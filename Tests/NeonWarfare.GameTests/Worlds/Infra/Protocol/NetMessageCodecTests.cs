@@ -24,6 +24,7 @@ public class NetMessageCodecTests
         [typeof(ulong)] = 0xFEDC_BA98_7654_3210UL,
         [typeof(Color)] = new Color(0.1f, 0.2f, 0.3f, 0.4f),
         [typeof(PlayerUid)] = new PlayerUid("Sample"),
+        [typeof(SaveFileName)] = new SaveFileName("sample"),
         [typeof(LocalizedText)] = new LocalizedText("sample", ["first", "second"]),
     };
 

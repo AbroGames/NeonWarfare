@@ -1,5 +1,6 @@
 using GdUnit4;
 using NeonWarfare.GameTests.KludgeBox.Persistence.Fixtures;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scripts.GlobalServices;
 using static GdUnit4.Assertions;
 
@@ -10,7 +11,7 @@ namespace NeonWarfare.GameTests.Scripts.GlobalServices;
 [TestSuite]
 public class SaveLoadServiceTests
 {
-    private const string FileName = "save";
+    private static readonly SaveFileName FileName = new("save");
 
     private static readonly byte[] Old = [1, 2, 3];
     private static readonly byte[] New = [4, 5, 6, 7];

@@ -1,4 +1,5 @@
 using NeonWarfare.Scenes.Worlds.Ports;
+using NeonWarfare.Scripts;
 
 namespace NeonWarfare.GameTests.Worlds.Fixtures;
 
@@ -7,13 +8,13 @@ namespace NeonWarfare.GameTests.Worlds.Fixtures;
 /// </summary>
 public class RecordingSaveFiles : ISaveFiles
 {
-    public record Written(string FileName, byte[] Data);
+    public record Written(SaveFileName FileName, byte[] Data);
 
     public List<Written> Files { get; } = [];
 
     public bool Failing { get; set; }
 
-    public void SaveToDisk(byte[] data, string saveFileName)
+    public void SaveToDisk(byte[] data, SaveFileName saveFileName)
     {
         if (Failing) throw new IOException($"writing '{saveFileName}' failed");
 

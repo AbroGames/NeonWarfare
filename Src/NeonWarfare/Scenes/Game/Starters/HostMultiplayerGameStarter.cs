@@ -9,7 +9,7 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>A server hosted from inside the client. The host plays in it too.</summary>
-public class HostMultiplayerGameStarter(string saveFileName, int? port) : BaseGameStarter
+public class HostMultiplayerGameStarter(SaveFileName saveFileName, int? port) : BaseGameStarter
 {
     public override void Start(Game game)
     {

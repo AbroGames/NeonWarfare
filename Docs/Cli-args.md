@@ -10,6 +10,8 @@ The first one is Godot's standard `--path "./"` argument — it points at the pr
 nothing to do with the game's arguments. Godot's `--headless` runs without a window; the engine consumes it, so
 the dedicated server detects this mode by `DisplayServer.GetName()` and creates no `ServerHud`.
 
+A value that does not parse (a number, a uid, a save name) is ignored with a warning, as if the flag were not passed.
+
 **Common** (`CommonArgs`):
 
 | Flag | Description |
@@ -31,7 +33,7 @@ the dedicated server detects this mode by `DisplayServer.GetName()` and creates 
 | `--auto-host-savefile <name>` | The save file name for auto-hosting (if the flag is not passed, then a new save file) |
 | `--auto-host-port <port>` | The port for auto-hosting (if the flag is not passed, then `25566`) |
 | `--nick <nick>` | Temporarily (without writing to the settings) override the nickname |
-| `--uid <uid>` | Temporarily (without writing to the settings) override the player UID; an invalid one is ignored with a warning |
+| `--uid <uid>` | Temporarily (without writing to the settings) override the player UID |
 
 `--auto-start`, `--auto-connect` and auto-hosting are mutually exclusive: the first of them in this order wins.
 
@@ -42,7 +44,7 @@ the dedicated server detects this mode by `DisplayServer.GetName()` and creates 
 | `--server` | Run the process as a dedicated server (selects `DedicatedServerRootStarter`) |
 | `--port <port>` | The port the server listens on (if the flag is not passed, then `25566`) |
 | `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
-| `--admin <uid>` | The UID of the player who will be granted administrator rights; an invalid one is ignored with a warning |
+| `--admin <uid>` | The UID of the player who will be granted administrator rights |
 | `--parent-pid <pid>` | The parent process PID; the server will shut down when the parent dies |
 | `--settings-file <name>` | The settings file in `user://` (if the flag is not passed, then `dedicated-server-settings.json`) |
 

@@ -18,7 +18,7 @@ public class SaveService(
 {
     private readonly ILogger _log = LogFactory.GetForStatic<SaveService>();
 
-    private readonly List<(string FileName, Action Written, Action<Exception> Failed)> _requests = [];
+    private readonly List<(SaveFileName FileName, Action Written, Action<Exception> Failed)> _requests = [];
 
     private readonly int _autoSaveIntervalTicks =
         TickRate.ToTicks(TimeSpan.FromMinutes(saving.AutoSaveIntervalMinutes).TotalSeconds);
@@ -29,16 +29,20 @@ public class SaveService(
     /// <summary>
     /// The last file written. After a "save as" the autosave, the save on exit and the next load use the new file.
     /// </summary>
-    public string SaveFileName { get; private set; } = saving.FileName;
+    public SaveFileName SaveFileName { get; private set; } = saving.FileName;
 
     /// <summary>
     /// Requests a save to <paramref name="saveFileName"/> at the end of the current tick.
     /// The callbacks run inside the tick and must not change the models.
     /// On a failure <see cref="SaveFileName"/> stays as it was.
     /// </summary>
-    public void RequestSave(string saveFileName, Action written, Action<Exception> failed)
+    /// <exception cref="ArgumentException"><paramref name="saveFileName"/> is invalid.</exception>
+    public void RequestSave(SaveFileName saveFileName, Action written, Action<Exception> failed)
     {
-        ArgumentNullException.ThrowIfNull(saveFileName);
+        if (!saveFileName.IsValid)
+        {
+            throw new ArgumentException($"The save file name '{saveFileName}' is invalid.", nameof(saveFileName));
+        }
         ArgumentNullException.ThrowIfNull(written);
         ArgumentNullException.ThrowIfNull(failed);
 
@@ -97,7 +101,7 @@ public class SaveService(
             }
         }
 
-        foreach ((string fileName, Action written, Action<Exception> failed) in requests)
+        foreach ((SaveFileName fileName, Action written, Action<Exception> failed) in requests)
         {
             try
             {
@@ -148,7 +152,7 @@ public class SaveService(
         _nextAutoSaveTick = clock.CurrentTick + _autoSaveIntervalTicks;
     }
 
-    private TimeSpan WriteToDisk(byte[] save, string fileName)
+    private TimeSpan WriteToDisk(byte[] save, SaveFileName fileName)
     {
         long started = time.GetTimestamp();
         saveFiles.SaveToDisk(save, fileName);

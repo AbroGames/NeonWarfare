@@ -9,9 +9,9 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// <paramref name="setLastGameSave"/> must not throw, because the save file is already written and an exception would
 /// report that save as failed.
 /// </summary>
-public class LastGameUpdatingSaveFiles(ISaveFiles disk, Action<string> setLastGameSave) : ISaveFiles
+public class LastGameUpdatingSaveFiles(ISaveFiles disk, Action<SaveFileName> setLastGameSave) : ISaveFiles
 {
-    public void SaveToDisk(byte[] data, string saveFileName)
+    public void SaveToDisk(byte[] data, SaveFileName saveFileName)
     {
         disk.SaveToDisk(data, saveFileName);
         setLastGameSave(saveFileName);

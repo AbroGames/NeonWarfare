@@ -11,6 +11,8 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 using NeonWarfare.Scenes.Worlds.Infra.Tick;
+using NeonWarfare.Scenes.Worlds.Ports;
+using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Saves;
@@ -20,8 +22,8 @@ namespace NeonWarfare.GameTests.Worlds.Infra.Server.Saves;
 [TestSuite]
 public class SaveServiceTests
 {
-    private const string OldFile = "old";
-    private const string NewFile = "new";
+    private static readonly SaveFileName OldFile = new("old");
+    private static readonly SaveFileName NewFile = new("new");
     private const int AutoSaveIntervalMinutes = 1;
 
     private static readonly int IntervalTicks =
@@ -46,6 +48,26 @@ public class SaveServiceTests
     {
         Stop();
         _scenes.Free();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RequestSave_InvalidName_Throws_NothingIsWritten()
+    {
+        AssertThrown(() => _service.RequestSave(new SaveFileName("../x"), () => { }, error => throw error))
+            .IsInstanceOf<ArgumentException>();
+
+        Tick();
+
+        AssertThat(_files.Files).IsEmpty();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WorldSaving_InvalidName_Throws()
+    {
+        AssertThrown(() => new WorldSaving(new SaveFileName("a/b"), autoSaveIntervalMinutes: 0))
+            .IsInstanceOf<ArgumentException>();
     }
 
     // The save is the state at the end of the tick, as the joining peers get it; one save serves every request of it

@@ -20,7 +20,8 @@ public class ProcessServiceTests
             var service = new ProcessService();
 
             Error error = service.StartNewDedicatedServerApplication(
-                "save", other.GetLocalPort(), PlayerUid.Generate(), "settings.json", showWindow: false);
+                new SaveFileName("save"), other.GetLocalPort(), PlayerUid.Generate(), "settings.json",
+                showWindow: false);
 
             AssertThat(error).IsNotEqual(Error.Ok);
             bool exitedAtOnce = false;

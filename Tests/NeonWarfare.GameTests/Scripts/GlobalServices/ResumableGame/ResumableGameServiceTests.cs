@@ -1,5 +1,6 @@
 using GdUnit4;
 using NeonWarfare.GameTests.KludgeBox.Persistence.Fixtures;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using static GdUnit4.Assertions;
 using LastGame = NeonWarfare.Scripts.GlobalServices.ResumableGame.ResumableGame;
@@ -46,6 +47,21 @@ public class ResumableGameServiceTests
     public void GetLastGame_SingleplayerWithoutSave_IsNone_WritesNothing() =>
         AssertNone("""{"Type":1,"SaveName":null,"Host":null,"Port":null,"IsDedicated":null}""");
 
+    // "Continue" with an invalid name would fail at the start, so it is hidden
+    [TestCase]
+    [RequireGodotRuntime]
+    public void GetLastGame_InvalidSaveName_IsNone_WritesNothing() =>
+        AssertNone("""{"Type":1,"SaveName":"a/b","Host":null,"Port":null,"IsDedicated":null}""");
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void GetLastGame_SingleplayerWithAValidSaveName_IsTheGame()
+    {
+        _folder.Write(Name, """{"Type":1,"SaveName":"save","Host":null,"Port":null,"IsDedicated":null}""");
+
+        AssertThat(_service.GetLastGame()).IsEqual(LastGame.GetSingleplayer(new SaveFileName("save")));
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_ConnectionWithoutHost_IsNone_WritesNothing() =>
@@ -60,7 +76,7 @@ public class ResumableGameServiceTests
     [RequireGodotRuntime]
     public void SetLastGame_ThenGetLastGame_RoundTrips()
     {
-        LastGame game = LastGame.GetCreateServer("save", 25566, isDedicated: true);
+        LastGame game = LastGame.GetCreateServer(new SaveFileName("save"), 25566, isDedicated: true);
 
         _service.SetLastGame(game);
 

@@ -11,7 +11,7 @@ namespace NeonWarfare.GameTests.Worlds.Fixtures;
 public static class TestWorldSetups
 {
     public static readonly PlayerUid LocalPlayerUid = new("LocalLocal-Llllllllll");
-    public const string SaveFileName = "save";
+    public static readonly SaveFileName SaveFileName = new("save");
 
     public static LocalPlayer LocalPlayer(PlayerUid? uid = null) => new(uid ?? LocalPlayerUid, "Local", Colors.White);
 
@@ -21,8 +21,9 @@ public static class TestWorldSetups
 
     public static WorldSetup.Host Host(
         LocalPlayer? localPlayer = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
-        ILocalPlayerOwner? localPlayerOwner = null, string saveFileName = SaveFileName) =>
-        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaving(saveFileName, autoSaveIntervalMinutes: 0),
+        ILocalPlayerOwner? localPlayerOwner = null, SaveFileName? saveFileName = null) =>
+        new(saveFiles ?? new RecordingSaveFiles(),
+            new WorldSaving(saveFileName ?? SaveFileName, autoSaveIntervalMinutes: 0),
             localPlayer ?? LocalPlayer(),
             owner ?? new RecordingServerOwner(), localPlayerOwner ?? new RecordingLocalPlayerOwner());
 
@@ -31,8 +32,9 @@ public static class TestWorldSetups
     /// <param name="autoSaveIntervalMinutes">Off by default, so a test running many ticks writes no save.</param>
     public static WorldSetup.Dedicated Dedicated(
         PlayerUid? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
-        string saveFileName = SaveFileName, PlayerUid? protectedUid = null, int autoSaveIntervalMinutes = 0) =>
-        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaving(saveFileName, autoSaveIntervalMinutes),
+        SaveFileName? saveFileName = null, PlayerUid? protectedUid = null, int autoSaveIntervalMinutes = 0) =>
+        new(saveFiles ?? new RecordingSaveFiles(),
+            new WorldSaving(saveFileName ?? SaveFileName, autoSaveIntervalMinutes),
             new WorldAdmin(adminUid),
             new ProtectedPlayer(protectedUid), owner ?? new RecordingServerOwner());
 }

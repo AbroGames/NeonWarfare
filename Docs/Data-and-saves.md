@@ -68,7 +68,8 @@ and on the project name (`Neon Warfare`):
 | Windows | `%APPDATA%\Godot\app_userdata\Neon Warfare\` |
 | Linux | `~/.local/share/godot/app_userdata/Neon Warfare/` |
 
-Saves: `user://saves/<name>.bin`, the name of a new file is `yyyy-MM-dd_HH-mm` (`SaveLoadService`).
+Saves: `user://saves/<name>.bin`, the name of a new file is `yyyy-MM-dd_HH-mm` (`SaveLoadService`). Every name the
+player gives passes `SaveFileName.IsValid`, the one rule for every OS.
 The saves are described [above](#saves).
 
 Other files in `user://` (JSON, `System.Text.Json`):

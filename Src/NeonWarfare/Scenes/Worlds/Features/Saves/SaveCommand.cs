@@ -8,4 +8,4 @@ namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 /// </summary>
 [MessagePackObject]
 public record SaveCommand(
-    [property: Key(0)] string FileName) : Command;
+    [property: Key(0)] SaveFileName FileName) : Command;
