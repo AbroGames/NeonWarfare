@@ -17,7 +17,7 @@ of a model: nothing of it goes into the save or the join snapshot, and the histo
 
 The sender travels as a uid through the whole chain; the nick and the rights are read by it where they are needed
 (`PlayerQuery.Get(uid)`). The dedicated server has no chat window: its chat is in the process log, written by
-`ChatSimulation`.
+`ChatSimulation`, which the `ServerHud` shows.
 
 ## Localized server messages
 

@@ -17,6 +17,8 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
     
     public override void Init()
     {
+        // The first line, so that the window shows the log of the base initialization too.
+        Services.ServerLog.Init();
         base.Init();
         _log.Information("Initializing DedicatedServer...");
         

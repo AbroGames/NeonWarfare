@@ -7,6 +7,7 @@ using KludgeBox.Reflection.Access;
 using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.KnownServers;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
+using NeonWarfare.Scripts.GlobalServices.ServerLog;
 using NeonWarfare.Scripts.GlobalServices.Settings;
 using TypesMappingService = NeonWarfare.Scripts.GlobalServices.TypesMappingService;
 
@@ -41,6 +42,7 @@ public static class Services
     public static readonly KnownServersService KnownServers = new();
     public static readonly SaveLoadService SaveLoad = new();
     public static readonly IconsStorageService IconsStorage = new();
+    public static readonly ServerLogService ServerLog = new();
     
     public static class Global
     {

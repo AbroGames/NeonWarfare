@@ -22,6 +22,7 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | `Services.Process` | `ProcessService` | Launching the dedicated server child process and waiting for it to exit |
 | `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
 | `Services.KnownServers` | `KnownServersService` | The server list of the multiplayer menu, stored in `user://known-servers.json` |
+| `Services.ServerLog` | `ServerLogService` | The last 1000 log records of the process for the `ServerHud`; fed only on a dedicated server |
 
 `QuitRequestsService` handles the signals through a subclass of KludgeBox's abstract `TerminationSignalsService`
 (`KludgeBox.Godot.Services`): the base holds the mechanism, the game adds only its own part.
