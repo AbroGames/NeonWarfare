@@ -24,6 +24,7 @@ public class HostMultiplayerGameStarter(
     {
         _localPlayer = ReadLocalPlayer();
         GoToMenuOnJoinRejected(game);
+        ClearLoadingScreenOnJoined(game);
         base.Init(game);
     }
 
@@ -34,7 +35,6 @@ public class HostMultiplayerGameStarter(
     protected override void OnServerOpened(Game game)
     {
         game.SendJoinRequest(_localPlayer);
-        Services.LoadingScreen.Clear();
     }
 
     protected override void OnHostingFailed(Error error)

@@ -1,3 +1,6 @@
+using System;
+using Humanizer;
+using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
 
 namespace NeonWarfare.Scenes.World.Features.Players;
@@ -7,10 +10,23 @@ namespace NeonWarfare.Scenes.World.Features.Players;
 /// replication, and a dedicated server has no such service.
 /// </summary>
 [Presentation]
-public class LocalPlayerPresentation(LocalPlayer localPlayer, PlayerQuery players)
+public class LocalPlayerPresentation(LocalPlayer localPlayer, ILocalPlayerOwner owner, PlayerQuery players)
 {
+    private const string NotOnlineError = "The local player {0} is not online";
+
     public string Uid => localPlayer.Uid;
 
-    /// <value><c>null</c> while the player is not online: before its join is applied or after it leaves.</value>
-    public PlayerModel Player => players.TryGetOnline(Uid);
+    /// <summary>
+    /// Throws rather than returning <c>null</c>: the UI is created only once the player is online, see
+    /// <see cref="ILocalPlayerOwner"/>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Before the join is applied or after the leave.</exception>
+    public PlayerModel Player =>
+        players.TryGetOnline(Uid) ?? throw new InvalidOperationException(NotOnlineError.FormatWith(Uid));
+
+    [EventHandler]
+    private void Handle(PlayerJoinedEvent e)
+    {
+        if (e.Uid == localPlayer.Uid) owner.Joined();
+    }
 }

@@ -236,20 +236,27 @@ public class WorldEntryPointsTests
         AssertThrown(() => dedicated.Get<ChatPresentation>()).IsInstanceOf<InvalidOperationException>();
     }
 
+    // Done when: the UI is created by the owner, so "me" is there the moment it is reported, and never before;
+    // another player's join is no report
     [TestCase]
     [RequireGodotRuntime]
-    public void LocalPlayer_OnAHost_IsOnlineOnlyAfterItsOwnJoin()
+    public void LocalPlayer_OnAHost_IsReportedOnlineOnlyByItsOwnJoin()
     {
-        GameWorld world = HostWorld();
+        var owner = new RecordingLocalPlayerOwner();
+        GameWorld world = HostWorld(owner: owner);
         var localPlayer = world.Get<LocalPlayerPresentation>();
+        PlayerModel? playerWhenReported = null;
+        owner.OnJoined = () => playerWhenReported = localPlayer.Player;
 
-        AssertThat(localPlayer.Player).IsNull();
-        JoinRemote(world);
-        AssertThat(localPlayer.Player).IsNull();
+        AssertThrown(() => { _ = localPlayer.Player; }).IsInstanceOf<InvalidOperationException>();
         JoinHost(world);
+        AssertThat(owner.JoinedCount).IsEqual(1);
+        AssertThat(playerWhenReported!.Uid).IsEqual(HostUid);
+        JoinRemote(world);
 
+        AssertThat(owner.JoinedCount).IsEqual(1);
         AssertThat(localPlayer.Uid).IsEqual(HostUid);
-        AssertThat(localPlayer.Player!.Uid).IsEqual(HostUid);
+        AssertThat(localPlayer.Player.Uid).IsEqual(HostUid);
     }
 
     // A loaded save stores the host's player, but it is not online until it joins again
@@ -257,13 +264,35 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void LocalPlayer_OnAHostFromSave_IsOnlineOnlyAfterItsJoin()
     {
-        GameWorld world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName));
+        var owner = new RecordingLocalPlayerOwner();
+        GameWorld world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName), owner);
         var localPlayer = world.Get<LocalPlayerPresentation>();
 
-        AssertThat(localPlayer.Player).IsNull();
+        AssertThrown(() => { _ = localPlayer.Player; }).IsInstanceOf<InvalidOperationException>();
         JoinHost(world);
 
-        AssertThat(localPlayer.Player!.Nick).IsEqual("Host");
+        AssertThat(owner.JoinedCount).IsEqual(1);
+        AssertThat(localPlayer.Player.Nick).IsEqual("Host");
+    }
+
+    // Done when: a rejected host join goes to the failure path, Game's JoinRejectedEvent, and the UI never appears
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnAHostWithRejectedJoin_IsNeverReported()
+    {
+        var owner = new RecordingLocalPlayerOwner();
+        GameWorld world = HostWorld(owner: owner);
+        var invalid = new LocalPlayer(HostUid, "", Colors.White);
+
+        world.OnClientConnected(HostPeer);
+        ((IServerConnection) _connection).Send(_codec.Encode(invalid.ToJoinRequest(_codec.ProtocolHash)));
+        Tick(world);
+
+        AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Packet[0])))
+            .ContainsExactly((HostPeer, (byte) ServerPacketKind.JoinRejected));
+        AssertThat(owner.JoinedCount).IsEqual(0);
+        AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
@@ -276,7 +305,8 @@ public class WorldEntryPointsTests
         world.OnClientDisconnected(HostPeer);
         Tick(world);
 
-        AssertThat(world.Get<LocalPlayerPresentation>().Player).IsNull();
+        AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     // The client's World is created after the join, from the object the join request was made of
@@ -290,9 +320,29 @@ public class WorldEntryPointsTests
 
         GameWorld client = World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
-        PlayerModel player = client.Get<LocalPlayerPresentation>().Player!;
+        PlayerModel player = client.Get<LocalPlayerPresentation>().Player;
         AssertThat(player.Uid).IsEqual(RemoteUid);
         AssertThat(player.Nick).IsEqual("Remote");
+    }
+
+    // The snapshot makes the player online, but the UI waits for the events packet of the join tick, as on the host
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnARemoteClient_IsReportedByTheEventsOfItsJoinTick()
+    {
+        GameWorld host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+        byte[] events = _connection.Packets
+            .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Events)
+            .Packet;
+        var owner = new RecordingLocalPlayerOwner();
+        GameWorld client = World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()), owner);
+        AssertThat(owner.JoinedCount).IsEqual(0);
+
+        client.ReceiveFromServer(events);
+
+        AssertThat(owner.JoinedCount).IsEqual(1);
     }
 
     [TestCase]
@@ -304,20 +354,21 @@ public class WorldEntryPointsTests
         AssertThrown(() => dedicated.Get<LocalPlayerPresentation>()).IsInstanceOf<InvalidOperationException>();
     }
 
-    private GameWorld HostWorld(WorldOrigin? origin = null)
+    private GameWorld HostWorld(WorldOrigin? origin = null, ILocalPlayerOwner? owner = null)
     {
-        GameWorld world = World(WorldLayer.Host, origin);
+        GameWorld world = World(WorldLayer.Host, origin, owner);
         _connection.Loopback = packet => world.ReceiveFromServer(packet);
         _connection.CommandLoopback = packet => world.ReceiveFromClient(HostPeer, packet);
         return world;
     }
 
-    private GameWorld World(WorldLayer layers, WorldOrigin? origin = null) =>
+    private GameWorld World(WorldLayer layers, WorldOrigin? origin = null, ILocalPlayerOwner? owner = null) =>
         AutoFree(new GameWorld())!.InitPreReady(
-            layers, Dependencies(layers), origin ?? new WorldOrigin.NewWorld(SaveFileName));
+            layers, Dependencies(layers, owner: owner), origin ?? new WorldOrigin.NewWorld(SaveFileName));
 
     // A client World here is always the remote player's, made from its join snapshot
-    private WorldDependencies Dependencies(WorldLayer layers, NetMessageCodec? codec = null)
+    private WorldDependencies Dependencies(
+        WorldLayer layers, NetMessageCodec? codec = null, ILocalPlayerOwner? owner = null)
     {
         LocalPlayer? localPlayer = layers switch
         {
@@ -330,7 +381,8 @@ public class WorldEntryPointsTests
             new ManualTimeProvider(Now), codec ?? _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), _connection, _connection, _saveFiles, localPlayer,
-            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers));
+            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers),
+            owner ?? TestWorldDependencies.LocalPlayerOwner(layers));
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way

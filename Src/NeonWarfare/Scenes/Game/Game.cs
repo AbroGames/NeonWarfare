@@ -27,10 +27,11 @@ namespace NeonWarfare.Scenes.Game;
 /// The transport of the session: routes the packets and the connection events between <see cref="Network.Network"/>
 /// and the current World, and loops the host's own packets back into its World synchronously, inside the call.
 /// </summary>
-public partial class Game : Node2D, IClientsConnection, IServerConnection
+public partial class Game : Node2D, IClientsConnection, IServerConnection, ILocalPlayerOwner
 {
     /// <summary>
-    /// The screen created together with the World and dying with it.
+    /// The screen of the World, dying with it. <see cref="Hud"/> is created only once this process's player has
+    /// joined, so that the UI never sees it offline; the others come with the World.
     /// </summary>
     public enum Screen
     {
@@ -46,6 +47,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     private const string BrokenServerPacketLog = "Packet from the server dropped";
     private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string HostDisconnectedLog = "The host's own peer is disconnected: the host has no player";
+    private const string HudFailedLog = "The Hud failed to be created after the join";
     private const string NoNetworkError = "Peer {0} is not the host's own, but there is no network";
     private const string NoServerError = "There is no server to send to";
     private const string NotInTreeError =
@@ -72,6 +74,8 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
 
     private bool HasWorld => _world != null && IsInstanceValid(_world);
 
+    private bool _isHudDue;
+
     /// <summary>
     /// A remote client without a World got the server's join snapshot: the World is created from it.
     /// </summary>
@@ -82,6 +86,11 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     /// World, inside the tick.
     /// </summary>
     public event Action<JoinRejectReason> JoinRejectedEvent;
+
+    /// <summary>
+    /// The server has applied this process's join, and its <see cref="Screen.Hud"/> is created.
+    /// </summary>
+    public event Action LocalPlayerJoinedEvent;
 
     public override void _Ready()
     {
@@ -111,7 +120,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this, saveFiles, localPlayer, admin, dedicatedServerOwner);
+            this, this, saveFiles, localPlayer, admin, dedicatedServerOwner, localPlayer == null ? null : this);
         var world = new World.World();
         try
         {
@@ -128,15 +137,12 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
         _world.SetName("World");
         WorldContainer.ChangeStoredNode(_world);
 
+        _isHudDue = screen == Screen.Hud;
         switch (screen)
         {
             case Screen.None:
-                HudContainer.ClearStoredNode();
-                break;
             case Screen.Hud:
-                Hud hud = GamePackedScenes.Hud.Instantiate<Hud>().InitPreReady(_world, _world);
-                hud.SetName("Hud");
-                HudContainer.ChangeStoredNode(hud);
+                HudContainer.ClearStoredNode();
                 break;
             case Screen.ServerHud:
                 ServerHud serverHud = GamePackedScenes.ServerHud.Instantiate<ServerHud>().InitPreReady(_world);
@@ -171,6 +177,28 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
             _world.OnClientConnected(localPeerId);
         }
         ((IServerConnection) this).Send(_codec.Encode(localPlayer.ToJoinRequest(_codec.ProtocolHash)));
+    }
+
+    void ILocalPlayerOwner.Joined()
+    {
+        if (_isHudDue)
+        {
+            _isHudDue = false;
+            try
+            {
+                Hud hud = GamePackedScenes.Hud.Instantiate<Hud>().InitPreReady(_world, _world);
+                hud.SetName("Hud");
+                HudContainer.ChangeStoredNode(hud);
+            }
+            catch (Exception e)
+            {
+                // The event dispatch would swallow it and leave the loading screen forever: the join fails instead
+                _log.Error(e, HudFailedLog);
+                JoinRejectedEvent?.Invoke(JoinRejectReason.InternalError);
+                return;
+            }
+        }
+        LocalPlayerJoinedEvent?.Invoke();
     }
 
     int? IClientsConnection.LocalPeerId => LocalPeerId;

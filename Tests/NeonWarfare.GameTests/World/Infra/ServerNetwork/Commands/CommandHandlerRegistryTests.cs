@@ -151,7 +151,8 @@ public class CommandHandlerRegistryTests
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection(), new RecordingSaveFiles(),
             TestWorldDependencies.LocalPlayer(WorldLayer.Host),
-            TestWorldDependencies.Admin(WorldLayer.Host), TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host));
+            TestWorldDependencies.Admin(WorldLayer.Host), TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host),
+            TestWorldDependencies.LocalPlayerOwner(WorldLayer.Host));
     }
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>

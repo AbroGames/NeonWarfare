@@ -25,4 +25,8 @@ public static class TestWorldDependencies
         layers.HasFlag(WorldLayer.Simulation) && !layers.HasFlag(WorldLayer.Presentation)
             ? new RecordingDedicatedServerOwner()
             : null;
+
+    /// <returns><c>null</c> on a dedicated server.</returns>
+    public static ILocalPlayerOwner? LocalPlayerOwner(WorldLayer layers) =>
+        layers.HasFlag(WorldLayer.Presentation) ? new RecordingLocalPlayerOwner() : null;
 }
