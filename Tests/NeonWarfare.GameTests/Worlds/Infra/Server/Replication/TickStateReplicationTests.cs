@@ -248,6 +248,28 @@ public class TickStateReplicationTests
         AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State, SentKind.Events);
     }
 
+    // A rejection that does not reach its peer still disconnects it, and costs the other joiners nothing
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SnapshotWriteFailed_FailedRejection_StillRejectsTheOthers()
+    {
+        var node = Spawner().SpawnOnRoot<ManualTextNode>();
+        Tick();
+        _connection.Packets.Clear();
+        node.Text = new string('x', 70_000);
+        _connection.FailingPeer = BobPeer;
+        _connection.FailingKind = SentKind.JoinRejected;
+
+        Join(BobPeer, BobUid, "Bob");
+        Join(CarolPeer, CarolUid, "Carol");
+        Tick();
+
+        AssertThat(Sent(BobPeer)).IsEmpty();
+        AssertThat(Sent(CarolPeer))
+            .ContainsExactly((SentKind.JoinRejected, (byte) JoinRejectReason.InternalError));
+        AssertThat(_connection.Disconnected).ContainsExactlyInAnyOrder(BobPeer, CarolPeer);
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void SnapshotSendFailed_DisconnectsOnlyThatPeer_WithoutItsEvents()

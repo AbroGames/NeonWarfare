@@ -37,15 +37,9 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
         if (peers.IsCut(peerId)) return;
 
         _log.Warning("Peer {peerId} rejected: {reason}", peerId, reason);
-        // A failed send must not leave the rejected peer connected
-        try
-        {
-            clientsConnection.Reject(peerId, reason);
-        }
-        finally
-        {
-            Disconnect(peerId);
-        }
+        // Disconnected whether the reason reached it or not
+        clientsConnection.Reject(peerId, reason);
+        Disconnect(peerId);
     }
 
     public void Disconnect(int peerId)

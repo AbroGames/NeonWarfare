@@ -23,9 +23,9 @@ public class SingleplayerGameStarter(string saveFileName) : BaseGameStarter
             game.AddSingleplayerWorld(
                 SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
         }
-        catch (Exception e) when (IsLoadError(e))
+        catch (Exception e)
         {
-            GoToMenuAndShowError(LogLoadError(e, saveFileName));
+            GoToMenuAndShowError(LogWorldError(e, saveFileName));
         }
     }
 }

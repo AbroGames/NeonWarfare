@@ -24,6 +24,7 @@ public abstract class BaseGameStarter
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string VersionMismatchMessage = "The save was made by another version of the game";
     private const string BrokenSaveMessage = "The save is broken or cannot be read";
+    private const string WorldFailedMessage = "Failed to create the world";
 
     private readonly ILogger _log = LogFactory.GetForStatic<BaseGameStarter>();
 
@@ -44,8 +45,7 @@ public abstract class BaseGameStarter
     /// <summary>
     /// The server World from its save file if there is one, otherwise a new World that saves to it.
     /// </summary>
-    /// <exception cref="SaveLoadService.LoadException">The file cannot be read, see <see cref="IsLoadError"/>.
-    /// </exception>
+    /// <exception cref="SaveLoadService.LoadException">The file cannot be read.</exception>
     protected WorldOrigin LoadServerOrigin(string saveFileName)
     {
         ArgumentNullException.ThrowIfNull(saveFileName);
@@ -55,15 +55,18 @@ public abstract class BaseGameStarter
     }
 
     /// <summary>
-    /// The file of <see cref="LoadServerOrigin"/> cannot be read, or the World cannot be built from it.
+    /// For any exception of building the server World: the edge of the session, where a failure becomes a message.
     /// </summary>
-    protected static bool IsLoadError(Exception e) => e is SaveLoadService.LoadException or SaveFormatException;
-
     /// <returns>The message for the player.</returns>
-    protected string LogLoadError(Exception e, string saveFileName)
+    protected string LogWorldError(Exception e, string saveFileName)
     {
-        _log.Error(e, "Loading the save '{saveFileName}' failed", saveFileName);
-        return e is SaveVersionMismatchException ? VersionMismatchMessage : BrokenSaveMessage;
+        _log.Error(e, "Creating the World of the save '{saveFileName}' failed", saveFileName);
+        return e switch
+        {
+            SaveVersionMismatchException => VersionMismatchMessage,
+            SaveLoadService.LoadException or SaveFormatException => BrokenSaveMessage,
+            _ => WorldFailedMessage
+        };
     }
 
     /// <summary>

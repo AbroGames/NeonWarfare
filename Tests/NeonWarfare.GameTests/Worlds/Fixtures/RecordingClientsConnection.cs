@@ -50,13 +50,13 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 
     public int? LocalPeerId { get; set; }
 
-    public void SendState(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.State, body);
+    public bool SendState(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.State, body);
 
-    public void SendSnapshot(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.Snapshot, body);
+    public bool SendSnapshot(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.Snapshot, body);
 
-    public void SendEvents(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.Events, body);
+    public bool SendEvents(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.Events, body);
 
-    public void Reject(int peerId, JoinRejectReason reason) =>
+    public bool Reject(int peerId, JoinRejectReason reason) =>
         Record(peerId, SentKind.JoinRejected, [(byte) reason]);
 
     public void Send(ReadOnlySpan<byte> packet)
@@ -68,16 +68,13 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 
     public void Disconnect(int peerId) => Disconnected.Add(peerId);
 
-    private void Record(int peerId, SentKind kind, ReadOnlySpan<byte> body)
+    private bool Record(int peerId, SentKind kind, ReadOnlySpan<byte> body)
     {
-        if (peerId == FailingPeer && (FailingKind == null || kind == FailingKind))
-        {
-            throw new InvalidOperationException($"send to peer {peerId} failed");
-        }
+        if (peerId == FailingPeer && (FailingKind == null || kind == FailingKind)) return false;
 
         byte[] copy = body.ToArray();
         Packets.Add(new Sent(peerId, kind, copy));
-        if (kind == SentKind.JoinRejected) return;
+        if (kind == SentKind.JoinRejected) return true;
         if (peerId == HostPeer)
         {
             if (kind == SentKind.Events) Loopback?.Invoke(copy);
@@ -86,5 +83,6 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
         {
             receiver(kind, copy);
         }
+        return true;
     }
 }

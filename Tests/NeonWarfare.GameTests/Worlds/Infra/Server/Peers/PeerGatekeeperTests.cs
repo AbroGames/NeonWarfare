@@ -80,8 +80,7 @@ public class PeerGatekeeperTests
     {
         _clientsConnection.FailingPeer = AlicePeer;
 
-        AssertThrown(() => _gatekeeper.Reject(AlicePeer, JoinRejectReason.InvalidNick))
-            .IsInstanceOf<InvalidOperationException>();
+        _gatekeeper.Reject(AlicePeer, JoinRejectReason.InvalidNick);
 
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }

@@ -12,7 +12,8 @@ public interface INetwork
     event Action<int, byte[]> PacketReceived;
     event Action ConnectedToServer;
 
-    void Send(int peerId, ReadOnlySpan<byte> packet);
+    /// <returns><c>false</c>: the packet is not sent, already logged.</returns>
+    bool Send(int peerId, ReadOnlySpan<byte> packet);
 
     void Disconnect(int peerId);
 }

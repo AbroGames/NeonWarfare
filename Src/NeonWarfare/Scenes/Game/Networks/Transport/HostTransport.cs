@@ -35,30 +35,37 @@ public sealed class HostTransport(
         ((IServerConnection) this).Send(codec.Encode(localPlayer.ToJoinRequest(protocolHash)));
     }
 
-    void IClientsConnection.SendState(int peerId, ReadOnlySpan<byte> body) => Remote(peerId).SendState(peerId, body);
+    bool IClientsConnection.SendState(int peerId, ReadOnlySpan<byte> body) => Remote(peerId).SendState(peerId, body);
 
-    void IClientsConnection.SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
+    bool IClientsConnection.SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
         Remote(peerId).SendSnapshot(peerId, body);
 
-    void IClientsConnection.SendEvents(int peerId, ReadOnlySpan<byte> body)
+    bool IClientsConnection.SendEvents(int peerId, ReadOnlySpan<byte> body)
     {
-        if (peerId == LocalPeer)
+        if (peerId != LocalPeer) return Remote(peerId).SendEvents(peerId, body);
+
+        try
         {
             client.ReceiveEvents(body.ToArray());
-            return;
         }
-        Remote(peerId).SendEvents(peerId, body);
+        // Delivered inside the server's tick: the host's own World failing must not cost the remote peers their events.
+        // Not false: the tick would disconnect the host's own peer
+        catch (Exception e)
+        {
+            _log.Error(e, "The host's own World failed to take the events of the tick");
+        }
+        return true;
     }
 
-    void IClientsConnection.Reject(int peerId, JoinRejectReason reason)
+    bool IClientsConnection.Reject(int peerId, JoinRejectReason reason)
     {
         if (peerId == LocalPeer)
         {
             _log.Error("The server rejected the join: {reason}", reason);
             owner.JoinRejected(reason);
-            return;
+            return true;
         }
-        Remote(peerId).Reject(peerId, reason);
+        return Remote(peerId).Reject(peerId, reason);
     }
 
     void IClientsConnection.Disconnect(int peerId)

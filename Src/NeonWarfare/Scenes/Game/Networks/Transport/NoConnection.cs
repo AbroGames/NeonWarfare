@@ -12,16 +12,16 @@ public sealed class NoConnection : IClientsConnection, IServerConnection
 {
     public int? LocalPeerId => null;
 
-    public void SendState(int peerId, ReadOnlySpan<byte> body) =>
+    public bool SendState(int peerId, ReadOnlySpan<byte> body) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
-    public void SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
+    public bool SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
-    public void SendEvents(int peerId, ReadOnlySpan<byte> body) =>
+    public bool SendEvents(int peerId, ReadOnlySpan<byte> body) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
-    public void Reject(int peerId, JoinRejectReason reason) =>
+    public bool Reject(int peerId, JoinRejectReason reason) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
     public void Disconnect(int peerId) =>

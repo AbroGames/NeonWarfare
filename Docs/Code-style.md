@@ -60,6 +60,16 @@ _log.Information("Connecting to the server at {host}:{port}", host, port);
 An error goes into the Error log at the place where it happens, and only then is rethrown as an
 exception or raised as an event for the `Hud`.
 
+## Exceptions
+
+A `catch` is one of three kinds:
+
+* **translation** — untrusted input (a packet, a save, text of another version) into our exception, narrowly typed
+  (`NetMessageCodec`, `SaveLoader`);
+* **fault boundary** — a failure costs only its own unit of work. The World's are listed in
+  [World](World.md#failures); outside it, the starters and `Game` turn any failure into a message for the player;
+* **cleanup** — `finally`, or `catch { node.Free(); throw; }` for what nobody else would release.
+
 ## Precision: float vs double
 
 Non-critical things (visuals, auxiliary calculations) — `float`, with `deltaTime` simply cast from

@@ -90,6 +90,17 @@ public class HostTransportTests
         AssertThat(call.Body).ContainsExactly(Body);
     }
 
+    // Delivered inside the server's tick: a throw would cost the remote peers their events, false would cut the host
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SendEvents_LocalPeerWorldThrows_ReportsSent()
+    {
+        IClientsConnection clients = FakeHost();
+        _endpoint.ThrowOnReceive = true;
+
+        AssertThat(clients.SendEvents(LocalPeer, Body)).IsTrue();
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void SendAndDisconnect_RemotePeer_GoToTheNetwork()

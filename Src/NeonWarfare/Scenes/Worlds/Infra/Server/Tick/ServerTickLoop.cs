@@ -67,18 +67,9 @@ public class ServerTickLoop(
             // Disconnected earlier in the tick, it is only waiting for its peer_disconnected
             if (!peers.IsJoined(peerId)) continue;
 
-            try
-            {
-                clientsConnection.SendState(peerId, body);
-            }
-            catch (Exception e)
-            {
-                _log.Error(e, "State packet for peer {peerId} failed, disconnecting it, the other peers still get "
-                              + "theirs", peerId);
-                // The baselines have moved past what the peer has, so every next delta would corrupt its models;
-                // it comes back through a join and gets a fresh snapshot
-                gatekeeper.Disconnect(peerId);
-            }
+            // The baselines have moved past what the peer has, so every next delta would corrupt its models; it
+            // comes back through a join and gets a fresh snapshot
+            if (!clientsConnection.SendState(peerId, body)) gatekeeper.Disconnect(peerId);
         }
     }
 
@@ -97,38 +88,18 @@ public class ServerTickLoop(
             writer.WriteVarUInt((ulong) clock.CurrentTick);
             stateReplicator.WriteSnapshot(writer);
         }
+        // Without a consistent snapshot the peer's models would silently drift from the next deltas on
         catch (Exception e)
         {
-            // Without a consistent snapshot the peer's models would silently drift from the next deltas on
             _log.Error(e, "The snapshot failed, rejecting the peers joined in the tick: {peerIds}", joined);
-            foreach (int peerId in joined)
-            {
-                // A failed rejection has disconnected the peer anyway, and the rest still have to be rejected
-                try
-                {
-                    gatekeeper.Reject(peerId, JoinRejectReason.InternalError);
-                }
-                catch (Exception rejectError)
-                {
-                    _log.Error(rejectError, "Rejecting peer {peerId} failed, it is disconnected anyway", peerId);
-                }
-            }
+            joined.ForEach(peerId => gatekeeper.Reject(peerId, JoinRejectReason.InternalError));
             return;
         }
 
         ReadOnlySpan<byte> body = writer.AsSpan();
         foreach (int peerId in joined)
         {
-            try
-            {
-                clientsConnection.SendSnapshot(peerId, body);
-            }
-            catch (Exception e)
-            {
-                _log.Error(e, "Snapshot for peer {peerId} failed, disconnecting it, the other peers still get theirs",
-                    peerId);
-                gatekeeper.Disconnect(peerId);
-            }
+            if (!clientsConnection.SendSnapshot(peerId, body)) gatekeeper.Disconnect(peerId);
         }
     }
 
@@ -137,18 +108,11 @@ public class ServerTickLoop(
         ArrayBufferWriter<byte> section = new();
         foreach (int peerId in peers.JoinedPeerIds.ToList())
         {
-            // On the host this also covers its own World throwing: its transport delivers the events inside the call
-            try
-            {
-                section.ResetWrittenCount();
-                if (outbox.DrainEvents(peerId, section) == 0) continue;
+            section.ResetWrittenCount();
+            if (outbox.DrainEvents(peerId, section) == 0) continue;
 
-                clientsConnection.SendEvents(peerId, section.WrittenSpan);
-            }
-            catch (Exception e)
-            {
-                _log.Error(e, "Events packet for peer {peerId} failed, the other peers still get theirs", peerId);
-            }
+            // Its models are fine, but the events of the tick are lost to it: it comes back through a join
+            if (!clientsConnection.SendEvents(peerId, section.WrittenSpan)) gatekeeper.Disconnect(peerId);
         }
     }
 }

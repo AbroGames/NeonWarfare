@@ -1,5 +1,7 @@
 using System.Text.Json;
 using Godot;
+using KludgeBox.Logging;
+using Serilog;
 
 namespace NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
@@ -7,6 +9,8 @@ public class ResumableGameService
 {
     
     private const string LastGameSettingPath = "user://resume-game.json";
+
+    private readonly ILogger _log = LogFactory.GetForStatic<ResumableGameService>();
 
     private ResumableGame _lastGame;
 
@@ -50,9 +54,15 @@ public class ResumableGameService
         }
     }
     
+    // Never throws: "Continue" is a convenience, and a save whose file is written must not be reported as failed
     private void SaveSettings()
     {
         using var file = FileAccess.Open(LastGameSettingPath, FileAccess.ModeFlags.Write);
+        if (file == null)
+        {
+            _log.Error("Failed to open '{path}': {error}", LastGameSettingPath, FileAccess.GetOpenError());
+            return;
+        }
         string json = JsonSerializer.Serialize(_lastGame);
         file.StoreString(json);
         file.Close();

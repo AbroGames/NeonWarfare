@@ -60,11 +60,7 @@ public class SaveLoader(
                 throw new SaveFormatException($"{reader.RemainingBits} bits left after the end of the save.");
             }
         }
-        catch (NetMessageFormatException e)
-        {
-            throw new SaveFormatException("The save is broken.", e);
-        }
-        catch (ReplicationException e)
+        catch (Exception e) when (e is NetMessageFormatException or ReplicationException)
         {
             throw new SaveFormatException("The save is broken.", e);
         }
