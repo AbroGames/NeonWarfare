@@ -8,7 +8,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// Spawns entities from the spawn records of <c>StateReplicator</c>, with the NetIds the records give them.
-/// The records come from a state packet, a join snapshot or a save.
+/// The records come from a state section, a join snapshot or a save.
 /// An entity gets its state before it enters the tree and the registry, as on the server's spawn, so its
 /// <c>_Ready</c> and the registry's subscribers see it configured.
 /// </summary>

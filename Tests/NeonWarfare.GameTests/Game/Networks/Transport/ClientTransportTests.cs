@@ -23,8 +23,8 @@ public class ClientTransportTests
     private TransportWorlds _worlds = null!;
     private FakeNetwork _network = null!;
     private RecordingLocalPlayerOwner _owner = null!;
-    private List<byte[]> _snapshots = null!;
-    private Action<ReadOnlyMemory<byte>> _onSnapshot = null!;
+    private List<(long Tick, byte[] Records)> _snapshots = null!;
+    private Action<long, ReadOnlyMemory<byte>> _onSnapshot = null!;
     private ClientTransport _transport = null!;
     private FakeNetwork _serverNetwork = null!;
     private World _server = null!;
@@ -39,26 +39,26 @@ public class ClientTransportTests
         _onSnapshot = RecordSnapshot;
         _transport = new ClientTransport(
             _network, _worlds.Codec, TestProtocol.Hash, TestWorldSetups.LocalPlayer(), _owner,
-            snapshot => _onSnapshot(snapshot));
+            (tick, records) => _onSnapshot(tick, records));
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void PacketReceived_WithoutAWorld_OnlyTheSnapshotBodyGoesOn()
+    public void PacketReceived_WithoutAWorld_OnlyTheSnapshotGoesOn_AsItsTickAndRecords()
     {
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1]);
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 1]);
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1, 2]);
+        _network.Receive(ServerPeer, TickUpdate(6, [1], [2]));
+        _network.Receive(ServerPeer, Snapshot(7, [1, 2]));
 
         AssertThat(_snapshots.Count).IsEqual(1);
-        AssertThat(_snapshots[0]).ContainsExactly(1, 2);
+        AssertThat(_snapshots[0].Tick).IsEqual(7);
+        AssertThat(_snapshots[0].Records).ContainsExactly(1, 2);
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void PacketReceived_NotFromTheServer_IsDropped()
     {
-        _network.Receive(OtherPeer, [(byte) ServerPacketKind.Snapshot, 1]);
+        _network.Receive(OtherPeer, Snapshot(1, [1]));
         _network.Receive(OtherPeer, Rejection(JoinRejectReason.UidInUse));
 
         AssertThat(_snapshots).IsEmpty();
@@ -87,14 +87,27 @@ public class ClientTransportTests
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.JoinRejected]);
         _network.Receive(ServerPeer, []);
         _network.Receive(ServerPeer, Rejection(JoinRejectReason.UidInUse));
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1]);
+        _network.Receive(ServerPeer, Snapshot(1, [1]));
 
         AssertThat(broken).IsEqual(1);
         AssertThat(_owner.Rejections).IsEmpty();
         AssertThat(_snapshots).IsEmpty();
     }
 
-    // The whole join: the snapshot builds the World inside the call, and the events packet right after it reaches it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void PacketReceived_SnapshotWithABrokenHeader_BreaksTheConnection()
+    {
+        int broken = 0;
+        _transport.ConnectionBroken += () => broken++;
+
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1]);
+
+        AssertThat(broken).IsEqual(1);
+        AssertThat(_snapshots).IsEmpty();
+    }
+
+    // The whole join: the snapshot builds the World inside the call, and the tick update right after it reaches it
     [TestCase]
     [RequireGodotRuntime]
     public void Enter_ThePacketsAfterItReachTheWorld()
@@ -105,10 +118,10 @@ public class ClientTransportTests
         AssertThat(client.Get<LocalPlayerPresentation>().Player.Uid).IsEqual(TestWorldSetups.LocalPlayerUid);
     }
 
-    // Every later join changes the online players: the state packet reaches the World
+    // Every later join changes the online players: the state section reaches the World
     [TestCase]
     [RequireGodotRuntime]
-    public void Enter_StatePacketsReachTheWorld()
+    public void Enter_StateSectionsReachTheWorld()
     {
         World client = Connect();
 
@@ -121,6 +134,37 @@ public class ClientTransportTests
             .ContainsExactlyInAnyOrder(TestWorldSetups.LocalPlayerUid, OtherUid);
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Enter_TickUpdateReachesTheWorld_AsItsTickAndSections()
+    {
+        var endpoint = new RecordingWorldEndpoint();
+        _transport.Enter(endpoint);
+
+        _network.Receive(ServerPeer, TickUpdate(9, [1], [2, 3]));
+
+        RecordingWorldEndpoint.Call call = endpoint.Calls.Single();
+        AssertThat(call.Name).IsEqual(nameof(World.IClientEndpoint.ReceiveTickUpdate));
+        AssertThat(call.Tick).IsEqual(9);
+        AssertThat(call.Body).ContainsExactly(1);
+        AssertThat(call.Events).ContainsExactly(2, 3);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void PacketReceived_TickUpdateWithABrokenHeader_BreaksTheConnection_WithoutReachingTheWorld()
+    {
+        var endpoint = new RecordingWorldEndpoint();
+        _transport.Enter(endpoint);
+        int broken = 0;
+        _transport.ConnectionBroken += () => broken++;
+
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.TickUpdate, 1, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1]);
+
+        AssertThat(broken).IsEqual(1);
+        AssertThat(endpoint.Calls).IsEmpty();
+    }
+
     // The server sends one snapshot per join: a second one is a broken packet
     [TestCase]
     [RequireGodotRuntime]
@@ -130,7 +174,7 @@ public class ClientTransportTests
         int broken = 0;
         _transport.ConnectionBroken += () => broken++;
 
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1]);
+        _network.Receive(ServerPeer, Snapshot(1, [1]));
 
         AssertThat(_snapshots).IsEmpty();
         AssertThat(broken).IsEqual(1);
@@ -146,8 +190,8 @@ public class ClientTransportTests
         int broken = 0;
         _transport.ConnectionBroken += () => broken++;
 
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 1]);
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1]);
+        _network.Receive(ServerPeer, TickUpdate(1, [], [1]));
+        _network.Receive(ServerPeer, TickUpdate(2, [1], []));
 
         AssertThat(broken).IsEqual(1);
         AssertThat(endpoint.Calls.Count).IsEqual(1);
@@ -176,11 +220,11 @@ public class ClientTransportTests
         _network.Wire = (_, packet) => _serverNetwork.Receive(ClientPeer, packet);
 
         World? client = null;
-        _onSnapshot = snapshot =>
+        _onSnapshot = (tick, records) =>
         {
             client = AutoFree(new World())!;
             _worlds.Init(client, TestWorldSetups.RemoteClient(localPlayerOwner: _owner), new NoConnection(),
-                _transport, new WorldOrigin.FromSnapshot(snapshot));
+                _transport, new WorldOrigin.FromSnapshot(tick, records));
             _transport.Enter(client);
         };
 
@@ -190,7 +234,21 @@ public class ClientTransportTests
         return client!;
     }
 
-    private void RecordSnapshot(ReadOnlyMemory<byte> snapshot) => _snapshots.Add(snapshot.ToArray());
+    private void RecordSnapshot(long tick, ReadOnlyMemory<byte> records) => _snapshots.Add((tick, records.ToArray()));
+
+    private static byte[] TickUpdate(long tick, byte[] state, byte[] events)
+    {
+        var packet = new ArrayBufferWriter<byte>();
+        ServerPackets.WriteTickUpdate(tick, state, events, packet);
+        return packet.WrittenSpan.ToArray();
+    }
+
+    private static byte[] Snapshot(long tick, byte[] records)
+    {
+        var packet = new ArrayBufferWriter<byte>();
+        ServerPackets.WriteSnapshot(tick, records, packet);
+        return packet.WrittenSpan.ToArray();
+    }
 
     private static byte[] Rejection(JoinRejectReason reason)
     {

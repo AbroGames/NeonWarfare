@@ -24,7 +24,7 @@ using static GdUnit4.Assertions;
 namespace NeonWarfare.GameTests.Worlds.Features.Saves;
 
 // A host through the real composition root: the command goes in through the real inbox, the tick writes the save to
-// the recorded disk, and the reply is read from the events packet a remote peer gets, or from the host's own chat
+// the recorded disk, and the reply is read from the events section a remote peer gets, or from the host's own chat
 [TestSuite]
 public class SaveCommandTests
 {
@@ -171,7 +171,7 @@ public class SaveCommandTests
     private void Tick() => _server.GetRequiredService<ServerTickLoop>().RunTick();
 
     private List<object> Replies(int peerId) => _connection.Packets
-        .Where(sent => sent.PeerId == peerId && sent.Kind == SentKind.Events)
-        .SelectMany(sent => _codec.ReadSection(sent.Body, EventTypes, out _))
+        .Where(sent => sent.PeerId == peerId && sent.Kind.HasFlag(SentKind.Events))
+        .SelectMany(sent => _codec.ReadSection(sent.Events, EventTypes, out _))
         .ToList();
 }

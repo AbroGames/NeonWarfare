@@ -19,7 +19,7 @@ public sealed class ClientTransport : IServerConnection
     private readonly ProtocolHash _protocolHash;
     private readonly LocalPlayer _localPlayer;
     private readonly ILocalPlayerOwner _owner;
-    private readonly Action<ReadOnlyMemory<byte>> _snapshotReceived;
+    private readonly Action<long, ReadOnlyMemory<byte>> _snapshotReceived;
 
     private readonly ILogger _log = LogFactory.GetForStatic<ClientTransport>();
 
@@ -32,11 +32,11 @@ public sealed class ClientTransport : IServerConnection
     /// </summary>
     public event Action ConnectionBroken;
 
-    /// <param name="snapshotReceived">Builds the World from the join snapshot and calls <see cref="Enter"/>.
-    /// It must do so inside the call, before the events packet of the join tick arrives.</param>
+    /// <param name="snapshotReceived">Builds the World from the tick and the records of the join snapshot and calls
+    /// <see cref="Enter"/>. It must do so inside the call, before the tick update of the join tick arrives.</param>
     public ClientTransport(
         INetwork network, NetMessageCodec codec, ProtocolHash protocolHash, LocalPlayer localPlayer,
-        ILocalPlayerOwner owner, Action<ReadOnlyMemory<byte>> snapshotReceived)
+        ILocalPlayerOwner owner, Action<long, ReadOnlyMemory<byte>> snapshotReceived)
     {
         _network = network;
         _codec = codec;
@@ -101,18 +101,18 @@ public sealed class ClientTransport : IServerConnection
                 _owner.JoinRejected(reason);
                 break;
             case ServerPacketKind.Snapshot when _endpoint == null:
-                _snapshotReceived(body);
+                (long snapshotTick, ReadOnlyMemory<byte> records) = ServerPackets.ReadSnapshot(body);
+                _snapshotReceived(snapshotTick, records);
                 break;
             case ServerPacketKind.Snapshot:
                 throw new NetMessageFormatException("A snapshot for a client that already has a World.");
-            case ServerPacketKind.State or ServerPacketKind.Events when _endpoint == null:
+            case ServerPacketKind.TickUpdate when _endpoint == null:
                 _log.Debug("Packet from peer {peerId} dropped: there is no World yet", ServerPeer);
                 break;
-            case ServerPacketKind.State:
-                _endpoint.ReceiveState(body);
-                break;
-            case ServerPacketKind.Events:
-                _endpoint.ReceiveEvents(body);
+            case ServerPacketKind.TickUpdate:
+                (long tick, ReadOnlyMemory<byte> state, ReadOnlyMemory<byte> events) =
+                    ServerPackets.ReadTickUpdate(body);
+                _endpoint.ReceiveTickUpdate(tick, state, events);
                 break;
         }
     }

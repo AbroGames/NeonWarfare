@@ -45,9 +45,9 @@ public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
     }
 
     /// <summary>
-    /// Writes the events section of the peer's events packet and empties its buffer.
+    /// Writes the events section of the peer's tick update and empties its buffer.
     /// </summary>
-    /// <returns>The number of events written. An events packet without events is not sent.</returns>
+    /// <returns>The number of events written. Without events the tick update has no events section.</returns>
     public int DrainEvents(int peerId, IBufferWriter<byte> output)
     {
         if (!peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))

@@ -18,7 +18,7 @@ World; their layers and the World itself are in [World](World.md).
   `Game` with their World. `ServerTransport` routes the remote peers of a server into `World.IServerEndpoint`;
   `HostTransport` loops the host's own peer back into both endpoints and hands the others to its `ServerTransport`;
   `ClientTransport` is a remote client's connection: it has no World until the join snapshot, then routes into
-  `World.IClientEndpoint`. The World hands `IClientsConnection` bodies only, one method per packet kind. The direction
+  `World.IClientEndpoint`. The World hands `IClientsConnection` the tick and the sections, never a packet. The direction
   a configuration does not use is `NoConnection`. `GameProtocol` holds what the client needs before its World exists:
   `EntityCatalog`, `NetMessageCodec`, the `ProtocolHash` and the RepliCAT `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
@@ -38,10 +38,10 @@ belong to the tick. `RunTick` goes strictly in this order:
 1. `ServerTickClock.StartTick()` — the tick counter;
 2. `CommandDispatcher.ProcessAll()` — every command and disconnection received since the last tick;
 3. `PeerGatekeeper.DisconnectExpired()` — peers that have not joined in `HandshakeTimeout` (10 s);
-4. the state packet to every peer joined before this tick;
+4. the state section of the tick (`StateReplicator.TryWrite`), written every tick;
 5. the snapshots to the peers joined in this tick;
 6. the saves requested in this tick (`SaveService.WriteRequested`, see [Data and saves](Data-and-saves.md));
-7. the events packet of each joined peer.
+7. the tick update of each joined peer, sent even if step 5 or 6 throws: the baselines have already moved.
 
 The Simulation changes the models only inside the tick: it has no deferred calls, timers or `async`
 (`SimulationTimingTests`).
@@ -64,25 +64,25 @@ command — only from a joined peer — to its `IPlayerCommandHandler<T>`, which
 
 ## Packets: server → client
 
-The first byte of every packet is its `ServerPacketKind`, written and read only by `ServerPackets`
-(`Game/Networks/Transport/`); the World sees only the bodies:
+The first byte of every packet is its `ServerPacketKind`; the layout is written and read only by `ServerPackets`
+(`Game/Networks/Transport/`), and the World sees only the tick and the sections:
 
 | Kind | Content | To whom |
 |---|---|---|
 | `Snapshot` | The tick, then a spawn record of every entity (`StateReplicator.WriteSnapshot`) | A peer that joined in this tick, except the host's own |
-| `State` | The tick, then spawns → models → despawns (`StateReplicator.TryWrite`) | Every peer joined before this tick, except the host's own |
-| `Events` | The events of this tick for this peer (`EventOutbox.DrainEvents`) | Every joined peer, the host's own included |
+| `TickUpdate` | The tick, the state section's length, the state section — spawns → models → despawns (`StateReplicator.TryWrite`), then the events section (`EventOutbox.DrainEvents`) | Every joined peer with a non-empty section; the state only to the peers joined before this tick, except the host's own |
 | `JoinRejected` | One `JoinRejectReason` byte, frozen across builds | A peer whose join is refused, just before the disconnect |
 
-The state packet is the same for everyone and written once; an empty one is not sent. It goes before the events,
-so an event handler sees the models already at the end of the tick, on the host and on a remote client alike.
+The state section is the same for everyone and written once. An empty section is absent, and a tick update with
+neither is not sent. The state section comes before the events section, so an event handler sees the models already
+at the end of the tick, on the host and on a remote client alike.
 ENet delivers a fragmented reliable packet whole, so a client applies a tick atomically.
 
 A send that fails (`IClientsConnection` returns `false`) disconnects the peer: it has missed a reliable packet.
 
-A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes it by kind, the state to
-`World.IClientEndpoint.ReceiveState` (`StateApplier`), the events to `ReceiveEvents` (`EventDispatcher`). The host
-gets only its events: its Simulation has already written the state.
+A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes a tick update to
+`World.IClientEndpoint.ReceiveTickUpdate`, which applies the state section (`StateApplier`), then dispatches the
+events section (`EventDispatcher`). The host gets only its events: its Simulation has already written the state.
 A packet the client cannot read or apply ends its session (`ClientTransport.ConnectionBroken` → `Game.Failed`): it may
 be applied in part while the server's baselines have moved on, so the models would drift; a new join brings a fresh
 snapshot.
@@ -133,18 +133,17 @@ sequenceDiagram
     G->>W: ReceiveFromClient: hash check, into the inbox
     Note over W: next tick
     W->>W: PeerSessions.Join: Validate, Joined(uid),<br/>Process → join message, PlayerJoinedEvent
-    W-->>O: State packet: the tick's changes (OnlinePlayersModel.Uids)
     W-->>C: Snapshot: every entity at the end of the tick
     C->>C: ClientTransport → Game builds the World from the snapshot
-    W-->>C: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
+    W-->>C: Tick update, events only: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
     C->>C: its own PlayerJoinedEvent → Game: Hud, then the starter clears the loading screen
-    W-->>O: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
-    Note over C: from the next tick on: State, then Events, like everyone
+    W-->>O: Tick update: the state (OnlinePlayersModel.Uids), then the same events
+    Note over C: from the next tick on: tick updates with state and events, like everyone
 ```
 
-The joined peer does not get the state packet of its join tick: the snapshot already is the state at its end. The
-snapshot is written right after the state packet, from the baselines that packet has just brought to the end of
-the tick, so "snapshot, then the next state packet" is consistent. The chat history is not in it.
+The joined peer does not get the state section of its join tick: the snapshot already is the state at its end. The
+snapshot is written right after the state section, from the baselines that section has just brought to the end of
+the tick, so "snapshot, then the next state section" is consistent. The chat history is not in it.
 
 ## Entities and replication
 
@@ -162,7 +161,7 @@ the tick, so "snapshot, then the next state packet" is consistent. The chat hist
 * **Replication** — `StateReplicator` subscribes to the registry and keeps a RepliCAT baseline per entity; at the end
   of the tick it writes the spawn records (NetId, kind, parent, first delta), the deltas of changed models and the
   despawns. The models are captured there, not at spawn.
-* **On a remote client** — `StateApplier` applies a state packet and the join snapshot; `EntityRecordReader` spawns
+* **On a remote client** — `StateApplier` applies the state section of a tick update and the join snapshot; `EntityRecordReader` spawns
   from the records with their NetIds (the same reader loads a save on the server).
 
 ## Transfer channels

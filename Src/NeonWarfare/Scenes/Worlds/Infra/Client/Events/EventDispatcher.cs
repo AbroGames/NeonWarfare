@@ -69,7 +69,7 @@ public class EventDispatcher
         if (bytesRead != section.Length)
         {
             throw new NetMessageFormatException(
-                $"{bytesRead} of {section.Length} bytes read, an events packet carries one section.");
+                $"{bytesRead} of {section.Length} bytes read, a tick update carries one events section.");
         }
         Deliver(events);
     }

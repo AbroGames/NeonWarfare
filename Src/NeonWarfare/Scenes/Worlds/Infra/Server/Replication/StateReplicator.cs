@@ -13,19 +13,18 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 
 /// <summary>
-/// Writes the body of the state packet, the join snapshot and the save from one set of RepliCAT baselines, see
+/// Writes the state section of a tick update, the join snapshot and the save from one set of RepliCAT baselines, see
 /// Docs/Networking.md#entities-and-replication.
-/// The state packet body is the tick number (varuint) and then three sections, each closed by
-/// <see cref="NetId.None"/>:
+/// The state section has three parts, each closed by <see cref="NetId.None"/>:
 /// <list type="number">
-/// <item>Spawns. For every entity spawned since the last packet, in NetId order: its NetId, kind id and parent NetId
+/// <item>Spawns. For every entity spawned since the last write, in NetId order: its NetId, kind id and parent NetId
 /// (varuints, <see cref="NetId.None"/> for the World root), a bit saying that the state follows, and its first
 /// RepliCAT delta.</item>
 /// <item>Models. For every other entity whose models changed: its NetId (varuint) and its RepliCAT delta.</item>
-/// <item>Despawns. The NetId (varuint) of every entity despawned since the last packet, descendants included.</item>
+/// <item>Despawns. The NetId (varuint) of every entity despawned since the last write, descendants included.</item>
 /// </list>
-/// A delta carries no length, so the client must know every NetId in the packet.
-/// One packet serves every peer, because writing a delta moves its baseline.
+/// A delta carries no length, so the client must know every NetId in the section.
+/// One section serves every peer, because writing a delta moves its baseline.
 /// </summary>
 [Server]
 public class StateReplicator
@@ -58,7 +57,7 @@ public class StateReplicator
     }
 
     /// <summary>
-    /// Writes the state packet body of the tick. Called every tick, even when no peer gets the packet.
+    /// Writes the state section of the tick. Called every tick, even when no peer gets it.
     /// That keeps the baselines equal to the state at the end of the last tick, and a joining peer's snapshot is
     /// built from them.
     /// </summary>
@@ -66,7 +65,7 @@ public class StateReplicator
     /// <c>false</c> when nothing was spawned, changed or despawned. The writer is then left as it was, and nothing is
     /// sent.
     /// </returns>
-    public bool TryWrite(long tick, BitWriter writer)
+    public bool TryWrite(BitWriter writer)
     {
         _despawned.ForEach(id =>
         {
@@ -75,7 +74,6 @@ public class StateReplicator
         });
 
         int start = writer.BitPosition;
-        writer.WriteVarUInt((ulong) tick);
 
         bool spawnedOrDespawned = _spawned.Count > 0 || _despawned.Count > 0;
         WriteSpawns(writer);
@@ -94,18 +92,19 @@ public class StateReplicator
 
     /// <summary>
     /// Writes every entity as it was at the last send, in NetId order, closed by <see cref="NetId.None"/>.
-    /// Each entity gets the same record as in the spawns section of the state packet. The caller writes the tick.
+    /// Each entity gets the same record as in the spawns of the state section.
     /// <list type="bullet">
     /// <item>It must be called right after <see cref="TryWrite"/>, before anything spawns.
-    /// It is built from the baselines, not from the live entities, so the next state packet continues it
+    /// It is built from the baselines, not from the live entities, so the next state section continues it
     /// consistently.</item>
-    /// <item>An entity despawned since the send is still in it, and the next packet despawns it.</item>
+    /// <item>An entity despawned since the send is still in it, and the next state section despawns it.</item>
     /// <item>An entity whose delta was never written goes without state. Its full state comes with its next
     /// delta.</item>
     /// </list>
     /// </summary>
     /// <exception cref="InvalidOperationException">
-    /// An entity has spawned since the last send: it has no state yet, and the next packet would spawn it again.
+    /// An entity has spawned since the last send: it has no state yet, and the next state section would spawn it
+    /// again.
     /// </exception>
     /// <exception cref="ReplicationException">A manual member cannot be written.</exception>
     public void WriteSnapshot(BitWriter writer) => WriteAll(writer, saving: false);

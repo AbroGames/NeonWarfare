@@ -50,11 +50,12 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
     /// <summary>What a client World receives from the server.</summary>
     public interface IClientEndpoint
     {
-        /// <exception cref="NetMessageFormatException">The body is broken.</exception>
-        void ReceiveState(ReadOnlyMemory<byte> body);
-
-        /// <exception cref="NetMessageFormatException">The body is broken.</exception>
-        void ReceiveEvents(ReadOnlyMemory<byte> body);
+        /// <summary>
+        /// Applies the state section before it dispatches the events section, so an event handler sees the models at
+        /// the end of the tick. An empty section is absent.
+        /// </summary>
+        /// <exception cref="NetMessageFormatException">A section is broken.</exception>
+        void ReceiveTickUpdate(long tick, ReadOnlyMemory<byte> state, ReadOnlyMemory<byte> events);
     }
 
     private ServiceProvider _services;
@@ -78,7 +79,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
                 _services.GetRequiredService<NewWorldSimulationFacade>().Create();
                 break;
             case WorldOrigin.FromSnapshot snapshot:
-                Service<StateApplier>().ApplySnapshot(snapshot.Body);
+                Service<StateApplier>().ApplySnapshot(snapshot.Records);
                 break;
             case WorldOrigin.FromSave save:
                 Service<SaveLoader>().Load(save.Save);
@@ -117,9 +118,11 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
     void IServerEndpoint.ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
         Service<CommandInbox>().EnqueueFromPeer(peerId, packet);
 
-    void IClientEndpoint.ReceiveState(ReadOnlyMemory<byte> body) => Service<StateApplier>().ApplyState(body);
-
-    void IClientEndpoint.ReceiveEvents(ReadOnlyMemory<byte> body) => Service<EventDispatcher>().Dispatch(body);
+    void IClientEndpoint.ReceiveTickUpdate(long tick, ReadOnlyMemory<byte> state, ReadOnlyMemory<byte> events)
+    {
+        if (!state.IsEmpty) Service<StateApplier>().ApplyState(state);
+        if (!events.IsEmpty) Service<EventDispatcher>().Dispatch(events);
+    }
 
     public override void _Notification(int what)
     {
