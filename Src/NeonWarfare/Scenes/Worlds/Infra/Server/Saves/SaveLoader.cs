@@ -1,5 +1,4 @@
 using System;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -21,12 +20,6 @@ public class SaveLoader(
     ServerTickClock clock,
     ProtocolHash protocolHash)
 {
-    private const string TooShortError = "The save is {0} bytes long, shorter than its protocol hash.";
-    private const string NetIdOutOfRangeError = "The save has {0}, but its next NetId is {1}.";
-    private const string NegativeTickError = "The save has tick {0}.";
-    private const string TrailingBitsError = "{0} bits left after the end of the save.";
-    private const string BrokenError = "The save is broken.";
-
     /// <summary>
     /// Not atomic: on an error the entities before the broken record are already spawned, and the World must be
     /// freed. A foreign save spawns nothing.
@@ -37,7 +30,7 @@ public class SaveLoader(
     {
         if (save.Length * 8 < SaveWriter.HashBits)
         {
-            throw new SaveFormatException(TooShortError.FormatWith(save.Length));
+            throw new SaveFormatException($"The save is {save.Length} bytes long, shorter than its protocol hash.");
         }
 
         long next;
@@ -55,25 +48,25 @@ public class SaveLoader(
             tick = (long) reader.ReadVarUInt();
             if (tick < 0)
             {
-                throw new SaveFormatException(NegativeTickError.FormatWith(tick));
+                throw new SaveFormatException($"The save has tick {tick}.");
             }
             NetId highest = records.ReadAll(ref reader);
             if (highest.Value >= next || next < 1)
             {
-                throw new SaveFormatException(NetIdOutOfRangeError.FormatWith(highest, next));
+                throw new SaveFormatException($"The save has {highest}, but its next NetId is {next}.");
             }
             if (reader.RemainingBits >= 8)
             {
-                throw new SaveFormatException(TrailingBitsError.FormatWith(reader.RemainingBits));
+                throw new SaveFormatException($"{reader.RemainingBits} bits left after the end of the save.");
             }
         }
         catch (NetMessageFormatException e)
         {
-            throw new SaveFormatException(BrokenError, e);
+            throw new SaveFormatException("The save is broken.", e);
         }
         catch (ReplicationException e)
         {
-            throw new SaveFormatException(BrokenError, e);
+            throw new SaveFormatException("The save is broken.", e);
         }
 
         netIds.Restore(next);

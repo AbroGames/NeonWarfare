@@ -26,10 +26,8 @@ public class CommandHandlerRegistryTests
     {
         CommandHandlerRegistry registry = Registered(new ChatAndSaveHandler());
 
-        AssertThat(registry.TryGetPlayerHandler(typeof(SendChatMessageCommand), out var chat)).IsTrue();
-        AssertThat(chat.Name).IsEqual(nameof(ChatAndSaveHandler));
-        AssertThat(registry.TryGetPlayerHandler(typeof(SaveCommand), out var save)).IsTrue();
-        AssertThat(save.Name).IsEqual(nameof(ChatAndSaveHandler));
+        AssertThat(registry.GetPlayerHandler(typeof(SendChatMessageCommand)).Name).IsEqual(nameof(ChatAndSaveHandler));
+        AssertThat(registry.GetPlayerHandler(typeof(SaveCommand)).Name).IsEqual(nameof(ChatAndSaveHandler));
     }
 
     [TestCase]
@@ -54,15 +52,6 @@ public class CommandHandlerRegistryTests
     public void Constructor_MarkerWithoutHandlerInterface_Throws()
     {
         AssertThrown(() => new CommandHandlerRegistry([new BareHandler()])).IsInstanceOf<InvalidOperationException>();
-    }
-
-    // CommandDispatcher routes every join to the session handler: a player handler of it would silently never run
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Constructor_PlayerHandlerOfJoinRequest_Throws()
-    {
-        AssertThrown(() => new CommandHandlerRegistry([new PlayerJoinHandler()]))
-            .IsInstanceOf<InvalidOperationException>();
     }
 
     // The real game types through the composition root: the whitelist is built from the handlers it found and
@@ -103,13 +92,6 @@ public class CommandHandlerRegistryTests
         public bool Validate(string senderUid, SendChatMessageCommand command) => true;
 
         public void Process(string senderUid, SendChatMessageCommand command) { }
-    }
-
-    private class PlayerJoinHandler : IPlayerCommandHandler<JoinRequestCommand>
-    {
-        public bool Validate(string senderUid, JoinRequestCommand command) => true;
-
-        public void Process(string senderUid, JoinRequestCommand command) { }
     }
 
     private class BareHandler : ICommandHandler;

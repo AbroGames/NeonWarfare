@@ -1,6 +1,5 @@
 using System;
 using Godot;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
@@ -13,10 +12,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 public class EntitySpawner(
     NetIdGenerator netIdGenerator, EntityRegistry registry, WorldRoot root, EntityCatalog catalog)
 {
-    private const string WrongTypeError = "The root of {0} is {1}, not {2}.";
-    private const string NotRegisteredError = "{0} is not a registered entity.";
-    private const string OutOfTreeError = "{0} is outside the tree: the registry would not see it leave.";
-
     public T SpawnOnRoot<T>(PackedScene scene, Action<T> initPreReady = null) where T : Node =>
         Spawn(scene, NetId.None, initPreReady);
 
@@ -49,7 +44,8 @@ public class EntitySpawner(
         {
             string actual = instance.GetType().Name;
             instance.Free();
-            throw new ArgumentException(WrongTypeError.FormatWith(catalog.Descriptors[kindId], actual, typeof(T).Name));
+            throw new ArgumentException(
+                $"The root of {catalog.Descriptors[kindId]} is {actual}, not {typeof(T).Name}.");
         }
 
         // Call InitPreReady callback
@@ -88,11 +84,12 @@ public class EntitySpawner(
         ArgumentNullException.ThrowIfNull(node);
         if (!registry.TryGetNetId(node, out _))
         {
-            throw new ArgumentException(NotRegisteredError.FormatWith(node.Name), nameof(node));
+            throw new ArgumentException($"{node.Name} is not a registered entity.", nameof(node));
         }
         if (!node.IsInsideTree())
         {
-            throw new InvalidOperationException(OutOfTreeError.FormatWith(node.Name));
+            throw new InvalidOperationException(
+                $"{node.Name} is outside the tree: the registry would not see it leave.");
         }
 
         node.GetParent().RemoveChild(node);

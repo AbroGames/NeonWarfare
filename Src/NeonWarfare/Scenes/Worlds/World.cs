@@ -1,7 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Godot;
-using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Infra.Client;
@@ -65,13 +65,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
         void ReceiveEvents(ReadOnlyMemory<byte> body);
     }
 
-    private const string NotInitializedError = "World is not initialized";
-    private const string NoLayerError = "World has no {0} layer";
-    private const string NotExposedError = "{0} is not a [Query] or [Presentation] service";
-    private const string NotWorldServiceError = "{0} has no world layer attribute";
-
     private ServiceProvider _services;
-    private WorldLayer _layers;
 
     /// <exception cref="NetMessageFormatException">The snapshot of <see cref="WorldOrigin.FromSnapshot"/> is broken:
     /// the World is half built and must be freed.</exception>
@@ -85,7 +79,6 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
         // Every service is created here, before the world has any entity, so none can read the world in its
         // constructor; the origin fills the world only after that
         _services = new WorldServicesBuilder().Build(setup, dependencies, new WorldRoot(this));
-        _layers = setup.Layers;
 
         switch (origin)
         {
@@ -101,14 +94,14 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
                 Service<SaveService>().Init(save.SaveFileName);
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
+                throw new UnreachableException();
         }
 
-        if (_layers.HasFlag(WorldLayer.Simulation))
+        if (setup.Layers.HasFlag(WorldLayer.Simulation))
         {
             AddChild(new ServerTickNode().InitPreReady(_services.GetRequiredService<ServerTickLoop>().RunTick));
         }
-        if (_layers.HasFlag(WorldLayer.Server))
+        if (setup.Layers.HasFlag(WorldLayer.Server))
         {
             AddChild(new SaveOnExitNode().InitPreReady(Service<SaveService>().SaveOnExit));
         }
@@ -121,7 +114,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
     {
         if (ServiceLayer<T>.Attribute is not (QueryAttribute or PresentationAttribute))
         {
-            throw new InvalidOperationException(NotExposedError.FormatWith(typeof(T).FullName));
+            throw new InvalidOperationException($"{typeof(T).FullName} is not a [Query] or [Presentation] service");
         }
 
         return Service<T>();
@@ -145,13 +138,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
 
     private T Service<T>() where T : class
     {
-        if (_services == null) throw new InvalidOperationException(NotInitializedError);
-        if (ServiceLayer<T>.Attribute is not { Layer: var layer })
-        {
-            throw new InvalidOperationException(NotWorldServiceError.FormatWith(typeof(T).FullName));
-        }
-        if (!_layers.HasFlag(layer)) throw new InvalidOperationException(NoLayerError.FormatWith(layer));
-
+        if (_services == null) throw new InvalidOperationException("World is not initialized");
         return _services.GetRequiredService<T>();
     }
 

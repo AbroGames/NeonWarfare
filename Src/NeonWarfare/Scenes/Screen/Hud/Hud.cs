@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
@@ -100,7 +101,7 @@ public partial class Hud : Control
             ChatPresentation.ServerTextEntry message => $"[{tr("HUD__CHAT_SERVER_NICK")}]: {message.Text}",
             ChatPresentation.LocalizedServerEntry message =>
                 $"[{tr("HUD__CHAT_SERVER_NICK")}]: {FormatLocalized(message.Key, message.Args, tr)}",
-            _ => throw new ArgumentOutOfRangeException(nameof(entry), entry, null)
+            _ => throw new UnreachableException()
         };
 
     // A server of another version may send a key this client lacks (Tr returns the key itself) or fewer

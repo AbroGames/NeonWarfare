@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
@@ -12,12 +11,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 [Server]
 public class CommandHandlerRegistry
 {
-    private const string NoInterfaceError = "{0} is a [CommandHandler] but implements no command handler interface.";
-    private const string SecondHandlerError = "{0} and {1} both handle {2}.";
-    private const string JoinAsPlayerCommandError =
-        "{0} handles JoinRequestCommand as a player command, but a joining peer has no player yet: "
-        + "implement IPeerSessionHandler instead.";
-
     public record PlayerHandler(
         string Name,
         Func<string, Command, bool> Validate,
@@ -46,15 +39,15 @@ public class CommandHandlerRegistry
 
             if (!found)
             {
-                throw new InvalidOperationException(NoInterfaceError.FormatWith(handler.GetType().FullName));
+                throw new InvalidOperationException(
+                    $"{handler.GetType().FullName} is a [CommandHandler] but implements no command handler interface.");
             }
         }
 
         NetworkCommandTypes = _playerHandlerByType.Keys.Append(typeof(JoinRequestCommand)).ToHashSet();
     }
 
-    public bool TryGetPlayerHandler(Type commandType, out PlayerHandler handler) =>
-        _playerHandlerByType.TryGetValue(commandType, out handler);
+    public PlayerHandler GetPlayerHandler(Type commandType) => _playerHandlerByType[commandType];
 
     private bool TryAdd(object handler, Type implemented)
     {
@@ -64,14 +57,10 @@ public class CommandHandlerRegistry
         }
 
         Type commandType = implemented.GetGenericArguments()[0];
-        // CommandDispatcher routes every JoinRequestCommand to the session handler, so this one would never be called
-        if (commandType == typeof(JoinRequestCommand))
-        {
-            throw new InvalidOperationException(JoinAsPlayerCommandError.FormatWith(handler.GetType().FullName));
-        }
         if (_playerHandlerByType.TryGetValue(commandType, out PlayerHandler existing))
         {
-            throw SecondHandler(existing.Name, handler, commandType);
+            throw new InvalidOperationException(
+                $"{existing.Name} and {handler.GetType().Name} both handle {commandType.Name}.");
         }
         // Built once per handler through a generic method: no reflection per command, and the handler's own
         // exception is not wrapped into a TargetInvocationException
@@ -79,9 +68,6 @@ public class CommandHandlerRegistry
         _playerHandlerByType.Add(commandType, wrapped);
         return true;
     }
-
-    private static InvalidOperationException SecondHandler(string first, object second, Type command) =>
-        new(SecondHandlerError.FormatWith(first, second.GetType().Name, command.Name));
 
     private static PlayerHandler Wrap<T>(IPlayerCommandHandler<T> handler) where T : Command =>
         new(handler.GetType().Name,

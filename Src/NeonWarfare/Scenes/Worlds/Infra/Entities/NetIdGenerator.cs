@@ -1,7 +1,5 @@
 using System;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
@@ -11,9 +9,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 [Server]
 public class NetIdGenerator
 {
-    private const string AlreadyUsedError = "{0} NetIds are already handed out: a restore comes before the first.";
-    private const string NotPositiveError = "The next NetId is {0}, not positive.";
-
     private long _next = 1;
 
     /// <summary>The value the next <see cref="Next"/> returns.</summary>
@@ -26,8 +21,12 @@ public class NetIdGenerator
     /// </summary>
     public void Restore(long next)
     {
-        if (_next != 1) throw new InvalidOperationException(AlreadyUsedError.FormatWith(_next - 1));
-        if (next < 1) throw new ArgumentOutOfRangeException(nameof(next), next, NotPositiveError.FormatWith(next));
+        if (_next != 1)
+        {
+            throw new InvalidOperationException(
+                $"{_next - 1} NetIds are already handed out: a restore comes before the first.");
+        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(next, 1);
 
         _next = next;
     }

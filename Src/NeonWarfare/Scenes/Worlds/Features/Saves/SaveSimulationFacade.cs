@@ -10,7 +10,6 @@ namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 [SimulationFacade]
 public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSimulation, PlayerQuery players)
 {
-    private const string SaveLog = "{nick} ({uid}) saves the game as '{fileName}'";
     private const string SavedMessageKey = "HUD__CHAT_GAME_SAVED";
     private const string SaveFailedMessageKey = "HUD__CHAT_GAME_SAVE_FAILED";
 
@@ -19,7 +18,7 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
     public void Save(string senderUid, string fileName)
     {
         PlayerModel sender = players.Get(senderUid);
-        _log.Information(SaveLog, sender.Nick, sender.Uid, fileName);
+        _log.Information("{nick} ({uid}) saves the game as '{fileName}'", sender.Nick, sender.Uid, fileName);
         
         // The reply comes at the end of the tick and is not guaranteed: the sender may have left by then
         saveService.RequestSave(fileName,

@@ -1,5 +1,5 @@
 using System;
-using Humanizer;
+using System.Diagnostics;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -22,14 +22,6 @@ public class CommandDispatcher(
     PeerSessions sessions,
     PeerStateTable peers)
 {
-    private const string NotJoinedLog = "{command} from peer {peerId} dropped: the peer has not joined";
-    private const string NotValidLog = "{command} from peer {peerId} dropped: {handler} did not validate it";
-    private const string DisconnectingLog = "{entry} dropped: the peer is being disconnected";
-    private const string EntryFailedLog = "{entry} failed, the rest of the tick goes on";
-    private const string UnknownEntryError = "{0} has no branch in Process.";
-    private const string NoPlayerHandlerError =
-        "{0} from peer {1} passed the inbox, but there is no player handler: the whitelist is miswired.";
-
     private readonly ILogger _log = LogFactory.GetForStatic<CommandDispatcher>();
 
     public void ProcessAll()
@@ -45,7 +37,7 @@ public class CommandDispatcher(
             }
             catch (Exception e)
             {
-                _log.Error(e, EntryFailedLog, entry);
+                _log.Error(e, "{entry} failed, the rest of the tick goes on", entry);
             }
         }
     }
@@ -55,7 +47,7 @@ public class CommandDispatcher(
         // Its commands were sent before the disconnect reached it, so they are not its owner's any more
         if (entry is not CommandInbox.PeerDisconnected && peers.IsCut(entry.PeerId))
         {
-            _log.Debug(DisconnectingLog, entry);
+            _log.Debug("{entry} dropped: the peer is being disconnected", entry);
             return;
         }
 
@@ -71,7 +63,7 @@ public class CommandDispatcher(
                 sessions.Disconnected(entry.PeerId);
                 break;
             default:
-                throw new InvalidOperationException(UnknownEntryError.FormatWith(entry.GetType().Name));
+                throw new UnreachableException();
         }
     }
 
@@ -80,20 +72,16 @@ public class CommandDispatcher(
         string name = command.GetType().Name;
         if (!peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))
         {
-            _log.Warning(NotJoinedLog, name, peerId);
+            _log.Warning("{command} from peer {peerId} dropped: the peer has not joined", name, peerId);
             return;
         }
         string uid = joined.Uid;
 
-        // The inbox lets through only the commands with a handler, so this is a wiring error, not a peer's
-        if (!handlers.TryGetPlayerHandler(command.GetType(), out CommandHandlerRegistry.PlayerHandler handler))
-        {
-            throw new InvalidOperationException(NoPlayerHandlerError.FormatWith(name, peerId));
-        }
-
+        CommandHandlerRegistry.PlayerHandler handler = handlers.GetPlayerHandler(command.GetType());
         if (!handler.Validate(uid, command))
         {
-            _log.Warning(NotValidLog, name, peerId, handler.Name);
+            _log.Warning("{command} from peer {peerId} dropped: {handler} did not validate it",
+                name, peerId, handler.Name);
             return;
         }
 

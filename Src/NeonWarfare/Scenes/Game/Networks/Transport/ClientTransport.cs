@@ -15,14 +15,6 @@ public sealed class ClientTransport : IServerConnection
 {
     private const int ServerPeer = Consts.Global.ServerId;
 
-    private const string NoWorldLog = "Packet from peer {peerId} dropped: there is no World yet";
-    private const string NotFromServerLog = "Packet from peer {peerId} dropped: not from the server";
-    private const string BrokenServerPacketLog = "A packet from the server cannot be read or applied";
-    private const string AfterBrokenLog = "Packet from the server dropped: the connection is already broken";
-    private const string JoinRejectedLog = "The server rejected the join: {reason}";
-    private const string SecondWorldError = "The client already has a World";
-    private const string SecondSnapshotError = "A snapshot for a client that already has a World.";
-
     private readonly INetwork _network;
     private readonly NetMessageCodec _codec;
     private readonly ProtocolHash _protocolHash;
@@ -59,7 +51,7 @@ public sealed class ClientTransport : IServerConnection
 
     public void Enter(World.IClientEndpoint endpoint)
     {
-        if (_endpoint != null) throw new InvalidOperationException(SecondWorldError);
+        if (_endpoint != null) throw new InvalidOperationException("The client already has a World");
 
         _endpoint = endpoint;
     }
@@ -72,13 +64,13 @@ public sealed class ClientTransport : IServerConnection
     {
         if (peerId != ServerPeer)
         {
-            _log.Warning(NotFromServerLog, peerId);
+            _log.Warning("Packet from peer {peerId} dropped: not from the server", peerId);
             return;
         }
 
         if (_isBroken)
         {
-            _log.Debug(AfterBrokenLog);
+            _log.Debug("Packet from the server dropped: the connection is already broken");
             return;
         }
 
@@ -90,7 +82,7 @@ public sealed class ClientTransport : IServerConnection
         // every next delta would land on diverged models. The session ends; a new join brings a fresh snapshot
         catch (Exception e)
         {
-            _log.Error(e, BrokenServerPacketLog);
+            _log.Error(e, "A packet from the server cannot be read or applied");
             _isBroken = true;
             ConnectionBroken?.Invoke();
         }
@@ -104,16 +96,16 @@ public sealed class ClientTransport : IServerConnection
         {
             case ServerPacketKind.JoinRejected:
                 JoinRejectReason reason = ServerPackets.ReadJoinRejected(body.Span);
-                _log.Error(JoinRejectedLog, reason);
+                _log.Error("The server rejected the join: {reason}", reason);
                 _owner.JoinRejected(reason);
                 break;
             case ServerPacketKind.Snapshot when _endpoint == null:
                 _snapshotReceived(body);
                 break;
             case ServerPacketKind.Snapshot:
-                throw new NetMessageFormatException(SecondSnapshotError);
+                throw new NetMessageFormatException("A snapshot for a client that already has a World.");
             case ServerPacketKind.State or ServerPacketKind.Events when _endpoint == null:
-                _log.Debug(NoWorldLog, ServerPeer);
+                _log.Debug("Packet from peer {peerId} dropped: there is no World yet", ServerPeer);
                 break;
             case ServerPacketKind.State:
                 _endpoint.ReceiveState(body);

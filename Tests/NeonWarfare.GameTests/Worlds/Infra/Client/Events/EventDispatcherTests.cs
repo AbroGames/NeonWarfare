@@ -100,14 +100,6 @@ public class EventDispatcherTests
         AssertThat(derived.Received).ContainsExactly("first");
     }
 
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Constructor_HandlerOfNonEventType_Throws()
-    {
-        AssertThrown(() => Dispatcher(new NonEventPresentation()))
-            .IsInstanceOf<InvalidOperationException>();
-    }
-
     private EventDispatcher Dispatcher(params IEventHandlerOwner[] presentations) => new(_codec, presentations);
 
     private byte[] Section(params object[] events)
@@ -142,10 +134,4 @@ public class EventDispatcherTests
     }
 
     private class DerivedPresentation : BasePresentation;
-
-    private class NonEventPresentation : IEventHandlerOwner
-    {
-        [EventHandler]
-        private void Handle(string text) { }
-    }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -19,11 +18,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 [ClientReplication]
 public class StateApplier(EntityRegistry registry, EntityRecordReader records, Replicator replicator)
 {
-    private const string UnknownNetIdError = "The state packet has a delta for {0}, which is not registered.";
-    private const string UnknownDespawnError = "The state packet despawns {0}, which is not registered.";
-    private const string BrokenPacketError = "The packet is broken.";
-    private const string TrailingBitsError = "{0} bits left after the end of the packet.";
-
     /// <summary>
     /// Not atomic: the records before a broken one are already applied.
     /// </summary>
@@ -37,7 +31,8 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
             {
                 if (!registry.TryGetNode(id, out Node node))
                 {
-                    throw new NetMessageFormatException(UnknownNetIdError.FormatWith(id));
+                    throw new NetMessageFormatException(
+                        $"The state packet has a delta for {id}, which is not registered.");
                 }
                 replicator.Apply(node, ref reader);
             }
@@ -67,13 +62,13 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
 
             if (reader.RemainingBits >= 8)
             {
-                throw new NetMessageFormatException(TrailingBitsError.FormatWith(reader.RemainingBits));
+                throw new NetMessageFormatException($"{reader.RemainingBits} bits left after the end of the packet.");
             }
         }
         // Not only the format: a model the client cannot build from the delta is as broken a packet
         catch (ReplicationException e)
         {
-            throw new NetMessageFormatException(BrokenPacketError, e);
+            throw new NetMessageFormatException("The packet is broken.", e);
         }
     }
 
@@ -85,7 +80,7 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
         {
             if (!registry.TryGetNode(id, out _))
             {
-                throw new NetMessageFormatException(UnknownDespawnError.FormatWith(id));
+                throw new NetMessageFormatException($"The state packet despawns {id}, which is not registered.");
             }
             despawned.Add(id);
         }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Humanizer;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
@@ -12,15 +11,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 /// </summary>
 public class EntityRegistry : IEntityFinder
 {
-    private const string NoneError = "NetId.None cannot be registered ({0}).";
-    private const string IdTakenError = "{0} is already registered to {1}.";
-    private const string NodeTakenError = "{0} is already registered as {1}.";
-    private const string NotFoundError = "{0} is not registered.";
-
-    public const string NotSingleError =
-        "Expected exactly one {0}, found {1}. An entity the world has from its start is missing only before the "
-        + "World is initialized or the world snapshot is applied: do not read it in a service constructor.";
-
     private record Entry(NetId Id, int KindId, Action OnTreeExiting);
 
     // Members are kept up to date from the first request on; the snapshot is rebuilt lazily after a change, so
@@ -44,14 +34,17 @@ public class EntityRegistry : IEntityFinder
     public void Register(NetId id, Node node, int kindId)
     {
         ArgumentNullException.ThrowIfNull(node);
-        if (id == NetId.None) throw new ArgumentException(NoneError.FormatWith(node.Name), nameof(id));
+        if (id == NetId.None)
+        {
+            throw new ArgumentException($"NetId.None cannot be registered ({node.Name}).", nameof(id));
+        }
         if (_nodeById.TryGetValue(id, out Node taken))
         {
-            throw new InvalidOperationException(IdTakenError.FormatWith(id, taken.Name));
+            throw new InvalidOperationException($"{id} is already registered to {taken.Name}.");
         }
         if (_entryByNode.TryGetValue(node, out Entry existing))
         {
-            throw new InvalidOperationException(NodeTakenError.FormatWith(node.Name, existing.Id));
+            throw new InvalidOperationException($"{node.Name} is already registered as {existing.Id}.");
         }
 
         // A closure over the registry, not a node method: Godot would not disconnect it, so Remove does
@@ -73,7 +66,7 @@ public class EntityRegistry : IEntityFinder
     public Node GetNode(NetId id) =>
         _nodeById.TryGetValue(id, out Node node)
             ? node
-            : throw new KeyNotFoundException(NotFoundError.FormatWith(id));
+            : throw new KeyNotFoundException($"{id} is not registered.");
 
     public int GetKindId(NetId id) => _entryByNode[GetNode(id)].KindId;
 
@@ -108,7 +101,10 @@ public class EntityRegistry : IEntityFinder
         IReadOnlyList<T> found = GetAll<T>();
         return found.Count == 1
             ? found[0]
-            : throw new InvalidOperationException(NotSingleError.FormatWith(typeof(T).Name, found.Count));
+            : throw new InvalidOperationException(
+                $"Expected exactly one {typeof(T).Name}, found {found.Count}. An entity the world has from its "
+                + "start is missing only before the World is initialized or the world snapshot is applied: do not "
+                + "read it in a service constructor.");
     }
 
     public bool Exists<T>() where T : class => GetAll<T>().Count > 0;

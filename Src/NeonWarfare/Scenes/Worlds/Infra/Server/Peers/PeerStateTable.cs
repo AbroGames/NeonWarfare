@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
@@ -17,11 +16,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 [Server]
 public class PeerStateTable
 {
-    private const string KnownPeerError = "Peer {0} cannot connect: it is already {1}.";
-    private const string UidTakenError = "Uid {0} cannot join from peer {1}: peer {2} has it.";
-    private const string NotJoinableError = "Peer {0} cannot join: it is {1}.";
-    private const string NotLeavingError = "Peer {0} cannot be released: it is {1}.";
-
     public abstract record PeerState;
     public record Connecting(DateTimeOffset Deadline) : PeerState;
     public record Joined(string Uid) : PeerState
@@ -44,7 +38,7 @@ public class PeerStateTable
     {
         if (_stateByPeerId.TryGetValue(peerId, out PeerState state))
         {
-            throw new InvalidOperationException(KnownPeerError.FormatWith(peerId, state));
+            throw new InvalidOperationException($"Peer {peerId} cannot connect: it is already {state}.");
         }
 
         _stateByPeerId.Add(peerId, new Connecting(deadline));
@@ -54,12 +48,12 @@ public class PeerStateTable
     {
         if (_peerIdByUid.TryGetValue(uid, out int takenBy))
         {
-            throw new InvalidOperationException(UidTakenError.FormatWith(uid, peerId, takenBy));
+            throw new InvalidOperationException($"Uid {uid} cannot join from peer {peerId}: peer {takenBy} has it.");
         }
         if (!IsConnecting(peerId))
         {
             string state = _stateByPeerId.GetValueOrDefault(peerId)?.ToString() ?? "unknown";
-            throw new InvalidOperationException(NotJoinableError.FormatWith(peerId, state));
+            throw new InvalidOperationException($"Peer {peerId} cannot join: it is {state}.");
         }
 
         _stateByPeerId[peerId] = new Joined(uid);
@@ -88,7 +82,8 @@ public class PeerStateTable
         _stateByPeerId.TryGetValue(peerId, out PeerState state);
         if (state is not Leaving leaving)
         {
-            throw new InvalidOperationException(NotLeavingError.FormatWith(peerId, state?.ToString() ?? "unknown"));
+            throw new InvalidOperationException(
+                $"Peer {peerId} cannot be released: it is {state?.ToString() ?? "unknown"}.");
         }
 
         _stateByPeerId[peerId] = new TurnedAway();

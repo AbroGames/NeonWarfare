@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Humanizer;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
@@ -14,10 +13,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 /// </summary>
 public class EntityCatalog
 {
-    private const string UnknownSceneError = "{0} is not a scene of the entity catalog.";
-    private const string UnknownTypeError = "{0} is not a node type of the entity catalog.";
-    private const string UnknownIdError = "Kind id {0} is not in the entity catalog.";
-
     private readonly IReadOnlyList<PackedScene> _scenes;
     private readonly IReadOnlyList<Type> _types;
     // By reference: Godot hands out one instance per loaded scene resource
@@ -49,14 +44,14 @@ public class EntityCatalog
     public int GetKindId(PackedScene scene)
     {
         if (scene != null && _idByScene.TryGetValue(scene, out int id)) return id;
-        throw new ArgumentException(UnknownSceneError.FormatWith(scene?.ResourcePath), nameof(scene));
+        throw new ArgumentException($"{scene?.ResourcePath} is not a scene of the entity catalog.", nameof(scene));
     }
 
     /// <exception cref="ArgumentException">The type is not a node type of the catalog.</exception>
     public int GetKindId(Type type)
     {
         if (type != null && _idByType.TryGetValue(type, out int id)) return id;
-        throw new ArgumentException(UnknownTypeError.FormatWith(type?.FullName), nameof(type));
+        throw new ArgumentException($"{type?.FullName} is not a node type of the entity catalog.", nameof(type));
     }
 
     /// <summary>A new node of the kind, not in the tree. A type kind is named after its type.</summary>
@@ -68,7 +63,7 @@ public class EntityCatalog
         int typeIndex = kindId - _scenes.Count;
         if (typeIndex < 0 || typeIndex >= _types.Count)
         {
-            throw new ArgumentException(UnknownIdError.FormatWith(kindId), nameof(kindId));
+            throw new ArgumentException($"Kind id {kindId} is not in the entity catalog.", nameof(kindId));
         }
 
         Type type = _types[typeIndex];

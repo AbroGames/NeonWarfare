@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 namespace NeonWarfare.Scenes.Game.Networks.Transport;
@@ -11,10 +10,6 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 /// </summary>
 public static class ServerPackets
 {
-    private const string EmptyPacketError = "The packet is empty.";
-    private const string UnknownKindError = "Unknown server packet kind {0}.";
-    private const string JoinRejectedLengthError = "A join rejection body is {0} bytes long, 1 expected.";
-
     public static void Write(ServerPacketKind kind, ReadOnlySpan<byte> body, IBufferWriter<byte> output)
     {
         Span<byte> span = output.GetSpan(1 + body.Length);
@@ -31,13 +26,13 @@ public static class ServerPackets
     {
         if (packet.IsEmpty)
         {
-            throw new NetMessageFormatException(EmptyPacketError);
+            throw new NetMessageFormatException("The packet is empty.");
         }
 
         var kind = (ServerPacketKind) packet.Span[0];
         if (!Enum.IsDefined(kind))
         {
-            throw new NetMessageFormatException(UnknownKindError.FormatWith(packet.Span[0]));
+            throw new NetMessageFormatException($"Unknown server packet kind {packet.Span[0]}.");
         }
         return (kind, packet[1..]);
     }
@@ -50,7 +45,7 @@ public static class ServerPackets
     {
         if (body.Length != 1)
         {
-            throw new NetMessageFormatException(JoinRejectedLengthError.FormatWith(body.Length));
+            throw new NetMessageFormatException($"A join rejection body is {body.Length} bytes long, 1 expected.");
         }
         return (JoinRejectReason) body[0];
     }

@@ -15,15 +15,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 [Server]
 public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable peers, PeerGatekeeper gatekeeper)
 {
-    private const string RejoinLog = "{command} from peer {peerId} dropped: the peer has already joined as {uid}";
-    private const string NotConnectingLog = "{command} from peer {peerId} dropped: the peer is not waiting for a join";
-    private const string JoinRejectedLog = "{command} from peer {peerId} rejected by {handler}: {reason}";
-    private const string JoinValidateFailedLog = "{handler} failed to validate {command}, the peer is rejected";
-    private const string JoinFailedLog = "{handler} failed to process {command}, the peer is rejected";
-    private const string HostUidLog = "Peer {peerId} joins as {uid}, which is the host's own: rejected";
-    private const string DisplacedLog = "Peer {newPeerId} joins as {uid}, displacing peer {oldPeerId}";
-    private const string NotJoinedLeftLog = "Peer {peerId} disconnected before joining";
-
     private readonly ILogger _log = LogFactory.GetForStatic<PeerSessions>();
 
     public void Join(int peerId, JoinRequestCommand command)
@@ -31,13 +22,14 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
         string name = command.GetType().Name;
         if (peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))
         {
-            _log.Warning(RejoinLog, name, peerId, joined.Uid);
+            _log.Warning("{command} from peer {peerId} dropped: the peer has already joined as {uid}",
+                name, peerId, joined.Uid);
             return;
         }
         // Checked before anything is done for the join: a cut peer must not displace the player online with its uid
         if (!peers.IsConnecting(peerId))
         {
-            _log.Warning(NotConnectingLog, name, peerId);
+            _log.Warning("{command} from peer {peerId} dropped: the peer is not waiting for a join", name, peerId);
             return;
         }
         string handlerName = sessionHandler.GetType().Name;
@@ -48,13 +40,14 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
             valid = sessionHandler.ValidateJoin(command, out reason);
             if (!valid)
             {
-                _log.Warning(JoinRejectedLog, name, peerId, handlerName, reason);
+                _log.Warning("{command} from peer {peerId} rejected by {handler}: {reason}",
+                    name, peerId, handlerName, reason);
             }
         }
         // Caught here rather than in CommandDispatcher: the peer still has to be rejected
         catch (Exception e)
         {
-            _log.Error(e, JoinValidateFailedLog, handlerName, name);
+            _log.Error(e, "{handler} failed to validate {command}, the peer is rejected", handlerName, name);
             valid = false;
             reason = JoinRejectReason.InternalError;
         }
@@ -71,13 +64,13 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
             // The host cannot be reconnected from another peer, so displacing it would only lock it out of its world
             if (gatekeeper.IsLocal(oldPeerId))
             {
-                _log.Warning(HostUidLog, peerId, uid);
+                _log.Warning("Peer {peerId} joins as {uid}, which is the host's own: rejected", peerId, uid);
                 gatekeeper.Reject(peerId, JoinRejectReason.UidInUse);
                 return;
             }
 
             // Otherwise a crashed client could not come back until ENet notices the old connection is gone
-            _log.Information(DisplacedLog, peerId, uid, oldPeerId);
+            _log.Information("Peer {newPeerId} joins as {uid}, displacing peer {oldPeerId}", peerId, uid, oldPeerId);
             gatekeeper.Disconnect(oldPeerId);
             // A throwing handler must not keep the uid from the new peer
             try
@@ -98,7 +91,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
         // The model may stay half-changed, as with any facade, but the peer must not stay joined to a broken player
         catch (Exception e)
         {
-            _log.Error(e, JoinFailedLog, handlerName, name);
+            _log.Error(e, "{handler} failed to process {command}, the peer is rejected", handlerName, name);
             try
             {
                 gatekeeper.Reject(peerId, JoinRejectReason.InternalError);
@@ -122,7 +115,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
                 sessionHandler.Leave(leaving.Uid, LeaveReason.Disconnected);
                 break;
             default:
-                _log.Debug(NotJoinedLeftLog, peerId);
+                _log.Debug("Peer {peerId} disconnected before joining", peerId);
                 break;
         }
     }

@@ -10,22 +10,23 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 /// </summary>
 public sealed class NoConnection : IClientsConnection, IServerConnection
 {
-    private const string NoConnectionError = "This World has no connection in this direction";
-
     public int? LocalPeerId => null;
 
     public void SendState(int peerId, ReadOnlySpan<byte> body) =>
-        throw new InvalidOperationException(NoConnectionError);
+        throw new InvalidOperationException("This World has no connection in this direction");
 
     public void SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
-        throw new InvalidOperationException(NoConnectionError);
+        throw new InvalidOperationException("This World has no connection in this direction");
 
     public void SendEvents(int peerId, ReadOnlySpan<byte> body) =>
-        throw new InvalidOperationException(NoConnectionError);
+        throw new InvalidOperationException("This World has no connection in this direction");
 
-    public void Reject(int peerId, JoinRejectReason reason) => throw new InvalidOperationException(NoConnectionError);
+    public void Reject(int peerId, JoinRejectReason reason) =>
+        throw new InvalidOperationException("This World has no connection in this direction");
 
-    public void Disconnect(int peerId) => throw new InvalidOperationException(NoConnectionError);
+    public void Disconnect(int peerId) =>
+        throw new InvalidOperationException("This World has no connection in this direction");
 
-    public void Send(ReadOnlySpan<byte> packet) => throw new InvalidOperationException(NoConnectionError);
+    public void Send(ReadOnlySpan<byte> packet) =>
+        throw new InvalidOperationException("This World has no connection in this direction");
 }

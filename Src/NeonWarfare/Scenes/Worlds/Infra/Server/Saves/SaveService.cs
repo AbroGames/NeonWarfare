@@ -16,15 +16,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 [Server]
 public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles)
 {
-    private const string InitializedError = "The save file name is already set.";
-    private const string NotInitializedError = "The save file name is not set.";
-    private const string WriteFailedLog = "The save failed";
-    private const string DiskFailedLog = "Writing the save '{saveFileName}' failed";
-    private const string CallbackFailedLog = "A save callback failed, the other callbacks still run";
-    private const string AutoSaveDisabledLog = "No autosave: it is disabled";
-    private const string NoTickLog = "No autosave to '{saveFileName}': no tick has run, nothing new to save";
-    private const string AutoSaveFailedLog = "The autosave to '{saveFileName}' failed";
-
     private readonly ILogger _log = LogFactory.GetForStatic<SaveService>();
 
     private readonly List<(string FileName, Action Written, Action<Exception> Failed)> _requests = [];
@@ -34,7 +25,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
     public void Init(string saveFileName)
     {
         ArgumentNullException.ThrowIfNull(saveFileName);
-        if (SaveFileName != null) throw new InvalidOperationException(InitializedError);
+        if (SaveFileName != null) throw new InvalidOperationException("The save file name is already set.");
 
         SaveFileName = saveFileName;
     }
@@ -67,7 +58,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
         }
         catch (Exception e)
         {
-            _log.Error(e, WriteFailedLog);
+            _log.Error(e, "The save failed");
             foreach ((_, _, Action<Exception> failed) in requests)
             {
                 Run(() => failed(e));
@@ -83,7 +74,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
             }
             catch (Exception e)
             {
-                _log.Error(e, DiskFailedLog, fileName);
+                _log.Error(e, "Writing the save '{saveFileName}' failed", fileName);
                 Run(() => failed(e));
                 continue;
             }
@@ -101,22 +92,22 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
         {
             if (!saveFiles.IsAutoSaveEnabled())
             {
-                _log.Information(AutoSaveDisabledLog);
+                _log.Information("No autosave: it is disabled");
                 return;
             }
             // Its file, if any, already holds this state, and the baselines hold none of it yet
             if (!clock.Started)
             {
-                _log.Information(NoTickLog, SaveFileName);
+                _log.Information("No autosave to '{saveFileName}': no tick has run, nothing new to save", SaveFileName);
                 return;
             }
-            if (SaveFileName == null) throw new InvalidOperationException(NotInitializedError);
+            if (SaveFileName == null) throw new InvalidOperationException("The save file name is not set.");
 
             saveFiles.SaveToDisk(saveWriter.Write(), SaveFileName);
         }
         catch (Exception e)
         {
-            _log.Error(e, AutoSaveFailedLog, SaveFileName);
+            _log.Error(e, "The autosave to '{saveFileName}' failed", SaveFileName);
         }
     }
 
@@ -128,7 +119,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
         }
         catch (Exception e)
         {
-            _log.Error(e, CallbackFailedLog);
+            _log.Error(e, "A save callback failed, the other callbacks still run");
         }
     }
 }

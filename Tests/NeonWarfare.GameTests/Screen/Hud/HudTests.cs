@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using GdUnit4;
 using HudScreen = NeonWarfare.Scenes.Screen.Hud.Hud;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
@@ -66,7 +67,7 @@ public class HudTests
     public void FormatChatLine_UnknownEntry_Throws()
     {
         AssertThrown(() => HudScreen.FormatChatLine(new UnknownEntry(), Translate))
-            .IsInstanceOf<ArgumentOutOfRangeException>();
+            .IsInstanceOf<UnreachableException>();
     }
 
     private static string Translate(string key) => $"<{key}>";
