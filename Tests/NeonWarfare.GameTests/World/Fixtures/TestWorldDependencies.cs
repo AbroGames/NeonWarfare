@@ -1,6 +1,7 @@
 using Godot;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 
 namespace NeonWarfare.GameTests.World.Fixtures;
 
@@ -18,4 +19,10 @@ public static class TestWorldDependencies
     /// <returns><c>null</c> on a remote client.</returns>
     public static WorldAdmin? Admin(WorldLayer layers, string? uid = null) =>
         layers.HasFlag(WorldLayer.Simulation) ? new WorldAdmin(uid) : null;
+
+    /// <returns><c>null</c> except on a dedicated server.</returns>
+    public static IDedicatedServerOwner? DedicatedServerOwner(WorldLayer layers) =>
+        layers.HasFlag(WorldLayer.Simulation) && !layers.HasFlag(WorldLayer.Presentation)
+            ? new RecordingDedicatedServerOwner()
+            : null;
 }

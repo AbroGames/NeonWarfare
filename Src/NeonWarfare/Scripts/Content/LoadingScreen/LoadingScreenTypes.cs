@@ -8,14 +8,16 @@ public static class LoadingScreenTypes
     {
         Loading,
         Connecting, 
-        WaitingSyncing
+        WaitingSyncing,
+        StoppingServer
     }
 
     private static readonly Dictionary<Type, string> LoadingScreenTextKeyByType = new()
     {
         { Type.Loading, "LOADING_SCREEN__LOADING" },
         { Type.Connecting, "LOADING_SCREEN__CONNECTING" },
-        { Type.WaitingSyncing, "LOADING_SCREEN__WAITING_SYNCING" }
+        { Type.WaitingSyncing, "LOADING_SCREEN__WAITING_SYNCING" },
+        { Type.StoppingServer, "LOADING_SCREEN__STOPPING_SERVER" }
     };
 
     public static string GetLoadingScreenText(Type loadingScreenType)

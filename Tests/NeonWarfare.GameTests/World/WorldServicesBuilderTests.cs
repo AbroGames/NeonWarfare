@@ -292,6 +292,25 @@ public class WorldServicesBuilderTests
             .IsInstanceOf<ArgumentException>();
     }
 
+    // The host's admin is the process itself, so only a dedicated server reports the admin leaving
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_DedicatedServerOwner_OnlyAndAlwaysOnDedicated()
+    {
+        var root = new WorldRoot(AutoFree(new Node())!);
+        var owner = new RecordingDedicatedServerOwner();
+
+        WorldDependencies noOwner = Dependencies(WorldLayer.Dedicated) with { DedicatedServerOwner = null! };
+        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, noOwner, root))
+            .IsInstanceOf<ArgumentException>();
+        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.Client })
+        {
+            WorldDependencies withOwner = Dependencies(layers) with { DedicatedServerOwner = owner };
+            AssertThrown(() => new WorldServicesBuilder().Build(layers, withOwner, root))
+                .IsInstanceOf<ArgumentException>();
+        }
+    }
+
     private static ServiceProvider Build(WorldLayer layers) => Build(new WorldServicesBuilder(), layers);
 
     private static ServiceProvider Build(WorldServicesBuilder builder, WorldLayer layers) =>
@@ -313,7 +332,7 @@ public class WorldServicesBuilderTests
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection(), new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-            TestWorldDependencies.Admin(layers));
+            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers));
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

@@ -132,6 +132,9 @@ msgstr "Loading"
 msgid "LOADING_SCREEN__WAITING_SYNCING"
 msgstr "Wait for the synchronization ends"
 
+msgid "LOADING_SCREEN__STOPPING_SERVER"
+msgstr "Stopping the server"
+
 msgid "SINGLEPLAYER_MENU__TITLE"
 msgstr "Singleplayer"
 

@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using GodotBox;
 using GodotBox.Godot.Nodes;
@@ -21,20 +22,25 @@ public class MainSceneService
         _mainMenuPackedScene = mainMenuPackedScene;
     }
     
+    /// <summary>
+    /// Clears the loading screen once the menu is shown.
+    /// </summary>
     public void StartMainMenu()
     {
-        var mainMenu = _mainMenuPackedScene.Instantiate();
-        _mainSceneContainer.ChangeStoredNode(mainMenu);
+        LeaveGame(() => ShowMainMenu());
     }
 
+    /// <inheritdoc cref="StartMainMenu()"/>
     public void StartMainMenu(string message)
     {
-        StartMainMenu();
-        var mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
-        
-        // We must call this section after adding MainMenu to tree, because otherwise we can't
-        // access mainMenu.PagesProvider property
-        mainMenu.PushPage(mainMenu.PagesProvider.PrepareMessagePage(message));
+        LeaveGame(() =>
+        {
+            MainMenu mainMenu = ShowMainMenu();
+
+            // We must call this section after adding MainMenu to tree, because otherwise we can't
+            // access mainMenu.PagesProvider property
+            mainMenu.PushPage(mainMenu.PagesProvider.PrepareMessagePage(message));
+        });
     }
     
     public void StartSingleplayerGame(string saveFileName)
@@ -131,8 +137,25 @@ public class MainSceneService
     
     public void Shutdown()
     {
-        Callable.From(() => { 
-            _mainSceneContainer.GetTree().Quit();
+        Callable.From(() =>
+        {
+            LeaveGame(() => _mainSceneContainer.GetTree().Quit());
         }).CallDeferred();
+    }
+
+    // Freeing the Game closes its connection, and a child server stops once its admin has left: the next scene
+    // waits for that, so the server saves and no second one starts beside it
+    private void LeaveGame(Action then)
+    {
+        _mainSceneContainer.ClearStoredNode();
+        Services.Process.WaitForDedicatedServerExit(then);
+    }
+
+    private MainMenu ShowMainMenu()
+    {
+        MainMenu mainMenu = _mainMenuPackedScene.Instantiate<MainMenu>();
+        _mainSceneContainer.ChangeStoredNode(mainMenu);
+        Services.LoadingScreen.Clear();
+        return mainMenu;
     }
 }

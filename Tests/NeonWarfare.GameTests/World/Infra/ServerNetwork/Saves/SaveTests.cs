@@ -389,7 +389,7 @@ public class SaveTests
         var dependencies = new WorldDependencies(new ManualTimeProvider(Now), _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
             connection, connection, new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-            TestWorldDependencies.Admin(layers, adminUid));
+            TestWorldDependencies.Admin(layers, adminUid), TestWorldDependencies.DedicatedServerOwner(layers));
         ServiceProvider provider = new WorldServicesBuilder().Build(layers, dependencies, new WorldRoot(root));
         _providers.Add(provider);
         return provider;

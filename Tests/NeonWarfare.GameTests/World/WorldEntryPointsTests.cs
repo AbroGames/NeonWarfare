@@ -330,7 +330,7 @@ public class WorldEntryPointsTests
             new ManualTimeProvider(Now), codec ?? _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), _connection, _connection, _saveFiles, localPlayer,
-            TestWorldDependencies.Admin(layers));
+            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers));
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way

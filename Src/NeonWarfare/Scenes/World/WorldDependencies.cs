@@ -13,6 +13,7 @@ namespace NeonWarfare.Scenes.World;
 /// <param name="SaveFiles"><c>null</c> on a remote client: it has no save file.</param>
 /// <param name="LocalPlayer"><c>null</c> on a dedicated server: it has no player of its own.</param>
 /// <param name="Admin"><c>null</c> on a remote client: only the Simulation grants the rights.</param>
+/// <param name="DedicatedServerOwner"><c>null</c> except on a dedicated server.</param>
 public record WorldDependencies(
     TimeProvider Time,
     NetMessageCodec Codec,
@@ -24,4 +25,5 @@ public record WorldDependencies(
     IServerConnection ServerConnection,
     ISaveFiles SaveFiles,
     LocalPlayer LocalPlayer,
-    WorldAdmin Admin);
+    WorldAdmin Admin,
+    IDedicatedServerOwner DedicatedServerOwner);

@@ -25,6 +25,8 @@ public class WorldServicesBuilder
     private const string UnexpectedLocalPlayerError = "A World without the Presentation layer has no local player.";
     private const string NoAdminError = "A World with the Simulation layer needs the admin, even one without a uid.";
     private const string UnexpectedAdminError = "A World without the Simulation layer has no admin.";
+    private const string NoDedicatedServerOwnerError = "A dedicated server World needs the owner of its process.";
+    private const string UnexpectedDedicatedServerOwnerError = "Only a dedicated server World has a process owner.";
 
     private readonly IEnumerable<Type> _candidates;
 
@@ -73,6 +75,18 @@ public class WorldServicesBuilder
         if (dependencies.Admin != null)
         {
             services.AddSingleton(dependencies.Admin);
+        }
+        bool isDedicated = layers.HasFlag(WorldLayer.Simulation) && !layers.HasFlag(WorldLayer.Presentation);
+        if (isDedicated != (dependencies.DedicatedServerOwner != null))
+        {
+            string error = dependencies.DedicatedServerOwner == null
+                ? NoDedicatedServerOwnerError
+                : UnexpectedDedicatedServerOwnerError;
+            throw new ArgumentException(error, nameof(dependencies));
+        }
+        if (dependencies.DedicatedServerOwner != null)
+        {
+            services.AddSingleton(dependencies.DedicatedServerOwner);
         }
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one

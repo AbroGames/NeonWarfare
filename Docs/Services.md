@@ -12,18 +12,18 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | Service | Class | Purpose |
 |---|---|---|
 | `Services.MainScene` | `MainSceneService` | Switching MainMenu ↔ Game, the entry points into all the modes, `Shutdown()` |
-| `Services.TerminationSignals` | `TerminationSignalsService` | SIGTERM / SIGINT → `MainScene.Shutdown()`, see [Shutdown](Shutdown.md) |
+| `Services.QuitRequests` | `QuitRequestsService` | SIGTERM / SIGINT and closing the window → `MainScene.Shutdown()`, see [Shutdown](Shutdown.md) |
 | `Services.LoadingScreen` | `LoadingScreenService` | Showing / hiding the loading screen |
 | `Services.GameSettings` | `GameSettingsService` | Client settings + the temporary `--nick` / `--uid` |
 | `Services.DedicatedServerSettings` | `DedicatedServerSettingsService` | Dedicated server settings |
 | `Services.MenuGameSettings` | `MenuGameSettingsService` | The bridge between `GameSettings` and the settings screen model |
 | `Services.SaveLoad` | `SaveLoadService` | Save files, `SaveException` / `LoadException`; the `ISaveFiles` of a server World |
 | `Services.LastGame` | `ResumableGameService` | The last session for the "Continue" button (`ResumableGame`) |
-| `Services.Process` | `ProcessService` | Launching the dedicated server child process |
+| `Services.Process` | `ProcessService` | Launching the dedicated server child process and waiting for it to exit |
 | `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
 | `Services.KnownServers` | `KnownServersService` | The server list of the multiplayer menu, stored in `user://known-servers.json` |
 
-`TerminationSignalsService` extends an abstract service of the same name from KludgeBox
+`QuitRequestsService` handles the signals through a subclass of KludgeBox's abstract `TerminationSignalsService`
 (`KludgeBox.Godot.Services`): the base holds the mechanism, the game adds only its own part.
 
 The field name in `Services` is deliberately shorter than the class name (`Services.SaveLoad` →

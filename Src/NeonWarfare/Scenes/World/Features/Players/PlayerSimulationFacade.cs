@@ -2,6 +2,7 @@ using System;
 using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using Serilog;
 
@@ -13,7 +14,9 @@ public class PlayerSimulationFacade(
     EventOutbox outbox,
     PlayersStorageQuery players,
     PlayersSessionStorageQuery session,
-    WorldAdmin admin)
+    WorldAdmin admin,
+    // Absent on the host: its admin is the process itself
+    IDedicatedServerOwner dedicatedServerOwner = null)
 {
     private const string NewPlayerLog = "New player: {nick} ({uid})";
     private const string JoinedLog = "Player joined: {nick} ({uid})";
@@ -51,6 +54,7 @@ public class PlayerSimulationFacade(
         session.Model.OnlinePlayerUids.Remove(uid);
         _log.Information(LeftLog, player.Nick, uid);
         outbox.PublishToAll(new PlayerLeftEvent(NowUnixSeconds(), uid, player.Nick));
+        if (uid == admin.Uid) dedicatedServerOwner?.AdminLeft();
     }
 
     private long NowUnixSeconds() => timeProvider.GetUtcNow().ToUnixTimeSeconds();

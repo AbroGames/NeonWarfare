@@ -10,6 +10,7 @@ using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
@@ -50,16 +51,7 @@ public class PlayerJoinLeaveTests
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
-        _provider = new WorldServicesBuilder().Build(
-            WorldLayer.Host,
-            new WorldDependencies(
-                new ManualTimeProvider(Now), _codec,
-                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
-                TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection,
-                new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(WorldLayer.Host),
-                TestWorldDependencies.Admin(WorldLayer.Host, HostUid)),
-            new WorldRoot(_root));
-        _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _provider = Build(WorldLayer.Host, HostUid, dedicatedServerOwner: null);
     }
 
     [AfterTest]
@@ -243,6 +235,43 @@ public class PlayerJoinLeaveTests
 
         AssertThat(Rejections()).IsEmpty();
         AssertThat(Online()).HasSize(100);
+    }
+
+    // Done when: a child server stops once the client that started it leaves, its admin
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Leave_AdminOfDedicated_IsReportedToTheOwner_AnotherPlayerIsNot()
+    {
+        _provider.Dispose();
+        _clientsConnection = new RecordingClientsConnection();
+        var owner = new RecordingDedicatedServerOwner();
+        _provider = Build(WorldLayer.Dedicated, AliceUid, owner);
+        Join(AlicePeer, AliceUid, "Alice");
+        Join(BobPeer, BobUid, "Bob");
+        Tick();
+
+        Disconnect(BobPeer);
+        Tick();
+        AssertThat(owner.AdminLeftCount).IsEqual(0);
+
+        Disconnect(AlicePeer);
+        Tick();
+        AssertThat(owner.AdminLeftCount).IsEqual(1);
+    }
+
+    private ServiceProvider Build(WorldLayer layers, string adminUid, IDedicatedServerOwner? dedicatedServerOwner)
+    {
+        ServiceProvider provider = new WorldServicesBuilder().Build(
+            layers,
+            new WorldDependencies(
+                new ManualTimeProvider(Now), _codec,
+                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
+                TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection,
+                new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
+                TestWorldDependencies.Admin(layers, adminUid), dedicatedServerOwner),
+            new WorldRoot(_root));
+        provider.GetRequiredService<NewWorldSimulationFacade>().Create();
+        return provider;
     }
 
     private void Join(int peerId, string uid, string nick, Color? color = null)
