@@ -24,9 +24,6 @@ public partial class Hud : Control
     [Child] private LineEdit ChatLineEdit { get; set; }
     [Child] private Button ChatSendButton { get; set; }
     
-    [Child] private Button Test1Button { get; set; }
-    [Child] private Button Test2Button { get; set; }
-    [Child] private Button Test3Button { get; set; }
     [Child] private Button LogButton { get; set; }
     [Child] private Button SaveButton { get; set; }
     [Child] private Button ExitButton { get; set; }

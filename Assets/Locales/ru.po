@@ -172,15 +172,6 @@ msgstr "Имя сохранения"
 msgid "HUD__EXIT_BUTTON"
 msgstr "Выйти"
 
-msgid "HUD__TEST_1_BUTTON"
-msgstr "Тест 1"
-
-msgid "HUD__TEST_2_BUTTON"
-msgstr "Тест 2"
-
-msgid "HUD__TEST_3_BUTTON"
-msgstr "Тест 3"
-
 msgid "HUD__LOG_BUTTON"
 msgstr "Лог"
 
@@ -189,9 +180,6 @@ msgstr "Подключение к серверу"
 
 msgid "LOADING_SCREEN__LOADING"
 msgstr "Загрузка"
-
-msgid "LOADING_SCREEN__WAITING_SYNCING"
-msgstr "Ожидаение окончания синхронизации"
 
 msgid "LOADING_SCREEN__STOPPING_SERVER"
 msgstr "Остановка сервера"

@@ -167,15 +167,6 @@ msgstr ""
 msgid "HUD__EXIT_BUTTON"
 msgstr ""
 
-msgid "HUD__TEST_1_BUTTON"
-msgstr ""
-
-msgid "HUD__TEST_2_BUTTON"
-msgstr ""
-
-msgid "HUD__TEST_3_BUTTON"
-msgstr ""
-
 msgid "HUD__LOG_BUTTON"
 msgstr ""
 
@@ -183,9 +174,6 @@ msgid "LOADING_SCREEN__CONNECTING"
 msgstr ""
 
 msgid "LOADING_SCREEN__LOADING"
-msgstr ""
-
-msgid "LOADING_SCREEN__WAITING_SYNCING"
 msgstr ""
 
 msgid "LOADING_SCREEN__STOPPING_SERVER"

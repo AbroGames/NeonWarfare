@@ -100,7 +100,7 @@ Both get the World **before** being added to the tree, through `InitPreReady`, a
 `IReader.Get<T>()` hands out only `[Query]` and `[Presentation]` services (see [World](World.md)). A screen polls in
 `_Process`: models and queries every frame, and one-frame notices through `HudMailbox.Read<T>()` — on a
 `ChatEntryAddedNotice` the `Hud` re-reads `ChatPresentation.Entries` and translates the entries with `Tr`. `Hud` is
-temporary and debug-grade: it shows the players, the chat, the save (to an admin), test buttons and
+temporary and debug-grade: it shows the players, the chat, the save (to an admin), the log button and
 the exit to the menu. `ServerHud` is not temporary: the player list and the read-only log of the process.
 
 The loading screen (`LoadingScreen`) lives in a separate `CanvasLayer` at the very top and supports an

@@ -36,8 +36,8 @@ public readonly record struct DedicatedServerArgs(
         List<string> listParams = [];
         
         listParams.Add(DedicatedServerFlag);
-        listParams.AddRange([PortParam, Port.ToString()]);
         
+        if (Port is { } port) listParams.AddRange([PortParam, port.ToString()]);
         if (SaveFileName is { } saveFileName) listParams.AddRange([SaveFileNameParam, saveFileName.Value]);
         if (Admin is { } admin) listParams.AddRange([AdminParam, admin.Value]);
         if (ParentPid.HasValue) listParams.AddRange([ParentPidParam, ParentPid.ToString()]);
