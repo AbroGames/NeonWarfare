@@ -114,6 +114,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, game types with a codec, models; only Simulation writes them |
 | `Architecture/WireTypeRegistrationTests` | Every MessagePack formatter and RepliCAT codec of the game is listed in `ProtocolCodecs` |
 | `Architecture/ReplicatedMemberTests` | `[Replicated]` only on fields, never on a plain collection: RepliCAT ones only |
+| `Architecture/ProtocolEnumTests` | A MessagePack key or a `[Replicated]` member holds no enum of another assembly, its elements and generic arguments included: `ProtocolHasher` hashes the members of game enums only |
 | `Architecture/TickingFacadeTests` | Every `ITickingFacade` is `[SimulationFacade]`; its fields are written only in the constructor from its parameters, the logger aside, never static or by reference |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |
 | `Architecture/TickPriorityTests` | `int.MaxValue` physics priority only on `WorldTickNode`, in code and in no scene |
