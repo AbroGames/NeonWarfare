@@ -54,8 +54,8 @@ next NetId and the tick, then a spawn record of every entity (`StateReplicator.W
   sequence and the tick counter. A save of another protocol hash throws `SaveVersionMismatchException`, a broken one
   `SaveFormatException`; the starter shows the player a message (see [Startup flow](Startup-flow.md)).
 
-Any change to the protocol — a mapped type, a MessagePack key, a replicated member, an entity kind — changes the
-hash: saves do not move between versions of the game. The game is not released, so the compatibility of saves and of
+Any change to what the protocol hash covers (see [Networking](Networking.md#payload)) changes it: saves do not move
+between versions of the game. The game is not released, so the compatibility of saves and of
 the network protocol is broken freely: no migrations, no version shims.
 
 ## Files

@@ -34,6 +34,12 @@ public class ProtocolHasher(Replicator replicator)
                 AppendMessagePackKeys(text, type);
             }
 
+            // The RepliCAT schema of an enum member sees only its width and maximum, so the members go in here.
+            if (type.IsEnum)
+            {
+                AppendEnumMembers(text, type);
+            }
+
             // The type list alone misses a changed [Replicated] member, so the schema goes in too.
             // A generic definition has no schema of its own.
             if (!type.ContainsGenericParameters && DeclaresReplicatedMember(type))
@@ -69,6 +75,31 @@ public class ProtocolHasher(Replicator replicator)
                 .Append(' ');
             AppendTypeName(text, memberType);
             text.Append('\n');
+        }
+    }
+
+    // The members go in value order, so declaring the same members in another order keeps the hash.
+    private void AppendEnumMembers(StringBuilder text, Type type)
+    {
+        text.Append("underlying ");
+        AppendTypeName(text, Enum.GetUnderlyingType(type));
+        text.Append('\n');
+
+        IEnumerable<(string Name, decimal Value)> members = type
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Select(field => (
+                field.Name,
+                Value: Convert.ToDecimal(field.GetRawConstantValue(), CultureInfo.InvariantCulture)))
+            .OrderBy(member => member.Value)
+            .ThenBy(member => member.Name, StringComparer.Ordinal);
+
+        foreach ((string name, decimal value) in members)
+        {
+            text.Append("member ")
+                .Append(name)
+                .Append('=')
+                .Append(value.ToString(CultureInfo.InvariantCulture))
+                .Append('\n');
         }
     }
 
