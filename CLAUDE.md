@@ -49,7 +49,8 @@ may be added as needed. Work with them through the `task` skill.
   even when the work is finished and verified. Report what changed and stop.
 - The user can run the game and read the Godot log. When verification
   requires launching Godot, ask the user to run it and paste the output.
-- Comment only *why* the code is here and works this way, never *what* it does. Keep comments rare.
+- No comment is the default. Write one only when a reader would otherwise get it wrong: a hidden
+  constraint, a non-obvious *why*, a workaround. If the code and names already say it — no comment.
 - Write comments as if the current code was always this way. No "X instead of Y, because…" — the
   replaced version is history, not context.
 
