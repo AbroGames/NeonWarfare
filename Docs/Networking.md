@@ -80,8 +80,8 @@ ENet delivers a fragmented reliable packet whole, so a client applies a tick ato
 A client applies a packet at once, in `peer_packet`, with no queue: `StateApplier` the state, `EventDispatcher` the
 events. The host gets only its events packet: its Simulation has already written the state.
 `JoinRejected` never reaches a World: the transport reads it, with or without a World, and calls
-`ILocalPlayerOwner.JoinRejected`; the starter leaves for the menu with the reason, on a remote client and on a host
-refused its own join alike.
+`ILocalPlayerOwner.JoinRejected`; `Game` reports it as `Failed`, and the starter leaves for the menu with the reason,
+on a remote client and on a host refused its own join alike.
 
 Events are published only by the Simulation, into `EventOutbox` (`PublishToAll` / `PublishTo(uid)`), one buffer per
 joined peer, so personal and common events keep the order of publication. An event is encoded when published, so
@@ -123,9 +123,9 @@ sequenceDiagram
     W->>W: PeerSessions.Join: Validate, bind uid,<br/>event buffer, Process → join message, PlayerJoinedEvent
     W-->>O: State packet: the tick's changes (OnlinePlayerUids)
     W-->>C: Snapshot: every entity at the end of the tick
-    C->>C: ClientTransport → the starter builds the World from the snapshot
+    C->>C: ClientTransport → Game builds the World from the snapshot
     W-->>C: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
-    C->>C: its own PlayerJoinedEvent → ILocalPlayerOwner.Joined: Hud, the loading screen is cleared
+    C->>C: its own PlayerJoinedEvent → Game: Hud, then the starter clears the loading screen
     W-->>O: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
     Note over C: from the next tick on: State, then Events, like everyone
 ```

@@ -7,8 +7,8 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Conventions;
 
 /// <summary>
-/// "Methods" from Docs/Code-style.md: <c>Event</c> is a protocol record, <c>On…</c> is a handler of a C# event,
-/// a C# event has no suffix. Next to <c>PlayerJoinedEvent</c> a C# event named
+/// "Methods" from Docs/Code-style.md: <c>Event</c> is a protocol record, <c>On…</c> is a private handler of a C#
+/// event, a C# event has no suffix. Next to <c>PlayerJoinedEvent</c> a C# event named
 /// <c>LocalPlayerJoinedEvent</c> reads as one more network message, and a method named <c>PeerConnectedEvent</c> reads
 /// as an event field.
 /// </summary>
@@ -53,22 +53,22 @@ public class EventNamingTests
     }
 
     /// <summary>
-    /// A protected <c>On…</c> is a hook the base class calls once something has happened
-    /// (<c>BaseHostGameStarter.OnLoadFailed</c>): a reaction too, only overridden instead of subscribed.
+    /// A handler belongs to the class that subscribes it: one visible to a subclass is a hook, and the order of steps
+    /// is then read from two classes at once.
     /// </summary>
     [Fact]
-    public void OnMethods_ArePrivateOrProtected()
+    public void OnMethods_ArePrivate()
     {
-        FailureReport report = new($"Public or internal {HandlerPrefix}… methods");
+        FailureReport report = new($"Non-private {HandlerPrefix}… methods");
 
         foreach (CSharpFile file in ScopedFiles())
         {
             foreach (MethodDeclarationSyntax method in file.Nodes<MethodDeclarationSyntax>())
             {
                 string name = method.Identifier.ValueText;
-                if (IsHandlerName(name) && IsVisibleOutside(method))
+                if (IsHandlerName(name) && IsVisibleOutsideItsClass(method))
                 {
-                    report.Add($"{file.Describe(method)}: '{name}' — {HandlerPrefix}… is a handler or a hook, a " +
+                    report.Add($"{file.Describe(method)}: '{name}' — {HandlerPrefix}… is a private handler, a " +
                                $"method called from outside is named by what it does");
                 }
             }
@@ -145,8 +145,9 @@ public class EventNamingTests
     /// <summary>
     /// An interface member without an access modifier is public, a class member without one is private.
     /// </summary>
-    private static bool IsVisibleOutside(MethodDeclarationSyntax method) =>
+    private static bool IsVisibleOutsideItsClass(MethodDeclarationSyntax method) =>
         method.Parent is InterfaceDeclarationSyntax
         || method.Modifiers.Any(modifier =>
-            modifier.IsKind(SyntaxKind.PublicKeyword) || modifier.IsKind(SyntaxKind.InternalKeyword));
+            modifier.IsKind(SyntaxKind.PublicKeyword) || modifier.IsKind(SyntaxKind.InternalKeyword)
+            || modifier.IsKind(SyntaxKind.ProtectedKeyword));
 }

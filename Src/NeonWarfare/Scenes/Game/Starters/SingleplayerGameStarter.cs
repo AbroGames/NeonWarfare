@@ -1,5 +1,4 @@
-using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using System;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
@@ -9,35 +8,23 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// <summary>
 /// A host without ENet: its only peer is its own.
 /// </summary>
-public class SingleplayerGameStarter(
-    string saveFileName
-    ) : BaseGameStarter, IServerOwner, ILocalPlayerOwner
+public class SingleplayerGameStarter(string saveFileName) : BaseGameStarter
 {
-    private Game _game;
-
-    public override void Init(Game game)
+    public override void Start(Game game)
     {
-        _game = game;
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         ResumableGame lastGame = ResumableGame.GetSingleplayer(saveFileName);
         SetLastGame(lastGame);
-        ISaveFiles saveFiles = SaveFilesUpdatingLastGame(lastGame);
-        LocalPlayer localPlayer = ReadLocalPlayer();
-        World world = AddServerWorld(
-            saveFileName,
-            origin => game.AddHostWorld(new WorldSetup.Host(saveFiles, localPlayer, this, this), origin),
-            out string loadError);
-        if (world == null)
+        FollowLocalPlayer(game);
+
+        try
         {
-            GoToMenuAndShowError(loadError);
+            game.AddHostWorld(SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
+        }
+        catch (Exception e) when (IsLoadError(e))
+        {
+            GoToMenuAndShowError(LogLoadError(e, saveFileName));
         }
     }
-
-    // The admin is this process's own player, which leaves only with the process: there is nothing to stop
-    public void AdminLeft() { }
-
-    public void Joined() => ShowHudOnJoined(_game);
-
-    public void JoinRejected(JoinRejectReason reason) => GoToMenuOnJoinRejected(_game, reason);
 }

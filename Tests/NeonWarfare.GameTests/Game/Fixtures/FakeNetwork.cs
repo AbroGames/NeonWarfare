@@ -21,6 +21,9 @@ public class FakeNetwork : INetwork
 
     public Action<int, byte[]>? Wire { get; set; }
 
+    public bool HasListeners =>
+        PeerConnected != null || PeerDisconnected != null || PacketReceived != null || ConnectedToServer != null;
+
     public void Send(int peerId, ReadOnlySpan<byte> packet)
     {
         byte[] copy = packet.ToArray();
