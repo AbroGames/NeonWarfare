@@ -89,7 +89,7 @@ public class SaveTests
         AssertThat(((CounterNode) registry.GetNode(Id(_server, child))).Value).IsEqual(3);
         AssertThat(Players(loaded).PlayerByUid[AliceUid].Nick).IsEqual("Renamed");
         AssertThat(Players(loaded).PlayerByUid[HostUid].Nick).IsEqual("Host");
-        AssertThat(loaded.GetRequiredService<ServerTickLoop>().CurrentTick).IsEqual(3L);
+        AssertThat(loaded.GetRequiredService<ServerTickClock>().CurrentTick).IsEqual(3L);
         long next = _server.GetRequiredService<NetIdGenerator>().NextValue;
         AssertThat(Id(loaded, Spawner(loaded).SpawnOnRoot<CounterNode>()).Value).IsEqual(next);
     }
@@ -186,7 +186,7 @@ public class SaveTests
         Tick(_server);
         Spawner(_server).SpawnOnRoot<CounterNode>();
 
-        AssertThrown(() => _server.GetRequiredService<ServerTickLoop>().Restore(10))
+        AssertThrown(() => _server.GetRequiredService<ServerTickClock>().Restore(10))
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => _server.GetRequiredService<NetIdGenerator>().Restore(10))
             .IsInstanceOf<InvalidOperationException>();
@@ -211,7 +211,7 @@ public class SaveTests
         ServiceProvider loaded = Load(written[0]);
         AssertThat(((CounterNode) loaded.GetRequiredService<IEntityFinder>().GetNode(Id(_server, counter))).Value)
             .IsEqual(2);
-        AssertThat(loaded.GetRequiredService<ServerTickLoop>().CurrentTick).IsEqual(2L);
+        AssertThat(loaded.GetRequiredService<ServerTickClock>().CurrentTick).IsEqual(2L);
         written.Clear();
 
         Tick(_server);

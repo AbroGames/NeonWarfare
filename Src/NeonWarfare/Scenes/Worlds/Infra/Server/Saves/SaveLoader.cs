@@ -18,7 +18,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 public class SaveLoader(
     EntityRecordReader records,
     NetIdGenerator netIds,
-    ServerTickLoop tickLoop,
+    ServerTickClock clock,
     NetMessageCodec codec)
 {
     private const string TooShortError = "The save is {0} bytes long, shorter than its protocol hash.";
@@ -77,6 +77,6 @@ public class SaveLoader(
         }
 
         netIds.Restore(next);
-        tickLoop.Restore(tick);
+        clock.Restore(tick);
     }
 }

@@ -155,13 +155,15 @@ public class ServerTickLoopTests
     public void CurrentTick_StartsAtZero_GrowsByOnePerTick()
     {
         Build(new WorldServicesBuilder());
-        ServerTickLoop loop = Loop();
+        ServerTickClock clock = _provider.GetRequiredService<ServerTickClock>();
 
-        AssertThat(loop.CurrentTick).IsEqual(0);
-        loop.RunTick();
-        AssertThat(loop.CurrentTick).IsEqual(1);
-        loop.RunTick();
-        AssertThat(loop.CurrentTick).IsEqual(2);
+        AssertThat(clock.Started).IsFalse();
+        AssertThat(clock.CurrentTick).IsEqual(0);
+        Loop().RunTick();
+        AssertThat(clock.Started).IsTrue();
+        AssertThat(clock.CurrentTick).IsEqual(1);
+        Loop().RunTick();
+        AssertThat(clock.CurrentTick).IsEqual(2);
     }
 
     // Commands first, sending last: what a command publishes leaves in the same tick

@@ -2,7 +2,6 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -27,6 +26,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 /// </summary>
 [Server]
 public class ServerTickLoop(
+    ServerTickClock clock,
     CommandDispatcher commands,
     PeerGatekeeper gatekeeper,
     PeerStateTable peers,
@@ -35,8 +35,6 @@ public class ServerTickLoop(
     SaveWriter saveWriter,
     IClientsConnection clientsConnection)
 {
-    private const string RestoreAfterTickError = "The tick counter is {0}: a restore comes before the first tick.";
-    private const string NegativeTickError = "Tick {0} is negative.";
     private const string SendFailedLog = "Events packet for peer {peerId} failed, the other peers still get theirs";
     private const string StateSendFailedLog =
         "State packet for peer {peerId} failed, disconnecting it, the other peers still get theirs";
@@ -48,33 +46,10 @@ public class ServerTickLoop(
 
     private readonly ILogger _log = LogFactory.GetForStatic<ServerTickLoop>();
 
-    /// <summary>
-    /// Grows at the start of <see cref="RunTick"/>: inside tick N it is N, and it stays N until tick N + 1 starts.
-    /// 0 before the first tick of a new world, the saved tick before the first tick of a loaded one.
-    /// </summary>
-    public long CurrentTick { get; private set; }
-
-    /// <summary>
-    /// Whether a tick has run in this World: before that its baselines hold nothing to save.
-    /// </summary>
-    public bool Started { get; private set; }
-
-    /// <summary>
-    /// Continues the tick counter of a loaded world: the first tick after it is <paramref name="tick"/> + 1.
-    /// </summary>
-    public void Restore(long tick)
-    {
-        if (Started) throw new InvalidOperationException(RestoreAfterTickError.FormatWith(CurrentTick));
-        if (tick < 0) throw new ArgumentOutOfRangeException(nameof(tick), tick, NegativeTickError.FormatWith(tick));
-
-        CurrentTick = tick;
-    }
-
     // Calls from ServerTickNode
     public void RunTick()
     {
-        Started = true;
-        CurrentTick++;
+        clock.StartTick();
         
         // A peer that joins in this tick gets the state at its end from its snapshot, and has nothing to apply a
         // delta to before that
@@ -92,7 +67,7 @@ public class ServerTickLoop(
     private void SendState(List<int> joinedBefore)
     {
         var writer = new BitWriter();
-        if (!stateReplicator.TryWrite(CurrentTick, writer)) return;
+        if (!stateReplicator.TryWrite(clock.CurrentTick, writer)) return;
 
         ReadOnlySpan<byte> body = writer.AsSpan();
         // The host's own World has the state already: its Simulation wrote it
@@ -127,7 +102,7 @@ public class ServerTickLoop(
         var writer = new BitWriter();
         try
         {
-            writer.WriteVarUInt((ulong) CurrentTick);
+            writer.WriteVarUInt((ulong) clock.CurrentTick);
             stateReplicator.WriteSnapshot(writer);
         }
         catch (Exception e)

@@ -12,7 +12,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 /// the next load go to the new file.
 /// </summary>
 [Server]
-public class SaveService(SaveWriter saveWriter, ServerTickLoop tickLoop, ISaveFiles saveFiles)
+public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles)
 {
     private const string InitializedError = "The save file name is already set.";
     private const string NotInitializedError = "The save file name is not set.";
@@ -73,7 +73,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickLoop tickLoop, ISaveFi
                 return;
             }
             // Its file, if any, already holds this state, and the baselines hold none of it yet
-            if (!tickLoop.Started)
+            if (!clock.Started)
             {
                 _log.Information(NoTickLog, SaveFileName);
                 return;
