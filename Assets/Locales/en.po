@@ -171,15 +171,6 @@ msgstr "Filename"
 msgid "HUD__EXIT_BUTTON"
 msgstr "Exit"
 
-msgid "HUD__TEST_1_BUTTON"
-msgstr "Test 1"
-
-msgid "HUD__TEST_2_BUTTON"
-msgstr "Test 2"
-
-msgid "HUD__TEST_3_BUTTON"
-msgstr "Test 3"
-
 msgid "HUD__LOG_BUTTON"
 msgstr "Log"
 
@@ -188,9 +179,6 @@ msgstr "Connecting to server"
 
 msgid "LOADING_SCREEN__LOADING"
 msgstr "Loading"
-
-msgid "LOADING_SCREEN__WAITING_SYNCING"
-msgstr "Wait for the synchronization ends"
 
 msgid "LOADING_SCREEN__STOPPING_SERVER"
 msgstr "Stopping the server"

@@ -22,7 +22,6 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | `Services.SaveLoad` | `SaveLoadService` | Save files, `SaveException` / `LoadException`; the `ISaveFiles` of a server World |
 | `Services.LastGame` | `ResumableGameService` | The last session for the "Continue" button (`ResumableGame`) |
 | `Services.Process` | `ProcessService` | Launching the dedicated server child process and waiting for it to exit |
-| `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
 | `Services.KnownServers` | `KnownServersService` | The server list of the multiplayer menu, stored in `user://known-servers.json` |
 | `Services.ServerLog` | `ServerLogService` | The last 1000 log records of the process for the `ServerHud`; fed only on a dedicated server |
 

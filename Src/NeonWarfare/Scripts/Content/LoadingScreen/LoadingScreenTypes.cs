@@ -8,7 +8,6 @@ public static class LoadingScreenTypes
     {
         Loading,
         Connecting, 
-        WaitingSyncing,
         StoppingServer
     }
 
@@ -16,7 +15,6 @@ public static class LoadingScreenTypes
     {
         { Type.Loading, "LOADING_SCREEN__LOADING" },
         { Type.Connecting, "LOADING_SCREEN__CONNECTING" },
-        { Type.WaitingSyncing, "LOADING_SCREEN__WAITING_SYNCING" },
         { Type.StoppingServer, "LOADING_SCREEN__STOPPING_SERVER" }
     };
 

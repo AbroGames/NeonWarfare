@@ -43,7 +43,6 @@ public static class Services
     public static readonly ResumableGameService LastGame = new();
     public static readonly KnownServersService KnownServers = new();
     public static readonly SaveLoadService SaveLoad = new();
-    public static readonly IconsStorageService IconsStorage = new();
     public static readonly ServerLogService ServerLog = new();
     
     public static class Global
