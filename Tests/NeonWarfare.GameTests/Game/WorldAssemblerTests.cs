@@ -34,13 +34,12 @@ public class WorldAssemblerTests
         _owner = new RecordingLocalPlayerOwner();
     }
 
-    // Single player
     [TestCase]
     [RequireGodotRuntime]
-    public void Host_WithoutANetwork_TheHostJoinsInTheNextTick()
+    public void Singleplayer_TheHostJoinsInTheNextTick()
     {
-        World world = AutoFree(_assembler.Host(
-            TestWorldSetups.Host(localPlayerOwner: _owner), new WorldOrigin.NewWorld(SaveFileName), null))!;
+        World world = AutoFree(_assembler.Singleplayer(
+            TestWorldSetups.Host(localPlayerOwner: _owner), new WorldOrigin.NewWorld(SaveFileName)))!;
 
         TransportWorlds.Tick(world);
 

@@ -97,10 +97,11 @@ can come too early.
 * **`AddServerNetwork()`** — `Network` (ENet) of a host or a dedicated server; single player has none.
 * **`ConnectToServer(localPlayer, host, port)`** — `Network` of a remote client and its `ClientTransport`, which
   sends the join once connected. **No World yet**: `Game` builds it from the join snapshot itself.
-* **`AddHostWorld(saveFiles, localPlayer, origin)`** / **`AddDedicatedWorld(saveFiles, admin, origin)`** — the World
-  of its configuration (`WorldSetup`, see [World](World.md)) over its transport, put into `WorldContainer`.
-  `AddHostWorld` also sends the host's join: its own peer first "connects", so it passes the same gatekeeper as a
-  remote one (see [Networking](Networking.md#join-and-leave)).
+* **`AddSingleplayerWorld(saveFiles, localPlayer, origin)`** / **`AddHostWorld(network, saveFiles, localPlayer,
+  origin)`** / **`AddDedicatedWorld(network, saveFiles, admin, origin)`** — the World of its configuration
+  (`WorldSetup`, see [World](World.md)) over its transport, put into `WorldContainer`. The first two also send the
+  host's join: its own peer first "connects", so it passes the same gatekeeper as a remote one (see
+  [Networking](Networking.md#join-and-leave)).
 * **`ShowServerHud()`** — the screen of a dedicated server.
 
 `WorldAssembler` builds each configuration: its transports, `WorldDependencies`, `InitPreReady`. A World that throws
@@ -154,8 +155,8 @@ A host without `Network`: its only peer is its own.
 
 1. The `Loading` loading screen.
 2. `resume-game.json` — the "single-player game" mode, with the save files that keep it current.
-3. `FollowLocalPlayer`, then `AddHostWorld(...)`, which sends the join; it is applied in the next tick. A load error
-   → back to the menu with the message.
+3. `FollowLocalPlayer`, then `AddSingleplayerWorld(...)`, which sends the join; it is applied in the next tick. A load
+   error → back to the menu with the message.
 
 ### 2. `HostMultiplayerGameStarter` and `DedicatedServerGameStarter`
 
@@ -170,10 +171,10 @@ An ENet server **in this same process**.
 3. `network.HostServer(port ?? 25566)` — the port is open but refuses connections. An error (a busy port, say) →
    the host goes back to the menu, the dedicated server shuts down.
 4. The host: `FollowLocalPlayer`.
-5. The host — `AddHostWorld(...)` with its `LocalPlayer`, whose join leaves before the server is opened; the dedicated
-   server — `AddDedicatedWorld(...)`, no local player, the World hidden, then `ShowServerHud()` if requested. A load
-   error → the host goes back to the menu, the dedicated server shuts down: a new world in its place would overwrite
-   the save on exit.
+5. The host — `AddHostWorld(network, ...)` with its `LocalPlayer`, whose join leaves before the server is opened; the
+   dedicated server — `AddDedicatedWorld(network, ...)`, no local player, the World hidden, then `ShowServerHud()` if
+   requested. A load error → the host goes back to the menu, the dedicated server shuts down: a new world in its place
+   would overwrite the save on exit.
 6. `network.OpenServer()`.
 
 > [!IMPORTANT]

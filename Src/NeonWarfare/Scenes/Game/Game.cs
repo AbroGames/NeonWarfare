@@ -25,7 +25,6 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 {
     private const string NotInTreeError =
         "Game must be in the tree before Init: WorldPackedScenes fills its scene list in _Ready";
-    private const string NoServerNetworkError = "A dedicated server needs AddServerNetwork first";
     private const string NoWorldError = "There is no World to show";
 
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
@@ -65,7 +64,6 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     private GameProtocol _protocol;
     private WorldAssembler _assembler;
-    private Network _serverNetwork;
     private ClientTransport _clientTransport;
     private WorldSetup.RemoteClient _clientSetup;
     private World _world;
@@ -87,11 +85,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     /// <summary>
     /// The network of a host or a dedicated server; its World is added next.
     /// </summary>
-    public Network AddServerNetwork()
-    {
-        _serverNetwork = AddNetwork();
-        return _serverNetwork;
-    }
+    public Network AddServerNetwork() => AddNetwork();
 
     /// <summary>
     /// A remote client: the join is sent once connected, the World is added from the join snapshot and the
@@ -114,21 +108,27 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     }
 
     /// <summary>
-    /// Single player, or a host over <see cref="AddServerNetwork"/>. The host's own join is sent right away and
-    /// applied in the next tick.
+    /// A host without a network. Its own join is sent right away and applied in the next tick.
     /// </summary>
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
-    public World AddHostWorld(ISaveFiles saveFiles, LocalPlayer localPlayer, WorldOrigin origin)
+    public World AddSingleplayerWorld(ISaveFiles saveFiles, LocalPlayer localPlayer, WorldOrigin origin)
     {
-        return Store(_assembler.Host(new WorldSetup.Host(saveFiles, localPlayer, this, this), origin, _serverNetwork));
+        return Store(_assembler.Singleplayer(new WorldSetup.Host(saveFiles, localPlayer, this, this), origin));
+    }
+
+    /// <summary>
+    /// A host over <paramref name="network"/>. Its own join is sent right away and applied in the next tick.
+    /// </summary>
+    /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
+    public World AddHostWorld(Network network, ISaveFiles saveFiles, LocalPlayer localPlayer, WorldOrigin origin)
+    {
+        return Store(_assembler.Host(new WorldSetup.Host(saveFiles, localPlayer, this, this), origin, network));
     }
 
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
-    public World AddDedicatedWorld(ISaveFiles saveFiles, WorldAdmin admin, WorldOrigin origin)
+    public World AddDedicatedWorld(Network network, ISaveFiles saveFiles, WorldAdmin admin, WorldOrigin origin)
     {
-        if (_serverNetwork == null) throw new InvalidOperationException(NoServerNetworkError);
-
-        return Store(_assembler.Dedicated(new WorldSetup.Dedicated(saveFiles, admin, this), origin, _serverNetwork));
+        return Store(_assembler.Dedicated(new WorldSetup.Dedicated(saveFiles, admin, this), origin, network));
     }
 
     public void ShowServerHud()

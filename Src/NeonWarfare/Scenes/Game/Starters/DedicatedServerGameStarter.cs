@@ -45,7 +45,8 @@ public class DedicatedServerGameStarter(
         World world;
         try
         {
-            world = game.AddDedicatedWorld(saveFiles, new WorldAdmin(adminUid), LoadServerOrigin(saveFileName));
+            world = game.AddDedicatedWorld(
+                network, saveFiles, new WorldAdmin(adminUid), LoadServerOrigin(saveFileName));
         }
         catch (Exception e) when (IsLoadError(e))
         {
