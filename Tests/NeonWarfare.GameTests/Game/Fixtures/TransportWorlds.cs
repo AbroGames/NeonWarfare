@@ -2,7 +2,7 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
@@ -34,5 +34,5 @@ public class TransportWorlds
 
     // Outside the tree the engine never ticks the World
     public static void Tick(World world) =>
-        world.GetChildren().OfType<ServerTickNode>().Single()._PhysicsProcess(0);
+        world.GetChildren().OfType<WorldTickNode>().Single()._PhysicsProcess(0);
 }

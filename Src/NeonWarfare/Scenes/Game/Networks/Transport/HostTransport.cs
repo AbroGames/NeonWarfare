@@ -14,7 +14,7 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 /// </summary>
 public sealed class HostTransport(
     World.IServerEndpoint server,
-    World.IClientEndpoint client,
+    World.IHostEndpoint client,
     NetMessageCodec codec,
     ProtocolHash protocolHash,
     ILocalPlayerOwner owner,
@@ -51,7 +51,7 @@ public sealed class HostTransport(
 
         try
         {
-            client.ReceiveTickUpdate(tick, ReadOnlyMemory<byte>.Empty, events.ToArray());
+            client.ReceiveOwnEvents(events.ToArray());
         }
         // The events are delivered inside the server's tick, so a failure of the host's own World must not cost the
         // remote peers their events.

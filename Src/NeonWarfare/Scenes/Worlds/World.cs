@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Infra.Client;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Tick;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -14,11 +15,13 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 
 namespace NeonWarfare.Scenes.Worlds;
 
 /// <summary>The composition root of one game world, see Docs/World.md#the-world-node.</summary>
-public partial class World : Node2D, World.IReader, World.ICommandSender, World.IServerEndpoint, World.IClientEndpoint
+public partial class World
+    : Node2D, World.IReader, World.ICommandSender, World.IServerEndpoint, World.IHostEndpoint, World.IClientEndpoint
 {
     /// <summary>What a screen reads from the World.</summary>
     public interface IReader
@@ -47,10 +50,19 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
         void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet);
     }
 
-    /// <summary>What a client World receives from the server.</summary>
+    /// <summary>What the host's World receives as its own peer.</summary>
+    public interface IHostEndpoint
+    {
+        /// <summary>Only the events: the host's Simulation has written the state already.</summary>
+        /// <exception cref="NetMessageFormatException">The section is broken.</exception>
+        void ReceiveOwnEvents(ReadOnlyMemory<byte> events);
+    }
+
+    /// <summary>What a remote client World receives from the server.</summary>
     public interface IClientEndpoint
     {
         /// <summary>
+        /// Syncs the clock to the tick before anything else, so every event handler sees at least that tick.
         /// Applies the state section before it dispatches the events section, so an event handler sees the models at
         /// the end of the tick. An empty section is absent.
         /// </summary>
@@ -79,6 +91,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
                 _services.GetRequiredService<NewWorldSimulationFacade>().Create();
                 break;
             case WorldOrigin.FromSnapshot snapshot:
+                Service<ClientTickClock>().Sync(snapshot.Tick);
                 Service<StateApplier>().ApplySnapshot(snapshot.Records);
                 break;
             case WorldOrigin.FromSave save:
@@ -90,7 +103,11 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
 
         if (setup.Layers.HasFlag(WorldLayer.Simulation))
         {
-            AddChild(new ServerTickNode().InitPreReady(_services.GetRequiredService<ServerTickLoop>().RunTick));
+            AddChild(new WorldTickNode().InitPreReady(_services.GetRequiredService<ServerTickLoop>().RunTick));
+        }
+        if (setup.Layers.HasFlag(WorldLayer.ClientReplication))
+        {
+            AddChild(new WorldTickNode().InitPreReady(Service<ClientTickClock>().Advance));
         }
         if (setup.Layers.HasFlag(WorldLayer.Server))
         {
@@ -118,8 +135,11 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
     void IServerEndpoint.ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
         Service<CommandInbox>().EnqueueFromPeer(peerId, packet);
 
+    void IHostEndpoint.ReceiveOwnEvents(ReadOnlyMemory<byte> events) => Service<EventDispatcher>().Dispatch(events);
+
     void IClientEndpoint.ReceiveTickUpdate(long tick, ReadOnlyMemory<byte> state, ReadOnlyMemory<byte> events)
     {
+        Service<ClientTickClock>().Sync(tick);
         if (!state.IsEmpty) Service<StateApplier>().ApplyState(state);
         if (!events.IsEmpty) Service<EventDispatcher>().Dispatch(events);
     }

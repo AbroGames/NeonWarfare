@@ -114,7 +114,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/WireTypeRegistrationTests` | Every MessagePack formatter and RepliCAT codec of the game is listed in `ProtocolCodecs` |
 | `Architecture/ReplicatedMemberTests` | `[Replicated]` only on fields, never on a plain collection: RepliCAT ones only |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |
-| `Architecture/TickPriorityTests` | `int.MaxValue` physics priority only on `ServerTickNode`, in code and in no scene |
+| `Architecture/TickPriorityTests` | `int.MaxValue` physics priority only on `WorldTickNode`, in code and in no scene |
 | `Launch/LaunchProfilesTests` | Game profiles of `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |
 | `Scenes/SceneResourceTests` | `res://` paths in scenes and `project.godot` resolve; a root script is the `.cs` beside its scene |

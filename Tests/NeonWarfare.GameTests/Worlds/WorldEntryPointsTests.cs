@@ -1,3 +1,4 @@
+using System.Reflection;
 using GdUnit4;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts;
 using RepliCAT;
@@ -64,13 +66,19 @@ public class WorldEntryPointsTests
             new ChatPresentation.PlayerMessageEntry(Now, HostUid, "Host", "hello"));
     }
 
-    // A missing client layer is shown by a dedicated server, a missing server one by a World before its InitPreReady
+    // A missing client layer is shown by a dedicated server, a missing server one by a World before its InitPreReady,
+    // a missing client replication by a host
     [TestCase]
     [RequireGodotRuntime]
     public void EntryPoints_WithoutTheirLayer_Throw()
     {
         World dedicated = CreateWorld(DedicatedSetup());
+        World host = HostWorld();
         World notInitialized = AutoFree(new World())!;
+
+        AssertThrown(() => dedicated.ReceiveOwnEvents(new byte[] { 0 })).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => host.ReceiveTickUpdate(1, ReadOnlyMemory<byte>.Empty, ReadOnlyMemory<byte>.Empty))
+            .IsInstanceOf<InvalidOperationException>();
 
         AssertThrown(() => dedicated.ReceiveTickUpdate(1, new byte[] { 0 }, ReadOnlyMemory<byte>.Empty))
             .IsInstanceOf<InvalidOperationException>();
@@ -259,6 +267,59 @@ public class WorldEntryPointsTests
         AssertThat(owner.JoinedCount).IsEqual(1);
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void InitPreReady_FromSnapshot_TheClockIsTheSnapshotTick()
+    {
+        World host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+        var snapshot = (WorldOrigin.FromSnapshot) RemoteSnapshot();
+
+        World client = CreateWorld(RemoteClientSetup(), snapshot);
+
+        AssertThat(snapshot.Tick).IsGreater(0);
+        AssertThat(Clock(client).CurrentTick).IsEqual(snapshot.Tick);
+    }
+
+    // The update is ahead of the snapshot, so only a sync before the events shows its tick to the handler
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReceiveTickUpdate_AnEventHandlerSeesTheTickOfTheUpdate()
+    {
+        World host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+        byte[] events = RemoteJoinEvents();
+        var owner = new RecordingLocalPlayerOwner();
+        World client = CreateWorld(RemoteClientSetup(owner), RemoteSnapshot());
+        long updateTick = Clock(client).CurrentTick + 5;
+        long? tickWhenReported = null;
+        owner.OnJoined = () => tickWhenReported = Clock(client).CurrentTick;
+
+        client.ReceiveTickUpdate(updateTick, ReadOnlyMemory<byte>.Empty, events);
+
+        AssertThat(tickWhenReported).IsEqual(updateTick);
+    }
+
+    // Tick takes the single node, so a World with both the server's and the client's would fail here
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickNode_InEachConfiguration_AdvancesItsClockByOne()
+    {
+        World host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+        World[] worlds = [host, CreateWorld(DedicatedSetup()), CreateWorld(RemoteClientSetup(), RemoteSnapshot())];
+
+        foreach (World world in worlds)
+        {
+            long before = Clock(world).CurrentTick;
+            Tick(world);
+            AssertThat(Clock(world).CurrentTick).IsEqual(before + 1);
+        }
+    }
+
     // The state section is applied first, so a broken one stops the events before any handler runs
     [TestCase]
     [RequireGodotRuntime]
@@ -293,7 +354,7 @@ public class WorldEntryPointsTests
     private World HostWorld(WorldOrigin? origin = null, ILocalPlayerOwner? owner = null)
     {
         World world = CreateWorld(HostSetup(owner), origin);
-        _connection.Loopback = section => world.ReceiveTickUpdate(0, ReadOnlyMemory<byte>.Empty, section);
+        _connection.Loopback = section => world.ReceiveOwnEvents(section);
         _connection.CommandLoopback = packet => world.ReceiveFromClient(HostPeer, packet);
         return world;
     }
@@ -369,5 +430,11 @@ public class WorldEntryPointsTests
 
     // Outside the tree the engine never ticks the World
     private static void Tick(World world) =>
-        world.GetChildren().OfType<ServerTickNode>().Single()._PhysicsProcess(0);
+        world.GetChildren().OfType<WorldTickNode>().Single()._PhysicsProcess(0);
+
+    // The World hands out no clock, so it is read from the container the way a service takes it
+    private static IWorldClock Clock(World world) =>
+        ((ServiceProvider) (typeof(World).GetField("_services", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?? throw new InvalidOperationException("World has no private field _services"))
+            .GetValue(world)!).GetRequiredService<IWorldClock>();
 }
