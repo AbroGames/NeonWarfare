@@ -22,7 +22,7 @@ public class DedicatedServerGameStarter(
     PlayerUid? adminUid,
     int? parentPid,
     bool serverHud,
-    bool autoSave
+    int autoSaveIntervalMinutes
     ) : BaseGameStarter
 {
     private readonly ILogger _log = LogFactory.GetForStatic<DedicatedServerGameStarter>();
@@ -44,7 +44,7 @@ public class DedicatedServerGameStarter(
         World world;
         try
         {
-            world = game.AddDedicatedWorld(network, saveFiles, new WorldSaveFile(saveFileName, autoSave),
+            world = game.AddDedicatedWorld(network, saveFiles, new WorldSaving(saveFileName, autoSaveIntervalMinutes),
                 new WorldAdmin(adminUid), new ProtectedPlayer(parentPid is null ? null : adminUid),
                 LoadServerOrigin(saveFileName));
         }

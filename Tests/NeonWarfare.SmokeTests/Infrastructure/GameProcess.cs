@@ -167,7 +167,7 @@ public sealed partial class GameProcess : IDisposable
     ///
     /// SIGTERM first, on purpose. The Serilog sink is wrapped in WriteTo.Async and nothing calls
     /// Log.CloseAndFlush(), so a hard kill drops whatever is still queued — including the error that
-    /// would have explained the failure. A graceful exit also runs the autosave path (Docs/Shutdown.md),
+    /// would have explained the failure. A graceful exit also runs the save on exit (Docs/Shutdown.md),
     /// and that is exactly what a hang or a crash on the way out breaks.
     ///
     /// A process that had already exited before the call is not judged here: dying early is a problem of

@@ -10,7 +10,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
-using NeonWarfare.Scenes.Worlds.Ports;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Saves;
@@ -22,6 +22,10 @@ public class SaveServiceTests
 {
     private const string OldFile = "old";
     private const string NewFile = "new";
+    private const int AutoSaveIntervalMinutes = 1;
+
+    private static readonly int IntervalTicks =
+        TickRate.ToTicks(TimeSpan.FromMinutes(AutoSaveIntervalMinutes).TotalSeconds);
 
     private WorldPackedScenes _scenes = null!;
     private Node _root = null!;
@@ -33,28 +37,14 @@ public class SaveServiceTests
     public void SetUp()
     {
         _scenes = TestWorldScenes.Create();
-        var catalog = new EntityCatalog(_scenes.GetScenesList(),
-            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode)]);
-        _root = new Node();
-        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(_root);
         _files = new RecordingSaveFiles();
-        var connection = new RecordingClientsConnection();
-        _server = new WorldServicesBuilder().Build(
-            TestWorldSetups.Dedicated(saveFiles: _files, saveFileName: OldFile),
-            new WorldDependencies(new ManualTimeProvider(0),
-                new NetMessageCodec(NetMessageCodecTests.CreateMapping()), TestProtocol.Hash,
-                NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes, catalog,
-                connection, connection),
-            new WorldRoot(_root));
-        _server.GetRequiredService<NewWorldSimulationFacade>().Create();
-        _service = _server.GetRequiredService<SaveService>();
+        Start(AutoSaveIntervalMinutes);
     }
 
     [AfterTest]
     public void TearDown()
     {
-        _server.Dispose();
-        _root.Free();
+        Stop();
         _scenes.Free();
     }
 
@@ -150,19 +140,6 @@ public class SaveServiceTests
         AssertThat(_files.Files[0].Data).IsEqual(Writer().Write());
     }
 
-    [TestCase]
-    [RequireGodotRuntime]
-    public void SaveOnExit_AutoSaveDisabled_WritesNothing()
-    {
-        Tick();
-        var service = new SaveService(Writer(), _server.GetRequiredService<ServerTickClock>(), _files,
-            new WorldSaveFile(OldFile, autoSave: false));
-
-        service.SaveOnExit();
-
-        AssertThat(_files.Files).IsEmpty();
-    }
-
     // The writer would throw: every entity is still spawned since the last send
     [TestCase]
     [RequireGodotRuntime]
@@ -185,7 +162,134 @@ public class SaveServiceTests
         AssertThat(_files.Files).IsEmpty();
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WriteRequested_AutoSavesToTheSaveFileEveryInterval()
+    {
+        Ticks(IntervalTicks);
+        AssertThat(_files.Files).IsEmpty();
+
+        Tick();
+
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(OldFile);
+        AssertThat(_files.Files[0].Data).IsEqual(Writer().Write());
+        Ticks(IntervalTicks - 1);
+        AssertThat(_files.Files).HasSize(1);
+        Tick();
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(OldFile, OldFile);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WriteRequested_AutoSaveOff_NeverAutoSaves()
+    {
+        Restart(autoSaveIntervalMinutes: 0);
+
+        Ticks(IntervalTicks * 2 + 1);
+
+        AssertThat(_files.Files).IsEmpty();
+    }
+
+    // SaveLoader restores the tick before the first one, and the load is as fresh as a save
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WriteRequested_AfterALoad_AutoSavesAnIntervalAfterTheFirstTick()
+    {
+        _server.GetRequiredService<ServerTickClock>().Restore(IntervalTicks * 10L);
+
+        Ticks(IntervalTicks);
+        AssertThat(_files.Files).IsEmpty();
+
+        Tick();
+
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(OldFile);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WriteRequested_SaveAs_MovesTheAutoSaveToTheNewFile_AnIntervalLater()
+    {
+        Ticks(IntervalTicks / 2);
+        _service.RequestSave(NewFile, () => { }, error => throw error);
+        Tick();
+        _files.Files.Clear();
+        Ticks(IntervalTicks - 1);
+        AssertThat(_files.Files).IsEmpty();
+
+        Tick();
+
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(NewFile);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WriteRequested_SaveAsInTheAutoSaveTick_TheNewFileIsTheSaveFile()
+    {
+        Ticks(IntervalTicks);
+        _service.RequestSave(NewFile, () => { }, error => throw error);
+
+        Tick();
+
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(OldFile, NewFile);
+        AssertThat(_service.SaveFileName).IsEqual(NewFile);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void WriteRequested_AutoSaveFails_TriedAgainAnIntervalLater()
+    {
+        Ticks(IntervalTicks);
+        _files.Failing = true;
+        Tick();
+        _files.Failing = false;
+        Ticks(IntervalTicks - 1);
+        AssertThat(_files.Files).IsEmpty();
+
+        Tick();
+
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(OldFile);
+    }
+
+    private void Start(int autoSaveIntervalMinutes)
+    {
+        var catalog = new EntityCatalog(_scenes.GetScenesList(),
+            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode)]);
+        _root = new Node();
+        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(_root);
+        var connection = new RecordingClientsConnection();
+        _server = new WorldServicesBuilder().Build(
+            TestWorldSetups.Dedicated(saveFiles: _files, saveFileName: OldFile,
+                autoSaveIntervalMinutes: autoSaveIntervalMinutes),
+            new WorldDependencies(new ManualTimeProvider(0),
+                new NetMessageCodec(NetMessageCodecTests.CreateMapping()), TestProtocol.Hash,
+                NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes, catalog,
+                connection, connection),
+            new WorldRoot(_root));
+        _server.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _service = _server.GetRequiredService<SaveService>();
+    }
+
+    private void Stop()
+    {
+        _server.Dispose();
+        _root.Free();
+    }
+
+    private void Restart(int autoSaveIntervalMinutes)
+    {
+        Stop();
+        Start(autoSaveIntervalMinutes);
+    }
+
     private void Tick() => _server.GetRequiredService<ServerTickLoop>().RunTick();
+
+    private void Ticks(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            Tick();
+        }
+    }
 
     private SaveWriter Writer() => _server.GetRequiredService<SaveWriter>();
 }

@@ -43,7 +43,7 @@ public partial class PlayerSettingsPage : MainMenuPage
 
     private void PopulateSettings()
     {
-        // Renders nick + color + uid + autosave (all non-hidden Player-category fields).
+        // Renders nick + color + uid + autosave interval (all non-hidden Player-category fields).
         // PlayerSettingsAcknowledged is [Hide] so it is excluded automatically.
         _settings = _draftSettings.GetVisibleSettings("Player");
         foreach (var setting in _settings)

@@ -40,6 +40,6 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
             _dedicatedServerArgs.Admin is { } admin ? new PlayerUid(admin) : null,
             _dedicatedServerArgs.ParentPid,
             DisplayServer.GetName() != HeadlessDisplayServer,
-            Services.DedicatedServerSettings.GetSettings().AutoSaveEnabled);
+            Services.DedicatedServerSettings.GetSettings().AutoSaveIntervalMinutes);
     }
 }

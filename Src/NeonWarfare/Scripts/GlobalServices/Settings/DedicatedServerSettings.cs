@@ -2,14 +2,14 @@ namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public record DedicatedServerSettings(
     string Locale,
-    bool AutoSaveEnabled
+    int AutoSaveIntervalMinutes
 )
 {
     public static DedicatedServerSettings GetDefault()
     {
         return new(
             Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code,
-            AutoSaveEnabled: true
+            AutoSaveIntervalMinutes: 10
         );
     }
 }

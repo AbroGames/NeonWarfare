@@ -1,5 +1,6 @@
 using KludgeBox.Logging;
 using KludgeBox.Persistence;
+using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
 namespace NeonWarfare.Scripts.GlobalServices.Settings;
@@ -14,21 +15,29 @@ public class DedicatedServerSettingsService
 
     /// <summary>
     /// A setting that is missing or bad in the file gets its default, written back, and the other settings stay.
-    /// An unknown locale is bad too.
+    /// An unknown locale and an autosave interval out of its range are bad too.
     /// </summary>
     /// <param name="fileName"><c>null</c> — <c>dedicated-server-settings.json</c>.</param>
     public void Init(string fileName)
     {
         var file = new JsonFile<DedicatedServerSettings>(fileName ?? DefaultFileName);
-        _settings = file.ReadOverDefault(DedicatedServerSettings.GetDefault);
-        // A known locale in another spelling, like "EN_us", is replaced with its code too
-        string locale = (Services.I18N.GetLocaleInfoByCode(_settings.Locale)
-            ?? Services.I18N.GetUserOsLocaleInfoOrDefault()).Code;
-        if (locale != _settings.Locale)
+        DedicatedServerSettings read = file.ReadOverDefault(DedicatedServerSettings.GetDefault);
+        _settings = read with
         {
-            _log.Warning("The locale '{locale}' in the settings is replaced with '{newLocale}'",
-                _settings.Locale, locale);
-            _settings = _settings with { Locale = locale };
+            // A known locale in another spelling, like "EN_us", is replaced with its code too
+            Locale = (Services.I18N.GetLocaleInfoByCode(read.Locale)
+                ?? Services.I18N.GetUserOsLocaleInfoOrDefault()).Code,
+            AutoSaveIntervalMinutes = read.AutoSaveIntervalMinutes is < 0 or > WorldSaving.MaxAutoSaveIntervalMinutes
+                ? DedicatedServerSettings.GetDefault().AutoSaveIntervalMinutes
+                : read.AutoSaveIntervalMinutes
+        };
+        if (_settings != read)
+        {
+            _log.Warning("Bad settings replaced: " +
+                "locale '{locale}' with '{newLocale}', " +
+                "autosave interval {interval} with {newInterval}",
+                read.Locale, _settings.Locale,
+                read.AutoSaveIntervalMinutes, _settings.AutoSaveIntervalMinutes);
             file.Write(_settings);
         }
     }

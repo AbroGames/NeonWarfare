@@ -258,7 +258,7 @@ public class SaveTests
         AssertThat(copy.Part.Value).IsEqual(7);
     }
 
-    // The autosave on exit: the World is leaving the tree, the entities have left the registry, the baselines remain
+    // The save on exit: the World is leaving the tree, the entities have left the registry, the baselines remain
     [TestCase]
     [RequireGodotRuntime]
     public void Write_AfterTheServerRootLeftTheTree_HasEveryEntity()

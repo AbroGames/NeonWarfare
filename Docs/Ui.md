@@ -67,7 +67,8 @@ It is built **from a model, not by hand**. `MenuGameSettings`
 | `[Name]`, `[Hint]` | Localization keys for the label and the hint |
 | `[Hide]` | Excluded from the generated list (`PlayerSettingsAcknowledged`) |
 | `[Range]`, `[Step]` | A numeric field becomes an `HSlider` (without `[Range]` — a `SpinBox`) |
-| `[Options]` | A fixed set of values → an `OptionButton` |
+| `[Options]` | A fixed set of values → an `OptionButton`; a value not among them selects nothing and is kept |
+| `[OptionValues]` | The values of the `[Options]` items, of the field's type (`AutoSaveIntervalMinutes`); without it an item's value is its label |
 
 `GetVisibleSettings(category)` assembles a list of `Setting` by reflection; `SettingsCategoryPage`
 turns each of them into a `SettingContainer`, which picks the input control by field type through

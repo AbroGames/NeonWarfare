@@ -68,3 +68,17 @@ public class OptionsAttribute : Attribute
         Options = options;
     }
 }
+
+/// <summary>
+/// The values of the <see cref="OptionsAttribute"/> items, in their order, of the member's type. Without it an item's
+/// value is its label.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class OptionValuesAttribute : Attribute
+{
+    public object[] Values { get; }
+    public OptionValuesAttribute(params object[] values)
+    {
+        Values = values;
+    }
+}

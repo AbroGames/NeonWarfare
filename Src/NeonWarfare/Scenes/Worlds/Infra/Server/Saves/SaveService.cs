@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
@@ -12,14 +13,23 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 /// The saves of the World, see Docs/Data-and-saves.md#saves.
 /// </summary>
 [Server]
-public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles, WorldSaveFile saveFile)
+public class SaveService(
+    SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles, WorldSaving saving, TimeProvider time)
 {
     private readonly ILogger _log = LogFactory.GetForStatic<SaveService>();
 
     private readonly List<(string FileName, Action Written, Action<Exception> Failed)> _requests = [];
 
-    /// <summary>The last file written. After a "save as" the autosave and the next load use the new file.</summary>
-    public string SaveFileName { get; private set; } = saveFile.FileName;
+    private readonly int _autoSaveIntervalTicks =
+        TickRate.ToTicks(TimeSpan.FromMinutes(saving.AutoSaveIntervalMinutes).TotalSeconds);
+
+    // Scheduled at the first tick, because the services are built before SaveLoader restores the tick counter.
+    private long? _nextAutoSaveTick;
+
+    /// <summary>
+    /// The last file written. After a "save as" the autosave, the save on exit and the next load use the new file.
+    /// </summary>
+    public string SaveFileName { get; private set; } = saving.FileName;
 
     /// <summary>
     /// Requests a save to <paramref name="saveFileName"/> at the end of the current tick.
@@ -35,14 +45,26 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
         _requests.Add((saveFileName, written, failed));
     }
 
-    /// <summary>Writes one save for every request of the tick.</summary>
+    /// <summary>
+    /// Writes one save for every request of the tick, and the autosave when an interval has passed since the first
+    /// tick or the last write to <see cref="SaveFileName"/>.
+    /// </summary>
     public void WriteRequested()
     {
-        if (_requests.Count == 0) return;
+        bool autoSave = false;
+        if (_autoSaveIntervalTicks > 0)
+        {
+            _nextAutoSaveTick ??= clock.CurrentTick + _autoSaveIntervalTicks;
+            autoSave = clock.CurrentTick >= _nextAutoSaveTick.Value;
+        }
+        if (_requests.Count == 0 && !autoSave) return;
 
         var requests = _requests.ToArray();
         _requests.Clear();
+        // A due autosave waits a whole interval whatever happens to it, so a failing disk is not hit every tick.
+        if (autoSave) ScheduleAutoSave();
 
+        long started = time.GetTimestamp();
         byte[] save;
         try
         {
@@ -57,12 +79,29 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
             }
             return;
         }
+        TimeSpan serializing = time.GetElapsedTime(started);
+
+        // The autosave goes first, so a "save as" of the same tick still moves the save file.
+        if (autoSave)
+        {
+            try
+            {
+                TimeSpan writing = WriteToDisk(save, SaveFileName);
+                _log.Information(
+                    "Autosaved to '{saveFileName}': serialize {serializeMs:0.00} ms, disk {diskMs:0.00} ms",
+                    SaveFileName, serializing.TotalMilliseconds, writing.TotalMilliseconds);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e, "The autosave to '{saveFileName}' failed", SaveFileName);
+            }
+        }
 
         foreach ((string fileName, Action written, Action<Exception> failed) in requests)
         {
             try
             {
-                saveFiles.SaveToDisk(save, fileName);
+                WriteToDisk(save, fileName);
             }
             catch (Exception e)
             {
@@ -71,6 +110,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
                 continue;
             }
             SaveFileName = fileName;
+            ScheduleAutoSave();
             Run(written);
         }
     }
@@ -82,24 +122,37 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
     {
         try
         {
-            if (!saveFile.AutoSave)
-            {
-                _log.Information("No autosave: it is disabled");
-                return;
-            }
             // Without a tick the baselines are empty, and the save file, if any, already holds this state.
             if (!clock.Started)
             {
-                _log.Information("No autosave to '{saveFileName}': no tick has run, nothing new to save", SaveFileName);
+                _log.Information("No save on exit to '{saveFileName}': no tick has run, nothing new to save",
+                    SaveFileName);
                 return;
             }
-            saveFiles.SaveToDisk(saveWriter.Write(), SaveFileName);
-            _log.Information("Autosaved to '{saveFileName}'", SaveFileName);
+            long started = time.GetTimestamp();
+            byte[] save = saveWriter.Write();
+            TimeSpan serializing = time.GetElapsedTime(started);
+            TimeSpan writing = WriteToDisk(save, SaveFileName);
+            _log.Information(
+                "Saved on exit to '{saveFileName}': serialize {serializeMs:0.00} ms, disk {diskMs:0.00} ms",
+                SaveFileName, serializing.TotalMilliseconds, writing.TotalMilliseconds);
         }
         catch (Exception e)
         {
-            _log.Error(e, "The autosave to '{saveFileName}' failed", SaveFileName);
+            _log.Error(e, "The save on exit to '{saveFileName}' failed", SaveFileName);
         }
+    }
+
+    private void ScheduleAutoSave()
+    {
+        _nextAutoSaveTick = clock.CurrentTick + _autoSaveIntervalTicks;
+    }
+
+    private TimeSpan WriteToDisk(byte[] save, string fileName)
+    {
+        long started = time.GetTimestamp();
+        saveFiles.SaveToDisk(save, fileName);
+        return time.GetElapsedTime(started);
     }
 
     private void Run(Action callback)

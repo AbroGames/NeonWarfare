@@ -26,7 +26,7 @@ public abstract record WorldSetup
     /// <summary>Single player and hosting from inside the client. The admin is the host's own player.</summary>
     public sealed record Host(
         ISaveFiles SaveFiles,
-        WorldSaveFile SaveFile,
+        WorldSaving Saving,
         LocalPlayer LocalPlayer,
         IServerOwner ServerOwner,
         ILocalPlayerOwner LocalPlayerOwner)
@@ -45,7 +45,7 @@ public abstract record WorldSetup
     /// <summary>A dedicated server, with <c>ServerHud</c> or without.</summary>
     public sealed record Dedicated(
         ISaveFiles SaveFiles,
-        WorldSaveFile SaveFile,
+        WorldSaving Saving,
         WorldAdmin Admin,
         ProtectedPlayer ProtectedPlayer,
         IServerOwner ServerOwner)

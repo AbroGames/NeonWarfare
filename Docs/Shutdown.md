@@ -7,11 +7,11 @@
   calls `Shutdown()` on the root window's `CloseRequested`.
 * **A termination signal** — SIGTERM or SIGINT (Ctrl+C, `kill`, `systemctl stop`, `docker stop`). Godot
   installs no handler of its own, so the signal would kill the process on the spot, with no
-  `NotificationExitTree` and hence no autosave. `QuitRequestsService.Init()`, called
+  `NotificationExitTree` and hence no save on exit. `QuitRequestsService.Init()`, called
   from `BaseRootStarter.Init()` for both roles, cancels the signal through `PosixSignalRegistration` and
   calls `Services.MainScene.Shutdown()` instead. A second signal is not cancelled and kills the process
   — the way out when a shutdown hangs.
-* **The server child process** — `OS.Kill` is SIGKILL / `TerminateProcess`, with no autosave, so the client never
+* **The server child process** — `OS.Kill` is SIGKILL / `TerminateProcess`, with no save on exit, so the client never
   asks the server to stop: freeing the `Game` closes the connection, the admin leaves, and `PlayerSimulationFacade`
   reports it through `IServerOwner.AdminLeft()`, which `Game` raises as its `AdminLeft` event.
   `DedicatedServerGameStarter` started with `--parent-pid` subscribes to it and calls `MainScene.Shutdown()`; one
@@ -23,9 +23,9 @@
   `DedicatedServerGameStarter` attaches a `ProcessDeadChecker` (also a node from GodotBox) to `Game`.
   It periodically checks whether the parent is alive and calls `MainScene.Shutdown()` if the client has
   disappeared from the OS.
-* **Saving the world** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree, if
-  autosave is on for the session, see [Data and saves](Data-and-saves.md#saves).
+* **Saving the world** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree, see
+  [Data and saves](Data-and-saves.md#saves).
 
 The "client + out-of-process server" pair is stopped from the server side both ways: by the admin leaving on a
 normal client shutdown, and by `ProcessDeadChecker` when the client died abnormally — a crashing client kills
-nothing, so the server still autosaves.
+nothing, so the server still saves on exit.

@@ -4,7 +4,7 @@ namespace NeonWarfare.Scripts.GlobalServices;
 
 /// <summary>
 /// A quit requested from outside the game — a termination signal or closing the window — goes through
-/// <see cref="MainSceneService.Shutdown"/>, the same way as the game's own Quit: it autosaves and waits for a child
+/// <see cref="MainSceneService.Shutdown"/>, the same way as the game's own Quit: it saves on exit and waits for a child
 /// server.
 /// </summary>
 public class QuitRequestsService

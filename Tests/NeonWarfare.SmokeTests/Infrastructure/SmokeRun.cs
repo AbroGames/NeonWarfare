@@ -22,7 +22,7 @@ public static class SmokeRun
 
     /// <summary>
     /// How long the exiter of a <see cref="SelfExit"/> gets to quit. ProcessDeadChecker looks every 5 s, and the
-    /// autosave on the way out comes after that.
+    /// save on exit comes after that.
     /// </summary>
     private static readonly TimeSpan SelfExitTimeout = TimeSpan.FromSeconds(15);
 

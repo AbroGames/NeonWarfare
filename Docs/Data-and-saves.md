@@ -43,10 +43,13 @@ next NetId and the tick, then a spawn record of every entity (`StateReplicator.W
 
 * **"Save as"** — `SaveCommand` (admin) → `SaveService.RequestSave`: one `SaveWriter.Write()` serves every request
   of the tick, after its packets; the written file becomes the World's save file, and the sender gets a chat reply.
+* **Autosave** — `SaveService.WriteRequested` also writes the save file every `AutoSaveIntervalMinutes` of
+  `WorldSaving` (0 — never), counted from the first tick and from every write to the save file, so neither a load nor a
+  "save as" is followed by an autosave at once. It goes before the requests of its tick, so a "save as" still moves the
+  file. The starter fills the interval once per session from `GameSettings`, or from the dedicated server's settings.
 * **On exit** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree (quit or back to the
-  menu), if a tick has run and the `WorldSaveFile` says so: the starter fills it once per session from
-  `AutoSaveEnabled` of `GameSettings`, or of the dedicated server's settings. It comes between ticks: `Quit()` only sets
-  a flag.
+  menu), if a tick has run. It comes between ticks: `Quit()` only sets a flag. It and the autosave log how long the
+  serialization and the disk write took.
 * **Load** — `SaveLoader` (origin `FromSave`) spawns every entity with its saved NetId, then restores the NetId
   sequence and the tick counter. A save of another protocol hash throws `SaveVersionMismatchException`, a broken one
   `SaveFormatException`; the starter shows the player a message (see [Startup flow](Startup-flow.md)).
@@ -66,7 +69,7 @@ and on the project name (`Neon Warfare`):
 | Linux | `~/.local/share/godot/app_userdata/Neon Warfare/` |
 
 Saves: `user://saves/<name>.bin`, the name of a new file is `yyyy-MM-dd_HH-mm` (`SaveLoadService`).
-The save on exit and "save as" are described [above](#saves).
+The saves are described [above](#saves).
 
 Other files in `user://` (JSON, `System.Text.Json`):
 

@@ -78,7 +78,7 @@ public class WorldServicesBuilder
                 break;
             case WorldSetup.Host host:
                 services.AddSingleton(host.SaveFiles);
-                services.AddSingleton(host.SaveFile);
+                services.AddSingleton(host.Saving);
                 services.AddSingleton(host.LocalPlayer);
                 services.AddSingleton(host.Admin);
                 services.AddSingleton(host.ProtectedPlayer);
@@ -87,7 +87,7 @@ public class WorldServicesBuilder
                 break;
             case WorldSetup.Dedicated dedicated:
                 services.AddSingleton(dedicated.SaveFiles);
-                services.AddSingleton(dedicated.SaveFile);
+                services.AddSingleton(dedicated.Saving);
                 services.AddSingleton(dedicated.Admin);
                 services.AddSingleton(dedicated.ProtectedPlayer);
                 services.AddSingleton(dedicated.ServerOwner);
