@@ -21,8 +21,8 @@ explicit implementation of a nested role interface, so a caller holds only the r
 | `IServerEndpoint`: `StartHandshake`, `QueueDisconnection`, `ReceiveFromClient` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
 | `IClientEndpoint`: `ReceiveState`, `ReceiveEvents` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the body of a packet |
 
-`WorldOrigin` says where the state comes from: `NewWorld(saveFileName)` — `NewWorldSimulationFacade.Create()` spawns
-what a world starts with; `FromSave(save, saveFileName)` — `SaveLoader`; `FromSnapshot(body)` — the join snapshot,
+`WorldOrigin` says where the state comes from: `NewWorld()` — `NewWorldSimulationFacade.Create()` spawns
+what a world starts with; `FromSave(save)` — `SaveLoader`; `FromSnapshot(body)` — the join snapshot,
 on a remote client. A World is never empty: a remote client creates it only from the first snapshot. A broken save
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
@@ -41,8 +41,8 @@ it (`LayerReferenceTests`), so a service sees its layer and the ports, never the
 | `WorldSetup` | Ports | `WorldLayer` | Used by |
 |---|---|---|---|
 | `RemoteClient` | `LocalPlayer`, `ILocalPlayerOwner` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
-| `Host` | `ISaveFiles`, `LocalPlayer` (also the `WorldAdmin`), `IServerOwner`, `ILocalPlayerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
-| `Dedicated` | `ISaveFiles`, `WorldAdmin`, `IServerOwner` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
+| `Host` | `ISaveFiles`, `WorldSaveFile`, `LocalPlayer` (also the `WorldAdmin`), `IServerOwner`, `ILocalPlayerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
+| `Dedicated` | `ISaveFiles`, `WorldSaveFile`, `WorldAdmin`, `IServerOwner` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
 
 The host has no `ClientReplication`: its Simulation writes the very models its Presentation reads.
 
@@ -52,16 +52,16 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[SimulationFacade]` | A finished operation: checks, decisions, order of steps; writes and publishes itself or through leaves (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[Server]` | Host, Dedicated |
 | `[CommandHandler]` | `IPlayerCommandHandler<T>`, `IPeerSessionHandler`: validate and call a facade | Facades, `[Query]` | Host, Dedicated |
 | `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]`; `[CommandHandler]` only as a collection, and `IPeerSessionHandler` | Host, Dedicated |
-| `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`, `*StorageQuery`) | `[Query]` | All |
+| `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`) | `[Query]` | All |
 | `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]`; `[Presentation]` only as a collection | RemoteClient, Host |
 | `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | RemoteClient, Host |
 | `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
 
 Every layer may also take the models, the `WorldDependencies` and the `WorldSetup` types, except those with an
-effect beyond the world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[Server]`;
-`IServerOwner` — `[SimulationFacade]`; `IPeerSessionHandler` — `[Server]` (`PeerSessions`); `IServerConnection` —
-`[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`; `EntityRegistry`
-and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
+effect beyond the world, which only their owner takes: `IClientsConnection`, `ISaveFiles`, `WorldSaveFile` —
+`[Server]`; `IServerOwner` — `[SimulationFacade]`; `IPeerSessionHandler` — `[Server]` (`PeerSessions`);
+`IServerConnection` — `[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`;
+`EntityRegistry` and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
 `ILocalPlayerOwner` — `[Presentation]`.
 `IEntityFinder` is open to all. A parameter `IEnumerable<I>` is a dependency on the layer of every implementation
 of `I`; an `I` the root registers itself (a port, a `WorldDependencies` type) is never taken as a
@@ -117,7 +117,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | Folder | What it holds |
 |---|---|
 | `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
-| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
+| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `WorldSaveFile` — the file a server World saves to from its start, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher` and its `ProtocolHash`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |

@@ -31,14 +31,14 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
     public void SendLocalizedMessageAsServerToAll(string key, string[] args)
     {
         _log.Information("Chat server to all: {key} {args}", key, args);
-        outbox.PublishToAll(new LocalizedChatMessageEvent(NowUnixSeconds(), key, args));
+        outbox.PublishToAll(new LocalizedChatMessageEvent(NowUnixSeconds(), new LocalizedText(key, args)));
     }
 
     public void SendLocalizedMessageAsServerToPlayer(string key, string[] args, string receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
         _log.Information("Chat server to {nick} ({uid}): {key} {args}", receiver.Nick, receiver.Uid, key, args);
-        outbox.PublishTo(new LocalizedChatMessageEvent(NowUnixSeconds(), key, args), receiverUid);
+        outbox.PublishTo(new LocalizedChatMessageEvent(NowUnixSeconds(), new LocalizedText(key, args)), receiverUid);
     }
 
     // A log record stays on one line, because a continuation line has no time or source and grep loses it.

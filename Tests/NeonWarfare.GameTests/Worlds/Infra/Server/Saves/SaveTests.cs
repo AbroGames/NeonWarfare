@@ -325,8 +325,8 @@ public class SaveTests
         var registry = bob.GetRequiredService<IEntityFinder>();
         AssertThat(registry.GetAll<Node>()).HasSize(loaded.GetRequiredService<IEntityFinder>().GetAll<Node>().Count);
         AssertThat(((CounterNode) registry.GetNode(Id(_server, counter))).Value).IsEqual(5);
-        AssertThat(bob.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick).IsEqual("Alice");
-        AssertThat(bob.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.ToList())
+        AssertThat(bob.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[AliceUid].Nick).IsEqual("Alice");
+        AssertThat(bob.GetRequiredService<PlayerQuery>().OnlineModel.Uids.ToList())
             .ContainsExactly(BobUid);
     }
 
@@ -442,10 +442,10 @@ public class SaveTests
     private static EntitySpawner Spawner(ServiceProvider server) => server.GetRequiredService<EntitySpawner>();
 
     private static PlayersModel Players(ServiceProvider provider) =>
-        provider.GetRequiredService<PlayersStorageQuery>().Model;
+        provider.GetRequiredService<PlayerQuery>().PlayersModel;
 
     private static ReplicatedSet<string> Online(ServiceProvider provider) =>
-        provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids;
+        provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids;
 
     private static T Single<T>(ServiceProvider provider) where T : class =>
         provider.GetRequiredService<IEntityFinder>().GetSingle<T>();

@@ -5,8 +5,7 @@ using RepliCAT;
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 /// <summary>
-/// The entity holding <see cref="OnlinePlayersModel"/>, one per world, found through
-/// <see cref="OnlinePlayersStorageQuery"/>.
+/// The entity holding <see cref="OnlinePlayersModel"/>, one per world, found through <see cref="PlayerQuery"/>.
 /// After a load nobody is online until the players join again, see Docs/Data-and-saves.md#models-and-storages.
 /// </summary>
 [NotSaved]

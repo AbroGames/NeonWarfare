@@ -99,9 +99,11 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     /// Adds the World of a host without a network. Its own join is sent right away and applied in the next tick.
     /// </summary>
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
-    public World AddSingleplayerWorld(ISaveFiles saveFiles, LocalPlayer localPlayer, WorldOrigin origin)
+    public World AddSingleplayerWorld(
+        ISaveFiles saveFiles, WorldSaveFile saveFile, LocalPlayer localPlayer, WorldOrigin origin)
     {
-        return Store(_assembler.Singleplayer(new WorldSetup.Host(saveFiles, localPlayer, this, this), origin));
+        return Store(_assembler.Singleplayer(
+            new WorldSetup.Host(saveFiles, saveFile, localPlayer, this, this), origin));
     }
 
     /// <summary>
@@ -109,15 +111,19 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     /// next tick.
     /// </summary>
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
-    public World AddHostWorld(Network network, ISaveFiles saveFiles, LocalPlayer localPlayer, WorldOrigin origin)
+    public World AddHostWorld(
+        Network network, ISaveFiles saveFiles, WorldSaveFile saveFile, LocalPlayer localPlayer, WorldOrigin origin)
     {
-        return Store(_assembler.Host(new WorldSetup.Host(saveFiles, localPlayer, this, this), origin, network));
+        return Store(_assembler.Host(
+            new WorldSetup.Host(saveFiles, saveFile, localPlayer, this, this), origin, network));
     }
 
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
-    public World AddDedicatedWorld(Network network, ISaveFiles saveFiles, WorldAdmin admin, WorldOrigin origin)
+    public World AddDedicatedWorld(
+        Network network, ISaveFiles saveFiles, WorldSaveFile saveFile, WorldAdmin admin, WorldOrigin origin)
     {
-        return Store(_assembler.Dedicated(new WorldSetup.Dedicated(saveFiles, admin, this), origin, network));
+        return Store(_assembler.Dedicated(
+            new WorldSetup.Dedicated(saveFiles, saveFile, admin, this), origin, network));
     }
 
     public void ShowServerHud()

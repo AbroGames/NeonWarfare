@@ -5,22 +5,22 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.Root.Starters;
 
-public class ClientRootStarter : BaseRootStarter
+public class ClientRootStarter(RootData rootData) : BaseRootStarter(rootData)
 {
 
-	private ClientArgs _clientArgs;
-	private readonly ILogger _log = LogFactory.GetForStatic<ClientRootStarter>();
-	
-    public override void Init(RootData rootData)
+    private ClientArgs _clientArgs;
+    private readonly ILogger _log = LogFactory.GetForStatic<ClientRootStarter>();
+    
+    public override void Init()
     {
-	    base.Init(rootData);
+        base.Init();
         _log.Information("Initializing Client...");
         
         _clientArgs = ClientArgs.GetFromCmd(CmdArgsService);
         
         Services.SaveLoad.Init(false);
-        Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
-        Services.Process.Init(rootData.SceneTree);
+        Services.AutoScaling.Init(RootData.SceneTree, Consts.AutoScalingSettings);
+        Services.Process.Init(RootData.SceneTree);
         Services.LastGame.Init();
         Services.KnownServers.Init();
         
@@ -35,24 +35,23 @@ public class ClientRootStarter : BaseRootStarter
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
     }
 
-    public override void Start(RootData rootData)
+    public override void Start()
     {
-	    base.Start(rootData);
         _log.Information("Starting Client...");
 
 
         if (_clientArgs.AutoStart)
         {
-	        Services.MainScene.StartSingleplayerGame(
-		        _clientArgs.AutoStartSaveFileName ?? Services.SaveLoad.GenNewSaveFileName());
+            Services.MainScene.StartSingleplayerGame(
+                _clientArgs.AutoStartSaveFileName ?? Services.SaveLoad.GenNewSaveFileName());
         } 
         else if (_clientArgs.AutoConnect)
         {
-	        Services.MainScene.ConnectToMultiplayerGame(_clientArgs.AutoConnectIp, _clientArgs.AutoConnectPort);
+            Services.MainScene.ConnectToMultiplayerGame(_clientArgs.AutoConnectIp, _clientArgs.AutoConnectPort);
         }
         else
         {
-	        Services.MainScene.StartMainMenu();
+            Services.MainScene.StartMainMenu();
         }
     }
 }

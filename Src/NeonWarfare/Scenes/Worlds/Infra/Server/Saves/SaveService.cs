@@ -12,22 +12,14 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 /// The saves of the World, see Docs/Data-and-saves.md#saves.
 /// </summary>
 [Server]
-public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles)
+public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles, WorldSaveFile saveFile)
 {
     private readonly ILogger _log = LogFactory.GetForStatic<SaveService>();
 
     private readonly List<(string FileName, Action Written, Action<Exception> Failed)> _requests = [];
 
     /// <summary>The last file written. After a "save as" the autosave and the next load use the new file.</summary>
-    public string SaveFileName { get; private set; }
-
-    public void Init(string saveFileName)
-    {
-        ArgumentNullException.ThrowIfNull(saveFileName);
-        if (SaveFileName != null) throw new InvalidOperationException("The save file name is already set.");
-
-        SaveFileName = saveFileName;
-    }
+    public string SaveFileName { get; private set; } = saveFile.FileName;
 
     /// <summary>
     /// Requests a save to <paramref name="saveFileName"/> at the end of the current tick.
@@ -101,8 +93,6 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
                 _log.Information("No autosave to '{saveFileName}': no tick has run, nothing new to save", SaveFileName);
                 return;
             }
-            if (SaveFileName == null) throw new InvalidOperationException("The save file name is not set.");
-
             saveFiles.SaveToDisk(saveWriter.Write(), SaveFileName);
         }
         catch (Exception e)

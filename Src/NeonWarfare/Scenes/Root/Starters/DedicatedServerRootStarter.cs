@@ -5,7 +5,7 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.Root.Starters;
 
-public class DedicatedServerRootStarter : BaseRootStarter
+public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(rootData)
 {
     
     // The display server of a windowless run, see Docs/Cli-args.md.
@@ -14,9 +14,9 @@ public class DedicatedServerRootStarter : BaseRootStarter
     private DedicatedServerArgs _dedicatedServerArgs;
     private readonly ILogger _log = LogFactory.GetForStatic<DedicatedServerRootStarter>();
     
-    public override void Init(RootData rootData)
+    public override void Init()
     {
-        base.Init(rootData);
+        base.Init();
         _log.Information("Initializing DedicatedServer...");
         
         _dedicatedServerArgs = DedicatedServerArgs.GetFromCmd(CmdArgsService);
@@ -28,12 +28,11 @@ public class DedicatedServerRootStarter : BaseRootStarter
         // The locale is a setting, so it is set only after the settings are loaded.
         Services.I18N.SetCurrentLocale(Services.DedicatedServerSettings.GetSettings().Locale);
         
-        rootData.SceneTree.Root.Title = $"[SERVER] {rootData.SceneTree.Root.Title}";
+        RootData.SceneTree.Root.Title = $"[SERVER] {RootData.SceneTree.Root.Title}";
     }
 
-    public override void Start(RootData rootData)
+    public override void Start()
     {
-        base.Start(rootData);
         _log.Information("Starting DedicatedServer...");
 
         Services.MainScene.HostMultiplayerGameAsDedicatedServer(

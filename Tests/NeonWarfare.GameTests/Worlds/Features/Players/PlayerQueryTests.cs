@@ -7,11 +7,11 @@ using static GdUnit4.Assertions;
 namespace NeonWarfare.GameTests.Worlds.Features.Players;
 
 [TestSuite]
-public class PlayersStorageQueryTests
+public class PlayerQueryTests
 {
     [TestCase]
     [RequireGodotRuntime]
-    public void Model_IsTheModelOfTheStorage()
+    public void PlayersAndOnline_AreTheModelsOfTheStorages()
     {
         var registry = new EntityRegistry();
         PlayersStorage players = AutoFree(new PlayersStorage())!;
@@ -19,21 +19,21 @@ public class PlayersStorageQueryTests
         registry.Register(new NetId(1), players, 0);
         registry.Register(new NetId(2), onlinePlayers, 0);
 
-        AssertThat(new PlayersStorageQuery(registry).Model).IsSame(players.Model);
-        AssertThat(new OnlinePlayersStorageQuery(registry).Model).IsSame(onlinePlayers.Model);
+        AssertThat(new PlayerQuery(registry).PlayersModel).IsSame(players.Model);
+        AssertThat(new PlayerQuery(registry).OnlineModel).IsSame(onlinePlayers.Model);
     }
 
     // The registry's own message, so a read before the spawn says why the storage is missing
     [TestCase]
     [RequireGodotRuntime]
-    public void Model_BeforeTheSpawn_Throws()
+    public void PlayersAndOnline_BeforeTheSpawn_Throw()
     {
         var registry = new EntityRegistry();
 
-        AssertThrown(() => _ = new PlayersStorageQuery(registry).Model)
+        AssertThrown(() => _ = new PlayerQuery(registry).PlayersModel)
             .IsInstanceOf<InvalidOperationException>()
             .StartsWithMessage("Expected exactly one PlayersStorage, found 0.");
-        AssertThrown(() => _ = new OnlinePlayersStorageQuery(registry).Model)
+        AssertThrown(() => _ = new PlayerQuery(registry).OnlineModel)
             .IsInstanceOf<InvalidOperationException>()
             .StartsWithMessage("Expected exactly one OnlinePlayersStorage, found 0.");
     }

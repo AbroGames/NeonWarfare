@@ -16,7 +16,6 @@ namespace NeonWarfare.GameTests.Game.Fixtures;
 public class TransportWorlds
 {
     public const long Now = 1_700_000_000;
-    public const string SaveFileName = "save";
 
     public NetMessageCodec Codec { get; } = new(NetMessageCodecTests.CreateMapping());
 
@@ -30,7 +29,7 @@ public class TransportWorlds
         var dependencies = new WorldDependencies(
             Time, Codec, TestProtocol.Hash, new Replicator(NetMessageCodecTests.CreateMapping()),
             new ManualFrameProvider(), scenes, TestWorldScenes.CreateCatalog(scenes), clients, server);
-        return world.InitPreReady(setup, dependencies, origin ?? new WorldOrigin.NewWorld(SaveFileName));
+        return world.InitPreReady(setup, dependencies, origin ?? new WorldOrigin.NewWorld());
     }
 
     // Outside the tree the engine never ticks the World

@@ -69,7 +69,7 @@ public partial class Hud : Control
     public override void _Process(double delta)
     {
         InfoLabel.Text = "Players:\n"
-                         + string.Join("\n", _players.OnlinePlayers().Select(player => player.Nick));
+                         + string.Join("\n", _players.GetOnlinePlayers().Select(player => player.Nick));
 
         // The server drops a save from anyone else without a reply
         bool isAdmin = _localPlayer.Player.IsAdmin;
@@ -100,7 +100,7 @@ public partial class Hud : Control
             ChatPresentation.PlayerMessageEntry message => $"[{message.SenderNick}]: {message.Text}",
             ChatPresentation.ServerTextEntry message => $"[{tr("HUD__CHAT_SERVER_NICK")}]: {message.Text}",
             ChatPresentation.LocalizedServerEntry message =>
-                $"[{tr("HUD__CHAT_SERVER_NICK")}]: {FormatLocalized(message.Key, message.Args, tr)}",
+                $"[{tr("HUD__CHAT_SERVER_NICK")}]: {FormatLocalized(message.Text.Key, message.Text.Args, tr)}",
             _ => throw new UnreachableException()
         };
 

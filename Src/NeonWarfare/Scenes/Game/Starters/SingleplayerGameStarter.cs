@@ -18,8 +18,8 @@ public class SingleplayerGameStarter(string saveFileName) : BaseGameStarter
 
         try
         {
-            game.AddSingleplayerWorld(
-                SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
+            game.AddSingleplayerWorld(SaveFilesUpdatingLastGame(lastGame), new WorldSaveFile(saveFileName),
+                ReadLocalPlayer(), LoadServerOrigin(saveFileName));
         }
         catch (Exception e)
         {

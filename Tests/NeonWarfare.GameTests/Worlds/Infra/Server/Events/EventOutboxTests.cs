@@ -69,7 +69,7 @@ public class EventOutboxTests
     {
         ChatServerMessageEvent first = Event("first");
         ChatServerMessageEvent second = Event("second");
-        var third = new LocalizedChatMessageEvent(3, "key", ["Carol"]);
+        var third = new LocalizedChatMessageEvent(3, new LocalizedText("key", ["Carol"]));
         ChatServerMessageEvent fourth = Event("fourth");
 
         _outbox.PublishToAll(first);

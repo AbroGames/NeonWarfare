@@ -50,7 +50,7 @@ public class CommandDispatcherTests
         registry.Register(new NetId(1), _playersStorage, 0);
         registry.Register(new NetId(2), _onlinePlayersStorage, 0);
         _playersModel = _playersStorage.Model;
-        _players = new PlayerQuery(new PlayersStorageQuery(registry), new OnlinePlayersStorageQuery(registry));
+        _players = new PlayerQuery(registry);
         _calls = [];
         foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
         {

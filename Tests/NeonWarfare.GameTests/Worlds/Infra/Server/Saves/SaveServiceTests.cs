@@ -40,7 +40,7 @@ public class SaveServiceTests
         _files = new RecordingSaveFiles();
         var connection = new RecordingClientsConnection();
         _server = new WorldServicesBuilder().Build(
-            TestWorldSetups.Dedicated(saveFiles: _files),
+            TestWorldSetups.Dedicated(saveFiles: _files, saveFileName: OldFile),
             new WorldDependencies(new ManualTimeProvider(0),
                 new NetMessageCodec(NetMessageCodecTests.CreateMapping()), TestProtocol.Hash,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, catalog,
@@ -48,7 +48,6 @@ public class SaveServiceTests
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _service = _server.GetRequiredService<SaveService>();
-        _service.Init(OldFile);
     }
 
     [AfterTest]
@@ -183,14 +182,6 @@ public class SaveServiceTests
         _service.SaveOnExit();
 
         AssertThat(_files.Files).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Init_Twice_Throws()
-    {
-        AssertThrown(() => _service.Init(NewFile)).IsInstanceOf<InvalidOperationException>();
-        AssertThat(_service.SaveFileName).IsEqual(OldFile);
     }
 
     private void Tick() => _server.GetRequiredService<ServerTickLoop>().RunTick();

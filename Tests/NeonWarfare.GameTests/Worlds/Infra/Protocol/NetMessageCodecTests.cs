@@ -22,6 +22,7 @@ public class NetMessageCodecTests
         [typeof(long)] = 1_700_000_000L,
         [typeof(ulong)] = 0xFEDC_BA98_7654_3210UL,
         [typeof(Color)] = new Color(0.1f, 0.2f, 0.3f, 0.4f),
+        [typeof(LocalizedText)] = new LocalizedText("sample", ["first", "second"]),
     };
 
     [TestCase]
@@ -99,7 +100,7 @@ public class NetMessageCodecTests
     {
         var codec = new NetMessageCodec(CreateMapping());
         var buffer = new ArrayBufferWriter<byte>();
-        codec.Write(buffer, new LocalizedChatMessageEvent(1, "key", ["nick"]));
+        codec.Write(buffer, new LocalizedChatMessageEvent(1, new LocalizedText("key", ["nick"])));
 
         AssertRejected(() => codec.Read(buffer.WrittenMemory, AllowedCommands(), out _));
     }
@@ -132,7 +133,8 @@ public class NetMessageCodecTests
     public void Section_RoundTrips()
     {
         var codec = new NetMessageCodec(CreateMapping());
-        object[] messages = [new SendChatMessageCommand("hello"), new LocalizedChatMessageEvent(1, "key", ["nick"])];
+        object[] messages =
+            [new SendChatMessageCommand("hello"), new LocalizedChatMessageEvent(1, new LocalizedText("key", ["nick"]))];
         HashSet<Type> allowed = [typeof(SendChatMessageCommand), typeof(LocalizedChatMessageEvent)];
 
         foreach (object[] section in new[] { [], messages })

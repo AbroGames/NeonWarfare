@@ -328,10 +328,10 @@ public class PlayerJoinLeaveTests
     // The dispatcher alone, not the whole tick: the tick would send the events away before they are read
     private void Tick() => _provider.GetRequiredService<CommandDispatcher>().ProcessAll();
 
-    private PlayersModel Players() => _provider.GetRequiredService<PlayersStorageQuery>().Model;
+    private PlayersModel Players() => _provider.GetRequiredService<PlayerQuery>().PlayersModel;
 
     private IEnumerable<string> Online() =>
-        _provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.ToList();
+        _provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids.ToList();
 
     private EventOutbox Outbox() => _provider.GetRequiredService<EventOutbox>();
 
@@ -359,7 +359,11 @@ public class PlayerJoinLeaveTests
             .ToList();
 
     private static object[] Joined(string uid, string nick) =>
-        [new LocalizedChatMessageEvent(Now, "HUD__CHAT_PLAYER_JOINED", [nick]), new PlayerJoinedEvent(uid)];
+        [
+            new LocalizedChatMessageEvent(Now, new LocalizedText("HUD__CHAT_PLAYER_JOINED", [nick])),
+            new PlayerJoinedEvent(uid),
+        ];
 
-    private static LocalizedChatMessageEvent Left(string nick) => new(Now, "HUD__CHAT_PLAYER_LEFT", [nick]);
+    private static LocalizedChatMessageEvent Left(string nick) =>
+        new(Now, new LocalizedText("HUD__CHAT_PLAYER_LEFT", [nick]));
 }

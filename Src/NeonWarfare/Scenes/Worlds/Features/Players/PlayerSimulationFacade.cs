@@ -13,8 +13,7 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 public class PlayerSimulationFacade(
     ChatSimulation chat,
     EventOutbox outbox,
-    PlayersStorageQuery players,
-    OnlinePlayersStorageQuery onlinePlayers,
+    PlayerQuery players,
     WorldAdmin admin,
     IServerOwner owner)
 {
@@ -30,9 +29,9 @@ public class PlayerSimulationFacade(
     /// </summary>
     public void Join(string uid, string nick, Color color)
     {
-        if (!players.Model.PlayerByUid.TryGetValue(uid, out PlayerModel player))
+        if (!players.PlayersModel.PlayerByUid.TryGetValue(uid, out PlayerModel player))
         {
-            player = players.Model.AddPlayer(uid);
+            player = players.PlayersModel.AddPlayer(uid);
             player.Nick = nick;
             player.Color = color;
             _log.Information("New player: {nick} ({uid})", nick, uid);
@@ -44,7 +43,7 @@ public class PlayerSimulationFacade(
             _log.Information("Player is the admin of the world: {nick} ({uid})", player.Nick, uid);
         }
 
-        onlinePlayers.Model.Uids.Add(uid);
+        players.OnlineModel.Uids.Add(uid);
         _log.Information("Player joined: {nick} ({uid})", player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, [player.Nick]);
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
@@ -55,8 +54,8 @@ public class PlayerSimulationFacade(
     /// </summary>
     public void Leave(string uid, LeaveReason reason)
     {
-        PlayerModel player = players.Model.PlayerByUid[uid];
-        onlinePlayers.Model.Uids.Remove(uid);
+        PlayerModel player = players.PlayersModel.PlayerByUid[uid];
+        players.OnlineModel.Uids.Remove(uid);
         _log.Information("Player left: {nick} ({uid})", player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, [player.Nick]);
         if (uid == admin.Uid && reason == LeaveReason.Disconnected) owner.AdminLeft();

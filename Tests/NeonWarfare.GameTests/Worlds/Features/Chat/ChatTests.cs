@@ -172,7 +172,7 @@ public class ChatTests
         var calls = new List<string>();
         (ChatSimulationFacade facade, EventOutbox outbox, PeerStateTable peers) =
             HandMade((_, _) => [new FixtureCommand("admin", RequiresAdmin: true, calls)]);
-        PlayerModel root = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer("root");
+        PlayerModel root = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer("root");
         root.Nick = "Root";
         root.IsAdmin = true;
         peers.Connect(AlicePeer, DateTimeOffset.MaxValue);
@@ -206,6 +206,17 @@ public class ChatTests
         }
     }
 
+    // The events and the chat entries holding it compare by it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalizedText_EqualArgs_AreEqual()
+    {
+        AssertThat(new LocalizedText("KEY", ["a", "b"]))
+            .IsEqual(new LocalizedText("KEY", ["a", "b"]))
+            .IsNotEqual(new LocalizedText("KEY", ["a", "c"]))
+            .IsNotEqual(new LocalizedText("OTHER", ["a", "b"]));
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Help_ListsTheListedCommandsByRights()
@@ -221,7 +232,7 @@ public class ChatTests
             ];
             return [..listed, new HelpChatCommandSimulationFacade(listed, chat, players)];
         });
-        PlayerModel root = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer("root");
+        PlayerModel root = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer("root");
         root.IsAdmin = true;
         peers.Connect(AlicePeer, DateTimeOffset.MaxValue);
         peers.Join(AlicePeer, "alice");
@@ -242,9 +253,9 @@ public class ChatTests
     // Past the join, whose events would mix with the chat's
     private PlayerModel JoinDirectly(string uid, string nick, int peerId)
     {
-        PlayerModel player = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
+        PlayerModel player = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(uid);
         player.Nick = nick;
-        _provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.Add(uid);
+        _provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids.Add(uid);
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _provider.GetRequiredService<PeerStateTable>().Join(peerId, uid);
         return player;

@@ -263,7 +263,7 @@ public class ServerTickLoopTests
     private void JoinDirectly(string uid, string nick, int peerId)
     {
         Players().AddPlayer(uid).Nick = nick;
-        _provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.Add(uid);
+        _provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids.Add(uid);
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _provider.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
@@ -272,7 +272,7 @@ public class ServerTickLoopTests
         _provider.GetRequiredService<CommandInbox>()
             .EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
 
-    private PlayersModel Players() => _provider.GetRequiredService<PlayersStorageQuery>().Model;
+    private PlayersModel Players() => _provider.GetRequiredService<PlayerQuery>().PlayersModel;
 
     private IEnumerable<RecordingClientsConnection.Sent> EventPackets() =>
         _clientsConnection.Packets.Where(sent => sent.Kind == SentKind.Events);

@@ -10,6 +10,7 @@ namespace NeonWarfare.GameTests.Worlds.Fixtures;
 public static class TestWorldSetups
 {
     public const string LocalPlayerUid = "LocalLocal-Llllllllll";
+    public const string SaveFileName = "save";
 
     public static LocalPlayer LocalPlayer(string uid = LocalPlayerUid) => new(uid, "Local", Colors.White);
 
@@ -19,12 +20,14 @@ public static class TestWorldSetups
 
     public static WorldSetup.Host Host(
         LocalPlayer? localPlayer = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
-        ILocalPlayerOwner? localPlayerOwner = null) =>
-        new(saveFiles ?? new RecordingSaveFiles(), localPlayer ?? LocalPlayer(), owner ?? new RecordingServerOwner(),
-            localPlayerOwner ?? new RecordingLocalPlayerOwner());
+        ILocalPlayerOwner? localPlayerOwner = null, string saveFileName = SaveFileName) =>
+        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaveFile(saveFileName), localPlayer ?? LocalPlayer(),
+            owner ?? new RecordingServerOwner(), localPlayerOwner ?? new RecordingLocalPlayerOwner());
 
     /// <param name="adminUid"><c>null</c> — a World without an admin.</param>
     public static WorldSetup.Dedicated Dedicated(
-        string? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null) =>
-        new(saveFiles ?? new RecordingSaveFiles(), new WorldAdmin(adminUid), owner ?? new RecordingServerOwner());
+        string? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
+        string saveFileName = SaveFileName) =>
+        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaveFile(saveFileName), new WorldAdmin(adminUid),
+            owner ?? new RecordingServerOwner());
 }

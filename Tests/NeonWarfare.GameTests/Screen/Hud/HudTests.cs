@@ -30,7 +30,7 @@ public class HudTests
     [TestCase]
     public void FormatChatLine_LocalizedServerMessage_ShowsServerNickAndTranslationWithArgs()
     {
-        var entry = new ChatPresentation.LocalizedServerEntry(Now, "SAVED", ["my save"]);
+        var entry = new ChatPresentation.LocalizedServerEntry(Now, new LocalizedText("SAVED", ["my save"]));
 
         AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs))
             .IsEqual("[server]: saved as 'my save'");
@@ -40,7 +40,7 @@ public class HudTests
     [TestCase]
     public void FormatChatLine_LocalizedServerMessageMissingArg_ShowsKeyAndArgs()
     {
-        var entry = new ChatPresentation.LocalizedServerEntry(Now, "SAVED", []);
+        var entry = new ChatPresentation.LocalizedServerEntry(Now, new LocalizedText("SAVED", []));
 
         AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs)).IsEqual("[server]: SAVED");
     }
@@ -49,17 +49,9 @@ public class HudTests
     [TestCase]
     public void FormatChatLine_LocalizedServerMessageUnknownKey_ShowsKeyAndArgs()
     {
-        var entry = new ChatPresentation.LocalizedServerEntry(Now, "UNKNOWN", ["my save"]);
+        var entry = new ChatPresentation.LocalizedServerEntry(Now, new LocalizedText("UNKNOWN", ["my save"]));
 
         AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs)).IsEqual("[server]: UNKNOWN my save");
-    }
-
-    [TestCase]
-    public void LocalizedServerEntry_EqualArgs_AreEqual()
-    {
-        AssertThat(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "b"]))
-            .IsEqual(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "b"]))
-            .IsNotEqual(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "c"]));
     }
 
     private static string Translate(string key) => $"<{key}>";

@@ -69,6 +69,8 @@ public class ConstructorLayerTests
                 [Layer.Server, Layer.ClientReplication],
             // A write past SaveService would put a file on disk that the save file name and LastGame never follow
             [WorldLayers.WorldNamespace + ".Ports.ISaveFiles"] = [Layer.Server],
+            // The file to save to is SaveService's state: after a "save as" the port no longer names it
+            [WorldLayers.WorldNamespace + ".Ports.WorldSaveFile"] = [Layer.Server],
             // The join and the leave of a peer run only through PeerSessions, after its checks of the peer's state
             [WorldLayers.PeerSessionHandler] = [Layer.Server],
             // Stopping the process is an operation's decision, never a leaf's or the network machinery's

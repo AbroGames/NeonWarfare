@@ -57,9 +57,6 @@ public class StateReplicator
         entities.Despawned += OnEntityDespawned;
     }
 
-    /// <summary>The tick of the last <see cref="TryWrite"/>. The baselines hold the state at its end.</summary>
-    public long LastSentTick { get; private set; }
-
     /// <summary>
     /// Writes the state packet body of the tick. Called every tick, even when no peer gets the packet.
     /// That keeps the baselines equal to the state at the end of the last tick, and a joining peer's snapshot is
@@ -76,7 +73,6 @@ public class StateReplicator
             _entryById.Remove(id.Value);
             _stateLost.Remove(id.Value);
         });
-        LastSentTick = tick;
 
         int start = writer.BitPosition;
         writer.WriteVarUInt((ulong) tick);
