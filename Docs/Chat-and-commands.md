@@ -8,8 +8,9 @@ of a model: nothing of it goes into the save or the join snapshot, and the histo
 1. The `Hud` sends `SendChatMessageCommand(text)` (see [Networking](Networking.md#commands-client--server)).
 2. `SendChatMessageHandler` validates the text (not blank, at most 1024 characters, no control characters) and
    calls `ChatSimulationFacade.HandleInput(senderUid, text)`.
-3. Text starting with `/` is a chat command (below); anything else goes to `ChatSimulation.SendMessageAsPlayerToAll`,
-   which logs it and publishes `ChatPlayerMessageEvent` to everyone.
+3. `ChatSimulationFacade` routes by the `/` prefix: a chat command goes to `ChatCommandRunnerSimulationFacade`
+   (below); anything else goes to `ChatSimulation.SendMessageAsPlayerToAll`, which logs it and publishes
+   `ChatPlayerMessageEvent` to everyone.
 4. On every client `ChatPresentation` handles the chat events, keeps the last 100 entries as typed facts
    (`ChatEntry`) and posts `ChatEntryAddedNotice` into `HudMailbox`; the `Hud` then re-reads the history and renders
    it, translating the server's messages with `Tr` — so a language switch re-renders the old entries too.
@@ -33,13 +34,13 @@ key.
 A chat command is a class implementing `IListedChatCommand` (`Name`, `Description`, `RequiresAdmin`,
 `Execute(senderUid, arguments)`) — a `[SimulationFacade]` named `*ChatCommandSimulationFacade` in
 `Worlds/Features/Chat/ChatCommands/`, since a command may change the state through other facades.
-`ChatSimulationFacade` takes every `IChatCommand` in its constructor; the name is lower case without whitespace,
-unique. `/help` takes every `IListedChatCommand`, so it implements only the base `IChatCommand` and does not list
-itself.
+`ChatCommandRunnerSimulationFacade` takes every `IChatCommand` in its constructor; the name is lower case without
+whitespace, unique. `/help` takes every `IListedChatCommand`, so it implements only the base `IChatCommand` and does
+not list itself.
 
-`ChatSimulationFacade` logs the command, splits the name from the arguments and runs it. An unknown name or missing
-admin rights get a reply instead; a reply is `ChatSimulation.SendMessageAsServerToPlayer(text, senderUid)` →
-`ChatServerMessageEvent` to the sender alone.
+`ChatCommandRunnerSimulationFacade` logs the command, splits the name from the arguments and runs it. An unknown name
+or missing admin rights get a reply instead; a reply is `ChatSimulation.SendMessageAsServerToPlayer(text, senderUid)`
+→ `ChatServerMessageEvent` to the sender alone.
 
 | Command | Class | Rights |
 |---|---|---|

@@ -185,8 +185,8 @@ public class ChatTests
         peers.Connect(BobPeer, DateTimeOffset.MaxValue);
         peers.Join(BobPeer, root.Uid);
 
-        facade.HandleInput(AliceUid, "/admin x");
-        facade.HandleInput(root.Uid, "/ADMIN  y ");
+        facade.HandleChatInput(AliceUid, "/admin x");
+        facade.HandleChatInput(root.Uid, "/ADMIN  y ");
 
         AssertThat(calls).ContainsExactly("root: admin y");
         IReadOnlyList<object> aliceEvents = PeerEvents(outbox, AlicePeer);
@@ -244,8 +244,8 @@ public class ChatTests
         peers.Connect(BobPeer, DateTimeOffset.MaxValue);
         peers.Join(BobPeer, root.Uid);
 
-        facade.HandleInput(AliceUid, "/help");
-        facade.HandleInput(root.Uid, "/help");
+        facade.HandleChatInput(AliceUid, "/help");
+        facade.HandleChatInput(root.Uid, "/help");
 
         string player = ((ChatServerMessageEvent) PeerEvents(outbox, AlicePeer).Single()).Text;
         string admin = ((ChatServerMessageEvent) PeerEvents(outbox, BobPeer).Single()).Text;
@@ -306,8 +306,9 @@ public class ChatTests
         var outbox = new EventOutbox(_codec, peers);
         var players = _provider.GetRequiredService<PlayerQuery>();
         var chatSimulation = new ChatSimulation(new ManualTimeProvider(Now), outbox, players);
-        var facade = new ChatSimulationFacade(chatSimulation, players, commands(chatSimulation, players));
-        return (facade, outbox, peers);
+        var chatCommandRunner =
+            new ChatCommandRunnerSimulationFacade(chatSimulation, players, commands(chatSimulation, players));
+        return (new ChatSimulationFacade(chatSimulation, chatCommandRunner), outbox, peers);
     }
 
     private record FixtureCommand(string Name, bool RequiresAdmin, List<string> Calls) : IListedChatCommand

@@ -5,9 +5,9 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
-/// <c>ChatSimulationFacade</c> takes every <c>IChatCommand</c> in the container, and <c>/help</c> every
-/// <c>IListedChatCommand</c>. The layer is checked here and not only by the collection rules: they let a facade
-/// take a collection of any layer it may take, so a <c>[Simulation]</c> command would pass them.
+/// <c>ChatCommandRunnerSimulationFacade</c> takes every <c>IChatCommand</c> in the container, and <c>/help</c>
+/// every <c>IListedChatCommand</c>. The layer is checked here and not only by the collection rules: they let a
+/// facade take a collection of any layer it may take, so a <c>[Simulation]</c> command would pass them.
 /// </summary>
 [Collection(GameAssembly.Collection)]
 public class ChatCommandTests
