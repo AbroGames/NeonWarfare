@@ -14,11 +14,11 @@ Command-line arguments are parsed **only** in the RootStarters and travel on as 
 
 ## Level 1: RootStarter
 
-`Root._Ready()` calls `RootStarterManager.ChooseStarter()`: `"--server"` in `OS.GetCmdlineArgs()` →
+`Root._Ready()` calls its `ChooseStarter()`: `"--server"` in `OS.GetCmdlineArgs()` →
 `DedicatedServerRootStarter`, otherwise `ClientRootStarter`. Both then get `Init()` (the common
 `BaseRootStarter.Init()`, then the role-specific part: `SaveLoad.Init()`, the settings, the locale, UI
 auto-scaling) and `Start()` (the scenario, through `Services.MainScene.*`). `RootData` (the containers,
-`RootPackedScenes`, `SceneTree`) comes in as a parameter — no global access to `Root`.
+`RootPackedScenes`, `SceneTree`) comes in through the constructor — no global access to `Root`.
 
 ### The common part: `BaseRootStarter`
 
@@ -36,7 +36,7 @@ auto-scaling) and `Start()` (the scenario, through `Services.MainScene.*`). `Roo
    (see [Shutdown](Shutdown.md)).
 8. `Services.I18N.Init(sceneTree)`.
 
-`Start()` in the base only logs — the scenario itself is in the descendants.
+`Start()` is abstract — the scenario is in the descendants.
 
 ### `ClientRootStarter`
 
@@ -97,11 +97,11 @@ can come too early.
 * **`AddServerNetwork()`** — `Network` (ENet) of a host or a dedicated server; single player has none.
 * **`ConnectToServer(localPlayer, host, port)`** — `Network` of a remote client and its `ClientTransport`, which
   sends the join once connected. **No World yet**: `Game` builds it from the join snapshot itself.
-* **`AddSingleplayerWorld(saveFiles, localPlayer, origin)`** / **`AddHostWorld(network, saveFiles, localPlayer,
-  origin)`** / **`AddDedicatedWorld(network, saveFiles, admin, origin)`** — the World of its configuration
-  (`WorldSetup`, see [World](World.md)) over its transport, put into `WorldContainer`. The first two also send the
-  host's join: its own peer first "connects", so it passes the same gatekeeper as a remote one (see
-  [Networking](Networking.md#join-and-leave)).
+* **`AddSingleplayerWorld(saveFiles, saveFile, localPlayer, origin)`** / **`AddHostWorld(network, saveFiles,
+  saveFile, localPlayer, origin)`** / **`AddDedicatedWorld(network, saveFiles, saveFile, admin, origin)`** — the
+  World of its configuration (`WorldSetup`, see [World](World.md)) over its transport, put into `WorldContainer`. The
+  first two also send the host's join: its own peer first "connects", so it passes the same gatekeeper as a remote
+  one (see [Networking](Networking.md#join-and-leave)).
 * **`ShowServerHud()`** — the screen of a dedicated server.
 
 `WorldAssembler` builds each configuration: its transports, `WorldDependencies`, `InitPreReady`. A World that throws
@@ -131,9 +131,9 @@ The handlers die with the `Game`, so nothing unsubscribes.
 Only helpers, no template method:
 
 * **`LoadServerOrigin(saveFileName)`** — the save file exists → `WorldOrigin.FromSave`, otherwise
-  `WorldOrigin.NewWorld`; either way the World saves back to that file. Each server starter wraps it with
-  `Add…World` in a `try` whose `catch` takes **`IsLoadError(e)`** (a `LoadException` or a `SaveFormatException`);
-  **`LogLoadError(e, saveFileName)`** logs it and gives the message for the player.
+  `WorldOrigin.NewWorld`; either way the starter passes the same name as the `WorldSaveFile`, so the World saves
+  back to that file. Each server starter wraps it with `Add…World` in a `try` whose `catch` takes any exception;
+  **`LogWorldError(e, saveFileName)`** logs it and gives the message for the player.
 * **`ReadLocalPlayer()`** — reads the settings once into a `LocalPlayer`: the same object goes to the World and into
   the join request, so they cannot disagree.
 * **`SetLastGame(...)` / `SaveFilesUpdatingLastGame(...)`** — writing the session into `resume-game.json`. The

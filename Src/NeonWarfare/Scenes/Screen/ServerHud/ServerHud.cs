@@ -46,7 +46,7 @@ public partial class ServerHud : Control
 
     public override void _Process(double delta)
     {
-        IEnumerable<string> players = _players.OnlinePlayers()
+        IEnumerable<string> players = _players.GetOnlinePlayers()
             .Select(player => $"{player.Nick} (uid: {player.Uid})");
         InfoLabel.Text = "Players:\n" + string.Join("\n", players);
     }

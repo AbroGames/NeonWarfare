@@ -7,8 +7,10 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.Root.Starters;
 
-public abstract class BaseRootStarter
+public abstract class BaseRootStarter(RootData rootData)
 {
+    
+    protected readonly RootData RootData = rootData;
     
     /// <summary>
     /// Not in <c>Services</c>, because only a root starter reads the command line, see Docs/Cli-args.md.
@@ -18,7 +20,7 @@ public abstract class BaseRootStarter
     private CommonArgs _commonArgs;
     private readonly ILogger _log = LogFactory.GetForStatic<BaseRootStarter>();
 
-    public virtual void Init(RootData rootData)
+    public virtual void Init()
     {
         _commonArgs = CommonArgs.GetFromCmd(CmdArgsService);
         
@@ -29,15 +31,12 @@ public abstract class BaseRootStarter
         _log.Information("Initializing base...");
         Services.AssemblyCache.AddAssembly(Assembly.GetExecutingAssembly());
         Services.TypesMapping.SetTypes(Services.AssemblyCache.GetTypes(Assembly.GetExecutingAssembly()).ToList());
-        Services.LoadingScreen.Init(rootData.LoadingScreenContainer, rootData.PackedScenes.LoadingScreen);
+        Services.LoadingScreen.Init(RootData.LoadingScreenContainer, RootData.PackedScenes.LoadingScreen);
         Services.MainScene.Init(
-            rootData.MainSceneContainer, rootData.PackedScenes.Game, rootData.PackedScenes.MainMenu);
-        Services.QuitRequests.Init(rootData.SceneTree);
-        Services.I18N.Init(rootData.SceneTree);
+            RootData.MainSceneContainer, RootData.PackedScenes.Game, RootData.PackedScenes.MainMenu);
+        Services.QuitRequests.Init(RootData.SceneTree);
+        Services.I18N.Init(RootData.SceneTree);
     }
 
-    public virtual void Start(RootData rootData)
-    {
-        _log.Information("Starting base...");
-    }
+    public abstract void Start();
 }

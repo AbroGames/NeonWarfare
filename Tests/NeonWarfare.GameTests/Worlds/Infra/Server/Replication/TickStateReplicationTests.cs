@@ -93,11 +93,11 @@ public class TickStateReplicationTests
         AssertThat(AliceOnline()).ContainsExactlyInAnyOrder(HostUid, AliceUid);
 
         Players().PlayerByUid[AliceUid].Nick = "Renamed";
-        AssertThat(_alice.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick)
+        AssertThat(_alice.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[AliceUid].Nick)
             .IsEqual("Alice");
         Tick();
 
-        AssertThat(_alice.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick)
+        AssertThat(_alice.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[AliceUid].Nick)
             .IsEqual("Renamed");
     }
 
@@ -141,7 +141,7 @@ public class TickStateReplicationTests
 
         AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.State);
         AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State);
-        AssertThat(bob.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[BobUid].Nick).IsEqual("Robert");
+        AssertThat(bob.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[BobUid].Nick).IsEqual("Robert");
     }
 
     // Done when: one spawned in this tick is in the snapshot, with the state at the end of the tick
@@ -383,7 +383,7 @@ public class TickStateReplicationTests
             .ContainsExactly(ServerId<PlayersStorage>(), ServerId<OnlinePlayersStorage>());
         AssertClientCopy<PlayersStorage>();
         AssertClientCopy<OnlinePlayersStorage>();
-        AssertThat(_alice.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick)
+        AssertThat(_alice.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[AliceUid].Nick)
             .IsEqual("Alice");
         AssertThat(AliceOnline()).ContainsExactlyInAnyOrder(HostUid, AliceUid);
     }
@@ -667,7 +667,7 @@ public class TickStateReplicationTests
         byte[] packet = StatePacket(AlicePeer);
         World host = AutoFree(new World())!.InitPreReady(
             TestWorldSetups.Host(), Dependencies(new RecordingClientsConnection()),
-            new WorldOrigin.NewWorld("save"));
+            new WorldOrigin.NewWorld());
 
         AssertThrown(() => host.ReceiveState(packet)).IsInstanceOf<InvalidOperationException>();
     }
@@ -723,13 +723,13 @@ public class TickStateReplicationTests
 
     private void Tick() => _server.GetRequiredService<ServerTickLoop>().RunTick();
 
-    private PlayersModel Players() => _server.GetRequiredService<PlayersStorageQuery>().Model;
+    private PlayersModel Players() => _server.GetRequiredService<PlayerQuery>().PlayersModel;
 
     private ReplicatedSet<string> Online() =>
-        _server.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids;
+        _server.GetRequiredService<PlayerQuery>().OnlineModel.Uids;
 
     private IEnumerable<string> AliceOnline() =>
-        _alice.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.ToList();
+        _alice.GetRequiredService<PlayerQuery>().OnlineModel.Uids.ToList();
 
     private StateApplier Applier() => _alice.GetRequiredService<StateApplier>();
 
@@ -876,7 +876,7 @@ public class TickStateReplicationTests
 
     // What Alice's client models hold at the moment her Presentation handles a join
     [Presentation]
-    private class JoinRecorder(PlayersStorageQuery players, OnlinePlayersStorageQuery onlinePlayers)
+    private class JoinRecorder(PlayerQuery players)
         : IEventHandlerOwner
     {
         public record Sight(string? Uid, bool Online, string Nick);
@@ -887,11 +887,11 @@ public class TickStateReplicationTests
         [EventHandler]
         private void Handle(LocalizedChatMessageEvent @event)
         {
-            if (@event.Key != "HUD__CHAT_PLAYER_JOINED") return;
+            if (@event.Text.Key != "HUD__CHAT_PLAYER_JOINED") return;
 
-            string nick = @event.Args[0];
-            PlayerModel? player = players.Model.PlayerByUid.Values.SingleOrDefault(player => player.Nick == nick);
-            bool online = player != null && onlinePlayers.Model.Uids.Contains(player.Uid);
+            string nick = @event.Text.Args[0];
+            PlayerModel? player = players.PlayersModel.PlayerByUid.Values.SingleOrDefault(player => player.Nick == nick);
+            bool online = player != null && players.OnlineModel.Uids.Contains(player.Uid);
             Seen.Add(new Sight(player?.Uid, online, nick));
         }
     }

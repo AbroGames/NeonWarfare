@@ -43,15 +43,15 @@ public abstract class BaseGameStarter
             Services.SaveLoad, saveFileName => SetLastGame(lastGame with { SaveName = saveFileName }));
 
     /// <summary>
-    /// Loads the server World from its save file if there is one. Otherwise it is a new World that saves to that file.
+    /// Loads the server World from its save file if there is one. Otherwise it is a new World.
     /// </summary>
     /// <exception cref="SaveLoadService.LoadException">The file cannot be read.</exception>
     protected WorldOrigin LoadServerOrigin(string saveFileName)
     {
         ArgumentNullException.ThrowIfNull(saveFileName);
         return Services.SaveLoad.CheckFileExists(saveFileName)
-            ? new WorldOrigin.FromSave(Services.SaveLoad.LoadFromDisk(saveFileName), saveFileName)
-            : new WorldOrigin.NewWorld(saveFileName);
+            ? new WorldOrigin.FromSave(Services.SaveLoad.LoadFromDisk(saveFileName))
+            : new WorldOrigin.NewWorld();
     }
 
     /// <summary>

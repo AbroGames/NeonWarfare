@@ -128,7 +128,7 @@ public class ClientTransportTests
             _worlds.Codec.Encode(TestWorldSetups.LocalPlayer(OtherUid).ToJoinRequest(TestProtocol.Hash)));
         TransportWorlds.Tick(_server);
 
-        AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Uid))
+        AssertThat(client.Get<PlayerQuery>().GetOnlinePlayers().Select(player => player.Uid))
             .ContainsExactlyInAnyOrder(TestWorldSetups.LocalPlayerUid, OtherUid);
     }
 

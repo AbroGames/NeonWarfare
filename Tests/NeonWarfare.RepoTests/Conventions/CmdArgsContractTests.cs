@@ -34,11 +34,11 @@ public class CmdArgsContractTests
     private static readonly string[] CommandLineMethods = ["GetCmdlineArgs", "GetCmdlineUserArgs"];
 
     /// <summary>
-    /// The one place allowed to read the command line without the service: ChooseStarter decides which
+    /// The one place allowed to read the command line without the service: Root.ChooseStarter decides which
     /// starter to build, so neither a starter nor its CmdArgsService exists yet.
     /// </summary>
     private static readonly string[] MayReadCommandLineDirectly =
-        ["Src/NeonWarfare/Scenes/Root/Starters/RootStarterManager.cs"];
+        ["Src/NeonWarfare/Scenes/Root/Root.cs"];
 
     /// <summary>
     /// Godot's own flags the game passes to a process it starts. The engine consumes them before the game

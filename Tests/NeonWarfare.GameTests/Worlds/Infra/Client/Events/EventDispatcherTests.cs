@@ -36,18 +36,18 @@ public class EventDispatcherTests
         using ServiceProvider provider = new WorldServicesBuilder().Build(
             TestWorldSetups.RemoteClient(), Dependencies(), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
-            new LocalizedChatMessageEvent(1, "HUD__CHAT_PLAYER_JOINED", ["Alice"]),
+            new LocalizedChatMessageEvent(1, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Alice"])),
             new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
             new ChatServerMessageEvent(3, "server"),
-            new LocalizedChatMessageEvent(4, "HUD__CHAT_PLAYER_LEFT", ["Alice"]));
+            new LocalizedChatMessageEvent(4, new LocalizedText("HUD__CHAT_PLAYER_LEFT", ["Alice"])));
 
         provider.GetRequiredService<EventDispatcher>().Dispatch(section);
 
         AssertThat(provider.GetRequiredService<ChatPresentation>().Entries).ContainsExactly(
-            new LocalizedServerEntry(1, "HUD__CHAT_PLAYER_JOINED", ["Alice"]),
+            new LocalizedServerEntry(1, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Alice"])),
             new PlayerMessageEntry(2, "alice", "Alice", "hi"),
             new ServerTextEntry(3, "server"),
-            new LocalizedServerEntry(4, "HUD__CHAT_PLAYER_LEFT", ["Alice"]));
+            new LocalizedServerEntry(4, new LocalizedText("HUD__CHAT_PLAYER_LEFT", ["Alice"])));
         AssertThat(provider.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).HasSize(4);
     }
 

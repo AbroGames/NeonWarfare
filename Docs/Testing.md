@@ -46,7 +46,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
   `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Eleven exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  skip. Eleven exist: `GlobalUsings.cs` (no namespace), `Root` (reads the command
   line directly), the engine's `ui_*` input actions, Godot's `--path` (not our flag), the composition
   root — `World` and `WorldServicesBuilder` as one entry (takes `Services` and wires every layer),
   `Services.Di`, `JoinRequestCommand` (sent by the transports, not by a command sender), `IChatCommand` (a chat
@@ -91,7 +91,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/MessageStringTests` | Log templates are string literals in the call; no exception message from a constant or `FormatWith` |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
-| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles` and `IPeerSessionHandler` only in `Server`; every `Build` parameter is open or restricted explicitly; an `IEnumerable<I>` is a dependency on every implementation of `I`, never of a type the root registers; `[CommandHandler]` and `[Presentation]` only as a collection, of `[Server]` and `[Client]`; no optional parameter |
+| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles`, `WorldSaveFile` and `IPeerSessionHandler` only in `Server`; every `Build` parameter is open or restricted explicitly; an `IEnumerable<I>` is a dependency on every implementation of `I`, never of a type the root registers; `[CommandHandler]` and `[Presentation]` only as a collection, of `[Server]` and `[Client]`; no optional parameter |
 | `Architecture/SimulationReachTests` | No `[Simulation]` / `[SimulationFacade]` constructor chain reaches `ServerTickLoop`, the command machinery or `PeerSessions` |
 | `Architecture/ConstructorWorldReadTests` | No world service constructor calls a query or an `EntityRegistry` lookup |
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |

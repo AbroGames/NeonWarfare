@@ -28,7 +28,6 @@ namespace NeonWarfare.GameTests.Worlds;
 [TestSuite]
 public class WorldServicesBuilderTests
 {
-    private const string SaveFileName = "save";
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
     // a present handler means all three are there, an absent ChatSimulation means none is
@@ -233,7 +232,7 @@ public class WorldServicesBuilderTests
         World world = AutoFree(new World())!;
 
         AssertThat(world.InitPreReady(
-                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
+                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld()))
             .IsSame(world);
     }
 
@@ -245,7 +244,7 @@ public class WorldServicesBuilderTests
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
         AssertThrown(() => world.InitPreReady(
-                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
+                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld()))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -257,7 +256,7 @@ public class WorldServicesBuilderTests
         {
             World world = AutoFree(new World())!;
 
-            world.InitPreReady(setup, Dependencies(), new WorldOrigin.NewWorld(SaveFileName));
+            world.InitPreReady(setup, Dependencies(), new WorldOrigin.NewWorld());
 
             AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
             AssertThat(world.GetChildren().OfType<OnlinePlayersStorage>().Count()).IsEqual(1);
@@ -306,7 +305,7 @@ public class WorldServicesBuilderTests
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerStateTable), typeof(EventDispatcher),
             typeof(CommandHandlerRegistry), typeof(ChatSimulation), typeof(ChatSimulationFacade),
-            typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(OnlinePlayersStorageQuery),
+            typeof(PlayerQuery),
         ]);
 
     private static WorldDependencies Dependencies()

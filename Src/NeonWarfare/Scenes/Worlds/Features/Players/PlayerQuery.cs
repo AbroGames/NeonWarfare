@@ -2,25 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [Query]
-public class PlayerQuery(PlayersStorageQuery players, OnlinePlayersStorageQuery onlinePlayers)
+public class PlayerQuery(IEntityFinder entityFinder)
 {
-    public IEnumerable<PlayerModel> OnlinePlayers()
+    public PlayersModel PlayersModel => entityFinder.GetSingle<PlayersStorage>().Model;
+
+    public OnlinePlayersModel OnlineModel => entityFinder.GetSingle<OnlinePlayersStorage>().Model;
+
+    public IEnumerable<PlayerModel> GetOnlinePlayers()
     {
-        PlayersModel model = players.Model;
-        return onlinePlayers.Model.Uids.Select(uid => model.PlayerByUid[uid]);
+        PlayersModel players = PlayersModel;
+        return OnlineModel.Uids.Select(uid => players.PlayerByUid[uid]);
     }
 
     public PlayerModel TryGetOnline(string uid) =>
-        onlinePlayers.Model.Uids.Contains(uid) ? players.Model.PlayerByUid[uid] : null;
+        OnlineModel.Uids.Contains(uid) ? PlayersModel.PlayerByUid[uid] : null;
 
     /// <summary>Throws instead of returning <c>null</c>, so a caller needs no null check.</summary>
     public PlayerModel Get(string uid)
     {
-        if (!players.Model.PlayerByUid.TryGetValue(uid, out PlayerModel player))
+        if (!PlayersModel.PlayerByUid.TryGetValue(uid, out PlayerModel player))
         {
             throw new InvalidOperationException($"There is no player with uid {uid}");
         }

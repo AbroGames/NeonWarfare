@@ -23,7 +23,7 @@ world:
 
 A `[NotSaved]` entity goes into the save without its state: after a load it is created empty from its kind and the
 joins fill it again. So every replicated member of such a node is a readonly field set in its constructor
-(`NotSavedEntityTests`). A service reads a storage through its `[Query]` (`PlayersStorageQuery.Model`), which looks
+(`NotSavedEntityTests`). A service reads a storage through its `[Query]` (`PlayerQuery.PlayersModel`), which looks
 the entity up on every call, so it works the same on the server, after a load and on a client.
 
 > [!IMPORTANT]

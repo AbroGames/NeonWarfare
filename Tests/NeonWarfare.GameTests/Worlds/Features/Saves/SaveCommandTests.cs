@@ -57,14 +57,13 @@ public class SaveCommandTests
         _files = new RecordingSaveFiles();
         _frames = new ManualFrameProvider();
         _server = new WorldServicesBuilder().Build(
-            TestWorldSetups.Host(saveFiles: _files),
+            TestWorldSetups.Host(saveFiles: _files, saveFileName: "old"),
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
                 new Replicator(NetMessageCodecTests.CreateMapping()), _frames, _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _connection, _connection),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
-        _server.GetRequiredService<SaveService>().Init("old");
         _connection.Loopback = _server.GetRequiredService<EventDispatcher>().Dispatch;
 
         JoinDirectly(HostUid, HostPeer).IsAdmin = true;
@@ -91,7 +90,7 @@ public class SaveCommandTests
         AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(FileName);
         AssertThat(_server.GetRequiredService<SaveService>().SaveFileName).IsEqual(FileName);
         AssertThat(Replies(AdminPeer))
-            .ContainsExactly(new LocalizedChatMessageEvent(Now, "HUD__CHAT_GAME_SAVED", [FileName]));
+            .ContainsExactly(new LocalizedChatMessageEvent(Now, new LocalizedText("HUD__CHAT_GAME_SAVED", [FileName])));
         AssertThat(Replies(PlayerPeer)).IsEmpty();
     }
 
@@ -109,7 +108,8 @@ public class SaveCommandTests
 
         AssertThat(_server.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).IsNotEmpty();
         AssertThat(_server.GetRequiredService<ChatPresentation>().Entries.Last())
-            .IsEqual(new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_GAME_SAVE_FAILED", [FileName]));
+            .IsEqual(new ChatPresentation.LocalizedServerEntry(
+                Now, new LocalizedText("HUD__CHAT_GAME_SAVE_FAILED", [FileName])));
         AssertThat(_files.Files).ContainsExactly(previous);
         AssertThat(_server.GetRequiredService<SaveService>().SaveFileName).IsEqual(FileName);
     }
@@ -153,9 +153,9 @@ public class SaveCommandTests
     // Past the join, whose events would mix with the replies
     private PlayerModel JoinDirectly(string uid, int peerId)
     {
-        PlayerModel player = _server.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
+        PlayerModel player = _server.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(uid);
         player.Nick = uid;
-        _server.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.Add(uid);
+        _server.GetRequiredService<PlayerQuery>().OnlineModel.Uids.Add(uid);
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _server.GetRequiredService<PeerStateTable>().Join(peerId, uid);
         return player;

@@ -74,16 +74,14 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
 
         switch (origin)
         {
-            case WorldOrigin.NewWorld newWorld:
+            case WorldOrigin.NewWorld:
                 _services.GetRequiredService<NewWorldSimulationFacade>().Create();
-                Service<SaveService>().Init(newWorld.SaveFileName);
                 break;
             case WorldOrigin.FromSnapshot snapshot:
                 Service<StateApplier>().ApplySnapshot(snapshot.Body);
                 break;
             case WorldOrigin.FromSave save:
                 Service<SaveLoader>().Load(save.Save);
-                Service<SaveService>().Init(save.SaveFileName);
                 break;
             default:
                 throw new UnreachableException();

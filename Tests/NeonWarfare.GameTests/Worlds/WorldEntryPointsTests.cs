@@ -30,7 +30,6 @@ public class WorldEntryPointsTests
     private const string HostUid = "HostHostHo-Hhhhhhhhhh";
     private const int RemotePeer = 2;
     private const string RemoteUid = "RemoteRemo-Rrrrrrrrrr";
-    private const string SaveFileName = "save";
 
     private static readonly LocalPlayer HostPlayer = new(HostUid, "Host", Colors.White);
     private static readonly LocalPlayer RemotePlayer = new(RemoteUid, "Remote", Colors.White);
@@ -56,7 +55,8 @@ public class WorldEntryPointsTests
         JoinHost(world);
 
         AssertThat(world.Get<ChatPresentation>().Entries)
-            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_PLAYER_JOINED", ["Host"]));
+            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(
+                Now, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Host"])));
     }
 
     [TestCase]
@@ -71,7 +71,7 @@ public class WorldEntryPointsTests
 
         AssertThat(_connection.Commands.Count).IsEqual(2);
         AssertThat(world.Get<ChatPresentation>().Entries).ContainsExactly(
-            new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_PLAYER_JOINED", ["Host"]),
+            new ChatPresentation.LocalizedServerEntry(Now, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Host"])),
             new ChatPresentation.PlayerMessageEntry(Now, HostUid, "Host", "hello"));
     }
 
@@ -103,7 +103,7 @@ public class WorldEntryPointsTests
 
         World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
-        AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Nick))
+        AssertThat(client.Get<PlayerQuery>().GetOnlinePlayers().Select(player => player.Nick))
             .ContainsExactlyInAnyOrder("Host", "Remote");
     }
 
@@ -113,9 +113,9 @@ public class WorldEntryPointsTests
     {
         byte[] save = HostSave(TestProtocol.Hash);
 
-        World loaded = CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save, SaveFileName));
+        World loaded = CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save));
 
-        AssertThat(loaded.Get<PlayersStorageQuery>().Model.PlayerByUid[HostUid].Nick).IsEqual("Host");
+        AssertThat(loaded.Get<PlayerQuery>().PlayersModel.PlayerByUid[HostUid].Nick).IsEqual("Host");
     }
 
     // The single-player game of a save: the host's own player joins the loaded world as it joins a new one
@@ -123,13 +123,14 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void InitPreReady_FromSaveOnAHost_TheHostJoinsIt()
     {
-        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash), SaveFileName));
+        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash)));
 
         JoinHost(world);
 
         AssertThat(world.Get<ChatPresentation>().Entries)
-            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_PLAYER_JOINED", ["Host"]));
-        AssertThat(world.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Nick)).ContainsExactly("Host");
+            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(
+                Now, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Host"])));
+        AssertThat(world.Get<PlayerQuery>().GetOnlinePlayers().Select(player => player.Nick)).ContainsExactly("Host");
     }
 
     [TestCase]
@@ -140,14 +141,14 @@ public class WorldEntryPointsTests
         World world = AutoFree(new World())!;
 
         AssertThrown(() => world.InitPreReady(DedicatedSetup(), Dependencies(),
-                new WorldOrigin.FromSave(save, SaveFileName)))
+                new WorldOrigin.FromSave(save)))
             .IsInstanceOf<SaveVersionMismatchException>();
     }
 
     // The autosave on exit: Quit() and the way back to the menu both take the World out of the tree
     [TestCase]
     [RequireGodotRuntime]
-    public void ExitTree_ServerWorld_SavesToItsFile_ALoadedOneToTheFileItCameFrom()
+    public void ExitTree_ServerWorld_SavesToTheFileOfItsSetup()
     {
         const string loadedFileName = "loaded";
         World host = InTree(HostWorld());
@@ -156,14 +157,15 @@ public class WorldEntryPointsTests
         host.GetParent().RemoveChild(host);
 
         RecordingSaveFiles.Written save = _saveFiles.Files.Single();
-        AssertThat(save.FileName).IsEqual(SaveFileName);
+        AssertThat(save.FileName).IsEqual(TestWorldSetups.SaveFileName);
 
-        World loaded = InTree(CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save.Data, loadedFileName)));
-        AssertThat(loaded.Get<PlayersStorageQuery>().Model.PlayerByUid[HostUid].Nick).IsEqual("Host");
+        World loaded = InTree(CreateWorld(DedicatedSetup(loadedFileName), new WorldOrigin.FromSave(save.Data)));
+        AssertThat(loaded.Get<PlayerQuery>().PlayersModel.PlayerByUid[HostUid].Nick).IsEqual("Host");
         Tick(loaded);
         loaded.GetParent().RemoveChild(loaded);
 
-        AssertThat(_saveFiles.Files.Select(file => file.FileName)).ContainsExactly(SaveFileName, loadedFileName);
+        AssertThat(_saveFiles.Files.Select(file => file.FileName))
+            .ContainsExactly(TestWorldSetups.SaveFileName, loadedFileName);
     }
 
     // Given the save files all the same
@@ -229,7 +231,7 @@ public class WorldEntryPointsTests
     public void LocalPlayer_OnAHostFromSave_IsOnlineOnlyAfterItsJoin()
     {
         var owner = new RecordingLocalPlayerOwner();
-        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash), SaveFileName), owner);
+        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash)), owner);
         var localPlayer = world.Get<LocalPlayerPresentation>();
 
         AssertThrown(() => { _ = localPlayer.Player; }).IsInstanceOf<InvalidOperationException>();
@@ -327,7 +329,7 @@ public class WorldEntryPointsTests
     }
 
     private World CreateWorld(WorldSetup setup, WorldOrigin? origin = null) =>
-        AutoFree(new World())!.InitPreReady(setup, Dependencies(), origin ?? new WorldOrigin.NewWorld(SaveFileName));
+        AutoFree(new World())!.InitPreReady(setup, Dependencies(), origin ?? new WorldOrigin.NewWorld());
 
     private WorldSetup.Host HostSetup(ILocalPlayerOwner? owner = null) =>
         TestWorldSetups.Host(HostPlayer, _saveFiles, localPlayerOwner: owner);
@@ -336,7 +338,8 @@ public class WorldEntryPointsTests
     private static WorldSetup.RemoteClient RemoteClientSetup(ILocalPlayerOwner? owner = null) =>
         TestWorldSetups.RemoteClient(RemotePlayer, owner);
 
-    private WorldSetup.Dedicated DedicatedSetup() => TestWorldSetups.Dedicated(saveFiles: _saveFiles);
+    private WorldSetup.Dedicated DedicatedSetup(string saveFileName = TestWorldSetups.SaveFileName) =>
+        TestWorldSetups.Dedicated(saveFiles: _saveFiles, saveFileName: saveFileName);
 
     private WorldDependencies Dependencies(ProtocolHash? hash = null)
     {
@@ -354,7 +357,7 @@ public class WorldEntryPointsTests
         using ServiceProvider host = new WorldServicesBuilder()
             .Build(HostSetup(), Dependencies(hash), new WorldRoot(root));
         host.GetRequiredService<NewWorldSimulationFacade>().Create();
-        host.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(HostUid).Nick = "Host";
+        host.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(HostUid).Nick = "Host";
         host.GetRequiredService<ServerTickLoop>().RunTick();
         return host.GetRequiredService<SaveWriter>().Write();
     }

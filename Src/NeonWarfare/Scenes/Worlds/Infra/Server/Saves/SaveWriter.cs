@@ -3,6 +3,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 using RepliCAT;
 using RepliCAT.Bits;
 
@@ -14,7 +15,8 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 /// The hash comes first and has a fixed size, so a build of any later format can still recognize a foreign save.
 /// </summary>
 [Server]
-public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, ProtocolHash protocolHash)
+public class SaveWriter(
+    StateReplicator stateReplicator, ServerTickClock clock, NetIdGenerator netIds, ProtocolHash protocolHash)
 {
     public const int HashBits = 64;
 
@@ -28,7 +30,7 @@ public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, 
         var writer = new BitWriter();
         writer.WriteBits(protocolHash.Value, HashBits);
         writer.WriteVarUInt((ulong) netIds.NextValue);
-        writer.WriteVarUInt((ulong) stateReplicator.LastSentTick);
+        writer.WriteVarUInt((ulong) clock.CurrentTick);
         stateReplicator.WriteSave(writer);
         return writer.ToArray();
     }

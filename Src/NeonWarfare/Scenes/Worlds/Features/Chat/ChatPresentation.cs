@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
@@ -24,18 +22,8 @@ public class ChatPresentation(HudMailbox hudMailbox) : IEventHandlerOwner
         : ChatEntry(SentAtUnixSeconds);
     public record ServerTextEntry(long SentAtUnixSeconds, string Text) : ChatEntry(SentAtUnixSeconds);
 
-    public sealed record LocalizedServerEntry(long SentAtUnixSeconds, string Key, string[] Args)
-        : ChatEntry(SentAtUnixSeconds)
-    {
-        /// <summary>Compares <c>Args</c> by content, not by reference as the generated equality would.</summary>
-        public bool Equals(LocalizedServerEntry other) =>
-            other is not null
-            && SentAtUnixSeconds == other.SentAtUnixSeconds
-            && Key == other.Key
-            && Args.SequenceEqual(other.Args);
-
-        public override int GetHashCode() => HashCode.Combine(SentAtUnixSeconds, Key, Args.Length);
-    }
+    public record LocalizedServerEntry(long SentAtUnixSeconds, LocalizedText Text)
+        : ChatEntry(SentAtUnixSeconds);
 
     [EventHandler]
     private void Handle(ChatPlayerMessageEvent e) =>
@@ -47,7 +35,7 @@ public class ChatPresentation(HudMailbox hudMailbox) : IEventHandlerOwner
 
     [EventHandler]
     private void Handle(LocalizedChatMessageEvent e) =>
-        AddChatEntry(new LocalizedServerEntry(e.SentAtUnixSeconds, e.Key, e.Args));
+        AddChatEntry(new LocalizedServerEntry(e.SentAtUnixSeconds, e.Text));
 
     private void AddChatEntry(ChatEntry chatEntry)
     {

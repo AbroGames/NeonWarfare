@@ -17,7 +17,6 @@ namespace NeonWarfare.GameTests.Game;
 [TestSuite]
 public class WorldAssemblerTests
 {
-    private const string SaveFileName = "save";
 
     private static readonly byte[] BrokenSave = [1, 2, 3, 4];
 
@@ -39,7 +38,7 @@ public class WorldAssemblerTests
     public void Singleplayer_TheHostJoinsInTheNextTick()
     {
         World world = AutoFree(_assembler.Singleplayer(
-            TestWorldSetups.Host(localPlayerOwner: _owner), new WorldOrigin.NewWorld(SaveFileName)))!;
+            TestWorldSetups.Host(localPlayerOwner: _owner), new WorldOrigin.NewWorld()))!;
 
         TransportWorlds.Tick(world);
 
@@ -56,7 +55,7 @@ public class WorldAssemblerTests
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
         AssertThrown(() => _assembler.Dedicated(
-                TestWorldSetups.Dedicated(), new WorldOrigin.FromSave(BrokenSave, SaveFileName), network))
+                TestWorldSetups.Dedicated(), new WorldOrigin.FromSave(BrokenSave), network))
             .IsInstanceOf<SaveFormatException>();
 
         AssertThat(Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount)).IsEqual(orphans);
