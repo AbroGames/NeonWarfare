@@ -13,7 +13,8 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 /// back into its World synchronously, inside the call. The remote peers, if any, go to <paramref name="remote"/>.
 /// </summary>
 public sealed class HostTransport(
-    World world,
+    World.IServerEndpoint server,
+    World.IClientEndpoint client,
     NetMessageCodec codec,
     ILocalPlayerOwner owner,
     ServerTransport remote
@@ -35,7 +36,7 @@ public sealed class HostTransport(
     /// </summary>
     public void SendJoinRequest(LocalPlayer localPlayer)
     {
-        world.StartHandshake(LocalPeer);
+        server.StartHandshake(LocalPeer);
         ((IServerConnection) this).Send(codec.Encode(localPlayer.ToJoinRequest(codec.ProtocolHash)));
     }
 
@@ -48,7 +49,7 @@ public sealed class HostTransport(
     {
         if (peerId == LocalPeer)
         {
-            world.ReceiveEvents(body.ToArray());
+            client.ReceiveEvents(body.ToArray());
             return;
         }
         Remote(peerId).SendEvents(peerId, body);
@@ -76,10 +77,10 @@ public sealed class HostTransport(
         // Queued like any other disconnection, so it is processed in the next tick, not inside this one. A warning:
         // whatever cut the host off has already logged its error
         _log.Warning(LocalDisconnectedLog);
-        world.QueueDisconnection(peerId);
+        server.QueueDisconnection(peerId);
     }
 
-    void IServerConnection.Send(ReadOnlySpan<byte> packet) => world.ReceiveFromClient(LocalPeer, packet.ToArray());
+    void IServerConnection.Send(ReadOnlySpan<byte> packet) => server.ReceiveFromClient(LocalPeer, packet.ToArray());
 
     private ServerTransport Remote(int peerId)
     {

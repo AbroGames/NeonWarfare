@@ -6,9 +6,7 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.Scenes.Game.Networks.Transport;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using RepliCAT.Bits;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Game.Networks.Transport;
@@ -106,25 +104,6 @@ public class ClientTransportTests
         AssertThat(_snapshots).IsEmpty();
     }
 
-    // The World has applied part of the packet, and the server has moved on: the models would drift from here
-    [TestCase]
-    [RequireGodotRuntime]
-    public void PacketReceived_BrokenStateWithAWorld_BreaksTheConnection()
-    {
-        Connect();
-        int broken = 0;
-        _transport.ConnectionBroken += () => broken++;
-
-        // The tick, no spawns, then a delta for an entity the client has never seen
-        var body = new BitWriter();
-        body.WriteVarUInt(1);
-        body.WriteVarUInt((ulong) NetId.None.Value);
-        body.WriteVarUInt(999);
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, ..body.ToArray()]);
-
-        AssertThat(broken).IsEqual(1);
-    }
-
     // The whole join: the snapshot builds the World inside the call, and the events packet right after it reaches it
     [TestCase]
     [RequireGodotRuntime]
@@ -157,8 +136,7 @@ public class ClientTransportTests
     [RequireGodotRuntime]
     public void PacketReceived_SnapshotWithAWorld_BreaksTheConnection()
     {
-        Connect();
-        _onSnapshot = RecordSnapshot;
+        _transport.Enter(new RecordingWorldEndpoint());
         int broken = 0;
         _transport.ConnectionBroken += () => broken++;
 
@@ -170,11 +148,44 @@ public class ClientTransportTests
 
     [TestCase]
     [RequireGodotRuntime]
+    public void Enter_TheStateAndEventsBodiesGoToTheWorld()
+    {
+        var endpoint = new RecordingWorldEndpoint();
+        _transport.Enter(endpoint);
+
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1, 2]);
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 3]);
+
+        AssertThat(endpoint.Calls.Select(call => call.Name)).ContainsExactly(
+            nameof(World.IClientEndpoint.ReceiveState), nameof(World.IClientEndpoint.ReceiveEvents));
+        AssertThat(endpoint.Calls[0].Body).ContainsExactly(1, 2);
+        AssertThat(endpoint.Calls[1].Body).ContainsExactly(3);
+    }
+
+    // The World has applied part of the packet, and the server has moved on: the models would drift from here
+    [TestCase]
+    [RequireGodotRuntime]
+    public void PacketReceived_TheWorldCannotApplyIt_BreaksTheConnectionOnce()
+    {
+        var endpoint = new RecordingWorldEndpoint { ThrowOnReceive = true };
+        _transport.Enter(endpoint);
+        int broken = 0;
+        _transport.ConnectionBroken += () => broken++;
+
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 1]);
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1]);
+
+        AssertThat(broken).IsEqual(1);
+        AssertThat(endpoint.Calls.Count).IsEqual(1);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
     public void Enter_Twice_Throws()
     {
-        World client = Connect();
+        _transport.Enter(new RecordingWorldEndpoint());
 
-        AssertThrown(() => _transport.Enter(client)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => _transport.Enter(new RecordingWorldEndpoint())).IsInstanceOf<InvalidOperationException>();
     }
 
     // A dedicated server over the same fake wire: the client is its peer 2, the server is the client's peer 1

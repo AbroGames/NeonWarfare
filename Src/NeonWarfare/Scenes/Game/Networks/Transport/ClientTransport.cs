@@ -31,7 +31,7 @@ public sealed class ClientTransport : IServerConnection
 
     private readonly ILogger _log = LogFactory.GetForStatic<ClientTransport>();
 
-    private World _world;
+    private World.IClientEndpoint _endpoint;
     private bool _isBroken;
 
     /// <summary>
@@ -55,11 +55,11 @@ public sealed class ClientTransport : IServerConnection
         _network.PacketReceived += OnPacketReceived;
     }
 
-    public void Enter(World world)
+    public void Enter(World.IClientEndpoint endpoint)
     {
-        if (_world != null) throw new InvalidOperationException(SecondWorldError);
+        if (_endpoint != null) throw new InvalidOperationException(SecondWorldError);
 
-        _world = world;
+        _endpoint = endpoint;
     }
 
     public void Send(ReadOnlySpan<byte> packet) => _network.Send(ServerPeer, packet);
@@ -105,19 +105,19 @@ public sealed class ClientTransport : IServerConnection
                 _log.Error(JoinRejectedLog, reason);
                 _owner.JoinRejected(reason);
                 break;
-            case ServerPacketKind.Snapshot when _world == null:
+            case ServerPacketKind.Snapshot when _endpoint == null:
                 _snapshotReceived(body);
                 break;
             case ServerPacketKind.Snapshot:
                 throw new NetMessageFormatException(SecondSnapshotError);
-            case ServerPacketKind.State or ServerPacketKind.Events when _world == null:
+            case ServerPacketKind.State or ServerPacketKind.Events when _endpoint == null:
                 _log.Debug(NoWorldLog, ServerPeer);
                 break;
             case ServerPacketKind.State:
-                _world.ReceiveState(body);
+                _endpoint.ReceiveState(body);
                 break;
             case ServerPacketKind.Events:
-                _world.ReceiveEvents(body);
+                _endpoint.ReceiveEvents(body);
                 break;
         }
     }

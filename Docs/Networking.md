@@ -15,12 +15,12 @@ World; their layers and the World itself are in [World](World.md).
   is built.
 * **The transports** ([Scenes/Game/Networks/Transport/](../Src/NeonWarfare/Scenes/Game/Networks/Transport/)) — plain
   objects implementing `IClientsConnection` (server → clients) and `IServerConnection` (client → server), created by
-  `Game` with their World. `ServerTransport` routes the remote peers of a server into `World.StartHandshake` /
-  `QueueDisconnection` / `ReceiveFromClient`; `HostTransport` loops the host's own peer back and hands the others to its
-  `ServerTransport`; `ClientTransport` is a remote client's connection, which has no World until the join snapshot. The
-  World hands `IClientsConnection` bodies only, one method per packet kind. The direction a configuration does not use
-  is `NoConnection`. `GameProtocol` holds what the client needs before its World exists: `EntityCatalog`,
-  `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
+  `Game` with their World. `ServerTransport` routes the remote peers of a server into `World.IServerEndpoint`;
+  `HostTransport` loops the host's own peer back into both endpoints and hands the others to its `ServerTransport`;
+  `ClientTransport` is a remote client's connection: it has no World until the join snapshot, then routes into
+  `World.IClientEndpoint`. The World hands `IClientsConnection` bodies only, one method per packet kind. The direction
+  a configuration does not use is `NoConnection`. `GameProtocol` holds what the client needs before its World exists:
+  `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
   `HostTransport` hands it to its own World synchronously, inside the call. So the host's commands pass the same
   decoding and whitelist as a remote client's, and its event handlers run in the physics step, before `_Process`.
@@ -48,7 +48,7 @@ The Simulation changes the models only inside the tick: it has no deferred calls
 
 ## Commands: client → server
 
-A command is a `Command` record with MessagePack keys. The HUD sends it through `World.Send<T>` →
+A command is a `Command` record with MessagePack keys. The HUD sends it through `World.ICommandSender` →
 `PlayerCommandSender`, the only sender in the World; `JoinRequestCommand` alone is sent by the transport: the
 host's by `Game.AddHostWorld`, a remote client's on connecting, before it has a World. A command is sent at once,
 not at the tick.
@@ -79,8 +79,8 @@ so an event handler sees the models already at the end of the tick, on the host 
 ENet delivers a fragmented reliable packet whole, so a client applies a tick atomically.
 
 A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes it by kind, the state to
-`World.ReceiveState` (`StateApplier`), the events to `World.ReceiveEvents` (`EventDispatcher`). The host gets only its
-events: its Simulation has already written the state.
+`World.IClientEndpoint.ReceiveState` (`StateApplier`), the events to `ReceiveEvents` (`EventDispatcher`). The host
+gets only its events: its Simulation has already written the state.
 A packet the client cannot read or apply ends its session (`ClientTransport.ConnectionBroken` → `Game.Failed`): it may
 be applied in part while the server's baselines have moved on, so the models would drift; a new join brings a fresh
 snapshot.
