@@ -1,5 +1,4 @@
 using System;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -14,7 +13,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 /// Called by <see cref="CommandDispatcher"/> in the tick, in the order of the inbox.
 /// </summary>
 [Server]
-public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers, PeerGatekeeper gatekeeper)
+public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable peers, PeerGatekeeper gatekeeper)
 {
     private const string RejoinLog = "{command} from peer {peerId} dropped: the peer has already joined as {uid}";
     private const string NotConnectingLog = "{command} from peer {peerId} dropped: the peer is not waiting for a join";
@@ -24,9 +23,6 @@ public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers,
     private const string HostUidLog = "Peer {peerId} joins as {uid}, which is the host's own: rejected";
     private const string DisplacedLog = "Peer {newPeerId} joins as {uid}, displacing peer {oldPeerId}";
     private const string NotJoinedLeftLog = "Peer {peerId} disconnected before joining";
-    private const string NoSessionHandlerError =
-        "JoinRequestCommand from peer {0} passed the inbox, but there is no session handler: "
-        + "the whitelist is miswired.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<PeerSessions>();
 
@@ -44,10 +40,6 @@ public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers,
             _log.Warning(NotConnectingLog, name, peerId);
             return;
         }
-        // The inbox lets the join through only when there is a session handler, so this is a wiring error, not a peer's
-        IPeerSessionHandler sessionHandler = handlers.SessionHandler
-            ?? throw new InvalidOperationException(NoSessionHandlerError.FormatWith(peerId));
-
         string handlerName = sessionHandler.GetType().Name;
         JoinRejectReason reason;
         bool valid;
@@ -124,10 +116,10 @@ public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers,
         switch (peers.Remove(peerId))
         {
             case PeerStateTable.Joined joined:
-                handlers.SessionHandler.Leave(joined.Uid, LeaveReason.Disconnected);
+                sessionHandler.Leave(joined.Uid, LeaveReason.Disconnected);
                 break;
             case PeerStateTable.Leaving leaving:
-                handlers.SessionHandler.Leave(leaving.Uid, LeaveReason.Disconnected);
+                sessionHandler.Leave(leaving.Uid, LeaveReason.Disconnected);
                 break;
             default:
                 _log.Debug(NotJoinedLeftLog, peerId);

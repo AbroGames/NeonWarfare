@@ -31,6 +31,7 @@ public static class WorldLayers
     public const string EventHandlerAttribute = WorldNamespace + ".Infra.Client.Events.EventHandlerAttribute";
     public const string EventHandlerOwner = WorldNamespace + ".Infra.Client.Events.IEventHandlerOwner";
     public const string CommandHandler = WorldNamespace + ".Infra.Server.Commands.ICommandHandler";
+    public const string PeerSessionHandler = WorldNamespace + ".Infra.Server.Peers.IPeerSessionHandler";
 
     private const string CompositionNamespace = WorldNamespace + ".Infra.Composition";
     private const string LayerAttributeBase = CompositionNamespace + ".WorldServiceAttribute";

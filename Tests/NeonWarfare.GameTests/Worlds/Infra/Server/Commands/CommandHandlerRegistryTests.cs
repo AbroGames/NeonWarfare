@@ -5,10 +5,10 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -24,23 +24,20 @@ public class CommandHandlerRegistryTests
     [RequireGodotRuntime]
     public void Constructor_FindsEveryHandlerOfAnObject()
     {
-        var chat = new ChatHandler();
-        var session = new SessionHandler();
+        CommandHandlerRegistry registry = Registered(new ChatAndSaveHandler());
 
-        CommandHandlerRegistry registry = Registered(chat, session);
-
-        AssertThat(registry.SessionHandler).IsSame(session);
-        AssertThat(registry.TryGetPlayerHandler(typeof(SendChatMessageCommand), out var handler)).IsTrue();
-        AssertThat(handler.Name).IsEqual(nameof(ChatHandler));
+        AssertThat(registry.TryGetPlayerHandler(typeof(SendChatMessageCommand), out var chat)).IsTrue();
+        AssertThat(chat.Name).IsEqual(nameof(ChatAndSaveHandler));
+        AssertThat(registry.TryGetPlayerHandler(typeof(SaveCommand), out var save)).IsTrue();
+        AssertThat(save.Name).IsEqual(nameof(ChatAndSaveHandler));
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void NetworkCommandTypes_HaveJoinOnlyWithSessionHandler()
+    public void NetworkCommandTypes_ArePlayerHandledAndJoin()
     {
+        AssertThat(Registered().NetworkCommandTypes).ContainsExactlyInAnyOrder(typeof(JoinRequestCommand));
         AssertThat(Registered(new ChatHandler()).NetworkCommandTypes)
-            .ContainsExactlyInAnyOrder(typeof(SendChatMessageCommand));
-        AssertThat(Registered(new ChatHandler(), new SessionHandler()).NetworkCommandTypes)
             .ContainsExactlyInAnyOrder(typeof(SendChatMessageCommand), typeof(JoinRequestCommand));
     }
 
@@ -48,14 +45,8 @@ public class CommandHandlerRegistryTests
     [RequireGodotRuntime]
     public void Constructor_SecondHandlerOfOneCommand_Throws()
     {
-        foreach (ICommandHandler[] handlers in new[]
-                 {
-                     new ICommandHandler[] { new ChatHandler(), new ChatHandler() },
-                     [new SessionHandler(), new SessionHandler()],
-                 })
-        {
-            AssertThrown(() => new CommandHandlerRegistry(handlers)).IsInstanceOf<InvalidOperationException>();
-        }
+        AssertThrown(() => new CommandHandlerRegistry([new ChatHandler(), new ChatHandler()]))
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
@@ -123,16 +114,14 @@ public class CommandHandlerRegistryTests
 
     private class BareHandler : ICommandHandler;
 
-    private class SessionHandler : IPeerSessionHandler
+    private class ChatAndSaveHandler : IPlayerCommandHandler<SendChatMessageCommand>, IPlayerCommandHandler<SaveCommand>
     {
-        public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
-        {
-            reason = default;
-            return true;
-        }
+        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
 
-        public void Join(JoinRequestCommand command) { }
+        public void Process(string senderUid, SendChatMessageCommand command) { }
 
-        public void Leave(string uid, LeaveReason reason) { }
+        public bool Validate(string senderUid, SaveCommand command) => true;
+
+        public void Process(string senderUid, SaveCommand command) { }
     }
 }

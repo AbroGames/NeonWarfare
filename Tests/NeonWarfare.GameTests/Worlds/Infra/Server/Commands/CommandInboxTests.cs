@@ -4,6 +4,7 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
@@ -29,8 +30,7 @@ public class CommandInboxTests
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _clientsConnection = new RecordingClientsConnection();
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), new PeerStateTable());
-        // No session handler on purpose: a command type without a handler must be rejected too
-        _inbox = Inbox(new ChatHandler());
+        _inbox = new CommandInbox(_codec, _gatekeeper, new CommandHandlerRegistry([new ChatHandler()]));
     }
 
     [TestCase]
@@ -52,7 +52,7 @@ public class CommandInboxTests
         byte[][] rejected =
         [
             _codec.Encode(new ChatServerMessageEvent(1, "an event")),
-            _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, "uid", "nick", Colors.Red)),
+            _codec.Encode(new SaveCommand("save")),
             chat[..^1],
             [..chat, 0],
         ];
@@ -72,13 +72,12 @@ public class CommandInboxTests
     [RequireGodotRuntime]
     public void EnqueueFromPeer_JoinWithAnotherProtocolHash_IsRejectedAndNotEnqueued()
     {
-        CommandInbox inbox = JoinInbox();
         var join = new JoinRequestCommand(_codec.ProtocolHash, "alice", "Alice", Colors.Red);
 
-        inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(join with { ProtocolHash = _codec.ProtocolHash + 1 }));
-        inbox.EnqueueFromPeer(BobPeer, _codec.Encode(join));
+        _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(join with { ProtocolHash = _codec.ProtocolHash + 1 }));
+        _inbox.EnqueueFromPeer(BobPeer, _codec.Encode(join));
 
-        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(BobPeer, join));
+        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(BobPeer, join));
         AssertThat(_clientsConnection.Packets.Count).IsEqual(1);
         AssertThat(_clientsConnection.Packets[0].PeerId).IsEqual(AlicePeer);
         AssertThat(_clientsConnection.Packets[0].Kind).IsEqual(SentKind.JoinRejected);
@@ -116,28 +115,10 @@ public class CommandInboxTests
         AssertThat(_inbox.TakeAll()).IsEmpty();
     }
 
-    private CommandInbox JoinInbox() => Inbox(new SessionHandler());
-
-    private CommandInbox Inbox(params ICommandHandler[] handlers) =>
-        new(_codec, _gatekeeper, new CommandHandlerRegistry(handlers));
-
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>
     {
         public bool Validate(string senderUid, SendChatMessageCommand command) => true;
 
         public void Process(string senderUid, SendChatMessageCommand command) { }
-    }
-
-    private class SessionHandler : IPeerSessionHandler
-    {
-        public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
-        {
-            reason = default;
-            return true;
-        }
-
-        public void Join(JoinRequestCommand command) { }
-
-        public void Leave(string uid, LeaveReason reason) { }
     }
 }

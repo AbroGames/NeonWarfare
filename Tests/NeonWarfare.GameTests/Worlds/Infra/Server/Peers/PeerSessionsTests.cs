@@ -4,7 +4,6 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
 using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
@@ -36,8 +35,7 @@ public class PeerSessionsTests
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
         _calls = [];
-        var handlers = new CommandHandlerRegistry([new FakeSessionHandler(_calls, _peers)]);
-        _sessions = new PeerSessions(handlers, _peers, _gatekeeper);
+        _sessions = new PeerSessions(new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper);
         foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
         {
             _gatekeeper.StartHandshake(peerId);
@@ -261,16 +259,6 @@ public class PeerSessionsTests
         AssertThat(_calls).Contains($"leave {ThrowInLeave}");
         AssertNotJoined(AlicePeer);
         AssertThat(_peers.TryGetPeerIdByUid(ThrowInLeave, out _)).IsFalse();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Join_WithoutSessionHandler_Throws()
-    {
-        var handlers = new CommandHandlerRegistry([]);
-        var sessions = new PeerSessions(handlers, _peers, _gatekeeper);
-
-        AssertThrown(() => sessions.Join(AlicePeer, Command(AliceUid))).IsInstanceOf<InvalidOperationException>();
     }
 
     private void Join(int peerId, string uid) => _sessions.Join(peerId, Command(uid));

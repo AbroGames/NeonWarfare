@@ -152,7 +152,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_ChatBeforeJoinDropped_JoinThenChatInOneTickBothProcessed()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
 
         Chat(AlicePeer, "too early");
         Join(AlicePeer, AliceUid);
@@ -171,7 +171,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_DisplacedPeer_IsIgnoredUntilItsDisconnection()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
         Join(AlicePeer, AliceUid);
         dispatcher.ProcessAll();
         _calls.Clear();
@@ -192,7 +192,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_JoinedPeerRejectedByTheInbox_IsIgnoredAndLeavesOnItsDisconnection()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
         Join(AlicePeer, AliceUid);
         dispatcher.ProcessAll();
         _calls.Clear();
@@ -218,7 +218,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_JoinedPeerDisconnected_LeavesAndIsForgotten()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
         Join(AlicePeer, AliceUid);
         dispatcher.ProcessAll();
         _calls.Clear();
@@ -237,10 +237,9 @@ public class CommandDispatcherTests
     {
         var registry = new CommandHandlerRegistry(handlers);
         _inbox = new CommandInbox(_codec, _gatekeeper, registry);
-        return new CommandDispatcher(_inbox, registry, new PeerSessions(registry, _peers, _gatekeeper), _peers);
+        var sessions = new PeerSessions(new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper);
+        return new CommandDispatcher(_inbox, registry, sessions, _peers);
     }
-
-    private FakeSessionHandler SessionHandler() => new(_calls, _peers);
 
     // The dispatcher looks only at the peer's state: whether the player exists is the handler's lookup
     private void JoinDirectly(string uid, int peerId) => _peers.Join(peerId, uid);

@@ -8,7 +8,8 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// A service takes every service of a kind as <c>IEnumerable&lt;I&gt;</c>, and an element that is not in the
 /// container, or does not implement <c>I</c>, is silently not in the collection: nothing fails, it just never
 /// runs. Where membership is set by something other than the interface (an <c>[EventHandler]</c> method, the
-/// <c>[CommandHandler]</c> layer), a rule ties the two together.
+/// <c>[CommandHandler]</c> layer), a rule ties the two together. The session handler is the one
+/// <c>[CommandHandler]</c> outside the collection: <c>PeerSessions</c> takes it directly.
 /// </summary>
 [Collection(GameAssembly.Collection)]
 public class CollectionInjectionTests
@@ -71,8 +72,10 @@ public class CollectionInjectionTests
             {
                 using NeonWarfare.Scenes.Worlds.Infra.Composition;
                 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
+                using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
                 [CommandHandler] public class Handler : IPlayerCommandHandler<int>;
+                [CommandHandler] public class Session : IPeerSessionHandler;
                 [CommandHandler] public class Lost;
             }
             """);
@@ -126,15 +129,17 @@ public class CollectionInjectionTests
 
     private static FailureReport CommandHandlersWithoutMarker(GameAssembly game)
     {
-        FailureReport report = new($"[CommandHandler] services that are not {WorldLayers.CommandHandler}");
+        FailureReport report = new($"[CommandHandler] services that are neither {WorldLayers.CommandHandler} " +
+                                   $"nor {WorldLayers.PeerSessionHandler}");
 
         IEnumerable<TypeDefinition> handlers = game.Types
             .Where(type => WorldLayers.DeclaredLayer(type) == Layer.CommandHandler
-                           && !WorldLayers.Implements(type, WorldLayers.CommandHandler));
+                           && !WorldLayers.Implements(type, WorldLayers.CommandHandler)
+                           && !WorldLayers.Implements(type, WorldLayers.PeerSessionHandler));
         foreach (TypeDefinition handler in handlers)
         {
-            report.Add($"{GameAssembly.Describe(handler)}: is a [CommandHandler] but no ICommandHandler, so the " +
-                       "registry never gets it");
+            report.Add($"{GameAssembly.Describe(handler)}: is a [CommandHandler] but neither an ICommandHandler " +
+                       "nor the IPeerSessionHandler, so nothing ever gets it");
         }
 
         return report;

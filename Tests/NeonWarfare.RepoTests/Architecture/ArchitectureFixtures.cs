@@ -32,5 +32,10 @@ public static class ArchitectureFixtures
             public interface IPlayerCommandHandler<TCommand> : ICommandHandler;
         }
 
+        namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers
+        {
+            public interface IPeerSessionHandler;
+        }
+
         """;
 }

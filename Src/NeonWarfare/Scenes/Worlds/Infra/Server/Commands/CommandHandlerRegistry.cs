@@ -5,11 +5,10 @@ using System.Reflection;
 using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
-/// <summary>Every network handler of the world, and the command whitelist built from them.</summary>
+/// <summary>The player command handlers of the world, and the command whitelist built from them.</summary>
 [Server]
 public class CommandHandlerRegistry
 {
@@ -29,12 +28,9 @@ public class CommandHandlerRegistry
 
     private readonly Dictionary<Type, PlayerHandler> _playerHandlerByType = new();
 
-    /// <summary><c>null</c> when the world has none.</summary>
-    public IPeerSessionHandler SessionHandler { get; private set; }
-
     /// <summary>
-    /// The commands a peer may send: those with a player handler, and <see cref="JoinRequestCommand"/> when there
-    /// is a session handler. Everything else is rejected by <see cref="CommandInbox"/> before its body is read.
+    /// The commands a peer may send: those with a player handler, and <see cref="JoinRequestCommand"/>, which goes to
+    /// the session handler. Everything else is rejected by <see cref="CommandInbox"/> before its body is read.
     /// </summary>
     public IReadOnlySet<Type> NetworkCommandTypes { get; }
 
@@ -54,12 +50,7 @@ public class CommandHandlerRegistry
             }
         }
 
-        HashSet<Type> networkTypes = _playerHandlerByType.Keys.ToHashSet();
-        if (SessionHandler != null)
-        {
-            networkTypes.Add(typeof(JoinRequestCommand));
-        }
-        NetworkCommandTypes = networkTypes;
+        NetworkCommandTypes = _playerHandlerByType.Keys.Append(typeof(JoinRequestCommand)).ToHashSet();
     }
 
     public bool TryGetPlayerHandler(Type commandType, out PlayerHandler handler) =>
@@ -67,16 +58,6 @@ public class CommandHandlerRegistry
 
     private bool TryAdd(object handler, Type implemented)
     {
-        if (implemented == typeof(IPeerSessionHandler))
-        {
-            if (SessionHandler != null)
-            {
-                throw SecondHandler(SessionHandler.GetType().Name, handler, typeof(JoinRequestCommand));
-            }
-            SessionHandler = (IPeerSessionHandler) handler;
-            return true;
-        }
-
         if (!implemented.IsGenericType || implemented.GetGenericTypeDefinition() != typeof(IPlayerCommandHandler<>))
         {
             return false;
