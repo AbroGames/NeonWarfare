@@ -199,6 +199,8 @@ A **second OS process** plus an ordinary client connection to it.
    `--server`, `--port`, `--savefile`, `--admin` (the uid of that `LocalPlayer`) and **`--parent-pid` with the PID of
    the current process**. `--headless` is set when the server window is not requested; log mirroring into the Godot
    console is never passed to the dedicated server. `ProcessService` keeps the PID to wait for the process to exit.
+   It first binds the port and releases it: on a taken port nothing is started, and the client goes back to the menu
+   with the hosting error, so it never joins another server listening there.
 2. `resume-game.json` — "own server", so that "Continue" brings the server up again rather than connecting to it.
    The child server writes the same mode itself and keeps it current after a "save as"; `Services.LastGame` re-reads
    the file on every access, so "Continue" in this process follows it.

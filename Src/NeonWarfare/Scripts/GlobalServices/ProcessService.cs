@@ -32,8 +32,20 @@ public class ProcessService
         return OS.CreateInstance(arguments);
     }
 
-    public void StartNewDedicatedServerApplication(string saveFileName, int port, PlayerUid adminUid, bool showWindow)
+    /// <summary>
+    /// Starts nothing when the port cannot be bound, so the client never connects to another server listening on it.
+    /// A process binding the port between this check and the child's own bind is not caught.
+    /// </summary>
+    /// <returns><see cref="Error.Ok"/> when the process was started. Otherwise the error of binding the port.</returns>
+    public Error StartNewDedicatedServerApplication(string saveFileName, int port, PlayerUid adminUid, bool showWindow)
     {
+        Error portError = CheckPortFree(port);
+        if (portError != Error.Ok)
+        {
+            _log.Error("Dedicated server not started: port {port} cannot be bound: {error}", port, portError);
+            return portError;
+        }
+
         CommonArgs commonArgs = new CommonArgs(
             false); // Dedicated server never uses Godot console
         DedicatedServerArgs dedicatedServerArgs = new DedicatedServerArgs(
@@ -46,6 +58,19 @@ public class ProcessService
         string[] arguments = dedicatedServerArgs.GetArrayToStartDedicatedServer();
         _dedicatedServerPid = StartNewApplication(showWindow ? arguments : [..arguments, GodotHeadlessFlag]);
         _log.Information("Started dedicated server process {pid}", _dedicatedServerPid);
+        return Error.Ok;
+    }
+
+    // Binds the port with the same ENet call a server makes, so it fails exactly where the child server would.
+    private Error CheckPortFree(int port)
+    {
+        var connection = new ENetConnection();
+        Error error = connection.CreateHostBound("*", port);
+        if (error == Error.Ok)
+        {
+            connection.Destroy();
+        }
+        return error;
     }
 
     /// <summary>
