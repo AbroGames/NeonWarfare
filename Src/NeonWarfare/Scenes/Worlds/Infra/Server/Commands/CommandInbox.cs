@@ -51,7 +51,7 @@ public class CommandInbox(NetMessageCodec codec, PeerGatekeeper gatekeeper, Comm
             return;
         }
 
-        // A protocol check, not a game rule, so it is not the join handler's: a client of another build is rejected
+        // A protocol check, not a game rule, so it is not the session handler's: a client of another build is rejected
         // before its join can reach the world
         if (command is JoinRequestCommand join && join.ProtocolHash != codec.ProtocolHash)
         {

@@ -15,11 +15,10 @@ public class CommandHandlerTests
     private const string PeersNamespace = WorldLayers.WorldNamespace + ".Infra.Server.Peers";
     private const string JoinCommand = WorldLayers.WorldNamespace + ".Infra.Protocol.JoinRequestCommand";
     private const string PlayerHandler = CommandsNamespace + ".IPlayerCommandHandler`1";
-    private const string JoinHandler = PeersNamespace + ".IJoinRequestHandler";
-    private const string DisconnectedHandler = PeersNamespace + ".IPeerDisconnectedHandler";
+    private const string SessionHandler = PeersNamespace + ".IPeerSessionHandler";
 
     /// <summary>
-    /// <c>JoinRequestCommand</c> goes to the <c>IJoinRequestHandler</c>: the joining peer has no player yet.
+    /// <c>JoinRequestCommand</c> goes to the <c>IPeerSessionHandler</c>: the joining peer has no player yet.
     /// </summary>
     [Fact]
     public void EveryCommand_HasNetworkHandler()
@@ -39,7 +38,7 @@ public class CommandHandlerTests
                 if (hasPlayerHandler)
                 {
                     report.Add($"{GameAssembly.Describe(command)}: has a player handler, which the dispatcher " +
-                               "never calls — the join goes to IJoinRequestHandler");
+                               "never calls — the join goes to IPeerSessionHandler");
                 }
             }
             else if (!hasPlayerHandler)
@@ -80,27 +79,19 @@ public class CommandHandlerTests
     }
 
     /// <summary>
-    /// <c>CommandHandlerRegistry.Register</c> takes one of each and only in a pair, but only at run time: without
-    /// them a peer could neither join nor leave.
+    /// <c>CommandHandlerRegistry.Register</c> takes at most one, but only at run time: without it a peer could
+    /// neither join nor leave.
     /// </summary>
     [Fact]
-    public void JoinAndDisconnectedHandlers_HaveExactlyOneImplementation()
+    public void SessionHandler_HasExactlyOneImplementation()
     {
-        FailureReport report = new("Join and peer disconnected handlers that are not exactly one");
+        List<TypeDefinition> implementations = HandlerTypes()
+            .Where(type => Interfaces(type).Any(implemented => implemented.FullName == SessionHandler))
+            .ToList();
 
-        foreach (string handlerInterface in new[] { JoinHandler, DisconnectedHandler })
-        {
-            List<TypeDefinition> implementations = HandlerTypes()
-                .Where(type => Interfaces(type).Any(implemented => implemented.FullName == handlerInterface))
-                .ToList();
-            if (implementations.Count != 1)
-            {
-                string found = string.Join(", ", implementations.Select(GameAssembly.Describe));
-                report.Add($"{handlerInterface}: {implementations.Count} implementations, one expected ({found})");
-            }
-        }
-
-        report.AssertEmpty();
+        string found = string.Join(", ", implementations.Select(GameAssembly.Describe));
+        Assert.True(implementations.Count == 1,
+            $"{SessionHandler}: {implementations.Count} implementations, one expected ({found})");
     }
 
     /// <summary>
@@ -164,5 +155,5 @@ public class CommandHandlerTests
     }
 
     private static bool IsHandlerInterface(TypeReference implemented) =>
-        implemented.GetElementType().FullName is PlayerHandler or JoinHandler or DisconnectedHandler;
+        implemented.GetElementType().FullName is PlayerHandler or SessionHandler;
 }

@@ -11,7 +11,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 /// <summary>
 /// The life of a joined peer, kept in one place: after a valid join the peer is bound to its uid and gets its event
-/// buffer, both before the join handler publishes anything, and loses them on its disconnection or displacement.
+/// buffer, both before the session handler publishes anything, and loses them on its disconnection or displacement.
 /// Called by <see cref="CommandDispatcher"/> in the tick, in the order of the inbox.
 /// </summary>
 [Server]
@@ -24,12 +24,13 @@ public class PeerSessions(
     private const string RejoinLog = "{command} from peer {peerId} dropped: the peer has already joined as {uid}";
     private const string JoinRejectedLog = "{command} from peer {peerId} rejected by {handler}: {reason}";
     private const string JoinValidateFailedLog = "{handler} failed to validate {command}, the peer is rejected";
-    private const string JoinProcessFailedLog = "{handler} failed to process {command}, the peer is rejected";
+    private const string JoinFailedLog = "{handler} failed to process {command}, the peer is rejected";
     private const string HostUidLog = "Peer {peerId} joins as {uid}, which is the host's own: rejected";
     private const string DisplacedLog = "Peer {newPeerId} joins as {uid}, displacing peer {oldPeerId}";
     private const string NotJoinedLeftLog = "Peer {peerId} disconnected before joining";
-    private const string NoJoinHandlerError =
-        "JoinRequestCommand from peer {0} passed the inbox, but there is no join handler: the whitelist is miswired.";
+    private const string NoSessionHandlerError =
+        "JoinRequestCommand from peer {0} passed the inbox, but there is no session handler: "
+        + "the whitelist is miswired.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<PeerSessions>();
 
@@ -41,16 +42,16 @@ public class PeerSessions(
             _log.Warning(RejoinLog, name, peerId, joinedUid);
             return;
         }
-        // The inbox lets the join through only when there is a join handler, so this is a wiring error, not a peer's
-        IJoinRequestHandler joinHandler = handlers.JoinHandler
-            ?? throw new InvalidOperationException(NoJoinHandlerError.FormatWith(peerId));
+        // The inbox lets the join through only when there is a session handler, so this is a wiring error, not a peer's
+        IPeerSessionHandler sessionHandler = handlers.SessionHandler
+            ?? throw new InvalidOperationException(NoSessionHandlerError.FormatWith(peerId));
 
-        string handlerName = joinHandler.GetType().Name;
+        string handlerName = sessionHandler.GetType().Name;
         JoinRejectReason reason;
         bool valid;
         try
         {
-            valid = joinHandler.Validate(command, out reason);
+            valid = sessionHandler.ValidateJoin(command, out reason);
             if (!valid)
             {
                 _log.Warning(JoinRejectedLog, name, peerId, handlerName, reason);
@@ -98,12 +99,12 @@ public class PeerSessions(
         outbox.AddPeer(peerId);
         try
         {
-            joinHandler.Process(command);
+            sessionHandler.Join(command);
         }
         // The model may stay half-changed, as with any facade, but the peer must not stay joined to a broken player
         catch (Exception e)
         {
-            _log.Error(e, JoinProcessFailedLog, handlerName, name);
+            _log.Error(e, JoinFailedLog, handlerName, name);
             outbox.RemovePeer(peerId);
             peers.Unbind(peerId);
             gatekeeper.Reject(peerId, JoinRejectReason.InternalError);
@@ -134,7 +135,7 @@ public class PeerSessions(
     {
         try
         {
-            handlers.DisconnectedHandler.Process(uid);
+            handlers.SessionHandler.Leave(uid);
         }
         finally
         {

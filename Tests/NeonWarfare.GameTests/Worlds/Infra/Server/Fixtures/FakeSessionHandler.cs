@@ -4,18 +4,17 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures;
 
-// Records whether the peer is bound and has its buffer by the time of Process; a uid picks the failure
-public class FakeJoinHandler(List<string> calls, PeerUidMap peers, EventOutbox outbox)
-    : IJoinRequestHandler, IPeerDisconnectedHandler
+// Records whether the peer is bound and has its buffer by the time of Join; a uid picks the failure
+public class FakeSessionHandler(List<string> calls, PeerUidMap peers, EventOutbox outbox) : IPeerSessionHandler
 {
     public const string Invalid = "invalid";
     public const string ThrowInValidate = "throw in validate";
-    public const string ThrowInProcess = "throw in process";
+    public const string ThrowInJoin = "throw in join";
     public const string ThrowInLeave = "throw in leave";
 
-    public static string Processed(string uid) => $"process join {uid}: bound, buffer";
+    public static string Joined(string uid) => $"join {uid}: bound, buffer";
 
-    public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
+    public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
     {
         calls.Add($"validate join {command.Uid}");
         reason = JoinRejectReason.InvalidNick;
@@ -27,15 +26,15 @@ public class FakeJoinHandler(List<string> calls, PeerUidMap peers, EventOutbox o
         };
     }
 
-    public void Process(JoinRequestCommand command)
+    public void Join(JoinRequestCommand command)
     {
         bool bound = peers.TryGetPeerId(command.Uid, out int peerId);
         string buffer = bound && outbox.Peers.Contains(peerId) ? "buffer" : "no buffer";
-        calls.Add($"process join {command.Uid}: {(bound ? "bound" : "not bound")}, {buffer}");
-        if (command.Uid == ThrowInProcess) throw new InvalidOperationException("process failed");
+        calls.Add($"join {command.Uid}: {(bound ? "bound" : "not bound")}, {buffer}");
+        if (command.Uid == ThrowInJoin) throw new InvalidOperationException("join failed");
     }
 
-    public void Process(string uid)
+    public void Leave(string uid)
     {
         calls.Add($"leave {uid}");
         if (uid == ThrowInLeave) throw new InvalidOperationException("leave failed");

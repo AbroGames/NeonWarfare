@@ -90,14 +90,14 @@ packet carries only the last value of a tick.
 `JoinRequestCommand(protocolHash, uid, nick, color)`; until then it receives nothing. In the tick, `PeerSessions`:
 
 * drops a second join of a joined peer;
-* asks `IJoinRequestHandler.Validate` — a refusal sends `JoinRejected(reason)` and disconnects the peer;
+* asks `IPeerSessionHandler.ValidateJoin` — a refusal sends `JoinRejected(reason)` and disconnects the peer;
 * displaces a peer already online with the same uid: the old one leaves and is disconnected, then the new one joins
   (a crashed client comes back without waiting for ENet to notice). The host's own uid cannot be taken —
   `UidInUse`;
 * binds peer ↔ uid (`PeerUidMap`), creates the peer's buffer in `EventOutbox` and calls
-  `IJoinRequestHandler.Process`, which joins the player through the Simulation.
+  `IPeerSessionHandler.Join`, which joins the player through the Simulation.
 
-`peer_disconnected` enqueues `PeerDisconnected`; in the tick `IPeerDisconnectedHandler.Process(uid)` runs for a
+`peer_disconnected` enqueues `PeerDisconnected`; in the tick `IPeerSessionHandler.Leave(uid)` runs for a
 joined peer, then its buffer and binding go. Between a server-side disconnect and its `peer_disconnected` every
 command of the peer is dropped.
 
