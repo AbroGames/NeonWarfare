@@ -137,7 +137,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void ExitTree_ServerWorld_SavesToTheFileOfItsSetup()
     {
-        const string loadedFileName = "loaded";
+        var loadedFileName = new SaveFileName("loaded");
         World host = InTree(HostWorld());
         JoinHost(host);
 
@@ -369,7 +369,7 @@ public class WorldEntryPointsTests
     private static WorldSetup.RemoteClient RemoteClientSetup(ILocalPlayerOwner? owner = null) =>
         TestWorldSetups.RemoteClient(RemotePlayer, owner);
 
-    private WorldSetup.Dedicated DedicatedSetup(string saveFileName = TestWorldSetups.SaveFileName) =>
+    private WorldSetup.Dedicated DedicatedSetup(SaveFileName? saveFileName = null) =>
         TestWorldSetups.Dedicated(saveFiles: _saveFiles, saveFileName: saveFileName);
 
     private WorldDependencies Dependencies(ProtocolHash? hash = null)

@@ -37,14 +37,14 @@ public class ResumableGameService
         switch (game.Type)
         {
             case ResumableGame.ResumableType.RunSingleplayer:
-                Services.MainScene.StartSingleplayerGame(game.SaveName);
+                Services.MainScene.StartSingleplayerGame(new SaveFileName(game.SaveName));
                 break;
             case ResumableGame.ResumableType.ConnectToServer:
                 Services.MainScene.ConnectToMultiplayerGame(game.Host, game.Port);
                 break;
             case ResumableGame.ResumableType.CreateServer:
                 Services.MainScene.HostMultiplayerGameAsClient(
-                    game.SaveName, game.Port, game.IsDedicated!.Value, showWindow: true);
+                    new SaveFileName(game.SaveName), game.Port, game.IsDedicated!.Value, showWindow: true);
                 break;
         }
     }

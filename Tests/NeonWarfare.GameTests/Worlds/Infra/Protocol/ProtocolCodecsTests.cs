@@ -42,6 +42,19 @@ public class ProtocolCodecsTests
         AssertThat(MessagePackSerializer.Deserialize<PlayerUid>(nil, Options)).IsEqual(default(PlayerUid));
     }
 
+    // An invalid name must reach the save command's validation intact, not fail the message
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SaveFileNameFormatter_WritesABareString_AnInvalidOneReadsBackIntact_NilAsDefault()
+    {
+        byte[] invalid = MessagePackSerializer.Serialize(new SaveFileName("../x"), Options);
+        byte[] nil = MessagePackSerializer.Serialize<string?>(null);
+
+        AssertThat(invalid).IsEqual(MessagePackSerializer.Serialize("../x"));
+        AssertThat(MessagePackSerializer.Deserialize<SaveFileName>(invalid, Options)).IsEqual(new SaveFileName("../x"));
+        AssertThat(MessagePackSerializer.Deserialize<SaveFileName>(nil, Options)).IsEqual(default(SaveFileName));
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void NetIdFormatter_Negative_Throws()

@@ -34,15 +34,14 @@ public abstract class BaseGameStarter
     /// </summary>
     protected ISaveFiles SaveFilesUpdatingLastGame(ResumableGame lastGame) =>
         new LastGameUpdatingSaveFiles(
-            Services.SaveLoad, saveFileName => SetLastGame(lastGame with { SaveName = saveFileName }));
+            Services.SaveLoad, saveFileName => SetLastGame(lastGame with { SaveName = saveFileName.Value }));
 
     /// <summary>
     /// Loads the server World from its save file if there is one. Otherwise it is a new World.
     /// </summary>
     /// <exception cref="SaveLoadService.LoadException">The file cannot be read.</exception>
-    protected WorldOrigin LoadServerOrigin(string saveFileName)
+    protected WorldOrigin LoadServerOrigin(SaveFileName saveFileName)
     {
-        ArgumentNullException.ThrowIfNull(saveFileName);
         return Services.SaveLoad.CheckFileExists(saveFileName)
             ? new WorldOrigin.FromSave(saveFileName, Services.SaveLoad.LoadFromDisk(saveFileName))
             : new WorldOrigin.NewWorld();
@@ -52,7 +51,7 @@ public abstract class BaseGameStarter
     /// Logs any exception of building the server World and turns it into a message for the player.
     /// </summary>
     /// <returns>The message for the player.</returns>
-    protected string LogWorldError(Exception e, string saveFileName)
+    protected string LogWorldError(Exception e, SaveFileName saveFileName)
     {
         _log.Error(e, "Creating the World of the save '{saveFileName}' failed", saveFileName);
         return Services.I18N.Tr(e switch

@@ -17,7 +17,7 @@ public class SaveLoadService : ISaveFiles
     
     public class SaveException(string message, Exception innerException = null) : Exception(message, innerException);
     public class LoadException(string message, Exception innerException = null) : Exception(message, innerException);
-    public readonly record struct SaveFileInfo(string FileName, ulong ModifiedTime);
+    public readonly record struct SaveFileInfo(SaveFileName FileName, ulong ModifiedTime);
     
     private const string DefaultSaveDirName = "saves";
     private const string SaveExtension = ".bin";
@@ -34,9 +34,9 @@ public class SaveLoadService : ISaveFiles
         _saveDirName = saveDirName;
     }
 
-    public string GenNewSaveFileName()
+    public SaveFileName GenNewSaveFileName()
     {
-        return DateTime.Now.ToString(NewSaveNameFormat, CultureInfo.InvariantCulture);
+        return new SaveFileName(DateTime.Now.ToString(NewSaveNameFormat, CultureInfo.InvariantCulture));
     }
     
     public List<SaveFileInfo> GetAllSaveFiles()
@@ -45,18 +45,18 @@ public class SaveLoadService : ISaveFiles
         return DirAccess.GetFilesAt(dirPath)
             .Where(filename => filename.EndsWith(SaveExtension))
             .Select(filename => new SaveFileInfo(
-                FileName: Path.GetFileNameWithoutExtension(filename),
+                FileName: new SaveFileName(Path.GetFileNameWithoutExtension(filename)),
                 ModifiedTime: FileAccess.GetModifiedTime(dirPath.PathJoin(filename))))
             .OrderByDescending(file => file.ModifiedTime)
             .ToList();
     }
 
-    public bool CheckFileExists(string saveFileName)
+    public bool CheckFileExists(SaveFileName saveFileName)
     {
         return _storage.FileExists(GetFileName(saveFileName));
     }
     
-    public string GetFullPath(string saveFileName)
+    public string GetFullPath(SaveFileName saveFileName)
     {
         return _storage.GetPathForFile(GetFileName(saveFileName));
     }
@@ -66,7 +66,7 @@ public class SaveLoadService : ISaveFiles
     /// atomically.
     /// </summary>
     /// <exception cref="SaveException">Nothing was saved.</exception>
-    public void SaveToDisk(byte[] data, string saveFileName)
+    public void SaveToDisk(byte[] data, SaveFileName saveFileName)
     {
         string fileName = GetFileName(saveFileName);
         try
@@ -82,7 +82,7 @@ public class SaveLoadService : ISaveFiles
     }
     
     /// <exception cref="LoadException">The file cannot be read.</exception>
-    public byte[] LoadFromDisk(string saveFileName)
+    public byte[] LoadFromDisk(SaveFileName saveFileName)
     {
         string fileName = GetFileName(saveFileName);
         byte[] data;
@@ -98,5 +98,5 @@ public class SaveLoadService : ISaveFiles
         return data;
     }
 
-    private string GetFileName(string saveFileName) => _saveDirName.PathJoin(saveFileName + SaveExtension);
+    private string GetFileName(SaveFileName saveFileName) => _saveDirName.PathJoin(saveFileName.Value + SaveExtension);
 }

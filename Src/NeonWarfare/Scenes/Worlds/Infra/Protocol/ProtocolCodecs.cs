@@ -16,6 +16,7 @@ public static class ProtocolCodecs
         new IMessagePackFormatter[]
         {
             ColorFormatter.Instance, PlayerUidFormatter.Instance, NetIdFormatter.Instance, TickTimerFormatter.Instance,
+            SaveFileNameFormatter.Instance,
         },
         new IFormatterResolver[] { StandardResolver.Instance });
 

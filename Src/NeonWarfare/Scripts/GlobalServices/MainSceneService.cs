@@ -42,7 +42,7 @@ public class MainSceneService
         });
     }
     
-    public void StartSingleplayerGame(string saveFileName)
+    public void StartSingleplayerGame(SaveFileName saveFileName)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -64,13 +64,13 @@ public class MainSceneService
     /// <summary>
     /// Start a new server and connect to them. Use in the client process.
     /// </summary>
-    /// <param name="saveFileName">Name of the save file in the folder with saves, required non-null</param>
+    /// <param name="saveFileName">Name of the save file in the folder with saves.</param>
     /// <param name="port">Port number on which the server will listen to.</param>
     /// <param name="createDedicatedServerProcess">If true, create a new OS process running
     /// a dedicated server and have this process connect to it as a client.</param>
     /// <param name="showWindow">Give the dedicated server process a window. Ignored without one.</param>
     public void HostMultiplayerGameAsClient(
-        string saveFileName, int? port, bool createDedicatedServerProcess, bool showWindow)
+        SaveFileName saveFileName, int? port, bool createDedicatedServerProcess, bool showWindow)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -92,7 +92,7 @@ public class MainSceneService
     /// <summary>
     /// Start a new server. Use in the dedicated server process.
     /// </summary>
-    /// <param name="saveFileName">Name of the save file in the folder with saves, required non-null</param>
+    /// <param name="saveFileName">Name of the save file in the folder with saves.</param>
     /// <param name="port">Port number on which the server will listen to.</param>
     /// <param name="adminUid">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client,
@@ -100,7 +100,7 @@ public class MainSceneService
     /// <param name="serverHud">Show the ServerHud: false for a server without a window.</param>
     /// <param name="autoSaveIntervalMinutes">0 turns the autosave off.</param>
     public void HostMultiplayerGameAsDedicatedServer(
-        string saveFileName,
+        SaveFileName saveFileName,
         int? port,
         PlayerUid? adminUid,
         int? parentPid,

@@ -131,6 +131,9 @@ msgstr ""
 msgid "MESSAGE_MENU__HOSTING_FAILED"
 msgstr ""
 
+msgid "MESSAGE_MENU__INVALID_SAVE_NAME"
+msgstr ""
+
 msgid "HUD__CHAT_PLACEHOLDER"
 msgstr ""
 
@@ -150,6 +153,9 @@ msgid "HUD__CHAT_GAME_SAVED"
 msgstr ""
 
 msgid "HUD__CHAT_GAME_SAVE_FAILED"
+msgstr ""
+
+msgid "HUD__INVALID_SAVE_NAME"
 msgstr ""
 
 msgid "HUD__SAVE_BUTTON"

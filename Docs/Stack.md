@@ -49,6 +49,8 @@ repository and searching it will not find declarations of its types: the DI core
 `[Child]`, `[NotNull]`), logging, the services of the [global registry](Services.md) (`I18N`,
 `Rand`, `NodeTree`, …), the Godot extensions pulled in by `GlobalUsings.cs` and so on. The path to the
 library's source code is stored in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
+KludgeBox is ours: a change to it and a new release of the package are made whenever a task needs them, so needing a
+release is never an argument against a solution.
 
 The Godot nodes built on top of it are **not** in the package: they live in this repository, in
 `Src/GodotBox/` (namespaces `GodotBox.*`) — `NodeContainer`, `AbstractStorage`, `CheckedAbstractStorage`,

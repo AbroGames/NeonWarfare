@@ -8,7 +8,7 @@ namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>Launches a dedicated server as a child process and connects to it as an ordinary client.</summary>
 public class HostDedicatedServerAndConnectGameStarter(
-    string saveFileName,
+    SaveFileName saveFileName,
     int? port,
     bool showWindow
     ) : BaseGameStarter

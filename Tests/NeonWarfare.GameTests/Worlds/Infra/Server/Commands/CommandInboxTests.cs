@@ -52,7 +52,7 @@ public class CommandInboxTests
         byte[][] rejected =
         [
             _codec.Encode(new ChatServerMessageEvent(1, "an event")),
-            _codec.Encode(new SaveCommand("save")),
+            _codec.Encode(new SaveCommand(new SaveFileName("save"))),
             chat[..^1],
             [..chat, 0],
         ];

@@ -12,7 +12,7 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
 {
     private readonly ILogger _log = LogFactory.GetForStatic<SaveSimulationFacade>();
 
-    public void Save(PlayerUid senderUid, string fileName)
+    public void Save(PlayerUid senderUid, SaveFileName fileName)
     {
         PlayerModel sender = players.Get(senderUid);
         _log.Information("{nick} ({uid}) saves the game as '{fileName}'", sender.Nick, sender.Uid, fileName);
@@ -20,8 +20,8 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
         // The reply comes at the end of the tick, and the sender may have left by then.
         saveService.RequestSave(fileName,
             () => chatSimulation.SendLocalizedMessageAsServerToPlayer(
-                "HUD__CHAT_GAME_SAVED", [fileName], senderUid),
+                "HUD__CHAT_GAME_SAVED", [fileName.Value], senderUid),
             _ => chatSimulation.SendLocalizedMessageAsServerToPlayer(
-                "HUD__CHAT_GAME_SAVE_FAILED", [fileName], senderUid));
+                "HUD__CHAT_GAME_SAVE_FAILED", [fileName.Value], senderUid));
     }
 }

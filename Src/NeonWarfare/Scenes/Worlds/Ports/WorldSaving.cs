@@ -12,16 +12,20 @@ public sealed record WorldSaving
     /// <summary>The longest interval whose ticks fit into an <c>int</c>.</summary>
     public const int MaxAutoSaveIntervalMinutes = int.MaxValue / (60 * TickRate.TicksPerSecond);
 
-    public WorldSaving(string fileName, int autoSaveIntervalMinutes)
+    /// <exception cref="ArgumentException"><paramref name="fileName"/> is invalid.</exception>
+    public WorldSaving(SaveFileName fileName, int autoSaveIntervalMinutes)
     {
-        ArgumentNullException.ThrowIfNull(fileName);
+        if (!fileName.IsValid)
+        {
+            throw new ArgumentException($"The save file name '{fileName}' is invalid.", nameof(fileName));
+        }
         ArgumentOutOfRangeException.ThrowIfNegative(autoSaveIntervalMinutes);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(autoSaveIntervalMinutes, MaxAutoSaveIntervalMinutes);
         FileName = fileName;
         AutoSaveIntervalMinutes = autoSaveIntervalMinutes;
     }
 
-    public string FileName { get; }
+    public SaveFileName FileName { get; }
 
     /// <summary>0 turns the autosave off.</summary>
     public int AutoSaveIntervalMinutes { get; }

@@ -39,7 +39,7 @@ public class ProcessService
     /// <returns><see cref="Error.Ok"/> when the process was started. Otherwise the error of binding the port.</returns>
     /// <param name="settingsFileName">The settings file the server reads, relative to <c>user://</c>.</param>
     public Error StartNewDedicatedServerApplication(
-        string saveFileName, int port, PlayerUid adminUid, string settingsFileName, bool showWindow)
+        SaveFileName saveFileName, int port, PlayerUid adminUid, string settingsFileName, bool showWindow)
     {
         Error portError = CheckPortFree(port);
         if (portError != Error.Ok)

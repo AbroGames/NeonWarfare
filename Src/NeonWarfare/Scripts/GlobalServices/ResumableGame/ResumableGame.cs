@@ -26,21 +26,21 @@ public record ResumableGame(
             IsDedicated: null);
     }
 
-    public static ResumableGame GetSingleplayer(string saveName)
+    public static ResumableGame GetSingleplayer(SaveFileName saveName)
     {
         return GetNone() with
         {
             Type = ResumableType.RunSingleplayer,
-            SaveName = saveName,
+            SaveName = saveName.Value,
         };
     }
         
-    public static ResumableGame GetCreateServer(string saveName, int port, bool isDedicated)
+    public static ResumableGame GetCreateServer(SaveFileName saveName, int port, bool isDedicated)
     {
         return GetNone() with
         {
             Type = ResumableType.CreateServer,
-            SaveName = saveName,
+            SaveName = saveName.Value,
             Port = port,
             IsDedicated = isDedicated
         };
@@ -49,8 +49,8 @@ public record ResumableGame(
     public bool IsValid() => Type switch
     {
         ResumableType.None => true,
-        ResumableType.RunSingleplayer => SaveName != null,
-        ResumableType.CreateServer => SaveName != null && Port != null && IsDedicated != null,
+        ResumableType.RunSingleplayer => SaveFileName.TryParse(SaveName, out _),
+        ResumableType.CreateServer => SaveFileName.TryParse(SaveName, out _) && Port != null && IsDedicated != null,
         ResumableType.ConnectToServer => Host != null && Port != null,
         _ => false
     };

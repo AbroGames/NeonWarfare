@@ -17,7 +17,7 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// never resumed by "Continue".
 /// </param>
 public class DedicatedServerGameStarter(
-    string saveFileName,
+    SaveFileName saveFileName,
     int? port,
     PlayerUid? adminUid,
     int? parentPid,

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Godot;
+using Humanizer;
 using KludgeBox.DI.Requests.ChildInjection;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Singleplayer;
@@ -27,7 +28,7 @@ public partial class SingleplayerPage : MainMenuPage
         CancelButton.Pressed += OnCancel;
         TabContainer.TabChanged += OnSwitchingTabs;
 
-        _selectedSaveName = Services.SaveLoad.GetAllSaveFiles().FirstOrDefault().FileName ?? String.Empty;
+        _selectedSaveName = Services.SaveLoad.GetAllSaveFiles().FirstOrDefault().FileName.Value ?? String.Empty;
         SaveNameLineEdit.Text = _selectedSaveName;
         
         PopulateSavesList();
@@ -52,7 +53,7 @@ public partial class SingleplayerPage : MainMenuPage
             DateTimeOffset modifiedTime = DateTimeOffset
                 .FromUnixTimeSeconds((long)save.ModifiedTime).ToLocalTime();
             button.Text = $"{save.FileName} ({modifiedTime:yyyy-MM-dd HH:mm})";
-            button.Pressed += () => SaveNameLineEdit.Text = save.FileName;
+            button.Pressed += () => SaveNameLineEdit.Text = save.FileName.Value;
             SavesListContainer.AddChild(button);
         }
     }
@@ -69,9 +70,15 @@ public partial class SingleplayerPage : MainMenuPage
 
     private void OnStart()
     {
-        string saveFileName = String.IsNullOrWhiteSpace(SaveNameLineEdit.Text)
+        SaveFileName saveFileName = String.IsNullOrWhiteSpace(SaveNameLineEdit.Text)
             ? Services.SaveLoad.GenNewSaveFileName()
-            : SaveNameLineEdit.Text.Trim();
+            : new SaveFileName(SaveNameLineEdit.Text.Trim());
+        if (!saveFileName.IsValid)
+        {
+            GoNext(PagesProvider.PrepareMessagePage(
+                Tr("MESSAGE_MENU__INVALID_SAVE_NAME").FormatWith(SaveFileName.MaxLength)));
+            return;
+        }
         TryStartGame(() => Services.MainScene.StartSingleplayerGame(saveFileName));
     }
     

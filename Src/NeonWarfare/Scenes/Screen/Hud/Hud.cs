@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using Godot;
+using Humanizer;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
@@ -35,6 +36,7 @@ public partial class Hud : Control
     private World.ICommandSender _commands;
     private PlayerQuery _players;
     private LocalPlayerPresentation _localPlayer;
+    private AcceptDialog _invalidSaveNameDialog;
     private readonly ILogger _log = LogFactory.GetForStatic<Hud>();
     
     public Hud InitPreReady(World.IReader reader, World.ICommandSender commands)
@@ -60,7 +62,9 @@ public partial class Hud : Control
         ChatLineEdit.TextSubmitted += _ => SendChat();
         LogButton.Pressed += () => { Services.NodeTree.LogFullTree(GetTree().Root); };
         ExitButton.Pressed += () => { Services.MainScene.StartMainMenu(); };
-        SaveButton.Pressed += () => _commands.Send(new SaveCommand(SaveLineEdit.Text));
+        SaveButton.Pressed += Save;
+        _invalidSaveNameDialog = new AcceptDialog();
+        AddChild(_invalidSaveNameDialog);
 
         // The Hud is created right after the join's own chat line, whose notice must not be the only trigger
         RenderChat();
@@ -84,6 +88,19 @@ public partial class Hud : Control
     private void RenderChat() =>
         ChatLabel.Text = string.Join("\n",
             _reader.Get<ChatPresentation>().Entries.Select(entry => FormatChatLine(entry, key => Tr(key))));
+
+    private void Save()
+    {
+        var fileName = new SaveFileName(SaveLineEdit.Text);
+        if (!fileName.IsValid)
+        {
+            _invalidSaveNameDialog.DialogText = Tr("HUD__INVALID_SAVE_NAME").FormatWith(SaveFileName.MaxLength);
+            _invalidSaveNameDialog.PopupCentered();
+            return;
+        }
+
+        _commands.Send(new SaveCommand(fileName));
+    }
 
     private void SendChat()
     {

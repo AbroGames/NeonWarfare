@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Godot;
+using Humanizer;
 using KludgeBox.DI.Requests.ChildInjection;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.CreateSavedServer;
@@ -14,7 +15,7 @@ public partial class CreateSavedServerPage : MainMenuPage
     [Child] public Button CreateServerButton { get; private set; }
     [Child] public Button CancelButton { get; private set; }
 
-    private string _selectedSaveFileName;
+    private SaveFileName? _selectedSaveFileName;
 
     public override void _Ready()
     {
@@ -28,7 +29,9 @@ public partial class CreateSavedServerPage : MainMenuPage
         IsDedicatedCheckButton.ButtonPressed = false;
         SearchLineEdit.Text = String.Empty;
 
-        _selectedSaveFileName = Services.SaveLoad.GetAllSaveFiles().FirstOrDefault().FileName ?? String.Empty;
+        _selectedSaveFileName = Services.SaveLoad.GetAllSaveFiles()
+            .Select(save => (SaveFileName?) save.FileName)
+            .FirstOrDefault();
         PopulateSavesList(SearchLineEdit.Text);
     }
 
@@ -45,7 +48,7 @@ public partial class CreateSavedServerPage : MainMenuPage
         foreach (var save in saves)
         {
             if (!String.IsNullOrEmpty(filterLower)
-                && !save.FileName.ToLowerInvariant().Contains(filterLower))
+                && !save.FileName.Value.ToLowerInvariant().Contains(filterLower))
             {
                 continue;
             }
@@ -73,15 +76,21 @@ public partial class CreateSavedServerPage : MainMenuPage
 
     private void OnCreate()
     {
-        if (String.IsNullOrWhiteSpace(_selectedSaveFileName))
+        if (_selectedSaveFileName is not { } saveFileName)
         {
             GoNext(PagesProvider.PrepareMessagePage(Tr("CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR")));
+            return;
+        }
+        if (!saveFileName.IsValid)
+        {
+            GoNext(PagesProvider.PrepareMessagePage(
+                Tr("MESSAGE_MENU__INVALID_SAVE_NAME").FormatWith(SaveFileName.MaxLength)));
             return;
         }
 
         int port = (int) PortSpinBox.Value;
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
         TryStartGame(() =>
-            Services.MainScene.HostMultiplayerGameAsClient(_selectedSaveFileName, port, isDedicated, showWindow: true));
+            Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated, showWindow: true));
     }
 }

@@ -33,7 +33,7 @@ public class SaveCommandTests
     private static readonly PlayerUid HostUid = new("host");
     private static readonly PlayerUid AdminUid = new("admin");
     private static readonly PlayerUid PlayerUid = new("player");
-    private const string FileName = "my save";
+    private static readonly SaveFileName FileName = new("my save");
 
     private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent)];
 
@@ -56,7 +56,7 @@ public class SaveCommandTests
         _files = new RecordingSaveFiles();
         _frames = new ManualFrameProvider();
         _server = new WorldServicesBuilder().Build(
-            TestWorldSetups.Host(saveFiles: _files, saveFileName: "old"),
+            TestWorldSetups.Host(saveFiles: _files, saveFileName: new SaveFileName("old")),
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
                 NetMessageCodecTests.CreateReplicator(), _frames, _scenes,
@@ -89,7 +89,8 @@ public class SaveCommandTests
         AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(FileName);
         AssertThat(_server.GetRequiredService<SaveService>().SaveFileName).IsEqual(FileName);
         AssertThat(Replies(AdminPeer))
-            .ContainsExactly(new LocalizedChatMessageEvent(Now, new LocalizedText("HUD__CHAT_GAME_SAVED", [FileName])));
+            .ContainsExactly(
+                new LocalizedChatMessageEvent(Now, new LocalizedText("HUD__CHAT_GAME_SAVED", [FileName.Value])));
         AssertThat(Replies(PlayerPeer)).IsEmpty();
     }
 
@@ -108,7 +109,7 @@ public class SaveCommandTests
         AssertThat(_server.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).IsNotEmpty();
         AssertThat(_server.GetRequiredService<ChatPresentation>().Entries.Last())
             .IsEqual(new ChatPresentation.LocalizedServerEntry(
-                Now, new LocalizedText("HUD__CHAT_GAME_SAVE_FAILED", [FileName])));
+                Now, new LocalizedText("HUD__CHAT_GAME_SAVE_FAILED", [FileName.Value])));
         AssertThat(_files.Files).ContainsExactly(previous);
         AssertThat(_server.GetRequiredService<SaveService>().SaveFileName).IsEqual(FileName);
     }
@@ -138,12 +139,15 @@ public class SaveCommandTests
         AssertThat(Replies(PlayerPeer)).IsEmpty();
     }
 
-    // The rule itself is in SaveFileNameTests
+    // The rule itself is in SaveFileNameTests; Validate refuses the name before the facade logs a save
     [TestCase]
     [RequireGodotRuntime]
-    public void BadName_IsDropped()
+    public void BadName_IsRefused_AndDropped()
     {
-        From(AdminPeer, "../x");
+        var badName = new SaveCommand(new SaveFileName("../x"));
+        AssertThat(_server.GetRequiredService<SaveCommandHandler>().Validate(AdminUid, badName)).IsFalse();
+
+        From(AdminPeer, badName.FileName);
 
         AssertThat(_files.Files).IsEmpty();
         AssertThat(Replies(AdminPeer)).IsEmpty();
@@ -160,7 +164,7 @@ public class SaveCommandTests
         return player;
     }
 
-    private void From(int peerId, string fileName)
+    private void From(int peerId, SaveFileName fileName)
     {
         _server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(new SaveCommand(fileName)));
         Tick();

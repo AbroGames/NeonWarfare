@@ -228,7 +228,7 @@ public class SaveTests
         node.Text = new string('x', 70_000);
         List<Exception> failed = [];
         _server.GetRequiredService<SaveService>()
-            .RequestSave("file", () => throw new InvalidOperationException("written"), failed.Add);
+            .RequestSave(new SaveFileName("file"), () => throw new InvalidOperationException("written"), failed.Add);
 
         Join(BobPeer, BobUid, "Bob");
         Tick(_server);
