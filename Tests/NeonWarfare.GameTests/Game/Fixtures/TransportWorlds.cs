@@ -1,6 +1,7 @@
 using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
@@ -28,7 +29,7 @@ public class TransportWorlds
         var dependencies = new WorldDependencies(
             Time, Codec, TestProtocol.Hash, NetMessageCodecTests.CreateReplicator(),
             new ManualFrameProvider(), scenes, TestWorldScenes.CreateCatalog(scenes), clients, server);
-        return world.InitPreReady(setup, dependencies, origin ?? new WorldOrigin.NewWorld());
+        return world.InitPreReady(setup, dependencies, origin ?? new WorldOrigin.NewWorld(WorldOptions.GetDefault()));
     }
 
     // Outside the tree the engine never ticks the World

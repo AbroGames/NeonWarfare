@@ -18,6 +18,7 @@ world:
 
 | Storage | Model | Goes into the save |
 |---|---|---|
+| `WorldOptionsStorage` | `WorldOptions`: the parameters the world was created with | Yes |
 | `PlayersStorage` | `PlayersModel`: every player who ever joined, by uid | Yes |
 | `OnlinePlayersStorage` | `OnlinePlayersModel`: the uids online now | No: `[NotSaved]` |
 
@@ -80,10 +81,15 @@ Other files in `user://` (JSON, `System.Text.Json`):
 | `player-uid.json` | The uid of the client's player, apart from the settings so that their fault never changes it |
 | `dedicated-server-settings.json` | Dedicated server settings |
 | `child-server-settings.json` | The settings of a child server, written by its client before the launch |
+| `child-world-options.json` | The `WorldOptions` of a new world on a child server, written by its client before the launch |
 | `resume-game.json` | The last session for the "Continue" button |
 | `known-servers.json` | The server list of the multiplayer menu |
 
 Every file in `user://` is written atomically through KludgeBox's `UserStorage`, and every JSON file is read through its
 `JsonFile`, which keeps a corrupt file as `<name>.corrupt` and reads and writes Godot's `Color`, `Vector2`, `Vector3`
-with no options. The two settings files are read field by field (`JsonFile.ReadOverDefault`): a missing or bad
-setting gets its default, and the others stay.
+with no options, and an enum by its name only. The two settings files and the world options are read field by field
+(`JsonFile.ReadOverDefault`, a nested object field by field too): a missing or bad field gets its default, and the
+others stay.
+
+`WorldOptions` is the one type that is both a JSON file and a model: the options travel to a child server as a file
+and live in the world as its model, so one record serves both.

@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
@@ -236,23 +237,42 @@ public class WorldServicesBuilderTests
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
         AssertThrown(() => world.InitPreReady(
-                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld()))
+                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld(WorldOptions.GetDefault())))
             .IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void InitPreReady_NewWorld_SpawnsBothStoragesUnderTheWorld()
+    public void InitPreReady_NewWorld_SpawnsTheStoragesUnderTheWorld_WithItsOptions()
     {
+        var options = new WorldOptions(
+            new FixedWorldOptions(allBuildingsUnlocked: true), new AdjustableWorldOptions(friendlyFireMultiplier: 0));
         foreach (WorldSetup setup in new WorldSetup[] { TestWorldSetups.Host(), TestWorldSetups.Dedicated() })
         {
             World world = AutoFree(new World())!;
 
-            world.InitPreReady(setup, Dependencies(), new WorldOrigin.NewWorld());
+            world.InitPreReady(setup, Dependencies(), new WorldOrigin.NewWorld(options));
 
+            AssertThat(world.GetChildren().OfType<WorldOptionsStorage>().Single().Options).IsEqual(options);
             AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
             AssertThat(world.GetChildren().OfType<OnlinePlayersStorage>().Count()).IsEqual(1);
         }
+    }
+
+    // The menu passes its options straight to the World, so the World itself keeps them in range
+    [TestCase]
+    [RequireGodotRuntime]
+    public void InitPreReady_NewWorld_NegativeFriendlyFire_ItsDefault_TheOtherOptionsKept()
+    {
+        World world = AutoFree(new World())!;
+
+        var options = new WorldOptions(
+            new FixedWorldOptions(allBuildingsUnlocked: true), new AdjustableWorldOptions(friendlyFireMultiplier: -1));
+
+        world.InitPreReady(TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld(options));
+
+        AssertThat(world.GetChildren().OfType<WorldOptionsStorage>().Single().Options).IsEqual(new WorldOptions(
+            new FixedWorldOptions(allBuildingsUnlocked: true), AdjustableWorldOptions.GetDefault()));
     }
 
     // Spawning is the origin's business: a loaded world gets its entities from the save, a client from the server

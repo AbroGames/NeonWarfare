@@ -44,6 +44,7 @@ public static class Services
     public static readonly KnownServersService KnownServers = new();
     public static readonly SaveLoadService SaveLoad = new();
     public static readonly ServerLogService ServerLog = new();
+    public static readonly WorldOptionsFileService WorldOptionsFiles = new();
     
     public static class Global
     {

@@ -229,6 +229,12 @@ msgstr "Выделенный?"
 msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
 msgstr "Создать сервер"
 
+msgid "WORLD_OPTIONS_MENU__ALL_BUILDINGS_UNLOCKED"
+msgstr "Все постройки открыты"
+
+msgid "WORLD_OPTIONS_MENU__FRIENDLY_FIRE"
+msgstr "Множитель огня по своим"
+
 msgid "CREATE_SAVED_SERVER_MENU__TITLE"
 msgstr "Создать сервер из сохранения"
 

@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -57,7 +58,7 @@ public class ChatTests
                 TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection(), new RecordingClientsConnection()),
             new WorldRoot(_root));
-        _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _provider.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         _outbox = _provider.GetRequiredService<EventOutbox>();
 
         JoinDirectly(AliceUid, "Alice", AlicePeer);

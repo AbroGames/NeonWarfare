@@ -224,6 +224,12 @@ msgstr ""
 msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
 msgstr ""
 
+msgid "WORLD_OPTIONS_MENU__ALL_BUILDINGS_UNLOCKED"
+msgstr ""
+
+msgid "WORLD_OPTIONS_MENU__FRIENDLY_FIRE"
+msgstr ""
+
 msgid "CREATE_SAVED_SERVER_MENU__TITLE"
 msgstr ""
 

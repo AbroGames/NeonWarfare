@@ -6,6 +6,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.GameTests.Worlds.Infra.Server.Replication;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
@@ -287,7 +288,7 @@ public class SaveServiceTests
                 NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes, catalog,
                 connection, connection),
             new WorldRoot(_root));
-        _server.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _server.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         _service = _server.GetRequiredService<SaveService>();
     }
 

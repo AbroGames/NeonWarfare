@@ -8,6 +8,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.GameTests.Worlds.Infra.Server.Replication;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
@@ -35,6 +36,8 @@ public class SaveTests
     private static readonly PlayerUid HostUid = new("HostHostHo-Hhhhhhhhhh");
     private static readonly PlayerUid AliceUid = new("AliceAlice-Aaaaaaaaaa");
     private static readonly PlayerUid BobUid = new("BobBobBobB-Bbbbbbbbbb");
+    private static readonly WorldOptions Options =
+        new(new FixedWorldOptions(allBuildingsUnlocked: true), new AdjustableWorldOptions(friendlyFireMultiplier: 0.5));
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
@@ -54,7 +57,7 @@ public class SaveTests
                 typeof(ManualTextNode), typeof(TimerNode)]);
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = Build(TestWorldSetups.Host(), _connection, out _);
-        _server.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _server.GetRequiredService<NewWorldSimulationFacade>().Create(Options);
 
         JoinDirectly(_server, HostUid, "Host", HostPeer);
         JoinDirectly(_server, AliceUid, "Alice", AlicePeer);
@@ -70,7 +73,7 @@ public class SaveTests
         _scenes.Free();
     }
 
-    // Done when: the round trip restores the models, NextNetId and the tick number
+    // Done when: the round trip restores the models, the world options among them, NextNetId and the tick number
     [TestCase]
     [RequireGodotRuntime]
     public void Load_RestoresTheEntitiesTheirModelsTheNextNetIdAndTheTick()
@@ -91,6 +94,7 @@ public class SaveTests
         AssertThat(((CounterNode) registry.GetNode(Id(_server, child))).Value).IsEqual(3);
         AssertThat(Players(loaded).PlayerByUid[AliceUid].Nick).IsEqual("Renamed");
         AssertThat(Players(loaded).PlayerByUid[HostUid].Nick).IsEqual("Host");
+        AssertThat(loaded.GetRequiredService<WorldOptionsQuery>().Options).IsEqual(Options);
         AssertThat(loaded.GetRequiredService<ServerTickClock>().CurrentTick).IsEqual(3L);
         long next = _server.GetRequiredService<NetIdGenerator>().NextValue;
         AssertThat(Id(loaded, Spawner(loaded).SpawnOnRoot<CounterNode>()).Value).IsEqual(next);
@@ -336,6 +340,7 @@ public class SaveTests
         AssertThat(registry.GetAll<Node>()).HasSize(loaded.GetRequiredService<IEntityFinder>().GetAll<Node>().Count);
         AssertThat(((CounterNode) registry.GetNode(Id(_server, counter))).Value).IsEqual(5);
         AssertThat(bob.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[AliceUid].Nick).IsEqual("Alice");
+        AssertThat(bob.GetRequiredService<WorldOptionsQuery>().Options).IsEqual(Options);
         AssertThat(bob.GetRequiredService<PlayerQuery>().OnlineModel.Uids.ToList())
             .ContainsExactly(BobUid);
     }

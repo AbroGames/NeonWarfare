@@ -16,13 +16,16 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// <c>null</c> for a server started from the console, which outlives its admin, lets the admin be displaced and is
 /// never resumed by "Continue".
 /// </param>
+/// <param name="worldOptionsFileName">Read only when there is no save file yet. <c>null</c> — the default options.
+/// </param>
 public class DedicatedServerGameStarter(
     SaveFileName saveFileName,
     int? port,
     PlayerUid? adminUid,
     int? parentPid,
     bool serverHud,
-    int autoSaveIntervalMinutes
+    int autoSaveIntervalMinutes,
+    string worldOptionsFileName
     ) : BaseGameStarter
 {
     private readonly ILogger _log = LogFactory.GetForStatic<DedicatedServerGameStarter>();
@@ -46,7 +49,7 @@ public class DedicatedServerGameStarter(
         {
             world = game.AddDedicatedWorld(network, saveFiles, new WorldSaving(saveFileName, autoSaveIntervalMinutes),
                 new WorldAdmin(adminUid), new ProtectedPlayer(parentPid is null ? null : adminUid),
-                LoadServerOrigin(saveFileName));
+                LoadServerOrigin(saveFileName, () => Services.WorldOptionsFiles.Read(worldOptionsFileName)));
         }
         catch (Exception e)
         {

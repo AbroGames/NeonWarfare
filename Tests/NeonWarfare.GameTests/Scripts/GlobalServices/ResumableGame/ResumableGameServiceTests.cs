@@ -40,24 +40,25 @@ public class ResumableGameServiceTests
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_ServerWithoutPort_IsNone_WritesNothing() =>
-        AssertNone("""{"Type":2,"SaveName":"save","Host":null,"Port":null,"IsDedicated":true}""");
+        AssertNone("""{"Type":"CreateServer","SaveName":"save","Host":null,"Port":null,"IsDedicated":true}""");
 
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_SingleplayerWithoutSave_IsNone_WritesNothing() =>
-        AssertNone("""{"Type":1,"SaveName":null,"Host":null,"Port":null,"IsDedicated":null}""");
+        AssertNone("""{"Type":"RunSingleplayer","SaveName":null,"Host":null,"Port":null,"IsDedicated":null}""");
 
     // "Continue" with an invalid name would fail at the start, so it is hidden
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_InvalidSaveName_IsNone_WritesNothing() =>
-        AssertNone("""{"Type":1,"SaveName":"a/b","Host":null,"Port":null,"IsDedicated":null}""");
+        AssertNone("""{"Type":"RunSingleplayer","SaveName":"a/b","Host":null,"Port":null,"IsDedicated":null}""");
 
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_SingleplayerWithAValidSaveName_IsTheGame()
     {
-        _folder.Write(Name, """{"Type":1,"SaveName":"save","Host":null,"Port":null,"IsDedicated":null}""");
+        _folder.Write(Name,
+            """{"Type":"RunSingleplayer","SaveName":"save","Host":null,"Port":null,"IsDedicated":null}""");
 
         AssertThat(_service.GetLastGame()).IsEqual(LastGame.GetSingleplayer(new SaveFileName("save")));
     }
@@ -65,12 +66,12 @@ public class ResumableGameServiceTests
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_ConnectionWithoutHost_IsNone_WritesNothing() =>
-        AssertNone("""{"Type":3,"SaveName":null,"Host":null,"Port":25566,"IsDedicated":null}""");
+        AssertNone("""{"Type":"ConnectToServer","SaveName":null,"Host":null,"Port":25566,"IsDedicated":null}""");
 
     [TestCase]
     [RequireGodotRuntime]
     public void GetLastGame_UnknownType_IsNone_WritesNothing() =>
-        AssertNone("""{"Type":9,"SaveName":"save","Host":"host","Port":25566,"IsDedicated":true}""");
+        AssertNone("""{"Type":"Unknown","SaveName":"save","Host":"host","Port":25566,"IsDedicated":true}""");
 
     [TestCase]
     [RequireGodotRuntime]

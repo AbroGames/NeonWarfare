@@ -7,6 +7,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Networks.Transport;
 using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using static GdUnit4.Assertions;
@@ -37,7 +38,7 @@ public class WorldAssemblerTests
     public void Singleplayer_TheHostJoinsInTheNextTick()
     {
         World world = AutoFree(_assembler.Singleplayer(
-            TestWorldSetups.Host(localPlayerOwner: _owner), new WorldOrigin.NewWorld()))!;
+            TestWorldSetups.Host(localPlayerOwner: _owner), new WorldOrigin.NewWorld(WorldOptions.GetDefault())))!;
 
         TransportWorlds.Tick(world);
 

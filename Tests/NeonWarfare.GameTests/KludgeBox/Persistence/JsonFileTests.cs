@@ -19,6 +19,18 @@ public class JsonFileTests
 
     public record GodotSample(Color Color, Vector2 Position, Vector3 Size);
 
+    public record Inner(int Count, Vector2 Position);
+
+    public record NestedSample(string Name, Inner Inner);
+
+    public enum Shade
+    {
+        Light,
+        Dark,
+    }
+
+    public record ShadeSample(Shade Shade);
+
     private const string Name = "sample.json";
     private const string CorruptName = Name + JsonFile<Sample>.CorruptSuffix;
     private const string ValidJson = """{"Name":"a","Count":1}""";
@@ -27,6 +39,7 @@ public class JsonFileTests
         """{"Color":"0a141e28","Position":{"X":1.5,"Y":-2.25},"Size":{"X":0,"Y":1,"Z":2}}""";
 
     private static readonly Sample Default = new("default", 0);
+    private static readonly NestedSample NestedDefault = new("default", new Inner(0, new Vector2(3, 4)));
     private static readonly GodotSample GodotValue = new(Color.Color8(10, 20, 30, 40), new(1.5f, -2.25f), new(0, 1, 2));
 
     private TestUserFolder _folder = null!;
@@ -318,7 +331,80 @@ public class JsonFileTests
         AssertThat(_folder.Entries()).ContainsExactly(Name);
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadOverDefault_NestedMissingField_OnlyItsDefault_WrittenBack_NoCorruptCopy()
+    {
+        _folder.Write(Name, """{"Name":"a","Inner":{"Count":5}}""");
+        var expected = new NestedSample("a", new Inner(5, NestedDefault.Inner.Position));
+
+        AssertThat(NestedFile().ReadOverDefault(() => NestedDefault)).IsEqual(expected);
+
+        AssertThat(NestedFile().Read().Value).IsEqual(expected);
+        AssertThat(_folder.Entries()).ContainsExactly(Name);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadOverDefault_NestedWrongFieldType_OnlyItsDefault_WrittenBack_TheFileCopied() =>
+        AssertNestedReplaced("""{"Name":"a","Inner":{"Count":"five","Position":{"X":1,"Y":2}}}""",
+            new NestedSample("a", new Inner(NestedDefault.Inner.Count, new Vector2(1, 2))));
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadOverDefault_NestedVectorMissingComponent_TheWholeVectorGetsItsDefault() =>
+        AssertNestedReplaced("""{"Name":"a","Inner":{"Count":5,"Position":{"X":1}}}""",
+            new NestedSample("a", new Inner(5, NestedDefault.Inner.Position)));
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadOverDefault_NestedNull_TheObjectGetsItsDefault() =>
+        AssertNestedReplaced("""{"Name":"a","Inner":null}""", NestedDefault with { Name = "a" });
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadOverDefault_NestedNotAnObject_TheObjectGetsItsDefault() =>
+        AssertNestedReplaced("""{"Name":"a","Inner":5}""", NestedDefault with { Name = "a" });
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Write_Enum_ByName_RoundTrips()
+    {
+        var file = new JsonFile<ShadeSample>(_folder.FileName(Name));
+
+        file.Write(new ShadeSample(Shade.Dark));
+
+        AssertThat(_folder.Read(Name)).IsEqual("""{"Shade":"Dark"}""");
+        AssertThat(file.Read().Value).IsEqual(new ShadeSample(Shade.Dark));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadOverDefault_EnumAsNumber_ItsDefault()
+    {
+        // The default is the member numbered 1, so a number 0 read as a member would differ from it
+        const string json = """{"Shade":0}""";
+        _folder.Write(Name, json);
+        var file = new JsonFile<ShadeSample>(_folder.FileName(Name));
+
+        AssertThat(file.ReadOverDefault(() => new ShadeSample(Shade.Dark))).IsEqual(new ShadeSample(Shade.Dark));
+
+        AssertThat(_folder.Read(CorruptName)).IsEqual(json);
+    }
+
     private static bool IsValid(Sample sample) => sample.Name != "";
+
+    private JsonFile<NestedSample> NestedFile() => new(_folder.FileName(Name));
+
+    private void AssertNestedReplaced(string json, NestedSample expected)
+    {
+        _folder.Write(Name, json);
+
+        AssertThat(NestedFile().ReadOverDefault(() => NestedDefault)).IsEqual(expected);
+
+        AssertThat(NestedFile().Read().Value).IsEqual(expected);
+        AssertThat(_folder.Read(CorruptName)).IsEqual(json);
+    }
 
     private void AssertFieldReplaced(string json, Sample expected)
     {

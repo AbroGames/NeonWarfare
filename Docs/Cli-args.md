@@ -47,6 +47,7 @@ A value that does not parse (a number, a uid, a save name) is ignored with a war
 | `--admin <uid>` | The UID of the player who will be granted administrator rights |
 | `--parent-pid <pid>` | The parent process PID; the server will shut down when the parent dies |
 | `--settings-file <name>` | The settings file in `user://` (if the flag is not passed, then `dedicated-server-settings.json`) |
+| `--world-options-file <name>` | The `WorldOptions` file in `user://`, read only when a new game is created (if the flag is not passed, then the defaults) |
 
 The server flags are assembled back into a command line by
 `DedicatedServerArgs.GetArrayToStartDedicatedServer()` — this is exactly what the client uses to launch

@@ -38,9 +38,9 @@ Every entry point into a game session goes through it.
 | Page | What it does |
 |---|---|
 | `MainPage` | Root. Resume (hidden when `Services.LastGame` has nothing), Singleplayer, Multiplayer, Settings, Language, Quit |
-| `SingleplayerPage` | New game / load game tabs, save name, list of saves → `MainScene.StartSingleplayerGame` |
+| `SingleplayerPage` | New game / load game tabs, save name, list of saves, the world options of a new game → `MainScene.StartSingleplayerGame` |
 | `MultiplayerPage` | A hub: create a new server, create from a save, connect |
-| `CreateNewServerPage` | Port, new save name, "dedicated" flag → `MainScene.HostMultiplayerGameAsClient` |
+| `CreateNewServerPage` | Port, new save name, the world options, "dedicated" flag → `MainScene.HostMultiplayerGameAsClient` |
 | `CreateSavedServerPage` | The same, but over an existing save with a search filter |
 | `ServerListPage` | `Services.KnownServers`: the list, the inline add form, remove, and direct `host[:port]` connect |
 | `SettingsHubPage` | Buttons into the five setting categories: Player, Controls, Interface, Graphics, Audio |
@@ -100,7 +100,7 @@ Both get the World **before** being added to the tree, through `InitPreReady`, a
 `IReader.Get<T>()` hands out only `[Query]` and `[Presentation]` services (see [World](World.md)). A screen polls in
 `_Process`: models and queries every frame, and one-frame notices through `HudMailbox.Read<T>()` — on a
 `ChatEntryAddedNotice` the `Hud` re-reads `ChatPresentation.Entries` and translates the entries with `Tr`. `Hud` is
-temporary and debug-grade: it shows the players, the chat, the save (to an admin), the log button and
+temporary and debug-grade: it shows the world options, the players, the chat, the save (to an admin), the log button and
 the exit to the menu. `ServerHud` is not temporary: the player list and the read-only log of the process.
 
 The loading screen (`LoadingScreen`) lives in a separate `CanvasLayer` at the very top and supports an

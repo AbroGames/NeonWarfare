@@ -1,5 +1,6 @@
 using Godot;
 using Humanizer;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
@@ -7,21 +8,25 @@ using NeonWarfare.Scripts.GlobalServices.Settings;
 namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>Launches a dedicated server as a child process and connects to it as an ordinary client.</summary>
+/// <param name="newWorldOptions">Used by the child server only when there is no save file yet.</param>
 public class HostDedicatedServerAndConnectGameStarter(
     SaveFileName saveFileName,
     int? port,
-    bool showWindow
+    bool showWindow,
+    WorldOptions newWorldOptions
     ) : BaseGameStarter
 {
     private const string ChildServerSettingsFileName = "child-server-settings.json";
+    private const string ChildWorldOptionsFileName = "child-world-options.json";
 
     public override void Start(Game game)
     {
         // The admin of the child server is the very player that joins it.
         LocalPlayer localPlayer = ReadLocalPlayer();
-        if (!WriteChildServerSettings())
+        if (!WriteChildServerSettings()
+            || !Services.WorldOptionsFiles.Write(ChildWorldOptionsFileName, newWorldOptions))
         {
-            // The settings file has already logged the error.
+            // The file has already logged the error.
             ShowHostingError(Error.FileCantWrite);
             return;
         }
@@ -32,6 +37,7 @@ public class HostDedicatedServerAndConnectGameStarter(
             port ?? DefaultPort,
             localPlayer.Uid,
             ChildServerSettingsFileName,
+            ChildWorldOptionsFileName,
             showWindow);
         if (error != Error.Ok)
         {

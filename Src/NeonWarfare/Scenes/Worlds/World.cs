@@ -87,8 +87,8 @@ public partial class World
 
         switch (origin)
         {
-            case WorldOrigin.NewWorld:
-                _services.GetRequiredService<NewWorldSimulationFacade>().Create();
+            case WorldOrigin.NewWorld newWorld:
+                _services.GetRequiredService<NewWorldSimulationFacade>().Create(newWorld.Options);
                 break;
             case WorldOrigin.FromSnapshot snapshot:
                 Service<ClientTickClock>().Sync(snapshot.Tick);

@@ -228,6 +228,12 @@ msgstr "Dedicated?"
 msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
 msgstr "Create server"
 
+msgid "WORLD_OPTIONS_MENU__ALL_BUILDINGS_UNLOCKED"
+msgstr "All buildings unlocked"
+
+msgid "WORLD_OPTIONS_MENU__FRIENDLY_FIRE"
+msgstr "Friendly fire multiplier"
+
 msgid "CREATE_SAVED_SERVER_MENU__TITLE"
 msgstr "Create Server from Save"
 

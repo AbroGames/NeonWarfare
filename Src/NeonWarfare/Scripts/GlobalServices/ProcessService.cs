@@ -38,8 +38,9 @@ public class ProcessService
     /// </summary>
     /// <returns><see cref="Error.Ok"/> when the process was started. Otherwise the error of binding the port.</returns>
     /// <param name="settingsFileName">The settings file the server reads, relative to <c>user://</c>.</param>
-    public Error StartNewDedicatedServerApplication(
-        SaveFileName saveFileName, int port, PlayerUid adminUid, string settingsFileName, bool showWindow)
+    /// <param name="worldOptionsFileName">The options of a new world, relative to <c>user://</c>.</param>
+    public Error StartNewDedicatedServerApplication(SaveFileName saveFileName, int port, PlayerUid adminUid,
+        string settingsFileName, string worldOptionsFileName, bool showWindow)
     {
         Error portError = CheckPortFree(port);
         if (portError != Error.Ok)
@@ -56,7 +57,8 @@ public class ProcessService
             saveFileName,
             adminUid,
             OS.GetProcessId(),
-            settingsFileName);
+            settingsFileName,
+            worldOptionsFileName);
 
         string[] arguments = dedicatedServerArgs.GetArrayToStartDedicatedServer();
         _dedicatedServerPid = StartNewApplication(showWindow ? arguments : [..arguments, GodotHeadlessFlag]);

@@ -1,4 +1,5 @@
 using System;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
@@ -6,7 +7,8 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>A host without ENet. Its only peer is its own.</summary>
-public class SingleplayerGameStarter(SaveFileName saveFileName) : BaseGameStarter
+/// <param name="newWorldOptions">Used only when there is no save file yet.</param>
+public class SingleplayerGameStarter(SaveFileName saveFileName, WorldOptions newWorldOptions) : BaseGameStarter
 {
     public override void Start(Game game)
     {
@@ -20,7 +22,7 @@ public class SingleplayerGameStarter(SaveFileName saveFileName) : BaseGameStarte
         {
             game.AddSingleplayerWorld(SaveFilesUpdatingLastGame(lastGame),
                 new WorldSaving(saveFileName, Services.GameSettings.GetSettings().AutoSaveIntervalMinutes),
-                ReadLocalPlayer(), LoadServerOrigin(saveFileName));
+                ReadLocalPlayer(), LoadServerOrigin(saveFileName, () => newWorldOptions));
         }
         catch (Exception e)
         {

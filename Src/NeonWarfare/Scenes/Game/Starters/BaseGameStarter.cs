@@ -1,6 +1,7 @@
 using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -39,12 +40,13 @@ public abstract class BaseGameStarter
     /// <summary>
     /// Loads the server World from its save file if there is one. Otherwise it is a new World.
     /// </summary>
+    /// <param name="newWorldOptions">Called only for a new World: a loaded one has its options from the save.</param>
     /// <exception cref="SaveLoadService.LoadException">The file cannot be read.</exception>
-    protected WorldOrigin LoadServerOrigin(SaveFileName saveFileName)
+    protected WorldOrigin LoadServerOrigin(SaveFileName saveFileName, Func<WorldOptions> newWorldOptions)
     {
         return Services.SaveLoad.CheckFileExists(saveFileName)
             ? new WorldOrigin.FromSave(saveFileName, Services.SaveLoad.LoadFromDisk(saveFileName))
-            : new WorldOrigin.NewWorld();
+            : new WorldOrigin.NewWorld(newWorldOptions());
     }
 
     /// <summary>

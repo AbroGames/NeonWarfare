@@ -84,6 +84,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="AllBuildingsUnlockedCheckBox" type="CheckBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=296859051]
+layout_mode = 2
+text = "WORLD_OPTIONS_MENU__ALL_BUILDINGS_UNLOCKED"
+
+[node name="FriendlyFireContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=1766152600]
+layout_mode = 2
+
+[node name="FriendlyFireLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/FriendlyFireContainer" unique_id=1201996262]
+layout_mode = 2
+text = "WORLD_OPTIONS_MENU__FRIENDLY_FIRE"
+
+[node name="FriendlyFireSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/FriendlyFireContainer" unique_id=1514947458]
+layout_mode = 2
+step = 0.1
+value = 1.0
+allow_greater = true
+
 [node name="IsDedicatedCheckButton" type="CheckButton" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=197850604]
 layout_mode = 2
 text = "CREATE_SERVER_MENU__DEDICATED"

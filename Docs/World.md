@@ -22,10 +22,11 @@ explicit implementation of a nested role interface, so a caller holds only the r
 | `IHostEndpoint`: `ReceiveOwnEvents` | `HostTransport`: the events of the host's own peer |
 | `IClientEndpoint`: `ReceiveTickUpdate` | `ClientTransport`: the tick and the sections of a tick update; the tick syncs `ClientTickClock` first |
 
-`WorldOrigin` says where the state comes from: `NewWorld()` — `NewWorldSimulationFacade.Create()` spawns
-what a world starts with; `FromSave(fileName, save)` — `SaveLoader`; `FromSnapshot(tick, records)` — the join
-snapshot, on a remote client. A World is never empty: a remote client creates it only from the first snapshot. A
-broken save or snapshot throws from `InitPreReady`, and the caller frees the World.
+`WorldOrigin` says where the state comes from: `NewWorld(options)` — `NewWorldSimulationFacade.Create(options)`
+spawns what a world starts with, its `WorldOptions` among them; `FromSave(fileName, save)` — `SaveLoader`;
+`FromSnapshot(tick, records)` — the join snapshot, on a remote client. A World is never empty: a remote client
+creates it only from the first snapshot. A broken save or snapshot throws from `InitPreReady`, and the caller frees
+the World.
 
 `WorldDependencies` is what `Game` hands to every World, none of it `null`: `TimeProvider`, `NetMessageCodec`,
 `ProtocolHash`, `Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog` and both connections.

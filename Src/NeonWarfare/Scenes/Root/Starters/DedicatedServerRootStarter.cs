@@ -40,6 +40,7 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
             _dedicatedServerArgs.Admin,
             _dedicatedServerArgs.ParentPid,
             DisplayServer.GetName() != HeadlessDisplayServer,
-            Services.DedicatedServerSettings.GetSettings().AutoSaveIntervalMinutes);
+            Services.DedicatedServerSettings.GetSettings().AutoSaveIntervalMinutes,
+            _dedicatedServerArgs.WorldOptionsFileName);
     }
 }

@@ -7,6 +7,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
@@ -360,7 +361,8 @@ public class WorldEntryPointsTests
     }
 
     private World CreateWorld(WorldSetup setup, WorldOrigin? origin = null) =>
-        AutoFree(new World())!.InitPreReady(setup, Dependencies(), origin ?? new WorldOrigin.NewWorld());
+        AutoFree(new World())!.InitPreReady(
+            setup, Dependencies(), origin ?? new WorldOrigin.NewWorld(WorldOptions.GetDefault()));
 
     private WorldSetup.Host HostSetup(ILocalPlayerOwner? owner = null) =>
         TestWorldSetups.Host(HostPlayer, _saveFiles, localPlayerOwner: owner);
@@ -387,7 +389,7 @@ public class WorldEntryPointsTests
         Node root = AutoFree(new Node())!;
         using ServiceProvider host = new WorldServicesBuilder()
             .Build(HostSetup(), Dependencies(hash), new WorldRoot(root));
-        host.GetRequiredService<NewWorldSimulationFacade>().Create();
+        host.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         host.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(HostUid).Nick = "Host";
         host.GetRequiredService<ServerTickLoop>().RunTick();
         return host.GetRequiredService<SaveWriter>().Write();

@@ -79,6 +79,23 @@ metadata/_tab_name = "SINGLEPLAYER_MENU__NEW_TAB"
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/NewGameTab" unique_id=41536972]
 layout_mode = 2
 
+[node name="AllBuildingsUnlockedCheckBox" type="CheckBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/NewGameTab/VBoxContainer" unique_id=1367655325]
+layout_mode = 2
+text = "WORLD_OPTIONS_MENU__ALL_BUILDINGS_UNLOCKED"
+
+[node name="FriendlyFireContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/NewGameTab/VBoxContainer" unique_id=1009872643]
+layout_mode = 2
+
+[node name="FriendlyFireLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/NewGameTab/VBoxContainer/FriendlyFireContainer" unique_id=2106661131]
+layout_mode = 2
+text = "WORLD_OPTIONS_MENU__FRIENDLY_FIRE"
+
+[node name="FriendlyFireSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/NewGameTab/VBoxContainer/FriendlyFireContainer" unique_id=904628231]
+layout_mode = 2
+step = 0.1
+value = 1.0
+allow_greater = true
+
 [node name="LoadGameTab" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=1738391518]
 visible = false
 layout_mode = 2

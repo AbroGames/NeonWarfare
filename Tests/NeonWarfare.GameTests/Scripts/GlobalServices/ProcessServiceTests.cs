@@ -21,7 +21,7 @@ public class ProcessServiceTests
 
             Error error = service.StartNewDedicatedServerApplication(
                 new SaveFileName("save"), other.GetLocalPort(), PlayerUid.Generate(), "settings.json",
-                showWindow: false);
+                "world-options.json", showWindow: false);
 
             AssertThat(error).IsNotEqual(Error.Ok);
             bool exitedAtOnce = false;

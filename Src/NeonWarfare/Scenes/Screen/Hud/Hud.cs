@@ -7,6 +7,7 @@ using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Features.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
@@ -32,6 +33,7 @@ public partial class Hud : Control
     private World.IReader _reader;
     private World.ICommandSender _commands;
     private PlayerQuery _players;
+    private WorldOptionsQuery _worldOptions;
     private LocalPlayerPresentation _localPlayer;
     private AcceptDialog _invalidSaveNameDialog;
     private readonly ILogger _log = LogFactory.GetForStatic<Hud>();
@@ -43,6 +45,7 @@ public partial class Hud : Control
         _reader = reader;
         _commands = commands;
         _players = reader.Get<PlayerQuery>();
+        _worldOptions = reader.Get<WorldOptionsQuery>();
         _localPlayer = reader.Get<LocalPlayerPresentation>();
         
         return this;
@@ -69,7 +72,10 @@ public partial class Hud : Control
 
     public override void _Process(double delta)
     {
-        InfoLabel.Text = "Players:\n"
+        WorldOptions options = _worldOptions.Options;
+        InfoLabel.Text = $"Friendly fire: {options.Adjustable.FriendlyFireMultiplier}\n"
+                         + $"All buildings unlocked: {options.Fixed.AllBuildingsUnlocked}\n"
+                         + "Players:\n"
                          + string.Join("\n", _players.GetOnlinePlayers().Select(player => player.Nick));
 
         // The server drops a save from anyone else without a reply

@@ -4,6 +4,7 @@ using GodotBox.Godot.Nodes;
 using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 
 namespace NeonWarfare.Scripts.GlobalServices;
 
@@ -42,14 +43,16 @@ public class MainSceneService
         });
     }
     
-    public void StartSingleplayerGame(SaveFileName saveFileName)
+    /// <param name="newWorldOptions">Used only when the save file does not exist.</param>
+    public void StartSingleplayerGame(SaveFileName saveFileName, WorldOptions newWorldOptions)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
         game.Init(new SingleplayerGameStarter(
-            saveFileName: saveFileName));
+            saveFileName: saveFileName,
+            newWorldOptions: newWorldOptions));
     }
     
     public void ConnectToMultiplayerGame(string host, int? port)
@@ -69,8 +72,9 @@ public class MainSceneService
     /// <param name="createDedicatedServerProcess">If true, create a new OS process running
     /// a dedicated server and have this process connect to it as a client.</param>
     /// <param name="showWindow">Give the dedicated server process a window. Ignored without one.</param>
-    public void HostMultiplayerGameAsClient(
-        SaveFileName saveFileName, int? port, bool createDedicatedServerProcess, bool showWindow)
+    /// <param name="newWorldOptions">Used only when the save file does not exist.</param>
+    public void HostMultiplayerGameAsClient(SaveFileName saveFileName, int? port, bool createDedicatedServerProcess,
+        bool showWindow, WorldOptions newWorldOptions)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -81,11 +85,13 @@ public class MainSceneService
             game.Init(new HostDedicatedServerAndConnectGameStarter(
                 saveFileName: saveFileName, 
                 port: port, 
-                showWindow: showWindow));
+                showWindow: showWindow,
+                newWorldOptions: newWorldOptions));
         }
         else
         {
-            game.Init(new HostMultiplayerGameStarter(saveFileName: saveFileName, port: port));
+            game.Init(new HostMultiplayerGameStarter(
+                saveFileName: saveFileName, port: port, newWorldOptions: newWorldOptions));
         }
     }
     
@@ -99,13 +105,15 @@ public class MainSceneService
     /// use the PID of the client process.</param>
     /// <param name="serverHud">Show the ServerHud: false for a server without a window.</param>
     /// <param name="autoSaveIntervalMinutes">0 turns the autosave off.</param>
+    /// <param name="worldOptionsFileName">The options of a new world. <c>null</c> — the default options.</param>
     public void HostMultiplayerGameAsDedicatedServer(
         SaveFileName saveFileName,
         int? port,
         PlayerUid? adminUid,
         int? parentPid,
         bool serverHud,
-        int autoSaveIntervalMinutes)
+        int autoSaveIntervalMinutes,
+        string worldOptionsFileName)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -117,7 +125,8 @@ public class MainSceneService
             adminUid: adminUid, 
             parentPid: parentPid,
             serverHud: serverHud,
-            autoSaveIntervalMinutes: autoSaveIntervalMinutes));
+            autoSaveIntervalMinutes: autoSaveIntervalMinutes,
+            worldOptionsFileName: worldOptionsFileName));
         Services.LoadingScreen.Clear();
     }
 

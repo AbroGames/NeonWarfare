@@ -3,6 +3,7 @@ using System.Linq;
 using Godot;
 using Humanizer;
 using KludgeBox.DI.Requests.ChildInjection;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Singleplayer;
 
@@ -14,6 +15,8 @@ public partial class SingleplayerPage : MainMenuPage
     [Child] public VBoxContainer SavesListContainer { get; private set; }
     [Child] public TabContainer TabContainer { get; private set; }
     [Child] public HBoxContainer SaveNameContainer { get; private set; }
+    [Child] public CheckBox AllBuildingsUnlockedCheckBox { get; private set; }
+    [Child] public SpinBox FriendlyFireSpinBox { get; private set; }
     
     private string _selectedSaveName;
 
@@ -79,7 +82,8 @@ public partial class SingleplayerPage : MainMenuPage
                 Tr("MESSAGE_MENU__INVALID_SAVE_NAME").FormatWith(SaveFileName.MaxLength)));
             return;
         }
-        TryStartGame(() => Services.MainScene.StartSingleplayerGame(saveFileName));
+        WorldOptions options = NewWorldOptionsForm.Read(AllBuildingsUnlockedCheckBox, FriendlyFireSpinBox);
+        TryStartGame(() => Services.MainScene.StartSingleplayerGame(saveFileName, options));
     }
     
     private void OnCancel()

@@ -6,6 +6,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Features.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
@@ -62,7 +63,7 @@ public class SaveCommandTests
                 NetMessageCodecTests.CreateReplicator(), _frames, _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _connection, _connection),
             new WorldRoot(_root));
-        _server.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _server.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         _connection.Loopback = _server.GetRequiredService<EventDispatcher>().Dispatch;
 
         JoinDirectly(HostUid, HostPeer).IsAdmin = true;

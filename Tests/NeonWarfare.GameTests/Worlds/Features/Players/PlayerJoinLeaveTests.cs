@@ -8,6 +8,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -331,7 +332,7 @@ public class PlayerJoinLeaveTests
                 NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
-        provider.GetRequiredService<NewWorldSimulationFacade>().Create();
+        provider.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         return provider;
     }
 

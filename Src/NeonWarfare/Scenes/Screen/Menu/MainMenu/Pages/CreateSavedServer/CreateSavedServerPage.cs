@@ -3,6 +3,7 @@ using System.Linq;
 using Godot;
 using Humanizer;
 using KludgeBox.DI.Requests.ChildInjection;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.CreateSavedServer;
 
@@ -91,6 +92,7 @@ public partial class CreateSavedServerPage : MainMenuPage
         int port = (int) PortSpinBox.Value;
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
         TryStartGame(() =>
-            Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated, showWindow: true));
+            Services.MainScene.HostMultiplayerGameAsClient(
+                saveFileName, port, isDedicated, showWindow: true, WorldOptions.GetDefault()));
     }
 }

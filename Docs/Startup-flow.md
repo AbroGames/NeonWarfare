@@ -79,8 +79,8 @@ Easy to forget: the dedicated server initializes neither `Services.GameSettings`
 
 `Start()` — a single scenario: `MainScene.HostMultiplayerGameAsDedicatedServer(...)` with the save name
 from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, `ServerHud` unless
-the engine runs without a window (`DisplayServer.GetName()` is `headless`), and `AutoSaveIntervalMinutes` of its
-settings.
+the engine runs without a window (`DisplayServer.GetName()` is `headless`), `AutoSaveIntervalMinutes` of its
+settings and the `WorldOptions` file of `--world-options-file`, read only for a new world (the defaults without it).
 
 ## Level 2: GameStarter
 
@@ -119,20 +119,24 @@ The handlers die with the `Game`, so nothing unsubscribes.
 
 | Starter | `MainSceneService` method | Network | World | When it is used |
 |---|---|---|---|---|
-| `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName)` | none | `Host`, `Hud` | A single-player game from the menu, `--auto-start` (+ `--auto-start-savefile`) |
+| `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName, newWorldOptions)` | none | `Host`, `Hud` | A single-player game from the menu, `--auto-start` (+ `--auto-start-savefile`) |
 | `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | an ENet server | `Host`, `Hud` | Hosting "from inside the client" from the menu, `--auto-host` |
 | `DedicatedServerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | an ENet server | `Dedicated`, `ServerHud` or none | A dedicated server (`--server`) |
 | `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | an ENet client | `RemoteClient`, `Hud`, from the snapshot | Connecting to a server from the menu, `--auto-connect` |
 | `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | an ENet client + a child server process | as above | Hosting with an out-of-process server from the menu, `--auto-host-dedicated` |
 
+A new world gets the `WorldOptions` of the new-game page. Every other entry (`--auto-start`, `--auto-host`,
+"Continue", a server from a save) passes the defaults, used only if the save file turns out to be missing.
+
 ### The shared steps: `BaseGameStarter`
 
 Only helpers, no template method:
 
-* **`LoadServerOrigin(saveFileName)`** — the save file exists → `WorldOrigin.FromSave`, otherwise
-  `WorldOrigin.NewWorld`; either way the starter passes the same name in the `WorldSaving`, so the World saves
-  back to that file. Each server starter wraps it with `Add…World` in a `try` whose `catch` takes any exception;
-  **`LogWorldError(e, saveFileName)`** logs it and gives the message for the player.
+* **`LoadServerOrigin(saveFileName, newWorldOptions)`** — the save file exists → `WorldOrigin.FromSave`, otherwise
+  `WorldOrigin.NewWorld` with the `WorldOptions` of `newWorldOptions`, called only then; either way the starter
+  passes the same name in the `WorldSaving`, so the World saves back to that file. Each server starter wraps it with
+  `Add…World` in a `try` whose `catch` takes any exception; **`LogWorldError(e, saveFileName)`** logs it and gives
+  the message for the player.
 * **`ReadLocalPlayer()`** — reads `Services.LocalPlayer` once: the same object goes to the World and into the join
   request, so they cannot disagree.
 * **`SetLastGame(...)` / `SaveFilesUpdatingLastGame(...)`** — writing the session into `resume-game.json`. The
@@ -195,9 +199,11 @@ Connecting to someone else's server. Parameters: `host`, `port`.
 A **second OS process** plus an ordinary client connection to it.
 
 1. `ReadLocalPlayer()`; the locale and `AutoSaveIntervalMinutes` of `GameSettings` go into
-   `child-server-settings.json`, and a failed write goes back to the menu with the hosting error.
+   `child-server-settings.json`, the `WorldOptions` into `child-world-options.json`, and a failed write goes back to
+   the menu with the hosting error.
    `Services.Process.StartNewDedicatedServerApplication(...)` launches a process with `--server`, `--port`,
-   `--savefile`, `--admin` (the uid of that `LocalPlayer`), `--settings-file child-server-settings.json` and
+   `--savefile`, `--admin` (the uid of that `LocalPlayer`), `--settings-file child-server-settings.json`,
+   `--world-options-file child-world-options.json` and
    **`--parent-pid` with the PID of the current process**. `--headless` is set when the server window is not
    requested; log mirroring into the Godot console is never passed to the dedicated server. `ProcessService` keeps
    the PID to wait for the process to exit.

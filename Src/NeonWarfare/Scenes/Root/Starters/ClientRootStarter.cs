@@ -1,4 +1,5 @@
 using KludgeBox.Logging;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using Serilog;
@@ -38,7 +39,8 @@ public class ClientRootStarter(RootData rootData) : BaseRootStarter(rootData)
         if (_clientArgs.AutoStart)
         {
             Services.MainScene.StartSingleplayerGame(
-                _clientArgs.AutoStartSaveFileName ?? Services.SaveLoad.GenNewSaveFileName());
+                _clientArgs.AutoStartSaveFileName ?? Services.SaveLoad.GenNewSaveFileName(),
+                WorldOptions.GetDefault());
         } 
         else if (_clientArgs.AutoConnect)
         {
@@ -50,7 +52,8 @@ public class ClientRootStarter(RootData rootData) : BaseRootStarter(rootData)
                 _clientArgs.AutoHostSaveFileName ?? Services.SaveLoad.GenNewSaveFileName(),
                 _clientArgs.AutoHostPort,
                 createDedicatedServerProcess: _clientArgs.AutoHostDedicated,
-                showWindow: !_clientArgs.AutoHostDedicatedHeadless);
+                showWindow: !_clientArgs.AutoHostDedicatedHeadless,
+                WorldOptions.GetDefault());
         }
         else
         {

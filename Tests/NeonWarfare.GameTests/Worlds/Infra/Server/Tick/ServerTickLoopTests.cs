@@ -6,6 +6,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
@@ -329,7 +330,7 @@ public class ServerTickLoopTests
                 TestWorldScenes.CreateCatalog(_scenes),
                 _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
-        _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _provider.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().Dispatch;
 
         JoinDirectly(HostUid, "Host", HostPeer);

@@ -6,6 +6,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
@@ -67,7 +68,7 @@ public class TickStateReplicationTests
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = new WorldServicesBuilder()
             .Build(TestWorldSetups.Host(), Dependencies(_connection), new WorldRoot(_serverRoot));
-        _server.GetRequiredService<NewWorldSimulationFacade>().Create();
+        _server.GetRequiredService<NewWorldSimulationFacade>().Create(WorldOptions.GetDefault());
         _connection.Loopback = _server.GetRequiredService<EventDispatcher>().Dispatch;
 
         _alice = ClientOf(AlicePeer, out _aliceRoot);
@@ -374,7 +375,7 @@ public class TickStateReplicationTests
         AssertThat(AliceOnline()).ContainsExactly(AliceUid);
     }
 
-    // Done when: PlayersStorage and OnlinePlayersStorage appear on the client with their models
+    // Done when: the storages of a new world appear on the client with their models
     [TestCase]
     [RequireGodotRuntime]
     public void FirstTick_SpawnsTheStoragesOnTheClient_WithTheirModels()
@@ -382,7 +383,9 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(Parse(StateSection(AlicePeer)).Spawns.Select(spawn => spawn.Id))
-            .ContainsExactly(ServerId<PlayersStorage>(), ServerId<OnlinePlayersStorage>());
+            .ContainsExactly(ServerId<WorldOptionsStorage>(), ServerId<PlayersStorage>(),
+                ServerId<OnlinePlayersStorage>());
+        AssertClientCopy<WorldOptionsStorage>();
         AssertClientCopy<PlayersStorage>();
         AssertClientCopy<OnlinePlayersStorage>();
         AssertThat(_alice.GetRequiredService<PlayerQuery>().PlayersModel.PlayerByUid[AliceUid].Nick)
@@ -465,7 +468,7 @@ public class TickStateReplicationTests
         AssertThat(AliceRegistry().TryGetNode(parentId, out _)).IsFalse();
         AssertThat(AliceRegistry().TryGetNode(childId, out _)).IsFalse();
         AssertThat(_aliceRoot.GetChildren()).NotContains(clientParent);
-        AssertThat(AliceRegistry().GetAll<Node>()).HasSize(2);
+        AssertThat(AliceRegistry().GetAll<Node>()).HasSize(3);
     }
 
     // Done when: spawn and despawn in the same tick. No client has heard of it, so there is nothing to tell
@@ -695,7 +698,7 @@ public class TickStateReplicationTests
         byte[] state = StateSection(AlicePeer);
         World host = AutoFree(new World())!.InitPreReady(
             TestWorldSetups.Host(), Dependencies(new RecordingClientsConnection()),
-            new WorldOrigin.NewWorld());
+            new WorldOrigin.NewWorld(WorldOptions.GetDefault()));
 
         AssertThrown(() => host.ReceiveTickUpdate(2, state, ReadOnlyMemory<byte>.Empty))
             .IsInstanceOf<InvalidOperationException>();

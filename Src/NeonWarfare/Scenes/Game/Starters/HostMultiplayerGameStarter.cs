@@ -2,6 +2,7 @@ using System;
 using Godot;
 using Humanizer;
 using NeonWarfare.Scenes.Game.Networks;
+using NeonWarfare.Scenes.Worlds.Features.Options;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
@@ -9,7 +10,9 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>A server hosted from inside the client. The host plays in it too.</summary>
-public class HostMultiplayerGameStarter(SaveFileName saveFileName, int? port) : BaseGameStarter
+/// <param name="newWorldOptions">Used only when there is no save file yet.</param>
+public class HostMultiplayerGameStarter(SaveFileName saveFileName, int? port, WorldOptions newWorldOptions)
+    : BaseGameStarter
 {
     public override void Start(Game game)
     {
@@ -33,7 +36,7 @@ public class HostMultiplayerGameStarter(SaveFileName saveFileName, int? port) : 
             // The host's join leaves before the server is opened, so the host is the first to join.
             game.AddHostWorld(network, SaveFilesUpdatingLastGame(lastGame),
                 new WorldSaving(saveFileName, Services.GameSettings.GetSettings().AutoSaveIntervalMinutes),
-                ReadLocalPlayer(), LoadServerOrigin(saveFileName));
+                ReadLocalPlayer(), LoadServerOrigin(saveFileName, () => newWorldOptions));
         }
         catch (Exception e)
         {
