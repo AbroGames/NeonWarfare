@@ -26,6 +26,10 @@ joins fill it again. So every replicated member of such a node is a readonly fie
 (`NotSavedEntityTests`). A service reads a storage through its `[Query]` (`PlayerQuery.PlayersModel`), which looks
 the entity up on every call, so it works the same on the server, after a load and on a client.
 
+A time in a model is a `TickTimer`: its start tick and its duration in ticks, read against `IWorldClock.CurrentTick`
+with no reference to the clock. It is written once, at its start, and reads the same on the server, on a client from
+its snapshot on, and after a load, which restores the tick counter. Seconds become ticks only through `TickRate`.
+
 > [!IMPORTANT]
 > Only the Simulation writes the models, and only inside the tick (`ModelRulesTests`, `SimulationTimingTests`). At
 > the end of the tick `StateReplicator` sends the changes; a client only applies them. A write is cheap — only the

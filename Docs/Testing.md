@@ -93,6 +93,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/DiTests` | `Di.Process(this)` is the first statement; every class with injected members calls it; an override of the method running it calls `base` |
 | `Conventions/ChildInjectionTests` | A `[Child]` member name resolves to a reachable node in the scene |
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
+| `Conventions/TickRateTests` | `TickRate.TicksPerSecond` equals the physics tick rate of `project.godot`, 60 when absent |
 | `Conventions/CodeStyleTests` | Single `GlobalUsings.cs`, no `GD.Load` / `res://` literals, no `[Logger]` |
 | `Conventions/EventNamingTests` | In `Root/`, `Game/`, `Worlds/`: no `…Event` C# event, `On…` methods private or protected, a subscribed method is `On…` |
 | `Conventions/MessageStringTests` | Log templates are string literals in the call; no exception message from a constant or `FormatWith`; no TrKey in a constant |

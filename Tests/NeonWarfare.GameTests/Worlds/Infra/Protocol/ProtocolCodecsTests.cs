@@ -2,6 +2,7 @@ using GdUnit4;
 using MessagePack;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scripts;
 using RepliCAT;
 using RepliCAT.Bits;
@@ -113,6 +114,82 @@ public class ProtocolCodecsTests
                 NetIdCodec.Instance.Read(ref reader);
             })
             .IsInstanceOf<ReplicationFormatException>();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickTimerFormatter_WritesTheStartAndTheDuration_AndReadsThemBack()
+    {
+        TickTimer timer = TickTimer.Start(long.MaxValue - int.MaxValue, int.MaxValue);
+
+        byte[] bytes = MessagePackSerializer.Serialize(timer, Options);
+
+        AssertThat(bytes).IsEqual(MessagePackSerializer.Serialize(new[] { timer.StartTick, int.MaxValue }));
+        AssertThat(MessagePackSerializer.Deserialize<TickTimer>(bytes, Options)).IsEqual(timer);
+        AssertThat(MessagePackSerializer.Deserialize<TickTimer>(
+            MessagePackSerializer.Serialize(default(TickTimer), Options), Options)).IsEqual(default(TickTimer));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickTimerFormatter_InvalidInput_IsRejected()
+    {
+        long[][] invalid =
+        [
+            [-1, 10], [0, -1], [0, (long) int.MaxValue + 1], [long.MaxValue, 1], [0], [0, 10, 0],
+        ];
+
+        foreach (long[] values in invalid)
+        {
+            byte[] bytes = MessagePackSerializer.Serialize(values);
+            AssertThrown(() => MessagePackSerializer.Deserialize<TickTimer>(bytes, Options))
+                .IsInstanceOf<MessagePackSerializationException>();
+        }
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickTimerCodec_RoundTrips()
+    {
+        Replicator replicator = ProtocolCodecs.CreateReplicator(NetMessageCodecTests.CreateMapping());
+        IReplicationCodec<TickTimer> codec = Codec<TickTimer>(replicator);
+        TickTimer large = TickTimer.Start(long.MaxValue - int.MaxValue, int.MaxValue);
+        var writer = new BitWriter();
+
+        codec.Write(writer, large);
+        codec.Write(writer, default);
+
+        var reader = new BitReader(writer.ToArray());
+        AssertThat(codec.Read(ref reader)).IsEqual(large);
+        AssertThat(codec.Read(ref reader)).IsEqual(default(TickTimer));
+        AssertThat(reader.RemainingBits).IsEqual(0);
+        AssertThat(codec.IsChanged(TickTimer.Start(1, 5), TickTimer.Start(1, 5))).IsFalse();
+        AssertThat(codec.IsChanged(TickTimer.Start(1, 5), TickTimer.Start(2, 5))).IsTrue();
+        AssertThat(codec.IsChanged(TickTimer.Start(1, 5), TickTimer.Start(1, 6))).IsTrue();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickTimerCodec_OutOfRange_IsRejected()
+    {
+        (ulong Start, ulong Duration)[] invalid =
+        [
+            ((ulong) long.MaxValue + 1, 0), (0, (ulong) int.MaxValue + 1), ((ulong) long.MaxValue, 1),
+        ];
+
+        foreach ((ulong start, ulong duration) in invalid)
+        {
+            var writer = new BitWriter();
+            writer.WriteVarUInt(start);
+            writer.WriteVarUInt(duration);
+            byte[] bytes = writer.ToArray();
+            AssertThrown(() =>
+                {
+                    var reader = new BitReader(bytes);
+                    TickTimerCodec.Instance.Read(ref reader);
+                })
+                .IsInstanceOf<ReplicationFormatException>();
+        }
     }
 
     private static IReplicationCodec<T> Codec<T>(Replicator replicator)
