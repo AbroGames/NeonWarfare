@@ -43,8 +43,8 @@ it (`LayerReferenceTests`), so a service sees its layer and the ports, never the
 | `WorldSetup` | Ports | `WorldLayer` | Used by |
 |---|---|---|---|
 | `RemoteClient` | `LocalPlayer`, `ILocalPlayerOwner` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
-| `Host` | `ISaveFiles`, `WorldSaveFile`, `LocalPlayer` (also the `WorldAdmin` and the `ProtectedPlayer`), `IServerOwner`, `ILocalPlayerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
-| `Dedicated` | `ISaveFiles`, `WorldSaveFile`, `WorldAdmin`, `ProtectedPlayer`, `IServerOwner` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
+| `Host` | `ISaveFiles`, `WorldSaving`, `LocalPlayer` (also the `WorldAdmin` and the `ProtectedPlayer`), `IServerOwner`, `ILocalPlayerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
+| `Dedicated` | `ISaveFiles`, `WorldSaving`, `WorldAdmin`, `ProtectedPlayer`, `IServerOwner` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
 
 The host has no `ClientReplication`: its Simulation writes the very models its Presentation reads.
 
@@ -60,7 +60,7 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[ClientReplication]` | `StateApplier`: the state sections of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
 
 Every layer may also take the models, the `WorldDependencies` and the `WorldSetup` types, except those with an
-effect beyond the world, which only their owner takes: `IClientsConnection`, `ISaveFiles`, `WorldSaveFile` —
+effect beyond the world, which only their owner takes: `IClientsConnection`, `ISaveFiles`, `WorldSaving` —
 `[Server]`; `IServerOwner` — `[SimulationFacade]`; `IPeerSessionHandler` — `[Server]` (`PeerSessions`);
 `IServerConnection` — `[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`;
 `EntityRegistry` and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
@@ -93,7 +93,7 @@ through:
 | `StateReplicator` | One entity's delta | Its baseline is reset: its next delta is complete |
 | `ServerTickLoop` | One facade's `Tick()` | Logged, the model may stay half-changed; the other facades and the tick go on |
 | `ServerTickLoop` | The snapshot of the tick | The peers joined in the tick are rejected |
-| `SaveService` | The save of the tick, each request, each callback; the save on exit | The requester is told; the teardown goes on |
+| `SaveService` | The save of the tick, the autosave, each request, each callback; the save on exit | The requester is told, the autosave waits an interval; the teardown goes on |
 | `EventDispatcher` | One `[EventHandler]` call | Logged: a Presentation writes no model |
 | `ClientTransport` | One packet | The session ends: the models may have drifted |
 | `HostTransport` | The host's own events of the tick | Logged: the remote peers still get theirs |
@@ -120,7 +120,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | Folder | What it holds |
 |---|---|
 | `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
-| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `WorldSaveFile` — the file a server World saves to from its start and whether it saves there on exit, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`, `ProtectedPlayer` — whose uid cannot be displaced; refers to nothing in `Features/` or the World root |
+| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `WorldSaving` — the file a server World saves to from its start and its autosave interval, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`, `ProtectedPlayer` — whose uid cannot be displaced; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher` and its `ProtocolHash`, `JoinRequestCommand`, `DisconnectReason`, `ColorFormatter` |
@@ -130,7 +130,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, disconnection with a reason), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
 | `Infra/Server/Replication` | `StateReplicator` — the state section, the join snapshot and the save records, from the RepliCAT baselines |
-| `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter` (the format only), `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
+| `Infra/Server/Saves` | `SaveService` ("save as" and the autosave at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter` (the format only), `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
 | `Infra/Client/Events` | `EventDispatcher`, `EventHandlerAttribute` and `IEventHandlerOwner` — a Presentation with handlers |
 | `Infra/Client/Replication` | `StateApplier` — the state sections and the join snapshot of a remote client |

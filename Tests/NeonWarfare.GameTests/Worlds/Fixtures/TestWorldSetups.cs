@@ -22,16 +22,17 @@ public static class TestWorldSetups
     public static WorldSetup.Host Host(
         LocalPlayer? localPlayer = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
         ILocalPlayerOwner? localPlayerOwner = null, string saveFileName = SaveFileName) =>
-        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaveFile(saveFileName, autoSave: true),
+        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaving(saveFileName, autoSaveIntervalMinutes: 0),
             localPlayer ?? LocalPlayer(),
             owner ?? new RecordingServerOwner(), localPlayerOwner ?? new RecordingLocalPlayerOwner());
 
     /// <param name="adminUid"><c>null</c> — a World without an admin.</param>
     /// <param name="protectedUid"><c>null</c> — a server started from the console, which displaces everyone.</param>
+    /// <param name="autoSaveIntervalMinutes">Off by default, so a test running many ticks writes no save.</param>
     public static WorldSetup.Dedicated Dedicated(
         PlayerUid? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
-        string saveFileName = SaveFileName, PlayerUid? protectedUid = null) =>
-        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaveFile(saveFileName, autoSave: true),
+        string saveFileName = SaveFileName, PlayerUid? protectedUid = null, int autoSaveIntervalMinutes = 0) =>
+        new(saveFiles ?? new RecordingSaveFiles(), new WorldSaving(saveFileName, autoSaveIntervalMinutes),
             new WorldAdmin(adminUid),
             new ProtectedPlayer(protectedUid), owner ?? new RecordingServerOwner());
 }

@@ -47,7 +47,7 @@ public static class Launches
     public const string SecondClientUid = "SmokeTestB-Bbbbbbbbbb";
 
     /// <summary>SaveService: the World wrote its save on the way out.</summary>
-    public static string Autosaved(string saveFile) => $"Autosaved to '{saveFile}'";
+    public static string SavedOnExit(string saveFile) => $"Saved on exit to '{saveFile}'";
 
     /// <summary>SaveLoader: the World was filled from the save, not created anew.</summary>
     public static string LoadedSave(string saveFile) => $"Loaded the save '{saveFile}'";

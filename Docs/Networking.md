@@ -42,7 +42,8 @@ belong to the tick. `RunTick` goes strictly in this order:
 4. `ITickingFacade.Tick()` of every ticking facade, each one its own fault boundary;
 5. the state section of the tick (`StateReplicator.TryWrite`), written every tick;
 6. the snapshots to the peers joined in this tick;
-7. the saves requested in this tick (`SaveService.WriteRequested`, see [Data and saves](Data-and-saves.md));
+7. the saves requested in this tick and the autosave when it is due (`SaveService.WriteRequested`, see
+   [Data and saves](Data-and-saves.md#saves));
 8. the tick update of each joined peer, sent even if step 6 or 7 throws: the baselines have already moved.
 
 The Simulation changes the models only inside the tick: it has no deferred calls, timers or `async`

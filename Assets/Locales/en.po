@@ -51,11 +51,23 @@ msgstr "Player UID:"
 msgid "SETTING_MENU__PLAYER_UID_HINT"
 msgstr "Unique player identifier"
 
-msgid "SETTING_MENU__AUTOSAVE"
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL"
 msgstr "Autosave:"
 
-msgid "SETTING_MENU__AUTOSAVE_HINT"
-msgstr "Automatically save the game"
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_HINT"
+msgstr "How often the game saves itself; it always saves on exit"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_OFF"
+msgstr "Off"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_1_MIN"
+msgstr "Every minute"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_5_MIN"
+msgstr "Every 5 minutes"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_10_MIN"
+msgstr "Every 10 minutes"
 
 msgid "SETTING_MENU__LANGUAGE"
 msgstr "Language:"

@@ -52,11 +52,23 @@ msgstr "ID игрока:"
 msgid "SETTING_MENU__PLAYER_UID_HINT"
 msgstr "Уникальный идентификатор игрока"
 
-msgid "SETTING_MENU__AUTOSAVE"
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL"
 msgstr "Автосохранение:"
 
-msgid "SETTING_MENU__AUTOSAVE_HINT"
-msgstr "Автоматически сохранять игру"
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_HINT"
+msgstr "Как часто игра сохраняется сама; при выходе она сохраняется всегда"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_OFF"
+msgstr "Выключено"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_1_MIN"
+msgstr "Каждую минуту"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_5_MIN"
+msgstr "Каждые 5 минут"
+
+msgid "SETTING_MENU__AUTOSAVE_INTERVAL_10_MIN"
+msgstr "Каждые 10 минут"
 
 msgid "SETTING_MENU__LANGUAGE"
 msgstr "Язык:"

@@ -6,6 +6,7 @@ using KludgeBox.Godot.Services;
 using KludgeBox.Persistence;
 using NeonWarfare.GameTests.KludgeBox.Persistence.Fixtures;
 using NeonWarfare.GameTests.Scripts.GlobalServices.Settings.Fixtures;
+using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.GlobalServices.Settings;
 using static GdUnit4.Assertions;
 
@@ -95,6 +96,33 @@ public class GameSettingsServiceTests
         AssertFieldReplaced(Regex.Replace(Json(Stored()), "\"PlayerColor\":\"[^\"]*\"", "\"PlayerColor\":\"zz\""),
             Stored() with { PlayerColor = GameSettings.GetDefault().PlayerColor });
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Init_NegativeAutoSaveInterval_TheDefaultOne_TheOtherSettingsKept()
+    {
+        Json(Stored() with { AutoSaveIntervalMinutes = -1 });
+
+        AssertRepaired(Stored() with { AutoSaveIntervalMinutes = GameSettings.GetDefault().AutoSaveIntervalMinutes });
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Init_AutoSaveIntervalOverTheLongest_TheDefaultOne_TheOtherSettingsKept()
+    {
+        Json(Stored() with { AutoSaveIntervalMinutes = WorldSaving.MaxAutoSaveIntervalMinutes + 1 });
+
+        AssertRepaired(Stored() with { AutoSaveIntervalMinutes = GameSettings.GetDefault().AutoSaveIntervalMinutes });
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Init_TheLongestAutoSaveInterval_Kept()
+    {
+        Json(Stored() with { AutoSaveIntervalMinutes = WorldSaving.MaxAutoSaveIntervalMinutes });
+
+        AssertRepaired(Stored() with { AutoSaveIntervalMinutes = WorldSaving.MaxAutoSaveIntervalMinutes });
+    }
+
     // What a new setting does to every file written before it
     [TestCase]
     [RequireGodotRuntime]
@@ -109,10 +137,10 @@ public class GameSettingsServiceTests
 
     private GameSettingsService Create() => new(_folder.FileName(Name));
 
-    // Differs from the defaults in every field the defaults do not generate
+    // Differs from the defaults in every field the defaults do not generate. The interval is the lowest one kept.
     private static GameSettings Stored() => GameSettings.GetDefault() with
     {
-        PlayerNick = "Stored", PlayerColor = Colors.Red, AutoSaveEnabled = false, MasterVolume = 10
+        PlayerNick = "Stored", PlayerColor = Colors.Red, AutoSaveIntervalMinutes = 0, MasterVolume = 10
     };
 
     private string Json(GameSettings settings)

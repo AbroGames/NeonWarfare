@@ -13,7 +13,7 @@ public class ProcessService
     private const string GodotHeadlessFlag = "--headless";
 
     private const double ExitPollSeconds = 0.1;
-    // Far longer than an autosave takes: a server still running after it has hung
+    // Far longer than a save on exit takes: a server still running after it has hung
     private const ulong ExitTimeoutMsec = 10_000;
 
     private readonly ILogger _log = LogFactory.GetForStatic<ProcessService>();
@@ -77,7 +77,7 @@ public class ProcessService
     }
 
     /// <summary>
-    /// The child server stops by itself once its admin leaves, and autosaves on the way out. This only waits for it
+    /// The child server stops by itself once its admin leaves, and saves on the way out. This only waits for it
     /// behind the loading screen, so a new server never starts beside the old one still saving; a server that hangs
     /// is killed after the timeout. Without a running child server <paramref name="onExited"/> runs right away.
     /// A call during the wait replaces <paramref name="onExited"/>: quitting while leaving for the menu must quit.

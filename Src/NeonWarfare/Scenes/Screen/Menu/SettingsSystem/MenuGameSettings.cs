@@ -21,9 +21,12 @@ public partial class MenuGameSettings
     public string PlayerUid { get; set; } = Scripts.PlayerUid.Generate().Value;
 
     [Category("Player")]
-    [Name("SETTING_MENU__AUTOSAVE")]
-    [Hint("SETTING_MENU__AUTOSAVE_HINT")]
-    public bool AutoSaveEnabled { get; set; } = GameSettings.GetDefault().AutoSaveEnabled;
+    [Name("SETTING_MENU__AUTOSAVE_INTERVAL")]
+    [Hint("SETTING_MENU__AUTOSAVE_INTERVAL_HINT")]
+    [Options("SETTING_MENU__AUTOSAVE_INTERVAL_OFF", "SETTING_MENU__AUTOSAVE_INTERVAL_1_MIN",
+        "SETTING_MENU__AUTOSAVE_INTERVAL_5_MIN", "SETTING_MENU__AUTOSAVE_INTERVAL_10_MIN")]
+    [OptionValues(0, 1, 5, 10)]
+    public int AutoSaveIntervalMinutes { get; set; } = GameSettings.GetDefault().AutoSaveIntervalMinutes;
 
     [Category("Player")]
     [Hide]
@@ -67,14 +70,14 @@ public partial class MenuGameSettings
     public MenuGameSettings() {}
 
     public MenuGameSettings(
-        string playerName, Color playerColor, string playerUid, bool autoSaveEnabled,
+        string playerName, Color playerColor, string playerUid, int autoSaveIntervalMinutes,
         bool playerSettingsAcknowledged, int masterVolume, int soundsVolume, int musicVolume,
         bool fullscreen, string resolution, string interfaceSize)
     {
         PlayerName = playerName;
         PlayerColor = playerColor;
         PlayerUid = playerUid;
-        AutoSaveEnabled = autoSaveEnabled;
+        AutoSaveIntervalMinutes = autoSaveIntervalMinutes;
         PlayerSettingsAcknowledged = playerSettingsAcknowledged;
         MasterVolume = masterVolume;
         SoundsVolume = soundsVolume;

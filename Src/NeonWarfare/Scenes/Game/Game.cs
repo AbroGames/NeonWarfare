@@ -92,10 +92,10 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     /// </summary>
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
     public World AddSingleplayerWorld(
-        ISaveFiles saveFiles, WorldSaveFile saveFile, LocalPlayer localPlayer, WorldOrigin origin)
+        ISaveFiles saveFiles, WorldSaving saving, LocalPlayer localPlayer, WorldOrigin origin)
     {
         return Store(_assembler.Singleplayer(
-            new WorldSetup.Host(saveFiles, saveFile, localPlayer, this, this), origin));
+            new WorldSetup.Host(saveFiles, saving, localPlayer, this, this), origin));
     }
 
     /// <summary>
@@ -104,23 +104,23 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     /// </summary>
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
     public World AddHostWorld(
-        Network network, ISaveFiles saveFiles, WorldSaveFile saveFile, LocalPlayer localPlayer, WorldOrigin origin)
+        Network network, ISaveFiles saveFiles, WorldSaving saving, LocalPlayer localPlayer, WorldOrigin origin)
     {
         return Store(_assembler.Host(
-            new WorldSetup.Host(saveFiles, saveFile, localPlayer, this, this), origin, network));
+            new WorldSetup.Host(saveFiles, saving, localPlayer, this, this), origin, network));
     }
 
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
     public World AddDedicatedWorld(
         Network network,
         ISaveFiles saveFiles,
-        WorldSaveFile saveFile,
+        WorldSaving saving,
         WorldAdmin admin,
         ProtectedPlayer protectedPlayer,
         WorldOrigin origin)
     {
         return Store(_assembler.Dedicated(
-            new WorldSetup.Dedicated(saveFiles, saveFile, admin, protectedPlayer, this), origin, network));
+            new WorldSetup.Dedicated(saveFiles, saving, admin, protectedPlayer, this), origin, network));
     }
 
     public void ShowServerHud()

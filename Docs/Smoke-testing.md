@@ -26,9 +26,9 @@ cores. Not run in CI, only compiled.
 | `Client_StartsSingleplayerGame` | one client with `--auto-start` |
 | `Server_AcceptsTwoClients` | `--server` plus two `--auto-connect` clients |
 | `Client_QuitsFromMultiplayerGame` | an `--auto-host` client plus two `--auto-connect` clients, `client-1` quits first |
-| `Server_LoadsItsAutosaveAfterRestart` | an `--auto-host-dedicated` client, whose child server autosaves; then `--server` loads that save, an `--auto-connect` client joins, and the server autosaves on `SIGTERM` |
-| `Server_ShutsDownWhenParentDies` | `--server --parent-pid` of a stand-in process; the stand-in is killed, and the server must exit with its autosave |
-| `Client_LoadsItsSingleplayerAutosaveAfterRestart` | two runs of `--auto-start --auto-start-savefile`, the second loads the save of the first |
+| `Server_LoadsItsSaveOnExitAfterRestart` | an `--auto-host-dedicated` client, whose child server saves on exit; then `--server` loads that save, an `--auto-connect` client joins, and the server saves on exit on `SIGTERM` |
+| `Server_ShutsDownWhenParentDies` | `--server --parent-pid` of a stand-in process; the stand-in is killed, and the server must exit with its save on exit |
+| `Client_LoadsItsSingleplayerSaveOnExitAfterRestart` | two runs of `--auto-start --auto-start-savefile`, the second loads the save of the first |
 
 `SmokeRun` flow:
 
@@ -42,7 +42,7 @@ cores. Not run in CI, only compiled.
    within 15 s with code 0.
 5. The rest are stopped in launch order — so without a `Departure` the server always goes first and
    clients quit from the menu.
-6. Each process must have printed its `ExitMilestones` (the autosave, say) by the time it is stopped.
+6. Each process must have printed its `ExitMilestones` (the save on exit, say) by the time it is stopped.
 
 A client hosting with `--auto-host-dedicated` logs `Started dedicated server process <pid>`. The child inherits
 the client's stdout, so its lines are attributed to the client in the report.
@@ -67,7 +67,7 @@ Identical problems (the Serilog timestamp aside) are reported once with a repeat
 is capped at about 200 lines: an exception on every physics frame would otherwise run to tens of thousands.
 
 Stopping is `SIGTERM`, not a kill: the async Serilog sink is never flushed, so a kill would drop the lines
-that explain a failure, and a graceful exit exercises [Shutdown](Shutdown.md) and autosave. Windows has
+that explain a failure, and a graceful exit exercises [Shutdown](Shutdown.md) and the save on exit. Windows has
 no `SIGTERM`: processes are killed and their exit is not checked (Windows not verified at all).
 
 ## Known gotchas

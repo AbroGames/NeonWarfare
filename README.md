@@ -27,7 +27,7 @@ on Windows/Linux/macOS.
 | [Data and saves](Docs/Data-and-saves.md) | `[Replicated]` models, storages, `[NotSaved]`, RepliCAT saves |
 | [Services](Docs/Services.md) | `Services.*`, the global services |
 | [Startup flow](Docs/Startup-flow.md) | `RootStarter`, `GameStarter`, the four session modes |
-| [Shutdown](Docs/Shutdown.md) | Autosave on exit, killing child processes |
+| [Shutdown](Docs/Shutdown.md) | Save on exit, killing child processes |
 | [UI](Docs/Ui.md) | `PagesProvider` menu stack, `MenuGameSettings`, HUD |
 | [Chat and commands](Docs/Chat-and-commands.md) | `ChatSimulationFacade`, `ChatCommandRunnerSimulationFacade`, `ChatPresentation`, `IChatCommand` |
 | [Localization](Docs/Localization.md) | `Tr(KEY)`, `Assets/Locales/*.po` |

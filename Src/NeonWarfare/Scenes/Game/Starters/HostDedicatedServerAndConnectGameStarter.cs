@@ -49,8 +49,8 @@ public class HostDedicatedServerAndConnectGameStarter(
     private bool WriteChildServerSettings()
     {
         GameSettings settings = Services.GameSettings.GetSettings();
-        return Services.DedicatedServerSettings.Write(
-            ChildServerSettingsFileName, new DedicatedServerSettings(settings.Locale, settings.AutoSaveEnabled));
+        return Services.DedicatedServerSettings.Write(ChildServerSettingsFileName,
+            new DedicatedServerSettings(settings.Locale, settings.AutoSaveIntervalMinutes));
     }
 
     private void ShowHostingError(Error error)

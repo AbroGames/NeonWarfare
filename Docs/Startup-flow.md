@@ -79,7 +79,8 @@ Easy to forget: the dedicated server initializes neither `Services.GameSettings`
 
 `Start()` — a single scenario: `MainScene.HostMultiplayerGameAsDedicatedServer(...)` with the save name
 from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, `ServerHud` unless
-the engine runs without a window (`DisplayServer.GetName()` is `headless`), and `AutoSaveEnabled` of its settings.
+the engine runs without a window (`DisplayServer.GetName()` is `headless`), and `AutoSaveIntervalMinutes` of its
+settings.
 
 ## Level 2: GameStarter
 
@@ -129,7 +130,7 @@ The handlers die with the `Game`, so nothing unsubscribes.
 Only helpers, no template method:
 
 * **`LoadServerOrigin(saveFileName)`** — the save file exists → `WorldOrigin.FromSave`, otherwise
-  `WorldOrigin.NewWorld`; either way the starter passes the same name as the `WorldSaveFile`, so the World saves
+  `WorldOrigin.NewWorld`; either way the starter passes the same name in the `WorldSaving`, so the World saves
   back to that file. Each server starter wraps it with `Add…World` in a `try` whose `catch` takes any exception;
   **`LogWorldError(e, saveFileName)`** logs it and gives the message for the player.
 * **`ReadLocalPlayer()`** — reads `Services.LocalPlayer` once: the same object goes to the World and into the join
@@ -193,12 +194,13 @@ Connecting to someone else's server. Parameters: `host`, `port`.
 
 A **second OS process** plus an ordinary client connection to it.
 
-1. `ReadLocalPlayer()`; the locale and `AutoSaveEnabled` of `GameSettings` go into `child-server-settings.json`, and a
-   failed write goes back to the menu with the hosting error. `Services.Process.StartNewDedicatedServerApplication(...)`
-   launches a process with `--server`, `--port`, `--savefile`, `--admin` (the uid of that `LocalPlayer`),
-   `--settings-file child-server-settings.json` and **`--parent-pid` with the PID of the current process**.
-   `--headless` is set when the server window is not requested; log mirroring into the Godot console is never passed
-   to the dedicated server. `ProcessService` keeps the PID to wait for the process to exit.
+1. `ReadLocalPlayer()`; the locale and `AutoSaveIntervalMinutes` of `GameSettings` go into
+   `child-server-settings.json`, and a failed write goes back to the menu with the hosting error.
+   `Services.Process.StartNewDedicatedServerApplication(...)` launches a process with `--server`, `--port`,
+   `--savefile`, `--admin` (the uid of that `LocalPlayer`), `--settings-file child-server-settings.json` and
+   **`--parent-pid` with the PID of the current process**. `--headless` is set when the server window is not
+   requested; log mirroring into the Godot console is never passed to the dedicated server. `ProcessService` keeps
+   the PID to wait for the process to exit.
    It first binds the port and releases it: on a taken port nothing is started, and the client goes back to the menu
    with the hosting error, so it never joins another server listening there.
 2. `resume-game.json` — "own server", so that "Continue" brings the server up again rather than connecting to it.

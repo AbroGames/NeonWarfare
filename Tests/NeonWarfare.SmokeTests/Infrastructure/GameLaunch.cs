@@ -8,7 +8,7 @@ namespace NeonWarfare.SmokeTests.Infrastructure;
 public sealed record GameLaunch(string Name, IReadOnlyList<string> Arguments, IReadOnlyList<string> Milestones)
 {
     /// <summary>
-    /// Fragments the process must have printed by the time it is stopped, such as the autosave on exit.
+    /// Fragments the process must have printed by the time it is stopped, such as the save on exit.
     /// </summary>
     public IReadOnlyList<string> ExitMilestones { get; init; } = [];
 }

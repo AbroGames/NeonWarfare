@@ -10,7 +10,7 @@ public sealed class ServerShutsDownWhenParentDiesTests
 
     /// <summary>
     /// A child server whose client died without a word, so no admin ever left: the server notices the parent is
-    /// gone, autosaves and exits by itself.
+    /// gone, saves on exit and exits by itself.
     /// </summary>
     [Fact]
     public void Server_ShutsDownWhenParentDies()
@@ -24,7 +24,7 @@ public sealed class ServerShutsDownWhenParentDiesTests
                 server with
                 {
                     Arguments = [..server.Arguments, "--parent-pid", parent.Pid.ToString()],
-                    ExitMilestones = [ParentDied(parent.Pid), Autosaved(SaveFile)],
+                    ExitMilestones = [ParentDied(parent.Pid), SavedOnExit(SaveFile)],
                 },
             ],
             selfExit: new SelfExit(server.Name, parent.Kill));

@@ -2,6 +2,7 @@ using System;
 using System.Text.Json;
 using KludgeBox.Logging;
 using KludgeBox.Persistence;
+using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
 namespace NeonWarfare.Scripts.GlobalServices.Settings;
@@ -32,7 +33,7 @@ public class GameSettingsService
 
     /// <summary>
     /// A setting that is missing or bad in the file gets its default, written back, and the other settings stay.
-    /// A blank nick and an unknown locale are bad too.
+    /// A blank nick, an unknown locale and an autosave interval out of its range are bad too.
     /// </summary>
     public void Init()
     {
@@ -43,13 +44,21 @@ public class GameSettingsService
                 ? GameSettings.GetDefault().PlayerNick
                 : read.PlayerNick,
             Locale = (Services.I18N.GetLocaleInfoByCode(read.Locale)
-                ?? Services.I18N.GetUserOsLocaleInfoOrDefault()).Code
+                ?? Services.I18N.GetUserOsLocaleInfoOrDefault()).Code,
+            AutoSaveIntervalMinutes = read.AutoSaveIntervalMinutes is < 0 or > WorldSaving.MaxAutoSaveIntervalMinutes
+                ? GameSettings.GetDefault().AutoSaveIntervalMinutes
+                : read.AutoSaveIntervalMinutes
         };
         _settings = read;
         if (repaired != read)
         {
-            _log.Warning("Bad settings replaced: nick '{nick}' with '{newNick}', locale '{locale}' with '{newLocale}'",
-                read.PlayerNick, repaired.PlayerNick, read.Locale, repaired.Locale);
+            _log.Warning("Bad settings replaced: " +
+                "nick '{nick}' with '{newNick}', " +
+                "locale '{locale}' with '{newLocale}', " +
+                "autosave interval {interval} with {newInterval}",
+                read.PlayerNick, repaired.PlayerNick,
+                read.Locale, repaired.Locale,
+                read.AutoSaveIntervalMinutes, repaired.AutoSaveIntervalMinutes);
             SetSettings(repaired);
         }
     }

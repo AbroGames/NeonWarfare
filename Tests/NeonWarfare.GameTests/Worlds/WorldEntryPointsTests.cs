@@ -132,7 +132,7 @@ public class WorldEntryPointsTests
             .IsInstanceOf<SaveVersionMismatchException>();
     }
 
-    // The autosave on exit: Quit() and the way back to the menu both take the World out of the tree
+    // The save on exit: Quit() and the way back to the menu both take the World out of the tree
     [TestCase]
     [RequireGodotRuntime]
     public void ExitTree_ServerWorld_SavesToTheFileOfItsSetup()

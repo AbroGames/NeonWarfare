@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 
@@ -78,26 +79,23 @@ public partial class SettingContainer : PanelContainer
     {
         if (optionsAttr is null) return null;
 
+        string[] labels = optionsAttr.Options;
+        object[] values = container.Handle.Member.GetAttribute<OptionValuesAttribute>()?.Values ?? labels;
+        if (values.Length != labels.Length || values.Any(value => value.GetType() != container.Handle.Type))
+        {
+            throw new InvalidOperationException(
+                $"The option values of {container.Handle.Member.Member.Name} do not match its labels or its type.");
+        }
+
         var optionButton = new OptionButton();
-        var options = optionsAttr.Options;
-        var currentValue = container.Handle.Value?.ToString() ?? "";
-
-        for (int i = 0; i < options.Length; i++)
+        foreach (string label in labels)
         {
-            optionButton.AddItem(container.Tr(options[i]));
-            if (options[i] == currentValue)
-            {
-                optionButton.Select(i);
-            }
+            optionButton.AddItem(container.Tr(label));
         }
+        // A value not among the options, from a hand-edited file, selects nothing and stays until an item is picked.
+        optionButton.Select(Array.FindIndex(values, value => Equals(value, container.Handle.Value)));
 
-        if (optionButton.Selected == -1 && options.Length > 0)
-        {
-            optionButton.Select(0);
-            container.Handle.Value = options[0];
-        }
-
-        optionButton.ItemSelected += index => container.Handle.Value = options[(int)index];
+        optionButton.ItemSelected += index => container.Handle.Value = values[(int)index];
         return optionButton;
     }
 }

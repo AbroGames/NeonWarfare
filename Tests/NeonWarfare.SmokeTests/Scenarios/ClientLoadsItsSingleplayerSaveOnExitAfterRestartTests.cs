@@ -4,7 +4,7 @@ using static NeonWarfare.SmokeTests.Scenarios.Launches;
 
 namespace NeonWarfare.SmokeTests.Scenarios;
 
-public sealed class ClientLoadsItsSingleplayerAutosaveAfterRestartTests
+public sealed class ClientLoadsItsSingleplayerSaveOnExitAfterRestartTests
 {
     private const string SaveFile = "smoke-singleplayer-world";
 
@@ -13,12 +13,12 @@ public sealed class ClientLoadsItsSingleplayerAutosaveAfterRestartTests
     /// The second run reuses the user:// of the first.
     /// </summary>
     [Fact]
-    public void Client_LoadsItsSingleplayerAutosaveAfterRestart()
+    public void Client_LoadsItsSingleplayerSaveOnExitAfterRestart()
     {
         using UserDataDirectories userData = new();
         GameLaunch client = new("client", ["--auto-start", "--auto-start-savefile", SaveFile], [PlayerJoined]);
 
-        SmokeRun.Run([client with { ExitMilestones = [Autosaved(SaveFile)] }], userData: userData);
+        SmokeRun.Run([client with { ExitMilestones = [SavedOnExit(SaveFile)] }], userData: userData);
         SmokeRun.Run([client with { Milestones = [LoadedSave(SaveFile), PlayerJoined] }], userData: userData);
     }
 }
