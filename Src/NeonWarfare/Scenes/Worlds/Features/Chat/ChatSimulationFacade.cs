@@ -1,6 +1,5 @@
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 

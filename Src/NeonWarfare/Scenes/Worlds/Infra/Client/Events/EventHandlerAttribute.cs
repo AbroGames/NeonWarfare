@@ -1,6 +1,5 @@
 using System;
 using JetBrains.Annotations;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 

@@ -5,7 +5,6 @@ using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scripts.GlobalServices;
-using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Game;

@@ -1,6 +1,5 @@
 using GdUnit4;
 using Godot;
-using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Surfaces;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using static GdUnit4.Assertions;

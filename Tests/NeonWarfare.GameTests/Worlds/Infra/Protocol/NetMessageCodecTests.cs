@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Reflection;
 using GdUnit4;
 using Godot;
-using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scripts.GlobalServices;

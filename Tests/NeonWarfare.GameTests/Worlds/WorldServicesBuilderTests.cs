@@ -22,7 +22,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
-using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds;

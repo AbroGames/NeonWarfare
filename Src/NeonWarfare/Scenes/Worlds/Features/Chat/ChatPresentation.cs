@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
-using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 

@@ -1,5 +1,4 @@
 using Godot;
-using NeonWarfare.Scripts;
 using RepliCAT;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;

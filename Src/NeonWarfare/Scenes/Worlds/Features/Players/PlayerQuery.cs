@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
-using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 

@@ -5,7 +5,6 @@ using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scripts;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;

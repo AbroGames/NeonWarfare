@@ -1,5 +1,4 @@
 using Godot;
-using GodotBox;
 using GodotBox.Godot.Nodes;
 
 namespace NeonWarfare.Scenes.Root.Starters;

@@ -1,6 +1,5 @@
 using System;
 using Godot;
-using GodotBox;
 using GodotBox.Godot.Nodes;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
