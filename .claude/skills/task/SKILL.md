@@ -60,15 +60,40 @@ Do **not** start working on it. Report the created number and path.
 
 Trigger: "plan task N".
 
-Read `task.md`, read the docs `README.md` points to for this area, explore the
-relevant code, then write `plan.md` next to `task.md`:
+Planning is a conversation first and a document second. It runs in two phases with a
+stop between them.
+
+#### Phase A — discuss the problem and the options
+
+Read `task.md`, read the docs `README.md` points to for this area, and explore the
+relevant code deeply enough to understand the problem, not just to locate it. Then,
+in chat (Russian), **without writing `plan.md`**:
+
+1. **The problem.** What is actually wrong or missing today and why — grounded in the
+   code you read (`path/File.cs:42`), not restated from `task.md`. Name the constraints
+   that shape the solution (networking, save/load, mid-game join, existing patterns).
+2. **The options.** Every reasonable approach, including the obvious one and any that
+   question the task's framing. For each: a short description of what changes, then
+   its pros and cons — concrete ones (what breaks, what gets more complex, what it costs
+   later), not generic ones.
+3. **Recommendation.** Which option you would pick and why, plus the questions whose
+   answers could change that choice.
+
+Then stop and wait for the user. Do not use `AskUserQuestion` here — the discussion is
+open-ended, and the user may reject all options or propose a new one. Keep discussing
+as long as the user does; re-examine the code when they raise something new. Never
+pick a branch silently.
+
+#### Phase B — write the plan
+
+Only once the user has agreed on an approach, write `plan.md` next to `task.md`:
 
 ```markdown
 # Plan — NNN <Title>
 
 ## Approach
 
-<1–2 paragraphs: the chosen approach and why.>
+<1–2 paragraphs: the chosen approach and why; the rejected options in one line each.>
 
 ## Steps
 
@@ -79,12 +104,6 @@ relevant code, then write `plan.md` next to `task.md`:
 
 - <residual risks; forks were already resolved with the user>
 ```
-
-**Clarifying questions are mandatory at every fork.** Whenever exploration reveals more
-than one reasonable approach, an unclear requirement, or a trade-off the user should own,
-ask before writing `plan.md` (use `AskUserQuestion`, recommended option first). Never pick
-a branch silently. Write the plan only after the answers are in; "Risks / open questions"
-is for what remains after that, not a substitute for asking.
 
 `plan.md` is written in English. After writing it, show the user the whole plan in
 chat, translated into Russian — in full, not a summary.
