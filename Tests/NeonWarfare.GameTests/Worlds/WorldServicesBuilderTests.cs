@@ -125,6 +125,7 @@ public class WorldServicesBuilderTests
 
         using ServiceProvider client = Build(TestWorldSetups.RemoteClient());
         AssertThat(client.GetService<ChatSimulationFacade>()).IsNull();
+        AssertThat(client.GetService<ChatCommandRunnerSimulationFacade>()).IsNull();
         AssertThat(client.GetService<HelpChatCommandSimulationFacade>()).IsNull();
     }
 
@@ -305,7 +306,7 @@ public class WorldServicesBuilderTests
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerStateTable), typeof(EventDispatcher),
             typeof(CommandHandlerRegistry), typeof(ChatSimulation), typeof(ChatSimulationFacade),
-            typeof(PlayerQuery),
+            typeof(ChatCommandRunnerSimulationFacade), typeof(PlayerQuery),
         ]);
 
     private static WorldDependencies Dependencies()

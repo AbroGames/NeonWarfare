@@ -18,5 +18,5 @@ public class SendChatMessageHandler(ChatSimulationFacade chatSimulationFacade)
     }
 
     public void Process(PlayerUid senderUid, SendChatMessageCommand command) =>
-        chatSimulationFacade.HandleInput(senderUid, command.Text);
+        chatSimulationFacade.HandleChatInput(senderUid, command.Text);
 }
