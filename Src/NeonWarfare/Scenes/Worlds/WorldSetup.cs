@@ -4,8 +4,7 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.Scenes.Worlds;
 
 /// <summary>
-/// The configuration of a World, chosen by its <c>Game</c>: the layers and the ports of the process that configuration
-/// needs. Known only to the composition root; a service sees its layer and the ports, never the configuration.
+/// The configuration of a World: its layers and the ports of the process it needs, see Docs/World.md#layers.
 /// </summary>
 public abstract record WorldSetup
 {
@@ -24,14 +23,17 @@ public abstract record WorldSetup
             WorldLayer.Query | WorldLayer.Client | WorldLayer.Presentation | WorldLayer.ClientReplication;
     }
 
-    /// <summary>Single player and hosting from inside the client: the admin is the host's own player.</summary>
+    /// <summary>Single player and hosting from inside the client. The admin is the host's own player.</summary>
     public sealed record Host(
         ISaveFiles SaveFiles, LocalPlayer LocalPlayer, IServerOwner ServerOwner, ILocalPlayerOwner LocalPlayerOwner)
         : WorldSetup
     {
         public WorldAdmin Admin => new(LocalPlayer.Uid);
 
-        // No ClientReplication: the host's Simulation writes the very models its Presentation reads
+        /// <summary>
+        /// There is no <c>ClientReplication</c>, because the host's Simulation writes the very models its Presentation
+        /// reads.
+        /// </summary>
         public override WorldLayer Layers => ServerLayers | WorldLayer.Client | WorldLayer.Presentation;
     }
 

@@ -8,7 +8,7 @@ namespace NeonWarfare.Scenes.Root.Starters;
 public class DedicatedServerRootStarter : BaseRootStarter
 {
     
-    // The engine reports a windowless run itself: Godot keeps its --headless flag out of the command line we see
+    // The display server of a windowless run, see Docs/Cli-args.md.
     private const string HeadlessDisplayServer = "headless";
     
     private DedicatedServerArgs _dedicatedServerArgs;
@@ -25,7 +25,7 @@ public class DedicatedServerRootStarter : BaseRootStarter
         Services.LastGame.Init();
         Services.DedicatedServerSettings.Init();
         
-        // Set locale only after loading ServerSettings
+        // The locale is a setting, so it is set only after the settings are loaded.
         Services.I18N.SetCurrentLocale(Services.DedicatedServerSettings.GetSettings().Locale);
         
         rootData.SceneTree.Root.Title = $"[SERVER] {rootData.SceneTree.Root.Title}";

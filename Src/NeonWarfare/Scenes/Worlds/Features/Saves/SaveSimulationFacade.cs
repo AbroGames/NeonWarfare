@@ -20,7 +20,7 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
         PlayerModel sender = players.Get(senderUid);
         _log.Information("{nick} ({uid}) saves the game as '{fileName}'", sender.Nick, sender.Uid, fileName);
         
-        // The reply comes at the end of the tick and is not guaranteed: the sender may have left by then
+        // The reply comes at the end of the tick, and the sender may have left by then.
         saveService.RequestSave(fileName,
             () => chatSimulation.SendLocalizedMessageAsServerToPlayer(SavedMessageKey, [fileName], senderUid),
             _ => chatSimulation.SendLocalizedMessageAsServerToPlayer(SaveFailedMessageKey, [fileName], senderUid));

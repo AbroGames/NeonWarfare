@@ -4,8 +4,8 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>
-/// The save files of a World that "Continue" follows: after every file written, <paramref name="setLastGameSave"/>
-/// gets its name, which a "save as" changes.
+/// The save files of a World that "Continue" follows.
+/// After every file written <paramref name="setLastGameSave"/> gets its name, so "Continue" follows a "save as" too.
 /// </summary>
 public class LastGameUpdatingSaveFiles(ISaveFiles disk, Action<string> setLastGameSave) : ISaveFiles
 {

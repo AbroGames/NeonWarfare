@@ -93,6 +93,15 @@ non-obvious *why*, a workaround. If the code and names already say it — no com
 Write comments as if the current code was always this way. No "X instead of Y, because…" — the replaced version is
 history, not context.
 
+Write plain full sentences, one thought each: the conclusion first, then the reason, in the same sentence. No chains
+of facts joined by colons and commas. A fact from `Docs/` is not retold: the comment refers to it as
+`Docs/<File>.md#<anchor>`, without the anchor when the fact is above the first heading, and `CodeDocsReferenceTests`
+checks the reference.
+
+A comment on a non-private member is a `<summary>`; on a private member and inside a body it is `//`. A `<summary>`
+is not mandatory: it is written only where the contract is not visible from the signature, one sentence per
+constraint.
+
 ## Memory leaks
 
 A handler whose delegate target is a node (its method, or a local function capturing only `this`) needs

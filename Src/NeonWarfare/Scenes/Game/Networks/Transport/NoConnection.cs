@@ -5,8 +5,9 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
-/// The direction a configuration has no use for: a dedicated server sends no commands, a remote client serves no
-/// peers. Its layers never take it, so a call is a bug.
+/// The direction a configuration has no use for: a dedicated server sends no commands, and a remote client serves no
+/// peers.
+/// The layers of that configuration never take it, so a call is a bug.
 /// </summary>
 public sealed class NoConnection : IClientsConnection, IServerConnection
 {

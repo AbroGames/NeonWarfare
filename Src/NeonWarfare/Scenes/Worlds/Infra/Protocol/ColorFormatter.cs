@@ -3,7 +3,7 @@ using MessagePack;
 using MessagePack.Formatters;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
-// Lets the MessagePack source generator and analyzer accept Color members of [MessagePackObject] types
+// The MessagePack source generator and analyzer accept Color members of [MessagePackObject] types only with this.
 [assembly: MessagePackKnownFormatter(typeof(ColorFormatter))]
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;

@@ -10,8 +10,9 @@ namespace NeonWarfare.Scenes.Root.Starters;
 public abstract class BaseRootStarter
 {
     
-    // We don't move it to global Services class,
-    // because RootStarter is the only right place for processing and forwarding cmd args
+    /// <summary>
+    /// Not in <c>Services</c>, because only a root starter reads the command line, see Docs/Cli-args.md.
+    /// </summary>
     protected readonly CmdArgsService CmdArgsService = new();
     
     private CommonArgs _commonArgs;

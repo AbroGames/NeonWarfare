@@ -1,11 +1,12 @@
 namespace NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 
-// Implemented by a [SimulationFacade] named *ChatCommandSimulationFacade: a command may change the state
-// through other facades. A command implements IListedChatCommand; only /help implements this one alone, since it
-// takes every listed command and would otherwise take itself
+/// <summary>
+/// A chat command, see Docs/Chat-and-commands.md#chat-commands.
+/// Only <c>/help</c> implements it directly, every other command implements <see cref="IListedChatCommand"/>.
+/// </summary>
 public interface IChatCommand
 {
-    // Lower case, no whitespace: what follows the '/'
+    /// <summary>What follows the <c>/</c>: lower case, with no whitespace.</summary>
     string Name { get; }
     string Description { get; }
     bool RequiresAdmin { get; }

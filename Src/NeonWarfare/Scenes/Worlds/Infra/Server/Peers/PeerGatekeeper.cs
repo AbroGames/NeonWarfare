@@ -9,10 +9,10 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 /// <summary>
-/// Lets a connected peer in only through a join: one that has not joined by the deadline is disconnected, a rejected
-/// one is told why and disconnected. A disconnected peer is cut off in <see cref="PeerStateTable"/>: until its
-/// <c>peer_disconnected</c> it still sends, and <see cref="CommandDispatcher"/> drops all of it, so a rejected or
-/// displaced peer cannot act, displace back included.
+/// Lets a connected peer in only through a join, see Docs/Networking.md#join-and-leave.
+/// A disconnected peer is cut off in <see cref="PeerStateTable"/> at once.
+/// It may keep sending until its <c>peer_disconnected</c>, but <see cref="CommandDispatcher"/> drops all of it, so a
+/// rejected or displaced peer cannot act, nor displace the new peer back.
 /// </summary>
 [Server]
 public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider timeProvider, PeerStateTable peers)
@@ -37,7 +37,7 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
         if (peers.IsCut(peerId)) return;
 
         _log.Warning("Peer {peerId} rejected: {reason}", peerId, reason);
-        // Disconnected whether the reason reached it or not
+        // The peer is disconnected whether the reason reached it or not.
         clientsConnection.Reject(peerId, reason);
         Disconnect(peerId);
     }

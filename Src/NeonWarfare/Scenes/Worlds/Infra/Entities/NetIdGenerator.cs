@@ -4,7 +4,8 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
-/// Hands out <see cref="NetId"/>s on the server: 1, 2, … in order, never <see cref="NetId.None"/>, never twice.
+/// Hands out <see cref="NetId"/>s on the server in order: 1, 2, and so on.
+/// Never <see cref="NetId.None"/>, never the same value twice.
 /// </summary>
 [Server]
 public class NetIdGenerator

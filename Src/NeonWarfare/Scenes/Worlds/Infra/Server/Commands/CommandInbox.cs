@@ -9,9 +9,9 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
 /// <summary>
-/// The commands received since the last tick, in arrival order, together with the disconnections: a peer's
-/// commands and its leaving share one order. A packet is decoded on arrival, so a broken one is reported at once
-/// and never reaches the queue; whatever depends on the world state is left to <see cref="CommandDispatcher"/>.
+/// The commands and the disconnections received since the last tick, in one arrival order.
+/// A packet is decoded on arrival, so a broken one is dropped at once and never reaches the inbox.
+/// Every check that depends on the world state is left to <see cref="CommandDispatcher"/>.
 /// </summary>
 [Server]
 public class CommandInbox(
@@ -19,7 +19,7 @@ public class CommandInbox(
 {
     public abstract record Entry(int PeerId);
     public record PeerCommandEntry(int PeerId, Command Command) : Entry(PeerId);
-    // Not a Command, so it never enters the network whitelist: a peer cannot send its own disconnection
+    /// <summary>Not a <c>Command</c>, so it is never in the whitelist and no peer can send it.</summary>
     public record PeerDisconnected(int PeerId) : Entry(PeerId);
 
     private readonly ILogger _log = LogFactory.GetForStatic<CommandInbox>();
@@ -47,8 +47,8 @@ public class CommandInbox(
             return;
         }
 
-        // A protocol check, not a game rule, so it is not the session handler's: a client of another build is rejected
-        // before its join can reach the world
+        // The protocol check is not a game rule, so it is done here and not by the session handler.
+        // A client of another build is rejected before its join reaches the world.
         if (command is JoinRequestCommand join && join.ProtocolHash != protocolHash.Value)
         {
             _log.Warning("JoinRequestCommand from peer {peerId} has protocol hash {theirs}, the server has {ours}",
@@ -62,7 +62,7 @@ public class CommandInbox(
 
     public void EnqueuePeerDisconnected(int peerId) => _entries.Add(new PeerDisconnected(peerId));
 
-    // A new list rather than Clear: whatever is enqueued while these are processed waits for the next tick
+    /// <summary>Whatever is enqueued while the taken entries are processed waits for the next tick.</summary>
     public IReadOnlyList<Entry> TakeAll()
     {
         List<Entry> taken = _entries;

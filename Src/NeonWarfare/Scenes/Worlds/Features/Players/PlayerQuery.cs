@@ -17,7 +17,7 @@ public class PlayerQuery(PlayersStorageQuery players, OnlinePlayersStorageQuery 
     public PlayerModel TryGetOnline(string uid) =>
         onlinePlayers.Model.Uids.Contains(uid) ? players.Model.PlayerByUid[uid] : null;
 
-    // Throws rather than returning null, because otherwise every caller would need a null-check branch
+    /// <summary>Throws instead of returning <c>null</c>, so a caller needs no null check.</summary>
     public PlayerModel Get(string uid)
     {
         if (!players.Model.PlayerByUid.TryGetValue(uid, out PlayerModel player))

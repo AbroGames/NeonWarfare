@@ -7,14 +7,14 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 
-// Only an admin is shown the save controls, so a refused command gets no reply
+/// <summary>A refused command gets no reply, because only an admin is shown the save controls.</summary>
 [CommandHandler]
 public class SaveCommandHandler(SaveSimulationFacade saveSimulationFacade, PlayerQuery players)
     : IPlayerCommandHandler<SaveCommand>
 {
     public const int MaxFileNameLength = 32;
 
-    // Windows device names, reserved with any extension and in any case
+    // The Windows device names, reserved with any extension and in any case.
     private static readonly HashSet<string> WindowsReservedNames = new(
         ["CON", "PRN", "AUX", "NUL", ..Numbered("COM"), ..Numbered("LPT")],
         StringComparer.OrdinalIgnoreCase);
@@ -26,11 +26,14 @@ public class SaveCommandHandler(SaveSimulationFacade saveSimulationFacade, Playe
         saveSimulationFacade.Save(senderUid, command.FileName);
 
     /// <summary>
-    /// Whether a save file name is valid on every OS the game runs on, whichever one checks it: a save is moved between
-    /// machines, and a name comes from a remote player and becomes a path on the server.
+    /// Whether a save file name is valid on every OS the game runs on, whichever OS checks it.
+    /// A save is moved between machines, and the name comes from a remote player and becomes a path on the server.
+    /// <list type="bullet">
+    /// <item>The character set rules out the separators of every OS (<c>/</c>, <c>\</c>, <c>:</c>) and NUL.</item>
+    /// <item>The ban on a leading dot rules out <c>.</c> and <c>..</c>, hidden files and the <c>._</c> metadata
+    /// files of macOS.</item>
+    /// </list>
     /// </summary>
-    // The character set already rules out the separators of every OS ('/', '\', ':') and NUL. The leading dot rules
-    // out "." and ".." (Linux, macOS), a hidden file, and macOS's "._" metadata files
     public static bool IsValidFileName(string fileName) =>
         !string.IsNullOrEmpty(fileName)
         && fileName.Length <= MaxFileNameLength

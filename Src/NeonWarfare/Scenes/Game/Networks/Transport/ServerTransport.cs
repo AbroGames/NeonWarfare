@@ -6,10 +6,7 @@ using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
-/// <summary>
-/// The remote peers of a server World. The server is opened only once its World is built, so nothing reaches a
-/// World that does not exist yet.
-/// </summary>
+/// <summary>The connection of a server World to its remote peers.</summary>
 public sealed class ServerTransport : IClientsConnection, IDisposable
 {
     private readonly INetwork _network;
@@ -43,7 +40,7 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
     public void Disconnect(int peerId) => _network.Disconnect(peerId);
 
     /// <summary>
-    /// Detaches from the network, for a World that failed to be built: the network outlives it.
+    /// Detaches from the network when the World failed to be built, because the network outlives that World.
     /// </summary>
     public void Dispose()
     {

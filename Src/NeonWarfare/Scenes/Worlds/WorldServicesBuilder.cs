@@ -9,15 +9,18 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 namespace NeonWarfare.Scenes.Worlds;
 
-// Separate from World only so that a test can build the container for every configuration;
-// the game reaches the container through World alone
+/// <summary>
+/// Builds the container of the world services, see Docs/World.md#the-container.
+/// Separate from <see cref="World"/> only so a test can build the container for every configuration.
+/// The game reaches the container through <see cref="World"/> alone.
+/// </summary>
 public class WorldServicesBuilder
 {
     private readonly IEnumerable<Type> _candidates;
 
     public WorldServicesBuilder() : this(typeof(WorldServicesBuilder).Assembly.GetTypes()) { }
 
-    // A test passes its own fixture types: the game assembly cannot hold them
+    /// <summary>A test passes its own fixture types, because the game assembly cannot hold them.</summary>
     public WorldServicesBuilder(IEnumerable<Type> candidates)
     {
         _candidates = candidates;
@@ -35,8 +38,8 @@ public class WorldServicesBuilder
             ValidateScopes = true
         });
 
-        // Eagerly: a service nobody takes in a constructor would silently never be created, and the constructors
-        // that check their collections must fail here, not in the middle of a tick
+        // Every service is created eagerly, so a service nobody takes still exists.
+        // A constructor that rejects its collection then fails here, not in the middle of a tick.
         foreach ((Type type, _) in selected)
         {
             provider.GetRequiredService(type);
@@ -60,12 +63,11 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.ClientsConnection);
         services.AddSingleton(dependencies.ServerConnection);
         services.AddSingleton(root);
-        // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one
-        // layer. Every layer reads it through IEntityFinder, only the spawning one registers
+        // The registry is registered by hand, because it is the world's own state and not a service of one layer.
         services.AddSingleton<EntityRegistry>();
         services.AddSingleton<IEntityFinder>(provider => provider.GetRequiredService<EntityRegistry>());
-        // By hand too: the one spawn besides EntitySpawner, shared by the client's state applier and the server's
-        // load, which are of different layers
+        // The reader is registered by hand too, because the client's state applier and the server's load share it, and
+        // they are of different layers.
         services.AddSingleton<EntityRecordReader>();
 
         switch (setup)
@@ -94,11 +96,12 @@ public class WorldServicesBuilder
         foreach ((Type type, _) in selected)
         {
             services.AddSingleton(type);
-            // So that a consumer takes every service of a kind as IEnumerable<I>. Only the game's interfaces and
-            // those of a test's fixtures: the framework's and the engine's would be collections nobody means
+            // A consumer takes every service of a kind as IEnumerable<I>.
+            // Only the interfaces of the game and of a test's fixtures count. Those of the framework and the engine
+            // would make collections nobody means.
             foreach (Type implemented in type.GetInterfaces().Where(IsOwnInterface(type)))
             {
-                // MS.DI resolves a single I to the last registration: the service would silently replace the port
+                // MS.DI resolves a single I to the last registration, so the service would silently replace the port.
                 if (rootTypes.Contains(implemented))
                 {
                     throw new InvalidOperationException(
@@ -122,8 +125,8 @@ public class WorldServicesBuilder
             .ToList();
     }
 
-    // MS.DI resolves a single I to the last of its registrations: with several implementations it would pick one
-    // silently, by the order of the scan
+    // Rejects a single I parameter when several services implement I, because MS.DI would silently hand over the last
+    // registration, which depends on the order of the scan.
     private static void CheckSingleInterfaceParameters(
         IEnumerable<(Type Type, WorldServiceAttribute Attribute)> selected)
     {

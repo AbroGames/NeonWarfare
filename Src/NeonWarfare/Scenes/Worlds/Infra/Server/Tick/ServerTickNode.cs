@@ -4,9 +4,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 
-/// <summary>
-/// Drives the server tick from the physics step. Last in the physics step.
-/// </summary>
+/// <summary>Runs the server tick last in every physics step.</summary>
 public partial class ServerTickNode : Node
 {
     private Action _runTick;
@@ -14,8 +12,7 @@ public partial class ServerTickNode : Node
     public ServerTickNode InitPreReady(Action runTick)
     {
         _runTick = runTick;
-        // Last in the physics step: the physics callbacks and every other node's _PhysicsProcess belong to this tick
-        // and must run before it is sent
+        // The tick runs last, so the physics callbacks and every other _PhysicsProcess belong to it.
         ProcessPhysicsPriority = int.MaxValue;
         return this;
     }

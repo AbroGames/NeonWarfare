@@ -1,4 +1,7 @@
 namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
-// For typing only: the events read from the network are still limited by the set of event types
+/// <summary>
+/// The base of every event, for typing only. The events read from the network are limited by the set of mapped event
+/// types.
+/// </summary>
 public abstract record Event;

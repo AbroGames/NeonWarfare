@@ -6,8 +6,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 /// <summary>
-/// A server message the receiver translates itself: Tr on the server would use the server's language.
-/// The arguments are already strings, substituted into the translation by position ({0}, {1}, …).
+/// A server message the receiver translates itself, see Docs/Chat-and-commands.md#localized-server-messages.
 /// </summary>
 [MessagePackObject]
 public sealed record LocalizedChatMessageEvent(
@@ -15,7 +14,7 @@ public sealed record LocalizedChatMessageEvent(
     [property: Key(1)] string Key,
     [property: Key(2)] string[] Args) : Event
 {
-    // The generated equality compares the array by reference
+    /// <summary>Compares <c>Args</c> by content, not by reference as the generated equality would.</summary>
     public bool Equals(LocalizedChatMessageEvent other) =>
         other is not null
         && SentAtUnixSeconds == other.SentAtUnixSeconds

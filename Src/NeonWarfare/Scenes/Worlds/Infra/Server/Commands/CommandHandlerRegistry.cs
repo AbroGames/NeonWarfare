@@ -22,8 +22,8 @@ public class CommandHandlerRegistry
     private readonly Dictionary<Type, PlayerHandler> _playerHandlerByType = new();
 
     /// <summary>
-    /// The commands a peer may send: those with a player handler, and <see cref="JoinRequestCommand"/>, which goes to
-    /// the session handler. Everything else is rejected by <see cref="CommandInbox"/> before its body is read.
+    /// The commands a peer may send: those with a player handler, and <see cref="JoinRequestCommand"/>.
+    /// <see cref="CommandInbox"/> drops any other type before its body is read.
     /// </summary>
     public IReadOnlySet<Type> NetworkCommandTypes { get; }
 
@@ -62,8 +62,8 @@ public class CommandHandlerRegistry
             throw new InvalidOperationException(
                 $"{existing.Name} and {handler.GetType().Name} both handle {commandType.Name}.");
         }
-        // Built once per handler through a generic method: no reflection per command, and the handler's own
-        // exception is not wrapped into a TargetInvocationException
+        // The wrapper is built once per handler through a generic method, so no command goes through reflection.
+        // The handler's own exception is then not wrapped into a TargetInvocationException.
         var wrapped = (PlayerHandler) WrapMethod.MakeGenericMethod(commandType).Invoke(null, [handler])!;
         _playerHandlerByType.Add(commandType, wrapped);
         return true;

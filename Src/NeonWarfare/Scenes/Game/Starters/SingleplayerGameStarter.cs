@@ -5,9 +5,7 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-/// <summary>
-/// A host without ENet: its only peer is its own.
-/// </summary>
+/// <summary>A host without ENet. Its only peer is its own.</summary>
 public class SingleplayerGameStarter(string saveFileName) : BaseGameStarter
 {
     public override void Start(Game game)

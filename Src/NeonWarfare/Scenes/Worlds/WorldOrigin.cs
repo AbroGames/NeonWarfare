@@ -3,7 +3,7 @@ using System;
 namespace NeonWarfare.Scenes.Worlds;
 
 /// <summary>
-/// Where the state of a World comes from. A server World also learns here the save file it saves to.
+/// Where the state of a World comes from. A server World also gets here the save file it saves to.
 /// </summary>
 public abstract record WorldOrigin
 {
@@ -15,6 +15,6 @@ public abstract record WorldOrigin
     /// <summary>The world of a remote client, from the snapshot the server sends it on joining.</summary>
     public sealed record FromSnapshot(ReadOnlyMemory<byte> Body) : WorldOrigin;
 
-    /// <summary>A world loaded from a save, on the server: it saves back to the same file.</summary>
+    /// <summary>A world loaded from a save on the server. It saves back to the same file.</summary>
     public sealed record FromSave(ReadOnlyMemory<byte> Save, string SaveFileName) : WorldOrigin;
 }

@@ -6,15 +6,16 @@ using Godot;
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
-/// NetId, kind and node of every spawned entity. A node leaves on <c>TreeExiting</c>, which Godot propagates to every
-/// descendant, so freeing or removing an ancestor takes the whole registered subtree out.
+/// The NetId, kind and node of every spawned entity.
+/// A node leaves the registry on <c>TreeExiting</c>. Godot raises it on every descendant too, so freeing or removing
+/// an ancestor takes the whole registered subtree out.
 /// </summary>
 public class EntityRegistry : IEntityFinder
 {
     private record Entry(NetId Id, int KindId, Action OnTreeExiting);
 
-    // Members are kept up to date from the first request on; the snapshot is rebuilt lazily after a change, so
-    // a caller iterating it may spawn or despawn freely
+    // The entities of one type, kept up to date from the first request on. A change only drops the snapshot, and the
+    // next request builds a new one, so a caller iterating a snapshot may spawn and despawn freely.
     private class TypeCache(Type type)
     {
         public Type Type { get; } = type;
@@ -47,7 +48,7 @@ public class EntityRegistry : IEntityFinder
             throw new InvalidOperationException($"{node.Name} is already registered as {existing.Id}.");
         }
 
-        // A closure over the registry, not a node method: Godot would not disconnect it, so Remove does
+        // Godot does not disconnect a closure when the node is freed, so Remove detaches it.
         void OnTreeExiting() => Remove(node);
         _nodeById.Add(id, node);
         _entryByNode.Add(node, new Entry(id, kindId, OnTreeExiting));

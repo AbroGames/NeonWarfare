@@ -10,17 +10,13 @@ using RepliCAT.Bits;
 namespace NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 
 /// <summary>
-/// Applies the state packet of <c>StateReplicator</c> to the entities of a remote client, as soon as it arrives:
-/// the events packet of the same tick follows it on the same channel, so its handlers see the models already updated.
-/// The client's side of the spawner is <see cref="EntityRecordReader"/>. The join snapshot is the same spawn records,
-/// with every entity.
+/// Applies the state packets and the join snapshot of <c>StateReplicator</c> on a remote client, see
+/// Docs/Networking.md#packets-server--client.
 /// </summary>
 [ClientReplication]
 public class StateApplier(EntityRegistry registry, EntityRecordReader records, Replicator replicator)
 {
-    /// <summary>
-    /// Not atomic: the records before a broken one are already applied.
-    /// </summary>
+    /// <summary>Not atomic: the records before a broken one stay applied.</summary>
     /// <exception cref="NetMessageFormatException">The body is broken.</exception>
     public void ApplyState(ReadOnlyMemory<byte> body)
     {
@@ -56,7 +52,7 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
         try
         {
             var reader = new BitReader(body.Span);
-            //TODO TickTimer: keep the tick number
+            // TODO Keep the tick number for the TickTimer.
             reader.ReadVarUInt();
             readBody(ref reader);
 
@@ -65,14 +61,15 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
                 throw new NetMessageFormatException($"{reader.RemainingBits} bits left after the end of the packet.");
             }
         }
-        // Not only the format: a model the client cannot build from the delta is as broken a packet
+        // A model the client cannot build from the delta makes the packet as broken as a format error does.
         catch (ReplicationException e)
         {
             throw new NetMessageFormatException("The packet is broken.", e);
         }
     }
 
-    // Every NetId is checked before the first removal; a descendant listed after its ancestor is already gone with it
+    // Every NetId is checked before the first removal. A descendant listed after its ancestor is skipped, because it
+    // has already left with the ancestor.
     private void Despawn(ref BitReader reader)
     {
         List<NetId> despawned = [];

@@ -62,6 +62,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | Test class | What it checks |
 | --- | --- |
 | `Docs/DocsLinksTests` | Links and anchors in `Docs/**/*.md` and `README.md` resolve |
+| `Docs/CodeDocsReferenceTests` | `Docs/<File>.md#<anchor>` in the comments of every hand-written `.cs` resolves |
 | `Docs/DocsReadmeIndexTests` | Every `Docs/` file is linked from `README.md` |
 | `Docs/DocsBackLinkTests` | Every `Docs/` file starts with a heading and the back-anchor to `README.md` |
 | `Docs/DocsFormattingTests` | Encoding, trailing whitespace, line length, one heading, final newline |

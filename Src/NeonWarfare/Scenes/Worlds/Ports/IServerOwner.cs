@@ -2,14 +2,14 @@
 namespace NeonWarfare.Scenes.Worlds.Ports;
 
 /// <summary>
-/// What owns the process of a server World: its <c>Game</c>. The World only reports; whether the process stops is the
-/// owner's decision.
+/// The owner of a server World's process, implemented by <c>Game</c>.
+/// The World only reports, and the owner decides whether the process stops.
 /// </summary>
 public interface IServerOwner
 {
     /// <summary>
-    /// The player with the admin uid has disconnected; a displacement by its own new connection is no leave.
-    /// Called inside the tick.
+    /// The player with the admin uid has disconnected. Called inside the tick.
+    /// A displacement by the admin's own new connection is not a leave and does not call it.
     /// </summary>
     void AdminLeft();
 }

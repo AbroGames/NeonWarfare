@@ -4,7 +4,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 
 /// <summary>
-/// "Save as": the World is saved to <see cref="FileName"/>, which becomes its save file. Admin only.
+/// "Save as": saves the World to <see cref="FileName"/>, which becomes its save file. Only an admin may send it.
 /// </summary>
 [MessagePackObject]
 public record SaveCommand(

@@ -8,9 +8,9 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 /// <summary>
-/// The life of a joined peer: after a valid join it becomes <see cref="PeerStateTable.Joined"/> before the session
-/// handler publishes anything, and the handler's <c>Leave</c> runs once, on its disconnection or displacement.
-/// Called by <see cref="CommandDispatcher"/> in the tick, in the order of the inbox.
+/// The join, displacement and leave of a peer, see Docs/Networking.md#join-and-leave.
+/// A peer becomes <see cref="PeerStateTable.Joined"/> before the session handler publishes anything, so it gets the
+/// events of its own join.
 /// </summary>
 [Server]
 public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable peers, PeerGatekeeper gatekeeper)
@@ -26,7 +26,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
                 name, peerId, joined.Uid);
             return;
         }
-        // Checked before anything is done for the join: a cut peer must not displace the player online with its uid
+        // This is checked first, so a cut peer cannot displace the player who is online with its uid.
         if (!peers.IsConnecting(peerId))
         {
             _log.Warning("{command} from peer {peerId} dropped: the peer is not waiting for a join", name, peerId);
@@ -37,7 +37,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
         {
             JoinChecked(peerId, command);
         }
-        // The model may stay half-changed, as with any facade, but the peer must not stay joined to a broken player
+        // The model may stay half-changed, as with any facade. The peer must still not stay joined to a broken player.
         catch (Exception e)
         {
             _log.Error(e, "{handler} failed on {command} from peer {peerId}, the peer is rejected",
@@ -62,7 +62,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
         string uid = command.Uid;
         if (peers.TryGetPeerIdByUid(uid, out int oldPeerId))
         {
-            // The host cannot be reconnected from another peer, so displacing it would only lock it out of its world
+            // The host cannot reconnect from another peer, so displacing it would lock it out of its own world.
             if (gatekeeper.IsLocal(oldPeerId))
             {
                 _log.Warning("Peer {peerId} joins as {uid}, which is the host's own: rejected", peerId, uid);
@@ -70,10 +70,10 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
                 return;
             }
 
-            // Otherwise a crashed client could not come back until ENet notices the old connection is gone
+            // Displacement lets a crashed client come back before ENet notices that the old connection is gone.
             _log.Information("Peer {newPeerId} joins as {uid}, displacing peer {oldPeerId}", peerId, uid, oldPeerId);
             gatekeeper.Disconnect(oldPeerId);
-            // Released before Leave, so a throwing handler cannot keep the uid from the new peer
+            // The uid is released before Leave, so a throwing handler cannot keep it from the new peer.
             peers.Release(oldPeerId);
             sessionHandler.Leave(uid, LeaveReason.Displaced);
         }
@@ -82,7 +82,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
         sessionHandler.Join(command);
     }
 
-    // Removed before Leave, so a throwing handler cannot leave the peer behind
+    /// <summary>The peer is removed before <c>Leave</c>, so a throwing handler cannot leave it behind.</summary>
     public void Disconnected(int peerId)
     {
         switch (peers.Remove(peerId))

@@ -2,9 +2,7 @@ using System;
 
 namespace NeonWarfare.Scenes.Game.Networks;
 
-/// <summary>
-/// What the transports use of <see cref="Network"/>.
-/// </summary>
+/// <summary>The part of <see cref="Network"/> the transports use.</summary>
 public interface INetwork
 {
     event Action<int> PeerConnected;
@@ -12,7 +10,7 @@ public interface INetwork
     event Action<int, byte[]> PacketReceived;
     event Action ConnectedToServer;
 
-    /// <returns><c>false</c>: the packet is not sent, already logged.</returns>
+    /// <returns><c>false</c> when the packet is not sent. The failure is already logged.</returns>
     bool Send(int peerId, ReadOnlySpan<byte> packet);
 
     void Disconnect(int peerId);
