@@ -47,7 +47,7 @@ public class PlayerSimulationFacade(
 
         onlinePlayers.Model.Uids.Add(uid);
         _log.Information(JoinedLog, player.Nick, uid);
-        chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, player.Nick);
+        chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, [player.Nick]);
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
     }
 
@@ -57,7 +57,7 @@ public class PlayerSimulationFacade(
         PlayerModel player = players.Model.PlayerByUid[uid];
         onlinePlayers.Model.Uids.Remove(uid);
         _log.Information(LeftLog, player.Nick, uid);
-        chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, player.Nick);
+        chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, [player.Nick]);
         if (uid == admin.Uid && reason == LeaveReason.Disconnected) owner.AdminLeft();
     }
 }

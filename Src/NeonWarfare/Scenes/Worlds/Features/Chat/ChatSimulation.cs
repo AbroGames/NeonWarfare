@@ -33,13 +33,13 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
         outbox.PublishTo(message, receiverUid);
     }
 
-    public void SendLocalizedMessageAsServerToAll(string key, params string[] args)
+    public void SendLocalizedMessageAsServerToAll(string key, string[] args)
     {
         _log.Information(LocalizedServerToAllLog, key, args);
         outbox.PublishToAll(new LocalizedChatMessageEvent(NowUnixSeconds(), key, args));
     }
 
-    public void SendLocalizedMessageAsServerToPlayer(string receiverUid, string key, params string[] args)
+    public void SendLocalizedMessageAsServerToPlayer(string key, string[] args, string receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
         _log.Information(LocalizedServerToPlayerLog, receiver.Nick, receiver.Uid, key, args);
