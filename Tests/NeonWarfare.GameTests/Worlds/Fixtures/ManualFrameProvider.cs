@@ -1,5 +1,4 @@
 using GodotBox.Godot;
-using NeonWarfare.Scenes.Worlds;
 
 namespace NeonWarfare.GameTests.Worlds.Fixtures;
 

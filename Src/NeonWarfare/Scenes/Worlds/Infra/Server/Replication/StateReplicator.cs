@@ -5,7 +5,6 @@ using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
-using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using RepliCAT;
 using RepliCAT.Bits;
 using Serilog;

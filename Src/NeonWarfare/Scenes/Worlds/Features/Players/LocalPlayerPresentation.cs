@@ -1,6 +1,5 @@
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;

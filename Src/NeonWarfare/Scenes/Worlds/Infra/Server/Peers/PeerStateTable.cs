@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 

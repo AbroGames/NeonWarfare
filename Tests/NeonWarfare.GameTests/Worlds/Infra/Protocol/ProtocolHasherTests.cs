@@ -1,6 +1,5 @@
 using GdUnit4;
 using MessagePack;
-using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scripts.GlobalServices;
 using RepliCAT;

@@ -1,6 +1,5 @@
 using GdUnit4;
 using NeonWarfare.GameTests.Worlds.Fixtures;
-using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 using static GdUnit4.Assertions;
 

@@ -1,5 +1,4 @@
 using GdUnit4;
-using Godot;
 using NeonWarfare.GameTests.Game.Fixtures;
 using NeonWarfare.GameTests.Game.Networks.Fixtures;
 using NeonWarfare.GameTests.Worlds.Fixtures;

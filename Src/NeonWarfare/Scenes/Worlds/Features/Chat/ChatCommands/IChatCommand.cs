@@ -1,5 +1,3 @@
-using NeonWarfare.Scripts;
-
 namespace NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 
 /// <summary>

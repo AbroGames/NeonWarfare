@@ -11,7 +11,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.Worlds.Features.Chat.ChatPresentation;
 

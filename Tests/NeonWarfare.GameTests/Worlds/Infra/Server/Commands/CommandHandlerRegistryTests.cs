@@ -10,7 +10,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scripts;
-using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Commands;

@@ -17,7 +17,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scripts;
-using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.Worlds.Features.Chat.ChatPresentation;
 

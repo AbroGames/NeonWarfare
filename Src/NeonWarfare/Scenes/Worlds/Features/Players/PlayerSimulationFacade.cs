@@ -2,7 +2,6 @@ using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Ports;

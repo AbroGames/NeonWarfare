@@ -1,6 +1,5 @@
 using System.Linq;
 using Godot;
-using GodotBox;
 using GodotBox.Godot.Nodes;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Root.Starters;

@@ -4,7 +4,6 @@ using GodotBox.Godot.Nodes.Process;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Game.Networks;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;

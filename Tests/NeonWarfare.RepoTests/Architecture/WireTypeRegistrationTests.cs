@@ -1,5 +1,4 @@
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using NeonWarfare.RepoTests.Infrastructure;
 using Xunit;
 

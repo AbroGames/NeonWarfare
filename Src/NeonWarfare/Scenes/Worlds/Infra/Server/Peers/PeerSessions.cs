@@ -2,7 +2,6 @@ using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;

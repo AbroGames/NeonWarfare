@@ -1,6 +1,5 @@
 using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scripts;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
 
