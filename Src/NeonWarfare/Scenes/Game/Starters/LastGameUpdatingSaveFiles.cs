@@ -11,8 +11,6 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// </summary>
 public class LastGameUpdatingSaveFiles(ISaveFiles disk, Action<string> setLastGameSave) : ISaveFiles
 {
-    private const string LastGameFailedLog = "Pointing the last game at the save '{saveFileName}' failed";
-
     private readonly ILogger _log = LogFactory.GetForStatic<LastGameUpdatingSaveFiles>();
 
     public bool IsAutoSaveEnabled() => disk.IsAutoSaveEnabled();
@@ -27,7 +25,7 @@ public class LastGameUpdatingSaveFiles(ISaveFiles disk, Action<string> setLastGa
         }
         catch (Exception e)
         {
-            _log.Error(e, LastGameFailedLog, saveFileName);
+            _log.Error(e, "Pointing the last game at the save '{saveFileName}' failed", saveFileName);
         }
     }
 }

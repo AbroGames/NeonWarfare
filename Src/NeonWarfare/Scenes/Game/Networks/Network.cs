@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Godot;
-using Humanizer;
 using KludgeBox.Logging;
 using Serilog;
 
@@ -14,10 +13,6 @@ namespace NeonWarfare.Scenes.Game.Networks;
 // ReSharper disable once Godot.MissingParameterlessConstructor
 public partial class Network(Node multiplayerRoot) : Node, INetwork
 {
-    private const string SendFailedError = "Sending {0} bytes to peer {1} failed: {2}";
-    private const string NotServerError = "Only a server disconnects peers";
-    private const string AlreadyGoneLog = "Peer {peerId} not disconnected: it is already gone";
-
     public event Action<int> PeerConnected;
     public event Action<int> PeerDisconnected;
     public event Action<int, byte[]> PacketReceived;
@@ -141,7 +136,7 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
             packet, peerId, MultiplayerPeer.TransferModeEnum.Reliable, (int) Consts.TransferChannel.Default);
         if (error != Error.Ok)
         {
-            throw new InvalidOperationException(SendFailedError.FormatWith(packet.Length, peerId, error));
+            throw new InvalidOperationException($"Sending {packet.Length} bytes to peer {peerId} failed: {error}");
         }
     }
 
@@ -150,11 +145,11 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
     /// </summary>
     public void Disconnect(int peerId)
     {
-        if (!IsServer) throw new InvalidOperationException(NotServerError);
+        if (!IsServer) throw new InvalidOperationException("Only a server disconnects peers");
         // Already gone between the ticks: its peer_disconnected is reported, and GetPeer of it would be null
         if (!_api.GetPeers().Contains(peerId))
         {
-            _log.Warning(AlreadyGoneLog, peerId);
+            _log.Warning("Peer {peerId} not disconnected: it is already gone", peerId);
             return;
         }
 

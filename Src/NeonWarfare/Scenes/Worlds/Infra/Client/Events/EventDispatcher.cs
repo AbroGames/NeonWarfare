@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -16,12 +15,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 [Client]
 public class EventDispatcher
 {
-    private const string NoHandlerLog = "{event} has no [EventHandler]: it will be read and dropped";
-    private const string HandlerFailedLog = "[EventHandler] {handler} failed on {event}";
-    private const string ParameterCountError = "[EventHandler] {0} must have exactly one parameter.";
-    private const string NotEventError = "[EventHandler] {0} takes {1}, which is not a mapped event type.";
-    private const string TrailingBytesError = "{0} of {1} bytes read, an events packet carries one section.";
-    
     private record Handler(string Name, Action<Event> Call);
 
     private const BindingFlags HandlerFlags =
@@ -48,18 +41,7 @@ public class EventDispatcher
             foreach (MethodInfo method in HandlerMethods(owner.GetType()))
             {
                 string name = $"{method.DeclaringType!.Name}.{method.Name}";
-                ParameterInfo[] parameters = method.GetParameters();
-                if (parameters.Length != 1)
-                {
-                    throw new InvalidOperationException(ParameterCountError.FormatWith(name));
-                }
-
-                Type eventType = parameters[0].ParameterType;
-                if (!eventTypes.Contains(eventType))
-                {
-                    throw new InvalidOperationException(NotEventError.FormatWith(name, eventType.FullName));
-                }
-
+                Type eventType = method.GetParameters()[0].ParameterType;
                 if (!_handlersByType.TryGetValue(eventType, out List<Handler> handlers))
                 {
                     handlers = [];
@@ -71,7 +53,7 @@ public class EventDispatcher
 
         foreach (Type eventType in eventTypes.Where(type => !_handlersByType.ContainsKey(type)))
         {
-            _log.Warning(NoHandlerLog, eventType.Name);
+            _log.Warning("{event} has no [EventHandler]: it will be read and dropped", eventType.Name);
         }
         _eventTypes = eventTypes;
     }
@@ -86,7 +68,8 @@ public class EventDispatcher
         IReadOnlyList<object> events = Read(section, out int bytesRead);
         if (bytesRead != section.Length)
         {
-            throw new NetMessageFormatException(TrailingBytesError.FormatWith(bytesRead, section.Length));
+            throw new NetMessageFormatException(
+                $"{bytesRead} of {section.Length} bytes read, an events packet carries one section.");
         }
         Deliver(events);
     }
@@ -111,7 +94,7 @@ public class EventDispatcher
                 }
                 catch (Exception e)
                 {
-                    _log.Error(e, HandlerFailedLog, handler.Name, @event.GetType().Name);
+                    _log.Error(e, "[EventHandler] {handler} failed on {event}", handler.Name, @event.GetType().Name);
                 }
             }
         }

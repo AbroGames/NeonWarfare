@@ -1,5 +1,4 @@
 using System;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -22,11 +21,6 @@ public sealed class HostTransport(
     ) : IClientsConnection, IServerConnection
 {
     private const int LocalPeer = Consts.Global.ServerId;
-
-    private const string JoinRejectedLog = "The server rejected the join: {reason}";
-    private const string LocalDisconnectedLog = "The host's own peer is disconnected: the host has no player";
-    private const string NoNetworkError = "Peer {0} is not the host's own, but there is no network";
-    private const string LocalPeerError = "Peer {0} is the host's own: its World is the server's and needs no state";
 
     private readonly ILogger _log = LogFactory.GetForStatic<HostTransport>();
 
@@ -60,7 +54,7 @@ public sealed class HostTransport(
     {
         if (peerId == LocalPeer)
         {
-            _log.Error(JoinRejectedLog, reason);
+            _log.Error("The server rejected the join: {reason}", reason);
             owner.JoinRejected(reason);
             return;
         }
@@ -77,7 +71,7 @@ public sealed class HostTransport(
 
         // Queued like any other disconnection, so it is processed in the next tick, not inside this one. A warning:
         // whatever cut the host off has already logged its error
-        _log.Warning(LocalDisconnectedLog);
+        _log.Warning("The host's own peer is disconnected: the host has no player");
         server.QueueDisconnection(peerId);
     }
 
@@ -85,8 +79,13 @@ public sealed class HostTransport(
 
     private ServerTransport Remote(int peerId)
     {
-        if (peerId == LocalPeer) throw new InvalidOperationException(LocalPeerError.FormatWith(peerId));
+        if (peerId == LocalPeer)
+        {
+            throw new InvalidOperationException(
+                $"Peer {peerId} is the host's own: its World is the server's and needs no state");
+        }
 
-        return remote ?? throw new InvalidOperationException(NoNetworkError.FormatWith(peerId));
+        return remote
+               ?? throw new InvalidOperationException($"Peer {peerId} is not the host's own, but there is no network");
     }
 }

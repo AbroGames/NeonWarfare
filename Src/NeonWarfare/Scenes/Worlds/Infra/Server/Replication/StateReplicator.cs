@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
@@ -31,12 +30,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 [Server]
 public class StateReplicator
 {
-    private const string DeltaFailedLog = "The delta of {netId} failed, the other entities are still written";
-    private const string SpawnedSinceSendError =
-        "{0} entities spawned since the last send: the snapshot is written right after TryWrite.";
-    private const string StateLostError =
-        "The state of {0} was lost with a failed delta: a save without it would load them empty.";
-
     private readonly ILogger _log = LogFactory.GetForStatic<StateReplicator>();
 
     private readonly IEntityFinder _entities;
@@ -128,7 +121,8 @@ public class StateReplicator
         List<long> lost = _stateLost.Where(id => _entryById[id].Saved).ToList();
         if (lost.Count > 0)
         {
-            throw new InvalidOperationException(StateLostError.FormatWith(string.Join(", ", lost)));
+            throw new InvalidOperationException($"The state of {string.Join(", ", lost)} was lost with a failed "
+                                                + "delta: a save without it would load them empty.");
         }
         WriteAll(writer, saving: true);
     }
@@ -137,7 +131,8 @@ public class StateReplicator
     {
         if (_spawned.Count > 0)
         {
-            throw new InvalidOperationException(SpawnedSinceSendError.FormatWith(_spawned.Count));
+            throw new InvalidOperationException($"{_spawned.Count} entities spawned since the last send: the "
+                                                + "snapshot is written right after TryWrite.");
         }
 
         foreach ((long id, Entry entry) in _entryById)
@@ -214,7 +209,7 @@ public class StateReplicator
         catch (ReplicationException e)
         {
             // RepliCAT has reset the baseline, so the next delta of this entity is complete
-            _log.Error(e, DeltaFailedLog, id);
+            _log.Error(e, "The delta of {netId} failed, the other entities are still written", id);
             _stateLost.Add(id.Value);
             return false;
         }

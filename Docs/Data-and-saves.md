@@ -46,7 +46,8 @@ next NetId and the tick, then a spawn record of every entity (`StateReplicator.W
   `SaveFormatException`; the starter shows the player a message (see [Startup flow](Startup-flow.md)).
 
 Any change to the protocol — a mapped type, a MessagePack key, a replicated member, an entity kind — changes the
-hash: saves do not move between versions of the game.
+hash: saves do not move between versions of the game. The game is not released, so the compatibility of saves and of
+the network protocol is broken freely: no migrations, no version shims.
 
 ## Files
 

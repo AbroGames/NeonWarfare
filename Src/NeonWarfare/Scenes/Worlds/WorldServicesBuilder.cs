@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
@@ -13,12 +13,6 @@ namespace NeonWarfare.Scenes.Worlds;
 // the game reaches the container through World alone
 public class WorldServicesBuilder
 {
-    private const string SeveralLayersError = "{0} has more than one layer attribute: {1}";
-    private const string NotConcreteError = "{0} has a layer attribute but is abstract or generic";
-    private const string RootInterfaceError = "{0} implements {1}, which the composition root registers itself";
-    private const string AmbiguousParameterError =
-        "{0} takes a single {1}, which {2} implement: take IEnumerable<{1}> instead";
-
     private readonly IEnumerable<Type> _candidates;
 
     public WorldServicesBuilder() : this(typeof(WorldServicesBuilder).Assembly.GetTypes()) { }
@@ -93,7 +87,7 @@ public class WorldServicesBuilder
                 services.AddSingleton(dedicated.ServerOwner);
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(setup), setup, null);
+                throw new UnreachableException();
         }
 
         HashSet<Type> rootTypes = services.Select(descriptor => descriptor.ServiceType).ToHashSet();
@@ -108,7 +102,8 @@ public class WorldServicesBuilder
                 if (rootTypes.Contains(implemented))
                 {
                     throw new InvalidOperationException(
-                        RootInterfaceError.FormatWith(type.FullName, implemented.FullName));
+                        $"{type.FullName} implements {implemented.FullName}, which the composition root registers "
+                        + "itself");
                 }
                 services.AddSingleton(implemented, provider => provider.GetRequiredService(type));
             }
@@ -152,7 +147,8 @@ public class WorldServicesBuilder
 
                 string names = string.Join(", ", implementations.Select(implementation => implementation.Name));
                 throw new InvalidOperationException(
-                    AmbiguousParameterError.FormatWith(type.FullName, parameter.ParameterType.Name, names));
+                    $"{type.FullName} takes a single {parameter.ParameterType.Name}, which {names} implement: take "
+                    + $"IEnumerable<{parameter.ParameterType.Name}> instead");
             }
         }
     }
@@ -167,11 +163,12 @@ public class WorldServicesBuilder
             if (attributes.Count > 1)
             {
                 string names = string.Join(", ", attributes.Select(attribute => attribute.GetType().Name));
-                throw new InvalidOperationException(SeveralLayersError.FormatWith(type.FullName, names));
+                throw new InvalidOperationException($"{type.FullName} has more than one layer attribute: {names}");
             }
             if (!type.IsClass || type.IsAbstract || type.ContainsGenericParameters)
             {
-                throw new InvalidOperationException(NotConcreteError.FormatWith(type.FullName));
+                throw new InvalidOperationException(
+                    $"{type.FullName} has a layer attribute but is abstract or generic");
             }
             yield return (type, attributes[0]);
         }

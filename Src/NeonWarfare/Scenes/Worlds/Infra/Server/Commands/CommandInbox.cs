@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -18,11 +17,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 public class CommandInbox(
     NetMessageCodec codec, ProtocolHash protocolHash, PeerGatekeeper gatekeeper, CommandHandlerRegistry handlers)
 {
-    private const string RejectedPacketLog = "Packet from peer {peerId} dropped: {reason}";
-    private const string TrailingBytesReason = "{0} of {1} bytes read, a packet carries one command";
-    private const string ProtocolMismatchLog =
-        "JoinRequestCommand from peer {peerId} has protocol hash {theirs}, the server has {ours}";
-
     public abstract record Entry(int PeerId);
     public record PeerCommandEntry(int PeerId, Command Command) : Entry(PeerId);
     // Not a Command, so it never enters the network whitelist: a peer cannot send its own disconnection
@@ -42,13 +36,14 @@ public class CommandInbox(
         }
         catch (NetMessageFormatException e)
         {
-            _log.Warning(RejectedPacketLog, peerId, e.Message);
+            _log.Warning("Packet from peer {peerId} dropped: {reason}", peerId, e.Message);
             return;
         }
 
         if (bytesRead != packet.Length)
         {
-            _log.Warning(RejectedPacketLog, peerId, TrailingBytesReason.FormatWith(bytesRead, packet.Length));
+            _log.Warning("Packet from peer {peerId} dropped: {bytesRead} of {length} bytes read, a packet carries one "
+                + "command", peerId, bytesRead, packet.Length);
             return;
         }
 
@@ -56,7 +51,8 @@ public class CommandInbox(
         // before its join can reach the world
         if (command is JoinRequestCommand join && join.ProtocolHash != protocolHash.Value)
         {
-            _log.Warning(ProtocolMismatchLog, peerId, join.ProtocolHash, protocolHash.Value);
+            _log.Warning("JoinRequestCommand from peer {peerId} has protocol hash {theirs}, the server has {ours}",
+                peerId, join.ProtocolHash, protocolHash.Value);
             gatekeeper.Reject(peerId, JoinRejectReason.ProtocolMismatch);
             return;
         }

@@ -24,8 +24,6 @@ public class DedicatedServerGameStarter(
     bool serverHud
     ) : BaseGameStarter
 {
-    private const string AdminLeftLog = "The admin of a server started by its client has left. Shutdown server.";
-
     private readonly ILogger _log = LogFactory.GetForStatic<DedicatedServerGameStarter>();
 
     public override void Start(Game game)
@@ -79,7 +77,7 @@ public class DedicatedServerGameStarter(
 
         void OnAdminLeft()
         {
-            _log.Information(AdminLeftLog);
+            _log.Information("The admin of a server started by its client has left. Shutdown server.");
             Services.MainScene.Shutdown();
         }
 

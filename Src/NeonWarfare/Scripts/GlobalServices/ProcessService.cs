@@ -9,16 +9,12 @@ namespace NeonWarfare.Scripts.GlobalServices;
 
 public class ProcessService
 {
-
     // Godot's own flag, not a game argument: the engine consumes it before the game sees the command line
     private const string GodotHeadlessFlag = "--headless";
 
     private const double ExitPollSeconds = 0.1;
     // Far longer than an autosave takes: a server still running after it has hung
     private const ulong ExitTimeoutMsec = 10_000;
-
-    private const string ServerExitedLog = "Dedicated server process {pid} has exited.";
-    private const string ServerHungLog = "Dedicated server process {pid} has not exited in {timeoutMsec} ms. Kill it.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<ProcessService>();
 
@@ -86,12 +82,13 @@ public class ProcessService
                     _sceneTree.CreateTimer(ExitPollSeconds).Timeout += Poll;
                     return;
                 }
-                _log.Warning(ServerHungLog, pid, ExitTimeoutMsec);
+                _log.Warning("Dedicated server process {pid} has not exited in {timeoutMsec} ms. Kill it.",
+                    pid, ExitTimeoutMsec);
                 OS.Kill(pid);
             }
             else
             {
-                _log.Information(ServerExitedLog, pid);
+                _log.Information("Dedicated server process {pid} has exited.", pid);
             }
 
             _dedicatedServerPid = null;

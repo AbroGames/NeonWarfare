@@ -23,20 +23,12 @@ namespace NeonWarfare.Scenes.Game;
 /// </summary>
 public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 {
-    private const string NotInTreeError =
-        "Game must be in the tree before Init: WorldPackedScenes fills its scene list in _Ready";
-    private const string NoWorldError = "There is no World to show";
-
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
     private const string ConnectionBrokenMessage = "The data received from the server is broken";
     private const string BrokenWorldMessage = "The world received from the server is broken";
     private const string WorldCreationFailedMessage = "Failed to enter the world received from the server";
-    private const string BrokenSnapshotLog = "The join snapshot from the server is broken";
-    private const string WorldCreationFailedLog = "Creating the World from the join snapshot failed";
-    private const string EnteredWorldLog = "Entered the world from the join snapshot";
-    private const string HudFailedLog = "The Hud failed to be created after the join";
 
     /// <summary>
     /// This process's player is online and sees its World.
@@ -75,7 +67,11 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     public void Init(BaseGameStarter gameStarter)
     {
-        if (!IsInsideTree()) throw new InvalidOperationException(NotInTreeError);
+        if (!IsInsideTree())
+        {
+            throw new InvalidOperationException(
+                "Game must be in the tree before Init: WorldPackedScenes fills its scene list in _Ready");
+        }
 
         _protocol = GameProtocol.Create(WorldPackedScenes, Services.TypesMapping);
         _assembler = new WorldAssembler(_protocol, WorldPackedScenes);
@@ -133,7 +129,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     public void ShowServerHud()
     {
-        if (_world == null) throw new InvalidOperationException(NoWorldError);
+        if (_world == null) throw new InvalidOperationException("There is no World to show");
 
         ServerHud serverHud = GamePackedScenes.ServerHud.Instantiate<ServerHud>().InitPreReady(_world);
         serverHud.SetName("ServerHud");
@@ -151,7 +147,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
         catch (Exception e)
         {
             // The event dispatch would swallow it and leave the loading screen forever: the join fails instead
-            _log.Error(e, HudFailedLog);
+            _log.Error(e, "The Hud failed to be created after the join");
             Fail(JoinRejectedMessage(JoinRejectReason.InternalError));
             return;
         }
@@ -185,7 +181,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     private void ShowHud()
     {
-        if (_world == null) throw new InvalidOperationException(NoWorldError);
+        if (_world == null) throw new InvalidOperationException("There is no World to show");
 
         Hud hud = GamePackedScenes.Hud.Instantiate<Hud>().InitPreReady(_world, _world);
         hud.SetName("Hud");
@@ -203,18 +199,18 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
         catch (NetMessageFormatException e)
         {
             // The server sends no second snapshot, so waiting for one is pointless
-            _log.Error(e, BrokenSnapshotLog);
+            _log.Error(e, "The join snapshot from the server is broken");
             Fail(BrokenWorldMessage);
             return;
         }
         catch (Exception e)
         {
             // The World is already freed, so without a failure the connecting screen would stay forever
-            _log.Error(e, WorldCreationFailedLog);
+            _log.Error(e, "Creating the World from the join snapshot failed");
             Fail(WorldCreationFailedMessage);
             return;
         }
-        _log.Information(EnteredWorldLog);
+        _log.Information("Entered the world from the join snapshot");
     }
 
     // No answer from the server within the timeout; Network has already logged it

@@ -10,17 +10,12 @@ namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 [Simulation]
 public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, PlayerQuery players)
 {
-    private const string PlayerToAllLog = "Chat {nick} ({uid}) to all: {text}";
-    private const string ServerToPlayerLog = "Chat server to {nick} ({uid}): {text}";
-    private const string LocalizedServerToAllLog = "Chat server to all: {key} {args}";
-    private const string LocalizedServerToPlayerLog = "Chat server to {nick} ({uid}): {key} {args}";
-
     private readonly ILogger _log = LogFactory.GetForStatic<ChatSimulation>();
 
     public void SendMessageAsPlayerToAll(string senderUid, string text)
     {
         PlayerModel sender = players.Get(senderUid);
-        _log.Information(PlayerToAllLog, sender.Nick, sender.Uid, ToOneLine(text));
+        _log.Information("Chat {nick} ({uid}) to all: {text}", sender.Nick, sender.Uid, ToOneLine(text));
         var message = new ChatPlayerMessageEvent(NowUnixSeconds(), sender.Uid, sender.Nick, text);
         outbox.PublishToAll(message);
     }
@@ -28,21 +23,21 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
     public void SendMessageAsServerToPlayer(string text, string receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
-        _log.Information(ServerToPlayerLog, receiver.Nick, receiver.Uid, ToOneLine(text));
+        _log.Information("Chat server to {nick} ({uid}): {text}", receiver.Nick, receiver.Uid, ToOneLine(text));
         var message = new ChatServerMessageEvent(NowUnixSeconds(), text);
         outbox.PublishTo(message, receiverUid);
     }
 
     public void SendLocalizedMessageAsServerToAll(string key, string[] args)
     {
-        _log.Information(LocalizedServerToAllLog, key, args);
+        _log.Information("Chat server to all: {key} {args}", key, args);
         outbox.PublishToAll(new LocalizedChatMessageEvent(NowUnixSeconds(), key, args));
     }
 
     public void SendLocalizedMessageAsServerToPlayer(string key, string[] args, string receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
-        _log.Information(LocalizedServerToPlayerLog, receiver.Nick, receiver.Uid, key, args);
+        _log.Information("Chat server to {nick} ({uid}): {key} {args}", receiver.Nick, receiver.Uid, key, args);
         outbox.PublishTo(new LocalizedChatMessageEvent(NowUnixSeconds(), key, args), receiverUid);
     }
 

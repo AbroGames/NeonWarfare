@@ -13,13 +13,8 @@ namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 [SimulationFacade]
 public class ChatSimulationFacade
 {
-    private const string RanLog = "{nick} ({uid}) ran command /{text}";
     private const string NotFoundReply = "Command '{0}' not found. Use '/help' to see the list of commands.";
     private const string RequiresAdminReply = "Command '{0}' requires admin status.";
-
-    private const string BadNameError =
-        "{0} has the name '{1}': a chat command name is lower case, with no whitespace.";
-    private const string SecondCommandError = "{0} and {1} both have the name '{2}'.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<ChatSimulationFacade>();
 
@@ -38,12 +33,13 @@ public class ChatSimulationFacade
             string name = command.Name;
             if (string.IsNullOrEmpty(name) || name.Any(char.IsWhiteSpace) || name != name.ToLowerInvariant())
             {
-                throw new InvalidOperationException(BadNameError.FormatWith(command.GetType().FullName, name));
+                throw new InvalidOperationException($"{command.GetType().FullName} has the name '{name}': a chat "
+                                                    + "command name is lower case, with no whitespace.");
             }
             if (commandByName.TryGetValue(name, out IChatCommand existing))
             {
                 throw new InvalidOperationException(
-                    SecondCommandError.FormatWith(existing.GetType().Name, command.GetType().Name, name));
+                    $"{existing.GetType().Name} and {command.GetType().Name} both have the name '{name}'.");
             }
             commandByName.Add(name, command);
         }
@@ -66,7 +62,7 @@ public class ChatSimulationFacade
         PlayerModel sender = _players.Get(senderUid);
 
         // A command is not a chat message, so ChatSimulation never logs it, we have to log it here
-        _log.Information(RanLog, sender.Nick, sender.Uid, text);
+        _log.Information("{nick} ({uid}) ran command /{text}", sender.Nick, sender.Uid, text);
 
         int nameEnd = 0;
         while (nameEnd < text.Length && !char.IsWhiteSpace(text[nameEnd]))

@@ -1,5 +1,4 @@
 using Godot;
-using Humanizer;
 using MessagePack;
 using MessagePack.Formatters;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -12,7 +11,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 public sealed class ColorFormatter : IMessagePackFormatter<Color>
 {
     private const int ComponentCount = 4;
-    private const string WrongLengthError = "Color must be an array of {0} floats, got {1} elements.";
 
     public static readonly ColorFormatter Instance = new();
 
@@ -30,7 +28,8 @@ public sealed class ColorFormatter : IMessagePackFormatter<Color>
         int count = reader.ReadArrayHeader();
         if (count != ComponentCount)
         {
-            throw new MessagePackSerializationException(WrongLengthError.FormatWith(ComponentCount, count));
+            throw new MessagePackSerializationException(
+                $"Color must be an array of {ComponentCount} floats, got {count} elements.");
         }
 
         return new Color(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());

@@ -1,6 +1,5 @@
 using System;
 using Godot;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using RepliCAT;
 using RepliCAT.Bits;
@@ -15,10 +14,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 /// </summary>
 public class EntityRecordReader(EntityRegistry registry, WorldRoot root, EntityCatalog catalog, Replicator replicator)
 {
-    private const string SpawnTakenError = "The record spawns {0}, which is already registered.";
-    private const string UnknownKindError = "The record spawns {0} of kind {1}, which is not in the catalog.";
-    private const string UnknownParentError = "The record spawns {0} under {1}, which is not registered.";
-
     /// <summary>
     /// Reads and spawns the records up to <see cref="NetId.None"/>. Not atomic: the records before a broken one are
     /// already spawned.
@@ -46,12 +41,12 @@ public class EntityRecordReader(EntityRegistry registry, WorldRoot root, EntityC
         bool hasState = reader.ReadBool();
         if (registry.TryGetNode(id, out _))
         {
-            throw new NetMessageFormatException(SpawnTakenError.FormatWith(id));
+            throw new NetMessageFormatException($"The record spawns {id}, which is already registered.");
         }
         Node parentNode = null;
         if (parent != NetId.None && !registry.TryGetNode(parent, out parentNode))
         {
-            throw new NetMessageFormatException(UnknownParentError.FormatWith(id, parent));
+            throw new NetMessageFormatException($"The record spawns {id} under {parent}, which is not registered.");
         }
 
         Node node;
@@ -61,7 +56,8 @@ public class EntityRecordReader(EntityRegistry registry, WorldRoot root, EntityC
         }
         catch (ArgumentException e)
         {
-            throw new NetMessageFormatException(UnknownKindError.FormatWith(id, kindId), e);
+            throw new NetMessageFormatException(
+                $"The record spawns {id} of kind {kindId}, which is not in the catalog.", e);
         }
 
         if (hasState)

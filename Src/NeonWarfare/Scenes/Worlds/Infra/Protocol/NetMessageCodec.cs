@@ -2,7 +2,6 @@ using System;
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Generic;
-using Humanizer;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
@@ -20,15 +19,6 @@ public sealed class NetMessageCodec
     private const int CountSize = sizeof(int);
     // An id and at least one byte of MessagePack body
     private const int MinMessageSize = IdSize + 1;
-
-    private const string IdOverflowError = "{0} has type id {1}, which does not fit the {2}-byte message id.";
-    private const string TruncatedIdError = "The message is {0} bytes long, shorter than its {1}-byte type id.";
-    private const string UnknownIdError = "Type id {0} is not in the mapping.";
-    private const string NotAllowedError = "{0} is not allowed to come from the network.";
-    private const string BrokenBodyError = "The body of {0} cannot be read.";
-    private const string NullBodyError = "The body of {0} is nil.";
-    private const string TruncatedCountError = "The section is {0} bytes long, shorter than its {1}-byte count.";
-    private const string BadCountError = "The section claims {0} messages, but only {1} bytes follow the count.";
 
     private readonly TypesMappingService _mapping;
     private readonly MessagePackSerializerOptions _options = MessagePackSerializerOptions.Standard
@@ -51,7 +41,8 @@ public sealed class NetMessageCodec
         int id = _mapping.GetIdByType(type);
         if (id > ushort.MaxValue)
         {
-            throw new InvalidOperationException(IdOverflowError.FormatWith(type.FullName, id, IdSize));
+            throw new InvalidOperationException(
+                $"{type.FullName} has type id {id}, which does not fit the {IdSize}-byte message id.");
         }
 
         BinaryPrimitives.WriteUInt16LittleEndian(output.GetSpan(IdSize), (ushort) id);
@@ -88,7 +79,8 @@ public sealed class NetMessageCodec
     {
         if (data.Length < CountSize)
         {
-            throw new NetMessageFormatException(TruncatedCountError.FormatWith(data.Length, CountSize));
+            throw new NetMessageFormatException(
+                $"The section is {data.Length} bytes long, shorter than its {CountSize}-byte count.");
         }
 
         int count = BinaryPrimitives.ReadInt32LittleEndian(data.Span);
@@ -96,7 +88,8 @@ public sealed class NetMessageCodec
         // Checked before the list is sized by the count: the count comes from an untrusted peer
         if (count < 0 || count > remaining / MinMessageSize)
         {
-            throw new NetMessageFormatException(BadCountError.FormatWith(count, remaining));
+            throw new NetMessageFormatException(
+                $"The section claims {count} messages, but only {remaining} bytes follow the count.");
         }
 
         var messages = new List<object>(count);
@@ -121,7 +114,7 @@ public sealed class NetMessageCodec
         Type type = ReadType(data.Span);
         if (!allowedTypes.Contains(type))
         {
-            throw new NetMessageFormatException(NotAllowedError.FormatWith(type.FullName));
+            throw new NetMessageFormatException($"{type.FullName} is not allowed to come from the network.");
         }
 
         return ReadBody(data, type, out bytesRead);
@@ -131,7 +124,8 @@ public sealed class NetMessageCodec
     {
         if (data.Length < IdSize)
         {
-            throw new NetMessageFormatException(TruncatedIdError.FormatWith(data.Length, IdSize));
+            throw new NetMessageFormatException(
+                $"The message is {data.Length} bytes long, shorter than its {IdSize}-byte type id.");
         }
 
         ushort id = BinaryPrimitives.ReadUInt16LittleEndian(data);
@@ -141,7 +135,7 @@ public sealed class NetMessageCodec
         }
         catch (KeyNotFoundException e)
         {
-            throw new NetMessageFormatException(UnknownIdError.FormatWith(id), e);
+            throw new NetMessageFormatException($"Type id {id} is not in the mapping.", e);
         }
     }
 
@@ -155,12 +149,12 @@ public sealed class NetMessageCodec
         }
         catch (MessagePackSerializationException e)
         {
-            throw new NetMessageFormatException(BrokenBodyError.FormatWith(type.FullName), e);
+            throw new NetMessageFormatException($"The body of {type.FullName} cannot be read.", e);
         }
 
         if (message == null)
         {
-            throw new NetMessageFormatException(NullBodyError.FormatWith(type.FullName));
+            throw new NetMessageFormatException($"The body of {type.FullName} is nil.");
         }
 
         bytesRead = IdSize + (int) reader.Consumed;

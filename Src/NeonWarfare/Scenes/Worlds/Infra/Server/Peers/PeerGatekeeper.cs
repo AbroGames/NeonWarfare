@@ -19,9 +19,6 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
 {
     public static readonly TimeSpan HandshakeTimeout = TimeSpan.FromSeconds(10);
 
-    private const string TimedOutLog = "Peer {peerId} has not joined in {timeout}, disconnecting";
-    private const string RejectedLog = "Peer {peerId} rejected: {reason}";
-
     private readonly ILogger _log = LogFactory.GetForStatic<PeerGatekeeper>();
 
     public void StartHandshake(int peerId) => peers.Connect(peerId, timeProvider.GetUtcNow() + HandshakeTimeout);
@@ -30,7 +27,7 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
     {
         foreach (int peerId in peers.ExpiredConnecting(timeProvider.GetUtcNow()))
         {
-            _log.Information(TimedOutLog, peerId, HandshakeTimeout);
+            _log.Information("Peer {peerId} has not joined in {timeout}, disconnecting", peerId, HandshakeTimeout);
             Disconnect(peerId);
         }
     }
@@ -39,7 +36,7 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
     {
         if (peers.IsCut(peerId)) return;
 
-        _log.Warning(RejectedLog, peerId, reason);
+        _log.Warning("Peer {peerId} rejected: {reason}", peerId, reason);
         // A failed send must not leave the rejected peer connected
         try
         {

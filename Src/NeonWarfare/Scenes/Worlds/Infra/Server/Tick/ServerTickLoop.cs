@@ -35,15 +35,6 @@ public class ServerTickLoop(
     SaveService saveService,
     IClientsConnection clientsConnection)
 {
-    private const string SendFailedLog = "Events packet for peer {peerId} failed, the other peers still get theirs";
-    private const string StateSendFailedLog =
-        "State packet for peer {peerId} failed, disconnecting it, the other peers still get theirs";
-    private const string SnapshotWriteFailedLog =
-        "The snapshot failed, rejecting the peers joined in the tick: {peerIds}";
-    private const string SnapshotSendFailedLog =
-        "Snapshot for peer {peerId} failed, disconnecting it, the other peers still get theirs";
-    private const string RejectFailedLog = "Rejecting peer {peerId} failed, it is disconnected anyway";
-
     private readonly ILogger _log = LogFactory.GetForStatic<ServerTickLoop>();
 
     // Calls from ServerTickNode
@@ -82,7 +73,8 @@ public class ServerTickLoop(
             }
             catch (Exception e)
             {
-                _log.Error(e, StateSendFailedLog, peerId);
+                _log.Error(e, "State packet for peer {peerId} failed, disconnecting it, the other peers still get "
+                              + "theirs", peerId);
                 // The baselines have moved past what the peer has, so every next delta would corrupt its models;
                 // it comes back through a join and gets a fresh snapshot
                 gatekeeper.Disconnect(peerId);
@@ -108,7 +100,7 @@ public class ServerTickLoop(
         catch (Exception e)
         {
             // Without a consistent snapshot the peer's models would silently drift from the next deltas on
-            _log.Error(e, SnapshotWriteFailedLog, joined);
+            _log.Error(e, "The snapshot failed, rejecting the peers joined in the tick: {peerIds}", joined);
             foreach (int peerId in joined)
             {
                 // A failed rejection has disconnected the peer anyway, and the rest still have to be rejected
@@ -118,7 +110,7 @@ public class ServerTickLoop(
                 }
                 catch (Exception rejectError)
                 {
-                    _log.Error(rejectError, RejectFailedLog, peerId);
+                    _log.Error(rejectError, "Rejecting peer {peerId} failed, it is disconnected anyway", peerId);
                 }
             }
             return;
@@ -133,7 +125,8 @@ public class ServerTickLoop(
             }
             catch (Exception e)
             {
-                _log.Error(e, SnapshotSendFailedLog, peerId);
+                _log.Error(e, "Snapshot for peer {peerId} failed, disconnecting it, the other peers still get theirs",
+                    peerId);
                 gatekeeper.Disconnect(peerId);
             }
         }
@@ -154,7 +147,7 @@ public class ServerTickLoop(
             }
             catch (Exception e)
             {
-                _log.Error(e, SendFailedLog, peerId);
+                _log.Error(e, "Events packet for peer {peerId} failed, the other peers still get theirs", peerId);
             }
         }
     }

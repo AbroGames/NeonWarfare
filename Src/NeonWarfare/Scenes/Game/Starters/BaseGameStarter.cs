@@ -24,7 +24,6 @@ public abstract class BaseGameStarter
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string VersionMismatchMessage = "The save was made by another version of the game";
     private const string BrokenSaveMessage = "The save is broken or cannot be read";
-    private const string LoadFailedLog = "Loading the save '{saveFileName}' failed";
 
     private readonly ILogger _log = LogFactory.GetForStatic<BaseGameStarter>();
 
@@ -63,7 +62,7 @@ public abstract class BaseGameStarter
     /// <returns>The message for the player.</returns>
     protected string LogLoadError(Exception e, string saveFileName)
     {
-        _log.Error(e, LoadFailedLog, saveFileName);
+        _log.Error(e, "Loading the save '{saveFileName}' failed", saveFileName);
         return e is SaveVersionMismatchException ? VersionMismatchMessage : BrokenSaveMessage;
     }
 

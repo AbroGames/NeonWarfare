@@ -18,10 +18,6 @@ public class PlayerSimulationFacade(
     WorldAdmin admin,
     IServerOwner owner)
 {
-    private const string NewPlayerLog = "New player: {nick} ({uid})";
-    private const string JoinedLog = "Player joined: {nick} ({uid})";
-    private const string LeftLog = "Player left: {nick} ({uid})";
-    private const string AdminGrantedLog = "Player is the admin of the world: {nick} ({uid})";
     private const string JoinedMessageKey = "HUD__CHAT_PLAYER_JOINED";
     private const string LeftMessageKey = "HUD__CHAT_PLAYER_LEFT";
 
@@ -36,17 +32,17 @@ public class PlayerSimulationFacade(
             player = players.Model.AddPlayer(uid);
             player.Nick = nick;
             player.Color = color;
-            _log.Information(NewPlayerLog, nick, uid);
+            _log.Information("New player: {nick} ({uid})", nick, uid);
         }
 
         if (uid == admin.Uid && !player.IsAdmin)
         {
             player.IsAdmin = true;
-            _log.Information(AdminGrantedLog, player.Nick, uid);
+            _log.Information("Player is the admin of the world: {nick} ({uid})", player.Nick, uid);
         }
 
         onlinePlayers.Model.Uids.Add(uid);
-        _log.Information(JoinedLog, player.Nick, uid);
+        _log.Information("Player joined: {nick} ({uid})", player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, [player.Nick]);
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
     }
@@ -56,7 +52,7 @@ public class PlayerSimulationFacade(
     {
         PlayerModel player = players.Model.PlayerByUid[uid];
         onlinePlayers.Model.Uids.Remove(uid);
-        _log.Information(LeftLog, player.Nick, uid);
+        _log.Information("Player left: {nick} ({uid})", player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, [player.Nick]);
         if (uid == admin.Uid && reason == LeaveReason.Disconnected) owner.AdminLeft();
     }

@@ -1,5 +1,4 @@
 using System;
-using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Ports;
@@ -14,8 +13,6 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 public class LocalPlayerPresentation(LocalPlayer localPlayer, ILocalPlayerOwner owner, PlayerQuery players)
     : IEventHandlerOwner
 {
-    private const string NotOnlineError = "The local player {0} is not online";
-
     public string Uid => localPlayer.Uid;
 
     /// <summary>
@@ -24,7 +21,7 @@ public class LocalPlayerPresentation(LocalPlayer localPlayer, ILocalPlayerOwner 
     /// </summary>
     /// <exception cref="InvalidOperationException">Before the join is applied or after the leave.</exception>
     public PlayerModel Player =>
-        players.TryGetOnline(Uid) ?? throw new InvalidOperationException(NotOnlineError.FormatWith(Uid));
+        players.TryGetOnline(Uid) ?? throw new InvalidOperationException($"The local player {Uid} is not online");
 
     [EventHandler]
     private void Handle(PlayerJoinedEvent e)

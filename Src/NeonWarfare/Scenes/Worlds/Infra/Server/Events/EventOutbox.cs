@@ -1,6 +1,5 @@
 using System;
 using System.Buffers;
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -17,9 +16,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 [Server]
 public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
 {
-    private const string OfflineReceiverLog = "{event} for player {uid} dropped: the player is not on any peer";
-    private const string NotJoinedError = "Peer {0} has not joined, so it has no events.";
-
     private readonly ILogger _log = LogFactory.GetForStatic<EventOutbox>();
 
     // Encoded once, here: every addressee gets the same bytes, and an event that cannot be serialized fails in
@@ -39,7 +35,8 @@ public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
         byte[] encoded = codec.Encode(@event);
         if (!peers.TryGetJoinedByUid(receiverUid, out PeerStateTable.Joined joined))
         {
-            _log.Information(OfflineReceiverLog, @event.GetType().Name, receiverUid);
+            _log.Information("{event} for player {uid} dropped: the player is not on any peer",
+                @event.GetType().Name, receiverUid);
             return;
         }
 
@@ -54,7 +51,7 @@ public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
     {
         if (!peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))
         {
-            throw new InvalidOperationException(NotJoinedError.FormatWith(peerId));
+            throw new InvalidOperationException($"Peer {peerId} has not joined, so it has no events.");
         }
 
         codec.WriteSection(output, joined.Events);
