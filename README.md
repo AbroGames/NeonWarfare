@@ -14,13 +14,13 @@ on Windows/Linux/macOS.
 | Document | What is inside |
 |---|---|
 | [Scene tree](Docs/Scene-tree.md) | `NodeContainer`, "calls go down, events go up" |
-| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]` |
 | [Code style conventions](Docs/Code-style.md) | Namespaces, initialization, serialization, `.editorconfig` |
 
 ### Area-by-area design — read when the task touches that area
 
 | Document | Read when you touch |
 |---|---|
+| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]` |
 | [Networking](Docs/Networking.md) | `Network`, `ServerTickLoop`, commands, packets, join, `NetId`, replication |
 | [World](Docs/World.md) | `World`, `WorldSetup`, `WorldLayer`, the layer attributes, `WorldServicesBuilder`, the `Infra/` folders |
 | [World features](Docs/World-features.md) | `Worlds/Features/`: what each feature holds, how it plugs in |

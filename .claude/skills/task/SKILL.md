@@ -15,6 +15,16 @@ A task is referenced by its number. Pad it to 3 digits (`1` → `001`) and find 
 with `ls .claude/tasks/ | grep '^NNN'`.
 If the number does not exist and the user did not ask to create it — stop and say so.
 
+## Reading the docs
+
+Every listed file is read in full — the `README.md` tables are an index, not a summary.
+
+- **All docs** — every `Docs/` file except the environment references (`Quick-start`,
+  `Stack`, `Cli-args` — unless the work touches what they describe) and the test docs.
+- **Foundation docs** — the files in the "Foundation" table of `README.md`.
+- **Test docs** — `Testing.md`, `Smoke-testing.md` and `Game-testing.md`; read them only
+  when the work touches tests.
+
 ## Modes
 
 The user's phrasing selects one of four modes. If it names no mode — just a number, as in
@@ -65,8 +75,9 @@ stop between them.
 
 #### Phase A — discuss the problem and the options
 
-Read `task.md`, read the docs `README.md` points to for this area, and explore the
-relevant code deeply enough to understand the problem, not just to locate it. Then,
+Read `task.md`, read all docs (see [Reading the docs](#reading-the-docs)) — not only the
+area the task names, because save/load and mid-game join cut across every area — and
+explore the relevant code deeply enough to understand the problem, not just to locate it. Then,
 in chat (Russian), **without writing `plan.md`**:
 
 1. **The problem.** What is actually wrong or missing today and why — grounded in the
@@ -95,6 +106,10 @@ Only once the user has agreed on an approach, write `plan.md` next to `task.md`:
 
 <1–2 paragraphs: the chosen approach and why; the rejected options in one line each.>
 
+## Docs
+
+- `Docs/<File>.md` — <what in it the implementation relies on>
+
 ## Steps
 
 1. `path/to/File.cs` — <what changes>
@@ -104,6 +119,10 @@ Only once the user has agreed on an approach, write `plan.md` next to `task.md`:
 
 - <residual risks; forks were already resolved with the user>
 ```
+
+`## Docs` lists the `Docs/` files the implementer must read beyond the foundation docs —
+the ones the chosen approach depends on. The Do mode reads exactly this list, so do not
+leave out a file the steps rely on.
 
 `plan.md` is written in English. After writing it, show the user the whole plan in
 chat, translated into Russian — in full, not a summary.
@@ -116,19 +135,22 @@ Trigger: "start task N", "continue task N".
 
 1. Read `task.md`, and `plan.md` if it exists. If there is no plan and the task is
    non-trivial, propose making one first.
-2. Set `status: in-progress`.
-3. Implement. Follow `CLAUDE.md` and the `Docs/` files relevant to the area.
-4. Verify — this is the last step of writing code, and it is mandatory:
+2. Before writing code, read the foundation docs, then the files in the plan's `## Docs`.
+   Without a plan, read the docs `README.md` points to for the area instead. Read the
+   test docs if the work touches tests.
+3. Set `status: in-progress`.
+4. Implement. Follow `CLAUDE.md` and the docs read in step 2.
+5. Verify — this is the last step of writing code, and it is mandatory:
    - `dotnet build`, then the full `dotnet test`. Do not hand the task over with failing
      tests; the reviewer does not run them.
    - For every test added or changed: break the code it covers on purpose, confirm the
      test fails, then revert the breakage and confirm it passes again. The reviewer
      does not do this either.
    - Anything that only shows up inside the node tree — ask the user to run the game.
-5. If the change affects the architecture, update the matching file in `Docs/` (and
+6. If the change affects the architecture, update the matching file in `Docs/` (and
    `README.md` if the list of documents or the entry points changed). Keep the doc
    edit as short as possible.
-6. Append a `## Result` section to `task.md`: what was changed, what was verified and
+7. Append a `## Result` section to `task.md`: what was changed, what was verified and
    how (including which breakages the tests caught), what was left out. Once the build
    and all tests pass, set `status: review`.
 
@@ -146,9 +168,8 @@ self-contained prompt: the task number and folder path, the instruction to read
 `README.md` first per `CLAUDE.md`, and the review contract below. Only a session that
 did not write the code may review it directly.
 
-Before reviewing, read in full every `Docs/` file except the environment references
-(`Quick-start`, `Stack`, `Cli-args` — unless the diff touches what they describe).
-Read `Testing.md`, `Smoke-testing.md` and `Game-testing.md` if the diff touches tests.
+Before reviewing, read all docs, plus the test docs if the diff touches tests (see
+[Reading the docs](#reading-the-docs)).
 
 Review the work done for the task — the diff, plus the code around it — against
 `task.md`'s "Done when" and against `Docs/`. Check specifically that:
