@@ -91,8 +91,21 @@ public partial class Hud : Control
         {
             ChatPresentation.PlayerMessageEntry message => $"[{message.SenderNick}]: {message.Text}",
             ChatPresentation.ServerTextEntry message => $"[{tr("HUD__CHAT_SERVER_NICK")}]: {message.Text}",
-            ChatPresentation.PlayerJoinedEntry joined => $"{joined.Nick} {tr("HUD__CHAT_PLAYER_JOINED")}",
-            ChatPresentation.PlayerLeftEntry left => $"{left.Nick} {tr("HUD__CHAT_PLAYER_LEFT")}",
+            ChatPresentation.LocalizedServerEntry message =>
+                $"[{tr("HUD__CHAT_SERVER_NICK")}]: {FormatLocalized(message.Key, message.Args, tr)}",
             _ => throw new ArgumentOutOfRangeException(nameof(entry), entry, null)
         };
+
+    // A translation may expect more arguments than a server of another version sends: the line stays readable
+    private static string FormatLocalized(string key, string[] args, Func<string, string> tr)
+    {
+        try
+        {
+            return string.Format(tr(key), args);
+        }
+        catch (FormatException)
+        {
+            return string.Join(" ", [key, ..args]);
+        }
+    }
 }

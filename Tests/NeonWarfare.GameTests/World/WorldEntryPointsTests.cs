@@ -57,7 +57,7 @@ public class WorldEntryPointsTests
         JoinHost(world);
 
         AssertThat(world.Get<ChatPresentation>().Entries)
-            .ContainsExactly(new ChatPresentation.PlayerJoinedEntry(Now, HostUid, "Host"));
+            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_PLAYER_JOINED", ["Host"]));
     }
 
     [TestCase]
@@ -72,7 +72,7 @@ public class WorldEntryPointsTests
 
         AssertThat(_connection.Commands.Count).IsEqual(2);
         AssertThat(world.Get<ChatPresentation>().Entries).ContainsExactly(
-            new ChatPresentation.PlayerJoinedEntry(Now, HostUid, "Host"),
+            new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_PLAYER_JOINED", ["Host"]),
             new ChatPresentation.PlayerMessageEntry(Now, HostUid, "Host", "hello"));
     }
 
@@ -164,7 +164,7 @@ public class WorldEntryPointsTests
         JoinHost(world);
 
         AssertThat(world.Get<ChatPresentation>().Entries)
-            .ContainsExactly(new ChatPresentation.PlayerJoinedEntry(Now, HostUid, "Host"));
+            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_PLAYER_JOINED", ["Host"]));
         AssertThat(world.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Nick)).ContainsExactly("Host");
     }
 

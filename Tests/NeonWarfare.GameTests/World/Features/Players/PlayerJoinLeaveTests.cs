@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Infra.Protocol;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
@@ -35,7 +36,7 @@ public class PlayerJoinLeaveTests
     private const string AliceUid = "AliceAlice-Aaaaaaaaaa";
     private const string BobUid = "BobBobBobB-Bbbbbbbbbb";
 
-    private static readonly HashSet<Type> EventTypes = [typeof(PlayerJoinedEvent), typeof(PlayerLeftEvent)];
+    private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent)];
     private static readonly Color Pink = new(1, 0.5f, 0.8f);
 
     private NetMessageCodec _codec = null!;
@@ -75,8 +76,8 @@ public class PlayerJoinLeaveTests
         AssertThat(alice.Nick).IsEqual("Alice");
         AssertThat(alice.Color).IsEqual(Pink);
         AssertThat(Online()).ContainsExactlyInAnyOrder(HostUid, AliceUid);
-        AssertThat(PeerEvents(HostPeer)).ContainsExactly(Joined(HostUid, "Host"), Joined(AliceUid, "Alice"));
-        AssertThat(PeerEvents(AlicePeer)).ContainsExactly(Joined(AliceUid, "Alice"));
+        AssertThat(PeerEvents(HostPeer)).ContainsExactly(Joined("Host"), Joined("Alice"));
+        AssertThat(PeerEvents(AlicePeer)).ContainsExactly(Joined("Alice"));
     }
 
     [TestCase]
@@ -94,7 +95,7 @@ public class PlayerJoinLeaveTests
         PlayerModel alice = Players().PlayerByUid[AliceUid];
         AssertThat(alice.Nick).IsEqual("Alice");
         AssertThat(alice.Color).IsEqual(Pink);
-        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined(AliceUid, "Alice"));
+        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined("Alice"));
     }
 
     // Done when: the player with the admin uid is admin after join; another player is not
@@ -141,7 +142,7 @@ public class PlayerJoinLeaveTests
 
         AssertThat(Online()).ContainsExactly(BobUid);
         AssertThat(Players().PlayerByUid.ContainsKey(AliceUid)).IsTrue();
-        AssertThat(PeerEvents(BobPeer)).ContainsExactly(Left(AliceUid, "Alice"));
+        AssertThat(PeerEvents(BobPeer)).ContainsExactly(Left("Alice"));
         AssertThat(Outbox().Peers).ContainsExactly(BobPeer);
     }
 
@@ -159,8 +160,8 @@ public class PlayerJoinLeaveTests
         Tick();
 
         AssertThat(Online()).ContainsExactlyInAnyOrder(AliceUid, BobUid);
-        AssertThat(PeerEvents(BobPeer)).ContainsExactly(Left(AliceUid, "Alice"), Joined(AliceUid, "Alice"));
-        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined(AliceUid, "Alice"));
+        AssertThat(PeerEvents(BobPeer)).ContainsExactly(Left("Alice"), Joined("Alice"));
+        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined("Alice"));
         AssertThat(Outbox().Peers).ContainsExactlyInAnyOrder(BobPeer, AliceSecondPeer);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
@@ -313,7 +314,7 @@ public class PlayerJoinLeaveTests
             .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Packet[1]))
             .ToList();
 
-    private static PlayerJoinedEvent Joined(string uid, string nick) => new(Now, uid, nick);
+    private static LocalizedChatMessageEvent Joined(string nick) => new(Now, "HUD__CHAT_PLAYER_JOINED", [nick]);
 
-    private static PlayerLeftEvent Left(string uid, string nick) => new(Now, uid, nick);
+    private static LocalizedChatMessageEvent Left(string nick) => new(Now, "HUD__CHAT_PLAYER_LEFT", [nick]);
 }

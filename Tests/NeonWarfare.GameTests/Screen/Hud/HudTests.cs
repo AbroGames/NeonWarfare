@@ -28,19 +28,29 @@ public class HudTests
     }
 
     [TestCase]
-    public void FormatChatLine_PlayerJoined_ShowsNickAndTranslatedFact()
+    public void FormatChatLine_LocalizedServerMessage_ShowsServerNickAndTranslationWithArgs()
     {
-        var entry = new ChatPresentation.PlayerJoinedEntry(Now, "uid", "Alice");
+        var entry = new ChatPresentation.LocalizedServerEntry(Now, "SAVED", ["my save"]);
 
-        AssertThat(HudScreen.FormatChatLine(entry, Translate)).IsEqual("Alice <HUD__CHAT_PLAYER_JOINED>");
+        AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs))
+            .IsEqual("[server]: saved as 'my save'");
+    }
+
+    // A translation of another version may expect an argument the server did not send
+    [TestCase]
+    public void FormatChatLine_LocalizedServerMessageMissingArg_ShowsKeyAndArgs()
+    {
+        var entry = new ChatPresentation.LocalizedServerEntry(Now, "SAVED", []);
+
+        AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs)).IsEqual("[server]: SAVED");
     }
 
     [TestCase]
-    public void FormatChatLine_PlayerLeft_ShowsNickAndTranslatedFact()
+    public void LocalizedServerEntry_EqualArgs_AreEqual()
     {
-        var entry = new ChatPresentation.PlayerLeftEntry(Now, "uid", "Alice");
-
-        AssertThat(HudScreen.FormatChatLine(entry, Translate)).IsEqual("Alice <HUD__CHAT_PLAYER_LEFT>");
+        AssertThat(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "b"]))
+            .IsEqual(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "b"]))
+            .IsNotEqual(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "c"]));
     }
 
     [TestCase]
@@ -51,6 +61,13 @@ public class HudTests
     }
 
     private static string Translate(string key) => $"<{key}>";
+
+    private static string TranslateWithArgs(string key) => key switch
+    {
+        "HUD__CHAT_SERVER_NICK" => "server",
+        "SAVED" => "saved as '{0}'",
+        _ => key
+    };
 
     private record UnknownEntry() : ChatPresentation.ChatEntry(Now);
 }

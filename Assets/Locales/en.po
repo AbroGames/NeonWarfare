@@ -97,10 +97,16 @@ msgid "HUD__CHAT_SERVER_NICK"
 msgstr "SERVER"
 
 msgid "HUD__CHAT_PLAYER_JOINED"
-msgstr "joined the game"
+msgstr "{0} joined the game"
 
 msgid "HUD__CHAT_PLAYER_LEFT"
-msgstr "left the game"
+msgstr "{0} left the game"
+
+msgid "HUD__CHAT_GAME_SAVED"
+msgstr "The game is saved as '{0}'."
+
+msgid "HUD__CHAT_GAME_SAVE_FAILED"
+msgstr "Saving the game as '{0}' failed."
 
 msgid "HUD__SAVE_BUTTON"
 msgstr "Save"

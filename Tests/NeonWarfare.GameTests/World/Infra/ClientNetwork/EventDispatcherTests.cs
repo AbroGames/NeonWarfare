@@ -24,8 +24,7 @@ public class EventDispatcherTests
 
     private static readonly HashSet<Type> EventTypes =
     [
-        typeof(ChatPlayerMessageEvent), typeof(ChatServerMessageEvent), typeof(PlayerJoinedEvent),
-        typeof(PlayerLeftEvent),
+        typeof(ChatPlayerMessageEvent), typeof(ChatServerMessageEvent), typeof(LocalizedChatMessageEvent),
     ];
 
     private NetMessageCodec _codec = null!;
@@ -44,19 +43,19 @@ public class EventDispatcherTests
         using ServiceProvider provider = new WorldServicesBuilder().Build(
             WorldLayer.Client, Dependencies(WorldLayer.Client), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
-            new PlayerJoinedEvent(1, "alice", "Alice"),
+            new LocalizedChatMessageEvent(1, "HUD__CHAT_PLAYER_JOINED", ["Alice"]),
             new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
             new ChatServerMessageEvent(3, "server"),
-            new PlayerLeftEvent(4, "alice", "Alice"));
+            new LocalizedChatMessageEvent(4, "HUD__CHAT_PLAYER_LEFT", ["Alice"]));
 
         int bytesRead = provider.GetRequiredService<EventDispatcher>().Dispatch(section);
 
         AssertThat(bytesRead).IsEqual(section.Length);
         AssertThat(provider.GetRequiredService<ChatPresentation>().Entries).ContainsExactly(
-            new PlayerJoinedEntry(1, "alice", "Alice"),
+            new LocalizedServerEntry(1, "HUD__CHAT_PLAYER_JOINED", ["Alice"]),
             new PlayerMessageEntry(2, "alice", "Alice", "hi"),
             new ServerTextEntry(3, "server"),
-            new PlayerLeftEntry(4, "alice", "Alice"));
+            new LocalizedServerEntry(4, "HUD__CHAT_PLAYER_LEFT", ["Alice"]));
         AssertThat(provider.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).HasSize(4);
     }
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Infra.Protocol;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
@@ -876,16 +877,20 @@ public class TickStateReplicationTests
     [Presentation]
     private class JoinRecorder(PlayersStorageQuery players, PlayersSessionStorageQuery session)
     {
-        public record Sight(string Uid, bool Online, string? Nick);
+        public record Sight(string? Uid, bool Online, string Nick);
 
         public List<Sight> Seen { get; } = [];
 
+        // The join message carries only the nick: the player is found by it
         [EventHandler]
-        private void Handle(PlayerJoinedEvent @event)
+        private void Handle(LocalizedChatMessageEvent @event)
         {
-            bool known = players.Model.PlayerByUid.TryGetValue(@event.Uid, out PlayerModel? player);
-            Seen.Add(new Sight(@event.Uid, session.Model.OnlinePlayerUids.Contains(@event.Uid),
-                known ? player!.Nick : null));
+            if (@event.Key != "HUD__CHAT_PLAYER_JOINED") return;
+
+            string nick = @event.Args[0];
+            PlayerModel? player = players.Model.PlayerByUid.Values.SingleOrDefault(player => player.Nick == nick);
+            bool online = player != null && session.Model.OnlinePlayerUids.Contains(player.Uid);
+            Seen.Add(new Sight(player?.Uid, online, nick));
         }
     }
 }

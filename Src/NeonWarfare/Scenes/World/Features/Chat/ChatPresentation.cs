@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-using NeonWarfare.Scenes.World.Features.Players;
+using System.Linq;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Hud;
@@ -21,8 +22,19 @@ public class ChatPresentation(HudMailbox hudMailbox)
     public record PlayerMessageEntry(long SentAtUnixSeconds, string SenderUid, string SenderNick, string Text)
         : ChatEntry(SentAtUnixSeconds);
     public record ServerTextEntry(long SentAtUnixSeconds, string Text) : ChatEntry(SentAtUnixSeconds);
-    public record PlayerJoinedEntry(long SentAtUnixSeconds, string Uid, string Nick) : ChatEntry(SentAtUnixSeconds);
-    public record PlayerLeftEntry(long SentAtUnixSeconds, string Uid, string Nick) : ChatEntry(SentAtUnixSeconds);
+
+    public sealed record LocalizedServerEntry(long SentAtUnixSeconds, string Key, string[] Args)
+        : ChatEntry(SentAtUnixSeconds)
+    {
+        // The generated equality compares the array by reference
+        public bool Equals(LocalizedServerEntry other) =>
+            other is not null
+            && SentAtUnixSeconds == other.SentAtUnixSeconds
+            && Key == other.Key
+            && Args.SequenceEqual(other.Args);
+
+        public override int GetHashCode() => HashCode.Combine(SentAtUnixSeconds, Key, Args.Length);
+    }
 
     [EventHandler]
     private void Handle(ChatPlayerMessageEvent e) =>
@@ -33,12 +45,8 @@ public class ChatPresentation(HudMailbox hudMailbox)
         AddChatEntry(new ServerTextEntry(e.SentAtUnixSeconds, e.Text));
 
     [EventHandler]
-    private void Handle(PlayerJoinedEvent e) =>
-        AddChatEntry(new PlayerJoinedEntry(e.SentAtUnixSeconds, e.Uid, e.Nick));
-
-    [EventHandler]
-    private void Handle(PlayerLeftEvent e) =>
-        AddChatEntry(new PlayerLeftEntry(e.SentAtUnixSeconds, e.Uid, e.Nick));
+    private void Handle(LocalizedChatMessageEvent e) =>
+        AddChatEntry(new LocalizedServerEntry(e.SentAtUnixSeconds, e.Key, e.Args));
 
     private void AddChatEntry(ChatEntry chatEntry)
     {

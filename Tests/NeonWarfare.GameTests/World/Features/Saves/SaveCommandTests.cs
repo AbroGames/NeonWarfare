@@ -37,7 +37,7 @@ public class SaveCommandTests
     private const string PlayerUid = "player";
     private const string FileName = "my save";
 
-    private static readonly HashSet<Type> EventTypes = [typeof(ChatServerMessageEvent)];
+    private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent)];
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
@@ -93,7 +93,8 @@ public class SaveCommandTests
 
         AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(FileName);
         AssertThat(_server.GetRequiredService<SaveService>().SaveFileName).IsEqual(FileName);
-        AssertThat(Replies(AdminPeer)).ContainsExactly($"The game is saved as '{FileName}'.");
+        AssertThat(Replies(AdminPeer))
+            .ContainsExactly(new LocalizedChatMessageEvent(Now, "HUD__CHAT_GAME_SAVED", [FileName]));
         AssertThat(Replies(PlayerPeer)).IsEmpty();
     }
 
@@ -111,7 +112,7 @@ public class SaveCommandTests
 
         AssertThat(_server.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).IsNotEmpty();
         AssertThat(_server.GetRequiredService<ChatPresentation>().Entries.Last())
-            .IsEqual(new ChatPresentation.ServerTextEntry(Now, $"Saving the game as '{FileName}' failed."));
+            .IsEqual(new ChatPresentation.LocalizedServerEntry(Now, "HUD__CHAT_GAME_SAVE_FAILED", [FileName]));
         AssertThat(_files.Files).ContainsExactly(previous);
         AssertThat(_server.GetRequiredService<SaveService>().SaveFileName).IsEqual(FileName);
     }
@@ -171,9 +172,8 @@ public class SaveCommandTests
 
     private void Tick() => _server.GetRequiredService<ServerTickLoop>().RunTick();
 
-    private List<string> Replies(int peerId) => _connection.Packets
+    private List<object> Replies(int peerId) => _connection.Packets
         .Where(sent => sent.PeerId == peerId && sent.Packet[0] == (byte) ServerPacketKind.Events)
         .SelectMany(sent => _codec.ReadSection(sent.Packet.AsMemory(1), EventTypes, out _))
-        .Select(message => ((ChatServerMessageEvent) message).Text)
         .ToList();
 }
