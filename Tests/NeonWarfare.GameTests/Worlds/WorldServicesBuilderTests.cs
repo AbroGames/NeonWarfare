@@ -10,6 +10,7 @@ using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Tick;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
@@ -18,6 +19,8 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
@@ -279,6 +282,25 @@ public class WorldServicesBuilderTests
         AssertThat(provider.GetService<EntitySpawner>()).IsNull();
         AssertThat(provider.GetService<NetIdGenerator>()).IsNull();
         AssertThat(provider.GetService<NewWorldSimulationFacade>()).IsNull();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_EachConfiguration_HasOneClockOfItsSide()
+    {
+        foreach ((WorldSetup setup, Type clock) in new (WorldSetup, Type)[]
+                 {
+                     (TestWorldSetups.RemoteClient(), typeof(ClientTickClock)),
+                     (TestWorldSetups.Host(), typeof(ServerTickClock)),
+                     (TestWorldSetups.Dedicated(), typeof(ServerTickClock)),
+                 })
+        {
+            using ServiceProvider provider = Build(setup);
+
+            AssertThat(provider.GetServices<IWorldClock>().Select(service => service.GetType()))
+                .ContainsExactly(clock);
+            AssertThat(provider.GetRequiredService<IWorldClock>()).IsSame(provider.GetRequiredService(clock));
+        }
     }
 
     private static ServiceProvider Build(WorldSetup setup) => Build(new WorldServicesBuilder(), setup);

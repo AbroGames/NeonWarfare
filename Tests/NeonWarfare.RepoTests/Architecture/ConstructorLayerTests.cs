@@ -79,6 +79,9 @@ public class ConstructorLayerTests
             [WorldLayers.WorldNamespace + ".Ports.LocalPlayer"] = [Layer.Presentation],
             // Creating the UI is the answer to the player's own join, which only the client side receives
             [WorldLayers.WorldNamespace + ".Ports.ILocalPlayerOwner"] = [Layer.Presentation],
+            // The tick counter is written by the layer that runs the ticks; every other layer reads IWorldClock
+            [WorldLayers.WorldNamespace + ".Infra.Server.Tick.ServerTickClock"] = [Layer.Server],
+            [WorldLayers.WorldNamespace + ".Infra.Client.Tick.ClientTickClock"] = [Layer.ClientReplication],
         };
 
     // Open to every layer besides the WorldDependencies and WorldSetup types: what the root registers itself, or a
@@ -86,6 +89,7 @@ public class ConstructorLayerTests
     private static readonly string[] OpenTypes =
     [
         WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder",
+        WorldLayers.WorldNamespace + ".Infra.Tick.IWorldClock",
     ];
 
     [Fact]
@@ -182,6 +186,51 @@ public class ConstructorLayerTests
 
         Assert.Equal(2, report.Failures.Count);
         Assert.All(report.Failures, failure => Assert.Contains("which the composition root registers itself", failure));
+    }
+
+    [Fact]
+    public void Constructors_OnlyTheWritersTakeTheConcreteClocks()
+    {
+        GameAssembly fixture = GameAssembly.Compile(ArchitectureFixtures.LayerAttributes + """
+            namespace NeonWarfare.Scenes.Worlds.Infra.Tick
+            {
+                public interface IWorldClock;
+            }
+
+            namespace NeonWarfare.Scenes.Worlds.Infra.Server.Tick
+            {
+                [NeonWarfare.Scenes.Worlds.Infra.Composition.Server]
+                public class ServerTickClock : NeonWarfare.Scenes.Worlds.Infra.Tick.IWorldClock;
+            }
+
+            namespace NeonWarfare.Scenes.Worlds.Infra.Client.Tick
+            {
+                [NeonWarfare.Scenes.Worlds.Infra.Composition.ClientReplication]
+                public class ClientTickClock : NeonWarfare.Scenes.Worlds.Infra.Tick.IWorldClock;
+            }
+
+            namespace Fixture
+            {
+                using NeonWarfare.Scenes.Worlds.Infra.Client.Tick;
+                using NeonWarfare.Scenes.Worlds.Infra.Composition;
+                using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+                using NeonWarfare.Scenes.Worlds.Infra.Tick;
+
+                [Presentation] public class Reader(IWorldClock clock);
+                [Presentation] public class ServerWriter(ServerTickClock clock);
+                [Presentation] public class ClientWriter(ClientTickClock clock);
+                [Simulation] public class SimulationReader(IWorldClock clock);
+                [Simulation] public class SimulationWriter(ServerTickClock clock);
+            }
+            """);
+        FailureReport report = new("fixture");
+
+        CheckParameters(fixture, OpenTypes.ToHashSet(StringComparer.Ordinal), report);
+
+        Assert.Equal(3, report.Failures.Count);
+        Assert.Contains(report.Failures, failure => failure.Contains("ServerWriter::.ctor"));
+        Assert.Contains(report.Failures, failure => failure.Contains("ClientWriter::.ctor"));
+        Assert.Contains(report.Failures, failure => failure.Contains("SimulationWriter::.ctor"));
     }
 
     /// <summary>

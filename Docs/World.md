@@ -62,9 +62,9 @@ effect beyond the world, which only their owner takes: `IClientsConnection`, `IS
 `[Server]`; `IServerOwner` — `[SimulationFacade]`; `IPeerSessionHandler` — `[Server]` (`PeerSessions`);
 `IServerConnection` — `[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`;
 `EntityRegistry` and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
-`ILocalPlayerOwner` — `[Presentation]`.
-`IEntityFinder` is open to all. A parameter `IEnumerable<I>` is a dependency on the layer of every implementation
-of `I`; an `I` the root registers itself (a port, a `WorldDependencies` type) is never taken as a
+`ILocalPlayerOwner` — `[Presentation]`; `ServerTickClock` — `[Server]`, `ClientTickClock` — `[ClientReplication]`.
+`IEntityFinder` and `IWorldClock` are open to all. A parameter `IEnumerable<I>` is a dependency on the layer of every
+implementation of `I`; an `I` the root registers itself (a port, a `WorldDependencies` type) is never taken as a
 collection. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
 
 * leaf simulations never call each other, a command handler calls only facades;
@@ -122,7 +122,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher` and its `ProtocolHash`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
-| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step; `ServerTickClock` — the tick counter |
+| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step; `ServerTickClock` — the tick counter, the `IWorldClock` of a server |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>`; `ICommandHandler` — what every player handler interface extends |
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
@@ -131,5 +131,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
 | `Infra/Client/Events` | `EventDispatcher`, `EventHandlerAttribute` and `IEventHandlerOwner` — a Presentation with handlers |
 | `Infra/Client/Replication` | `StateApplier` — the state sections and the join snapshot of a remote client |
+| `Infra/Client/Tick` | `ClientTickClock` — the `IWorldClock` of a remote client |
 | `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `GameProtocol`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
+| `Infra/Tick` | `IWorldClock` — the read side of the tick counter, implemented by one clock per configuration |
 | `Infra/Presentation` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |
