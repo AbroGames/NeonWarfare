@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using GdUnit4;
 using Godot;
@@ -33,7 +32,7 @@ public class GameSettingsServiceTests
         _folder.Dispose();
     }
 
-    // The color has fields only, so without its converter it would not round-trip
+    // The color has fields only, so the default JSON options would not round-trip it
     [TestCase]
     [RequireGodotRuntime]
     public void SetSettings_ReadBackByTheNextInit()
@@ -159,8 +158,7 @@ public class GameSettingsServiceTests
         service.Init();
 
         AssertThat(service.GetSettings()).IsEqual(expected);
-        var file = new JsonFile<GameSettings>(_folder.FileName(Name),
-            new JsonSerializerOptions { Converters = { new ColorJsonConverter() } });
+        var file = new JsonFile<GameSettings>(_folder.FileName(Name));
         AssertThat(file.Read().Value).IsEqual(expected);
     }
 

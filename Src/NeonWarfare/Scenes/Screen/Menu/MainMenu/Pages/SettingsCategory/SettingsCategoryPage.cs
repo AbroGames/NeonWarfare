@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Settings;
@@ -53,7 +54,8 @@ public partial class SettingsCategoryPage : MainMenuPage
         }
     }
 
-    private bool IsDirty() => _draftSettings.Serialize() != _preservedSettings.Serialize();
+    private bool IsDirty() =>
+        _settings.Any(setting => !Equals(setting.Value, setting.Member.GetValue(_preservedSettings)));
 
     private void OnSave()
     {

@@ -83,8 +83,8 @@ applies the runtime side-effects (window mode, resolution, audio bus volumes, lo
 
 Both settings pages use the same draft/preserved pattern: two copies of the settings are loaded,
 edits go into the draft, Save applies and persists it, Cancel re-applies the preserved snapshot to
-roll back the runtime side-effects. Back on `SettingsCategoryPage` compares the serialized copies and
-pushes a `ConfirmDialogPage` when they differ.
+roll back the runtime side-effects. Back on `SettingsCategoryPage` compares the edited values with the
+preserved settings and pushes a `ConfirmDialogPage` when they differ.
 
 ## The in-game HUD and the loading screen
 

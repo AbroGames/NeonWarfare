@@ -38,8 +38,7 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
   `Worlds/` by `EventNamingTests`.
 * Static code is only pure functions: no state, no side effects, no services. Everything else goes into the
   [world services or `Services`](Services.md). A game rule shared between features stays in the feature that owns
-  it. Extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings (de)serialization are
-  static too.
+  it. Extension classes (`MainMenuPageExtensions`) and constant sets (`Keys`) are static too.
 
 ## Serialization
 
