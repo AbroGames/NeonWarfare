@@ -44,6 +44,7 @@ may be added as needed. Work with them through the `task` skill.
 - When weighing the pros and cons of alternative solutions, judge only the production code. The
   size and difficulty of test changes never count as an argument: tests always adapt to the
   production code.
+- The game is not released: compatibility of saves and of the network protocol is never an argument.
 - Mark uncertain claims explicitly ("not verified", "assumption").
   Never present an unverified claim as a fact.
 - If a fix does not work after 3 attempts, stop and report: what was tried,
