@@ -146,6 +146,10 @@ self-contained prompt: the task number and folder path, the instruction to read
 `README.md` first per `CLAUDE.md`, and the review contract below. Only a session that
 did not write the code may review it directly.
 
+Before reviewing, read in full every `Docs/` file except the environment references
+(`Quick-start`, `Stack`, `Cli-args` — unless the diff touches what they describe).
+Read `Testing.md`, `Smoke-testing.md` and `Game-testing.md` if the diff touches tests.
+
 Review the work done for the task — the diff, plus the code around it — against
 `task.md`'s "Done when" and against `Docs/`. Check specifically that:
 
