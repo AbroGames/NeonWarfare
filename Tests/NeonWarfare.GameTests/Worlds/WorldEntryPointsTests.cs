@@ -110,8 +110,8 @@ public class WorldEntryPointsTests
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.ReceiveFromClient(HostPeer, new byte[] { 0 }))
             .IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => notInitialized.OnClientConnected(HostPeer)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => notInitialized.OnClientDisconnected(HostPeer)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => notInitialized.AddClient(HostPeer)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => notInitialized.RemoveClient(HostPeer)).IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => dedicated.Send(new SendChatMessageCommand("hello")))
             .IsInstanceOf<InvalidOperationException>();
     }
@@ -275,7 +275,7 @@ public class WorldEntryPointsTests
         AssertThat(localPlayer.Player.Nick).IsEqual("Host");
     }
 
-    // Done when: a rejected host join goes to the failure path, Game's JoinRejectedEvent, and the UI never appears
+    // Done when: a rejected host join goes to the failure path, Game's JoinRejected, and the UI never appears
     [TestCase]
     [RequireGodotRuntime]
     public void LocalPlayer_OnAHostWithRejectedJoin_IsNeverReported()
@@ -284,7 +284,7 @@ public class WorldEntryPointsTests
         World world = HostWorld(owner: owner);
         var invalid = new LocalPlayer(HostUid, "", Colors.White);
 
-        world.OnClientConnected(HostPeer);
+        world.AddClient(HostPeer);
         ((IServerConnection) _connection).Send(_codec.Encode(invalid.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
 
@@ -302,7 +302,7 @@ public class WorldEntryPointsTests
         World world = HostWorld();
         JoinHost(world);
 
-        world.OnClientDisconnected(HostPeer);
+        world.RemoveClient(HostPeer);
         Tick(world);
 
         AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
@@ -400,7 +400,7 @@ public class WorldEntryPointsTests
     // As Game joins the host's own player
     private void JoinHost(World world)
     {
-        world.OnClientConnected(HostPeer);
+        world.AddClient(HostPeer);
         ((IServerConnection) _connection).Send(_codec.Encode(HostPlayer.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
     }
@@ -408,7 +408,7 @@ public class WorldEntryPointsTests
     // As Game hands a remote peer to the World; the snapshot is recorded, not delivered
     private void JoinRemote(World world)
     {
-        world.OnClientConnected(RemotePeer);
+        world.AddClient(RemotePeer);
         world.ReceiveFromClient(RemotePeer, _codec.Encode(RemotePlayer.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
     }

@@ -111,10 +111,10 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     public void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
         Service<CommandInbox>().EnqueueFromPeer(peerId, packet);
 
-    public void OnClientConnected(int peerId) =>
-        Service<PeerGatekeeper>().OnPeerConnected(peerId);
+    public void AddClient(int peerId) =>
+        Service<PeerGatekeeper>().StartHandshake(peerId);
 
-    public void OnClientDisconnected(int peerId) =>
+    public void RemoveClient(int peerId) =>
         Service<CommandInbox>().EnqueuePeerDisconnected(peerId);
 
     /// <exception cref="NetMessageFormatException">The packet is broken or of an unknown kind.</exception>

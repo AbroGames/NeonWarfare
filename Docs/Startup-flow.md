@@ -97,10 +97,10 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
   `Hud` only once this process's player has joined. A World that throws while being built is freed.
 * **`SendJoinRequest(localPlayer)`** — the join of this process's player. On the host its own peer first
   "connects", so it passes the same gatekeeper as a remote one (see [Networking](Networking.md#join-and-leave)).
-* **`WorldSnapshotReceivedEvent`** — a remote client without a World got the join snapshot.
-* **`LocalPlayerJoinedEvent`** — the World reported, through `ILocalPlayerOwner`, its own `PlayerJoinedEvent`: the
+* **`WorldSnapshotReceived`** — a remote client without a World got the join snapshot.
+* **`LocalPlayerJoined`** — the World reported, through `ILocalPlayerOwner`, its own `PlayerJoinedEvent`: the
   player is online and its `Hud` is created. So the UI never sees "me" offline. A `Hud` that fails to be created
-  raises `JoinRejectedEvent` (`InternalError`) instead.
+  raises `JoinRejected` (`InternalError`) instead.
 
 | Starter | `MainSceneService` method | Network | World | When it is used |
 |---|---|---|---|---|
@@ -123,9 +123,9 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
   writes, so after a "save as" it leads to the new file.
 * **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu; never called by
   `DedicatedServerGameStarter`, since a dedicated server has no menu.
-* **`GoToMenuOnJoinRejected(game)`** — every starter with a player of its own: `Game.JoinRejectedEvent` → to the
+* **`GoToMenuOnJoinRejected(game)`** — every starter with a player of its own: `Game.JoinRejected` → to the
   menu with the localized reason.
-* **`ClearLoadingScreenOnJoined(game)`** — the same starters: `Game.LocalPlayerJoinedEvent` → the loading screen is
+* **`ClearLoadingScreenOnJoined(game)`** — the same starters: `Game.LocalPlayerJoined` → the loading screen is
   cleared.
 
 The admin of a server World (`WorldAdmin`) is the uid of the host's `LocalPlayer`, or `--admin` of a dedicated
@@ -173,11 +173,11 @@ Connecting to someone else's server. Parameters: `host`, `port`, `mustSetLastGam
 1. The `Connecting` loading screen — with a cancel button that calls `GoToMenu()`.
 2. `AddNetwork()`, `ReadLocalPlayer()`. **No World yet**: it is created from the server's join snapshot.
 3. Subscriptions to the events of `Network` and `Game`, which die with the `Game`, so nothing unsubscribes:
-   * `ConnectedToServerEvent` → `SendJoinRequest(localPlayer)`;
-   * `WorldSnapshotReceivedEvent` → `AddWorld(Client, FromSnapshot(snapshot), Hud, null, localPlayer)`; a broken
+   * `ConnectedToServer` → `SendJoinRequest(localPlayer)`;
+   * `WorldSnapshotReceived` → `AddWorld(Client, FromSnapshot(snapshot), Hud, null, localPlayer)`; a broken
      snapshot or a failure to build the World → back to the menu with the error;
-   * `ConnectionFailedEvent` → to the menu with "Connection to the server failed" (no answer within the timeout);
-   * `ServerDisconnectedEvent` → to the menu with "Server disconnected" (can arrive even hours into the game);
+   * `ConnectionFailed` → to the menu with "Connection to the server failed" (no answer within the timeout);
+   * `ServerDisconnected` → to the menu with "Server disconnected" (can arrive even hours into the game);
    * `GoToMenuOnJoinRejected(game)`, `ClearLoadingScreenOnJoined(game)`: the `Hud` comes with the events packet of
      the join tick, right after the snapshot.
 
@@ -185,7 +185,7 @@ Connecting to someone else's server. Parameters: `host`, `port`, `mustSetLastGam
    frame.
 4. `mustSetLastGame` → a "connection to a server" write into `resume-game.json`.
 5. `network.ConnectToServer(host ?? 127.0.0.1, port ?? 25566)`. A synchronous error is handled by that same
-   `ConnectionFailedEvent`.
+   `ConnectionFailed`.
 
 ### 4. `HostDedicatedServerAndConnectGameStarter`
 

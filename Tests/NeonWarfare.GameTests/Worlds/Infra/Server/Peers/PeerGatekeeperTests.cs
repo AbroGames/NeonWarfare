@@ -30,9 +30,9 @@ public class PeerGatekeeperTests
     [RequireGodotRuntime]
     public void DisconnectExpired_PeerNotJoinedByTheDeadline_IsDisconnected()
     {
-        _gatekeeper.OnPeerConnected(AlicePeer);
+        _gatekeeper.StartHandshake(AlicePeer);
         _time.Now += PeerGatekeeper.HandshakeTimeout - TimeSpan.FromMilliseconds(1);
-        _gatekeeper.OnPeerConnected(BobPeer);
+        _gatekeeper.StartHandshake(BobPeer);
 
         _gatekeeper.DisconnectExpired();
         AssertThat(_clientsConnection.Disconnected).IsEmpty();
@@ -50,7 +50,7 @@ public class PeerGatekeeperTests
     [RequireGodotRuntime]
     public void DisconnectExpired_JoinedPeer_StaysAfterTheDeadline()
     {
-        _gatekeeper.OnPeerConnected(AlicePeer);
+        _gatekeeper.StartHandshake(AlicePeer);
         _peers.Bind("alice", AlicePeer);
         _time.Now += PeerGatekeeper.HandshakeTimeout;
 
@@ -101,7 +101,7 @@ public class PeerGatekeeperTests
     [RequireGodotRuntime]
     public void Forget_ClearsTheMarkAndTheDeadline()
     {
-        _gatekeeper.OnPeerConnected(BobPeer);
+        _gatekeeper.StartHandshake(BobPeer);
         _gatekeeper.Disconnect(AlicePeer);
 
         _gatekeeper.Forget(AlicePeer);

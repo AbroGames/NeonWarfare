@@ -17,7 +17,7 @@ in `Worlds/Features/` — see [World features](World-features.md). The packets a
 | `InitPreReady(layers, dependencies, origin)` | `Game.AddWorld`, before the World enters the tree: builds every service, then fills the world |
 | `Send<TCommand>(command)` | The `Hud`, through `World.ICommandSender`: the only way a command leaves the World |
 | `Get<T>()` | The screens, through `World.IReader`: only `[Query]` and `[Presentation]` services are handed out |
-| `ReceiveFromClient`, `OnClientConnected`, `OnClientDisconnected` | `Game`, on a server: packets and connection events of the peers |
+| `ReceiveFromClient`, `AddClient`, `RemoveClient` | `Game`, on a server: packets and connection events of the peers |
 | `ReceiveFromServer` | `Game`, on a client: a state, events or join rejection packet |
 
 `WorldOrigin` says where the state comes from: `NewWorld(saveFileName)` — `NewWorldSimulationFacade.Create()` spawns

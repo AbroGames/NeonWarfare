@@ -36,9 +36,9 @@ public class EntityRegistry : IEntityFinder
     private readonly Dictionary<Node, Entry> _entryByNode = new();
     private readonly Dictionary<Type, TypeCache> _cacheByType = new();
 
-    public event Action<NetId, Node> SpawnedEvent;
+    public event Action<NetId, Node> Spawned;
 
-    public event Action<NetId, Node> DespawnedEvent;
+    public event Action<NetId, Node> Despawned;
 
     /// <param name="kindId">The <see cref="EntityCatalog"/> kind the node was created from.</param>
     public void Register(NetId id, Node node, int kindId)
@@ -65,7 +65,7 @@ public class EntityRegistry : IEntityFinder
             cache.Snapshot = null;
         }
 
-        SpawnedEvent?.Invoke(id, node);
+        Spawned?.Invoke(id, node);
     }
 
     public bool TryGetNode(NetId id, out Node node) => _nodeById.TryGetValue(id, out node);
@@ -124,6 +124,6 @@ public class EntityRegistry : IEntityFinder
             if (cache.Members.Remove(entry.Id)) cache.Snapshot = null;
         }
 
-        DespawnedEvent?.Invoke(entry.Id, node);
+        Despawned?.Invoke(entry.Id, node);
     }
 }

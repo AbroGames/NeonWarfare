@@ -74,7 +74,7 @@ public class EntitySpawner(
             parentNode.AddChild(node);
         }
 
-        // Last, so a SpawnedEvent subscriber finds the node already in its place
+        // Last, so a Spawned subscriber finds the node already in its place
         registry.Register(id, node, kindId);
         return node;
     }

@@ -14,14 +14,14 @@ public interface IEntityFinder
     /// Raised once the node is in its place and in the registry. Not necessarily after its <c>_Ready</c>: an entity
     /// spawned while the World is outside the tree gets it only when the World enters.
     /// </summary>
-    event Action<NetId, Node> SpawnedEvent;
+    event Action<NetId, Node> Spawned;
 
     /// <summary>
     /// Raised once the node is out of the registry, inside its <c>TreeExiting</c>: the node is still in the tree and
     /// may be in the middle of being freed, so a subscriber must not change the tree. Freeing a whole World raises it
     /// for every entity.
     /// </summary>
-    event Action<NetId, Node> DespawnedEvent;
+    event Action<NetId, Node> Despawned;
 
     bool TryGetNode(NetId id, out Node node);
 

@@ -12,8 +12,6 @@ namespace NeonWarfare.RepoTests.Conventions;
 /// </summary>
 public class CodeStyleTests
 {
-    private const string EventSuffix = "Event";
-
     private const string ResourcePathPrefix = "res://";
 
     /// <summary>The file that owns every global import, see Docs/Repository-structure.md.</summary>
@@ -27,36 +25,6 @@ public class CodeStyleTests
     private static readonly string[] LoadMethods = ["Load", "LoadThreadedRequest", "LoadThreadedGet"];
 
     private const string LoggerAttribute = "Logger";
-
-    /// <summary>
-    /// "Events are named <c>&lt;What&gt;Event</c> with the side spelled out" from Docs/Code-style.md.
-    /// The suffix is what tells a subscription apart from a method call at the use site, where the two
-    /// look the same.
-    /// </summary>
-    [Fact]
-    public void Events_AreNamedWithTheEventSuffix()
-    {
-        FailureReport report = new("Events without the Event suffix");
-
-        foreach (CSharpFile file in CSharpFile.LoadAll())
-        {
-            IEnumerable<MemberDeclarationSyntax> events = file.Nodes<MemberDeclarationSyntax>()
-                .Where(member => member is EventFieldDeclarationSyntax or EventDeclarationSyntax);
-
-            foreach (MemberDeclarationSyntax declaration in events)
-            {
-                foreach (string name in CSharpFile.DeclaredNames(declaration))
-                {
-                    if (!name.EndsWith(EventSuffix, StringComparison.Ordinal))
-                    {
-                        report.Add($"{file.Describe(declaration)}: '{name}' must end with {EventSuffix}");
-                    }
-                }
-            }
-        }
-
-        report.AssertEmpty();
-    }
 
     /// <summary>
     /// "New global imports are added only there" from Docs/Services.md. A global using is invisible at

@@ -76,18 +76,18 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
     /// <summary>
     /// A remote client without a World got the server's join snapshot: the World is created from it.
     /// </summary>
-    public event Action<byte[]> WorldSnapshotReceivedEvent;
+    public event Action<byte[]> WorldSnapshotReceived;
 
     /// <summary>
     /// The server refused this process's join: a remote client gets it before it has a World, the host from its own
     /// World, inside the tick.
     /// </summary>
-    public event Action<JoinRejectReason> JoinRejectedEvent;
+    public event Action<JoinRejectReason> JoinRejected;
 
     /// <summary>
     /// The server has applied this process's join, and its <see cref="Screen.Hud"/> is created.
     /// </summary>
-    public event Action LocalPlayerJoinedEvent;
+    public event Action LocalPlayerJoined;
 
     public override void _Ready()
     {
@@ -156,9 +156,9 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
     {
         _network?.QueueFree();
         _network = new Network(this);
-        _network.PeerConnectedEvent += PeerConnectedEvent;
-        _network.PeerDisconnectedEvent += PeerDisconnectedEvent;
-        _network.PacketReceivedEvent += PacketReceivedEvent;
+        _network.PeerConnected += OnPeerConnected;
+        _network.PeerDisconnected += OnPeerDisconnected;
+        _network.PacketReceived += OnPacketReceived;
         this.AddChildWithName(_network, "Network");
         return _network;
     }
@@ -171,7 +171,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
     {
         if (LocalPeerId is { } localPeerId)
         {
-            _world.OnClientConnected(localPeerId);
+            _world.AddClient(localPeerId);
         }
         ((IServerConnection) this).Send(_codec.Encode(localPlayer.ToJoinRequest(_codec.ProtocolHash)));
     }
@@ -191,11 +191,11 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
             {
                 // The event dispatch would swallow it and leave the loading screen forever: the join fails instead
                 _log.Error(e, HudFailedLog);
-                JoinRejectedEvent?.Invoke(JoinRejectReason.InternalError);
+                JoinRejected?.Invoke(JoinRejectReason.InternalError);
                 return;
             }
         }
-        LocalPlayerJoinedEvent?.Invoke();
+        LocalPlayerJoined?.Invoke();
     }
 
     int? IClientsConnection.LocalPeerId => LocalPeerId;
@@ -225,7 +225,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
         {
             // Queued like any other disconnection, so it is processed in the next tick, not inside this one
             _log.Error(HostDisconnectedLog);
-            _world.OnClientDisconnected(peerId);
+            _world.RemoveClient(peerId);
             return;
         }
         if (_network == null) throw new InvalidOperationException(NoNetworkError.FormatWith(peerId));
@@ -245,17 +245,17 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
         _network.Send(ServerPeerId, packet);
     }
 
-    private void PeerConnectedEvent(int peerId)
+    private void OnPeerConnected(int peerId)
     {
-        if (HasWorld) _world.OnClientConnected(peerId);
+        if (HasWorld) _world.AddClient(peerId);
     }
 
-    private void PeerDisconnectedEvent(int peerId)
+    private void OnPeerDisconnected(int peerId)
     {
-        if (HasWorld) _world.OnClientDisconnected(peerId);
+        if (HasWorld) _world.RemoveClient(peerId);
     }
 
-    private void PacketReceivedEvent(int peerId, byte[] packet)
+    private void OnPacketReceived(int peerId, byte[] packet)
     {
         if (_network.IsServer)
         {
@@ -291,7 +291,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
             // The subscriber creates the World inside the call, before the events packet of the join tick arrives
             if (packet.Length > 0 && packet[0] == (byte) ServerPacketKind.Snapshot)
             {
-                WorldSnapshotReceivedEvent?.Invoke(packet);
+                WorldSnapshotReceived?.Invoke(packet);
             }
             else
             {
@@ -318,6 +318,6 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
     {
         JoinRejectReason reason = JoinRejectedPacket.Read(packet);
         _log.Error(JoinRejectedLog, reason);
-        JoinRejectedEvent?.Invoke(reason);
+        JoinRejected?.Invoke(reason);
     }
 }

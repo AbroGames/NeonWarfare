@@ -57,8 +57,8 @@ public class StateReplicator
     {
         _entities = entities;
         _replicator = replicator;
-        entities.SpawnedEvent += OnEntitySpawned;
-        entities.DespawnedEvent += OnEntityDespawned;
+        entities.Spawned += OnEntitySpawned;
+        entities.Despawned += OnEntityDespawned;
     }
 
     /// <summary>
