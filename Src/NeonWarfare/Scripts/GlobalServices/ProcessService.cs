@@ -45,6 +45,7 @@ public class ProcessService
 
         string[] arguments = dedicatedServerArgs.GetArrayToStartDedicatedServer();
         _dedicatedServerPid = StartNewApplication(showWindow ? arguments : [..arguments, GodotHeadlessFlag]);
+        _log.Information("Started dedicated server process {pid}", _dedicatedServerPid);
     }
 
     /// <summary>

@@ -10,8 +10,7 @@ namespace NeonWarfare.RepoTests.Docs;
 /// needs it more, not less — the smoke project is not run in CI, so a scenario that was renamed or
 /// deleted can stay wrong in the document for a long time with nothing pointing it out.
 ///
-/// The unit is a test method here, not a class: the table lists Client_StartsToMenu and its siblings,
-/// which all live in one class.
+/// The unit is a test method here, not a class: the table names a scenario the way the test report does.
 /// </summary>
 public class SmokeTestingDocTests
 {

@@ -24,10 +24,18 @@ public sealed partial class GameProcess : IDisposable
 
     private const int Sigterm = 15;
 
+    /// <summary>
+    /// How much later than its start line a child may seem to have started and still be that child. The start time
+    /// is derived from the boot time, so it drifts a little, while a pid reused by another process starts no earlier
+    /// than the child's exit, seconds after the line.
+    /// </summary>
+    private static readonly TimeSpan ChildStartTolerance = TimeSpan.FromSeconds(1);
+
     private readonly Process _process;
     private readonly List<string> _output = [];
+    private readonly List<ChildServer> _children = [];
+    private readonly List<string> _childProblems = [];
     private readonly Lock _outputLock = new();
-
 
     private GameProcess(string name, Process process)
     {
@@ -55,6 +63,21 @@ public sealed partial class GameProcess : IDisposable
         }
     }
 
+    /// <summary>
+    /// The child processes found still running once this one had exited. A client waits for its child server to
+    /// exit, so every such child is a bug of the game; it is killed by then.
+    /// </summary>
+    public IReadOnlyList<string> ChildProblems
+    {
+        get
+        {
+            lock (_outputLock)
+            {
+                return _childProblems.ToArray();
+            }
+        }
+    }
+
     public bool HasExited => _process.HasExited;
 
     public int ExitCode => _process.ExitCode;
@@ -66,6 +89,13 @@ public sealed partial class GameProcess : IDisposable
     /// </summary>
     [GeneratedRegex(@"\x1B\[[0-9;]*m")]
     private static partial Regex AnsiEscapeRegex();
+
+    /// <summary>
+    /// ProcessService: the client has started a child dedicated server. The child inherits the client's stdout, so
+    /// its lines arrive in the same stream, and the stream ends only once the child has exited too.
+    /// </summary>
+    [GeneratedRegex(@"Started dedicated server process (?<pid>\d+)")]
+    private static partial Regex ChildStartedRegex();
 
     /// <summary>
     /// Launches the engine against the repository. <paramref name="arguments"/> are the game flags —
@@ -168,6 +198,21 @@ public sealed partial class GameProcess : IDisposable
         return _process.ExitCode == 0 ? null : $"exited with code {_process.ExitCode} after SIGTERM";
     }
 
+    /// <summary>
+    /// Waits for the process to quit without being asked. Null when it did, within <paramref name="timeout"/> and
+    /// with exit code 0; otherwise what went wrong. A process still running is left for <see cref="Stop"/>.
+    /// </summary>
+    public string? WaitForSelfExit(TimeSpan timeout)
+    {
+        if (!_process.WaitForExit(timeout))
+        {
+            return $"did not exit on its own within {timeout.TotalSeconds:0} s";
+        }
+
+        DrainOutput();
+        return _process.ExitCode == 0 ? null : $"exited on its own with code {_process.ExitCode}";
+    }
+
     public void Dispose()
     {
         try
@@ -216,9 +261,60 @@ public sealed partial class GameProcess : IDisposable
     /// <summary>
     /// WaitForExit(int) returning true does not mean the asynchronous output handlers are done — the
     /// last lines, the ones that explain a failure, can still be in flight. Only the parameterless
-    /// overload waits for the redirected streams to reach their end.
+    /// overload waits for the redirected streams to reach their end, and a child still running keeps them open,
+    /// so the children are killed first.
     /// </summary>
-    private void DrainOutput() => _process.WaitForExit();
+    private void DrainOutput()
+    {
+        KillLeftoverChildren();
+        _process.WaitForExit();
+    }
+
+    private void KillLeftoverChildren()
+    {
+        ChildServer[] children;
+        lock (_outputLock)
+        {
+            children = _children.ToArray();
+            _children.Clear();
+        }
+
+        foreach (ChildServer child in children)
+        {
+            if (!TryKillRunning(child)) continue;
+
+            lock (_outputLock)
+            {
+                _childProblems.Add(
+                    $"child server {child.Pid} was still running after its client exited and was killed");
+            }
+        }
+    }
+
+    /// <summary>
+    /// False when <paramref name="child"/> is no longer running. The child is not ours, so it is looked up by pid:
+    /// it was reparented once its client exited. A process under that pid started after the child's start line is
+    /// another one that reused the pid, and is left alone.
+    /// </summary>
+    private static bool TryKillRunning(ChildServer child)
+    {
+        try
+        {
+            using Process process = Process.GetProcessById(child.Pid);
+            if (process.HasExited || process.StartTime > child.SeenAt + ChildStartTolerance) return false;
+
+            process.Kill(entireProcessTree: true);
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Looks only at the lines received so far: the whole output only once <see cref="Stop"/> has returned.
@@ -256,12 +352,22 @@ public sealed partial class GameProcess : IDisposable
         if (line is null) return;
 
         string plain = AnsiEscapeRegex().Replace(line, string.Empty);
+        Match childStarted = ChildStartedRegex().Match(plain);
         lock (_outputLock)
         {
             _output.Add(plain);
+            if (childStarted.Success)
+            {
+                _children.Add(new ChildServer(int.Parse(childStarted.Groups["pid"].Value), DateTime.Now));
+            }
         }
     }
 
     [DllImport("libc", EntryPoint = "kill", SetLastError = true)]
     private static extern int NativeKill(int pid, int signal);
+
+    /// <summary>
+    /// <paramref name="SeenAt"/> is local time, as <see cref="Process.StartTime"/> is.
+    /// </summary>
+    private readonly record struct ChildServer(int Pid, DateTime SeenAt);
 }

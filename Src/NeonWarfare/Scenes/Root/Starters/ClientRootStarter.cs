@@ -49,6 +49,14 @@ public class ClientRootStarter(RootData rootData) : BaseRootStarter(rootData)
         {
             Services.MainScene.ConnectToMultiplayerGame(_clientArgs.AutoConnectIp, _clientArgs.AutoConnectPort);
         }
+        else if (_clientArgs.AutoHost || _clientArgs.AutoHostDedicated)
+        {
+            Services.MainScene.HostMultiplayerGameAsClient(
+                _clientArgs.AutoHostSaveFileName ?? Services.SaveLoad.GenNewSaveFileName(),
+                _clientArgs.AutoHostPort,
+                createDedicatedServerProcess: _clientArgs.AutoHostDedicated,
+                showWindow: !_clientArgs.AutoHostDedicatedHeadless);
+        }
         else
         {
             Services.MainScene.StartMainMenu();

@@ -55,12 +55,13 @@ someone else's server, hosting "from inside the client". `Init()` after `base.In
 | `Services.I18N.SetCurrentLocale(...)` | The locale from `GameSettings` |
 | `Services.LoadingScreen.SetLoadingScreen(Loading)` | The first showing of the loading screen |
 
-`Start()` — exactly one of three, by the flags:
+`Start()` — exactly one of four, by the flags:
 
 | Condition | Action |
 |---|---|
 | `--auto-start` | `MainScene.StartSingleplayerGame(...)`. The save name comes from `--auto-start-savefile`, and without that flag — a generated `SaveLoad.GenNewSaveFileName()` |
 | `--auto-connect` | `MainScene.ConnectToMultiplayerGame(--auto-connect-ip, --auto-connect-port)` |
+| `--auto-host` or `--auto-host-dedicated` | `MainScene.HostMultiplayerGameAsClient(...)`: the save name as for `--auto-start`, but from `--auto-host-savefile`; the child server process per `--auto-host-dedicated`, its window unless `--auto-host-dedicated-headless` |
 | otherwise | `MainScene.StartMainMenu()`, which clears the loading screen once the menu is shown |
 
 ### `DedicatedServerRootStarter`
@@ -121,10 +122,10 @@ The handlers die with the `Game`, so nothing unsubscribes.
 | Starter | `MainSceneService` method | Network | World | When it is used |
 |---|---|---|---|---|
 | `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName)` | none | `Host`, `Hud` | A single-player game from the menu, `--auto-start` (+ `--auto-start-savefile`) |
-| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | an ENet server | `Host`, `Hud` | Hosting "from inside the client" |
+| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | an ENet server | `Host`, `Hud` | Hosting "from inside the client" from the menu, `--auto-host` |
 | `DedicatedServerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | an ENet server | `Dedicated`, `ServerHud` or none | A dedicated server (`--server`) |
 | `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | an ENet client | `RemoteClient`, `Hud`, from the snapshot | Connecting to a server from the menu, `--auto-connect` |
-| `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | an ENet client + a child server process | as above | Hosting with an out-of-process server |
+| `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | an ENet client + a child server process | as above | Hosting with an out-of-process server from the menu, `--auto-host-dedicated` |
 
 ### The shared steps: `BaseGameStarter`
 

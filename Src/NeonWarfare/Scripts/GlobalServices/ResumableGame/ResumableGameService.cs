@@ -49,7 +49,8 @@ public class ResumableGameService
                 Services.MainScene.ConnectToMultiplayerGame(game.Host, game.Port);
                 break;
             case ResumableGame.ResumableType.CreateServer: 
-                Services.MainScene.HostMultiplayerGameAsClient(game.SaveName, game.Port, game.IsDedicated!.Value);
+                Services.MainScene.HostMultiplayerGameAsClient(
+                    game.SaveName, game.Port, game.IsDedicated!.Value, showWindow: true);
                 break;
         }
     }

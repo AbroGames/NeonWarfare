@@ -25,10 +25,15 @@ the dedicated server detects this mode by `DisplayServer.GetName()` and creates 
 | `--auto-connect` | Immediately connect to a server, skipping the menu (the address and port are set by other flags) |
 | `--auto-connect-ip <ip>` | The server address for auto-connection (if the flag is not passed, then `127.0.0.1`) |
 | `--auto-connect-port <port>` | The port for auto-connection (if the flag is not passed, then `25566`) |
+| `--auto-host` | Immediately host a multiplayer game inside the client, skipping the menu |
+| `--auto-host-dedicated` | The same, but the server runs in a child dedicated server process |
+| `--auto-host-dedicated-headless` | Start that child server without a window |
+| `--auto-host-savefile <name>` | The save file name for auto-hosting (if the flag is not passed, then a new save file) |
+| `--auto-host-port <port>` | The port for auto-hosting (if the flag is not passed, then `25566`) |
 | `--nick <nick>` | Temporarily (without writing to the settings) override the nickname |
 | `--uid <uid>` | Temporarily (without writing to the settings) override the player UID |
 
-`--auto-start` and `--auto-connect` are mutually exclusive: if both are passed, `--auto-start` wins.
+`--auto-start`, `--auto-connect` and auto-hosting are mutually exclusive: the first of them in this order wins.
 
 **Dedicated server** (`DedicatedServerArgs`):
 

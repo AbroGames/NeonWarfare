@@ -81,6 +81,7 @@ public partial class CreateSavedServerPage : MainMenuPage
 
         int port = (int) PortSpinBox.Value;
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        TryStartGame(() => Services.MainScene.HostMultiplayerGameAsClient(_selectedSaveFileName, port, isDedicated));
+        TryStartGame(() =>
+            Services.MainScene.HostMultiplayerGameAsClient(_selectedSaveFileName, port, isDedicated, showWindow: true));
     }
 }

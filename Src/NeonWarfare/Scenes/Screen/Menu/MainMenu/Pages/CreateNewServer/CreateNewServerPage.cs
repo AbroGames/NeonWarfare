@@ -29,6 +29,7 @@ public partial class CreateNewServerPage : MainMenuPage
             ? Services.SaveLoad.GenNewSaveFileName()
             : SaveNameLineEdit.Text.Trim();
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        TryStartGame(() => Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated));
+        TryStartGame(() =>
+            Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated, showWindow: true));
     }
 }
