@@ -32,7 +32,7 @@ public class ServerTickLoop(
     PeerStateTable peers,
     EventOutbox outbox,
     StateReplicator stateReplicator,
-    SaveWriter saveWriter,
+    SaveService saveService,
     IClientsConnection clientsConnection)
 {
     private const string SendFailedLog = "Events packet for peer {peerId} failed, the other peers still get theirs";
@@ -60,7 +60,7 @@ public class ServerTickLoop(
         //TODO Tick() of the facades with a time rule, once the first one appears
         SendState(joinedBefore);
         SendSnapshots(joinedBefore);
-        saveWriter.WriteRequested();
+        saveService.WriteRequested();
         SendEvents();
     }
 

@@ -37,8 +37,8 @@ A save is RepliCAT, as the join snapshot is: one path for both, written from the
 exactly the state at the end of a tick. `SaveWriter` writes the protocol hash (64 bits, first and fixed-size), the
 next NetId and the tick, then a spawn record of every entity (`StateReplicator.WriteSave`).
 
-* **"Save as"** — `SaveCommand` (admin) → `SaveService.RequestSave`: the save is written at the end of the tick, after
-  its packets; the written file becomes the World's save file, and the sender gets a chat reply.
+* **"Save as"** — `SaveCommand` (admin) → `SaveService.RequestSave`: one `SaveWriter.Write()` serves every request
+  of the tick, after its packets; the written file becomes the World's save file, and the sender gets a chat reply.
 * **On exit** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree (quit or back to the
   menu), under the `AutoSaveEnabled` setting, if a tick has run. It comes between ticks: `Quit()` only sets a flag.
 * **Load** — `SaveLoader` (origin `FromSave`) spawns every entity with its saved NetId, then restores the NetId

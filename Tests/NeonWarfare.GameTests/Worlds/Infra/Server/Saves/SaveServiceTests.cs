@@ -34,7 +34,7 @@ public class SaveServiceTests
     {
         _scenes = TestWorldScenes.Create();
         var catalog = new EntityCatalog(_scenes.GetScenesList(),
-            [..NetMessageCodecTests.CreateMapping().Types, typeof(UnmappedPartNode)]);
+            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode)]);
         _root = new Node();
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(_root);
         _files = new RecordingSaveFiles();
@@ -59,6 +59,7 @@ public class SaveServiceTests
         _scenes.Free();
     }
 
+    // The save is the state at the end of the tick, as the joining peers get it; one save serves every request of it
     [TestCase]
     [RequireGodotRuntime]
     public void RequestSave_WrittenToTheNewFileAtTheEndOfTheTick_WhichBecomesTheSaveFile()
@@ -66,18 +67,40 @@ public class SaveServiceTests
         Tick();
         int written = 0;
         _service.RequestSave(NewFile, () => written++, error => throw error);
+        _service.RequestSave(NewFile, () => written++, error => throw error);
+        byte[] atTheRequest = Writer().Write();
 
+        var counter = _server.GetRequiredService<EntitySpawner>().SpawnOnRoot<CounterNode>(node => node.Value = 1);
+        counter.Value = 2;
         AssertThat(_files.Files).IsEmpty();
         Tick();
 
-        AssertThat(written).IsEqual(1);
-        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(NewFile);
-        AssertThat(_files.Files[0].Data).IsEqual(Writer().Write());
-        AssertThat(_service.SaveFileName).IsEqual(NewFile);
-
-        _service.SaveOnExit();
-
+        AssertThat(written).IsEqual(2);
         AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(NewFile, NewFile);
+        AssertThat(_files.Files[0].Data).IsEqual(Writer().Write()).IsNotEqual(atTheRequest);
+        AssertThat(_files.Files[1].Data).IsSame(_files.Files[0].Data);
+        AssertThat(_service.SaveFileName).IsEqual(NewFile);
+        _files.Files.Clear();
+
+        Tick();
+
+        AssertThat(_files.Files).IsEmpty();
+        _service.SaveOnExit();
+        AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(NewFile);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RequestSave_ACallbackThrows_TheOthersStillRun()
+    {
+        Tick();
+        int written = 0;
+        _service.RequestSave(NewFile, () => throw new InvalidOperationException("callback"), error => throw error);
+        _service.RequestSave(NewFile, () => written++, error => throw error);
+
+        Tick();
+
+        AssertThat(written).IsEqual(1);
     }
 
     [TestCase]
@@ -87,6 +110,8 @@ public class SaveServiceTests
         Tick();
         _files.Failing = true;
         List<Exception> failed = [];
+        _service.RequestSave(NewFile, () => throw new InvalidOperationException("written"),
+            _ => throw new InvalidOperationException("failed"));
         _service.RequestSave(NewFile, () => throw new InvalidOperationException("written"), failed.Add);
 
         Tick();
@@ -103,6 +128,8 @@ public class SaveServiceTests
         Tick();
         _server.GetRequiredService<EntitySpawner>().SpawnOnRoot<UnmappedPartNode>();
         List<Exception> failed = [];
+        _service.RequestSave(NewFile, () => throw new InvalidOperationException("written"),
+            _ => throw new InvalidOperationException("failed"));
         _service.RequestSave(NewFile, () => throw new InvalidOperationException("written"), failed.Add);
 
         Tick();
