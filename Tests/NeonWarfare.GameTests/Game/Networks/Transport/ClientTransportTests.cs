@@ -59,22 +59,22 @@ public class ClientTransportTests
     public void PacketReceived_NotFromTheServer_IsDropped()
     {
         _network.Receive(OtherPeer, Snapshot(1, [1]));
-        _network.Receive(OtherPeer, Rejection(JoinRejectReason.UidInUse));
+        _network.Receive(OtherPeer, Disconnecting(DisconnectReason.UidInUse));
 
         AssertThat(_snapshots).IsEmpty();
-        AssertThat(_owner.Rejections).IsEmpty();
+        AssertThat(_owner.Disconnections).IsEmpty();
     }
 
     // Before and after the World alike: the World would throw on it
     [TestCase]
     [RequireGodotRuntime]
-    public void PacketReceived_JoinRejected_ReachesTheOwner()
+    public void PacketReceived_Disconnecting_ReachesTheOwner()
     {
-        _network.Receive(ServerPeer, Rejection(JoinRejectReason.UidInUse));
+        _network.Receive(ServerPeer, Disconnecting(DisconnectReason.UidInUse));
         Connect();
-        _network.Receive(ServerPeer, Rejection(JoinRejectReason.InternalError));
+        _network.Receive(ServerPeer, Disconnecting(DisconnectReason.Displaced));
 
-        AssertThat(_owner.Rejections).ContainsExactly(JoinRejectReason.UidInUse, JoinRejectReason.InternalError);
+        AssertThat(_owner.Disconnections).ContainsExactly(DisconnectReason.UidInUse, DisconnectReason.Displaced);
     }
 
     [TestCase]
@@ -84,13 +84,13 @@ public class ClientTransportTests
         int broken = 0;
         _transport.ConnectionBroken += () => broken++;
 
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.JoinRejected]);
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Disconnecting]);
         _network.Receive(ServerPeer, []);
-        _network.Receive(ServerPeer, Rejection(JoinRejectReason.UidInUse));
+        _network.Receive(ServerPeer, Disconnecting(DisconnectReason.UidInUse));
         _network.Receive(ServerPeer, Snapshot(1, [1]));
 
         AssertThat(broken).IsEqual(1);
-        AssertThat(_owner.Rejections).IsEmpty();
+        AssertThat(_owner.Disconnections).IsEmpty();
         AssertThat(_snapshots).IsEmpty();
     }
 
@@ -250,10 +250,10 @@ public class ClientTransportTests
         return packet.WrittenSpan.ToArray();
     }
 
-    private static byte[] Rejection(JoinRejectReason reason)
+    private static byte[] Disconnecting(DisconnectReason reason)
     {
         var packet = new ArrayBufferWriter<byte>();
-        ServerPackets.WriteJoinRejected(reason, packet);
+        ServerPackets.WriteDisconnecting(reason, packet);
         return packet.WrittenSpan.ToArray();
     }
 }

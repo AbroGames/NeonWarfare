@@ -145,14 +145,14 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
             // The join fails instead of throwing, because the event dispatch would swallow the exception and leave the
             // loading screen forever.
             _log.Error(e, "The Hud failed to be created after the join");
-            Fail(JoinRejectedMessage(JoinRejectReason.InternalError));
+            Fail(DisconnectedMessage(DisconnectReason.InternalError));
             return;
         }
         LocalPlayerJoined?.Invoke();
     }
 
     // The transport has already logged the reason.
-    void ILocalPlayerOwner.JoinRejected(JoinRejectReason reason) => Fail(JoinRejectedMessage(reason));
+    void ILocalPlayerOwner.Disconnected(DisconnectReason reason) => Fail(DisconnectedMessage(reason));
 
     void IServerOwner.AdminLeft()
     {
@@ -222,15 +222,18 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
         Failed?.Invoke(message);
     }
 
-    private static string JoinRejectedMessage(JoinRejectReason reason) => Services.I18N.Tr(reason switch
+    private static string DisconnectedMessage(DisconnectReason reason) => Services.I18N.Tr(reason switch
     {
-        JoinRejectReason.ProtocolMismatch => "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH",
-        JoinRejectReason.InvalidUid => "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID",
-        JoinRejectReason.InvalidNick => "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK",
-        JoinRejectReason.InvalidColor => "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR",
-        JoinRejectReason.UidInUse => "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE",
-        JoinRejectReason.InternalError => "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR",
+        DisconnectReason.ProtocolMismatch => "MESSAGE_MENU__DISCONNECTED_PROTOCOL_MISMATCH",
+        DisconnectReason.InvalidUid => "MESSAGE_MENU__DISCONNECTED_INVALID_UID",
+        DisconnectReason.InvalidNick => "MESSAGE_MENU__DISCONNECTED_INVALID_NICK",
+        DisconnectReason.InvalidColor => "MESSAGE_MENU__DISCONNECTED_INVALID_COLOR",
+        DisconnectReason.UidInUse => "MESSAGE_MENU__DISCONNECTED_UID_IN_USE",
+        DisconnectReason.InternalError => "MESSAGE_MENU__DISCONNECTED_INTERNAL_ERROR",
+        DisconnectReason.Displaced => "MESSAGE_MENU__DISCONNECTED_DISPLACED",
+        DisconnectReason.HandshakeTimeout => "MESSAGE_MENU__DISCONNECTED_HANDSHAKE_TIMEOUT",
+        DisconnectReason.MissedPacket => "MESSAGE_MENU__DISCONNECTED_MISSED_PACKET",
         // A server of another build may send a code this build does not know.
-        _ => "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
+        _ => "MESSAGE_MENU__DISCONNECTED_UNKNOWN"
     });
 }

@@ -234,7 +234,7 @@ public class TickStateReplicationTests
         Join(CarolPeer, CarolUid, "Carol");
         Tick();
 
-        (SentKind, byte) rejection = (SentKind.JoinRejected, (byte) JoinRejectReason.InternalError);
+        (SentKind, byte) rejection = (SentKind.DisconnectReason, (byte) DisconnectReason.InternalError);
         AssertThat(Sent(BobPeer)).ContainsExactly(rejection);
         AssertThat(Sent(CarolPeer)).ContainsExactly(rejection);
         AssertThat(_connection.Disconnected).ContainsExactlyInAnyOrder(BobPeer, CarolPeer);
@@ -260,7 +260,7 @@ public class TickStateReplicationTests
         _connection.Packets.Clear();
         node.Text = new string('x', 70_000);
         _connection.FailingPeer = BobPeer;
-        _connection.FailingKind = SentKind.JoinRejected;
+        _connection.FailingKind = SentKind.DisconnectReason;
 
         Join(BobPeer, BobUid, "Bob");
         Join(CarolPeer, CarolUid, "Carol");
@@ -268,7 +268,7 @@ public class TickStateReplicationTests
 
         AssertThat(Sent(BobPeer)).IsEmpty();
         AssertThat(Sent(CarolPeer))
-            .ContainsExactly((SentKind.JoinRejected, (byte) JoinRejectReason.InternalError));
+            .ContainsExactly((SentKind.DisconnectReason, (byte) DisconnectReason.InternalError));
         AssertThat(_connection.Disconnected).ContainsExactlyInAnyOrder(BobPeer, CarolPeer);
     }
 
@@ -286,7 +286,7 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(_connection.Disconnected).ContainsExactly(BobPeer);
-        AssertThat(Kinds(BobPeer)).IsEmpty();
+        AssertThat(Sent(BobPeer)).ContainsExactly((SentKind.DisconnectReason, (byte) DisconnectReason.MissedPacket));
         AssertThat(Kinds(CarolPeer)).ContainsExactly(SentKind.Snapshot, SentKind.Events);
         _connection.Packets.Clear();
 
@@ -675,7 +675,7 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(_connection.Disconnected).ContainsExactly(AlicePeer);
-        AssertThat(Kinds(AlicePeer)).IsEmpty();
+        AssertThat(Sent(AlicePeer)).ContainsExactly((SentKind.DisconnectReason, (byte) DisconnectReason.MissedPacket));
         AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.State | SentKind.Events);
         _connection.Packets.Clear();
 

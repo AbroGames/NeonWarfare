@@ -17,8 +17,8 @@ public interface ILocalPlayerOwner
     void Joined();
 
     /// <summary>
-    /// The server refused this process's join.
-    /// The transport calls it, never the World, because a remote client is refused before it has a World.
+    /// The server is disconnecting this process's player, before or after its join.
+    /// The transport calls it, never the World, because a remote client may be disconnected before it has a World.
     /// </summary>
-    void JoinRejected(JoinRejectReason reason);
+    void Disconnected(DisconnectReason reason);
 }

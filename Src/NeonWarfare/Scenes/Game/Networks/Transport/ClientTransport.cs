@@ -95,10 +95,10 @@ public sealed class ClientTransport : IServerConnection
         (ServerPacketKind kind, ReadOnlyMemory<byte> body) = ServerPackets.Read(packet);
         switch (kind)
         {
-            case ServerPacketKind.JoinRejected:
-                JoinRejectReason reason = ServerPackets.ReadJoinRejected(body.Span);
-                _log.Error("The server rejected the join: {reason}", reason);
-                _owner.JoinRejected(reason);
+            case ServerPacketKind.Disconnecting:
+                DisconnectReason reason = ServerPackets.ReadDisconnecting(body.Span);
+                _log.Information("The server is disconnecting: {reason}", reason);
+                _owner.Disconnected(reason);
                 break;
             case ServerPacketKind.Snapshot when _endpoint == null:
                 (long snapshotTick, ReadOnlyMemory<byte> records) = ServerPackets.ReadSnapshot(body);

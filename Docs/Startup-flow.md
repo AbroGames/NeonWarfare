@@ -113,7 +113,7 @@ while being built is freed and its `ServerTransport` detached from the network.
 | Event | When |
 |---|---|
 | `LocalPlayerJoined` | The World reported its own `PlayerJoinedEvent`: `Game` has shown the `Hud`, so the UI never sees "me" offline |
-| `Failed(message)` | The join is rejected, the `Hud` or the client World fails to be created, the snapshot is broken, the connection fails or the server disconnects |
+| `Failed(message)` | The server disconnects with a reason, the `Hud` or the client World fails to be created, the snapshot is broken, the connection fails or the server disconnects |
 | `AdminLeft` | The admin of the server World has left, inside the tick |
 
 None is raised once the `Game` is queued for deletion: the multiplayer is still polled until the end of that frame.

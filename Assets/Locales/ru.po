@@ -67,26 +67,35 @@ msgstr "Ок"
 msgid "MESSAGE_MENU__DEFAULT_ERROR"
 msgstr "Неизвестная ошибка"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH"
+msgid "MESSAGE_MENU__DISCONNECTED_PROTOCOL_MISMATCH"
 msgstr "На сервере другая версия игры"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID"
+msgid "MESSAGE_MENU__DISCONNECTED_INVALID_UID"
 msgstr "Сервер отклонил идентификатор игрока"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK"
+msgid "MESSAGE_MENU__DISCONNECTED_INVALID_NICK"
 msgstr "Ник должен быть длиной от 3 до 25 символов, без пробелов"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR"
+msgid "MESSAGE_MENU__DISCONNECTED_INVALID_COLOR"
 msgstr "Цвет игрока слишком тёмный"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE"
+msgid "MESSAGE_MENU__DISCONNECTED_UID_IN_USE"
 msgstr "Игрок с вашим идентификатором уже на сервере"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR"
+msgid "MESSAGE_MENU__DISCONNECTED_INTERNAL_ERROR"
 msgstr "Сервер не смог впустить вас из-за внутренней ошибки"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
-msgstr "Сервер отклонил подключение"
+msgid "MESSAGE_MENU__DISCONNECTED_DISPLACED"
+msgstr "Игрок с таким же UID подключился к серверу"
+
+msgid "MESSAGE_MENU__DISCONNECTED_HANDSHAKE_TIMEOUT"
+msgstr "Сервер не дождался вашего входа"
+
+msgid "MESSAGE_MENU__DISCONNECTED_MISSED_PACKET"
+msgstr "Связь с сервером прервалась, подключитесь заново"
+
+msgid "MESSAGE_MENU__DISCONNECTED_UNKNOWN"
+msgstr "Сервер отключил вас"
 
 msgid "MESSAGE_MENU__CONNECTION_FAILED"
 msgstr "Не удалось подключиться к серверу"

@@ -14,7 +14,7 @@ public enum SentKind
     Snapshot = 1,
     State = 2,
     Events = 4,
-    JoinRejected = 8
+    DisconnectReason = 8
 }
 
 /// <summary>
@@ -22,7 +22,7 @@ public enum SentKind
 /// host's own peer to it synchronously, inside the call, as the host's transport does; the commands go to
 /// <see cref="CommandLoopback"/> the same way. The packets of a remote peer go to its entry in
 /// <see cref="Receivers"/>, also inside the call: ENet keeps the order of a reliable channel, so a client World gets
-/// them as if in <c>poll</c>. A join rejection is only recorded, its body is the reason byte: the transport reads it
+/// them as if in <c>poll</c>. A disconnect reason is only recorded, its body is the reason byte: the transport reads it
 /// itself, it never reaches a World. A disconnect is only recorded too: the test enqueues the
 /// <c>PeerDisconnected</c> that ENet would report.
 /// </summary>
@@ -30,9 +30,11 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 {
     public const int HostPeer = 1;
 
-    // Body: the records of a snapshot, the reason byte of a rejection, the state section of a tick update.
+    // Body: the records of a snapshot, the reason byte of a disconnect, the state section of a tick update.
     // Events: the events section of a tick update, empty otherwise.
     public record Sent(int PeerId, SentKind Kind, long Tick, byte[] Body, byte[] Events);
+
+    public record Disconnection(int PeerId);
 
     public List<Sent> Packets { get; } = [];
 
@@ -55,6 +57,9 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 
     public List<int> Disconnected { get; } = [];
 
+    // Every recorded packet and disconnect, in the order of the calls
+    public List<object> Timeline { get; } = [];
+
     public int? LocalPeerId { get; set; }
 
     public bool SendTickUpdate(int peerId, long tick, ReadOnlySpan<byte> state, ReadOnlySpan<byte> events)
@@ -68,8 +73,8 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
     public bool SendSnapshot(int peerId, long tick, ReadOnlySpan<byte> records) =>
         Record(new Sent(peerId, SentKind.Snapshot, tick, records.ToArray(), []));
 
-    public bool Reject(int peerId, JoinRejectReason reason) =>
-        Record(new Sent(peerId, SentKind.JoinRejected, 0, [(byte) reason], []));
+    public bool SendDisconnectReason(int peerId, DisconnectReason reason) =>
+        Record(new Sent(peerId, SentKind.DisconnectReason, 0, [(byte) reason], []));
 
     public void Send(ReadOnlySpan<byte> packet)
     {
@@ -78,7 +83,11 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
         CommandLoopback?.Invoke(copy);
     }
 
-    public void Disconnect(int peerId) => Disconnected.Add(peerId);
+    public void Disconnect(int peerId)
+    {
+        Disconnected.Add(peerId);
+        Timeline.Add(new Disconnection(peerId));
+    }
 
     private bool Record(Sent sent)
     {
@@ -89,7 +98,8 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
         if (sent.PeerId == FailingPeer && (FailingKind == null || (sent.Kind & FailingKind) != 0)) return false;
 
         Packets.Add(sent);
-        if (sent.Kind == SentKind.JoinRejected) return true;
+        Timeline.Add(sent);
+        if (sent.Kind == SentKind.DisconnectReason) return true;
         if (sent.PeerId == HostPeer)
         {
             if (sent.Events.Length > 0) Loopback?.Invoke(sent.Events);

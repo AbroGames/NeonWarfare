@@ -13,7 +13,7 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 /// <item><see cref="ServerPacketKind.TickUpdate"/>: the tick (<c>long</c>), the length of the state section
 /// (<c>int</c>), the state section, then the events section to the end. A section is absent when it is empty, and at
 /// least one is present.</item>
-/// <item><see cref="ServerPacketKind.JoinRejected"/>: one <see cref="JoinRejectReason"/> byte.</item>
+/// <item><see cref="ServerPacketKind.Disconnecting"/>: one <see cref="DisconnectReason"/> byte.</item>
 /// </list>
 /// </summary>
 public static class ServerPackets
@@ -50,10 +50,10 @@ public static class ServerPackets
         output.Advance(length);
     }
 
-    public static void WriteJoinRejected(JoinRejectReason reason, IBufferWriter<byte> output)
+    public static void WriteDisconnecting(DisconnectReason reason, IBufferWriter<byte> output)
     {
         Span<byte> span = output.GetSpan(2);
-        span[0] = (byte) ServerPacketKind.JoinRejected;
+        span[0] = (byte) ServerPacketKind.Disconnecting;
         span[1] = (byte) reason;
         output.Advance(2);
     }
@@ -113,15 +113,15 @@ public static class ServerPackets
         return (ReadTick(body.Span), body[TickSize..]);
     }
 
-    /// <summary>A reason this build does not know is read as it is, because it is still a rejection.</summary>
+    /// <summary>A reason this build does not know is read as it is, because it is still a disconnect.</summary>
     /// <exception cref="NetMessageFormatException">The body is not one byte long.</exception>
-    public static JoinRejectReason ReadJoinRejected(ReadOnlySpan<byte> body)
+    public static DisconnectReason ReadDisconnecting(ReadOnlySpan<byte> body)
     {
         if (body.Length != 1)
         {
-            throw new NetMessageFormatException($"A join rejection body is {body.Length} bytes long, 1 expected.");
+            throw new NetMessageFormatException($"A disconnect reason body is {body.Length} bytes long, 1 expected.");
         }
-        return (JoinRejectReason) body[0];
+        return (DisconnectReason) body[0];
     }
 
     private static long ReadTick(ReadOnlySpan<byte> body)

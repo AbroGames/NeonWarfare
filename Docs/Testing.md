@@ -86,7 +86,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot`, same `{n}` everywhere |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |
-| `Localization/JoinRejectedTextTests` | The numbers of the invalid nick text in every translation are `PlayerSessionHandler`'s nick length limits |
+| `Localization/DisconnectedTextTests` | The numbers of the invalid nick text in every translation are `PlayerSessionHandler`'s nick length limits |
 | `Conventions/NamespaceTests` | Namespace matches the folder path relative to `Src/` |
 | `Conventions/GodotBoxIndependenceTests` | `Src/GodotBox` compiles without the game |
 | `Conventions/CmdArgsContractTests` | Flags, parsing and `CmdArgsService` stay where [Cli args](Cli-args.md) says |

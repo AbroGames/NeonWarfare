@@ -15,21 +15,21 @@ public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade)
     // A darker color is lost on the dark background of the game.
     private const float ColorMinLuminance = 0.2f;
 
-    public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
+    public bool ValidateJoin(JoinRequestCommand command, out DisconnectReason reason)
     {
         if (!command.Uid.IsValid)
         {
-            reason = JoinRejectReason.InvalidUid;
+            reason = DisconnectReason.InvalidUid;
             return false;
         }
         if (!IsValidNick(command.Nick))
         {
-            reason = JoinRejectReason.InvalidNick;
+            reason = DisconnectReason.InvalidNick;
             return false;
         }
         if (!IsValidColor(command.Color))
         {
-            reason = JoinRejectReason.InvalidColor;
+            reason = DisconnectReason.InvalidColor;
             return false;
         }
 

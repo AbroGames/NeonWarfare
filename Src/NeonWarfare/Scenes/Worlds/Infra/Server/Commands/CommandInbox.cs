@@ -53,7 +53,7 @@ public class CommandInbox(
         {
             _log.Warning("JoinRequestCommand from peer {peerId} has protocol hash {theirs}, the server has {ours}",
                 peerId, join.ProtocolHash, protocolHash.Value);
-            gatekeeper.Reject(peerId, JoinRejectReason.ProtocolMismatch);
+            gatekeeper.Disconnect(peerId, DisconnectReason.ProtocolMismatch);
             return;
         }
 

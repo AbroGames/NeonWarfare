@@ -63,16 +63,16 @@ public class HostTransportTests
             _worlds.Codec.Encode(player.ToJoinRequest(TestProtocol.Hash)));
     }
 
-    // The World would throw on a rejection: it reaches only the owner
+    // The World would throw on a disconnect reason: it reaches only the owner
     [TestCase]
     [RequireGodotRuntime]
-    public void Reject_LocalPeer_ReachesOnlyTheOwner()
+    public void SendDisconnectReason_LocalPeer_ReachesOnlyTheOwner()
     {
         IClientsConnection clients = FakeHost();
 
-        clients.Reject(LocalPeer, JoinRejectReason.InvalidNick);
+        clients.SendDisconnectReason(LocalPeer, DisconnectReason.InvalidNick);
 
-        AssertThat(_owner.Rejections).ContainsExactly(JoinRejectReason.InvalidNick);
+        AssertThat(_owner.Disconnections).ContainsExactly(DisconnectReason.InvalidNick);
         AssertThat(_endpoint.Calls).IsEmpty();
     }
 
@@ -109,12 +109,13 @@ public class HostTransportTests
 
         clients.SendTickUpdate(RemotePeer, 1, Body, Body);
         clients.SendSnapshot(RemotePeer, 1, Body);
-        clients.Reject(RemotePeer, JoinRejectReason.UidInUse);
+        clients.SendDisconnectReason(RemotePeer, DisconnectReason.UidInUse);
         clients.Disconnect(RemotePeer);
 
         AssertThat(network.Packets.Select(sent => sent.PeerId).Distinct()).ContainsExactly(RemotePeer);
         AssertThat(network.Packets.Select(sent => sent.Packet[0])).ContainsExactly(
-            (byte) ServerPacketKind.TickUpdate, (byte) ServerPacketKind.Snapshot, (byte) ServerPacketKind.JoinRejected);
+            (byte) ServerPacketKind.TickUpdate, (byte) ServerPacketKind.Snapshot,
+            (byte) ServerPacketKind.Disconnecting);
         AssertThat(network.Disconnected).ContainsExactly(RemotePeer);
         AssertThat(_endpoint.Calls).IsEmpty();
     }
@@ -141,7 +142,7 @@ public class HostTransportTests
 
         AssertThrown(() => clients.SendTickUpdate(RemotePeer, 1, [], Body))
             .IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => clients.Reject(RemotePeer, JoinRejectReason.UidInUse))
+        AssertThrown(() => clients.SendDisconnectReason(RemotePeer, DisconnectReason.UidInUse))
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => clients.Disconnect(RemotePeer)).IsInstanceOf<InvalidOperationException>();
     }

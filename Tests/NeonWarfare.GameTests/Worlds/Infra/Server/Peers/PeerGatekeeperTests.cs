@@ -29,7 +29,7 @@ public class PeerGatekeeperTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void DisconnectExpired_PeerNotJoinedByTheDeadline_IsDisconnected()
+    public void DisconnectExpired_PeerNotJoinedByTheDeadline_IsDisconnectedWithTheTimeoutReason()
     {
         _gatekeeper.StartHandshake(AlicePeer);
         _time.Now += PeerGatekeeper.HandshakeTimeout - TimeSpan.FromMilliseconds(1);
@@ -43,6 +43,8 @@ public class PeerGatekeeperTests
         _gatekeeper.DisconnectExpired();
 
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+        AssertThat(_clientsConnection.Packets.Select(sent => (sent.PeerId, sent.Kind, sent.Body[0])))
+            .ContainsExactly((AlicePeer, SentKind.DisconnectReason, (byte) DisconnectReason.HandshakeTimeout));
         AssertThat(_peers.IsCut(AlicePeer)).IsTrue();
         AssertThat(_peers.IsCut(BobPeer)).IsFalse();
     }
@@ -63,25 +65,27 @@ public class PeerGatekeeperTests
     // The client reads the reason only if it comes before the disconnect
     [TestCase]
     [RequireGodotRuntime]
-    public void Reject_SendsTheReasonThenDisconnects()
+    public void DisconnectWithReason_SendsTheReasonThenDisconnects()
     {
-        _gatekeeper.Reject(AlicePeer, JoinRejectReason.InvalidNick);
-        _gatekeeper.Reject(AlicePeer, JoinRejectReason.InvalidColor);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.InvalidNick);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.InvalidColor);
 
         AssertThat(_clientsConnection.Packets.Count).IsEqual(1);
         AssertThat(_clientsConnection.Packets[0].PeerId).IsEqual(AlicePeer);
-        AssertThat(_clientsConnection.Packets[0].Kind).IsEqual(SentKind.JoinRejected);
-        AssertThat(_clientsConnection.Packets[0].Body).ContainsExactly((byte) JoinRejectReason.InvalidNick);
+        AssertThat(_clientsConnection.Packets[0].Kind).IsEqual(SentKind.DisconnectReason);
+        AssertThat(_clientsConnection.Packets[0].Body).ContainsExactly((byte) DisconnectReason.InvalidNick);
+        AssertThat(_clientsConnection.Timeline.Select(entry => entry.GetType().Name))
+            .ContainsExactly(nameof(RecordingClientsConnection.Sent), nameof(RecordingClientsConnection.Disconnection));
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Reject_FailedSend_StillDisconnects()
+    public void DisconnectWithReason_FailedSend_StillDisconnects()
     {
         _clientsConnection.FailingPeer = AlicePeer;
 
-        _gatekeeper.Reject(AlicePeer, JoinRejectReason.InvalidNick);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.InvalidNick);
 
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
@@ -90,12 +94,12 @@ public class PeerGatekeeperTests
     [RequireGodotRuntime]
     public void Disconnect_Twice_CallsTheTransportOnce()
     {
-        _gatekeeper.Disconnect(AlicePeer);
-        _gatekeeper.Disconnect(AlicePeer);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.MissedPacket);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.MissedPacket);
         _gatekeeper.StartHandshake(BobPeer);
         _peers.Join(BobPeer, new PlayerUid("bob"));
-        _gatekeeper.Disconnect(BobPeer);
-        _gatekeeper.Disconnect(BobPeer);
+        _gatekeeper.Disconnect(BobPeer, DisconnectReason.MissedPacket);
+        _gatekeeper.Disconnect(BobPeer, DisconnectReason.MissedPacket);
 
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, BobPeer);
         AssertThat(_peers.IsCut(BobPeer)).IsTrue();
@@ -103,13 +107,14 @@ public class PeerGatekeeperTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Reject_CutPeer_SendsNothing()
+    public void DisconnectWithReason_CutPeer_SendsNothing()
     {
         _gatekeeper.StartHandshake(AlicePeer);
         _peers.Join(AlicePeer, new PlayerUid("alice"));
-        _gatekeeper.Disconnect(AlicePeer);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.MissedPacket);
+        _clientsConnection.Packets.Clear();
 
-        _gatekeeper.Reject(AlicePeer, JoinRejectReason.InternalError);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.InternalError);
 
         AssertThat(_clientsConnection.Packets).IsEmpty();
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);

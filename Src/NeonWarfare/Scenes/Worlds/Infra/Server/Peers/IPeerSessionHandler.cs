@@ -11,10 +11,10 @@ public interface IPeerSessionHandler
 {
     /// <summary>
     /// Checks the fields the client fills, because the body is untrusted input.
-    /// A <c>false</c> result rejects the peer with <c>JoinRejected</c>, so the client does not wait for the handshake
+    /// A <c>false</c> result disconnects the peer with its reason, so the client does not wait for the handshake
     /// timeout.
     /// </summary>
-    bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason);
+    bool ValidateJoin(JoinRequestCommand command, out DisconnectReason reason);
     void Join(JoinRequestCommand command);
 
     /// <summary>

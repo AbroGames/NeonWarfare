@@ -213,7 +213,7 @@ public class WorldEntryPointsTests
         AssertThat(localPlayer.Player.Uid).IsEqual(HostUid);
     }
 
-    // Done when: a rejected host join goes to the failure path, the transport's JoinRejected, and the UI never appears
+    // Done when: a rejected host join goes to the failure path, its disconnect reason, and the UI never appears
     [TestCase]
     [RequireGodotRuntime]
     public void LocalPlayer_OnAHostWithRejectedJoin_IsNeverReported()
@@ -227,7 +227,7 @@ public class WorldEntryPointsTests
         Tick(world);
 
         AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Kind)))
-            .ContainsExactly((HostPeer, SentKind.JoinRejected));
+            .ContainsExactly((HostPeer, SentKind.DisconnectReason));
         AssertThat(owner.JoinedCount).IsEqual(0);
         AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
             .IsInstanceOf<InvalidOperationException>();

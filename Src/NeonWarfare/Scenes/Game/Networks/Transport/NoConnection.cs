@@ -19,7 +19,7 @@ public sealed class NoConnection : IClientsConnection, IServerConnection
     public bool SendSnapshot(int peerId, long tick, ReadOnlySpan<byte> records) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
-    public bool Reject(int peerId, JoinRejectReason reason) =>
+    public bool SendDisconnectReason(int peerId, DisconnectReason reason) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
     public void Disconnect(int peerId) =>
