@@ -22,11 +22,6 @@ public abstract class BaseGameStarter
     protected const string DefaultHost = Consts.DefaultHost;
     protected const int DefaultPort = Consts.DefaultPort;
 
-    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md.
-    private const string VersionMismatchMessage = "The save was made by another version of the game";
-    private const string BrokenSaveMessage = "The save is broken or cannot be read";
-    private const string WorldFailedMessage = "Failed to create the world";
-
     private readonly ILogger _log = LogFactory.GetForStatic<BaseGameStarter>();
 
     public abstract void Start(Game game);
@@ -62,12 +57,12 @@ public abstract class BaseGameStarter
     protected string LogWorldError(Exception e, string saveFileName)
     {
         _log.Error(e, "Creating the World of the save '{saveFileName}' failed", saveFileName);
-        return e switch
+        return Services.I18N.Tr(e switch
         {
-            SaveVersionMismatchException => VersionMismatchMessage,
-            SaveLoadService.LoadException or SaveFormatException => BrokenSaveMessage,
-            _ => WorldFailedMessage
-        };
+            SaveVersionMismatchException => "MESSAGE_MENU__SAVE_VERSION_MISMATCH",
+            SaveLoadService.LoadException or SaveFormatException => "MESSAGE_MENU__BROKEN_SAVE",
+            _ => "MESSAGE_MENU__WORLD_CREATION_FAILED"
+        });
     }
 
     /// <summary>

@@ -7,9 +7,9 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Conventions;
 
 /// <summary>
-/// "Strings" from Docs/Code-style.md: a log template and an exception message are written at the call, a constant is
-/// only for what the player sees, TrKeys and configuration. A wall of message constants at the top of a class pushes
-/// the logic down and sends the reader of a <c>throw</c> to another screen.
+/// "Strings" from Docs/Code-style.md: a log template, an exception message and a TrKey are written at the call, a
+/// constant is only for what the player sees and configuration. A wall of message constants at the top of a class
+/// pushes the logic down and sends the reader of a <c>throw</c> or a <c>Tr</c> to another screen.
 /// <br/>
 /// Syntax only: a constant declared in another file, or a logger reached through a property, is not seen.
 /// </summary>
@@ -100,6 +100,27 @@ public class MessageStringTests
         report.AssertEmpty();
     }
 
+    [Fact]
+    public void TrKeys_AreNotConstants()
+    {
+        FailureReport report = new("TrKeys held in a constant");
+
+        foreach (CSharpFile file in CSharpFile.LoadAll())
+        {
+            foreach (VariableDeclaratorSyntax constant in StringConstantDeclarators(file))
+            {
+                if (constant.Initializer?.Value is LiteralExpressionSyntax literal
+                    && LocalizationKeys.IsKey(literal.Token.ValueText))
+                {
+                    report.Add($"{file.Describe(constant)}: {constant.Identifier.ValueText} — write the key " +
+                               $"{literal} where it is used");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
     /// <summary>
     /// The arguments an exception is built from: <c>new …Exception(…)</c>, a target-typed <c>new(…)</c> that is thrown,
     /// and the base constructor call of an exception class.
@@ -170,8 +191,13 @@ public class MessageStringTests
         return variables.Concat(parameters).ToHashSet(StringComparer.Ordinal);
     }
 
+    private static HashSet<string> StringConstants(CSharpFile file) =>
+        StringConstantDeclarators(file)
+            .Select(variable => variable.Identifier.ValueText)
+            .ToHashSet(StringComparer.Ordinal);
+
     /// <summary>Every <c>const string</c> of the file, fields and locals alike.</summary>
-    private static HashSet<string> StringConstants(CSharpFile file)
+    private static IEnumerable<VariableDeclaratorSyntax> StringConstantDeclarators(CSharpFile file)
     {
         IEnumerable<VariableDeclarationSyntax> fields = file.Nodes<FieldDeclarationSyntax>()
             .Where(field => field.Modifiers.Any(SyntaxKind.ConstKeyword))
@@ -183,9 +209,7 @@ public class MessageStringTests
         return fields.Concat(locals)
             .Where(declaration => declaration.Type is PredefinedTypeSyntax predefined
                                   && predefined.Keyword.IsKind(SyntaxKind.StringKeyword))
-            .SelectMany(declaration => declaration.Variables)
-            .Select(variable => variable.Identifier.ValueText)
-            .ToHashSet(StringComparer.Ordinal);
+            .SelectMany(declaration => declaration.Variables);
     }
 
     /// <summary>

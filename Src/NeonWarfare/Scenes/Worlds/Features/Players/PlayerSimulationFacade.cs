@@ -18,9 +18,6 @@ public class PlayerSimulationFacade(
     WorldAdmin admin,
     IServerOwner owner)
 {
-    private const string JoinedMessageKey = "HUD__CHAT_PLAYER_JOINED";
-    private const string LeftMessageKey = "HUD__CHAT_PLAYER_LEFT";
-
     private readonly ILogger _log = LogFactory.GetForStatic<PlayerSimulationFacade>();
 
     /// <summary>
@@ -46,7 +43,7 @@ public class PlayerSimulationFacade(
 
         players.OnlineModel.Uids.Add(uid);
         _log.Information("Player joined: {nick} ({uid})", player.Nick, uid);
-        chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, [player.Nick]);
+        chat.SendLocalizedMessageAsServerToAll("HUD__CHAT_PLAYER_JOINED", [player.Nick]);
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
     }
 
@@ -58,7 +55,7 @@ public class PlayerSimulationFacade(
         PlayerModel player = players.PlayersModel.PlayerByUid[uid];
         players.OnlineModel.Uids.Remove(uid);
         _log.Information("Player left: {nick} ({uid})", player.Nick, uid);
-        chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, [player.Nick]);
+        chat.SendLocalizedMessageAsServerToAll("HUD__CHAT_PLAYER_LEFT", [player.Nick]);
         if (uid == admin.Uid && reason == LeaveReason.Disconnected) owner.AdminLeft();
     }
 }

@@ -78,10 +78,10 @@ Non-critical things (visuals, auxiliary calculations) — `float`, with `deltaTi
 ## Strings
 
 A log template is a string literal written in the Serilog call itself, never `$"…"` — interpolation loses the
-structured parameters. An exception message is a `$"…"` written in the `throw` itself. Neither gets a constant. A
-`private const string` at the top of the class is only for player-visible text, TrKeys and configuration values
-(paths, flags, formats); `FormatWith(...)` from Humanizer fills only those player-visible templates. Everything the
-player sees must be translatable — see [Localization](Localization.md).
+structured parameters. An exception message is a `$"…"` written in the `throw` itself. A TrKey is a literal written
+where it is used. None of them gets a constant. A `private const string` at the top of the class is only for
+player-visible text and configuration values (paths, flags, formats); `FormatWith(...)` from Humanizer fills only
+those player-visible templates. Everything the player sees must be translatable — see [Localization](Localization.md).
 
 An unreachable `default` / `_` arm throws `new UnreachableException()`, without a message.
 

@@ -87,6 +87,33 @@ msgstr "The server failed to let you in because of an internal error"
 msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
 msgstr "The server rejected the connection"
 
+msgid "MESSAGE_MENU__CONNECTION_FAILED"
+msgstr "Connection to the server failed"
+
+msgid "MESSAGE_MENU__SERVER_DISCONNECTED"
+msgstr "Server disconnected"
+
+msgid "MESSAGE_MENU__CONNECTION_BROKEN"
+msgstr "The data received from the server is broken"
+
+msgid "MESSAGE_MENU__BROKEN_WORLD"
+msgstr "The world received from the server is broken"
+
+msgid "MESSAGE_MENU__WORLD_ENTRY_FAILED"
+msgstr "Failed to enter the world received from the server"
+
+msgid "MESSAGE_MENU__SAVE_VERSION_MISMATCH"
+msgstr "The save was made by another version of the game"
+
+msgid "MESSAGE_MENU__BROKEN_SAVE"
+msgstr "The save is broken or cannot be read"
+
+msgid "MESSAGE_MENU__WORLD_CREATION_FAILED"
+msgstr "Failed to create the world"
+
+msgid "MESSAGE_MENU__HOSTING_FAILED"
+msgstr "Failed to start server: {0}"
+
 msgid "HUD__CHAT_PLACEHOLDER"
 msgstr "Type a message or command starting with /"
 

@@ -83,6 +83,33 @@ msgstr ""
 msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
 msgstr ""
 
+msgid "MESSAGE_MENU__CONNECTION_FAILED"
+msgstr ""
+
+msgid "MESSAGE_MENU__SERVER_DISCONNECTED"
+msgstr ""
+
+msgid "MESSAGE_MENU__CONNECTION_BROKEN"
+msgstr ""
+
+msgid "MESSAGE_MENU__BROKEN_WORLD"
+msgstr ""
+
+msgid "MESSAGE_MENU__WORLD_ENTRY_FAILED"
+msgstr ""
+
+msgid "MESSAGE_MENU__SAVE_VERSION_MISMATCH"
+msgstr ""
+
+msgid "MESSAGE_MENU__BROKEN_SAVE"
+msgstr ""
+
+msgid "MESSAGE_MENU__WORLD_CREATION_FAILED"
+msgstr ""
+
+msgid "MESSAGE_MENU__HOSTING_FAILED"
+msgstr ""
+
 msgid "HUD__CHAT_PLACEHOLDER"
 msgstr ""
 

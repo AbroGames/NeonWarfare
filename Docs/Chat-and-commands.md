@@ -24,7 +24,7 @@ The sender travels as a uid through the whole chain; the nick and the rights are
 A server message the player sees — a join, a leave, the save result — is
 `ChatSimulation.SendLocalizedMessageAsServerToAll(key, args)` / `…ToPlayer(key, args, receiverUid)` →
 `LocalizedChatMessageEvent` with a `LocalizedText(key, string[] args)`: the server cannot call `Tr`, it would
-translate into its own language. The key is a `const string` at the publisher, so `LocalizationUsageTests` checks it
+translate into its own language. The key is a literal at the publisher, so `LocalizationUsageTests` checks it
 against `Assets/Locales`; the arguments fill `{0}`, `{1}`, … of the translation. The `Hud` prefixes every such line
 with the server nick; a translation the arguments do not fit shows as the key and the arguments, as does an unknown
 key.
