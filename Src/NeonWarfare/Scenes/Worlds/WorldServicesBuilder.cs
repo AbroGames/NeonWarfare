@@ -81,6 +81,7 @@ public class WorldServicesBuilder
                 services.AddSingleton(host.SaveFile);
                 services.AddSingleton(host.LocalPlayer);
                 services.AddSingleton(host.Admin);
+                services.AddSingleton(host.ProtectedPlayer);
                 services.AddSingleton(host.ServerOwner);
                 services.AddSingleton(host.LocalPlayerOwner);
                 break;
@@ -88,6 +89,7 @@ public class WorldServicesBuilder
                 services.AddSingleton(dedicated.SaveFiles);
                 services.AddSingleton(dedicated.SaveFile);
                 services.AddSingleton(dedicated.Admin);
+                services.AddSingleton(dedicated.ProtectedPlayer);
                 services.AddSingleton(dedicated.ServerOwner);
                 break;
             default:

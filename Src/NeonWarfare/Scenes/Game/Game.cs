@@ -112,10 +112,15 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     /// <exception cref="Worlds.Infra.Server.Saves.SaveFormatException">The save of the origin is broken.</exception>
     public World AddDedicatedWorld(
-        Network network, ISaveFiles saveFiles, WorldSaveFile saveFile, WorldAdmin admin, WorldOrigin origin)
+        Network network,
+        ISaveFiles saveFiles,
+        WorldSaveFile saveFile,
+        WorldAdmin admin,
+        ProtectedPlayer protectedPlayer,
+        WorldOrigin origin)
     {
         return Store(_assembler.Dedicated(
-            new WorldSetup.Dedicated(saveFiles, saveFile, admin, this), origin, network));
+            new WorldSetup.Dedicated(saveFiles, saveFile, admin, protectedPlayer, this), origin, network));
     }
 
     public void ShowServerHud()

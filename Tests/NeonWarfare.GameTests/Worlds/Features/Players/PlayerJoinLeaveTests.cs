@@ -167,6 +167,43 @@ public class PlayerJoinLeaveTests
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
+    // The host's own player is protected by its setup, not by its peer
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Join_UidOfTheHost_IsRejected()
+    {
+        Join(HostPeer, HostUid, "Host");
+        Tick();
+
+        Join(AlicePeer, HostUid, "Host");
+        Tick();
+
+        AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.UidInUse));
+        AssertThat(Peers().JoinedPeerIds).ContainsExactly(HostPeer);
+        AssertThat(Online()).ContainsExactly(HostUid);
+    }
+
+    // Done when: the admin of a child server is not displaced, so the server does not stop under its own player
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Join_UidOfProtectedAdminOfDedicated_IsRejected_TheAdminStays()
+    {
+        _provider.Dispose();
+        _clientsConnection = new RecordingClientsConnection();
+        var owner = new RecordingServerOwner();
+        _provider = Build(TestWorldSetups.Dedicated(AliceUid, owner: owner, protectedUid: AliceUid));
+        Join(AlicePeer, AliceUid, "Alice");
+        Tick();
+
+        Join(AliceSecondPeer, AliceUid, "Alice");
+        Tick();
+
+        AssertThat(Rejections()).ContainsExactly((AliceSecondPeer, JoinRejectReason.UidInUse));
+        AssertThat(Peers().JoinedPeerIds).ContainsExactly(AlicePeer);
+        AssertThat(Online()).ContainsExactly(AliceUid);
+        AssertThat(owner.AdminLeftCount).IsEqual(0);
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Join_InvalidFields_AreRejectedWithTheirReason()
@@ -245,10 +282,10 @@ public class PlayerJoinLeaveTests
         AssertThat(owner.AdminLeftCount).IsEqual(1);
     }
 
-    // A child server must outlive its admin coming back on a new connection; the real leave still stops it
+    // A server started from the console displaces its admin, and that is not a leave; the real leave is reported
     [TestCase]
     [RequireGodotRuntime]
-    public void Leave_DisplacedAdminOfDedicated_IsNotReportedToTheOwner()
+    public void Leave_DisplacedAdminOfConsoleServer_IsNotReportedToTheOwner()
     {
         _provider.Dispose();
         _clientsConnection = new RecordingClientsConnection();

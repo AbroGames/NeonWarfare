@@ -46,6 +46,4 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
     {
         if (peers.Disconnect(peerId)) clientsConnection.Disconnect(peerId);
     }
-
-    public bool IsLocal(int peerId) => clientsConnection.LocalPeerId == peerId;
 }

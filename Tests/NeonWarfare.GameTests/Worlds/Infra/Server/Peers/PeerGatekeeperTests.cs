@@ -114,16 +114,4 @@ public class PeerGatekeeperTests
         AssertThat(_clientsConnection.Packets).IsEmpty();
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void IsLocal_OnlyTheHostsPeer()
-    {
-        AssertThat(_gatekeeper.IsLocal(RecordingClientsConnection.HostPeer)).IsFalse();
-
-        _clientsConnection.LocalPeerId = RecordingClientsConnection.HostPeer;
-
-        AssertThat(_gatekeeper.IsLocal(RecordingClientsConnection.HostPeer)).IsTrue();
-        AssertThat(_gatekeeper.IsLocal(AlicePeer)).IsFalse();
-    }
 }

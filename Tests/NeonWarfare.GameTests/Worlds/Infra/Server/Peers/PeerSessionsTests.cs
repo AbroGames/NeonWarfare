@@ -5,6 +5,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
@@ -33,10 +34,11 @@ public class PeerSessionsTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _peers = new PeerStateTable();
-        _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
+        _clientsConnection = new RecordingClientsConnection();
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
         _calls = [];
-        _sessions = new PeerSessions(new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper);
+        _sessions = new PeerSessions(
+            new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper, new ProtectedPlayer(HostUid));
         foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
         {
             _gatekeeper.StartHandshake(peerId);
@@ -153,10 +155,10 @@ public class PeerSessionsTests
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, AliceSecondPeer);
     }
 
-    // The host cannot reconnect from another peer, so it is never displaced
+    // The owner of the server cannot reconnect without leaving it, so it is never displaced
     [TestCase]
     [RequireGodotRuntime]
-    public void Join_WithTheHostsUid_IsRejected()
+    public void Join_WithTheProtectedUid_IsRejected()
     {
         Join(HostPeer, HostUid);
         _calls.Clear();
