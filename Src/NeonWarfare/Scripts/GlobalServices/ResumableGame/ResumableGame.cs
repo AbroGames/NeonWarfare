@@ -46,6 +46,15 @@ public record ResumableGame(
         };
     }
         
+    public bool IsValid() => Type switch
+    {
+        ResumableType.None => true,
+        ResumableType.RunSingleplayer => SaveName != null,
+        ResumableType.CreateServer => SaveName != null && Port != null && IsDedicated != null,
+        ResumableType.ConnectToServer => Host != null && Port != null,
+        _ => false
+    };
+
     public static ResumableGame GetConnectToServer(string host, int port)
     {
         return GetNone() with

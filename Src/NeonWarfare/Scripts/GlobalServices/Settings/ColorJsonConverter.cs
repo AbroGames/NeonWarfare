@@ -9,7 +9,9 @@ public class ColorJsonConverter : JsonConverter<Color>
 {
     public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var hex = reader.GetString();
+        string hex = reader.TokenType == JsonTokenType.String ? reader.GetString() : null;
+        // A JsonException, so that a bad color makes the file corrupt instead of crashing its reader
+        if (hex == null || !Color.HtmlIsValid(hex)) throw new JsonException($"Not an HTML color: {hex}");
         return Color.FromHtml(hex);
     }
 

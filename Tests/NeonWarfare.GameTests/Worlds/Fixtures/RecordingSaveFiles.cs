@@ -11,11 +11,7 @@ public class RecordingSaveFiles : ISaveFiles
 
     public List<Written> Files { get; } = [];
 
-    public bool AutoSaveEnabled { get; set; } = true;
-
     public bool Failing { get; set; }
-
-    public bool IsAutoSaveEnabled() => AutoSaveEnabled;
 
     public void SaveToDisk(byte[] data, string saveFileName)
     {

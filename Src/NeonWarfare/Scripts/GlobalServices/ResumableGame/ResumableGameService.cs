@@ -1,86 +1,51 @@
-using System.Text.Json;
-using Godot;
-using KludgeBox.Logging;
-using Serilog;
+using KludgeBox.Persistence;
 
 namespace NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 public class ResumableGameService
 {
-    
-    private const string LastGameSettingPath = "user://resume-game.json";
+    private const string DefaultFileName = "resume-game.json";
 
-    private readonly ILogger _log = LogFactory.GetForStatic<ResumableGameService>();
+    private readonly JsonFile<ResumableGame> _file;
 
-    private ResumableGame _lastGame;
-
-    public void Init()
+    public ResumableGameService(string fileName = DefaultFileName)
     {
-        _lastGame = ResumableGame.GetNone();
-        LoadSettings();
+        _file = new JsonFile<ResumableGame>(fileName);
     }
 
-    // A child dedicated server rewrites the file after a "save as", so the copy read at startup goes stale
+    /// <summary>
+    /// Reads the file on every call, because a child dedicated server rewrites it after a "save as".
+    /// A missing or bad file is <see cref="ResumableGame.ResumableType.None"/> and is never rewritten by a read.
+    /// </summary>
     public ResumableGame GetLastGame()
     {
-        LoadSettings();
-        return _lastGame;
+        JsonFileRead<ResumableGame> read = _file.Read(game => game.IsValid());
+        return read.Outcome == JsonFileOutcome.Loaded ? read.Value : ResumableGame.GetNone();
     }
-    
+
+    /// <summary>
+    /// A failed write is logged and not thrown.
+    /// </summary>
     public void SetLastGame(ResumableGame lastGame)
     {
-        _lastGame = lastGame;
-        SaveSettings();
+        _file.Write(lastGame);
     }
-    
+
     public void StartLastGame()
     {
-        StartResumableGame(GetLastGame());
-    }
-    
-    public void StartResumableGame(ResumableGame game)
-    {
+        ResumableGame game = GetLastGame();
         switch (game.Type)
-        { 
-            case ResumableGame.ResumableType.RunSingleplayer: 
+        {
+            case ResumableGame.ResumableType.RunSingleplayer:
                 Services.MainScene.StartSingleplayerGame(game.SaveName);
                 break;
-            case ResumableGame.ResumableType.ConnectToServer: 
+            case ResumableGame.ResumableType.ConnectToServer:
                 Services.MainScene.ConnectToMultiplayerGame(game.Host, game.Port);
                 break;
-            case ResumableGame.ResumableType.CreateServer: 
+            case ResumableGame.ResumableType.CreateServer:
                 Services.MainScene.HostMultiplayerGameAsClient(
                     game.SaveName, game.Port, game.IsDedicated!.Value, showWindow: true);
                 break;
         }
-    }
-    
-    // Never throws: "Continue" is a convenience, and a save whose file is written must not be reported as failed
-    private void SaveSettings()
-    {
-        using var file = FileAccess.Open(LastGameSettingPath, FileAccess.ModeFlags.Write);
-        if (file == null)
-        {
-            _log.Error("Failed to open '{path}': {error}", LastGameSettingPath, FileAccess.GetOpenError());
-            return;
-        }
-        string json = JsonSerializer.Serialize(_lastGame);
-        file.StoreString(json);
-        file.Close();
-    }
-
-    private void LoadSettings()
-    {
-        if (!FileAccess.FileExists(LastGameSettingPath))
-        {
-            SaveSettings();
-            return;
-        }
-        
-        using var file = FileAccess.Open(LastGameSettingPath, FileAccess.ModeFlags.Read);
-        string json = file.GetAsText();
-        file.Close();
-
-        _lastGame = JsonSerializer.Deserialize<ResumableGame>(json);
     }
 }

@@ -21,7 +21,8 @@ public class DedicatedServerGameStarter(
     int? port,
     PlayerUid? adminUid,
     int? parentPid,
-    bool serverHud
+    bool serverHud,
+    bool autoSave
     ) : BaseGameStarter
 {
     private readonly ILogger _log = LogFactory.GetForStatic<DedicatedServerGameStarter>();
@@ -43,7 +44,7 @@ public class DedicatedServerGameStarter(
         World world;
         try
         {
-            world = game.AddDedicatedWorld(network, saveFiles, new WorldSaveFile(saveFileName),
+            world = game.AddDedicatedWorld(network, saveFiles, new WorldSaveFile(saveFileName, autoSave),
                 new WorldAdmin(adminUid), new ProtectedPlayer(parentPid is null ? null : adminUid),
                 LoadServerOrigin(saveFileName));
         }
@@ -81,8 +82,7 @@ public class DedicatedServerGameStarter(
 
         game.AdminLeft += OnAdminLeft;
 
-        ResumableGame lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated: true);
-        SetLastGame(lastGame);
-        return SaveFilesUpdatingLastGame(lastGame);
+        return SaveFilesUpdatingLastGame(
+            ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated: true));
     }
 }

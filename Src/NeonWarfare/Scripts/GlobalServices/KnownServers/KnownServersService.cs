@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
-using Godot;
+using KludgeBox.Persistence;
 
 namespace NeonWarfare.Scripts.GlobalServices.KnownServers;
 
 public class KnownServersService
 {
-    private const string KnownServersPath = "user://known-servers.json";
+    private const string FileName = "known-servers.json";
+
+    private readonly JsonFile<List<KnownServer>> _file = new(FileName);
 
     private List<KnownServer> _servers;
 
     public void Init()
     {
-        _servers = new List<KnownServer>();
-        Load();
+        _servers = _file.ReadOrWriteDefault(KnownServer.IsValidList, () => []);
     }
 
     public List<KnownServer> GetAll()
@@ -25,40 +25,17 @@ public class KnownServersService
     public void Add(KnownServer server)
     {
         _servers.Add(server);
-        Save();
+        _file.Write(_servers);
     }
 
     public void Remove(KnownServer server)
     {
         _servers.Remove(server);
-        Save();
+        _file.Write(_servers);
     }
 
     public bool Exists(string host, int? port)
     {
         return _servers.Any(server => server.Host == host && server.Port == port);
-    }
-
-    private void Save()
-    {
-        using var file = FileAccess.Open(KnownServersPath, FileAccess.ModeFlags.Write);
-        string json = JsonSerializer.Serialize(GetAll());
-        file.StoreString(json);
-        file.Close();
-    }
-
-    private void Load()
-    {
-        if (!FileAccess.FileExists(KnownServersPath))
-        {
-            Save();
-            return;
-        }
-
-        using var file = FileAccess.Open(KnownServersPath, FileAccess.ModeFlags.Read);
-        string json = file.GetAsText();
-        file.Close();
-
-        _servers = JsonSerializer.Deserialize<List<KnownServer>>(json);
     }
 }

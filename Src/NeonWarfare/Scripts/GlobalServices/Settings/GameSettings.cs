@@ -3,7 +3,6 @@ using Godot;
 namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public record GameSettings(
-    string PlayerUid,
     string PlayerNick,
     Color PlayerColor,
     string Locale,
@@ -20,7 +19,6 @@ public record GameSettings(
     public static GameSettings GetDefault()
     {
         return new(
-            PlayerUid: Scripts.PlayerUid.Generate().Value,
             PlayerNick: "Player",
             PlayerColor: new Color(1, 1, 1),
             Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code,

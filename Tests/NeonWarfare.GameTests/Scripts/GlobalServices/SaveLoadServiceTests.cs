@@ -1,8 +1,7 @@
 using GdUnit4;
-using Godot;
+using NeonWarfare.GameTests.KludgeBox.Persistence.Fixtures;
 using NeonWarfare.Scripts.GlobalServices;
 using static GdUnit4.Assertions;
-using FileAccess = Godot.FileAccess;
 
 namespace NeonWarfare.GameTests.Scripts.GlobalServices;
 
@@ -16,118 +15,74 @@ public class SaveLoadServiceTests
     private static readonly byte[] Old = [1, 2, 3];
     private static readonly byte[] New = [4, 5, 6, 7];
 
-    private string _dir = null!;
+    private TestUserFolder _folder = null!;
     private SaveLoadService _service = null!;
 
     [BeforeTest]
     public void SetUp()
     {
-        _dir = $"user://save-load-tests-{Guid.NewGuid():N}/";
-        DirAccess.MakeDirRecursiveAbsolute(_dir);
-        _service = new SaveLoadService(_dir);
+        _folder = new TestUserFolder();
+        _service = new SaveLoadService(_folder.FileName("saves"));
     }
 
     [AfterTest]
     public void TearDown()
     {
-        Delete(_dir);
+        _folder.Dispose();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void SaveToDisk_ReplacesTheFile_LeavesNoTemporaryOrBackup()
+    public void SaveToDisk_CreatesTheFolder_ReplacesTheFile()
     {
         _service.SaveToDisk(Old, FileName);
 
         _service.SaveToDisk(New, FileName);
 
         AssertThat(_service.LoadFromDisk(FileName)).IsEqual(New);
-        AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void SaveToDisk_WriteFails_ThePreviousFileStays()
-    {
-        _service.SaveToDisk(Old, FileName);
-        DirAccess.MakeDirAbsolute(Path() + ".tmp");
-
-        AssertThrown(() => _service.SaveToDisk(New, FileName)).IsInstanceOf<SaveLoadService.SaveException>();
-
-        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void SaveToDisk_BackupFails_ThePreviousFileStays_TheTemporaryIsRemoved()
-    {
-        _service.SaveToDisk(Old, FileName);
-        DirAccess.MakeDirAbsolute(Path() + ".backup");
-
-        AssertThrown(() => _service.SaveToDisk(New, FileName)).IsInstanceOf<SaveLoadService.SaveException>();
-
-        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
-        AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
-    }
-
-    // A process killed between the two renames leaves only the backup
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Init_RestoresASaveLeftOnlyAsItsBackup()
-    {
-        Write(Path() + ".backup", Old);
-
-        _service.Init(false);
-
         AssertThat(_service.GetAllSaveFiles().Select(file => file.FileName)).ContainsExactly(FileName);
-        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
-        AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
-    }
-
-    // The file is the newer one: the backup is left by a complete save that could not remove it
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Init_KeepsAFileOverItsBackup()
-    {
-        Write(Path(), New);
-        Write(Path() + ".backup", Old);
-
-        _service.Init(false);
-
-        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(New);
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Init_RemovesAnUnfinishedTemporaryFile_KeepsTheSave()
+    public void SaveToDisk_WriteFails_ThrowsSaveException_ThePreviousFileStays()
     {
         _service.SaveToDisk(Old, FileName);
-        Write(Path() + ".tmp", New);
+        Directory.CreateDirectory($"{_service.GetFullPath(FileName)}.{Environment.ProcessId}.tmp");
 
-        _service.Init(false);
+        // Caught by hand: AssertThrown reports the innermost exception
+        Exception? thrown = null;
+        try
+        {
+            _service.SaveToDisk(New, FileName);
+        }
+        catch (Exception e)
+        {
+            thrown = e;
+        }
 
-        AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
+        AssertThat(thrown).IsInstanceOf<SaveLoadService.SaveException>();
+
         AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
     }
 
-    private string Path() => _service.GetFullPath(FileName);
-
-    private static void Write(string path, byte[] data)
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LoadFromDisk_ReadFails_ThrowsLoadException()
     {
-        using FileAccess file = FileAccess.Open(path, FileAccess.ModeFlags.Write);
-        file.StoreBuffer(data);
-    }
+        Directory.CreateDirectory(_service.GetFullPath(FileName));
 
-    private static void Delete(string dir)
-    {
-        foreach (string child in DirAccess.GetDirectoriesAt(dir))
+        // Caught by hand: AssertThrown reports the innermost exception
+        Exception? thrown = null;
+        try
         {
-            Delete(dir + child + "/");
+            _service.LoadFromDisk(FileName);
         }
-        foreach (string file in DirAccess.GetFilesAt(dir))
+        catch (Exception e)
         {
-            DirAccess.RemoveAbsolute(dir + file);
+            thrown = e;
         }
-        DirAccess.RemoveAbsolute(dir);
+
+        AssertThat(thrown).IsInstanceOf<SaveLoadService.LoadException>();
     }
 }

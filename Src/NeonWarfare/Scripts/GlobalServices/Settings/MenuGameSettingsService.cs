@@ -22,6 +22,7 @@ public class MenuGameSettingsService
     {
         ApplySettings(menuGameSettings);
         Services.GameSettings.SetSettings(Convert(menuGameSettings));
+        Services.PlayerUid.Set(new PlayerUid(menuGameSettings.PlayerUid));
     }
 
     private MenuGameSettings Convert(GameSettings gameSettings)
@@ -29,7 +30,7 @@ public class MenuGameSettingsService
         return new MenuGameSettings(
             playerName: gameSettings.PlayerNick,
             playerColor: gameSettings.PlayerColor,
-            playerUid: gameSettings.PlayerUid,
+            playerUid: Services.PlayerUid.Get().Value,
             autoSaveEnabled: gameSettings.AutoSaveEnabled,
             playerSettingsAcknowledged: gameSettings.PlayerSettingsAcknowledged,
             masterVolume: gameSettings.MasterVolume,
@@ -44,7 +45,6 @@ public class MenuGameSettingsService
     private GameSettings Convert(MenuGameSettings menuGameSettings)
     {
         return new GameSettings(
-            PlayerUid: menuGameSettings.PlayerUid,
             PlayerNick: menuGameSettings.PlayerName,
             PlayerColor: menuGameSettings.PlayerColor,
             Locale: Services.GameSettings.GetSettings().Locale,

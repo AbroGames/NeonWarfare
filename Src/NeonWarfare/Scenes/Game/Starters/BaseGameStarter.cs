@@ -6,7 +6,6 @@ using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
-using NeonWarfare.Scripts.GlobalServices.Settings;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Starters;
@@ -71,8 +70,7 @@ public abstract class BaseGameStarter
     /// </summary>
     protected LocalPlayer ReadLocalPlayer()
     {
-        GameSettings settings = Services.GameSettings.GetSettings();
-        return new LocalPlayer(new PlayerUid(settings.PlayerUid), settings.PlayerNick, settings.PlayerColor);
+        return Services.LocalPlayer.Read();
     }
 
     /// <summary>

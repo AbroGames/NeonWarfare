@@ -23,10 +23,7 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
         
         _dedicatedServerArgs = DedicatedServerArgs.GetFromCmd(CmdArgsService);
         
-        Services.SaveLoad.Init(true);
-        Services.LastGame.Init();
-        Services.DedicatedServerSettings.Init();
-        
+        Services.DedicatedServerSettings.Init(_dedicatedServerArgs.SettingsFileName);
         // The locale is a setting, so it is set only after the settings are loaded.
         Services.I18N.SetCurrentLocale(Services.DedicatedServerSettings.GetSettings().Locale);
         
@@ -42,6 +39,7 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
             _dedicatedServerArgs.Port,
             _dedicatedServerArgs.Admin is { } admin ? new PlayerUid(admin) : null,
             _dedicatedServerArgs.ParentPid,
-            DisplayServer.GetName() != HeadlessDisplayServer);
+            DisplayServer.GetName() != HeadlessDisplayServer,
+            Services.DedicatedServerSettings.GetSettings().AutoSaveEnabled);
     }
 }

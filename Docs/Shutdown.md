@@ -23,12 +23,9 @@
   `DedicatedServerGameStarter` attaches a `ProcessDeadChecker` (also a node from GodotBox) to `Game`.
   It periodically checks whether the parent is alive and calls `MainScene.Shutdown()` if the client has
   disappeared from the OS.
-* **Saving the world** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree,
-  see [Data and saves](Data-and-saves.md#saves).
+* **Saving the world** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree, if
+  autosave is on for the session, see [Data and saves](Data-and-saves.md#saves).
 
 The "client + out-of-process server" pair is stopped from the server side both ways: by the admin leaving on a
 normal client shutdown, and by `ProcessDeadChecker` when the client died abnormally — a crashing client kills
 nothing, so the server still autosaves.
-
-Autosave is controlled by the `AutoSaveEnabled` setting: on the client — in `GameSettings`, on the
-dedicated server — in `DedicatedServerSettings` (see [Data and saves](Data-and-saves.md)).

@@ -18,7 +18,8 @@ public class SingleplayerGameStarter(string saveFileName) : BaseGameStarter
 
         try
         {
-            game.AddSingleplayerWorld(SaveFilesUpdatingLastGame(lastGame), new WorldSaveFile(saveFileName),
+            game.AddSingleplayerWorld(SaveFilesUpdatingLastGame(lastGame),
+                new WorldSaveFile(saveFileName, Services.GameSettings.GetSettings().AutoSaveEnabled),
                 ReadLocalPlayer(), LoadServerOrigin(saveFileName));
         }
         catch (Exception e)

@@ -44,7 +44,9 @@ next NetId and the tick, then a spawn record of every entity (`StateReplicator.W
 * **"Save as"** — `SaveCommand` (admin) → `SaveService.RequestSave`: one `SaveWriter.Write()` serves every request
   of the tick, after its packets; the written file becomes the World's save file, and the sender gets a chat reply.
 * **On exit** — `SaveOnExitNode` calls `SaveService.SaveOnExit` when the World leaves the tree (quit or back to the
-  menu), under the `AutoSaveEnabled` setting, if a tick has run. It comes between ticks: `Quit()` only sets a flag.
+  menu), if a tick has run and the `WorldSaveFile` says so: the starter fills it once per session from
+  `AutoSaveEnabled` of `GameSettings`, or of the dedicated server's settings. It comes between ticks: `Quit()` only sets
+  a flag.
 * **Load** — `SaveLoader` (origin `FromSave`) spawns every entity with its saved NetId, then restores the NetId
   sequence and the tick counter. A save of another protocol hash throws `SaveVersionMismatchException`, a broken one
   `SaveFormatException`; the starter shows the player a message (see [Startup flow](Startup-flow.md)).
@@ -71,6 +73,12 @@ Other files in `user://` (JSON, `System.Text.Json`):
 | File | What it stores |
 |---|---|
 | `game-settings.json` | Client settings |
+| `player-uid.json` | The uid of the client's player, apart from the settings so that their fault never changes it |
 | `dedicated-server-settings.json` | Dedicated server settings |
+| `child-server-settings.json` | The settings of a child server, written by its client before the launch |
 | `resume-game.json` | The last session for the "Continue" button |
 | `known-servers.json` | The server list of the multiplayer menu |
+
+Every file in `user://` is written atomically through KludgeBox's `UserStorage`, and every JSON file is read through its
+`JsonFile`, which keeps a corrupt file as `<name>.corrupt`. The two settings files are read field by field
+(`JsonFile.ReadOverDefault`): a missing or bad setting gets its default, and the others stay.
