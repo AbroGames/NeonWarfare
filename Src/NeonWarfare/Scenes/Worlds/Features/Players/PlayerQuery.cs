@@ -13,16 +13,7 @@ public class PlayerQuery(IEntityFinder entityFinder)
 
     public OnlinePlayersModel OnlineModel => entityFinder.GetSingle<OnlinePlayersStorage>().Model;
 
-    public IEnumerable<PlayerModel> GetOnlinePlayers()
-    {
-        PlayersModel players = PlayersModel;
-        return OnlineModel.Uids.Select(uid => players.PlayerByUid[uid]);
-    }
-
-    public PlayerModel TryGetOnline(string uid) =>
-        OnlineModel.Uids.Contains(uid) ? PlayersModel.PlayerByUid[uid] : null;
-
-    /// <summary>Throws instead of returning <c>null</c>, so a caller needs no null check.</summary>
+    /// <summary>Throws for an unknown uid, so the result is never <c>null</c>.</summary>
     public PlayerModel Get(string uid)
     {
         if (!PlayersModel.PlayerByUid.TryGetValue(uid, out PlayerModel player))
@@ -31,5 +22,11 @@ public class PlayerQuery(IEntityFinder entityFinder)
         }
 
         return player;
+    }
+
+    public IEnumerable<PlayerModel> GetOnlinePlayers()
+    {
+        PlayersModel players = PlayersModel;
+        return OnlineModel.Uids.Select(uid => players.PlayerByUid[uid]);
     }
 }
