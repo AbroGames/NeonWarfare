@@ -43,7 +43,8 @@ files on disk — **JSON** (`System.Text.Json`). These two must not be confused:
 
 ## Logging
 
-Serilog. The logger is a field initializer, with named template parameters:
+Serilog. The logger is a field initializer — not KludgeBox's `[Logger]`, a field filled by reflection that
+the compiler reports as `CS0649`. Messages use named template parameters:
 
 ```csharp
 private readonly ILogger _log = LogFactory.GetForStatic<Network>();
@@ -53,8 +54,6 @@ _log.Information("Connecting to the server at {host}:{port}", host, port);
 
 An error goes into the Error log at the place where it happens, and only then is rethrown as an
 exception or raised as an event for the `Hud`.
-
-KludgeBox's `[Logger]` is not used: the compiler does not see a field filled by reflection and reports `CS0649`.
 
 ## Precision: float vs double
 
