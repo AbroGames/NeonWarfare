@@ -345,12 +345,12 @@ public class TickStateReplicationTests
 
         StateRecords records = Parse(StatePacket(AlicePeer));
         AssertThat(records.Spawns).IsEmpty();
-        AssertThat(records.Models).ContainsExactly(ServerId<PlayersSessionStorage>());
+        AssertThat(records.Models).ContainsExactly(ServerId<OnlinePlayersStorage>());
         AssertThat(records.Despawns).IsEmpty();
         AssertThat(AliceOnline()).ContainsExactly(AliceUid);
     }
 
-    // Done when: PlayersStorage and SessionStorage appear on the client with their models
+    // Done when: PlayersStorage and OnlinePlayersStorage appear on the client with their models
     [TestCase]
     [RequireGodotRuntime]
     public void FirstTick_SpawnsTheStoragesOnTheClient_WithTheirModels()
@@ -358,9 +358,9 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(Parse(StatePacket(AlicePeer)).Spawns.Select(spawn => spawn.Id))
-            .ContainsExactly(ServerId<PlayersStorage>(), ServerId<PlayersSessionStorage>());
+            .ContainsExactly(ServerId<PlayersStorage>(), ServerId<OnlinePlayersStorage>());
         AssertClientCopy<PlayersStorage>();
-        AssertClientCopy<PlayersSessionStorage>();
+        AssertClientCopy<OnlinePlayersStorage>();
         AssertThat(_alice.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick)
             .IsEqual("Alice");
         AssertThat(AliceOnline()).ContainsExactlyInAnyOrder(HostUid, AliceUid);
@@ -472,7 +472,7 @@ public class TickStateReplicationTests
         Spawner().Despawn(node);
         Tick();
 
-        AssertThat(Parse(StatePacket(AlicePeer)).Models).ContainsExactly(ServerId<PlayersSessionStorage>());
+        AssertThat(Parse(StatePacket(AlicePeer)).Models).ContainsExactly(ServerId<OnlinePlayersStorage>());
     }
 
     [TestCase]
@@ -703,10 +703,10 @@ public class TickStateReplicationTests
     private PlayersModel Players() => _server.GetRequiredService<PlayersStorageQuery>().Model;
 
     private ReplicatedSet<string> Online() =>
-        _server.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids;
+        _server.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids;
 
     private IEnumerable<string> AliceOnline() =>
-        _alice.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.ToList();
+        _alice.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.ToList();
 
     private StateApplier Applier() => _alice.GetRequiredService<StateApplier>();
 
@@ -853,7 +853,8 @@ public class TickStateReplicationTests
 
     // What Alice's client models hold at the moment her Presentation handles a join
     [Presentation]
-    private class JoinRecorder(PlayersStorageQuery players, PlayersSessionStorageQuery session) : IEventHandlerOwner
+    private class JoinRecorder(PlayersStorageQuery players, OnlinePlayersStorageQuery onlinePlayers)
+        : IEventHandlerOwner
     {
         public record Sight(string? Uid, bool Online, string Nick);
 
@@ -867,7 +868,7 @@ public class TickStateReplicationTests
 
             string nick = @event.Args[0];
             PlayerModel? player = players.Model.PlayerByUid.Values.SingleOrDefault(player => player.Nick == nick);
-            bool online = player != null && session.Model.OnlinePlayerUids.Contains(player.Uid);
+            bool online = player != null && onlinePlayers.Model.Uids.Contains(player.Uid);
             Seen.Add(new Sight(player?.Uid, online, nick));
         }
     }

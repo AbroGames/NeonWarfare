@@ -70,7 +70,7 @@ public class ProtocolHasherTests
     private static readonly string[] Kinds =
     [
         "scene res://Safe.tscn", "scene res://Battle.tscn",
-        "type NeonWarfare.Scenes.Worlds.Features.Players.PlayersSessionStorage",
+        "type NeonWarfare.Scenes.Worlds.Features.Players.OnlinePlayersStorage",
     ];
 
     // Stands for a message type added in a newer build

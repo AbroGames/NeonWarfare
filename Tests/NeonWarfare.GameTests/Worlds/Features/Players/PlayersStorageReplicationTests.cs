@@ -14,14 +14,14 @@ public class PlayersStorageReplicationTests
 {
     private Side _server = null!;
     private ReplicationBaseline _persistenceBaseline = null!;
-    private ReplicationBaseline _sessionBaseline = null!;
+    private ReplicationBaseline _onlinePlayersBaseline = null!;
 
     [BeforeTest]
     public void SetUp()
     {
         _server = new Side();
         _persistenceBaseline = _server.Replicator.CreateBaseline(_server.Persistence);
-        _sessionBaseline = _server.Replicator.CreateBaseline(_server.Session);
+        _onlinePlayersBaseline = _server.Replicator.CreateBaseline(_server.OnlinePlayers);
     }
 
     [TestCase]
@@ -38,7 +38,7 @@ public class PlayersStorageReplicationTests
         AssertMatchesServer(second);
 
         _server.Persistence.Model.PlayerByUid["bob"].Nick = "Robert";
-        _server.Session.Model.OnlinePlayerUids.Remove("alice");
+        _server.OnlinePlayers.Model.Uids.Remove("alice");
         Join("carol", "Carol", Colors.Green, isAdmin: false);
         SendDelta(first, second);
         AssertMatchesServer(first);
@@ -58,13 +58,13 @@ public class PlayersStorageReplicationTests
 
         var late = new Side();
         AssertThat(_server.Replicator.TryWriteSnapshot(_persistenceBaseline, out byte[] persistence)).IsTrue();
-        AssertThat(_server.Replicator.TryWriteSnapshot(_sessionBaseline, out byte[] session)).IsTrue();
+        AssertThat(_server.Replicator.TryWriteSnapshot(_onlinePlayersBaseline, out byte[] onlinePlayers)).IsTrue();
         late.Replicator.Apply(late.Persistence, persistence);
-        late.Replicator.Apply(late.Session, session);
+        late.Replicator.Apply(late.OnlinePlayers, onlinePlayers);
         AssertMatchesServer(late);
 
         _server.Persistence.Model.PlayerByUid["alice"].Color = Colors.Yellow;
-        _server.Session.Model.OnlinePlayerUids.Remove("bob");
+        _server.OnlinePlayers.Model.Uids.Remove("bob");
         Join("carol", "Carol", Colors.Green, isAdmin: false);
         SendDelta(early, late);
         AssertMatchesServer(early);
@@ -77,14 +77,14 @@ public class PlayersStorageReplicationTests
         player.Nick = nick;
         player.Color = color;
         player.IsAdmin = isAdmin;
-        _server.Session.Model.OnlinePlayerUids.Add(uid);
+        _server.OnlinePlayers.Model.Uids.Add(uid);
     }
 
     // One delta per storage, the same bytes for every client, as at the end of a tick
     private void SendDelta(params Side[] clients)
     {
         bool persistenceChanged = _server.Replicator.TryWriteDelta(_persistenceBaseline, out byte[] persistence);
-        bool sessionChanged = _server.Replicator.TryWriteDelta(_sessionBaseline, out byte[] session);
+        bool onlinePlayersChanged = _server.Replicator.TryWriteDelta(_onlinePlayersBaseline, out byte[] onlinePlayers);
         foreach (Side client in clients)
         {
             if (persistenceChanged)
@@ -92,9 +92,9 @@ public class PlayersStorageReplicationTests
                 client.Replicator.Apply(client.Persistence, persistence);
             }
 
-            if (sessionChanged)
+            if (onlinePlayersChanged)
             {
-                client.Replicator.Apply(client.Session, session);
+                client.Replicator.Apply(client.OnlinePlayers, onlinePlayers);
             }
         }
     }
@@ -114,8 +114,8 @@ public class PlayersStorageReplicationTests
             AssertThat(received.IsAdmin).IsEqual(player.IsAdmin);
         }
 
-        AssertThat(client.Session.Model.OnlinePlayerUids.Order())
-            .ContainsExactly(_server.Session.Model.OnlinePlayerUids.Order());
+        AssertThat(client.OnlinePlayers.Model.Uids.Order())
+            .ContainsExactly(_server.OnlinePlayers.Model.Uids.Order());
     }
 
     // One replicator per process, as in the game
@@ -123,6 +123,6 @@ public class PlayersStorageReplicationTests
     {
         public readonly Replicator Replicator = new(NetMessageCodecTests.CreateMapping());
         public readonly PlayersStorage Persistence = AutoFree(new PlayersStorage())!;
-        public readonly PlayersSessionStorage Session = AutoFree(new PlayersSessionStorage())!;
+        public readonly OnlinePlayersStorage OnlinePlayers = AutoFree(new OnlinePlayersStorage())!;
     }
 }

@@ -19,7 +19,7 @@ world:
 | Storage | Model | Goes into the save |
 |---|---|---|
 | `PlayersStorage` | `PlayersModel`: every player who ever joined, by uid | Yes |
-| `PlayersSessionStorage` | `PlayersSessionModel`: the uids online now | No: `[NotSaved]` |
+| `OnlinePlayersStorage` | `OnlinePlayersModel`: the uids online now | No: `[NotSaved]` |
 
 A `[NotSaved]` entity goes into the save without its state: after a load it is created empty from its kind and the
 joins fill it again. So every replicated member of such a node is a readonly field set in its constructor

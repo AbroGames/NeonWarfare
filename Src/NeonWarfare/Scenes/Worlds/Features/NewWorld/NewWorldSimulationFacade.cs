@@ -15,6 +15,6 @@ public class NewWorldSimulationFacade(EntitySpawner spawner)
     public void Create()
     {
         spawner.SpawnOnRoot<PlayersStorage>();
-        spawner.SpawnOnRoot<PlayersSessionStorage>();
+        spawner.SpawnOnRoot<OnlinePlayersStorage>();
     }
 }

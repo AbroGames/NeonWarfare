@@ -26,7 +26,7 @@ public class ReplicatedTypesTests
             .Where(type => type is { IsAbstract: false, ContainsGenericParameters: false } && DeclaresReplicated(type))
             .ToList();
         // Otherwise a rename of the attribute would leave this test nothing to check
-        AssertThat(types).Contains(typeof(PlayersStorage), typeof(PlayersSessionStorage), typeof(PlayerModel));
+        AssertThat(types).Contains(typeof(PlayersStorage), typeof(OnlinePlayersStorage), typeof(PlayerModel));
 
         var failures = new List<string>();
         foreach (Type type in types)

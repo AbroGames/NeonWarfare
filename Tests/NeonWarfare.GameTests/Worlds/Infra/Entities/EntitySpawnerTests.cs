@@ -76,12 +76,12 @@ public class EntitySpawnerTests
     {
         var parent = _spawner.SpawnOnRoot<Node>(_scenes.SafeSurface);
 
-        var child = _spawner.Spawn<PlayersSessionStorage>(new NetId(1));
+        var child = _spawner.Spawn<OnlinePlayersStorage>(new NetId(1));
 
         AssertThat(child.GetParent()).IsSame(parent);
         AssertThat(_registry.TryGetNetId(child, out NetId id)).IsTrue();
         AssertThat(id).IsEqual(new NetId(2));
-        AssertThat(_registry.GetSingle<PlayersSessionStorage>()).IsSame(child);
+        AssertThat(_registry.GetSingle<OnlinePlayersStorage>()).IsSame(child);
     }
 
     // The kind goes into spawn records and saves: it is the only way back from a node to its scene
@@ -92,10 +92,10 @@ public class EntitySpawnerTests
         EntityCatalog catalog = TestWorldScenes.CreateCatalog(_scenes);
 
         _spawner.SpawnOnRoot<Node>(_scenes.BattleSurface);
-        _spawner.SpawnOnRoot<PlayersSessionStorage>();
+        _spawner.SpawnOnRoot<OnlinePlayersStorage>();
 
         AssertThat(_registry.GetKindId(new NetId(1))).IsEqual(catalog.GetKindId(_scenes.BattleSurface));
-        AssertThat(_registry.GetKindId(new NetId(2))).IsEqual(catalog.GetKindId(typeof(PlayersSessionStorage)));
+        AssertThat(_registry.GetKindId(new NetId(2))).IsEqual(catalog.GetKindId(typeof(OnlinePlayersStorage)));
     }
 
     [TestCase]
@@ -105,8 +105,8 @@ public class EntitySpawnerTests
         // In the tree: a node leaves the registry on TreeExiting
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(_root);
         var parent = _spawner.SpawnOnRoot<PlayersStorage>();
-        var child = _spawner.Spawn<PlayersSessionStorage>(new NetId(1));
-        var sibling = _spawner.SpawnOnRoot<PlayersSessionStorage>();
+        var child = _spawner.Spawn<OnlinePlayersStorage>(new NetId(1));
+        var sibling = _spawner.SpawnOnRoot<OnlinePlayersStorage>();
 
         _spawner.Despawn(parent);
 
@@ -140,7 +140,7 @@ public class EntitySpawnerTests
 
         AssertThrown(() => _spawner.Spawn<Node>(_scenes.SafeSurface, new NetId(42)))
             .IsInstanceOf<KeyNotFoundException>();
-        AssertThrown(() => _spawner.Spawn<PlayersSessionStorage>(new NetId(42)))
+        AssertThrown(() => _spawner.Spawn<OnlinePlayersStorage>(new NetId(42)))
             .IsInstanceOf<KeyNotFoundException>();
         AssertThrown(() => _spawner.SpawnOnRoot<Node>(foreign)).IsInstanceOf<ArgumentException>();
         // An engine class: not in the game's type mapping
@@ -157,7 +157,7 @@ public class EntitySpawnerTests
     {
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
-        AssertThrown(() => _spawner.SpawnOnRoot<PlayersSessionStorage>(_scenes.SafeSurface))
+        AssertThrown(() => _spawner.SpawnOnRoot<OnlinePlayersStorage>(_scenes.SafeSurface))
             .IsInstanceOf<ArgumentException>()
             .StartsWithMessage("The root of");
 
@@ -180,10 +180,10 @@ public class EntitySpawnerTests
             parentSeen = node.GetParent();
             byId = _registry.TryGetNode(id, out Node found) && found == node;
             byNode = _registry.TryGetNetId(node, out NetId foundId) && foundId == id;
-            inAll = _registry.GetAll<PlayersSessionStorage>().Contains(node);
+            inAll = _registry.GetAll<OnlinePlayersStorage>().Contains(node);
         };
 
-        _spawner.Spawn<PlayersSessionStorage>(new NetId(1));
+        _spawner.Spawn<OnlinePlayersStorage>(new NetId(1));
 
         AssertThat(parentSeen).IsSame(parent);
         AssertThat(byId).IsTrue();
@@ -195,10 +195,10 @@ public class EntitySpawnerTests
     [RequireGodotRuntime]
     public void Spawn_InitPreReady_RunsOnTheSpawnedNodeBeforeTheTreeAndTheRegistry()
     {
-        PlayersSessionStorage? initialized = null;
+        OnlinePlayersStorage? initialized = null;
         bool outOfTree = false, unregistered = false;
 
-        var storage = _spawner.SpawnOnRoot<PlayersSessionStorage>(node =>
+        var storage = _spawner.SpawnOnRoot<OnlinePlayersStorage>(node =>
         {
             initialized = node;
             outOfTree = node.GetParent() == null;
@@ -216,7 +216,7 @@ public class EntitySpawnerTests
     {
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
-        AssertThrown(() => _spawner.SpawnOnRoot<PlayersSessionStorage>(
+        AssertThrown(() => _spawner.SpawnOnRoot<OnlinePlayersStorage>(
                 _ => throw new InvalidOperationException("init failed")))
             .IsInstanceOf<InvalidOperationException>()
             .HasMessage("init failed");

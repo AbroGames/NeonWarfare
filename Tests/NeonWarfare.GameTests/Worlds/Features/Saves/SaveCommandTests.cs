@@ -155,7 +155,7 @@ public class SaveCommandTests
     {
         PlayerModel player = _server.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
         player.Nick = uid;
-        _server.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
+        _server.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.Add(uid);
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _server.GetRequiredService<PeerStateTable>().Join(peerId, uid);
         return player;

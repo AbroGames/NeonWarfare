@@ -331,7 +331,7 @@ public class PlayerJoinLeaveTests
     private PlayersModel Players() => _provider.GetRequiredService<PlayersStorageQuery>().Model;
 
     private IEnumerable<string> Online() =>
-        _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.ToList();
+        _provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.ToList();
 
     private EventOutbox Outbox() => _provider.GetRequiredService<EventOutbox>();
 

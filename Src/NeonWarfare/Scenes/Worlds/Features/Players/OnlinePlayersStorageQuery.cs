@@ -5,7 +5,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [Query]
-public class PlayersSessionStorageQuery(IEntityFinder entityFinder)
+public class OnlinePlayersStorageQuery(IEntityFinder entityFinder)
 {
-    public PlayersSessionModel Model => entityFinder.GetSingle<PlayersSessionStorage>().Model;
+    public OnlinePlayersModel Model => entityFinder.GetSingle<OnlinePlayersStorage>().Model;
 }

@@ -244,7 +244,7 @@ public class ChatTests
     {
         PlayerModel player = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
         player.Nick = nick;
-        _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
+        _provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.Add(uid);
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _provider.GetRequiredService<PeerStateTable>().Join(peerId, uid);
         return player;

@@ -104,8 +104,8 @@ public class SaveTests
 
         ServiceProvider loaded = Load(Saver().Write());
 
-        var storage = loaded.GetRequiredService<IEntityFinder>().GetSingle<PlayersSessionStorage>();
-        AssertThat(Id(loaded, storage)).IsEqual(Id(_server, Single<PlayersSessionStorage>(_server)));
+        var storage = loaded.GetRequiredService<IEntityFinder>().GetSingle<OnlinePlayersStorage>();
+        AssertThat(Id(loaded, storage)).IsEqual(Id(_server, Single<OnlinePlayersStorage>(_server)));
         AssertThat(Online(loaded).ToList()).IsEmpty();
         AssertThat(Players(loaded).PlayerByUid.Keys).ContainsExactlyInAnyOrder(HostUid, AliceUid);
     }
@@ -368,7 +368,7 @@ public class SaveTests
         AssertThat(registry.GetAll<Node>()).HasSize(loaded.GetRequiredService<IEntityFinder>().GetAll<Node>().Count);
         AssertThat(((CounterNode) registry.GetNode(Id(_server, counter))).Value).IsEqual(5);
         AssertThat(bob.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick).IsEqual("Alice");
-        AssertThat(bob.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.ToList())
+        AssertThat(bob.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.ToList())
             .ContainsExactly(BobUid);
     }
 
@@ -487,7 +487,7 @@ public class SaveTests
         provider.GetRequiredService<PlayersStorageQuery>().Model;
 
     private static ReplicatedSet<string> Online(ServiceProvider provider) =>
-        provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids;
+        provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids;
 
     private static T Single<T>(ServiceProvider provider) where T : class =>
         provider.GetRequiredService<IEntityFinder>().GetSingle<T>();
