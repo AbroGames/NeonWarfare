@@ -1,6 +1,6 @@
-using System.Globalization;
 using System.Linq;
 using Godot;
+using KludgeBox.Core.Text;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
@@ -54,19 +54,12 @@ public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade)
 
     private static bool IsValidNick(string nick)
     {
-        return nick is { Length: >= NickMinLength and <= NickMaxLength }
-               && !nick.Any(c => char.IsWhiteSpace(c) || IsForbiddenChar(c));
+        return nick is { Length: >= NickMinLength and <= NickMaxLength } && nick.IsSingleWordPrintable();
     }
 
     private static bool IsValidColor(Color color)
     {
         float[] components = [color.R, color.G, color.B, color.A];
         return components.All(component => component is >= 0 and <= 1) && color.Luminance >= ColorMinLuminance;
-    }
-
-    private static bool IsForbiddenChar(char c)
-    {
-        return char.GetUnicodeCategory(c) is UnicodeCategory.Control or UnicodeCategory.Format
-            or UnicodeCategory.LineSeparator or UnicodeCategory.ParagraphSeparator;
     }
 }
