@@ -41,6 +41,9 @@ may be added as needed. Work with them through the `task` skill.
 - If you see a significantly better approach or a critical flaw in the
   current one, say so and wait for the user's answer before proceeding.
   Minor improvements: implement as asked, mention afterwards.
+- When weighing the pros and cons of alternative solutions, judge only the production code. The
+  size and difficulty of test changes never count as an argument: tests always adapt to the
+  production code.
 - Mark uncertain claims explicitly ("not verified", "assumption").
   Never present an unverified claim as a fact.
 - If a fix does not work after 3 attempts, stop and report: what was tried,
