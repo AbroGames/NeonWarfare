@@ -17,7 +17,7 @@ public class HostTransportTests
     private const int LocalPeer = 1;
     private const int RemotePeer = 2;
 
-    private static readonly byte[] Packet = [(byte) ServerPacketKind.Events, 1, 2];
+    private static readonly byte[] Body = [1, 2];
 
     private TransportWorlds _worlds = null!;
     private RecordingLocalPlayerOwner _owner = null!;
@@ -64,12 +64,29 @@ public class HostTransportTests
         (_, HostTransport transport) = HostWorld(network);
         IClientsConnection clients = transport;
 
-        clients.Send(RemotePeer, Packet);
+        clients.SendState(RemotePeer, Body);
+        clients.SendSnapshot(RemotePeer, Body);
+        clients.SendEvents(RemotePeer, Body);
+        clients.Reject(RemotePeer, JoinRejectReason.UidInUse);
         clients.Disconnect(RemotePeer);
 
-        AssertThat(network.Packets.Single().PeerId).IsEqual(RemotePeer);
-        AssertThat(network.Packets.Single().Packet).ContainsExactly(Packet);
+        AssertThat(network.Packets.Select(sent => sent.PeerId).Distinct()).ContainsExactly(RemotePeer);
+        AssertThat(network.Packets.Select(sent => sent.Packet[0])).ContainsExactly(
+            (byte) ServerPacketKind.State, (byte) ServerPacketKind.Snapshot, (byte) ServerPacketKind.Events,
+            (byte) ServerPacketKind.JoinRejected);
         AssertThat(network.Disconnected).ContainsExactly(RemotePeer);
+    }
+
+    // The host's World is the server's: the tick loop never sends it the state
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SendStateAndSnapshot_LocalPeer_Throw()
+    {
+        (_, HostTransport transport) = HostWorld(new FakeNetwork());
+        IClientsConnection clients = transport;
+
+        AssertThrown(() => clients.SendState(LocalPeer, Body)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => clients.SendSnapshot(LocalPeer, Body)).IsInstanceOf<InvalidOperationException>();
     }
 
     // Single player has no network
@@ -80,7 +97,9 @@ public class HostTransportTests
         (_, HostTransport transport) = HostWorld();
         IClientsConnection clients = transport;
 
-        AssertThrown(() => clients.Send(RemotePeer, Packet)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => clients.SendEvents(RemotePeer, Body)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => clients.Reject(RemotePeer, JoinRejectReason.UidInUse))
+            .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => clients.Disconnect(RemotePeer)).IsInstanceOf<InvalidOperationException>();
     }
 

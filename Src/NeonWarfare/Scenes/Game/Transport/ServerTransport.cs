@@ -1,5 +1,7 @@
 using System;
+using System.Buffers;
 using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Game.Transport;
@@ -12,6 +14,7 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
 {
     private readonly INetwork _network;
     private readonly World _world;
+    private readonly ArrayBufferWriter<byte> _packet = new();
 
     public ServerTransport(INetwork network, World world)
     {
@@ -24,7 +27,18 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
 
     public int? LocalPeerId => null;
 
-    public void Send(int peerId, ReadOnlySpan<byte> packet) => _network.Send(peerId, packet);
+    public void SendState(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.State, body);
+
+    public void SendSnapshot(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.Snapshot, body);
+
+    public void SendEvents(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.Events, body);
+
+    public void Reject(int peerId, JoinRejectReason reason)
+    {
+        _packet.ResetWrittenCount();
+        ServerPackets.WriteJoinRejected(reason, _packet);
+        _network.Send(peerId, _packet.WrittenSpan);
+    }
 
     public void Disconnect(int peerId) => _network.Disconnect(peerId);
 
@@ -36,6 +50,13 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
         _network.PeerConnected -= OnPeerConnected;
         _network.PeerDisconnected -= OnPeerDisconnected;
         _network.PacketReceived -= OnPacketReceived;
+    }
+
+    private void Send(int peerId, ServerPacketKind kind, ReadOnlySpan<byte> body)
+    {
+        _packet.ResetWrittenCount();
+        ServerPackets.Write(kind, body, _packet);
+        _network.Send(peerId, _packet.WrittenSpan);
     }
 
     private void OnPeerConnected(int peerId) => _world.StartHandshake(peerId);

@@ -1,4 +1,5 @@
 using System;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Game.Transport;
@@ -13,8 +14,16 @@ public sealed class NoConnection : IClientsConnection, IServerConnection
 
     public int? LocalPeerId => null;
 
-    public void Send(int peerId, ReadOnlySpan<byte> packet) =>
+    public void SendState(int peerId, ReadOnlySpan<byte> body) =>
         throw new InvalidOperationException(NoConnectionError);
+
+    public void SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
+        throw new InvalidOperationException(NoConnectionError);
+
+    public void SendEvents(int peerId, ReadOnlySpan<byte> body) =>
+        throw new InvalidOperationException(NoConnectionError);
+
+    public void Reject(int peerId, JoinRejectReason reason) => throw new InvalidOperationException(NoConnectionError);
 
     public void Disconnect(int peerId) => throw new InvalidOperationException(NoConnectionError);
 

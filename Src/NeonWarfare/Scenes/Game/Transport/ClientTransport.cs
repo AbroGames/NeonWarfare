@@ -20,12 +20,13 @@ public sealed class ClientTransport : IServerConnection
     private const string BrokenServerPacketLog = "Packet from the server dropped";
     private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string SecondWorldError = "The client already has a World";
+    private const string SecondSnapshotError = "A snapshot for a client that already has a World.";
 
     private readonly INetwork _network;
     private readonly NetMessageCodec _codec;
     private readonly LocalPlayer _localPlayer;
     private readonly ILocalPlayerOwner _owner;
-    private readonly Action<byte[]> _snapshotReceived;
+    private readonly Action<ReadOnlyMemory<byte>> _snapshotReceived;
 
     private readonly ILogger _log = LogFactory.GetForStatic<ClientTransport>();
 
@@ -35,7 +36,7 @@ public sealed class ClientTransport : IServerConnection
     /// arrives, and calls <see cref="Enter"/>.</param>
     public ClientTransport(
         INetwork network, NetMessageCodec codec, LocalPlayer localPlayer, ILocalPlayerOwner owner,
-        Action<byte[]> snapshotReceived)
+        Action<ReadOnlyMemory<byte>> snapshotReceived)
     {
         _network = network;
         _codec = codec;
@@ -78,27 +79,28 @@ public sealed class ClientTransport : IServerConnection
     /// <exception cref="NetMessageFormatException">The packet is broken.</exception>
     private void Receive(byte[] packet)
     {
-        ServerPacketKind? kind = packet.Length > 0 ? (ServerPacketKind) packet[0] : null;
-        if (kind == ServerPacketKind.JoinRejected)
+        (ServerPacketKind kind, ReadOnlyMemory<byte> body) = ServerPackets.Read(packet);
+        switch (kind)
         {
-            JoinRejectReason reason = JoinRejectedPacket.Read(packet);
-            _log.Error(JoinRejectedLog, reason);
-            _owner.JoinRejected(reason);
-            return;
-        }
-        if (_world != null)
-        {
-            _world.ReceiveFromServer(packet);
-            return;
-        }
-
-        if (kind == ServerPacketKind.Snapshot)
-        {
-            _snapshotReceived(packet);
-        }
-        else
-        {
-            _log.Debug(NoWorldLog, ServerPeer);
+            case ServerPacketKind.JoinRejected:
+                JoinRejectReason reason = ServerPackets.ReadJoinRejected(body.Span);
+                _log.Error(JoinRejectedLog, reason);
+                _owner.JoinRejected(reason);
+                break;
+            case ServerPacketKind.Snapshot when _world == null:
+                _snapshotReceived(body);
+                break;
+            case ServerPacketKind.Snapshot:
+                throw new NetMessageFormatException(SecondSnapshotError);
+            case ServerPacketKind.State or ServerPacketKind.Events when _world == null:
+                _log.Debug(NoWorldLog, ServerPeer);
+                break;
+            case ServerPacketKind.State:
+                _world.ReceiveState(body);
+                break;
+            case ServerPacketKind.Events:
+                _world.ReceiveEvents(body);
+                break;
         }
     }
 }

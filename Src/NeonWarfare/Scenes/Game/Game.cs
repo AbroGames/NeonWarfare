@@ -188,7 +188,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     }
 
     // Called inside the transport's packet handling, before the events packet of the join tick arrives
-    private void OnSnapshotReceived(byte[] snapshot)
+    private void OnSnapshotReceived(ReadOnlyMemory<byte> snapshot)
     {
         if (IsQueuedForDeletion()) return;
         try

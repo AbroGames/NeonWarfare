@@ -19,8 +19,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 [ClientReplication]
 public class StateApplier(EntityRegistry registry, EntityRecordReader records, Replicator replicator)
 {
-    private const string EmptyPacketError = "The packet is empty.";
-    private const string WrongKindError = "The packet kind is {0}, not {1}.";
     private const string UnknownNetIdError = "The state packet has a delta for {0}, which is not registered.";
     private const string UnknownDespawnError = "The state packet despawns {0}, which is not registered.";
     private const string BrokenPacketError = "The packet is broken.";
@@ -29,10 +27,10 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
     /// <summary>
     /// Not atomic: the records before a broken one are already applied.
     /// </summary>
-    /// <exception cref="NetMessageFormatException">The packet is not a state packet or is broken.</exception>
-    public void ApplyPacket(ReadOnlyMemory<byte> packet)
+    /// <exception cref="NetMessageFormatException">The body is broken.</exception>
+    public void ApplyState(ReadOnlyMemory<byte> body)
     {
-        Read(packet, ServerPacketKind.State, (ref BitReader reader) =>
+        Read(body, (ref BitReader reader) =>
         {
             records.ReadAll(ref reader);
             for (NetId id = ReadNetId(ref reader); id != NetId.None; id = ReadNetId(ref reader))
@@ -50,29 +48,19 @@ public class StateApplier(EntityRegistry registry, EntityRecordReader records, R
     /// <summary>
     /// Spawns every entity of the world from the join snapshot. Not atomic either.
     /// </summary>
-    /// <exception cref="NetMessageFormatException">The packet is not a snapshot or is broken.</exception>
-    public void ApplySnapshot(ReadOnlyMemory<byte> packet)
+    /// <exception cref="NetMessageFormatException">The snapshot is broken.</exception>
+    public void ApplySnapshot(ReadOnlyMemory<byte> body)
     {
-        Read(packet, ServerPacketKind.Snapshot, (ref BitReader reader) => records.ReadAll(ref reader));
+        Read(body, (ref BitReader reader) => records.ReadAll(ref reader));
     }
 
     private delegate void BodyReader(ref BitReader reader);
 
-    private static void Read(ReadOnlyMemory<byte> packet, ServerPacketKind kind, BodyReader readBody)
+    private static void Read(ReadOnlyMemory<byte> body, BodyReader readBody)
     {
-        ReadOnlySpan<byte> span = packet.Span;
-        if (span.IsEmpty)
-        {
-            throw new NetMessageFormatException(EmptyPacketError);
-        }
-        if (span[0] != (byte) kind)
-        {
-            throw new NetMessageFormatException(WrongKindError.FormatWith(span[0], kind));
-        }
-
         try
         {
-            var reader = new BitReader(span[1..]);
+            var reader = new BitReader(body.Span);
             //TODO TickTimer: keep the tick number
             reader.ReadVarUInt();
             readBody(ref reader);

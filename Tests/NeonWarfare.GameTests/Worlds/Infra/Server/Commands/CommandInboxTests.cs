@@ -81,8 +81,8 @@ public class CommandInboxTests
         AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(BobPeer, join));
         AssertThat(_clientsConnection.Packets.Count).IsEqual(1);
         AssertThat(_clientsConnection.Packets[0].PeerId).IsEqual(AlicePeer);
-        AssertThat(_clientsConnection.Packets[0].Packet)
-            .ContainsExactly((byte) ServerPacketKind.JoinRejected, (byte) JoinRejectReason.ProtocolMismatch);
+        AssertThat(_clientsConnection.Packets[0].Kind).IsEqual(SentKind.JoinRejected);
+        AssertThat(_clientsConnection.Packets[0].Body).ContainsExactly((byte) JoinRejectReason.ProtocolMismatch);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 

@@ -1,3 +1,4 @@
+using System.Buffers;
 using GdUnit4;
 using NeonWarfare.GameTests.Game.Fixtures;
 using NeonWarfare.GameTests.Worlds.Fixtures;
@@ -15,13 +16,16 @@ public class ClientTransportTests
     private const int ServerPeer = 1;
     private const int ClientPeer = 2;
     private const int OtherPeer = 3;
+    private const string OtherUid = "OtherOther-Oooooooooo";
 
     private TransportWorlds _worlds = null!;
     private FakeNetwork _network = null!;
     private RecordingLocalPlayerOwner _owner = null!;
     private List<byte[]> _snapshots = null!;
-    private Action<byte[]> _onSnapshot = null!;
+    private Action<ReadOnlyMemory<byte>> _onSnapshot = null!;
     private ClientTransport _transport = null!;
+    private FakeNetwork _serverNetwork = null!;
+    private World _server = null!;
 
     [BeforeTest]
     public void SetUp()
@@ -30,7 +34,7 @@ public class ClientTransportTests
         _network = new FakeNetwork();
         _owner = new RecordingLocalPlayerOwner();
         _snapshots = [];
-        _onSnapshot = _snapshots.Add;
+        _onSnapshot = RecordSnapshot;
         _transport = new ClientTransport(
             _network, _worlds.Codec, TestWorldSetups.LocalPlayer(), _owner, snapshot => _onSnapshot(snapshot));
     }
@@ -49,17 +53,15 @@ public class ClientTransportTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void PacketReceived_WithoutAWorld_OnlyTheSnapshotGoesOn()
+    public void PacketReceived_WithoutAWorld_OnlyTheSnapshotBodyGoesOn()
     {
-        byte[] snapshot = [(byte) ServerPacketKind.Snapshot, 1];
-
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1]);
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 1]);
         _network.Receive(ServerPeer, []);
-        _network.Receive(ServerPeer, snapshot);
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1, 2]);
 
         AssertThat(_snapshots.Count).IsEqual(1);
-        AssertThat(_snapshots[0]).ContainsExactly(snapshot);
+        AssertThat(_snapshots[0]).ContainsExactly(1, 2);
     }
 
     [TestCase]
@@ -67,7 +69,7 @@ public class ClientTransportTests
     public void PacketReceived_NotFromTheServer_IsDropped()
     {
         _network.Receive(OtherPeer, [(byte) ServerPacketKind.Snapshot, 1]);
-        _network.Receive(OtherPeer, JoinRejectedPacket.Write(JoinRejectReason.UidInUse));
+        _network.Receive(OtherPeer, Rejection(JoinRejectReason.UidInUse));
 
         AssertThat(_snapshots).IsEmpty();
         AssertThat(_owner.Rejections).IsEmpty();
@@ -78,10 +80,10 @@ public class ClientTransportTests
     [RequireGodotRuntime]
     public void PacketReceived_JoinRejected_ReachesTheOwner_ABrokenOneIsDropped()
     {
-        _network.Receive(ServerPeer, JoinRejectedPacket.Write(JoinRejectReason.UidInUse));
+        _network.Receive(ServerPeer, Rejection(JoinRejectReason.UidInUse));
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.JoinRejected]);
         Connect();
-        _network.Receive(ServerPeer, JoinRejectedPacket.Write(JoinRejectReason.InternalError));
+        _network.Receive(ServerPeer, Rejection(JoinRejectReason.InternalError));
 
         AssertThat(_owner.Rejections).ContainsExactly(JoinRejectReason.UidInUse, JoinRejectReason.InternalError);
     }
@@ -97,6 +99,35 @@ public class ClientTransportTests
         AssertThat(client.Get<LocalPlayerPresentation>().Player.Uid).IsEqual(TestWorldSetups.LocalPlayerUid);
     }
 
+    // Every later join changes the online players: the state packet reaches the World
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Enter_StatePacketsReachTheWorld()
+    {
+        World client = Connect();
+
+        _serverNetwork.Connect(OtherPeer);
+        _serverNetwork.Receive(OtherPeer,
+            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer(OtherUid).ToJoinRequest(_worlds.Codec.ProtocolHash)));
+        TransportWorlds.Tick(_server);
+
+        AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Uid))
+            .ContainsExactlyInAnyOrder(TestWorldSetups.LocalPlayerUid, OtherUid);
+    }
+
+    // The server sends one snapshot per join: a second one is a broken packet, logged and dropped
+    [TestCase]
+    [RequireGodotRuntime]
+    public void PacketReceived_SnapshotWithAWorld_IsDropped()
+    {
+        Connect();
+        _onSnapshot = RecordSnapshot;
+
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1]);
+
+        AssertThat(_snapshots).IsEmpty();
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Enter_Twice_Throws()
@@ -109,15 +140,15 @@ public class ClientTransportTests
     // A dedicated server over the same fake wire: the client is its peer 2, the server is the client's peer 1
     private World Connect()
     {
-        var serverNetwork = new FakeNetwork();
-        World server = AutoFree(new World())!;
-        _worlds.Init(server, TestWorldSetups.Dedicated(), new ServerTransport(serverNetwork, server),
+        _serverNetwork = new FakeNetwork();
+        _server = AutoFree(new World())!;
+        _worlds.Init(_server, TestWorldSetups.Dedicated(), new ServerTransport(_serverNetwork, _server),
             new NoConnection());
-        serverNetwork.Wire = (peerId, packet) =>
+        _serverNetwork.Wire = (peerId, packet) =>
         {
             if (peerId == ClientPeer) _network.Receive(ServerPeer, packet);
         };
-        _network.Wire = (_, packet) => serverNetwork.Receive(ClientPeer, packet);
+        _network.Wire = (_, packet) => _serverNetwork.Receive(ClientPeer, packet);
 
         World? client = null;
         _onSnapshot = snapshot =>
@@ -128,9 +159,18 @@ public class ClientTransportTests
             _transport.Enter(client);
         };
 
-        serverNetwork.Connect(ClientPeer);
+        _serverNetwork.Connect(ClientPeer);
         _network.ConnectToServer();
-        TransportWorlds.Tick(server);
+        TransportWorlds.Tick(_server);
         return client!;
+    }
+
+    private void RecordSnapshot(ReadOnlyMemory<byte> snapshot) => _snapshots.Add(snapshot.ToArray());
+
+    private static byte[] Rejection(JoinRejectReason reason)
+    {
+        var packet = new ArrayBufferWriter<byte>();
+        ServerPackets.WriteJoinRejected(reason, packet);
+        return packet.WrittenSpan.ToArray();
     }
 }

@@ -23,8 +23,6 @@ public class EventDispatcher(NetMessageCodec codec)
     private const string NotRegisteredError = "The event handlers are not registered yet.";
     private const string ParameterCountError = "[EventHandler] {0} must have exactly one parameter.";
     private const string NotEventError = "[EventHandler] {0} takes {1}, which is not an event type.";
-    private const string EmptyPacketError = "The packet is empty.";
-    private const string NotEventsPacketError = "The packet kind is {0}, not an events packet.";
     private const string TrailingBytesError = "{0} of {1} bytes read, an events packet carries one section.";
     
     private record Handler(string Name, Action<Event> Call);
@@ -81,38 +79,18 @@ public class EventDispatcher(NetMessageCodec codec)
     }
 
     /// <summary>
-    /// The client entry point for an events packet, both from the network and from the host's own loopback.
+    /// The client entry point for an events section, both from the network and from the host's own loopback. The
+    /// whole section is read before any handler runs, so a broken one changes nothing.
     /// </summary>
-    /// <exception cref="NetMessageFormatException">The packet is not an events packet or is broken.</exception>
-    public void DispatchPacket(ReadOnlyMemory<byte> packet)
+    /// <exception cref="NetMessageFormatException">The section is broken.</exception>
+    public void Dispatch(ReadOnlyMemory<byte> section)
     {
-        if (packet.IsEmpty)
-        {
-            throw new NetMessageFormatException(EmptyPacketError);
-        }
-        if (packet.Span[0] != (byte) ServerPacketKind.Events)
-        {
-            throw new NetMessageFormatException(NotEventsPacketError.FormatWith(packet.Span[0]));
-        }
-
-        ReadOnlyMemory<byte> section = packet[1..];
         IReadOnlyList<object> events = Read(section, out int bytesRead);
         if (bytesRead != section.Length)
         {
             throw new NetMessageFormatException(TrailingBytesError.FormatWith(bytesRead, section.Length));
         }
         Deliver(events);
-    }
-
-    /// <summary>
-    /// The whole section is read before any handler runs, so a broken one changes nothing.
-    /// </summary>
-    /// <returns>The number of bytes the section took.</returns>
-    /// <exception cref="NetMessageFormatException">The section is broken.</exception>
-    public int Dispatch(ReadOnlyMemory<byte> section)
-    {
-        Deliver(Read(section, out int bytesRead));
-        return bytesRead;
     }
 
     private IReadOnlyList<object> Read(ReadOnlyMemory<byte> section, out int bytesRead)

@@ -37,7 +37,7 @@ public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
     }
 
     /// <exception cref="NetMessageFormatException">The snapshot is broken.</exception>
-    public World RemoteClient(WorldSetup.RemoteClient setup, byte[] snapshot, ClientTransport transport)
+    public World RemoteClient(WorldSetup.RemoteClient setup, ReadOnlyMemory<byte> snapshot, ClientTransport transport)
     {
         var world = new World();
         Build(world, setup, new WorldOrigin.FromSnapshot(snapshot), new NoConnection(), transport, null);

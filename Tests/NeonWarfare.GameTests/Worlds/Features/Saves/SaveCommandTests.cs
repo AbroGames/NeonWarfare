@@ -65,7 +65,7 @@ public class SaveCommandTests
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _server.GetRequiredService<SaveService>().Init("old");
-        _connection.Loopback = _server.GetRequiredService<EventDispatcher>().DispatchPacket;
+        _connection.Loopback = _server.GetRequiredService<EventDispatcher>().Dispatch;
 
         JoinDirectly(HostUid, HostPeer).IsAdmin = true;
         JoinDirectly(AdminUid, AdminPeer).IsAdmin = true;
@@ -170,7 +170,7 @@ public class SaveCommandTests
     private void Tick() => _server.GetRequiredService<ServerTickLoop>().RunTick();
 
     private List<object> Replies(int peerId) => _connection.Packets
-        .Where(sent => sent.PeerId == peerId && sent.Packet[0] == (byte) ServerPacketKind.Events)
-        .SelectMany(sent => _codec.ReadSection(sent.Packet.AsMemory(1), EventTypes, out _))
+        .Where(sent => sent.PeerId == peerId && sent.Kind == SentKind.Events)
+        .SelectMany(sent => _codec.ReadSection(sent.Body, EventTypes, out _))
         .ToList();
 }
