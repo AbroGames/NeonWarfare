@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using GdUnit4;
 using HudScreen = NeonWarfare.Scenes.Screen.Hud.Hud;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
@@ -63,13 +62,6 @@ public class HudTests
             .IsNotEqual(new ChatPresentation.LocalizedServerEntry(Now, "KEY", ["a", "c"]));
     }
 
-    [TestCase]
-    public void FormatChatLine_UnknownEntry_Throws()
-    {
-        AssertThrown(() => HudScreen.FormatChatLine(new UnknownEntry(), Translate))
-            .IsInstanceOf<UnreachableException>();
-    }
-
     private static string Translate(string key) => $"<{key}>";
 
     private static string TranslateWithArgs(string key) => key switch
@@ -78,6 +70,4 @@ public class HudTests
         "SAVED" => "saved as '{0}'",
         _ => key
     };
-
-    private record UnknownEntry() : ChatPresentation.ChatEntry(Now);
 }

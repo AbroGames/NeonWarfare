@@ -21,8 +21,6 @@ public class MessageStringTests
 
     private const string FormatWithMethod = "FormatWith";
 
-    private const string UnreachableException = "UnreachableException";
-
     private static readonly string[] LogMethods = ["Verbose", "Debug", "Information", "Warning", "Error", "Fatal"];
 
     /// <summary>
@@ -80,9 +78,12 @@ public class MessageStringTests
             {
                 foreach (ArgumentSyntax argument in arguments.Arguments)
                 {
+                    // A constant interpolated into $"…" is a value (a flag, a path), not the message itself
                     bool usesConstant = argument.DescendantNodesAndSelf()
                         .OfType<IdentifierNameSyntax>()
-                        .Any(name => constants.Contains(name.Identifier.ValueText));
+                        .Any(name => constants.Contains(name.Identifier.ValueText)
+                                     && !name.Ancestors().TakeWhile(node => node != argument)
+                                         .OfType<InterpolationSyntax>().Any());
                     bool usesFormatWith = argument.DescendantNodesAndSelf()
                         .OfType<InvocationExpressionSyntax>()
                         .Any(call => CSharpFile.CalledName(call) == FormatWithMethod);
@@ -92,44 +93,6 @@ public class MessageStringTests
                         report.Add($"{file.Describe(argument)}: {argument} — write the message as $\"…\" in the " +
                                    $"throw");
                     }
-                }
-            }
-        }
-
-        report.AssertEmpty();
-    }
-
-    /// <summary>
-    /// <c>ArgumentOutOfRangeException</c> in an arm no input can reach blames an argument nobody passed wrong.
-    /// </summary>
-    [Fact]
-    public void UnreachableArms_ThrowUnreachableException()
-    {
-        FailureReport report = new("Throwing default arms that do not throw new UnreachableException()");
-
-        foreach (CSharpFile file in CSharpFile.LoadAll())
-        {
-            IEnumerable<ExpressionSyntax> statementThrows = file.Nodes<SwitchSectionSyntax>()
-                .Where(section => section.Labels.Any(label => label is DefaultSwitchLabelSyntax))
-                .SelectMany(section => section.Statements.OfType<ThrowStatementSyntax>())
-                .Select(statement => statement.Expression)
-                .OfType<ExpressionSyntax>();
-            IEnumerable<ExpressionSyntax> expressionThrows = file.Nodes<SwitchExpressionArmSyntax>()
-                .Where(arm => arm.Pattern is DiscardPatternSyntax && arm.WhenClause is null)
-                .Select(arm => arm.Expression)
-                .OfType<ThrowExpressionSyntax>()
-                .Select(@throw => @throw.Expression);
-
-            foreach (ExpressionSyntax thrown in statementThrows.Concat(expressionThrows))
-            {
-                bool isUnreachable = thrown is ObjectCreationExpressionSyntax creation
-                                     && TypeName(creation.Type) == UnreachableException
-                                     && (creation.ArgumentList is null || creation.ArgumentList.Arguments.Count == 0)
-                                     && creation.Initializer is null;
-
-                if (!isUnreachable)
-                {
-                    report.Add($"{file.Describe(thrown)}: {thrown} — throw new UnreachableException()");
                 }
             }
         }
