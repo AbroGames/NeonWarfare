@@ -12,7 +12,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
@@ -360,6 +359,7 @@ public class SaveTests
         };
         Tick(loaded);
 
+        loaded.GetRequiredService<PeerGatekeeper>().StartHandshake(BobPeer);
         loaded.GetRequiredService<CommandInbox>().EnqueueFromPeer(BobPeer,
             _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, BobUid, "Bob", Colors.White)));
         Tick(loaded);
@@ -374,6 +374,7 @@ public class SaveTests
 
     private void JoinAsPeer(ServiceProvider server, string uid, string nick, int peerId)
     {
+        server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId,
             _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White)));
         server.GetRequiredService<CommandDispatcher>().ProcessAll();
@@ -465,12 +466,13 @@ public class SaveTests
     {
         Players(server).AddPlayer(uid).Nick = nick;
         Online(server).Add(uid);
-        server.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
-        server.GetRequiredService<EventOutbox>().AddPeer(peerId);
+        server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
+        server.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
 
     private void Join(int peerId, string uid, string nick)
     {
+        _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         var join = new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White);
         _server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(join));
     }

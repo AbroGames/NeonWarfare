@@ -150,8 +150,8 @@ public class ChatTests
     public void Message_FromBoundPeerWithoutPlayer_DropsOnlyIt()
     {
         const int ghostPeer = 4;
-        _provider.GetRequiredService<PeerUidMap>().Bind("ghost", ghostPeer);
-        _outbox.AddPeer(ghostPeer);
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(ghostPeer);
+        _provider.GetRequiredService<PeerStateTable>().Join(ghostPeer, "ghost");
         var inbox = _provider.GetRequiredService<CommandInbox>();
 
         inbox.EnqueueFromPeer(ghostPeer, _codec.Encode(new SendChatMessageCommand("lost")));
@@ -169,15 +169,15 @@ public class ChatTests
     public void AdminCommand_RefusedToPlayerRunForAdmin()
     {
         var calls = new List<string>();
-        (ChatSimulationFacade facade, EventOutbox outbox, PeerUidMap peers) = HandMade();
+        (ChatSimulationFacade facade, EventOutbox outbox, PeerStateTable peers) = HandMade();
         facade.Register([new FixtureCommand("admin", RequiresAdmin: true, calls)]);
         PlayerModel root = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer("root");
         root.Nick = "Root";
         root.IsAdmin = true;
-        peers.Bind("alice", AlicePeer);
-        outbox.AddPeer(AlicePeer);
-        peers.Bind(root.Uid, BobPeer);
-        outbox.AddPeer(BobPeer);
+        peers.Connect(AlicePeer, DateTimeOffset.MaxValue);
+        peers.Join(AlicePeer, "alice");
+        peers.Connect(BobPeer, DateTimeOffset.MaxValue);
+        peers.Join(BobPeer, root.Uid);
 
         facade.HandleInput("alice", "/admin x");
         facade.HandleInput(root.Uid, "/ADMIN  y ");
@@ -227,8 +227,8 @@ public class ChatTests
         PlayerModel player = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
         player.Nick = nick;
         _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
-        _provider.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
-        _outbox.AddPeer(peerId);
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
+        _provider.GetRequiredService<PeerStateTable>().Join(peerId, uid);
         return player;
     }
 
@@ -265,9 +265,9 @@ public class ChatTests
     }
 
     // Players come from the container's storages, the outbox and the peers are the facade's own
-    private (ChatSimulationFacade, EventOutbox, PeerUidMap) HandMade()
+    private (ChatSimulationFacade, EventOutbox, PeerStateTable) HandMade()
     {
-        var peers = new PeerUidMap();
+        var peers = new PeerStateTable();
         var outbox = new EventOutbox(_codec, peers);
         var players = _provider.GetRequiredService<PlayerQuery>();
         var chatSimulation = new ChatSimulation(new ManualTimeProvider(Now), outbox, players);

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -12,12 +10,12 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 /// <summary>
 /// Lets a connected peer in only through a join: one that has not joined by the deadline is disconnected, a rejected
-/// one is told why and disconnected. Between the disconnect and its <c>peer_disconnected</c> the peer still sends,
-/// so <see cref="CommandDispatcher"/> drops everything from a disconnecting peer: a rejected or displaced peer
-/// must not act, displace back included.
+/// one is told why and disconnected. A disconnected peer is cut off in <see cref="PeerStateTable"/>: until its
+/// <c>peer_disconnected</c> it still sends, and <see cref="CommandDispatcher"/> drops all of it, so a rejected or
+/// displaced peer cannot act, displace back included.
 /// </summary>
 [Server]
-public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider timeProvider, PeerUidMap peers)
+public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider timeProvider, PeerStateTable peers)
 {
     public static readonly TimeSpan HandshakeTimeout = TimeSpan.FromSeconds(10);
 
@@ -26,28 +24,12 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
 
     private readonly ILogger _log = LogFactory.GetForStatic<PeerGatekeeper>();
 
-    private readonly Dictionary<int, DateTimeOffset> _deadlineByPeerId = new();
-    private readonly HashSet<int> _disconnecting = [];
-
-    public void StartHandshake(int peerId)
-    {
-        _deadlineByPeerId[peerId] = timeProvider.GetUtcNow() + HandshakeTimeout;
-    }
+    public void StartHandshake(int peerId) => peers.Connect(peerId, timeProvider.GetUtcNow() + HandshakeTimeout);
 
     public void DisconnectExpired()
     {
-        if (_deadlineByPeerId.Count == 0) return;
-
-        DateTimeOffset now = timeProvider.GetUtcNow();
-        foreach ((int peerId, DateTimeOffset deadline) in _deadlineByPeerId.ToList())
+        foreach (int peerId in peers.ExpiredConnecting(timeProvider.GetUtcNow()))
         {
-            if (peers.TryGetUid(peerId, out _))
-            {
-                _deadlineByPeerId.Remove(peerId);
-                continue;
-            }
-            if (now < deadline) continue;
-
             _log.Information(TimedOutLog, peerId, HandshakeTimeout);
             Disconnect(peerId);
         }
@@ -55,7 +37,7 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
 
     public void Reject(int peerId, JoinRejectReason reason)
     {
-        if (_disconnecting.Contains(peerId)) return;
+        if (peers.IsCut(peerId)) return;
 
         _log.Warning(RejectedLog, peerId, reason);
         // A failed send must not leave the rejected peer connected
@@ -71,21 +53,8 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
 
     public void Disconnect(int peerId)
     {
-        _deadlineByPeerId.Remove(peerId);
-        if (!_disconnecting.Add(peerId)) return;
-
-        clientsConnection.Disconnect(peerId);
+        if (peers.Disconnect(peerId)) clientsConnection.Disconnect(peerId);
     }
-    
-    public void Forget(int peerId)
-    {
-        _deadlineByPeerId.Remove(peerId);
-        _disconnecting.Remove(peerId);
-    }
-
-    public bool IsDisconnecting(int peerId) => _disconnecting.Contains(peerId);
 
     public bool IsLocal(int peerId) => clientsConnection.LocalPeerId == peerId;
-
-
 }

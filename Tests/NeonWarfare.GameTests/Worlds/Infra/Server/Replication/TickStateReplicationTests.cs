@@ -687,12 +687,13 @@ public class TickStateReplicationTests
     {
         Players().AddPlayer(uid).Nick = nick;
         Online().Add(uid);
-        _server.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
-        _server.GetRequiredService<EventOutbox>().AddPeer(peerId);
+        _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
+        _server.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
 
     private void Join(int peerId, string uid, string nick)
     {
+        _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         var join = new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White);
         _server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(join));
     }

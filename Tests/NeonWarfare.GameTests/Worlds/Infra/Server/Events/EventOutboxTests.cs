@@ -26,14 +26,14 @@ public class EventOutboxTests
     private const string Offline = "offline";
 
     private NetMessageCodec _codec = null!;
-    private PeerUidMap _peers = null!;
+    private PeerStateTable _peers = null!;
     private EventOutbox _outbox = null!;
 
     [BeforeTest]
     public void SetUp()
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
-        _peers = new PeerUidMap();
+        _peers = new PeerStateTable();
         _outbox = new EventOutbox(_codec, _peers);
         Join(Alice, AlicePeer);
         Join(Bob, BobPeer);
@@ -91,13 +91,19 @@ public class EventOutboxTests
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
     }
 
+    // Disconnected by the server, the peer keeps its uid until its peer_disconnected, but receives nothing more
     [TestCase]
     [RequireGodotRuntime]
-    public void PublishTo_BoundPeerWithoutBuffer_Throws()
+    public void Publish_LeavingPeer_IsSkipped()
     {
-        _peers.Bind(Offline, 4);
+        _peers.Disconnect(BobPeer);
 
-        AssertThrown(() => _outbox.PublishTo(Event("lost"), Offline)).IsInstanceOf<InvalidOperationException>();
+        _outbox.PublishTo(Event("personal"), Bob);
+        _outbox.PublishToAll(Event("common"));
+
+        AssertThat(_peers.TryGetPeerIdByUid(Bob, out _)).IsTrue();
+        AssertThrown(() => _outbox.DrainEvents(BobPeer, new ArrayBufferWriter<byte>()))
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
@@ -114,7 +120,7 @@ public class EventOutboxTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void AddPeer_Later_GetsNoEarlierEvents()
+    public void Join_Later_GetsNoEarlierEvents()
     {
         _outbox.PublishToAll(Event("before"));
         Join("carol", 4);
@@ -127,29 +133,22 @@ public class EventOutboxTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void RemovePeer_LeavesTheOutbox()
+    public void RemovedPeer_LeavesTheOutbox()
     {
-        _outbox.RemovePeer(BobPeer);
+        _peers.Remove(BobPeer);
 
         _outbox.PublishToAll(Event("common"));
+        _outbox.PublishTo(Event("personal"), Bob);
 
-        AssertThat(_outbox.Peers).ContainsExactly(AlicePeer);
+        AssertThat(PeerEvents(AlicePeer).Count).IsEqual(1);
         AssertThrown(() => _outbox.DrainEvents(BobPeer, new ArrayBufferWriter<byte>()))
             .IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => _outbox.RemovePeer(BobPeer)).IsInstanceOf<InvalidOperationException>();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void AddPeer_Twice_Throws()
-    {
-        AssertThrown(() => _outbox.AddPeer(AlicePeer)).IsInstanceOf<InvalidOperationException>();
     }
 
     private void Join(string uid, int peerId)
     {
-        _peers.Bind(uid, peerId);
-        _outbox.AddPeer(peerId);
+        _peers.Connect(peerId, DateTimeOffset.MaxValue);
+        _peers.Join(peerId, uid);
     }
 
     private static ChatServerMessageEvent Event(string text) => new(1, text);

@@ -29,6 +29,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 public class ServerTickLoop(
     CommandDispatcher commands,
     PeerGatekeeper gatekeeper,
+    PeerStateTable peers,
     EventOutbox outbox,
     StateReplicator stateReplicator,
     SaveWriter saveWriter,
@@ -77,7 +78,7 @@ public class ServerTickLoop(
         
         // A peer that joins in this tick gets the state at its end from its snapshot, and has nothing to apply a
         // delta to before that
-        List<int> joinedBefore = outbox.Peers.ToList();
+        List<int> joinedBefore = peers.JoinedPeerIds.ToList();
         
         commands.ProcessAll();
         gatekeeper.DisconnectExpired();
@@ -88,10 +89,6 @@ public class ServerTickLoop(
         SendEvents();
     }
 
-    // A disconnected peer keeps its buffer and binding until its peer_disconnected, so that its Leave still runs,
-    // but has nothing more to receive: a rejected joiner has no world to apply a packet to
-    private bool IsReachable(int peerId) => outbox.Peers.Contains(peerId) && !gatekeeper.IsDisconnecting(peerId);
-
     private void SendState(List<int> joinedBefore)
     {
         var writer = new BitWriter();
@@ -101,7 +98,8 @@ public class ServerTickLoop(
         // The host's own World has the state already: its Simulation wrote it
         foreach (int peerId in joinedBefore.Where(peerId => peerId != clientsConnection.LocalPeerId))
         {
-            if (!IsReachable(peerId)) continue;
+            // Disconnected earlier in the tick, it is only waiting for its peer_disconnected
+            if (!peers.IsJoined(peerId)) continue;
 
             try
             {
@@ -120,9 +118,9 @@ public class ServerTickLoop(
     // The host's own World is the server's: it has every entity already
     private void SendSnapshots(List<int> joinedBefore)
     {
-        List<int> joined = outbox.Peers
+        List<int> joined = peers.JoinedPeerIds
             .Except(joinedBefore)
-            .Where(peerId => peerId != clientsConnection.LocalPeerId && IsReachable(peerId))
+            .Where(peerId => peerId != clientsConnection.LocalPeerId)
             .ToList();
         if (joined.Count == 0) return;
 
@@ -169,7 +167,7 @@ public class ServerTickLoop(
     private void SendEvents()
     {
         ArrayBufferWriter<byte> section = new();
-        foreach (int peerId in outbox.Peers.Where(IsReachable).ToList())
+        foreach (int peerId in peers.JoinedPeerIds.ToList())
         {
             // On the host this also covers its own World throwing: its transport delivers the events inside the call
             try

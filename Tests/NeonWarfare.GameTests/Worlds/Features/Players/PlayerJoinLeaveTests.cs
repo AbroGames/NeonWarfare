@@ -12,6 +12,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.GlobalServices.Settings;
 using RepliCAT;
@@ -144,7 +145,7 @@ public class PlayerJoinLeaveTests
         AssertThat(Online()).ContainsExactly(BobUid);
         AssertThat(Players().PlayerByUid.ContainsKey(AliceUid)).IsTrue();
         AssertThat(PeerEvents(BobPeer)).ContainsExactly(Left("Alice"));
-        AssertThat(Outbox().Peers).ContainsExactly(BobPeer);
+        AssertThat(Peers().JoinedPeerIds).ContainsExactly(BobPeer);
     }
 
     // A client that crashed comes back before ENet notices: the old connection is dropped, not the new one
@@ -164,7 +165,7 @@ public class PlayerJoinLeaveTests
         object[] displaced = [Left("Alice"), ..Joined(AliceUid, "Alice")];
         AssertThat(PeerEvents(BobPeer)).ContainsExactly(displaced);
         AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined(AliceUid, "Alice"));
-        AssertThat(Outbox().Peers).ContainsExactlyInAnyOrder(BobPeer, AliceSecondPeer);
+        AssertThat(Peers().JoinedPeerIds).ContainsExactlyInAnyOrder(BobPeer, AliceSecondPeer);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
@@ -295,6 +296,7 @@ public class PlayerJoinLeaveTests
 
     private void Join(int peerId, string uid, string nick, Color? color = null)
     {
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         var join = new JoinRequestCommand(_codec.ProtocolHash, uid, nick, color ?? Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(join));
     }
@@ -311,9 +313,11 @@ public class PlayerJoinLeaveTests
 
     private EventOutbox Outbox() => _provider.GetRequiredService<EventOutbox>();
 
+    private PeerStateTable Peers() => _provider.GetRequiredService<PeerStateTable>();
+
     private void DrainAll()
     {
-        foreach (int peerId in Outbox().Peers)
+        foreach (int peerId in Peers().JoinedPeerIds.ToList())
         {
             PeerEvents(peerId);
         }

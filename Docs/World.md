@@ -97,8 +97,8 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
 | `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
-| `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerUidMap` (never replicated), `IPeerSessionHandler` |
-| `Infra/Server/Events` | `EventOutbox` — the events of the tick, one buffer per joined peer |
+| `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
+| `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
 | `Infra/Server/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
 | `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
