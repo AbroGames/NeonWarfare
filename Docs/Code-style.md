@@ -35,9 +35,10 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
   never a hook for a subclass. A method called from the outside is named by what it does
   (`World.IServerEndpoint.QueueDisconnection`, `PeerGatekeeper.StartHandshake`). Checked in `Root/`, `Game/`,
   `Worlds/` by `EventNamingTests`.
-* No static game logic: it goes into the [world services or `Services`](Services.md). Statics are left
-  for extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings
-  (de)serialization.
+* Static code is only pure functions: no state, no side effects, no services. Everything else goes into the
+  [world services or `Services`](Services.md). A helper shared between features that is not about the game goes
+  into KludgeBox (`IsSingleLinePrintable`); a game rule stays in the feature that owns it. Extension classes
+  (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings (de)serialization are static too.
 
 ## Serialization
 
