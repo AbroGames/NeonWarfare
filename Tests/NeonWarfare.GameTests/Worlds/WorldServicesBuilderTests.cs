@@ -8,17 +8,17 @@ using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
-using NeonWarfare.Scenes.Worlds.Infra.ClientReplication;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
-using NeonWarfare.Scenes.Worlds.Infra.Hud;
+using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
+using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -38,7 +38,7 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool hasSimulation, bool hasPresentation) in new[]
                  {
-                     (WorldLayer.Client, false, true),
+                     (WorldLayer.RemoteClient, false, true),
                      (WorldLayer.Host, true, true),
                      (WorldLayer.Dedicated, true, false),
                  })
@@ -57,7 +57,7 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool isServer) in new[]
                  {
-                     (WorldLayer.Client, false),
+                     (WorldLayer.RemoteClient, false),
                      (WorldLayer.Host, true),
                      (WorldLayer.Dedicated, true),
                  })
@@ -80,7 +80,7 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool hasPresentation) in new[]
                  {
-                     (WorldLayer.Client, true),
+                     (WorldLayer.RemoteClient, true),
                      (WorldLayer.Host, true),
                      (WorldLayer.Dedicated, false),
                  })
@@ -99,7 +99,7 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool applies, bool writes) in new[]
                  {
-                     (WorldLayer.Client, true, false),
+                     (WorldLayer.RemoteClient, true, false),
                      (WorldLayer.Host, false, true),
                      (WorldLayer.Dedicated, false, true),
                  })
@@ -125,7 +125,7 @@ public class WorldServicesBuilderTests
                 .Contains(typeof(HelpChatCommandSimulationFacade));
         }
 
-        using ServiceProvider client = Build(WorldLayer.Client);
+        using ServiceProvider client = Build(WorldLayer.RemoteClient);
         AssertThat(client.GetService<ChatSimulationFacade>()).IsNull();
         AssertThat(client.GetService<HelpChatCommandSimulationFacade>()).IsNull();
     }
@@ -145,7 +145,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_HasQueries()
     {
-        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host, WorldLayer.Dedicated })
+        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host, WorldLayer.Dedicated })
         {
             using ServiceProvider provider = Build(FixtureBuilder(typeof(FixtureQuery)), layers);
 
@@ -215,7 +215,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_SpawnsNothing()
     {
-        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host, WorldLayer.Dedicated })
+        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host, WorldLayer.Dedicated })
         {
             Node root = AutoFree(new Node())!;
 
@@ -231,7 +231,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_Client_HasNoSpawnerNorNetIdGenerator()
     {
-        using ServiceProvider provider = Build(WorldLayer.Client);
+        using ServiceProvider provider = Build(WorldLayer.RemoteClient);
 
         AssertThat(provider.GetService<EntitySpawner>()).IsNull();
         AssertThat(provider.GetService<NetIdGenerator>()).IsNull();
@@ -246,7 +246,7 @@ public class WorldServicesBuilderTests
         var root = new WorldRoot(AutoFree(new Node())!);
 
         using ServiceProvider client = new WorldServicesBuilder()
-            .Build(WorldLayer.Client, Dependencies(WorldLayer.Client) with { SaveFiles = null! }, root);
+            .Build(WorldLayer.RemoteClient, Dependencies(WorldLayer.RemoteClient) with { SaveFiles = null! }, root);
         AssertThat(client.GetService<ISaveFiles>()).IsNull();
         foreach (WorldLayer server in new[] { WorldLayer.Host, WorldLayer.Dedicated })
         {
@@ -264,7 +264,7 @@ public class WorldServicesBuilderTests
         var root = new WorldRoot(AutoFree(new Node())!);
         WorldDependencies withLocalPlayer = Dependencies(WorldLayer.Host);
 
-        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host })
+        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host })
         {
             WorldDependencies noLocalPlayer = Dependencies(layers) with { LocalPlayer = null! };
             AssertThrown(() => new WorldServicesBuilder().Build(layers, noLocalPlayer, root))
@@ -281,7 +281,7 @@ public class WorldServicesBuilderTests
     {
         var root = new WorldRoot(AutoFree(new Node())!);
 
-        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host })
+        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host })
         {
             WorldDependencies noOwner = Dependencies(layers) with { LocalPlayerOwner = null! };
             AssertThrown(() => new WorldServicesBuilder().Build(layers, noOwner, root))
@@ -305,8 +305,9 @@ public class WorldServicesBuilderTests
             AssertThrown(() => new WorldServicesBuilder().Build(layers, noAdmin, root))
                 .IsInstanceOf<ArgumentException>();
         }
-        WorldDependencies clientWithAdmin = Dependencies(WorldLayer.Client) with { Admin = new WorldAdmin(null!) };
-        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Client, clientWithAdmin, root))
+        WorldDependencies clientWithAdmin =
+            Dependencies(WorldLayer.RemoteClient) with { Admin = new WorldAdmin(null!) };
+        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.RemoteClient, clientWithAdmin, root))
             .IsInstanceOf<ArgumentException>();
     }
 
@@ -321,7 +322,7 @@ public class WorldServicesBuilderTests
         WorldDependencies noOwner = Dependencies(WorldLayer.Dedicated) with { DedicatedServerOwner = null! };
         AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, noOwner, root))
             .IsInstanceOf<ArgumentException>();
-        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.Client })
+        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.RemoteClient })
         {
             WorldDependencies withOwner = Dependencies(layers) with { DedicatedServerOwner = owner };
             AssertThrown(() => new WorldServicesBuilder().Build(layers, withOwner, root))

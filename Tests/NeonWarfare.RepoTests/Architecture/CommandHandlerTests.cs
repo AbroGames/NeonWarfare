@@ -11,9 +11,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class CommandHandlerTests
 {
-    private const string CommandsNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Commands";
-    private const string PeersNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Peers";
-    private const string JoinCommand = PeersNamespace + ".JoinRequestCommand";
+    private const string CommandsNamespace = WorldLayers.WorldNamespace + ".Infra.Server.Commands";
+    private const string PeersNamespace = WorldLayers.WorldNamespace + ".Infra.Server.Peers";
+    private const string JoinCommand = WorldLayers.WorldNamespace + ".Infra.Protocol.JoinRequestCommand";
     private const string PlayerHandler = CommandsNamespace + ".IPlayerCommandHandler`1";
     private const string JoinHandler = PeersNamespace + ".IJoinRequestHandler";
     private const string DisconnectedHandler = PeersNamespace + ".IPeerDisconnectedHandler";

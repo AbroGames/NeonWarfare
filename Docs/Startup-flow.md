@@ -107,7 +107,7 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
 | `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName)` | none | `Host`, `Hud` | A single-player game from the menu, `--auto-start` (+ `--auto-start-savefile`) |
 | `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | an ENet server | `Host`, `Hud` | Hosting "from inside the client" |
 | `DedicatedServerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | an ENet server | `Dedicated`, `ServerHud` or none | A dedicated server (`--server`) |
-| `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | an ENet client | `Client`, `Hud`, from the snapshot | Connecting to a server from the menu, `--auto-connect` |
+| `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | an ENet client | `RemoteClient`, `Hud`, from the snapshot | Connecting to a server from the menu, `--auto-connect` |
 | `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | an ENet client + a child server process | as above | Hosting with an out-of-process server |
 
 ### The common part: `BaseGameStarter`

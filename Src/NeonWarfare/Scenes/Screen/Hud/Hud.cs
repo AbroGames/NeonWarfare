@@ -7,7 +7,7 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Features.Saves;
-using NeonWarfare.Scenes.Worlds.Infra.Hud;
+using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.Hud;

@@ -1,7 +1,6 @@
 using Godot;
-using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
+using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.GameTests.Worlds.Fixtures;
 

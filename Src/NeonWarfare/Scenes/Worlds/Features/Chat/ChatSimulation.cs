@@ -2,7 +2,7 @@ using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;

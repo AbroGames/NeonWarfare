@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scenes.Worlds.Infra.Hud;
+using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 

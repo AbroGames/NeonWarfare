@@ -4,15 +4,16 @@ using Godot;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
-using NeonWarfare.Scenes.Worlds.Infra.ClientReplication;
+using NeonWarfare.Scenes.Worlds.Infra.Client;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 
 namespace NeonWarfare.Scenes.Worlds;
 
@@ -81,7 +82,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         {
             AddChild(new ServerTickNode().InitPreReady(_services.GetRequiredService<ServerTickLoop>().RunTick));
         }
-        if (layers.HasFlag(WorldLayer.ServerNetwork))
+        if (layers.HasFlag(WorldLayer.Server))
         {
             AddChild(new SaveOnExitNode().InitPreReady(Service<SaveService>().SaveOnExit));
         }

@@ -9,9 +9,9 @@ public enum Layer
     Simulation,
     SimulationFacade,
     CommandHandler,
-    ServerNetwork,
+    Server,
     Query,
-    ClientNetwork,
+    Client,
     Presentation,
     ClientReplication,
 }
@@ -27,8 +27,8 @@ public static class WorldLayers
     public const string FeaturesNamespace = WorldNamespace + ".Features";
     public const string CommandBase = WorldNamespace + ".Infra.Protocol.Command";
     public const string EventBase = WorldNamespace + ".Infra.Protocol.Event";
-    public const string NoticeBase = WorldNamespace + ".Infra.Hud.Notice";
-    public const string EventHandlerAttribute = WorldNamespace + ".Infra.ClientNetwork.EventHandlerAttribute";
+    public const string NoticeBase = WorldNamespace + ".Infra.Presentation.Notice";
+    public const string EventHandlerAttribute = WorldNamespace + ".Infra.Client.Events.EventHandlerAttribute";
 
     private const string CompositionNamespace = WorldNamespace + ".Infra.Composition";
     private const string LayerAttributeBase = CompositionNamespace + ".WorldServiceAttribute";
@@ -45,9 +45,9 @@ public static class WorldLayers
             [CompositionNamespace + ".SimulationAttribute"] = Layer.Simulation,
             [CompositionNamespace + ".SimulationFacadeAttribute"] = Layer.SimulationFacade,
             [CompositionNamespace + ".CommandHandlerAttribute"] = Layer.CommandHandler,
-            [CompositionNamespace + ".ServerNetworkAttribute"] = Layer.ServerNetwork,
+            [CompositionNamespace + ".ServerAttribute"] = Layer.Server,
             [CompositionNamespace + ".QueryAttribute"] = Layer.Query,
-            [CompositionNamespace + ".ClientNetworkAttribute"] = Layer.ClientNetwork,
+            [CompositionNamespace + ".ClientAttribute"] = Layer.Client,
             [CompositionNamespace + ".PresentationAttribute"] = Layer.Presentation,
             [CompositionNamespace + ".ClientReplicationAttribute"] = Layer.ClientReplication,
         };
@@ -55,7 +55,7 @@ public static class WorldLayers
     /// <summary>The layers whose code runs only where the Simulation does and may reach it.</summary>
     public static readonly IReadOnlySet<Layer> SimulationGroup = new HashSet<Layer>
     {
-        Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.ServerNetwork
+        Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.Server
     };
 
     /// <summary>The layers allowed to write replicated state, besides the models themselves.</summary>

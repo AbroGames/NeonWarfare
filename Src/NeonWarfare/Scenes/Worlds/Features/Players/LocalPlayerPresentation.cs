@@ -1,7 +1,8 @@
 using System;
 using Humanizer;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 

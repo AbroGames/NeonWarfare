@@ -21,7 +21,7 @@ public class PresentationSurfaceTests
     /// </summary>
     private static readonly string[] OpenPresentations =
     [
-        WorldLayers.WorldNamespace + ".Infra.Hud.HudMailbox",
+        WorldLayers.WorldNamespace + ".Infra.Presentation.HudMailbox",
     ];
 
     [Fact]

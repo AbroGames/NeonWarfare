@@ -4,9 +4,7 @@ using GdUnit4;
 using Godot;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
-using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scripts.GlobalServices;
 using static GdUnit4.Assertions;
 

@@ -9,7 +9,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// </summary>
 public static class CommandSends
 {
-    private const string PlayerSender = WorldLayers.WorldNamespace + ".Infra.ClientNetwork.PlayerCommandSender";
+    private const string PlayerSender = WorldLayers.WorldNamespace + ".Infra.Client.PlayerCommandSender";
     private const string WorldRoot = WorldLayers.WorldNamespace + ".World";
     private const string WorldSender = WorldRoot + "/ICommandSender";
     private const string SendMethod = "Send";

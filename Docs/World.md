@@ -28,8 +28,8 @@ or snapshot throws from `InitPreReady`, and the caller frees the World.
 `WorldDependencies` is what `Game` hands to every service: `TimeProvider`, `NetMessageCodec`, `Replicator`,
 `FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections, `ISaveFiles` (`null` on a remote client),
 `LocalPlayer` and `ILocalPlayerOwner` (`null` on a dedicated server), `WorldAdmin` (`null` on a remote client) and
-`IDedicatedServerOwner` (only on a dedicated server). With the Simulation the World also adds `ServerTickNode`, with
-the server network `SaveOnExitNode`.
+`IDedicatedServerOwner` (only on a dedicated server); the ones the owning process supplies are in `Ports/`. With the
+Simulation the World also adds `ServerTickNode`, with the Server layer `SaveOnExitNode`.
 
 ## Layers
 
@@ -38,27 +38,27 @@ A service belongs to exactly one layer, set by its attribute. The starter passes
 
 | Configuration | `WorldLayer` | Used by |
 |---|---|---|
-| `Client` | `Query \| ClientNetwork \| Presentation \| ClientReplication` | A client connected to a remote server |
-| `Host` | `Dedicated \| Client` without `ClientReplication` | Single player and hosting from inside the client |
-| `Dedicated` | `Simulation \| SimulationFacade \| CommandHandler \| ServerNetwork \| Query` | A dedicated server, with `ServerHud` or without |
+| `RemoteClient` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
+| `Host` | `Dedicated \| RemoteClient` without `ClientReplication` | Single player and hosting from inside the client |
+| `Dedicated` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
 
 The host has no `ClientReplication`: its Simulation writes the very models its Presentation reads.
 
 | Attribute | What lives there | The constructor may take | Configurations |
 |---|---|---|---|
-| `[Simulation]` | A leaf: one side effect (a model write, or an event with its log), no decisions (`ChatSimulation`) | `[Query]`, `[ServerNetwork]` | Host, Dedicated |
-| `[SimulationFacade]` | A finished operation: checks, decisions, order of steps (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[ServerNetwork]` | Host, Dedicated |
+| `[Simulation]` | A leaf: one side effect (a model write, or an event with its log), no decisions (`ChatSimulation`) | `[Query]`, `[Server]` | Host, Dedicated |
+| `[SimulationFacade]` | A finished operation: checks, decisions, order of steps (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[Server]` | Host, Dedicated |
 | `[CommandHandler]` | `IPlayerCommandHandler<T>`, `IJoinRequestHandler`, `IPeerDisconnectedHandler`: validate and call a facade | Facades, `[Query]` | Host, Dedicated |
-| `[ServerNetwork]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[ServerNetwork]`, `[Query]` | Host, Dedicated |
+| `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]` | Host, Dedicated |
 | `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`, `*StorageQuery`) | `[Query]` | All |
-| `[ClientNetwork]` | `EventDispatcher`, `PlayerCommandSender` | `[ClientNetwork]`, `[Query]` | Client, Host |
-| `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | Client, Host |
-| `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | Client |
+| `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]` | RemoteClient, Host |
+| `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | RemoteClient, Host |
+| `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
 
 Every layer may also take the models and the `WorldDependencies` types, except those with an effect beyond the
-world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[ServerNetwork]`;
+world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[Server]`;
 `IDedicatedServerOwner` — `[SimulationFacade]`; `IServerConnection` —
-`[ClientNetwork]`; `Replicator`, `EntityRecordReader` — `[ServerNetwork]`, `[ClientReplication]`; `EntityRegistry`
+`[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`; `EntityRegistry`
 and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
 `ILocalPlayerOwner` — `[Presentation]`.
 `IEntityFinder` is open to all. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
@@ -88,17 +88,19 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | Folder | What it holds |
 |---|---|
 | `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
+| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` (implemented by `Game`, the host's own peer looped back synchronously), `IServerConnection` (a loopback on the host), `ISaveFiles`, `IDedicatedServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner`, `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags and the three configurations; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
-| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |
-| `Infra/ServerNetwork` | The server side; `IClientsConnection` — the transport to the clients, implemented by `Game`, the host's own peer looped back synchronously; `IDedicatedServerOwner`, see [Shutdown](Shutdown.md) |
-| `Infra/ServerNetwork/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
-| `Infra/ServerNetwork/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
-| `Infra/ServerNetwork/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerUidMap` (never replicated), `JoinRequestCommand`, `IJoinRequestHandler` and `IPeerDisconnectedHandler` |
-| `Infra/ServerNetwork/Events` | `EventOutbox` — the events of the tick, one buffer per joined peer |
-| `Infra/ServerNetwork/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
-| `Infra/ServerNetwork/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `ISaveFiles` (owned by the process), `SaveFormatException`, `SaveVersionMismatchException` |
-| `Infra/ClientNetwork` | `IServerConnection` (a loopback on the host), `PlayerCommandSender` — the only sender in the World, `EventDispatcher` and `EventHandlerAttribute` |
-| `Infra/ClientReplication` | `StateApplier` — the state packets and the join snapshot of a remote client |
+| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRequestCommand`, `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |
+| `Infra/Server` | The `[Server]` layer, one folder per topic |
+| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
+| `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
+| `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerUidMap` (never replicated), `IJoinRequestHandler` and `IPeerDisconnectedHandler` |
+| `Infra/Server/Events` | `EventOutbox` — the events of the tick, one buffer per joined peer |
+| `Infra/Server/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
+| `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
+| `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
+| `Infra/Client/Events` | `EventDispatcher` and `EventHandlerAttribute` |
+| `Infra/Client/Replication` | `StateApplier` — the state packets and the join snapshot of a remote client |
 | `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `Game`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
-| `Infra/Hud` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |
+| `Infra/Presentation` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |
