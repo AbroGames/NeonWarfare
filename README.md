@@ -22,7 +22,7 @@ on Windows/Linux/macOS.
 | Document | Read when you touch |
 |---|---|
 | [Networking](Docs/Networking.md) | `Network`, `ServerTickLoop`, commands, packets, join, `NetId`, replication |
-| [World](Docs/World.md) | `World`, `WorldLayer`, the layer attributes, `WorldServicesBuilder`, the `Infra/` inventory |
+| [World](Docs/World.md) | `World`, `WorldLayer`, the layer attributes, `WorldServicesBuilder`, the `Infra/` folders |
 | [World features](Docs/World-features.md) | `World/Features/`: what each feature holds, how it plugs in |
 | [Data and saves](Docs/Data-and-saves.md) | `[Replicated]` models, storages, `[NotSaved]`, RepliCAT saves |
 | [Services](Docs/Services.md) | `Services.*`, the global services |
