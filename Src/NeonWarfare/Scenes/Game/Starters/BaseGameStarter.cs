@@ -46,7 +46,7 @@ public abstract class BaseGameStarter
     {
         ArgumentNullException.ThrowIfNull(saveFileName);
         return Services.SaveLoad.CheckFileExists(saveFileName)
-            ? new WorldOrigin.FromSave(Services.SaveLoad.LoadFromDisk(saveFileName))
+            ? new WorldOrigin.FromSave(saveFileName, Services.SaveLoad.LoadFromDisk(saveFileName))
             : new WorldOrigin.NewWorld();
     }
 

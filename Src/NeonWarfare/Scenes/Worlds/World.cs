@@ -95,7 +95,7 @@ public partial class World
                 Service<StateApplier>().ApplySnapshot(snapshot.Records);
                 break;
             case WorldOrigin.FromSave save:
-                Service<SaveLoader>().Load(save.Save);
+                Service<SaveLoader>().Load(save.FileName, save.Save);
                 break;
             default:
                 throw new UnreachableException();

@@ -4,7 +4,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using RepliCAT.Bits;
 using Serilog;
@@ -20,8 +19,7 @@ public class SaveLoader(
     EntityRecordReader records,
     NetIdGenerator netIds,
     ServerTickClock clock,
-    ProtocolHash protocolHash,
-    WorldSaveFile saveFile)
+    ProtocolHash protocolHash)
 {
     private readonly ILogger _log = LogFactory.GetForStatic<SaveLoader>();
 
@@ -31,7 +29,7 @@ public class SaveLoader(
     /// </summary>
     /// <exception cref="SaveVersionMismatchException">The save was written with another protocol hash.</exception>
     /// <exception cref="SaveFormatException">The save is truncated or broken.</exception>
-    public void Load(ReadOnlyMemory<byte> save)
+    public void Load(string fileName, ReadOnlyMemory<byte> save)
     {
         if (save.Length * 8 < SaveWriter.HashBits)
         {
@@ -72,6 +70,6 @@ public class SaveLoader(
 
         netIds.Restore(next);
         clock.Restore(tick);
-        _log.Information("Loaded the save '{saveFileName}' at tick {tick}", saveFile.FileName, tick);
+        _log.Information("Loaded the save '{saveFileName}' at tick {tick}", fileName, tick);
     }
 }
