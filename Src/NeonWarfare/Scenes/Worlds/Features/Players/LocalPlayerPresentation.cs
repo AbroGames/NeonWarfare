@@ -1,4 +1,3 @@
-using System;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Ports;
@@ -14,14 +13,7 @@ public class LocalPlayerPresentation(LocalPlayer localPlayer, ILocalPlayerOwner 
     : IEventHandlerOwner
 {
     public string Uid => localPlayer.Uid;
-
-    /// <summary>
-    /// Throws instead of returning <c>null</c>, because the UI exists only while the player is online, see
-    /// <see cref="ILocalPlayerOwner"/>.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">Before the join is applied or after the leave.</exception>
-    public PlayerModel Player =>
-        players.TryGetOnline(Uid) ?? throw new InvalidOperationException($"The local player {Uid} is not online");
+    public PlayerModel Player => players.Get(Uid);
 
     [EventHandler]
     private void Handle(PlayerJoinedEvent e)

@@ -225,22 +225,6 @@ public class WorldEntryPointsTests
         AssertThat(localPlayer.Player.Uid).IsEqual(HostUid);
     }
 
-    // A loaded save stores the host's player, but it is not online until it joins again
-    [TestCase]
-    [RequireGodotRuntime]
-    public void LocalPlayer_OnAHostFromSave_IsOnlineOnlyAfterItsJoin()
-    {
-        var owner = new RecordingLocalPlayerOwner();
-        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash)), owner);
-        var localPlayer = world.Get<LocalPlayerPresentation>();
-
-        AssertThrown(() => { _ = localPlayer.Player; }).IsInstanceOf<InvalidOperationException>();
-        JoinHost(world);
-
-        AssertThat(owner.JoinedCount).IsEqual(1);
-        AssertThat(localPlayer.Player.Nick).IsEqual("Host");
-    }
-
     // Done when: a rejected host join goes to the failure path, the transport's JoinRejected, and the UI never appears
     [TestCase]
     [RequireGodotRuntime]
@@ -257,20 +241,6 @@ public class WorldEntryPointsTests
         AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Kind)))
             .ContainsExactly((HostPeer, SentKind.JoinRejected));
         AssertThat(owner.JoinedCount).IsEqual(0);
-        AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
-            .IsInstanceOf<InvalidOperationException>();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void LocalPlayer_OnAHost_IsGoneAfterItsLeave()
-    {
-        World world = HostWorld();
-        JoinHost(world);
-
-        world.QueueDisconnection(HostPeer);
-        Tick(world);
-
         AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
             .IsInstanceOf<InvalidOperationException>();
     }

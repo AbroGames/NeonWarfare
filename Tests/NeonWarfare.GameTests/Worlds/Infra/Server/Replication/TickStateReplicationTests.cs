@@ -890,7 +890,8 @@ public class TickStateReplicationTests
             if (@event.Text.Key != "HUD__CHAT_PLAYER_JOINED") return;
 
             string nick = @event.Text.Args[0];
-            PlayerModel? player = players.PlayersModel.PlayerByUid.Values.SingleOrDefault(player => player.Nick == nick);
+            PlayerModel? player =
+                players.PlayersModel.PlayerByUid.Values.SingleOrDefault(player => player.Nick == nick);
             bool online = player != null && players.OnlineModel.Uids.Contains(player.Uid);
             Seen.Add(new Sight(player?.Uid, online, nick));
         }
