@@ -35,7 +35,7 @@ A process has no role. What runs is decided by the set of layers the starter bui
 `ServerTickLoop.RunTick()` last in every physics step, so the physics callbacks and every other `_PhysicsProcess`
 belong to the tick. `RunTick` goes strictly in this order:
 
-1. `ServerTickClock.StartTick()` — the tick counter;
+1. `ServerTickClock.StartTick()` — the tick counter, read by every layer through `IWorldClock`;
 2. `CommandDispatcher.ProcessAll()` — every command and disconnection received since the last tick;
 3. `PeerGatekeeper.DisconnectExpired()` — peers that have not joined in `HandshakeTimeout` (10 s);
 4. the state section of the tick (`StateReplicator.TryWrite`), written every tick;
@@ -161,8 +161,8 @@ the tick, so "snapshot, then the next state section" is consistent. The chat his
 * **Replication** — `StateReplicator` subscribes to the registry and keeps a RepliCAT baseline per entity; at the end
   of the tick it writes the spawn records (NetId, kind, parent, first delta), the deltas of changed models and the
   despawns. The models are captured there, not at spawn.
-* **On a remote client** — `StateApplier` applies the state section of a tick update and the join snapshot; `EntityRecordReader` spawns
-  from the records with their NetIds (the same reader loads a save on the server).
+* **On a remote client** — `StateApplier` applies the state section of a tick update and the join snapshot;
+  `EntityRecordReader` spawns from the records with their NetIds (the same reader loads a save on the server).
 
 ## Transfer channels
 
