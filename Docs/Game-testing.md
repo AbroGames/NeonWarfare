@@ -88,6 +88,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `Screen/Hud/HudTests` | One chat line per `ChatEntry` subtype, the server nick and the join and leave facts translated |
 | `Screen/ServerHud/ServerLogViewTests` | A record is shown as time, level, source, message and exception, its text as is; only new records are appended; over 1000 the oldest is removed with all its lines; a view far behind shows only the kept ones |
 | `Scripts/GlobalServices/SaveLoadServiceTests` | A save replaces its file through a temporary one and a backup; a failed write or backup keeps the previous file; `Init` restores a save left only as its backup, removes an unfinished temporary file, keeps a file over its backup |
+| `Scripts/GlobalServices/ProcessServiceTests` | A dedicated server on a taken port is not started, the bind error is returned |
 | `Scripts/GlobalServices/ServerLog/ServerLogServiceTests` | The last 1000 records in order; a read returns only the records after the version given; the message rendered with its properties, the level, source and exception kept; a read is a snapshot |
 | `Scripts/PlayerUidTests` | A generated uid is valid and unique |
 | `Worlds/Features/Chat/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; the admin gate; a bound peer without a player loses only its own message; `/help` lists the listed commands by name and rights, not itself; the facade rejects a duplicate or bad name |

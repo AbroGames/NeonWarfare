@@ -1,3 +1,5 @@
+using Godot;
+using Humanizer;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
@@ -15,11 +17,17 @@ public class HostDedicatedServerAndConnectGameStarter(
         // The admin of the child server is the very player that joins it.
         LocalPlayer localPlayer = ReadLocalPlayer();
         // The child server stops when its admin leaves, see DedicatedServerGameStarter. MainScene waits for its exit.
-        Services.Process.StartNewDedicatedServerApplication(
+        Error error = Services.Process.StartNewDedicatedServerApplication(
             saveFileName,
             port ?? DefaultPort,
             localPlayer.Uid,
             showWindow);
+        if (error != Error.Ok)
+        {
+            // ProcessService has already logged the error.
+            GoToMenuAndShowError(Services.I18N.Tr("MESSAGE_MENU__HOSTING_FAILED").FormatWith(error));
+            return;
+        }
 
         // "Continue" brings the server up again instead of connecting to it.
         SetLastGame(ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated: true));

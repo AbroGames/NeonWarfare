@@ -14,6 +14,8 @@ search, build or edit.
 
 Read `Testing.md` and `Smoke-testing.md` **only** when editing tests or smoke tests.
 
+No new smoke-test scenarios are written. A new check may only be added to an existing scenario.
+
 Before a non-trivial task, the `Docs/` file you need is read **in full** — the README tables are an
 index, not a summary. Key entities are named in those rows on purpose, so a document can also be
 found by searching for a class or attribute name.
