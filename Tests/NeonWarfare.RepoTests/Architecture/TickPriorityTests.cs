@@ -12,14 +12,14 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class TickPriorityTests
 {
-    private const string TickNode = WorldLayers.WorldNamespace + ".Infra.Server.Tick.ServerTickNode";
+    private const string TickNode = WorldLayers.WorldNamespace + ".Infra.Tick.WorldTickNode";
     private const string PrioritySetter = "set_ProcessPhysicsPriority";
     private const string ScenePriority = "process_physics_priority";
 
     [Fact]
     public void MaxPhysicsPriority_IsSetOnlyByTheTickNode()
     {
-        FailureReport report = new("int.MaxValue physics priority outside ServerTickNode");
+        FailureReport report = new("int.MaxValue physics priority outside WorldTickNode");
         bool setByTickNode = false;
 
         foreach (TypeDefinition type in GameAssembly.Instance.Types)
@@ -63,7 +63,7 @@ public class TickPriorityTests
             string[] parts = lines[i].Split('=', 2, StringSplitOptions.TrimEntries);
             if (parts is [ScenePriority, var value] && value == int.MaxValue.ToString())
             {
-                report.Add($"{relativePath}:{i + 1}: only ServerTickNode may run last in the physics step");
+                report.Add($"{relativePath}:{i + 1}: only WorldTickNode may run last in the physics step");
             }
         }
 

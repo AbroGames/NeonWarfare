@@ -86,9 +86,7 @@ public class HostTransportTests
         clients.SendTickUpdate(LocalPeer, 7, [], Body);
 
         Call call = _endpoint.Calls.Single();
-        AssertThat(call.Name).IsEqual(nameof(World.IClientEndpoint.ReceiveTickUpdate));
-        AssertThat(call.Tick).IsEqual(7);
-        AssertThat(call.Body).IsEmpty();
+        AssertThat(call.Name).IsEqual(nameof(World.IHostEndpoint.ReceiveOwnEvents));
         AssertThat(call.Events).ContainsExactly(Body);
     }
 

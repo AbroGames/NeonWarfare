@@ -16,7 +16,8 @@ World; their layers and the World itself are in [World](World.md).
 * **The transports** ([Scenes/Game/Networks/Transport/](../Src/NeonWarfare/Scenes/Game/Networks/Transport/)) — plain
   objects implementing `IClientsConnection` (server → clients) and `IServerConnection` (client → server), created by
   `Game` with their World. `ServerTransport` routes the remote peers of a server into `World.IServerEndpoint`;
-  `HostTransport` loops the host's own peer back into both endpoints and hands the others to its `ServerTransport`;
+  `HostTransport` loops the host's own peer back into `World.IServerEndpoint` and `World.IHostEndpoint` and hands
+  the others to its `ServerTransport`;
   `ClientTransport` is a remote client's connection: it has no World until the join snapshot, then routes into
   `World.IClientEndpoint`. The World hands `IClientsConnection` the tick and the sections, never a packet. The direction
   a configuration does not use is `NoConnection`. `GameProtocol` holds what the client needs before its World exists:
@@ -31,7 +32,7 @@ A process has no role. What runs is decided by the set of layers the starter bui
 
 ## The server tick
 
-`ServerTickNode` (`ProcessPhysicsPriority = int.MaxValue`, added only with the Simulation) calls
+`WorldTickNode` (`ProcessPhysicsPriority = int.MaxValue`, with the Simulation) calls
 `ServerTickLoop.RunTick()` last in every physics step, so the physics callbacks and every other `_PhysicsProcess`
 belong to the tick. `RunTick` goes strictly in this order:
 
@@ -45,6 +46,18 @@ belong to the tick. `RunTick` goes strictly in this order:
 
 The Simulation changes the models only inside the tick: it has no deferred calls, timers or `async`
 (`SimulationTimingTests`).
+
+## The client tick
+
+A remote client counts the server tick in `ClientTickClock`, read through `IWorldClock`. The World root syncs it from
+the snapshot's tick before the snapshot is applied, and from every tick update before its sections, so an event
+handler sees at least the tick of its packet. Between the packets its own `WorldTickNode` advances it by one, last in
+every physics step, as on the server.
+
+The clock never goes back. A tick ahead of it moves it there at once. A tick behind it means the client has counted
+ahead, so the clock skips as many next advances as it is ahead of that latest packet and converges back to the server.
+A frame that drops physics steps leaves it behind until the next packet. The host has no such clock: its Presentation
+reads the `ServerTickClock` its server advances.
 
 ## Commands: client → server
 
@@ -82,7 +95,8 @@ A send that fails (`IClientsConnection` returns `false`) disconnects the peer: i
 
 A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes a tick update to
 `World.IClientEndpoint.ReceiveTickUpdate`, which applies the state section (`StateApplier`), then dispatches the
-events section (`EventDispatcher`). The host gets only its events: its Simulation has already written the state.
+events section (`EventDispatcher`). The host gets only its events, through `World.IHostEndpoint.ReceiveOwnEvents`: its
+Simulation has already written the state.
 A packet the client cannot read or apply ends its session (`ClientTransport.ConnectionBroken` → `Game.Failed`): it may
 be applied in part while the server's baselines have moved on, so the models would drift; a new join brings a fresh
 snapshot.

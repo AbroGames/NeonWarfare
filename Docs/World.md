@@ -19,7 +19,8 @@ explicit implementation of a nested role interface, so a caller holds only the r
 | `ICommandSender.Send<TCommand>(command)` | The `Hud`: the only way a command leaves the World |
 | `IReader.Get<T>()` | The screens: only `[Query]` and `[Presentation]` services are handed out |
 | `IServerEndpoint`: `StartHandshake`, `QueueDisconnection`, `ReceiveFromClient` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
-| `IClientEndpoint`: `ReceiveTickUpdate` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the tick and the sections of a tick update |
+| `IHostEndpoint`: `ReceiveOwnEvents` | `HostTransport`: the events of the host's own peer |
+| `IClientEndpoint`: `ReceiveTickUpdate` | `ClientTransport`: the tick and the sections of a tick update; the tick syncs `ClientTickClock` first |
 
 `WorldOrigin` says where the state comes from: `NewWorld()` — `NewWorldSimulationFacade.Create()` spawns
 what a world starts with; `FromSave(save)` — `SaveLoader`; `FromSnapshot(tick, records)` — the join snapshot,
@@ -29,7 +30,8 @@ or snapshot throws from `InitPreReady`, and the caller frees the World.
 `WorldDependencies` is what `Game` hands to every World, none of it `null`: `TimeProvider`, `NetMessageCodec`,
 `ProtocolHash`, `Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog` and both connections.
 `WorldSetup` adds the ports of its configuration, see [Layers](#layers); the ones the owning process supplies are in
-`Ports/`. With the Simulation the World also adds `ServerTickNode`, with the Server layer `SaveOnExitNode`.
+`Ports/`. The World also adds a `WorldTickNode`: with the Simulation it runs `ServerTickLoop`, with the client
+replication it advances `ClientTickClock`. With the Server layer it adds `SaveOnExitNode`.
 
 ## Layers
 
@@ -122,7 +124,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher` and its `ProtocolHash`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
-| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step; `ServerTickClock` — the tick counter, the `IWorldClock` of a server |
+| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickClock` — the tick counter, the `IWorldClock` of a server |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>`; `ICommandHandler` — what every player handler interface extends |
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
@@ -131,7 +133,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
 | `Infra/Client/Events` | `EventDispatcher`, `EventHandlerAttribute` and `IEventHandlerOwner` — a Presentation with handlers |
 | `Infra/Client/Replication` | `StateApplier` — the state sections and the join snapshot of a remote client |
-| `Infra/Client/Tick` | `ClientTickClock` — the `IWorldClock` of a remote client |
+| `Infra/Client/Tick` | `ClientTickClock` — the `IWorldClock` of a remote client, written only by the World root, see [Networking](Networking.md#the-client-tick) |
 | `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `GameProtocol`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
-| `Infra/Tick` | `IWorldClock` — the read side of the tick counter, implemented by one clock per configuration |
+| `Infra/Tick` | `IWorldClock` — the read side of the tick counter, implemented by one clock per configuration; `WorldTickNode` — advances the tick last in the physics step |
 | `Infra/Presentation` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |

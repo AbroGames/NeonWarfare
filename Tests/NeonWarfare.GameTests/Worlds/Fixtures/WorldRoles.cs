@@ -23,6 +23,9 @@ public static class WorldRoles
     public static void ReceiveFromClient(this World world, int peerId, ReadOnlyMemory<byte> packet) =>
         ((World.IServerEndpoint) world).ReceiveFromClient(peerId, packet);
 
+    public static void ReceiveOwnEvents(this World world, ReadOnlyMemory<byte> events) =>
+        ((World.IHostEndpoint) world).ReceiveOwnEvents(events);
+
     public static void ReceiveTickUpdate(
         this World world, long tick, ReadOnlyMemory<byte> state, ReadOnlyMemory<byte> events) =>
         ((World.IClientEndpoint) world).ReceiveTickUpdate(tick, state, events);
