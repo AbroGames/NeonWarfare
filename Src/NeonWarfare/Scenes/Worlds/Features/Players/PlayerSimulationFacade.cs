@@ -23,8 +23,11 @@ public class PlayerSimulationFacade(
 
     private readonly ILogger _log = LogFactory.GetForStatic<PlayerSimulationFacade>();
 
-    // A returning player keeps the stored nick and color: they belong to the world, not to the client's settings.
-    // The rights are only granted here, never taken: they may have been granted by another admin
+    /// <summary>
+    /// A returning player keeps the stored nick and color, because they belong to the world, not to the client's
+    /// settings.
+    /// The admin rights are only granted here, never taken, because another admin may have granted them.
+    /// </summary>
     public void Join(string uid, string nick, Color color)
     {
         if (!players.Model.PlayerByUid.TryGetValue(uid, out PlayerModel player))
@@ -47,7 +50,9 @@ public class PlayerSimulationFacade(
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
     }
 
-    // A displaced admin is the same player on a new connection: the server it started must not stop under it
+    /// <summary>
+    /// A displaced admin is the same player on a new connection, so the server it started must not stop under it.
+    /// </summary>
     public void Leave(string uid, LeaveReason reason)
     {
         PlayerModel player = players.Model.PlayerByUid[uid];

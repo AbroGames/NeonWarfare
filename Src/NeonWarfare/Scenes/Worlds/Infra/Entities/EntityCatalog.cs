@@ -6,16 +6,16 @@ using Godot;
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
-/// Every kind of entity World may spawn, by kind id: first the scenes in their catalog order, then every concrete
-/// <see cref="Node"/> type of the type mapping in mapping order, created by its parameterless constructor. The id
-/// travels in spawn records and lies in saves, so <see cref="Descriptors"/> go into the protocol hash. Owned by Game,
-/// not World: the client needs the hash before its World exists.
+/// The kind id of every entity the World may spawn, see Docs/Networking.md#entities-and-replication.
+/// <see cref="Descriptors"/> go into the protocol hash.
+/// The catalog belongs to <c>GameProtocol</c>, not to the World, because a client needs the hash before its World
+/// exists.
 /// </summary>
 public class EntityCatalog
 {
     private readonly IReadOnlyList<PackedScene> _scenes;
     private readonly IReadOnlyList<Type> _types;
-    // By reference: Godot hands out one instance per loaded scene resource
+    // Keyed by reference, because Godot loads one instance per scene resource.
     private readonly Dictionary<PackedScene, int> _idByScene = new(ReferenceEqualityComparer.Instance);
     private readonly Dictionary<Type, int> _idByType = new();
 
@@ -34,7 +34,7 @@ public class EntityCatalog
             _idByType.Add(_types[i], _scenes.Count + i);
         }
 
-        // The path, not a property name, so a different scene under the same name is seen too
+        // The descriptor is the full resource path, so another scene with the same name changes the hash.
         Descriptors = _scenes.Select(scene => "scene " + scene.ResourcePath)
             .Concat(_types.Select(type => "type " + type.FullName))
             .ToList();
@@ -54,7 +54,7 @@ public class EntityCatalog
         throw new ArgumentException($"{type?.FullName} is not a node type of the entity catalog.", nameof(type));
     }
 
-    /// <summary>A new node of the kind, not in the tree. A type kind is named after its type.</summary>
+    /// <summary>Creates a node of the kind outside the tree. A node of a type kind is named after its type.</summary>
     /// <exception cref="ArgumentException">The id is not in the catalog.</exception>
     public Node Create(int kindId)
     {

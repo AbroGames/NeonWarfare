@@ -5,13 +5,14 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 namespace NeonWarfare.Scenes.Worlds.Infra.Presentation;
 
 /// <summary>
-/// One-shot HUD notices of the current frame: only a Presentation posts, from an event handler; a widget reads in
-/// <c>_Process</c>. The frame number clears the mailbox, so it needs no owner that empties it.
+/// One-frame HUD notices. A Presentation posts them from an event handler, and a widget reads them in
+/// <c>_Process</c>.
+/// A new frame number clears the mailbox, so nobody has to empty it.
 /// </summary>
 /// <remarks>
-/// Godot runs the event handlers in <c>multiplayer.poll()</c> (a remote client) or in a physics step (the host's
-/// loopback), both before <c>_Process</c> of the same frame number. A post after <c>_Process</c> (a timer,
-/// <c>CallDeferred</c>) is lost, and a read in <c>_PhysicsProcess</c> sees nothing.
+/// The event handlers run before <c>_Process</c> of the same frame, in <c>multiplayer.poll()</c> on a remote client
+/// and in the physics step on the host. A post after <c>_Process</c>, from a timer or <c>CallDeferred</c>, is
+/// therefore lost, and a read in <c>_PhysicsProcess</c> sees nothing.
 /// </remarks>
 [Presentation]
 public class HudMailbox(FrameProvider frames)

@@ -10,12 +10,12 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 [CommandHandler]
 public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade) : IPeerSessionHandler
 {
-    // The format of the client's uid generator, two groups of Latin letters joined by a dash
+    // The client's uid is two groups of Latin letters joined by a dash.
     private const int UidGroupLength = 10;
     private const char UidSeparator = '-';
     private const int NickMinLength = 3;
     private const int NickMaxLength = 25;
-    // Darker colors are lost on the dark background of the game
+    // A darker color is lost on the dark background of the game.
     private const float ColorMinLuminance = 0.2f;
 
     public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)

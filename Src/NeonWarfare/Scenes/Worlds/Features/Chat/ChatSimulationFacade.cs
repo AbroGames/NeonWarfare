@@ -61,7 +61,7 @@ public class ChatSimulationFacade
     {
         PlayerModel sender = _players.Get(senderUid);
 
-        // A command is not a chat message, so ChatSimulation never logs it, we have to log it here
+        // ChatSimulation logs only chat messages, so a command is logged here.
         _log.Information("{nick} ({uid}) ran command /{text}", sender.Nick, sender.Uid, text);
 
         int nameEnd = 0;

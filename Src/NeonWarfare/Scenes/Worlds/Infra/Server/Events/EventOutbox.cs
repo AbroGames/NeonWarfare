@@ -9,17 +9,15 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 
 /// <summary>
-/// Events from the Simulation to the clients, sent at the end of the tick. Not a bus: nothing on the server
-/// subscribes to it. Each joined peer has one buffer in <see cref="PeerStateTable"/>, so personal and common events
-/// keep the order of publication.
+/// Collects the events the Simulation publishes for the clients, see Docs/Networking.md#packets-server--client.
+/// Not a bus: nothing on the server subscribes to it.
 /// </summary>
 [Server]
 public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
 {
     private readonly ILogger _log = LogFactory.GetForStatic<EventOutbox>();
 
-    // Encoded once, here: every addressee gets the same bytes, and an event that cannot be serialized fails in
-    // the Simulation that published it rather than at the end of the tick
+    /// <summary>Encodes the event once for every addressee, see Docs/Networking.md#packets-server--client.</summary>
     public void PublishToAll(Event @event)
     {
         byte[] encoded = codec.Encode(@event);
@@ -29,7 +27,10 @@ public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
         }
     }
 
-    // A receiver chosen earlier in the tick may have left by the time the event is published
+    /// <summary>
+    /// The event is dropped when the receiver is not joined, because a receiver chosen earlier in the tick may have
+    /// left since.
+    /// </summary>
     public void PublishTo(Event @event, string receiverUid)
     {
         byte[] encoded = codec.Encode(@event);
@@ -46,7 +47,7 @@ public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
     /// <summary>
     /// Writes the events section of the peer's events packet and empties its buffer.
     /// </summary>
-    /// <returns>The number of events written: an events packet without events is not sent.</returns>
+    /// <returns>The number of events written. An events packet without events is not sent.</returns>
     public int DrainEvents(int peerId, IBufferWriter<byte> output)
     {
         if (!peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))

@@ -9,11 +9,9 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
 /// <summary>
-/// Drains <see cref="CommandInbox"/> in the server tick and hands every entry to its handler: a join and a
-/// disconnection to <see cref="PeerSessions"/>, a command to the player handler from
-/// <see cref="CommandHandlerRegistry"/>. "Joined or not" is decided here, at tick time rather than on arrival: a join
-/// and a chat command of one peer in one tick must both pass, in order. A handler gets the uid the peer has joined
-/// as in <see cref="PeerStateTable"/> and looks its own state up by it.
+/// Drains <see cref="CommandInbox"/> in the server tick, see Docs/Networking.md#commands-client--server.
+/// Whether the sender has joined is decided here, in the tick, not on arrival, so a join and a chat command of one
+/// peer in one tick both pass, in order.
 /// </summary>
 [Server]
 public class CommandDispatcher(
@@ -28,9 +26,10 @@ public class CommandDispatcher(
     {
         foreach (CommandInbox.Entry entry in inbox.TakeAll())
         {
-            // TakeAll has already emptied the inbox, so a throw must not cost the rest of the entries: a lost
-            // PeerDisconnected would leave its peer in the table. A facade has no rollback, so a throw may leave the
-            // model half-changed: the log is the only signal of that
+            // TakeAll has already emptied the inbox, so a throw must not cost the other entries.
+            // A lost PeerDisconnected would leave its peer in the table for good.
+            // A facade has no rollback, so after a throw the model may stay half-changed, and the log is the only
+            // trace of it.
             try
             {
                 Process(entry);
@@ -44,7 +43,7 @@ public class CommandDispatcher(
 
     private void Process(CommandInbox.Entry entry)
     {
-        // Its commands were sent before the disconnect reached it, so they are not its owner's any more
+        // A cut peer sent these before the disconnect reached it, and they no longer belong to its player.
         if (entry is not CommandInbox.PeerDisconnected && peers.IsCut(entry.PeerId))
         {
             _log.Debug("{entry} dropped: the peer is being disconnected", entry);

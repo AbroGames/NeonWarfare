@@ -7,8 +7,8 @@ using RepliCAT;
 namespace NeonWarfare.Scenes.Game;
 
 /// <summary>
-/// The protocol objects of a session. A client writes its join before it has a World, so they belong to the
-/// session, not to the World.
+/// The protocol objects of a session.
+/// They belong to the session, not to the World, because a client writes its join before it has a World.
 /// </summary>
 public record GameProtocol(EntityCatalog Entities, NetMessageCodec Codec, ProtocolHash Hash, Replicator Replicator)
 {

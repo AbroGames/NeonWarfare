@@ -8,8 +8,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
-/// The connection of a remote client. Until it has a World the client is connecting: it sends the join once
-/// connected and waits for the join snapshot, which <paramref name="snapshotReceived"/> builds the World from.
+/// The connection of a remote client, which sends the join once connected and has no World until the join snapshot.
 /// </summary>
 public sealed class ClientTransport : IServerConnection
 {
@@ -28,13 +27,13 @@ public sealed class ClientTransport : IServerConnection
     private bool _isBroken;
 
     /// <summary>
-    /// A packet from the server could not be read or applied. Raised once, already logged; every later packet is
-    /// dropped.
+    /// A packet from the server could not be read or applied. Raised once, and the failure is already logged.
+    /// Every later packet is dropped.
     /// </summary>
     public event Action ConnectionBroken;
 
-    /// <param name="snapshotReceived">Builds the World inside the call, before the events packet of the join tick
-    /// arrives, and calls <see cref="Enter"/>.</param>
+    /// <param name="snapshotReceived">Builds the World from the join snapshot and calls <see cref="Enter"/>.
+    /// It must do so inside the call, before the events packet of the join tick arrives.</param>
     public ClientTransport(
         INetwork network, NetMessageCodec codec, ProtocolHash protocolHash, LocalPlayer localPlayer,
         ILocalPlayerOwner owner, Action<ReadOnlyMemory<byte>> snapshotReceived)
@@ -56,7 +55,9 @@ public sealed class ClientTransport : IServerConnection
         _endpoint = endpoint;
     }
 
-    // A failed send is already logged: the connection is going down, and Network reports its end
+    /// <summary>
+    /// A failed send is only logged, because the connection is going down and <c>Network</c> reports its end.
+    /// </summary>
     public void Send(ReadOnlySpan<byte> packet) => _network.Send(ServerPeer, packet);
 
     private void OnConnectedToServer() => Send(_codec.Encode(_localPlayer.ToJoinRequest(_protocolHash)));
@@ -79,8 +80,7 @@ public sealed class ClientTransport : IServerConnection
         {
             Receive(packet);
         }
-        // Whatever the failure, the packet may be applied in part, and the server's baselines have moved past it, so
-        // every next delta would land on diverged models. The session ends; a new join brings a fresh snapshot
+        // Any failure ends the session, see Docs/Networking.md#packets-server--client.
         catch (Exception e)
         {
             _log.Error(e, "A packet from the server cannot be read or applied");
@@ -89,7 +89,7 @@ public sealed class ClientTransport : IServerConnection
         }
     }
 
-    /// <exception cref="NetMessageFormatException">The packet is broken.</exception>
+    // Throws NetMessageFormatException when the packet is broken.
     private void Receive(byte[] packet)
     {
         (ServerPacketKind kind, ReadOnlyMemory<byte> body) = ServerPackets.Read(packet);

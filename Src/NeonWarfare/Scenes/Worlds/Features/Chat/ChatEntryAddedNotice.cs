@@ -2,5 +2,8 @@ using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
-// No entry inside: the HUD reads the history from ChatPresentation, so the notice cannot go stale
+/// <summary>
+/// A chat entry has been added. The notice carries no entry, because the HUD re-reads the whole history from
+/// <see cref="ChatPresentation"/>.
+/// </summary>
 public record ChatEntryAddedNotice : Notice;

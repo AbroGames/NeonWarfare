@@ -4,11 +4,11 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 namespace NeonWarfare.Scenes.Worlds.Ports;
 
 /// <summary>
-/// The player of this process, as it joins the World: one object both for the join request and for the World,
-/// so the World knows exactly the uid that was sent.
+/// The player of this process as it joins the World.
+/// The join request is built from the same object, so the World knows exactly the uid that was sent.
 /// </summary>
-/// <param name="Nick">What the player asks for on join: a returning player keeps the stored nick and color, so
-/// they are read from <c>PlayerModel</c>, not from here.</param>
+/// <param name="Nick">The nick the player asks for on join.
+/// A returning player keeps the stored nick and color, so read them from <c>PlayerModel</c>, not from here.</param>
 public record LocalPlayer(string Uid, string Nick, Color Color)
 {
     public JoinRequestCommand ToJoinRequest(ProtocolHash protocolHash) => new(protocolHash.Value, Uid, Nick, Color);

@@ -10,14 +10,14 @@ using NeonWarfare.Scripts.GlobalServices;
 namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
-/// The format of a network message: a little-endian <c>ushort</c> type id from <see cref="TypesMappingService"/>
+/// The format of a network message: a little-endian <c>ushort</c> type id from <see cref="TypesMappingService"/>,
 /// followed by the MessagePack body.
 /// </summary>
 public sealed class NetMessageCodec
 {
     private const int IdSize = sizeof(ushort);
     private const int CountSize = sizeof(int);
-    // An id and at least one byte of MessagePack body
+    // A message has an id and at least one byte of MessagePack body.
     private const int MinMessageSize = IdSize + 1;
 
     private readonly TypesMappingService _mapping;
@@ -58,7 +58,7 @@ public sealed class NetMessageCodec
     }
 
     /// <summary>
-    /// A section: a little-endian <c>int</c> count followed by that many messages, each already encoded by
+    /// Writes a section: a little-endian <c>int</c> count followed by that many messages, each already encoded by
     /// <see cref="Encode"/>.
     /// </summary>
     public void WriteSection(IBufferWriter<byte> output, IReadOnlyCollection<ReadOnlyMemory<byte>> encoded)
@@ -72,7 +72,7 @@ public sealed class NetMessageCodec
     }
 
     /// <exception cref="NetMessageFormatException">
-    /// A truncated or impossible count, or any message <see cref="Read"/> rejects.
+    /// The count is truncated or impossible, or <see cref="Read"/> rejects a message.
     /// </exception>
     public IReadOnlyList<object> ReadSection(ReadOnlyMemory<byte> data, IReadOnlySet<Type> allowedTypes,
         out int bytesRead)
@@ -85,7 +85,7 @@ public sealed class NetMessageCodec
 
         int count = BinaryPrimitives.ReadInt32LittleEndian(data.Span);
         int remaining = data.Length - CountSize;
-        // Checked before the list is sized by the count: the count comes from an untrusted peer
+        // The count comes from an untrusted peer, so it is checked before the list is sized by it.
         if (count < 0 || count > remaining / MinMessageSize)
         {
             throw new NetMessageFormatException(
@@ -105,10 +105,12 @@ public sealed class NetMessageCodec
     }
 
     /// <summary>
-    /// Both sides treat the peer as untrusted: a type outside <paramref name="allowedTypes"/> is rejected before
-    /// its body is read.
+    /// Reads one message from an untrusted peer, on either side.
+    /// A type outside <paramref name="allowedTypes"/> is rejected before its body is read.
     /// </summary>
-    /// <exception cref="NetMessageFormatException">Unknown or not allowed type, or a broken body.</exception>
+    /// <exception cref="NetMessageFormatException">
+    /// The type is unknown or not allowed, or the body is broken.
+    /// </exception>
     public object Read(ReadOnlyMemory<byte> data, IReadOnlySet<Type> allowedTypes, out int bytesRead)
     {
         Type type = ReadType(data.Span);

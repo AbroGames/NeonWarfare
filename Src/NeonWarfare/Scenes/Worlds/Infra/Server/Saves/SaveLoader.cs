@@ -9,9 +9,8 @@ using RepliCAT.Bits;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 
 /// <summary>
-/// Fills an empty world from the save of <see cref="SaveWriter"/>: every entity with its saved NetId, then the NetId
-/// sequence and the tick counter where they were. A loaded entity is registered as a spawned one, so the first tick
-/// replicates the whole world, as it does for a new one.
+/// Fills an empty world from the save of <see cref="SaveWriter"/>, see Docs/Data-and-saves.md#saves.
+/// A loaded entity is registered as a spawned one, so the first tick replicates the whole world, as for a new one.
 /// </summary>
 [Server]
 public class SaveLoader(
@@ -21,8 +20,8 @@ public class SaveLoader(
     ProtocolHash protocolHash)
 {
     /// <summary>
-    /// Not atomic: on an error the entities before the broken record are already spawned, and the World must be
-    /// freed. A foreign save spawns nothing.
+    /// Not atomic. On an error the entities before the broken record stay spawned, so the World must be freed.
+    /// A save of another version spawns nothing.
     /// </summary>
     /// <exception cref="SaveVersionMismatchException">The save was written with another protocol hash.</exception>
     /// <exception cref="SaveFormatException">The save is truncated or broken.</exception>

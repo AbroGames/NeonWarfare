@@ -7,18 +7,18 @@ using RepliCAT.Bits;
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
-/// Spawns entities with the NetIds the records give them: the spawn records of <c>StateReplicator</c>, from a state
-/// packet, a join snapshot or a save. An entity is created empty from its kind, gets its state, then its place in the
-/// tree and in the registry — the order of the server's spawn, so <c>_Ready</c> and the registry's subscribers see it
-/// configured.
+/// Spawns entities from the spawn records of <c>StateReplicator</c>, with the NetIds the records give them.
+/// The records come from a state packet, a join snapshot or a save.
+/// An entity gets its state before it enters the tree and the registry, as on the server's spawn, so its
+/// <c>_Ready</c> and the registry's subscribers see it configured.
 /// </summary>
 public class EntityRecordReader(EntityRegistry registry, WorldRoot root, EntityCatalog catalog, Replicator replicator)
 {
     /// <summary>
-    /// Reads and spawns the records up to <see cref="NetId.None"/>. Not atomic: the records before a broken one are
-    /// already spawned.
+    /// Reads and spawns the records up to <see cref="NetId.None"/>.
+    /// Not atomic: the records before a broken one stay spawned.
     /// </summary>
-    /// <returns>The highest NetId read, <see cref="NetId.None"/> for no record.</returns>
+    /// <returns>The highest NetId read, or <see cref="NetId.None"/> when there is no record.</returns>
     /// <exception cref="NetMessageFormatException">A record is broken.</exception>
     /// <exception cref="ReplicationException">A state cannot be read or applied.</exception>
     public NetId ReadAll(ref BitReader reader)

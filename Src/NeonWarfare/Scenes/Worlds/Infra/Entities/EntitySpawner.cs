@@ -5,8 +5,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
-/// Creates an entity on the server: a kind of the <see cref="EntityCatalog"/> (a scene, or a node type with no
-/// scene of its own), a fresh NetId, a place in the tree and in the registry. Despawns it too.
+/// The only way to spawn and despawn an entity on the server, see Docs/Networking.md#entities-and-replication.
 /// </summary>
 [Simulation]
 public class EntitySpawner(
@@ -23,7 +22,7 @@ public class EntitySpawner(
     public T Spawn<T>(PackedScene scene, NetId parent, Action<T> initPreReady = null) where T : Node =>
         Spawn(catalog.GetKindId(scene), parent, initPreReady);
 
-    /// <summary>An entity without a scene: a bare <typeparamref name="T"/>, created by its constructor.</summary>
+    /// <summary>Spawns an entity without a scene: a bare <typeparamref name="T"/> created by its constructor.</summary>
     public T SpawnOnRoot<T>(Action<T> initPreReady = null) where T : Node =>
         Spawn(NetId.None, initPreReady);
 
@@ -35,10 +34,10 @@ public class EntitySpawner(
 
     private T Spawn<T>(int kindId, NetId parent, Action<T> initPreReady) where T : Node
     {
-        // Checks that the parent is in the registry
+        // GetNode throws when the parent is not registered.
         Node parentNode = parent == NetId.None ? null : registry.GetNode(parent);
 
-        // Only an instance knows its C# class: a scene itself knows just the engine class of its root
+        // The type is checked on an instance, because a scene knows only the engine class of its root.
         Node instance = catalog.Create(kindId);
         if (instance is not T node)
         {
@@ -48,7 +47,6 @@ public class EntitySpawner(
                 $"The root of {catalog.Descriptors[kindId]} is {actual}, not {typeof(T).Name}.");
         }
 
-        // Call InitPreReady callback
         try
         {
             initPreReady?.Invoke(node);
@@ -59,7 +57,6 @@ public class EntitySpawner(
             throw;
         }
 
-        // Gen id and to the parent
         NetId id = netIdGenerator.Next();
         if (parentNode == null)
         {
@@ -70,14 +67,14 @@ public class EntitySpawner(
             parentNode.AddChild(node);
         }
 
-        // Last, so a Spawned subscriber finds the node already in its place
+        // Registration goes last, so a Spawned subscriber finds the node already in its place.
         registry.Register(id, node, kindId);
         return node;
     }
 
     /// <summary>
-    /// Removes the entity with its whole subtree, every registered descendant included. The node is freed at the end
-    /// of the frame.
+    /// Removes the entity with its whole subtree, every registered descendant included.
+    /// The node is freed at the end of the frame.
     /// </summary>
     public void Despawn(Node node)
     {

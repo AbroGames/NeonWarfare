@@ -17,33 +17,27 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 
 namespace NeonWarfare.Scenes.Worlds;
 
+/// <summary>The composition root of one game world, see Docs/World.md#the-world-node.</summary>
 public partial class World : Node2D, World.IReader, World.ICommandSender, World.IServerEndpoint, World.IClientEndpoint
 {
-    /// <summary>
-    /// What a screen reads from the World.
-    /// </summary>
+    /// <summary>What a screen reads from the World.</summary>
     public interface IReader
     {
         /// <summary>
-        /// What the outside of the World may read: the Simulation and the network machinery are never handed out.
+        /// Hands out a <c>[Query]</c> or <c>[Presentation]</c> service.
+        /// The Simulation and the network machinery are never handed out.
         /// </summary>
         T Get<T>() where T : class;
     }
 
-    /// <summary>
-    /// How a screen of a playing peer acts on the World.
-    /// </summary>
+    /// <summary>How the screen of a playing process acts on the World.</summary>
     public interface ICommandSender
     {
-        /// <summary>
-        /// The only way the outside of the World sends commands.
-        /// </summary>
+        /// <summary>The only way to send a command from outside the World.</summary>
         void Send<TCommand>(TCommand command) where TCommand : Command;
     }
 
-    /// <summary>
-    /// What a server World receives from its peers.
-    /// </summary>
+    /// <summary>What a server World receives from its peers.</summary>
     public interface IServerEndpoint
     {
         void StartHandshake(int peerId);
@@ -53,9 +47,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
         void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet);
     }
 
-    /// <summary>
-    /// What a client World receives from the server.
-    /// </summary>
+    /// <summary>What a client World receives from the server.</summary>
     public interface IClientEndpoint
     {
         /// <exception cref="NetMessageFormatException">The body is broken.</exception>
@@ -67,17 +59,17 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
 
     private ServiceProvider _services;
 
-    /// <exception cref="NetMessageFormatException">The snapshot of <see cref="WorldOrigin.FromSnapshot"/> is broken:
-    /// the World is half built and must be freed.</exception>
+    /// <exception cref="NetMessageFormatException">The snapshot of <see cref="WorldOrigin.FromSnapshot"/> is broken.
+    /// The World is half built and must be freed.</exception>
     /// <exception cref="SaveFormatException">The save of <see cref="WorldOrigin.FromSave"/> is broken or of another
-    /// version (<see cref="SaveVersionMismatchException"/>): the World must be freed.</exception>
+    /// version (<see cref="SaveVersionMismatchException"/>). The World must be freed.</exception>
     public World InitPreReady(WorldSetup setup, WorldDependencies dependencies, WorldOrigin origin)
     {
         if (_services != null) throw new InvalidOperationException("World is already initialized");
         if (IsInsideTree()) throw new InvalidOperationException("World must be initialized before it enters the tree");
 
-        // Every service is created here, before the world has any entity, so none can read the world in its
-        // constructor; the origin fills the world only after that
+        // Every service is created before the world has any entity, so no constructor can read the world.
+        // The origin fills the world only after that.
         _services = new WorldServicesBuilder().Build(setup, dependencies, new WorldRoot(this));
 
         switch (origin)
@@ -142,7 +134,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender, World.
         return _services.GetRequiredService<T>();
     }
 
-    // Reflection once per type rather than on every call
+    // Caches the layer attribute, so reflection runs once per type.
     private static class ServiceLayer<T>
     {
         public static readonly WorldServiceAttribute Attribute =

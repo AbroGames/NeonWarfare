@@ -5,16 +5,17 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 namespace NeonWarfare.Scenes.Worlds.Ports;
 
 /// <summary>
-/// The connection to the clients, implemented by a transport of <c>Game</c>. The World hands over bodies; how a packet
-/// says what it carries is the transport's business. A packet for the host's own peer never reaches the network: the
-/// host's transport hands it to its own World synchronously, so the World has no loopback of its own.
-/// No queue: the host's <c>Handle</c> must run in the physics step, before <c>_Process</c>. Then whatever the
-/// Presentation puts into <c>HudMailbox</c> is read by the HUD in the same frame, as on a remote client, where the
-/// packet is handled in <c>poll</c>, also before <c>_Process</c>.
-/// Every send is reliable and ordered. A body is valid only during the call: the sender reuses the buffer for the next
-/// peer, so an implementation that sends or loops back later must copy it first.
-/// A send returns <c>false</c> when the peer did not get the packet, already logged: the peer may be gone before its
-/// <c>peer_disconnected</c> is handled, so it is not an exception.
+/// The connection from the server World to its clients. The World hands over packet bodies only.
+/// The host's own peer is served synchronously, inside the call, see Docs/Networking.md#transport-and-roles.
+/// <list type="bullet">
+/// <item>There is no queue for the host's own peer. Its event handlers must run in the physics step, before
+/// <c>_Process</c>, so the HUD reads <c>HudMailbox</c> in the same frame, as on a remote client.</item>
+/// <item>Every send is reliable and ordered.</item>
+/// <item>A body is valid only during the call, because the World reuses the buffer for the next peer.
+/// An implementation that sends later must copy it.</item>
+/// <item>A send returns <c>false</c> when the peer did not get the packet, and the failure is already logged.
+/// Not an exception, because a peer may be gone before its <c>peer_disconnected</c> is handled.</item>
+/// </list>
 /// </summary>
 public interface IClientsConnection
 {
@@ -27,13 +28,11 @@ public interface IClientsConnection
     bool Reject(int peerId, JoinRejectReason reason);
 
     /// <summary>
-    /// After the packets already sent to the peer, so a rejection reaches it. <c>peer_disconnected</c> follows as
-    /// for any other disconnection.
+    /// Disconnects the peer after the packets already sent to it, so a rejection still reaches it.
+    /// <c>peer_disconnected</c> follows, as for any other disconnection.
     /// </summary>
     void Disconnect(int peerId);
 
-    /// <summary>
-    /// The host's own peer, <c>null</c> on a dedicated server.
-    /// </summary>
+    /// <summary>The host's own peer, <c>null</c> on a dedicated server.</summary>
     int? LocalPeerId { get; }
 }

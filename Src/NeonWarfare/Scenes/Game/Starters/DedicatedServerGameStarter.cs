@@ -11,11 +11,10 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-/// <summary>
-/// A server without a player of its own.
-/// </summary>
-/// <param name="parentPid">The client that started this server as its child process; <c>null</c> for a server
-/// started from the console, which outlives its admin and is never resumed by "Continue".</param>
+/// <summary>A server without a player of its own.</summary>
+/// <param name="parentPid">The client that started this server as its child process.
+/// <c>null</c> for a server started from the console, which outlives its admin and is never resumed by "Continue".
+/// </param>
 public class DedicatedServerGameStarter(
     string saveFileName,
     int? port,
@@ -33,7 +32,7 @@ public class DedicatedServerGameStarter(
         Network network = game.AddServerNetwork();
         ISaveFiles saveFiles = parentPid is { } pid ? FollowParentClient(game, pid) : Services.SaveLoad;
 
-        // A server without a port has nobody to serve; Network has already logged the error
+        // A server without a port has nobody to serve. Network has already logged the error.
         if (network.HostServer(port ?? DefaultPort) != Error.Ok)
         {
             Services.MainScene.Shutdown();
@@ -48,7 +47,8 @@ public class DedicatedServerGameStarter(
         }
         catch (Exception e)
         {
-            // Starting a new world instead would overwrite the save on exit
+            // The server shuts down instead of starting a new world, see
+            // Docs/Startup-flow.md#2-hostmultiplayergamestarter-and-dedicatedservergamestarter.
             LogWorldError(e, saveFileName);
             Services.MainScene.Shutdown();
             return;
@@ -62,11 +62,7 @@ public class DedicatedServerGameStarter(
         network.OpenServer();
     }
 
-    /// <summary>
-    /// A child server lives as long as the client that started it, and stops gracefully, so it saves on exit:
-    /// when the client process dies, and when the client, its admin, leaves. "Continue" in the client resumes it.
-    /// </summary>
-    /// <returns>The save files that keep "Continue" at the file of the last save.</returns>
+    // Sets up a child server, see Docs/Startup-flow.md#2-hostmultiplayergamestarter-and-dedicatedservergamestarter.
     private ISaveFiles FollowParentClient(Game game, int clientPid)
     {
         var clientDeadChecker = new ProcessDeadChecker(

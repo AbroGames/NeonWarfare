@@ -3,9 +3,7 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-/// <summary>
-/// Launches a dedicated server as a child process and connects to it as an ordinary client.
-/// </summary>
+/// <summary>Launches a dedicated server as a child process and connects to it as an ordinary client.</summary>
 public class HostDedicatedServerAndConnectGameStarter(
     string saveFileName,
     int? port,
@@ -14,16 +12,16 @@ public class HostDedicatedServerAndConnectGameStarter(
 {
     public override void Start(Game game)
     {
-        // The admin of the child server is the very player that joins it
+        // The admin of the child server is the very player that joins it.
         LocalPlayer localPlayer = ReadLocalPlayer();
-        // Stopped by its admin leaving, which MainScene waits for; see DedicatedServerGameStarter
+        // The child server stops when its admin leaves, see DedicatedServerGameStarter. MainScene waits for its exit.
         Services.Process.StartNewDedicatedServerApplication(
             saveFileName,
             port ?? DefaultPort,
             localPlayer.Uid,
             showWindow);
 
-        // "Continue" brings the server up again, not a connection to it
+        // "Continue" brings the server up again instead of connecting to it.
         SetLastGame(ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated: true));
         ConnectAndFollow(game, localPlayer, Localhost, port ?? DefaultPort);
     }

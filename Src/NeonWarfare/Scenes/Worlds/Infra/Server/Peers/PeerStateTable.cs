@@ -6,12 +6,10 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 /// <summary>
-/// The state of every peer the server knows of, from its connection to its <c>peer_disconnected</c>, with the uid of
-/// each joined player. Not replicated: the model knows only the uid, and the server layer converts it to a peer.
-/// Only a <see cref="Joined"/> peer receives packets and has its commands handled. A peer the server has disconnected
-/// stays until its <c>peer_disconnected</c>, since it keeps sending until then. <see cref="Leaving"/> keeps the uid
-/// taken that long: its <c>Leave</c> is still due, and a peer rejoining with that uid would otherwise lose its
-/// "online" to the late <c>Leave</c> of the old one.
+/// The state of every peer from its connection to its <c>peer_disconnected</c>, see
+/// Docs/Networking.md#join-and-leave. Never replicated, because the models know players only by uid.
+/// <see cref="Leaving"/> keeps the uid taken until <c>peer_disconnected</c>, because its <c>Leave</c> is still due.
+/// Otherwise a peer rejoining with that uid would lose its online status to the late <c>Leave</c> of the old one.
 /// </summary>
 [Server]
 public class PeerStateTable
@@ -20,7 +18,9 @@ public class PeerStateTable
     public record Connecting(DateTimeOffset Deadline) : PeerState;
     public record Joined(string Uid) : PeerState
     {
-        // Filled by EventOutbox in the order of publication, emptied by sending
+        /// <summary>
+        /// The encoded events of the tick in the order of publication. <c>EventOutbox</c> fills and drains it.
+        /// </summary>
         public List<ReadOnlyMemory<byte>> Events { get; } = [];
     }
     public record Leaving(string Uid) : PeerState;
@@ -60,7 +60,7 @@ public class PeerStateTable
         _peerIdByUid.Add(uid, peerId);
     }
 
-    /// <returns>Whether the peer has just been cut off: the transport disconnects it once.</returns>
+    /// <returns>Whether the peer has just been cut off. Only then does the caller disconnect it.</returns>
     public bool Disconnect(int peerId)
     {
         _stateByPeerId.TryGetValue(peerId, out PeerState state);
@@ -76,7 +76,10 @@ public class PeerStateTable
         return true;
     }
 
-    // Called once the Leave of the peer is done or will never be, before its peer_disconnected
+    /// <summary>
+    /// Frees the uid of a leaving peer before its <c>peer_disconnected</c>.
+    /// Called once the <c>Leave</c> of the peer has run or will never run.
+    /// </summary>
     public void Release(int peerId)
     {
         _stateByPeerId.TryGetValue(peerId, out PeerState state);
@@ -90,7 +93,7 @@ public class PeerStateTable
         _peerIdByUid.Remove(leaving.Uid);
     }
 
-    /// <returns>The last state of the peer, null for an unknown one.</returns>
+    /// <returns>The last state of the peer, or <c>null</c> for an unknown one.</returns>
     public PeerState Remove(int peerId)
     {
         if (!_stateByPeerId.Remove(peerId, out PeerState state)) return null;
@@ -117,7 +120,9 @@ public class PeerStateTable
         return _peerIdByUid.TryGetValue(uid, out int peerId) && TryGetJoined(peerId, out joined);
     }
 
-    // A leaving peer too: until its peer_disconnected the uid is still its
+    /// <summary>
+    /// It finds a leaving peer too, because the uid is still taken until its <c>peer_disconnected</c>.
+    /// </summary>
     public bool TryGetPeerIdByUid(string uid, out int peerId) => _peerIdByUid.TryGetValue(uid, out peerId);
 
     public bool IsConnecting(int peerId) => _stateByPeerId.GetValueOrDefault(peerId) is Connecting;

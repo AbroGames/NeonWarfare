@@ -9,9 +9,9 @@ using RepliCAT.Bits;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 
 /// <summary>
-/// Writes the save: the protocol hash (<see cref="HashBits"/>), the next NetId and the tick (varuints), then the
-/// records of <see cref="StateReplicator.WriteSave"/>. The hash comes first and fixed-size, so a build of any later
-/// format can still tell a foreign save before it reads anything else.
+/// Writes the save: the protocol hash (<see cref="HashBits"/>), the next NetId and the tick (varuints), and then the
+/// records of <see cref="StateReplicator.WriteSave"/>.
+/// The hash comes first and has a fixed size, so a build of any later format can still recognize a foreign save.
 /// </summary>
 [Server]
 public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, ProtocolHash protocolHash)
@@ -19,7 +19,7 @@ public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, 
     public const int HashBits = 64;
 
     /// <summary>
-    /// The save right now. Valid only between ticks, when the baselines are the end of the last one.
+    /// Writes the save of the current state. Valid only between ticks, when the baselines hold the end of the last one.
     /// </summary>
     /// <exception cref="InvalidOperationException">No tick has been sent since an entity spawned.</exception>
     /// <exception cref="ReplicationException">A manual member cannot be written.</exception>

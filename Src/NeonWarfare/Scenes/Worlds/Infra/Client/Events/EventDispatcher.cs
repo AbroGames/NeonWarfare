@@ -59,8 +59,8 @@ public class EventDispatcher
     }
 
     /// <summary>
-    /// The client entry point for an events section, both from the network and from the host's own loopback. The
-    /// whole section is read before any handler runs, so a broken one changes nothing.
+    /// Delivers an events section, received from the network or from the host's own World.
+    /// The whole section is read before any handler runs, so a broken one changes nothing.
     /// </summary>
     /// <exception cref="NetMessageFormatException">The section is broken.</exception>
     public void Dispatch(ReadOnlyMemory<byte> section)
@@ -85,7 +85,7 @@ public class EventDispatcher
         {
             if (!_handlersByType.TryGetValue(@event.GetType(), out List<Handler> handlers)) continue;
 
-            // One failing handler must not cost the rest of the batch
+            // A failing handler must not cost the other handlers and events.
             foreach (Handler handler in handlers)
             {
                 try
@@ -100,7 +100,7 @@ public class EventDispatcher
         }
     }
 
-    // Level by level: GetMethods does not return the private methods of a base class
+    // Walks the hierarchy level by level, because GetMethods does not return the private methods of a base class.
     private IEnumerable<MethodInfo> HandlerMethods(Type type)
     {
         for (; type != null; type = type.BaseType)
@@ -115,8 +115,8 @@ public class EventDispatcher
         }
     }
 
-    // A typed delegate rather than MethodInfo.Invoke: no reflection per event, and the handler's own exception
-    // is not wrapped into a TargetInvocationException
+    // The handler is called through a typed delegate, so no event goes through reflection.
+    // The handler's own exception is then not wrapped into a TargetInvocationException.
     private static Action<Event> CreateCall(object owner, MethodInfo method, Type eventType)
     {
         Delegate typed = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(eventType), owner, method);

@@ -6,8 +6,8 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 namespace NeonWarfare.Scenes.Worlds.Features.NewWorld;
 
 /// <summary>
-/// Spawns what a world has from its start. Only a new world: a loaded one gets these entities from the save, a
-/// client from the world snapshot.
+/// Spawns what a new world has from its start.
+/// A loaded world gets these entities from the save, and a client from the join snapshot.
 /// </summary>
 [SimulationFacade]
 public class NewWorldSimulationFacade(EntitySpawner spawner)

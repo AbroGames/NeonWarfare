@@ -8,8 +8,9 @@ using Serilog;
 namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
-/// The host is the server and a client in one process: its own peer is the server's, and its packets are looped
-/// back into its World synchronously, inside the call. The remote peers, if any, go to <paramref name="remote"/>.
+/// The connection of the host, which is the server and a client in one process, see
+/// Docs/Networking.md#transport-and-roles.
+/// The remote peers, if any, go to <paramref name="remote"/>.
 /// </summary>
 public sealed class HostTransport(
     World.IServerEndpoint server,
@@ -48,8 +49,9 @@ public sealed class HostTransport(
         {
             client.ReceiveEvents(body.ToArray());
         }
-        // Delivered inside the server's tick: the host's own World failing must not cost the remote peers their events.
-        // Not false: the tick would disconnect the host's own peer
+        // The events are delivered inside the server's tick, so a failure of the host's own World must not cost the
+        // remote peers their events.
+        // It still returns true, because false would make the tick disconnect the host's own peer.
         catch (Exception e)
         {
             _log.Error(e, "The host's own World failed to take the events of the tick");
@@ -76,8 +78,8 @@ public sealed class HostTransport(
             return;
         }
 
-        // Queued like any other disconnection, so it is processed in the next tick, not inside this one. A warning:
-        // whatever cut the host off has already logged its error
+        // It is queued like any other disconnection, so it is processed in the next tick, not inside this one.
+        // A warning is enough, because whatever cut the host off has already logged its error.
         _log.Warning("The host's own peer is disconnected: the host has no player");
         server.QueueDisconnection(peerId);
     }

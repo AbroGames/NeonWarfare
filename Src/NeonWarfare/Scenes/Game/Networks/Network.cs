@@ -7,8 +7,8 @@ using Serilog;
 namespace NeonWarfare.Scenes.Game.Networks;
 
 /// <summary>
-/// ENet only: raw packets and connection events, no RPC. Knows nothing of the World, the transports route between
-/// them.
+/// ENet only: raw packets and connection events, see Docs/Networking.md#transport-and-roles.
+/// It knows nothing of the World. The transports route between them.
 /// </summary>
 // ReSharper disable once Godot.MissingParameterlessConstructor
 public partial class Network(Node multiplayerRoot) : Node, INetwork
@@ -29,10 +29,10 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
 
     public override void _Ready()
     {
-        // A fresh multiplayer per Game, so that old handlers and lambdas cannot outlive the session
+        // Every Game gets a fresh multiplayer, so no old handler can outlive the session.
         _api = new SceneMultiplayer();
         GetTree().SetMultiplayer(_api, multiplayerRoot.GetPath());
-        // The tree keeps a custom multiplayer until it is explicitly unset, even after the node is freed
+        // The tree keeps a custom multiplayer until it is unset, even after the node is freed.
         multiplayerRoot.TreeExiting += OnMultiplayerRootTreeExiting;
 
         _api.ConnectedToServer += OnMultiplayerConnectedToServer;
@@ -41,17 +41,14 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
         _api.PeerDisconnected += OnMultiplayerPeerDisconnected;
         _api.ServerDisconnected += OnMultiplayerServerDisconnected;
         _api.PeerPacket += OnMultiplayerPeerPacket;
-        // A client talks only to the server: a packet from another client must not reach it through the relay
+        // A client talks only to the server, so no packet of another client may reach it through the relay.
         _api.ServerRelay = false;
     }
 
-    /// <summary>Try to connect to the server</summary>
     /// <returns>
-    /// Returns <see cref="Godot.Error.Ok"/> if a client was created.<br/>
-    /// <see cref="Godot.Error.AlreadyInUse"/> if this <see cref="ENetMultiplayerPeer"/> instance
-    /// already has an open connection.<br/>
-    /// <see cref="Godot.Error.CantCreate"/> if the client could not be created.<br/>
-    /// <see cref="Godot.Error.AlreadyInUse"/> if the client already connected.<br/>
+    /// <see cref="Godot.Error.Ok"/> when the client was created.
+    /// <see cref="Godot.Error.AlreadyInUse"/> on a second call of either method, even after a failed one.
+    /// Otherwise the error of ENet, such as <see cref="Godot.Error.CantCreate"/>.
     /// </returns>
     public Error ConnectToServer(string host, int port)
     {
@@ -76,15 +73,13 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
     }
 
     /// <summary>
-    /// Try to host server. The server refuses new connections until <see cref="OpenServer"/>, so no client knocks on
-    /// a World that does not exist yet.
+    /// Hosts a server that refuses new connections until <see cref="OpenServer"/>, so no client knocks on a World that
+    /// does not exist yet.
     /// </summary>
     /// <returns>
-    /// Returns <see cref="Godot.Error.Ok"/> if a server was created.<br/>
-    /// <see cref="Godot.Error.AlreadyInUse"/> if this <see cref="ENetMultiplayerPeer"/> instance
-    /// already has an open connection.<br/>
-    /// <see cref="Godot.Error.CantCreate"/> if the server could not be created.<br/>
-    /// <see cref="Godot.Error.AlreadyInUse"/> if the server already hosted.<br/>
+    /// <see cref="Godot.Error.Ok"/> when the server was created.
+    /// <see cref="Godot.Error.AlreadyInUse"/> on a second call of either method, even after a failed one.
+    /// Otherwise the error of ENet, such as <see cref="Godot.Error.CantCreate"/>.
     /// </returns>
     public Error HostServer(int port, int maxClients = 32)
     {
@@ -128,10 +123,11 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
     }
 
     /// <summary>
-    /// Reliable and ordered, on <see cref="Consts.TransferChannel.Default"/>. Not an exception on a failure: a peer may
-    /// be gone from ENet before its <c>peer_disconnected</c> is handled.
+    /// Sends the packet reliably and in order on <see cref="Consts.TransferChannel.Default"/>.
+    /// A failure is not an exception, because a peer may be gone from ENet before its <c>peer_disconnected</c> is
+    /// handled.
     /// </summary>
-    /// <returns><c>false</c>: the packet is not sent, already logged.</returns>
+    /// <returns><c>false</c> when the packet is not sent. The failure is already logged.</returns>
     public bool Send(int peerId, ReadOnlySpan<byte> packet)
     {
         Error error = _api.SendBytes(
@@ -143,20 +139,21 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
     }
 
     /// <summary>
-    /// After the packets already queued for the peer, so a rejection reaches it.
+    /// Disconnects the peer after the packets already queued for it, so a rejection still reaches it.
     /// </summary>
     public void Disconnect(int peerId)
     {
         if (!IsServer) throw new InvalidOperationException("Only a server disconnects peers");
-        // Already gone between the ticks: its peer_disconnected is reported, and GetPeer of it would be null
+        // A peer gone between the ticks has its peer_disconnected reported already, and GetPeer would return null.
         if (!_api.GetPeers().Contains(peerId))
         {
             _log.Warning("Peer {peerId} not disconnected: it is already gone", peerId);
             return;
         }
 
-        // DisconnectPeer resets the peer's queues and would drop a queued rejection; the peer stays in the peer list,
-        // so its peer_disconnected is reported once the disconnect is acknowledged
+        // DisconnectPeer would reset the peer's queues and drop a queued rejection.
+        // With PeerDisconnectLater the peer stays in the list, and its peer_disconnected comes once the disconnect is
+        // acknowledged.
         ((ENetMultiplayerPeer) _api.MultiplayerPeer).GetPeer(peerId).PeerDisconnectLater();
     }
 

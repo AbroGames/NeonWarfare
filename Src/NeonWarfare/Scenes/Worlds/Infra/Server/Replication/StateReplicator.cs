@@ -13,19 +13,19 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 
 /// <summary>
-/// Writes the state packet body of the tick: the tick number (varuint), then three sections, each closed by
+/// Writes the body of the state packet, the join snapshot and the save from one set of RepliCAT baselines, see
+/// Docs/Networking.md#entities-and-replication.
+/// The state packet body is the tick number (varuint) and then three sections, each closed by
 /// <see cref="NetId.None"/>:
 /// <list type="number">
-/// <item>spawns — for every entity spawned since the last packet, by NetId: its NetId, kind id and parent NetId
-/// (varuints, <see cref="NetId.None"/> for the World root), a bit "the state follows" and its first RepliCAT
-/// delta;</item>
-/// <item>models — for every other entity whose models changed, its NetId (varuint) and its RepliCAT delta;</item>
-/// <item>despawns — the NetId (varuint) of every entity despawned since the last packet, descendants included.</item>
+/// <item>Spawns. For every entity spawned since the last packet, in NetId order: its NetId, kind id and parent NetId
+/// (varuints, <see cref="NetId.None"/> for the World root), a bit saying that the state follows, and its first
+/// RepliCAT delta.</item>
+/// <item>Models. For every other entity whose models changed: its NetId (varuint) and its RepliCAT delta.</item>
+/// <item>Despawns. The NetId (varuint) of every entity despawned since the last packet, descendants included.</item>
 /// </list>
-/// A delta carries no length, so the client must know every NetId in the packet. The state is captured here, at the
-/// end of the tick, not at spawn. One packet for every peer: a written delta has already moved its baseline.
-/// The same records of every entity, without the packet header, make the snapshot: <see cref="WriteSnapshot"/>, and
-/// the save: <see cref="WriteSave"/>.
+/// A delta carries no length, so the client must know every NetId in the packet.
+/// One packet serves every peer, because writing a delta moves its baseline.
 /// </summary>
 [Server]
 public class StateReplicator
@@ -34,16 +34,19 @@ public class StateReplicator
 
     private readonly IEntityFinder _entities;
     private readonly Replicator _replicator;
-    // By NetId: the order is the same on every run, so the packet is too
+    // Sorted by NetId, so the same world always gives the same packet.
     private readonly SortedDictionary<long, Entry> _entryById = new();
-    // By NetId, so a parent spawned in the same tick comes before its child
+    // Sorted by NetId, so a parent spawned in the same tick comes before its child.
     private readonly SortedSet<long> _spawned = [];
-    // Their baselines stay until the end of the tick: the set of baselines is the set of entities at the last send
+    // The despawned entities keep their baselines until the next send, so the baselines always describe the entities
+    // as they were at the last send.
     private readonly List<NetId> _despawned = [];
-    // A failed delta resets the baseline: a snapshot takes the state from the next delta, a save has none to take
+    // The entities whose last delta failed and whose baselines RepliCAT has reset. A snapshot can do without their
+    // state, because their next delta is complete, but a save cannot.
     private readonly SortedSet<long> _stateLost = [];
 
-    // Kind and parent are kept from the spawn: a despawned entity may be out of the registry before the next send
+    // The kind and the parent are kept from the spawn, because a despawned entity may leave the registry before the
+    // next send.
     private record Entry(ReplicationBaseline Baseline, int KindId, NetId Parent, bool Saved);
 
     public StateReplicator(IEntityFinder entities, Replicator replicator)
@@ -54,17 +57,17 @@ public class StateReplicator
         entities.Despawned += OnEntityDespawned;
     }
 
-    /// <summary>
-    /// The tick of the last <see cref="TryWrite"/>: the baselines are the state at its end.
-    /// </summary>
+    /// <summary>The tick of the last <see cref="TryWrite"/>. The baselines hold the state at its end.</summary>
     public long LastSentTick { get; private set; }
 
     /// <summary>
-    /// Called every tick, whether anyone gets the packet or not: the baselines stay equal to the state at the end of
-    /// the last tick, which is what a joining peer's snapshot is built from.
+    /// Writes the state packet body of the tick. Called every tick, even when no peer gets the packet.
+    /// That keeps the baselines equal to the state at the end of the last tick, and a joining peer's snapshot is
+    /// built from them.
     /// </summary>
     /// <returns>
-    /// <c>false</c> when nothing was spawned, changed or despawned: the writer is left as it was, and nothing is sent.
+    /// <c>false</c> when nothing was spawned, changed or despawned. The writer is then left as it was, and nothing is
+    /// sent.
     /// </returns>
     public bool TryWrite(long tick, BitWriter writer)
     {
@@ -94,12 +97,16 @@ public class StateReplicator
     }
 
     /// <summary>
-    /// Every entity as it was at the last send, by NetId: the same record as in the spawns section of the state
-    /// packet, closed by <see cref="NetId.None"/>. No tick: the caller writes it. Written right
-    /// after <see cref="TryWrite"/>, before anything spawns: "the snapshot, then the next state packet" is then
-    /// consistent, because it is built from the baselines, not from the live entities. An entity despawned since the
-    /// send is still in it, and the next packet despawns it. An entity whose delta was never written goes without
-    /// state; its full state comes with its next delta.
+    /// Writes every entity as it was at the last send, in NetId order, closed by <see cref="NetId.None"/>.
+    /// Each entity gets the same record as in the spawns section of the state packet. The caller writes the tick.
+    /// <list type="bullet">
+    /// <item>It must be called right after <see cref="TryWrite"/>, before anything spawns.
+    /// It is built from the baselines, not from the live entities, so the next state packet continues it
+    /// consistently.</item>
+    /// <item>An entity despawned since the send is still in it, and the next packet despawns it.</item>
+    /// <item>An entity whose delta was never written goes without state. Its full state comes with its next
+    /// delta.</item>
+    /// </list>
     /// </summary>
     /// <exception cref="InvalidOperationException">
     /// An entity has spawned since the last send: it has no state yet, and the next packet would spawn it again.
@@ -108,8 +115,10 @@ public class StateReplicator
     public void WriteSnapshot(BitWriter writer) => WriteAll(writer, saving: false);
 
     /// <summary>
-    /// The records of <see cref="WriteSnapshot"/>, but a <see cref="NotSavedAttribute"/> entity goes without state.
-    /// Between ticks too: an entity that has left the tree since the send is still written, from its baseline.
+    /// Writes the records of <see cref="WriteSnapshot"/>, except that a <see cref="NotSavedAttribute"/> entity goes
+    /// without state.
+    /// It may be called between ticks too. An entity that has left the tree since the send is still written from its
+    /// baseline.
     /// </summary>
     /// <exception cref="InvalidOperationException">
     /// An entity has spawned since the last send, or a saved entity has had no successful delta since its last failed
@@ -147,8 +156,8 @@ public class StateReplicator
     {
         foreach (long id in _spawned)
         {
-            // No delta for a kind with no replicated member, nor for a first delta that threw: RepliCAT has reset the
-            // baseline, so the models section of the next packet carries the full state
+            // A record goes without state when the kind has no replicated member or the first delta threw.
+            // After a throw RepliCAT has reset the baseline, so the next packet carries the full state.
             WriteSpawnRecord(id, _entryById[id], writer, () => TryWriteDelta(new NetId(id), writer));
         }
         writer.WriteVarUInt((ulong) NetId.None.Value);
@@ -208,7 +217,7 @@ public class StateReplicator
         }
         catch (ReplicationException e)
         {
-            // RepliCAT has reset the baseline, so the next delta of this entity is complete
+            // RepliCAT has reset the baseline, so the next delta of this entity is complete.
             _log.Error(e, "The delta of {netId} failed, the other entities are still written", id);
             _stateLost.Add(id.Value);
             return false;
@@ -224,7 +233,7 @@ public class StateReplicator
         _spawned.Add(id.Value);
     }
 
-    // Spawned and despawned before a send: no client has heard of it
+    // An entity spawned and despawned between two sends is dropped without a trace, because no client has heard of it.
     private void OnEntityDespawned(NetId id, Node node)
     {
         if (_spawned.Remove(id.Value))

@@ -9,19 +9,20 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.Scenes.Game;
 
 /// <summary>
-/// Builds the World of each configuration over its transports. The World is returned outside the tree; a World that
-/// throws while being built is freed.
+/// Builds the World of each configuration over its transports.
+/// The World is returned outside the tree. A World that throws while being built is freed.
 /// </summary>
 public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
 {
     /// <summary>
-    /// A host without a network. Its own join is sent right away and applied in the next tick.
+    /// Builds the World of a host without a network. Its own join is sent right away and applied in the next tick.
     /// </summary>
     public World Singleplayer(WorldSetup.Host setup, WorldOrigin origin) =>
         BuildHost(new World(), setup, origin, null);
 
     /// <summary>
-    /// A host over <paramref name="network"/>. Its own join is sent right away and applied in the next tick.
+    /// Builds the World of a host over <paramref name="network"/>. Its own join is sent right away and applied in the
+    /// next tick.
     /// </summary>
     public World Host(WorldSetup.Host setup, WorldOrigin origin, INetwork network)
     {
@@ -54,7 +55,7 @@ public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
         return world;
     }
 
-    /// <param name="serverTransport">Detached from the network when the World fails to be built.</param>
+    // serverTransport is detached from the network when the World fails to be built.
     private void Build(
         World world, WorldSetup setup, WorldOrigin origin, IClientsConnection clients, IServerConnection server,
         ServerTransport serverTransport)
@@ -69,7 +70,7 @@ public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
         catch
         {
             serverTransport?.Dispose();
-            // Outside the tree nothing else frees it, nor the entities a snapshot has already spawned in it
+            // Outside the tree nothing else frees the World or the entities a snapshot has already spawned in it.
             world.Free();
             throw;
         }

@@ -12,9 +12,8 @@ using RepliCAT;
 namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
-/// A hash of everything a peer of another build would read differently: the mapped types in id order, the
-/// MessagePack keys of every mapped [MessagePackObject] type, the RepliCAT schema of every mapped model and the
-/// descriptors of the entity kinds in kind id order.
+/// Hashes everything a peer of another build would read differently, see Docs/Networking.md#payload.
+/// The types go in id order and the entity kinds in kind id order.
 /// </summary>
 public class ProtocolHasher(Replicator replicator)
 {
@@ -35,8 +34,8 @@ public class ProtocolHasher(Replicator replicator)
                 AppendMessagePackKeys(text, type);
             }
 
-            // The type list alone does not see a changed [Replicated] member, and a generic definition has no
-            // schema of its own
+            // The type list alone misses a changed [Replicated] member, so the schema goes in too.
+            // A generic definition has no schema of its own.
             if (!type.ContainsGenericParameters && DeclaresReplicatedMember(type))
             {
                 text.Append("replicated ")
@@ -45,7 +44,6 @@ public class ProtocolHasher(Replicator replicator)
             }
         }
 
-        // A kind id travels in spawn records and lies in saves
         foreach (string kind in entityKinds)
         {
             text.Append("kind ").Append(kind).Append('\n');
@@ -94,7 +92,7 @@ public class ProtocolHasher(Replicator replicator)
         _ => null,
     };
 
-    // Without assembly information: the assembly version must not change the hash
+    // The name goes without the assembly, so the assembly version does not change the hash.
     private void AppendTypeName(StringBuilder text, Type type)
     {
         if (type.IsArray)

@@ -9,9 +9,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 
 /// <summary>
-/// The save file of the World. <see cref="SaveFileName"/> is the last file written: after a "save as" the autosave and
-/// the next load go to the new file. A requested save is the state at the end of the tick, the one the joining peers
-/// get: it is served after the packets of the tick are written.
+/// The saves of the World, see Docs/Data-and-saves.md#saves.
 /// </summary>
 [Server]
 public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFiles saveFiles)
@@ -20,6 +18,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
 
     private readonly List<(string FileName, Action Written, Action<Exception> Failed)> _requests = [];
 
+    /// <summary>The last file written. After a "save as" the autosave and the next load use the new file.</summary>
     public string SaveFileName { get; private set; }
 
     public void Init(string saveFileName)
@@ -31,8 +30,9 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
     }
 
     /// <summary>
-    /// A save to <paramref name="saveFileName"/> at the end of the current tick. The callbacks run inside the tick and
-    /// must not change the models. On a failure the save file stays as it was.
+    /// Requests a save to <paramref name="saveFileName"/> at the end of the current tick.
+    /// The callbacks run inside the tick and must not change the models.
+    /// On a failure <see cref="SaveFileName"/> stays as it was.
     /// </summary>
     public void RequestSave(string saveFileName, Action written, Action<Exception> failed)
     {
@@ -43,7 +43,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
         _requests.Add((saveFileName, written, failed));
     }
 
-    // Calls from ServerTickLoop. One save for every request of the tick
+    /// <summary>Writes one save for every request of the tick.</summary>
     public void WriteRequested()
     {
         if (_requests.Count == 0) return;
@@ -84,7 +84,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
     }
 
     /// <summary>
-    /// Never throws: the World is leaving the tree, and the teardown must go on whatever happens to the save.
+    /// Never throws, because the World is leaving the tree and the teardown must go on whatever happens to the save.
     /// </summary>
     public void SaveOnExit()
     {
@@ -95,7 +95,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
                 _log.Information("No autosave: it is disabled");
                 return;
             }
-            // Its file, if any, already holds this state, and the baselines hold none of it yet
+            // Without a tick the baselines are empty, and the save file, if any, already holds this state.
             if (!clock.Started)
             {
                 _log.Information("No autosave to '{saveFileName}': no tick has run, nothing new to save", SaveFileName);

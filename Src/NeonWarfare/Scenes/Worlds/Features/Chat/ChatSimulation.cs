@@ -41,7 +41,7 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
         outbox.PublishTo(new LocalizedChatMessageEvent(NowUnixSeconds(), key, args), receiverUid);
     }
 
-    // A log record is one line: a continuation line has no time or source, and grep loses it
+    // A log record stays on one line, because a continuation line has no time or source and grep loses it.
     private string ToOneLine(string text) => text.ReplaceLineEndings("\\n");
 
     private long NowUnixSeconds() => timeProvider.GetUtcNow().ToUnixTimeSeconds();

@@ -15,9 +15,10 @@ public class ChatPresentation(HudMailbox hudMailbox) : IEventHandlerOwner
     public IReadOnlyCollection<ChatEntry> Entries => _entries;
     private readonly Queue<ChatEntry> _entries = new(MaxNumberOfMessages);
 
-    // History keeps facts, not localized strings: the HUD translates them on render via Tr,
-    // so a language switch re-renders old entries too
-    // Command responses are deliberately not localized, see Docs/Localization.md
+    /// <summary>
+    /// A chat history entry. It keeps a fact, not a translated string, see Docs/Chat-and-commands.md.
+    /// The replies of chat commands are not localized, see Docs/Localization.md#locale-files.
+    /// </summary>
     public abstract record ChatEntry(long SentAtUnixSeconds);
     public record PlayerMessageEntry(long SentAtUnixSeconds, string SenderUid, string SenderNick, string Text)
         : ChatEntry(SentAtUnixSeconds);
@@ -26,7 +27,7 @@ public class ChatPresentation(HudMailbox hudMailbox) : IEventHandlerOwner
     public sealed record LocalizedServerEntry(long SentAtUnixSeconds, string Key, string[] Args)
         : ChatEntry(SentAtUnixSeconds)
     {
-        // The generated equality compares the array by reference
+        /// <summary>Compares <c>Args</c> by content, not by reference as the generated equality would.</summary>
         public bool Equals(LocalizedServerEntry other) =>
             other is not null
             && SentAtUnixSeconds == other.SentAtUnixSeconds
