@@ -146,7 +146,7 @@ public class SaveTests
         ServiceProvider loaded = Build(TestWorldSetups.Dedicated(), new RecordingClientsConnection(), out _);
 
         var error = AssertThrows<SaveVersionMismatchException>(
-            () => loaded.GetRequiredService<SaveLoader>().Load(save));
+            () => loaded.GetRequiredService<SaveLoader>().Load(TestWorldSetups.SaveFileName, save));
 
         AssertThat(error.SaveHash).IsEqual(foreign);
         AssertThat(error.ExpectedHash).IsEqual(TestProtocol.Hash.Value);
@@ -366,7 +366,7 @@ public class SaveTests
     {
         ServiceProvider loaded = Build(
             TestWorldSetups.Dedicated(adminUid), connection ?? new RecordingClientsConnection(), out _);
-        loaded.GetRequiredService<SaveLoader>().Load(save);
+        loaded.GetRequiredService<SaveLoader>().Load(TestWorldSetups.SaveFileName, save);
         return loaded;
     }
 
@@ -375,7 +375,8 @@ public class SaveTests
     {
         ServiceProvider loaded = Build(TestWorldSetups.Dedicated(), new RecordingClientsConnection(), out _);
 
-        var error = AssertThrows<SaveFormatException>(() => loaded.GetRequiredService<SaveLoader>().Load(save));
+        var error = AssertThrows<SaveFormatException>(
+            () => loaded.GetRequiredService<SaveLoader>().Load(TestWorldSetups.SaveFileName, save));
 
         AssertThat(error.GetType()).IsEqual(typeof(SaveFormatException));
     }

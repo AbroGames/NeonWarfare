@@ -55,7 +55,9 @@ public class WorldAssemblerTests
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
         AssertThrown(() => _assembler.Dedicated(
-                TestWorldSetups.Dedicated(), new WorldOrigin.FromSave(BrokenSave), network))
+                TestWorldSetups.Dedicated(),
+                new WorldOrigin.FromSave(TestWorldSetups.SaveFileName, BrokenSave),
+                network))
             .IsInstanceOf<SaveFormatException>();
 
         AssertThat(Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount)).IsEqual(orphans);

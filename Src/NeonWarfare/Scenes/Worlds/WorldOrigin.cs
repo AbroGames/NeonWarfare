@@ -16,5 +16,5 @@ public abstract record WorldOrigin
     public sealed record FromSnapshot(long Tick, ReadOnlyMemory<byte> Records) : WorldOrigin;
 
     /// <summary>A world loaded from a save on the server.</summary>
-    public sealed record FromSave(ReadOnlyMemory<byte> Save) : WorldOrigin;
+    public sealed record FromSave(string FileName, ReadOnlyMemory<byte> Save) : WorldOrigin;
 }

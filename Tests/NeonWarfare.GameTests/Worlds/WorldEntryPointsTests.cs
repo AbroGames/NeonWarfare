@@ -111,7 +111,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void InitPreReady_FromSaveOnAHost_TheHostJoinsIt()
     {
-        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash)));
+        World world = HostWorld(new WorldOrigin.FromSave(TestWorldSetups.SaveFileName, HostSave(TestProtocol.Hash)));
 
         JoinHost(world);
 
@@ -129,7 +129,7 @@ public class WorldEntryPointsTests
         World world = AutoFree(new World())!;
 
         AssertThrown(() => world.InitPreReady(DedicatedSetup(), Dependencies(),
-                new WorldOrigin.FromSave(save)))
+                new WorldOrigin.FromSave(TestWorldSetups.SaveFileName, save)))
             .IsInstanceOf<SaveVersionMismatchException>();
     }
 
@@ -147,7 +147,8 @@ public class WorldEntryPointsTests
         RecordingSaveFiles.Written save = _saveFiles.Files.Single();
         AssertThat(save.FileName).IsEqual(TestWorldSetups.SaveFileName);
 
-        World loaded = InTree(CreateWorld(DedicatedSetup(loadedFileName), new WorldOrigin.FromSave(save.Data)));
+        World loaded = InTree(
+            CreateWorld(DedicatedSetup(loadedFileName), new WorldOrigin.FromSave(save.FileName, save.Data)));
         AssertThat(loaded.Get<PlayerQuery>().PlayersModel.PlayerByUid[HostUid].Nick).IsEqual("Host");
         Tick(loaded);
         loaded.GetParent().RemoveChild(loaded);
