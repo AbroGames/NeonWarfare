@@ -5,30 +5,22 @@ using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scripts;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;
 
 /// <summary>
-/// Only reads the World: no chat, no commands, no events.
+/// Only reads the World: no chat, no commands, no events. The log comes from <c>Services.ServerLog</c>.
 /// </summary>
 public partial class ServerHud : Control
 {
     
     [Child] private Label InfoLabel { get; set; }
-    
-    [Child] private Label ChatLabel { get; set; }
-    [Child] private LineEdit ChatLineEdit { get; set; }
-    [Child] private Button ChatSendButton { get; set; }
-    
-    [Child] private Button Test1Button { get; set; }
-    [Child] private Button Test2Button { get; set; }
-    [Child] private Button Test3Button { get; set; }
-    [Child] private Button LogButton { get; set; }
-    [Child] private Button SaveButton { get; set; }
-    [Child] private LineEdit SaveLineEdit { get; set; }
+    [Child] private RichTextLabel LogLabel { get; set; }
     
     private PlayerQuery _players;
+    private ServerLogView _logView;
     private readonly ILogger _log = LogFactory.GetForStatic<ServerHud>();
     
     public ServerHud InitPreReady(World.IReader reader)
@@ -42,6 +34,7 @@ public partial class ServerHud : Control
     public override void _Ready()
     {
         Di.Process(this);
+        _logView = new ServerLogView(LogLabel, Services.ServerLog);
     }
 
     public override void _Process(double delta)
@@ -49,5 +42,7 @@ public partial class ServerHud : Control
         IEnumerable<string> players = _players.GetOnlinePlayers()
             .Select(player => $"{player.Nick} (uid: {player.Uid})");
         InfoLabel.Text = "Players:\n" + string.Join("\n", players);
+
+        _logView.Refresh();
     }
 }
