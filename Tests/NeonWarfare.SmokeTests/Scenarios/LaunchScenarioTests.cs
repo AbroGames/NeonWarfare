@@ -43,6 +43,15 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     private const string PlayerLeft = "Player left: ";
 
     /// <summary>
+    /// One save name per scenario, because on macOS every process shares the real user:// and a scenario would
+    /// otherwise load the save of another one.
+    /// </summary>
+    private const string ServerSaveFile = "smoke-server-world";
+
+    /// <inheritdoc cref="ServerSaveFile"/>
+    private const string SingleplayerSaveFile = "smoke-singleplayer-world";
+
+    /// <summary>
     /// The plain client launch: the menu comes up and nothing else happens.
     /// </summary>
     [Fact]
@@ -91,8 +100,53 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
                 Milestone: $"{PlayerLeft}{FirstClientName} ({FirstClientUid})"));
     }
 
+    /// <summary>
+    /// The whole lifecycle of a server world across processes: created, autosaved on SIGTERM, loaded by the
+    /// next server process, and joined over the network by a client once loaded. The second run reuses the
+    /// user:// of the first.
+    /// </summary>
+    [Fact]
+    public void Server_LoadsItsAutosaveAfterRestart()
+    {
+        using UserDataDirectories userData = new();
+        int port = FreePort.Take();
+        GameLaunch server = Server(port, ServerSaveFile);
+
+        SmokeRun.Run(
+            [server with { ExitMilestones = [Autosaved(ServerSaveFile)] }, FirstClient(port)],
+            userData: userData);
+        SmokeRun.Run(
+            [server with { Milestones = [LoadedSave(ServerSaveFile), ServerOpened] }, FirstClient(port)],
+            userData: userData);
+    }
+
+    /// <summary>
+    /// The same for a single-player game, where the client itself saves its world on SIGTERM and loads it on the
+    /// next start.
+    /// </summary>
+    [Fact]
+    public void Client_LoadsItsSingleplayerAutosaveAfterRestart()
+    {
+        using UserDataDirectories userData = new();
+        GameLaunch client = new(
+            "client", ["--auto-start", "--auto-start-savefile", SingleplayerSaveFile], [PlayerJoined]);
+
+        SmokeRun.Run([client with { ExitMilestones = [Autosaved(SingleplayerSaveFile)] }], userData: userData);
+        SmokeRun.Run(
+            [client with { Milestones = [LoadedSave(SingleplayerSaveFile), PlayerJoined] }], userData: userData);
+    }
+
+    /// <summary>SaveService: the World wrote its save on the way out.</summary>
+    private static string Autosaved(string saveFile) => $"Autosaved to '{saveFile}'";
+
+    /// <summary>SaveLoader: the World was filled from the save, not created anew.</summary>
+    private static string LoadedSave(string saveFile) => $"Loaded the save '{saveFile}'";
+
     private static GameLaunch Server(int port) =>
         new("server", ["--server", "--port", port.ToString()], [ServerOpened]);
+
+    private static GameLaunch Server(int port, string saveFile) =>
+        new("server", ["--server", "--port", port.ToString(), "--savefile", saveFile], [ServerOpened]);
 
     private const string FirstClientName = "client-1";
     private const string FirstClientUid = "SmokeTestA-Aaaaaaaaaa";
