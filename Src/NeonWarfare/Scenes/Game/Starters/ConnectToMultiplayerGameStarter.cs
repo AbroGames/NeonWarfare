@@ -2,7 +2,6 @@ using System;
 using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -57,8 +56,7 @@ public class ConnectToMultiplayerGameStarter(
             try
             {
                 game.AddWorld(
-                    WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud, saveFiles: null,
-                    localPlayer, admin: null);
+                    new WorldSetup.RemoteClient(localPlayer), new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud);
             }
             catch (NetMessageFormatException e)
             {

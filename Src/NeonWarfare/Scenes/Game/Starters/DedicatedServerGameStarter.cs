@@ -2,7 +2,6 @@ using Godot;
 using GodotBox.Godot.Nodes.Process;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
@@ -18,7 +17,7 @@ public class DedicatedServerGameStarter(
     int? parentPid,
     bool serverHud,
     bool mustSetLastGame
-    ) : BaseHostGameStarter(saveFileName, port, mustSetLastGame, isDedicated: true), IDedicatedServerOwner
+    ) : BaseHostGameStarter(saveFileName, port, mustSetLastGame, isDedicated: true), IServerOwner
 {
     private const string AdminLeftLog = "The admin of a server started by its client has left. Shutdown server.";
 
@@ -41,8 +40,8 @@ public class DedicatedServerGameStarter(
     protected override World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles)
     {
         World world = game.AddWorld(
-            WorldLayer.Dedicated, origin, serverHud ? Game.Screen.ServerHud : Game.Screen.None, saveFiles, null,
-            new WorldAdmin(adminUid), this);
+            new WorldSetup.Dedicated(saveFiles, new WorldAdmin(adminUid), this), origin,
+            serverHud ? Game.Screen.ServerHud : Game.Screen.None);
         world.SetVisible(false);
         return world;
     }

@@ -15,8 +15,7 @@ public class PlayerSimulationFacade(
     PlayersStorageQuery players,
     PlayersSessionStorageQuery session,
     WorldAdmin admin,
-    // Absent on the host: its admin is the process itself
-    IDedicatedServerOwner dedicatedServerOwner = null)
+    IServerOwner owner)
 {
     private const string NewPlayerLog = "New player: {nick} ({uid})";
     private const string JoinedLog = "Player joined: {nick} ({uid})";
@@ -57,6 +56,6 @@ public class PlayerSimulationFacade(
         session.Model.OnlinePlayerUids.Remove(uid);
         _log.Information(LeftLog, player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, player.Nick);
-        if (uid == admin.Uid) dedicatedServerOwner?.AdminLeft();
+        if (uid == admin.Uid) owner.AdminLeft();
     }
 }

@@ -1,7 +1,6 @@
 using Godot;
 using Humanizer;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Game.Starters;
@@ -12,7 +11,7 @@ namespace NeonWarfare.Scenes.Game.Starters;
 public class HostMultiplayerGameStarter(
     string saveFileName,
     int? port
-    ) : BaseHostGameStarter(saveFileName, port, mustSetLastGame: true, isDedicated: false)
+    ) : BaseHostGameStarter(saveFileName, port, mustSetLastGame: true, isDedicated: false), IServerOwner
 {
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string HostingFailedMessage = "Failed to start server: {0}";
@@ -28,8 +27,10 @@ public class HostMultiplayerGameStarter(
     }
 
     protected override World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles) =>
-        game.AddWorld(
-            WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, _localPlayer, new WorldAdmin(_localPlayer.Uid));
+        game.AddWorld(new WorldSetup.Host(saveFiles, _localPlayer, this), origin, Game.Screen.Hud);
+
+    // The admin is this process's own player, which leaves only with the process: there is nothing to stop
+    public void AdminLeft() { }
 
     protected override void OnServerOpened(Game game)
     {

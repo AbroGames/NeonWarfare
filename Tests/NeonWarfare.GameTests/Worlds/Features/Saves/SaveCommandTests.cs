@@ -9,7 +9,6 @@ using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Features.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -18,7 +17,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -59,14 +57,11 @@ public class SaveCommandTests
         _files = new RecordingSaveFiles();
         _frames = new ManualFrameProvider();
         _server = new WorldServicesBuilder().Build(
-            WorldLayer.Host,
+            TestWorldSetups.Host(saveFiles: _files),
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), _frames, _scenes,
-                TestWorldScenes.CreateCatalog(_scenes), _connection, _connection, _files,
-                TestWorldDependencies.LocalPlayer(WorldLayer.Host), TestWorldDependencies.Admin(WorldLayer.Host),
-                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host),
-                TestWorldDependencies.LocalPlayerOwner(WorldLayer.Host)),
+                TestWorldScenes.CreateCatalog(_scenes), _connection, _connection, new RecordingLocalPlayerOwner()),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _server.GetRequiredService<SaveService>().Init("old");

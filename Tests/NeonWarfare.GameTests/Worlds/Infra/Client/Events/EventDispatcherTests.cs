@@ -7,11 +7,9 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.Worlds.Features.Chat.ChatPresentation;
@@ -41,7 +39,7 @@ public class EventDispatcherTests
     public void Dispatch_ChatEvents_ReachChatPresentationInOrder()
     {
         using ServiceProvider provider = new WorldServicesBuilder().Build(
-            WorldLayer.RemoteClient, Dependencies(WorldLayer.RemoteClient), new WorldRoot(AutoFree(new Node())!));
+            TestWorldSetups.RemoteClient(), Dependencies(), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
             new LocalizedChatMessageEvent(1, "HUD__CHAT_PLAYER_JOINED", ["Alice"]),
             new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
@@ -153,15 +151,13 @@ public class EventDispatcherTests
     private static byte[] Packet(ServerPacketKind kind, byte[] section) => [(byte) kind, ..section];
 
     // A frame that never ends: everything posted during the test is still readable at its end
-    private WorldDependencies Dependencies(WorldLayer layers)
+    private WorldDependencies Dependencies()
     {
         WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
         return new(TimeProvider.System, _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers),
-            TestWorldDependencies.LocalPlayerOwner(layers));
+            new RecordingClientsConnection(), new RecordingLocalPlayerOwner());
     }
 
     private class ThrowingPresentation

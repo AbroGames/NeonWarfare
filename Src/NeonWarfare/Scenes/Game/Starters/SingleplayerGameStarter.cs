@@ -1,5 +1,4 @@
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
@@ -11,9 +10,8 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// </summary>
 public class SingleplayerGameStarter(
     string saveFileName
-    ) : BaseGameStarter
+    ) : BaseGameStarter, IServerOwner
 {
-    
     public override void Init(Game game)
     {
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
@@ -24,8 +22,7 @@ public class SingleplayerGameStarter(
         LocalPlayer localPlayer = ReadLocalPlayer();
         World world = AddServerWorld(
             saveFileName,
-            origin => game.AddWorld(
-                WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, localPlayer, new WorldAdmin(localPlayer.Uid)),
+            origin => game.AddWorld(new WorldSetup.Host(saveFiles, localPlayer, this), origin, Game.Screen.Hud),
             out string loadError);
         if (world == null)
         {
@@ -37,4 +34,7 @@ public class SingleplayerGameStarter(
         ClearLoadingScreenOnJoined(game);
         game.SendJoinRequest(localPlayer);
     }
+
+    // The admin is this process's own player, which leaves only with the process: there is nothing to stop
+    public void AdminLeft() { }
 }

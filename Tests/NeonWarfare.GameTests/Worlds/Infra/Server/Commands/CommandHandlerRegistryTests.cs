@@ -5,7 +5,6 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
@@ -107,7 +106,7 @@ public class CommandHandlerRegistryTests
     {
         var codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         using ServiceProvider provider = new WorldServicesBuilder().Build(
-            WorldLayer.Host, Dependencies(codec), new WorldRoot(AutoFree(new Node())!));
+            TestWorldSetups.Host(), Dependencies(codec), new WorldRoot(AutoFree(new Node())!));
         IReadOnlySet<Type> whitelist = provider.GetRequiredService<CommandHandlerRegistry>().NetworkCommandTypes;
         var inbox = provider.GetRequiredService<CommandInbox>();
         var chat = new SendChatMessageCommand("hi");
@@ -134,10 +133,7 @@ public class CommandHandlerRegistryTests
         return new(TimeProvider.System, codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles(),
-            TestWorldDependencies.LocalPlayer(WorldLayer.Host),
-            TestWorldDependencies.Admin(WorldLayer.Host), TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host),
-            TestWorldDependencies.LocalPlayerOwner(WorldLayer.Host));
+            new RecordingClientsConnection(), new RecordingLocalPlayerOwner());
     }
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>
