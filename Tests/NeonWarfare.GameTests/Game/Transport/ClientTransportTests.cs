@@ -5,7 +5,9 @@ using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.Scenes.Game.Transport;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using RepliCAT.Bits;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Game.Transport;
@@ -57,7 +59,6 @@ public class ClientTransportTests
     {
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1]);
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 1]);
-        _network.Receive(ServerPeer, []);
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1, 2]);
 
         AssertThat(_snapshots.Count).IsEqual(1);
@@ -78,14 +79,49 @@ public class ClientTransportTests
     // Before and after the World alike: the World would throw on it
     [TestCase]
     [RequireGodotRuntime]
-    public void PacketReceived_JoinRejected_ReachesTheOwner_ABrokenOneIsDropped()
+    public void PacketReceived_JoinRejected_ReachesTheOwner()
     {
         _network.Receive(ServerPeer, Rejection(JoinRejectReason.UidInUse));
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.JoinRejected]);
         Connect();
         _network.Receive(ServerPeer, Rejection(JoinRejectReason.InternalError));
 
         AssertThat(_owner.Rejections).ContainsExactly(JoinRejectReason.UidInUse, JoinRejectReason.InternalError);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void PacketReceived_Broken_BreaksTheConnectionOnce_AndTheRestIsDropped()
+    {
+        int broken = 0;
+        _transport.ConnectionBroken += () => broken++;
+
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.JoinRejected]);
+        _network.Receive(ServerPeer, []);
+        _network.Receive(ServerPeer, Rejection(JoinRejectReason.UidInUse));
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1]);
+
+        AssertThat(broken).IsEqual(1);
+        AssertThat(_owner.Rejections).IsEmpty();
+        AssertThat(_snapshots).IsEmpty();
+    }
+
+    // The World has applied part of the packet, and the server has moved on: the models would drift from here
+    [TestCase]
+    [RequireGodotRuntime]
+    public void PacketReceived_BrokenStateWithAWorld_BreaksTheConnection()
+    {
+        Connect();
+        int broken = 0;
+        _transport.ConnectionBroken += () => broken++;
+
+        // The tick, no spawns, then a delta for an entity the client has never seen
+        var body = new BitWriter();
+        body.WriteVarUInt(1);
+        body.WriteVarUInt((ulong) NetId.None.Value);
+        body.WriteVarUInt(999);
+        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, ..body.ToArray()]);
+
+        AssertThat(broken).IsEqual(1);
     }
 
     // The whole join: the snapshot builds the World inside the call, and the events packet right after it reaches it
@@ -115,17 +151,20 @@ public class ClientTransportTests
             .ContainsExactlyInAnyOrder(TestWorldSetups.LocalPlayerUid, OtherUid);
     }
 
-    // The server sends one snapshot per join: a second one is a broken packet, logged and dropped
+    // The server sends one snapshot per join: a second one is a broken packet
     [TestCase]
     [RequireGodotRuntime]
-    public void PacketReceived_SnapshotWithAWorld_IsDropped()
+    public void PacketReceived_SnapshotWithAWorld_BreaksTheConnection()
     {
         Connect();
         _onSnapshot = RecordSnapshot;
+        int broken = 0;
+        _transport.ConnectionBroken += () => broken++;
 
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.Snapshot, 1]);
 
         AssertThat(_snapshots).IsEmpty();
+        AssertThat(broken).IsEqual(1);
     }
 
     [TestCase]
