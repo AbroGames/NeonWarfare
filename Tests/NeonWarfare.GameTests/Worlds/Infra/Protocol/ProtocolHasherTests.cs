@@ -15,7 +15,7 @@ public class ProtocolHasherTests
     public void Compute_SameMapping_GivesSameHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
-        var hasher = new ProtocolHasher(new Replicator(mapping));
+        var hasher = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping));
 
         AssertThat(hasher.Compute(mapping.Types, Kinds))
             .IsEqual(hasher.Compute(mapping.Types.ToList(), Kinds.ToList()));
@@ -26,7 +26,7 @@ public class ProtocolHasherTests
     public void Compute_OneMoreType_ChangesHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
-        var hasher = new ProtocolHasher(new Replicator(mapping));
+        var hasher = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping));
 
         AssertThat(hasher.Compute(mapping.Types.Append(typeof(ExtraMessage)).ToList(), Kinds))
             .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
@@ -37,7 +37,7 @@ public class ProtocolHasherTests
     public void Compute_OneMoreKind_ChangesHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
-        var hasher = new ProtocolHasher(new Replicator(mapping));
+        var hasher = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping));
 
         AssertThat(hasher.Compute(mapping.Types, Kinds.Append("scene res://Extra.tscn").ToList()))
             .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
@@ -49,7 +49,7 @@ public class ProtocolHasherTests
     public void Compute_SwappedKinds_ChangesHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
-        var hasher = new ProtocolHasher(new Replicator(mapping));
+        var hasher = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping));
 
         AssertThat(hasher.Compute(mapping.Types, Kinds.Reverse().ToList()))
             .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
@@ -61,7 +61,7 @@ public class ProtocolHasherTests
     public void Compute_TypeKindRemovedWithTheSameTypes_ChangesHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
-        var hasher = new ProtocolHasher(new Replicator(mapping));
+        var hasher = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping));
 
         AssertThat(hasher.Compute(mapping.Types, Kinds.Where(kind => !kind.StartsWith("type ")).ToList()))
             .IsNotEqual(hasher.Compute(mapping.Types, Kinds));

@@ -8,8 +8,8 @@ their own, and an event changes no model (see [Networking](Networking.md)).
 ## Models and storages
 
 A model is a plain class with `[Replicated]` fields (RepliCAT), living in an entity node — `PlayerModel` inside
-`PlayersModel` inside `PlayersStorage`. A model refers to other entities by `NetId` and to players by uid, never to a
-node or a peer. Its fields are public; a private field behind a method is only for a consistency rule
+`PlayersModel` inside `PlayersStorage`. A model refers to other entities by `NetId` and to players by `PlayerUid`,
+never to a node or a peer. Its fields are public; a private field behind a method is only for a consistency rule
 (`PlayersModel.AddPlayer` keeps `PlayerByUid[uid].Uid == uid`). A plain collection is never `[Replicated]`: only the
 RepliCAT ones (`ReplicatedDictionary`, `ReplicatedSet`, …).
 

@@ -1,5 +1,6 @@
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
@@ -12,7 +13,7 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 public class LocalPlayerPresentation(LocalPlayer localPlayer, ILocalPlayerOwner owner, PlayerQuery players)
     : IEventHandlerOwner
 {
-    public string Uid => localPlayer.Uid;
+    public PlayerUid Uid => localPlayer.Uid;
     public PlayerModel Player => players.Get(Uid);
 
     [EventHandler]

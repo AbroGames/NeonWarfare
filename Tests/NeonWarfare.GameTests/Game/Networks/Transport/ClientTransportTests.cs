@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers;
 using GdUnit4;
 using NeonWarfare.GameTests.Game.Fixtures;
@@ -17,7 +18,7 @@ public class ClientTransportTests
     private const int ServerPeer = 1;
     private const int ClientPeer = 2;
     private const int OtherPeer = 3;
-    private const string OtherUid = "OtherOther-Oooooooooo";
+    private static readonly PlayerUid OtherUid = new("OtherOther-Oooooooooo");
 
     private TransportWorlds _worlds = null!;
     private FakeNetwork _network = null!;

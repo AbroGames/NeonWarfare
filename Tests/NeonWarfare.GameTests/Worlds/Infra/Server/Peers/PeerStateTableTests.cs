@@ -1,4 +1,5 @@
 using GdUnit4;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
 
@@ -9,7 +10,9 @@ public class PeerStateTableTests
 {
     private const int AlicePeer = 2;
     private const int BobPeer = 3;
-    private const string Alice = "alice";
+    private static readonly PlayerUid Alice = new("alice");
+    private static readonly PlayerUid Bob = new("bob");
+    private static readonly PlayerUid Other = new("other");
 
     private static readonly DateTimeOffset Deadline = DateTimeOffset.FromUnixTimeSeconds(1_700_000_000);
 
@@ -52,7 +55,7 @@ public class PeerStateTableTests
         _peers.Connect(BobPeer, Deadline);
 
         _peers.Join(AlicePeer, Alice);
-        _peers.Join(BobPeer, "bob");
+        _peers.Join(BobPeer, Bob);
 
         AssertThat(_peers.TryGetJoined(AlicePeer, out PeerStateTable.Joined? joined)).IsTrue();
         AssertThat(joined!.Uid).IsEqual(Alice);
@@ -73,13 +76,13 @@ public class PeerStateTableTests
         _peers.Connect(BobPeer, Deadline);
 
         AssertThrown(() => _peers.Join(BobPeer, Alice)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => _peers.Join(AlicePeer, "other")).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => _peers.Join(4, "other")).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => _peers.Join(AlicePeer, Other)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => _peers.Join(4, Other)).IsInstanceOf<InvalidOperationException>();
         _peers.Disconnect(BobPeer);
-        AssertThrown(() => _peers.Join(BobPeer, "bob")).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => _peers.Join(BobPeer, Bob)).IsInstanceOf<InvalidOperationException>();
 
-        AssertThat(_peers.TryGetPeerIdByUid("other", out _)).IsFalse();
-        AssertThat(_peers.TryGetPeerIdByUid("bob", out _)).IsFalse();
+        AssertThat(_peers.TryGetPeerIdByUid(Other, out _)).IsFalse();
+        AssertThat(_peers.TryGetPeerIdByUid(Bob, out _)).IsFalse();
         AssertThat(_peers.JoinedPeerIds).ContainsExactly(AlicePeer);
     }
 
@@ -89,7 +92,7 @@ public class PeerStateTableTests
     public void Disconnect_ReportsTheChangeOnce()
     {
         _peers.Connect(AlicePeer, Deadline);
-        ConnectAndJoin(BobPeer, "bob");
+        ConnectAndJoin(BobPeer, Bob);
 
         AssertThat(_peers.Disconnect(AlicePeer)).IsTrue();
         AssertThat(_peers.Disconnect(AlicePeer)).IsFalse();
@@ -143,7 +146,7 @@ public class PeerStateTableTests
     public void Release_PeerNotLeaving_Throws()
     {
         _peers.Connect(AlicePeer, Deadline);
-        ConnectAndJoin(BobPeer, "bob");
+        ConnectAndJoin(BobPeer, Bob);
         _peers.Disconnect(4);
 
         AssertThrown(() => _peers.Release(AlicePeer)).IsInstanceOf<InvalidOperationException>();
@@ -158,21 +161,21 @@ public class PeerStateTableTests
     public void Remove_ReturnsTheLastStateAndFreesTheUid()
     {
         ConnectAndJoin(AlicePeer, Alice);
-        ConnectAndJoin(BobPeer, "bob");
+        ConnectAndJoin(BobPeer, Bob);
         _peers.Disconnect(BobPeer);
 
         AssertThat(((PeerStateTable.Joined) _peers.Remove(AlicePeer)).Uid).IsEqual(Alice);
-        AssertThat(_peers.Remove(BobPeer)).IsEqual(new PeerStateTable.Leaving("bob"));
+        AssertThat(_peers.Remove(BobPeer)).IsEqual(new PeerStateTable.Leaving(Bob));
         AssertThat(_peers.Remove(AlicePeer)).IsNull();
 
         AssertThat(_peers.TryGetPeerIdByUid(Alice, out _)).IsFalse();
-        AssertThat(_peers.TryGetPeerIdByUid("bob", out _)).IsFalse();
+        AssertThat(_peers.TryGetPeerIdByUid(Bob, out _)).IsFalse();
         AssertThat(_peers.IsCut(BobPeer)).IsFalse();
         // ENet may give a later peer the same id
         ConnectAndJoin(AlicePeer, Alice);
     }
 
-    private void ConnectAndJoin(int peerId, string uid)
+    private void ConnectAndJoin(int peerId, PlayerUid uid)
     {
         _peers.Connect(peerId, Deadline);
         _peers.Join(peerId, uid);

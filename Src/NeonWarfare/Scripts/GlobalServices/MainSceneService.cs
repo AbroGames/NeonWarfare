@@ -101,7 +101,7 @@ public class MainSceneService
     public void HostMultiplayerGameAsDedicatedServer(
         string saveFileName,
         int? port = null,
-        string adminUid = null,
+        PlayerUid? adminUid = null,
         int? parentPid = null,
         bool serverHud = true)
     {

@@ -15,6 +15,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class ModelRulesTests
 {
     private const string ManualReplication = "RepliCAT.ManualReplication";
+    private const string ReplicationCodec = "RepliCAT.Codecs.IReplicationCodec`1";
     private const string MarkDirty = "MarkDirty";
 
     /// <summary>
@@ -55,6 +56,7 @@ public class ModelRulesTests
         GameAssembly game = GameAssembly.Instance;
         List<TypeDefinition> models = game.Types.Where(WorldLayers.IsModel).ToList();
         Assert.NotEmpty(models);
+        HashSet<string> codecValues = CodecValueTypes(game);
 
         foreach (TypeDefinition type in game.Types)
         {
@@ -66,14 +68,14 @@ public class ModelRulesTests
             HashSet<string> reported = [];
             foreach (TypeReferenceSite site in TypeReferences.Of(type))
             {
-                if (IsAllowedInModel(game, site.Type) || !reported.Add(site.Type.FullName))
+                if (IsAllowedInModel(game, codecValues, site.Type) || !reported.Add(site.Type.FullName))
                 {
                     continue;
                 }
 
                 report.Add($"{GameAssembly.Describe(site.From)}: model {GameAssembly.ShortName(model)} refers " +
                            $"to {site.Type.FullName} — a model holds only primitives, engine value types, " +
-                           "RepliCAT collections, game enums and other models");
+                           "RepliCAT collections, game enums, game types with a codec and other models");
             }
         }
 
@@ -138,7 +140,19 @@ public class ModelRulesTests
         report.AssertEmpty();
     }
 
-    private static bool IsAllowedInModel(GameAssembly game, TypeReference type)
+    /// <summary>
+    /// The game types RepliCAT carries through a codec of the game: they replicate as values, like primitives.
+    /// </summary>
+    private static HashSet<string> CodecValueTypes(GameAssembly game) =>
+        game.Types
+            .SelectMany(type => type.Interfaces)
+            .Select(implemented => implemented.InterfaceType)
+            .OfType<GenericInstanceType>()
+            .Where(codec => codec.ElementType.FullName == ReplicationCodec)
+            .Select(codec => codec.GenericArguments[0].FullName)
+            .ToHashSet(StringComparer.Ordinal);
+
+    private static bool IsAllowedInModel(GameAssembly game, IReadOnlySet<string> codecValues, TypeReference type)
     {
         string ns = GameAssembly.Outermost(type).Namespace;
         if (ns is "System" or "RepliCAT"
@@ -159,6 +173,7 @@ public class ModelRulesTests
         }
 
         return local.IsEnum
+               || codecValues.Contains(local.FullName)
                || WorldLayers.ModelOwner(local) != null
                || GameAssembly.IsCompilerGenerated(local);
     }

@@ -103,7 +103,8 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); no service refers to `WorldSetup`; Simulation referred to only by its group; `HudMailbox.Post` reached only from event handlers and their private helpers |
 | `Architecture/PresentationSurfaceTests` | A `[Presentation]` exposes only property getters, which write no field and reach no event handler code |
 | `Architecture/WorldNamingTests` | `Command` / `Event` / `Notice` types ↔ the same suffix in the World; layer attribute ↔ suffix in `Features/` |
-| `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |
+| `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, game types with a codec, models; only Simulation writes them |
+| `Architecture/WireTypeRegistrationTests` | Every MessagePack formatter and RepliCAT codec of the game is listed in `ProtocolCodecs` |
 | `Architecture/ReplicatedMemberTests` | `[Replicated]` only on fields, never on a plain collection: RepliCAT ones only |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |
 | `Architecture/TickPriorityTests` | `int.MaxValue` physics priority only on `ServerTickNode`, in code and in no scene |

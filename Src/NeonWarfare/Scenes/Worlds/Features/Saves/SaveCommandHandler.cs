@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Saves;
@@ -19,10 +20,10 @@ public class SaveCommandHandler(SaveSimulationFacade saveSimulationFacade, Playe
         ["CON", "PRN", "AUX", "NUL", ..Numbered("COM"), ..Numbered("LPT")],
         StringComparer.OrdinalIgnoreCase);
 
-    public bool Validate(string senderUid, SaveCommand command) =>
+    public bool Validate(PlayerUid senderUid, SaveCommand command) =>
         players.Get(senderUid).IsAdmin && IsValidFileName(command.FileName);
 
-    public void Process(string senderUid, SaveCommand command) =>
+    public void Process(PlayerUid senderUid, SaveCommand command) =>
         saveSimulationFacade.Save(senderUid, command.FileName);
 
     /// <summary>

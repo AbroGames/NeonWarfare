@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
@@ -14,7 +15,7 @@ public class PlayerQuery(IEntityFinder entityFinder)
     public OnlinePlayersModel OnlineModel => entityFinder.GetSingle<OnlinePlayersStorage>().Model;
 
     /// <summary>Throws for an unknown uid, so the result is never <c>null</c>.</summary>
-    public PlayerModel Get(string uid)
+    public PlayerModel Get(PlayerUid uid)
     {
         if (!PlayersModel.PlayerByUid.TryGetValue(uid, out PlayerModel player))
         {

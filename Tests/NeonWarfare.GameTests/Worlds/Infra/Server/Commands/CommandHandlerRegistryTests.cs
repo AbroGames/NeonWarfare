@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Worlds.Features.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
+using NeonWarfare.Scripts;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -82,28 +83,28 @@ public class CommandHandlerRegistryTests
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new(TimeProvider.System, codec, TestProtocol.Hash,
-            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
+            NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>
     {
-        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
+        public bool Validate(PlayerUid senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(string senderUid, SendChatMessageCommand command) { }
+        public void Process(PlayerUid senderUid, SendChatMessageCommand command) { }
     }
 
     private class BareHandler : ICommandHandler;
 
     private class ChatAndSaveHandler : IPlayerCommandHandler<SendChatMessageCommand>, IPlayerCommandHandler<SaveCommand>
     {
-        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
+        public bool Validate(PlayerUid senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(string senderUid, SendChatMessageCommand command) { }
+        public void Process(PlayerUid senderUid, SendChatMessageCommand command) { }
 
-        public bool Validate(string senderUid, SaveCommand command) => true;
+        public bool Validate(PlayerUid senderUid, SaveCommand command) => true;
 
-        public void Process(string senderUid, SaveCommand command) { }
+        public void Process(PlayerUid senderUid, SaveCommand command) { }
     }
 }

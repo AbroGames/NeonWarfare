@@ -1,3 +1,5 @@
+using NeonWarfare.Scripts;
+
 namespace NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 
 /// <summary>
@@ -11,5 +13,5 @@ public interface IChatCommand
     string Description { get; }
     bool RequiresAdmin { get; }
 
-    void Execute(string senderUid, string arguments);
+    void Execute(PlayerUid senderUid, string arguments);
 }

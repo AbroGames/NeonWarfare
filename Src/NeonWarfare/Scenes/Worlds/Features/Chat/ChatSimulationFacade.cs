@@ -6,6 +6,7 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
@@ -47,7 +48,7 @@ public class ChatSimulationFacade
         _commandByName = commandByName;
     }
 
-    public void HandleInput(string senderUid, string text)
+    public void HandleInput(PlayerUid senderUid, string text)
     {
         if (text.StartsWith('/'))
         {
@@ -57,7 +58,7 @@ public class ChatSimulationFacade
         _chatSimulation.SendMessageAsPlayerToAll(senderUid, text);
     }
 
-    private void ExecuteChatCommand(string senderUid, string text)
+    private void ExecuteChatCommand(PlayerUid senderUid, string text)
     {
         PlayerModel sender = _players.Get(senderUid);
 

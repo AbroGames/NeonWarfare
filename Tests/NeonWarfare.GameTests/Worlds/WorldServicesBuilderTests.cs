@@ -312,7 +312,7 @@ public class WorldServicesBuilderTests
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new(TimeProvider.System, Codec(), TestProtocol.Hash,
-            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
+            NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }

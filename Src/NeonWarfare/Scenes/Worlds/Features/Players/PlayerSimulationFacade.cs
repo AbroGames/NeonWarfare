@@ -2,6 +2,7 @@ using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Ports;
@@ -27,7 +28,7 @@ public class PlayerSimulationFacade(
     /// settings.
     /// The admin rights are only granted here, never taken, because another admin may have granted them.
     /// </summary>
-    public void Join(string uid, string nick, Color color)
+    public void Join(PlayerUid uid, string nick, Color color)
     {
         if (!players.PlayersModel.PlayerByUid.TryGetValue(uid, out PlayerModel player))
         {
@@ -52,7 +53,7 @@ public class PlayerSimulationFacade(
     /// <summary>
     /// A displaced admin is the same player on a new connection, so the server it started must not stop under it.
     /// </summary>
-    public void Leave(string uid, LeaveReason reason)
+    public void Leave(PlayerUid uid, LeaveReason reason)
     {
         PlayerModel player = players.PlayersModel.PlayerByUid[uid];
         players.OnlineModel.Uids.Remove(uid);

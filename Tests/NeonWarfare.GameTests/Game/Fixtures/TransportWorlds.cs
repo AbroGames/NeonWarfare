@@ -27,7 +27,7 @@ public class TransportWorlds
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         var dependencies = new WorldDependencies(
-            Time, Codec, TestProtocol.Hash, new Replicator(NetMessageCodecTests.CreateMapping()),
+            Time, Codec, TestProtocol.Hash, NetMessageCodecTests.CreateReplicator(),
             new ManualFrameProvider(), scenes, TestWorldScenes.CreateCatalog(scenes), clients, server);
         return world.InitPreReady(setup, dependencies, origin ?? new WorldOrigin.NewWorld());
     }

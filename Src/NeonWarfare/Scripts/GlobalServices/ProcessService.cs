@@ -32,7 +32,7 @@ public class ProcessService
         return OS.CreateInstance(arguments);
     }
 
-    public void StartNewDedicatedServerApplication(string saveFileName, int port, string adminUid, bool showWindow)
+    public void StartNewDedicatedServerApplication(string saveFileName, int port, PlayerUid adminUid, bool showWindow)
     {
         CommonArgs commonArgs = new CommonArgs(
             false); // Dedicated server never uses Godot console
@@ -40,7 +40,7 @@ public class ProcessService
             commonArgs,
             port,
             saveFileName,
-            adminUid,
+            adminUid.Value,
             OS.GetProcessId());
 
         string[] arguments = dedicatedServerArgs.GetArrayToStartDedicatedServer();

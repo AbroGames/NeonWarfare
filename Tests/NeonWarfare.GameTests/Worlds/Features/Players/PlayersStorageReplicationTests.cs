@@ -2,6 +2,7 @@ using GdUnit4;
 using Godot;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scripts;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -12,6 +13,10 @@ namespace NeonWarfare.GameTests.Worlds.Features.Players;
 [TestSuite]
 public class PlayersStorageReplicationTests
 {
+    private static readonly PlayerUid Alice = new("alice");
+    private static readonly PlayerUid Bob = new("bob");
+    private static readonly PlayerUid Carol = new("carol");
+
     private Side _server = null!;
     private ReplicationBaseline _persistenceBaseline = null!;
     private ReplicationBaseline _onlinePlayersBaseline = null!;
@@ -31,15 +36,15 @@ public class PlayersStorageReplicationTests
         var first = new Side();
         var second = new Side();
 
-        Join("alice", "Alice", Colors.Red, isAdmin: true);
-        Join("bob", "Bob", Colors.Blue, isAdmin: false);
+        Join(Alice, "Alice", Colors.Red, isAdmin: true);
+        Join(Bob, "Bob", Colors.Blue, isAdmin: false);
         SendDelta(first, second);
         AssertMatchesServer(first);
         AssertMatchesServer(second);
 
-        _server.Persistence.Model.PlayerByUid["bob"].Nick = "Robert";
-        _server.OnlinePlayers.Model.Uids.Remove("alice");
-        Join("carol", "Carol", Colors.Green, isAdmin: false);
+        _server.Persistence.Model.PlayerByUid[Bob].Nick = "Robert";
+        _server.OnlinePlayers.Model.Uids.Remove(Alice);
+        Join(Carol, "Carol", Colors.Green, isAdmin: false);
         SendDelta(first, second);
         AssertMatchesServer(first);
         AssertMatchesServer(second);
@@ -50,10 +55,10 @@ public class PlayersStorageReplicationTests
     public void Snapshot_ThenDelta_MatchesServer()
     {
         var early = new Side();
-        Join("alice", "Alice", Colors.Red, isAdmin: true);
+        Join(Alice, "Alice", Colors.Red, isAdmin: true);
         SendDelta(early);
-        _server.Persistence.Model.PlayerByUid["alice"].Nick = "Alicia";
-        Join("bob", "Bob", Colors.Blue, isAdmin: false);
+        _server.Persistence.Model.PlayerByUid[Alice].Nick = "Alicia";
+        Join(Bob, "Bob", Colors.Blue, isAdmin: false);
         SendDelta(early);
 
         var late = new Side();
@@ -63,15 +68,15 @@ public class PlayersStorageReplicationTests
         late.Replicator.Apply(late.OnlinePlayers, onlinePlayers);
         AssertMatchesServer(late);
 
-        _server.Persistence.Model.PlayerByUid["alice"].Color = Colors.Yellow;
-        _server.OnlinePlayers.Model.Uids.Remove("bob");
-        Join("carol", "Carol", Colors.Green, isAdmin: false);
+        _server.Persistence.Model.PlayerByUid[Alice].Color = Colors.Yellow;
+        _server.OnlinePlayers.Model.Uids.Remove(Bob);
+        Join(Carol, "Carol", Colors.Green, isAdmin: false);
         SendDelta(early, late);
         AssertMatchesServer(early);
         AssertMatchesServer(late);
     }
 
-    private void Join(string uid, string nick, Color color, bool isAdmin)
+    private void Join(PlayerUid uid, string nick, Color color, bool isAdmin)
     {
         PlayerModel player = _server.Persistence.Model.AddPlayer(uid);
         player.Nick = nick;
@@ -101,10 +106,10 @@ public class PlayersStorageReplicationTests
 
     private void AssertMatchesServer(Side client)
     {
-        IReadOnlyDictionary<string, PlayerModel> expected = _server.Persistence.Model.PlayerByUid;
-        IReadOnlyDictionary<string, PlayerModel> actual = client.Persistence.Model.PlayerByUid;
-        AssertThat(actual.Keys.Order()).ContainsExactly(expected.Keys.Order());
-        foreach ((string uid, PlayerModel player) in expected)
+        IReadOnlyDictionary<PlayerUid, PlayerModel> expected = _server.Persistence.Model.PlayerByUid;
+        IReadOnlyDictionary<PlayerUid, PlayerModel> actual = client.Persistence.Model.PlayerByUid;
+        AssertThat(actual.Keys).ContainsExactlyInAnyOrder(expected.Keys);
+        foreach ((PlayerUid uid, PlayerModel player) in expected)
         {
             PlayerModel received = actual[uid];
             AssertThat(received).IsNotSame(player);
@@ -114,14 +119,13 @@ public class PlayersStorageReplicationTests
             AssertThat(received.IsAdmin).IsEqual(player.IsAdmin);
         }
 
-        AssertThat(client.OnlinePlayers.Model.Uids.Order())
-            .ContainsExactly(_server.OnlinePlayers.Model.Uids.Order());
+        AssertThat(client.OnlinePlayers.Model.Uids).ContainsExactlyInAnyOrder(_server.OnlinePlayers.Model.Uids);
     }
 
     // One replicator per process, as in the game
     private sealed class Side
     {
-        public readonly Replicator Replicator = new(NetMessageCodecTests.CreateMapping());
+        public readonly Replicator Replicator = NetMessageCodecTests.CreateReplicator();
         public readonly PlayersStorage Persistence = AutoFree(new PlayersStorage())!;
         public readonly OnlinePlayersStorage OnlinePlayers = AutoFree(new OnlinePlayersStorage())!;
     }

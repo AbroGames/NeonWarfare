@@ -17,6 +17,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scripts;
 using RepliCAT;
 using RepliCAT.Bits;
 using static GdUnit4.Assertions;
@@ -35,11 +36,11 @@ public class TickStateReplicationTests
     private const int BobPeer = 3;
     private const int CarolPeer = 4;
     private const int DavePeer = 5;
-    private const string HostUid = "HostHostHo-Hhhhhhhhhh";
-    private const string AliceUid = "AliceAlice-Aaaaaaaaaa";
-    private const string BobUid = "BobBobBobB-Bbbbbbbbbb";
-    private const string CarolUid = "CarolCarol-Cccccccccc";
-    private const string DaveUid = "DaveDaveDa-Dddddddddd";
+    private static readonly PlayerUid HostUid = new("HostHostHo-Hhhhhhhhhh");
+    private static readonly PlayerUid AliceUid = new("AliceAlice-Aaaaaaaaaa");
+    private static readonly PlayerUid BobUid = new("BobBobBobB-Bbbbbbbbbb");
+    private static readonly PlayerUid CarolUid = new("CarolCarol-Cccccccccc");
+    private static readonly PlayerUid DaveUid = new("DaveDaveDa-Dddddddddd");
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
@@ -624,7 +625,7 @@ public class TickStateReplicationTests
         _clientNodes.Add(server);
         _clientNodes.Add(client);
         AliceRegistry().Register(id, client, 0);
-        var replicator = new Replicator(NetMessageCodecTests.CreateMapping());
+        var replicator = NetMessageCodecTests.CreateReplicator();
         BitWriter writer = PacketStart();
         writer.WriteVarUInt(0);
         writer.WriteVarUInt((ulong) id.Value);
@@ -674,7 +675,7 @@ public class TickStateReplicationTests
 
     private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
         new(new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
-            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
+            NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes, _catalog,
             connection, connection);
 
     private ServiceProvider ClientOf(int peerId, out Node root)
@@ -706,7 +707,7 @@ public class TickStateReplicationTests
     }
 
     // Past the join, whose events would mix with the ones under test
-    private void JoinDirectly(string uid, string nick, int peerId)
+    private void JoinDirectly(PlayerUid uid, string nick, int peerId)
     {
         Players().AddPlayer(uid).Nick = nick;
         Online().Add(uid);
@@ -714,7 +715,7 @@ public class TickStateReplicationTests
         _server.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
 
-    private void Join(int peerId, string uid, string nick)
+    private void Join(int peerId, PlayerUid uid, string nick)
     {
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         var join = new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, Colors.White);
@@ -725,10 +726,10 @@ public class TickStateReplicationTests
 
     private PlayersModel Players() => _server.GetRequiredService<PlayerQuery>().PlayersModel;
 
-    private ReplicatedSet<string> Online() =>
+    private ReplicatedSet<PlayerUid> Online() =>
         _server.GetRequiredService<PlayerQuery>().OnlineModel.Uids;
 
-    private IEnumerable<string> AliceOnline() =>
+    private IEnumerable<PlayerUid> AliceOnline() =>
         _alice.GetRequiredService<PlayerQuery>().OnlineModel.Uids.ToList();
 
     private StateApplier Applier() => _alice.GetRequiredService<StateApplier>();
@@ -864,7 +865,7 @@ public class TickStateReplicationTests
         Node scratch = _catalog.Create(kindId);
         try
         {
-            new Replicator(NetMessageCodecTests.CreateMapping()).Apply(scratch, ref reader);
+            NetMessageCodecTests.CreateReplicator().Apply(scratch, ref reader);
         }
         finally
         {
@@ -879,7 +880,7 @@ public class TickStateReplicationTests
     private class JoinRecorder(PlayerQuery players)
         : IEventHandlerOwner
     {
-        public record Sight(string? Uid, bool Online, string Nick);
+        public record Sight(PlayerUid? Uid, bool Online, string Nick);
 
         public List<Sight> Seen { get; } = [];
 

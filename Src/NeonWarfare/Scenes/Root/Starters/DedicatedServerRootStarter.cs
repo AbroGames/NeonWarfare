@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox.Logging;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
 
@@ -38,7 +39,7 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
         Services.MainScene.HostMultiplayerGameAsDedicatedServer(
             _dedicatedServerArgs.SaveFileName ?? Services.SaveLoad.GenNewSaveFileName(),
             _dedicatedServerArgs.Port,
-            _dedicatedServerArgs.Admin,
+            _dedicatedServerArgs.Admin is { } admin ? new PlayerUid(admin) : null,
             _dedicatedServerArgs.ParentPid,
             DisplayServer.GetName() != HeadlessDisplayServer);
     }

@@ -13,8 +13,8 @@ public class CommandHandlerRegistry
 {
     public record PlayerHandler(
         string Name,
-        Func<string, Command, bool> Validate,
-        Action<string, Command> Process);
+        Func<PlayerUid, Command, bool> Validate,
+        Action<PlayerUid, Command> Process);
 
     private static readonly MethodInfo WrapMethod =
         typeof(CommandHandlerRegistry).GetMethod(nameof(Wrap), BindingFlags.Static | BindingFlags.NonPublic)!;

@@ -15,7 +15,7 @@ public record GameProtocol(EntityCatalog Entities, NetMessageCodec Codec, Protoc
     public static GameProtocol Create(WorldPackedScenes scenes, TypesMappingService mapping)
     {
         var entities = new EntityCatalog(scenes.GetScenesList(), mapping.Types);
-        var replicator = new Replicator(mapping);
+        var replicator = ProtocolCodecs.CreateReplicator(mapping);
         return new GameProtocol(
             entities,
             new NetMessageCodec(mapping),

@@ -3,8 +3,6 @@ using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using MessagePack;
-using MessagePack.Formatters;
-using MessagePack.Resolvers;
 using NeonWarfare.Scripts.GlobalServices;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -22,9 +20,7 @@ public sealed class NetMessageCodec
 
     private readonly TypesMappingService _mapping;
     private readonly MessagePackSerializerOptions _options = MessagePackSerializerOptions.Standard
-        .WithResolver(CompositeResolver.Create(
-            new IMessagePackFormatter[] { ColorFormatter.Instance },
-            new IFormatterResolver[] { StandardResolver.Instance }))
+        .WithResolver(ProtocolCodecs.Resolver)
         .WithSecurity(MessagePackSecurity.UntrustedData);
 
     /// <summary>Every type the codec can read or write.</summary>

@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers;
 using GdUnit4;
 using Godot;
@@ -37,7 +38,7 @@ public class EventDispatcherTests
             TestWorldSetups.RemoteClient(), Dependencies(), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
             new LocalizedChatMessageEvent(1, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Alice"])),
-            new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
+            new ChatPlayerMessageEvent(2, new PlayerUid("alice"), "Alice", "hi"),
             new ChatServerMessageEvent(3, "server"),
             new LocalizedChatMessageEvent(4, new LocalizedText("HUD__CHAT_PLAYER_LEFT", ["Alice"])));
 
@@ -45,7 +46,7 @@ public class EventDispatcherTests
 
         AssertThat(provider.GetRequiredService<ChatPresentation>().Entries).ContainsExactly(
             new LocalizedServerEntry(1, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Alice"])),
-            new PlayerMessageEntry(2, "alice", "Alice", "hi"),
+            new PlayerMessageEntry(2, new PlayerUid("alice"), "Alice", "hi"),
             new ServerTextEntry(3, "server"),
             new LocalizedServerEntry(4, new LocalizedText("HUD__CHAT_PLAYER_LEFT", ["Alice"])));
         AssertThat(provider.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).HasSize(4);
@@ -114,7 +115,7 @@ public class EventDispatcherTests
     {
         WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
         return new(TimeProvider.System, _codec, TestProtocol.Hash,
-            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
+            NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }

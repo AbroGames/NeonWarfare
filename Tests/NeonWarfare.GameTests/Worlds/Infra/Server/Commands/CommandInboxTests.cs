@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Commands;
@@ -73,7 +74,7 @@ public class CommandInboxTests
     [RequireGodotRuntime]
     public void EnqueueFromPeer_JoinWithAnotherProtocolHash_IsRejectedAndNotEnqueued()
     {
-        var join = new JoinRequestCommand(TestProtocol.Hash.Value, "alice", "Alice", Colors.Red);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, new PlayerUid("alice"), "Alice", Colors.Red);
 
         _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(join with { ProtocolHash = TestProtocol.Hash.Value + 1 }));
         _inbox.EnqueueFromPeer(BobPeer, _codec.Encode(join));
@@ -118,8 +119,8 @@ public class CommandInboxTests
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>
     {
-        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
+        public bool Validate(PlayerUid senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(string senderUid, SendChatMessageCommand command) { }
+        public void Process(PlayerUid senderUid, SendChatMessageCommand command) { }
     }
 }

@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using RepliCAT;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
@@ -7,5 +8,5 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 /// </summary>
 public class OnlinePlayersModel
 {
-    [Replicated] public readonly ReplicatedSet<string> Uids = new();
+    [Replicated] public readonly ReplicatedSet<PlayerUid> Uids = new();
 }

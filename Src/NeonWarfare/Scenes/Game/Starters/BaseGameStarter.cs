@@ -1,6 +1,7 @@
 using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -77,7 +78,7 @@ public abstract class BaseGameStarter
     protected LocalPlayer ReadLocalPlayer()
     {
         GameSettings settings = Services.GameSettings.GetSettings();
-        return new LocalPlayer(settings.PlayerUid, settings.PlayerNick, settings.PlayerColor);
+        return new LocalPlayer(new PlayerUid(settings.PlayerUid), settings.PlayerNick, settings.PlayerColor);
     }
 
     /// <summary>

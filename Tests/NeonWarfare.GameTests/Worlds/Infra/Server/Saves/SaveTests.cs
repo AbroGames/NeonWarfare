@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers.Binary;
 using GdUnit4;
 using Godot;
@@ -30,9 +31,9 @@ public class SaveTests
     private const int HostPeer = RecordingClientsConnection.HostPeer;
     private const int AlicePeer = 2;
     private const int BobPeer = 3;
-    private const string HostUid = "HostHostHo-Hhhhhhhhhh";
-    private const string AliceUid = "AliceAlice-Aaaaaaaaaa";
-    private const string BobUid = "BobBobBobB-Bbbbbbbbbb";
+    private static readonly PlayerUid HostUid = new("HostHostHo-Hhhhhhhhhh");
+    private static readonly PlayerUid AliceUid = new("AliceAlice-Aaaaaaaaaa");
+    private static readonly PlayerUid BobUid = new("BobBobBobB-Bbbbbbbbbb");
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
@@ -330,7 +331,7 @@ public class SaveTests
             .ContainsExactly(BobUid);
     }
 
-    private void JoinAsPeer(ServiceProvider server, string uid, string nick, int peerId)
+    private void JoinAsPeer(ServiceProvider server, PlayerUid uid, string nick, int peerId)
     {
         server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId,
@@ -344,7 +345,7 @@ public class SaveTests
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(root);
         _roots.Add(root);
         var dependencies = new WorldDependencies(new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
-            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
+            NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes, _catalog,
             connection, connection);
         ServiceProvider provider = new WorldServicesBuilder().Build(setup, dependencies, new WorldRoot(root));
         _providers.Add(provider);
@@ -352,7 +353,7 @@ public class SaveTests
     }
 
     private ServiceProvider Load(
-        byte[] save, RecordingClientsConnection? connection = null, string? adminUid = null)
+        byte[] save, RecordingClientsConnection? connection = null, PlayerUid? adminUid = null)
     {
         ServiceProvider loaded = Build(
             TestWorldSetups.Dedicated(adminUid), connection ?? new RecordingClientsConnection(), out _);
@@ -420,7 +421,7 @@ public class SaveTests
         finder.TryGetNetId(node.GetParent(), out NetId id) ? id : NetId.None;
 
     // Past the join, whose events would mix with the ones under test
-    private static void JoinDirectly(ServiceProvider server, string uid, string nick, int peerId)
+    private static void JoinDirectly(ServiceProvider server, PlayerUid uid, string nick, int peerId)
     {
         Players(server).AddPlayer(uid).Nick = nick;
         Online(server).Add(uid);
@@ -428,7 +429,7 @@ public class SaveTests
         server.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
 
-    private void Join(int peerId, string uid, string nick)
+    private void Join(int peerId, PlayerUid uid, string nick)
     {
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         var join = new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, Colors.White);
@@ -444,7 +445,7 @@ public class SaveTests
     private static PlayersModel Players(ServiceProvider provider) =>
         provider.GetRequiredService<PlayerQuery>().PlayersModel;
 
-    private static ReplicatedSet<string> Online(ServiceProvider provider) =>
+    private static ReplicatedSet<PlayerUid> Online(ServiceProvider provider) =>
         provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids;
 
     private static T Single<T>(ServiceProvider provider) where T : class =>

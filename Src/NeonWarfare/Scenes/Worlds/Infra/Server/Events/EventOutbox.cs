@@ -31,7 +31,7 @@ public class EventOutbox(NetMessageCodec codec, PeerStateTable peers)
     /// The event is dropped when the receiver is not joined, because a receiver chosen earlier in the tick may have
     /// left since.
     /// </summary>
-    public void PublishTo(Event @event, string receiverUid)
+    public void PublishTo(Event @event, PlayerUid receiverUid)
     {
         byte[] encoded = codec.Encode(@event);
         if (!peers.TryGetJoinedByUid(receiverUid, out PeerStateTable.Joined joined))
