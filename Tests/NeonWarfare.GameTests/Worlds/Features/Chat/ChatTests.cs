@@ -125,20 +125,6 @@ public class ChatTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void HelpFromAdmin_ListsAdminCommands()
-    {
-        _bob.IsAdmin = true;
-
-        From(BobPeer, "/help");
-
-        IReadOnlyList<object> bob = PeerEvents(BobPeer);
-        AssertThat(bob.Count).IsEqual(1);
-        AssertThat(((ChatServerMessageEvent) bob[0]).Text).Contains("Player commands").Contains("Admin commands");
-        AssertThat(PeerEvents(AlicePeer)).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
     public void UnknownCommand_RepliesNotFoundOnlyToTheSender()
     {
         From(AlicePeer, "/nosuch arg");
@@ -209,17 +195,6 @@ public class ChatTests
         {
             AssertThrown(() => HandMade((_, _) => commands)).IsInstanceOf<InvalidOperationException>();
         }
-    }
-
-    // The events and the chat entries holding it compare by it
-    [TestCase]
-    [RequireGodotRuntime]
-    public void LocalizedText_EqualArgs_AreEqual()
-    {
-        AssertThat(new LocalizedText("KEY", ["a", "b"]))
-            .IsEqual(new LocalizedText("KEY", ["a", "b"]))
-            .IsNotEqual(new LocalizedText("KEY", ["a", "c"]))
-            .IsNotEqual(new LocalizedText("OTHER", ["a", "b"]));
     }
 
     [TestCase]

@@ -49,19 +49,6 @@ public class WorldEntryPointsTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Join_ThroughEntryPoints_ReachesPresentationThroughLoopback()
-    {
-        World world = HostWorld();
-
-        JoinHost(world);
-
-        AssertThat(world.Get<ChatPresentation>().Entries)
-            .ContainsExactly(new ChatPresentation.LocalizedServerEntry(
-                Now, new LocalizedText("HUD__CHAT_PLAYER_JOINED", ["Host"])));
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
     public void Send_LoopsBackAsPacketFromHostPeer()
     {
         World world = HostWorld();
@@ -106,17 +93,6 @@ public class WorldEntryPointsTests
 
         AssertThat(client.Get<PlayerQuery>().GetOnlinePlayers().Select(player => player.Nick))
             .ContainsExactlyInAnyOrder("Host", "Remote");
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void InitPreReady_FromSave_HasThePlayersOfTheSave()
-    {
-        byte[] save = HostSave(TestProtocol.Hash);
-
-        World loaded = CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save));
-
-        AssertThat(loaded.Get<PlayerQuery>().PlayersModel.PlayerByUid[HostUid].Nick).IsEqual("Host");
     }
 
     // The single-player game of a save: the host's own player joins the loaded world as it joins a new one

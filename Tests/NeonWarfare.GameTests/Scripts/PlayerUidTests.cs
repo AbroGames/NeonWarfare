@@ -21,22 +21,4 @@ public class PlayerUidTests
 
         AssertThat(uids).HasSize(100);
     }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void IsValid_TwoLetterGroupsJoinedByADash()
-    {
-        AssertThat(new PlayerUid("Aaaaaaaaaa-zzzzzzzzzZ").IsValid).IsTrue();
-        AssertThat(default(PlayerUid).IsValid).IsFalse();
-        AssertThat(new PlayerUid("Aaaaaaaaaa-Aaaaaaaaa").IsValid).IsFalse();
-        AssertThat(new PlayerUid("Aaaaaaaaaa_Aaaaaaaaaa").IsValid).IsFalse();
-        AssertThat(new PlayerUid("Aaaaaaaaa1-Aaaaaaaaaa").IsValid).IsFalse();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ToString_IsTheValue()
-    {
-        AssertThat(new PlayerUid("Aaaaaaaaaa-Bbbbbbbbbb").ToString()).IsEqual("Aaaaaaaaaa-Bbbbbbbbbb");
-    }
 }

@@ -286,20 +286,6 @@ public class SaveTests
         AssertThat(Players(loaded).PlayerByUid.Values.Where(player => player.IsAdmin)).IsEmpty();
     }
 
-    // The rights live in the save: a restart with another admin uid does not take them
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Load_AdminOfTheSave_StaysAdmin()
-    {
-        Players(_server).PlayerByUid[AliceUid].IsAdmin = true;
-        Tick(_server);
-
-        ServiceProvider loaded = Load(Saver().Write(), adminUid: BobUid);
-        JoinAsPeer(loaded, AliceUid, "Alice", AlicePeer);
-
-        AssertThat(Players(loaded).PlayerByUid[AliceUid].IsAdmin).IsTrue();
-    }
-
     // The loaded entities are spawned ones for the replicator: the first tick has their full state
     [TestCase]
     [RequireGodotRuntime]

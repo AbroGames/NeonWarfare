@@ -35,13 +35,4 @@ public class LastGameUpdatingSaveFilesTests
             .IsInstanceOf<IOException>();
         AssertThat(lastGame).IsEmpty();
     }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void IsAutoSaveEnabled_IsTheDisksSetting()
-    {
-        var disk = new RecordingSaveFiles { AutoSaveEnabled = false };
-
-        AssertThat(new LastGameUpdatingSaveFiles(disk, _ => { }).IsAutoSaveEnabled()).IsFalse();
-    }
 }

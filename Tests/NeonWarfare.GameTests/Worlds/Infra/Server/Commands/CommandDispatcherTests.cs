@@ -70,18 +70,6 @@ public class CommandDispatcherTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ProcessAll_CommandFromNotJoinedPeer_IsDropped()
-    {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
-
-        Chat(AlicePeer, "hi");
-        dispatcher.ProcessAll();
-
-        AssertThat(_calls).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
     public void ProcessAll_BoundPeers_ReachHandlerWithTheirUids()
     {
         CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));

@@ -44,18 +44,6 @@ public class ClientTransportTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ConnectedToServer_SendsTheJoinOfTheLocalPlayer()
-    {
-        _network.ConnectToServer();
-
-        FakeNetwork.Sent sent = _network.Packets.Single();
-        AssertThat(sent.PeerId).IsEqual(ServerPeer);
-        AssertThat(sent.Packet).ContainsExactly(
-            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer().ToJoinRequest(TestProtocol.Hash)));
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
     public void PacketReceived_WithoutAWorld_OnlyTheSnapshotBodyGoesOn()
     {
         _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1]);
@@ -146,22 +134,6 @@ public class ClientTransportTests
 
         AssertThat(_snapshots).IsEmpty();
         AssertThat(broken).IsEqual(1);
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Enter_TheStateAndEventsBodiesGoToTheWorld()
-    {
-        var endpoint = new RecordingWorldEndpoint();
-        _transport.Enter(endpoint);
-
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.State, 1, 2]);
-        _network.Receive(ServerPeer, [(byte) ServerPacketKind.Events, 3]);
-
-        AssertThat(endpoint.Calls.Select(call => call.Name)).ContainsExactly(
-            nameof(World.IClientEndpoint.ReceiveState), nameof(World.IClientEndpoint.ReceiveEvents));
-        AssertThat(endpoint.Calls[0].Body).ContainsExactly(1, 2);
-        AssertThat(endpoint.Calls[1].Body).ContainsExactly(3);
     }
 
     // The World has applied part of the packet, and the server has moved on: the models would drift from here

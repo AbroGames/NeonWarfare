@@ -25,6 +25,13 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 * **Conventions are checked on a syntax tree, not on text** (`Microsoft.CodeAnalysis.CSharp`): text
   matching cannot tell a declaration from a call, and [Code style conventions](Code-style.md) is written
   in those terms.
+* **A test is deleted when no breakage of the code fails it alone**, which is checked by breaking the code,
+  not by reading: it asserts nothing, or its expected value comes from the very call under test, or a
+  remaining test, a higher-level one included, fails on the same breakage. A bare delegation or a branchless
+  one-liner whose whole contract the signature shows gets no test. A test stays when it pins what the
+  signature does not show: an order, the state after a failure, an edge case, a wire or save format,
+  cross-version compatibility, a repository invariant. `RepositoryStatsTests` asserts nothing and stays as
+  a tool, see [below](#ci-and-repository-size).
 
 ## Conventions
 
