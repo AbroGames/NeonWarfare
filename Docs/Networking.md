@@ -153,9 +153,9 @@ the tick, so "snapshot, then the next state packet" is consistent. The chat hist
 * **`EntityRegistry`** — NetId ↔ node ↔ kind of every spawned entity, read by every layer through `IEntityFinder`
   (`GetSingle<T>`, `GetAll<T>`, `Spawned`, `Despawned`). A node leaves it on `TreeExiting`, its subtree
   with it.
-* **`EntityCatalog`** — the kind id of every entity: the scenes of `WorldPackedScenes` in order, then every concrete
-  `Node` type of the type mapping with a parameterless constructor. The id travels in spawn records and lies in
-  saves, so the catalog is part of the protocol hash.
+* **`EntityCatalog`** — the kind id of every entity: the scenes of `WorldPackedScenes` by resource path, then every
+  concrete `Node` type of the type mapping with a parameterless constructor. The id travels in spawn records and lies
+  in saves, so the catalog is part of the protocol hash.
 * **Spawn on the server** — only `EntitySpawner.Spawn<T>(scene | type, parent, initPreReady)`: the node is created
   and set up before it enters the tree, then gets a NetId, its place and the registry. `Despawn` removes the
   subtree.

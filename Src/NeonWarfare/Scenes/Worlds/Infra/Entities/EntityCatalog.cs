@@ -23,7 +23,7 @@ public class EntityCatalog
 
     public EntityCatalog(IReadOnlyList<PackedScene> scenes, IReadOnlyList<Type> mappedTypes)
     {
-        _scenes = scenes;
+        _scenes = scenes.OrderBy(scene => scene.ResourcePath, StringComparer.Ordinal).ToList();
         _types = mappedTypes.Where(IsCreatableNode).ToList();
         for (int i = 0; i < _scenes.Count; i++)
         {
