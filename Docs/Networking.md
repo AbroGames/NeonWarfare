@@ -39,13 +39,15 @@ belong to the tick. `RunTick` goes strictly in this order:
 1. `ServerTickClock.StartTick()` — the tick counter, read by every layer through `IWorldClock`;
 2. `CommandDispatcher.ProcessAll()` — every command and disconnection received since the last tick;
 3. `PeerGatekeeper.DisconnectExpired()` — peers that have not joined in `HandshakeTimeout` (10 s);
-4. the state section of the tick (`StateReplicator.TryWrite`), written every tick;
-5. the snapshots to the peers joined in this tick;
-6. the saves requested in this tick (`SaveService.WriteRequested`, see [Data and saves](Data-and-saves.md));
-7. the tick update of each joined peer, sent even if step 5 or 6 throws: the baselines have already moved.
+4. `ITickingFacade.Tick()` of every ticking facade, each one its own fault boundary;
+5. the state section of the tick (`StateReplicator.TryWrite`), written every tick;
+6. the snapshots to the peers joined in this tick;
+7. the saves requested in this tick (`SaveService.WriteRequested`, see [Data and saves](Data-and-saves.md));
+8. the tick update of each joined peer, sent even if step 6 or 7 throws: the baselines have already moved.
 
 The Simulation changes the models only inside the tick: it has no deferred calls, timers or `async`
-(`SimulationTimingTests`).
+(`SimulationTimingTests`). A time rule is the `Tick()` of a ticking facade, a `[SimulationFacade]` with no state of
+its own (`TickingFacadeTests`), independent of the order of the other ticking facades.
 
 ## The client tick
 

@@ -28,7 +28,8 @@ public class ServerTickLoop(
     EventOutbox outbox,
     StateReplicator stateReplicator,
     SaveService saveService,
-    IClientsConnection clientsConnection)
+    IClientsConnection clientsConnection,
+    IEnumerable<ITickingFacade> tickingFacades)
 {
     private readonly ILogger _log = LogFactory.GetForStatic<ServerTickLoop>();
 
@@ -42,7 +43,7 @@ public class ServerTickLoop(
         
         commands.ProcessAll();
         gatekeeper.DisconnectExpired();
-        // TODO Call Tick() of the facades with a time rule once the first one appears.
+        TickFacades();
         var state = new BitWriter();
         bool stateWritten = stateReplicator.TryWrite(state);
         try
@@ -61,6 +62,22 @@ public class ServerTickLoop(
         finally
         {
             SendTickUpdates(joinedBefore, stateWritten ? state.AsSpan() : ReadOnlySpan<byte>.Empty);
+        }
+    }
+
+    // Each facade is its own fault boundary, because one that throws would throw every tick and stop every packet.
+    private void TickFacades()
+    {
+        foreach (ITickingFacade facade in tickingFacades)
+        {
+            try
+            {
+                facade.Tick();
+            }
+            catch (Exception e)
+            {
+                _log.Error(e, "The tick of {facade} failed, the other facades still tick", facade.GetType().Name);
+            }
         }
     }
 
