@@ -75,9 +75,9 @@ constraint.
 
 ## Review
 
-Always check that the change still works correctly:
-- after saving and loading the world;
-- when a new player joins mid-game.
+When writing or reviewing code, check by reading it (not by asking the user to test) that it survives:
+- saving and loading the world;
+- a new player joining mid-game.
 
 Ignore the git index state (`AD`, stray staged files): commits go through Rider, which commits the working tree.
 
