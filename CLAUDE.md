@@ -48,16 +48,10 @@ may be added as needed. Work with them through the `task` skill.
   Never present an unverified claim as a fact.
 - If a fix does not work after 3 attempts, stop and report: what was tried,
   what the output was, what is needed from the user. Do not keep guessing.
-- The game is not released yet: backward compatibility of saves, the network protocol and the like may be broken
-  freely — no migrations, no version shims.
 - **Never commit and never push.** Committing and pushing are the user's job, always —
   even when the work is finished and verified. Report what changed and stop.
 - The user can run the game and read the Godot log. When verification
   requires launching Godot, ask the user to run it and paste the output.
-- No comment is the default. Write one only when a reader would otherwise get it wrong: a hidden
-  constraint, a non-obvious *why*, a workaround. If the code and names already say it — no comment.
-- Write comments as if the current code was always this way. No "X instead of Y, because…" — the
-  replaced version is history, not context.
 
 ## Review
 
