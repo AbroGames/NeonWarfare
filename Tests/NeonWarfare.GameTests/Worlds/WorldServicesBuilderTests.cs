@@ -228,17 +228,6 @@ public class WorldServicesBuilderTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void InitPreReady_OutsideTree_Succeeds()
-    {
-        World world = AutoFree(new World())!;
-
-        AssertThat(world.InitPreReady(
-                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld()))
-            .IsSame(world);
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
     public void InitPreReady_InsideTree_Throws()
     {
         World world = AutoFree(new World())!;

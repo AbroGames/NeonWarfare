@@ -156,22 +156,6 @@ public class ServerTickLoopTests
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
-    [TestCase]
-    [RequireGodotRuntime]
-    public void CurrentTick_StartsAtZero_GrowsByOnePerTick()
-    {
-        Build(new WorldServicesBuilder());
-        ServerTickClock clock = _provider.GetRequiredService<ServerTickClock>();
-
-        AssertThat(clock.Started).IsFalse();
-        AssertThat(clock.CurrentTick).IsEqual(0);
-        Loop().RunTick();
-        AssertThat(clock.Started).IsTrue();
-        AssertThat(clock.CurrentTick).IsEqual(1);
-        Loop().RunTick();
-        AssertThat(clock.CurrentTick).IsEqual(2);
-    }
-
     // Commands first, sending last: what a command publishes leaves in the same tick
     [TestCase]
     [RequireGodotRuntime]

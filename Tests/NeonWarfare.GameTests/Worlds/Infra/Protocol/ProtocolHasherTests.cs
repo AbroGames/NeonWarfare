@@ -1,4 +1,5 @@
 using GdUnit4;
+using MessagePack;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scripts.GlobalServices;
@@ -10,15 +11,18 @@ namespace NeonWarfare.GameTests.Worlds.Infra.Protocol;
 [TestSuite]
 public class ProtocolHasherTests
 {
+    // Every run is a new process, so an input that differs between processes changes the recorded hash.
+    // A deliberate change of the hash input changes it too, and then the constant is recorded anew.
     [TestCase]
     [RequireGodotRuntime]
-    public void Compute_SameMapping_GivesSameHash()
+    public void Compute_FixedInput_GivesTheRecordedHash()
     {
-        TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
+        var mapping = new TypesMappingService();
+        mapping.SetTypes([typeof(FixedMessage), typeof(FixedModel)]);
         var hasher = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping));
 
-        AssertThat(hasher.Compute(mapping.Types, Kinds))
-            .IsEqual(hasher.Compute(mapping.Types.ToList(), Kinds.ToList()));
+        AssertThat(hasher.Compute(mapping.Types, ["scene res://Fixed.tscn", "type Fixed.Node"]))
+            .IsEqual(new ProtocolHash(7609314544799570749UL));
     }
 
     [TestCase]
@@ -75,4 +79,13 @@ public class ProtocolHasherTests
 
     // Stands for a message type added in a newer build
     private class ExtraMessage;
+
+    [MessagePackObject]
+    public record FixedMessage([property: Key(0)] string Text, [property: Key(1)] int Count);
+
+    public class FixedModel
+    {
+        [Replicated] public string Name = "";
+        [Replicated] public int Score;
+    }
 }
