@@ -16,6 +16,8 @@ public class WorldServicesBuilder
     private const string SeveralLayersError = "{0} has more than one layer attribute: {1}";
     private const string NotConcreteError = "{0} has a layer attribute but is abstract or generic";
     private const string RootInterfaceError = "{0} implements {1}, which the composition root registers itself";
+    private const string AmbiguousParameterError =
+        "{0} takes a single {1}, which {2} implement: take IEnumerable<{1}> instead";
 
     private readonly IEnumerable<Type> _candidates;
 
@@ -31,9 +33,10 @@ public class WorldServicesBuilder
     {
         WorldLayer layers = setup.Layers;
         List<(Type Type, WorldServiceAttribute Attribute)> selected = SelectWorldServices(layers);
+        CheckSingleInterfaceParameters(selected);
         ServiceCollection services = GetServices(setup, dependencies, root, selected);
-        ServiceProvider provider = services.BuildServiceProvider(new ServiceProviderOptions 
-        { 
+        ServiceProvider provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
             ValidateOnBuild = true,
             ValidateScopes = true
         });
@@ -116,10 +119,41 @@ public class WorldServicesBuilder
         implemented => implemented.Assembly == service.Assembly
                        || implemented.Assembly == typeof(WorldServicesBuilder).Assembly;
 
-    private List<(Type Type, WorldServiceAttribute Attribute)> SelectWorldServices(WorldLayer layers) {
+    private List<(Type Type, WorldServiceAttribute Attribute)> SelectWorldServices(WorldLayer layers)
+    {
         return ScanWorldServices()
             .Where(service => layers.HasFlag(service.Attribute.Layer))
             .ToList();
+    }
+
+    // MS.DI resolves a single I to the last of its registrations: with several implementations it would pick one
+    // silently, by the order of the scan
+    private static void CheckSingleInterfaceParameters(
+        IEnumerable<(Type Type, WorldServiceAttribute Attribute)> selected)
+    {
+        List<Type> types = selected.Select(service => service.Type).ToList();
+        Dictionary<Type, List<Type>> implementationsByInterface = types
+            .SelectMany(type => type.GetInterfaces()
+                .Where(IsOwnInterface(type))
+                .Select(implemented => (Interface: implemented, Implementation: type)))
+            .GroupBy(pair => pair.Interface, pair => pair.Implementation)
+            .Where(group => group.Count() > 1)
+            .ToDictionary(group => group.Key, group => group.ToList());
+
+        foreach (Type type in types)
+        {
+            foreach (ParameterInfo parameter in type.GetConstructors().SelectMany(ctor => ctor.GetParameters()))
+            {
+                if (!implementationsByInterface.TryGetValue(parameter.ParameterType, out List<Type> implementations))
+                {
+                    continue;
+                }
+
+                string names = string.Join(", ", implementations.Select(implementation => implementation.Name));
+                throw new InvalidOperationException(
+                    AmbiguousParameterError.FormatWith(type.FullName, parameter.ParameterType.Name, names));
+            }
+        }
     }
 
     private IEnumerable<(Type Type, WorldServiceAttribute Attribute)> ScanWorldServices()

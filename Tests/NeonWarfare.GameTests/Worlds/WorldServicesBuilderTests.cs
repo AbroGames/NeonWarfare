@@ -205,6 +205,19 @@ public class WorldServicesBuilderTests
             .HasMessage(RejectingConsumer.Error);
     }
 
+    // MS.DI would hand over one of the two without a word
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_SingleParameterOfAnInterfaceWithSeveralServices_Throws()
+    {
+        AssertThrown(() => Build(FixtureBuilder(typeof(QueryPartA), typeof(QueryPartB), typeof(SinglePartConsumer)),
+                TestWorldSetups.RemoteClient()).Dispose())
+            .IsInstanceOf<InvalidOperationException>()
+            .HasMessage(
+                $"{typeof(SinglePartConsumer).FullName} takes a single IPart, which QueryPartA, QueryPartB implement: "
+                + "take IEnumerable<IPart> instead");
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Build_ServiceImplementingAPort_Throws()
@@ -346,6 +359,12 @@ public class WorldServicesBuilderTests
     private class PartConsumer(IEnumerable<IPart> parts)
     {
         public IReadOnlyList<IPart> Parts { get; } = parts.ToList();
+    }
+
+    [Query]
+    private class SinglePartConsumer(IPart part)
+    {
+        public IPart Part { get; } = part;
     }
 
     [Query]

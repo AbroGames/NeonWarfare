@@ -103,14 +103,15 @@ only a `Joined` one gets packets and has its commands handled.
 
 * drops a second join of a joined peer;
 * asks `IPeerSessionHandler.ValidateJoin` — a refusal sends `JoinRejected(reason)` and disconnects the peer;
-* displaces a peer already online with the same uid: the old one is disconnected and leaves, then the new one joins
-  (a crashed client comes back without waiting for ENet to notice). The host's own uid cannot be taken —
+* displaces a peer already online with the same uid: the old one is disconnected and leaves with
+  `LeaveReason.Displaced`, then the new one joins (a crashed client comes back without waiting for ENet to notice).
+  A displaced admin has not left, so `IServerOwner.AdminLeft` is not called. The host's own uid cannot be taken —
   `UidInUse`;
 * marks the peer `Joined` and calls `IPeerSessionHandler.Join`, which joins the player through the Simulation.
 
 `peer_disconnected` enqueues `PeerDisconnected`; in the tick the peer leaves the table and
-`IPeerSessionHandler.Leave(uid)` runs for a `Joined` or `Leaving` one. Between a server-side disconnect and its
-`peer_disconnected` every command of the peer is dropped.
+`IPeerSessionHandler.Leave(uid, LeaveReason.Disconnected)` runs for a `Joined` or `Leaving` one. Between a
+server-side disconnect and its `peer_disconnected` every command of the peer is dropped.
 
 ```mermaid
 sequenceDiagram

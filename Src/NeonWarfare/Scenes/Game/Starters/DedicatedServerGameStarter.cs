@@ -29,44 +29,16 @@ public class DedicatedServerGameStarter(
 
     public override void Start(Game game)
     {
-        if (parentPid.HasValue)
-        {
-            var clientDeadChecker = new ProcessDeadChecker(
-                parentPid.Value,
-                () => Services.MainScene.Shutdown(),
-                pid => $"Parent process {pid} is dead. Shutdown server.");
-            game.AddChild(clientDeadChecker);
-        }
-
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         Network network = game.AddServerNetwork();
-        ISaveFiles saveFiles = Services.SaveLoad;
-        if (parentPid.HasValue)
-        {
-            ResumableGame lastGame =
-                ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated: true);
-            SetLastGame(lastGame);
-            saveFiles = SaveFilesUpdatingLastGame(lastGame);
-        }
+        ISaveFiles saveFiles = parentPid is { } pid ? FollowParentClient(game, pid) : Services.SaveLoad;
 
         // A server without a port has nobody to serve; Network has already logged the error
         if (network.HostServer(port ?? DefaultPort) != Error.Ok)
         {
             Services.MainScene.Shutdown();
             return;
-        }
-
-        if (parentPid.HasValue)
-        {
-            // The client that started this server has left it: the server is stopped gracefully, so it saves on exit
-            void OnAdminLeft()
-            {
-                _log.Information(AdminLeftLog);
-                Services.MainScene.Shutdown();
-            }
-
-            game.AdminLeft += OnAdminLeft;
         }
 
         World world;
@@ -88,5 +60,31 @@ public class DedicatedServerGameStarter(
             game.ShowServerHud();
         }
         network.OpenServer();
+    }
+
+    /// <summary>
+    /// A child server lives as long as the client that started it, and stops gracefully, so it saves on exit:
+    /// when the client process dies, and when the client, its admin, leaves. "Continue" in the client resumes it.
+    /// </summary>
+    /// <returns>The save files that keep "Continue" at the file of the last save.</returns>
+    private ISaveFiles FollowParentClient(Game game, int clientPid)
+    {
+        var clientDeadChecker = new ProcessDeadChecker(
+            clientPid,
+            () => Services.MainScene.Shutdown(),
+            pid => $"Parent process {pid} is dead. Shutdown server.");
+        game.AddChild(clientDeadChecker);
+
+        void OnAdminLeft()
+        {
+            _log.Information(AdminLeftLog);
+            Services.MainScene.Shutdown();
+        }
+
+        game.AdminLeft += OnAdminLeft;
+
+        ResumableGame lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated: true);
+        SetLastGame(lastGame);
+        return SaveFilesUpdatingLastGame(lastGame);
     }
 }

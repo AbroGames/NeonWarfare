@@ -73,8 +73,9 @@ public sealed class HostTransport(
             return;
         }
 
-        // Queued like any other disconnection, so it is processed in the next tick, not inside this one
-        _log.Error(LocalDisconnectedLog);
+        // Queued like any other disconnection, so it is processed in the next tick, not inside this one. A warning:
+        // whatever cut the host off has already logged its error
+        _log.Warning(LocalDisconnectedLog);
         world.QueueDisconnection(peerId);
     }
 

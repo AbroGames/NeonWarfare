@@ -43,7 +43,7 @@ public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade)
     public void Join(JoinRequestCommand command) =>
         playerSimulationFacade.Join(command.Uid, command.Nick, command.Color);
 
-    public void Leave(string uid) => playerSimulationFacade.Leave(uid);
+    public void Leave(string uid, LeaveReason reason) => playerSimulationFacade.Leave(uid, reason);
 
     private static bool IsValidUid(string uid)
     {

@@ -182,7 +182,7 @@ public class CommandDispatcherTests
         _inbox.EnqueuePeerDisconnected(AlicePeer);
         dispatcher.ProcessAll();
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", Displaced(AliceUid), Joined(AliceUid));
         AssertBound(AliceSecondPeer, AliceUid);
         AssertThat(_peers.IsCut(AlicePeer)).IsFalse();
     }

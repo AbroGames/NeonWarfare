@@ -263,6 +263,28 @@ public class PlayerJoinLeaveTests
         AssertThat(owner.AdminLeftCount).IsEqual(1);
     }
 
+    // A child server must outlive its admin coming back on a new connection; the real leave still stops it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Leave_DisplacedAdminOfDedicated_IsNotReportedToTheOwner()
+    {
+        _provider.Dispose();
+        _clientsConnection = new RecordingClientsConnection();
+        var owner = new RecordingServerOwner();
+        _provider = Build(TestWorldSetups.Dedicated(AliceUid, owner: owner));
+        Join(AlicePeer, AliceUid, "Alice");
+        Tick();
+
+        Join(AliceSecondPeer, AliceUid, "Alice");
+        Tick();
+        AssertThat(owner.AdminLeftCount).IsEqual(0);
+        AssertThat(Online()).ContainsExactly(AliceUid);
+
+        Disconnect(AliceSecondPeer);
+        Tick();
+        AssertThat(owner.AdminLeftCount).IsEqual(1);
+    }
+
     // The host's admin is its own player: the report reaches the starter, which decides that nothing stops
     [TestCase]
     [RequireGodotRuntime]

@@ -32,9 +32,11 @@ public class FakeSessionHandler(List<string> calls, PeerStateTable peers) : IPee
         if (command.Uid == ThrowInJoin) throw new InvalidOperationException("join failed");
     }
 
-    public void Leave(string uid)
+    public static string Displaced(string uid) => $"leave {uid}: displaced";
+
+    public void Leave(string uid, LeaveReason reason)
     {
-        calls.Add($"leave {uid}");
+        calls.Add(reason == LeaveReason.Displaced ? Displaced(uid) : $"leave {uid}");
         if (uid == ThrowInLeave) throw new InvalidOperationException("leave failed");
     }
 }
