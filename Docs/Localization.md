@@ -42,8 +42,8 @@ locale (`LocaleFilesTests`).
 The current locale is set in `RootStarter` **after** the settings are loaded but **before** the loading
 screen is first shown — otherwise the loading screen will show keys instead of text (see
 [Startup flow](Startup-flow.md)). The default locale is taken from the OS
-(`Services.I18N.GetUserOsLocaleInfoOrDefault()`); the language can be changed in-game on the
-`LanguageSelectionPage` page.
+(`Services.I18N.GetUserOsLocaleInfoOrDefault()`), and an unknown locale in the settings is replaced with it; the
+language can be changed in-game on the `LanguageSelectionPage` page.
 
 ## Preview in the editor
 

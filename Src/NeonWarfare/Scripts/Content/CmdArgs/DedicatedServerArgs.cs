@@ -8,7 +8,8 @@ public readonly record struct DedicatedServerArgs(
     int? Port, 
     string SaveFileName, 
     string Admin, 
-    int? ParentPid)
+    int? ParentPid,
+    string SettingsFileName)
 {
     public static readonly string DedicatedServerFlag = "--server";
     
@@ -16,6 +17,7 @@ public readonly record struct DedicatedServerArgs(
     public static readonly string SaveFileNameParam = "--savefile";
     public static readonly string AdminParam = "--admin";
     public static readonly string ParentPidParam = "--parent-pid";
+    public static readonly string SettingsFileNameParam = "--settings-file";
     
     public static DedicatedServerArgs GetFromCmd(CmdArgsService argsService)
     {
@@ -24,7 +26,8 @@ public readonly record struct DedicatedServerArgs(
             argsService.GetIntFromCmdArgs(PortParam),
             argsService.GetStringFromCmdArgs(SaveFileNameParam),
             argsService.GetStringFromCmdArgs(AdminParam),
-            argsService.GetIntFromCmdArgs(ParentPidParam)
+            argsService.GetIntFromCmdArgs(ParentPidParam),
+            argsService.GetStringFromCmdArgs(SettingsFileNameParam)
         );
     }
 
@@ -38,6 +41,7 @@ public readonly record struct DedicatedServerArgs(
         if (SaveFileName != null) listParams.AddRange([SaveFileNameParam, SaveFileName]);
         if (Admin != null) listParams.AddRange([AdminParam, Admin]);
         if (ParentPid.HasValue) listParams.AddRange([ParentPidParam, ParentPid.ToString()]);
+        if (SettingsFileName != null) listParams.AddRange([SettingsFileNameParam, SettingsFileName]);
         if (CommonArgs.GodotLogPush) listParams.Add(CommonArgs.GodotLogPushParam);
 
         return listParams.ToArray();

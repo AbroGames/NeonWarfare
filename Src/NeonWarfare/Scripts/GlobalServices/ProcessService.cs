@@ -37,7 +37,9 @@ public class ProcessService
     /// A process binding the port between this check and the child's own bind is not caught.
     /// </summary>
     /// <returns><see cref="Error.Ok"/> when the process was started. Otherwise the error of binding the port.</returns>
-    public Error StartNewDedicatedServerApplication(string saveFileName, int port, PlayerUid adminUid, bool showWindow)
+    /// <param name="settingsFileName">The settings file the server reads, relative to <c>user://</c>.</param>
+    public Error StartNewDedicatedServerApplication(
+        string saveFileName, int port, PlayerUid adminUid, string settingsFileName, bool showWindow)
     {
         Error portError = CheckPortFree(port);
         if (portError != Error.Ok)
@@ -53,7 +55,8 @@ public class ProcessService
             port,
             saveFileName,
             adminUid.Value,
-            OS.GetProcessId());
+            OS.GetProcessId(),
+            settingsFileName);
 
         string[] arguments = dedicatedServerArgs.GetArrayToStartDedicatedServer();
         _dedicatedServerPid = StartNewApplication(showWindow ? arguments : [..arguments, GodotHeadlessFlag]);

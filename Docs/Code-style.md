@@ -11,6 +11,7 @@ of its own (`NeonWarfare.csproj` has an empty `RootNamespace`):
 `GlobalUsings.cs`. A scene and its handler live in the same folder under the same name (`Hud.tscn` +
 `Hud.cs`).
 
+Code that other games could reuse goes into KludgeBox (`IsSingleLinePrintable`), a node of that kind into GodotBox.
 `GodotBox` is the game-independent layer over KludgeBox and must not depend on `NeonWarfare`: it may use
 Godot and KludgeBox only, and nothing from the game — the game's global usings included. Instead of
 `Services` it has its own `GodotBoxServices`, called explicitly — `GodotBoxServices.Di.Process(this)`.
@@ -36,9 +37,9 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
   (`World.IServerEndpoint.QueueDisconnection`, `PeerGatekeeper.StartHandshake`). Checked in `Root/`, `Game/`,
   `Worlds/` by `EventNamingTests`.
 * Static code is only pure functions: no state, no side effects, no services. Everything else goes into the
-  [world services or `Services`](Services.md). A helper shared between features that is not about the game goes
-  into KludgeBox (`IsSingleLinePrintable`); a game rule stays in the feature that owns it. Extension classes
-  (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings (de)serialization are static too.
+  [world services or `Services`](Services.md). A game rule shared between features stays in the feature that owns
+  it. Extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings (de)serialization are
+  static too.
 
 ## Serialization
 

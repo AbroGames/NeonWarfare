@@ -16,9 +16,9 @@ Command-line arguments are parsed **only** in the RootStarters and travel on as 
 
 `Root._Ready()` calls its `ChooseStarter()`: `"--server"` in `OS.GetCmdlineArgs()` →
 `DedicatedServerRootStarter`, otherwise `ClientRootStarter`. Both then get `Init()` (the common
-`BaseRootStarter.Init()`, then the role-specific part: `SaveLoad.Init()`, the settings, the locale, UI
-auto-scaling) and `Start()` (the scenario, through `Services.MainScene.*`). `RootData` (the containers,
-`RootPackedScenes`, `SceneTree`) comes in through the constructor — no global access to `Root`.
+`BaseRootStarter.Init()`, then the role-specific part: the settings, the locale, UI auto-scaling) and `Start()`
+(the scenario, through `Services.MainScene.*`). `RootData` (the containers, `RootPackedScenes`, `SceneTree`) comes in
+through the constructor — no global access to `Root`.
 
 ### The common part: `BaseRootStarter`
 
@@ -46,12 +46,11 @@ someone else's server, hosting "from inside the client". `Init()` after `base.In
 | Step | What for |
 |---|---|
 | `ClientArgs.GetFromCmd(...)` | Parsing the client flags |
-| `Services.SaveLoad.Init(false)` | Restoring the save folder; autosave follows `GameSettings` |
 | `Services.AutoScaling.Init(...)` | UI auto-scaling per `Consts.AutoScalingSettings` |
-| `Services.LastGame.Init()` | Reading `resume-game.json` for the "Continue" button |
 | `Services.KnownServers.Init()` | Reading `known-servers.json` for the server list of the multiplayer menu |
+| `Services.PlayerUid.Init()` | Reading `player-uid.json` |
 | `Services.GameSettings.Init()` | Reading `game-settings.json` |
-| `--nick` / `--uid` | A temporary override of the nickname and the UID, **without writing** to the settings file |
+| `Services.LocalPlayer.SetOverrides(...)` | `--nick` / `--uid`: a temporary override of the nickname and the UID, kept out of `Services.PlayerUid` and `Services.GameSettings`, so never written to a file |
 | `Services.I18N.SetCurrentLocale(...)` | The locale from `GameSettings` |
 | `Services.LoadingScreen.SetLoadingScreen(Loading)` | The first showing of the loading screen |
 
@@ -71,9 +70,7 @@ Chosen by `--server`. There is no head player in this process. `Init()` after `b
 | Step | What for |
 |---|---|
 | `DedicatedServerArgs.GetFromCmd(...)` | Parsing the server flags |
-| `Services.SaveLoad.Init(true)` | Restoring the save folder; autosave follows `DedicatedServerSettings` |
-| `Services.LastGame.Init()` | Reading `resume-game.json` |
-| `Services.DedicatedServerSettings.Init()` | Reading `dedicated-server-settings.json` |
+| `Services.DedicatedServerSettings.Init(...)` | Reading the file of `--settings-file`, `dedicated-server-settings.json` without it |
 | `Services.I18N.SetCurrentLocale(...)` | The locale from `DedicatedServerSettings`, **after** they are loaded |
 | The window title | The `[SERVER]` prefix, so that the windows are not confused during a local test |
 
@@ -81,8 +78,8 @@ Easy to forget: the dedicated server initializes neither `Services.GameSettings`
 `Services.AutoScaling` and shows no loading screen — it has nothing to show a player.
 
 `Start()` — a single scenario: `MainScene.HostMultiplayerGameAsDedicatedServer(...)` with the save name
-from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, and `ServerHud` unless
-the engine runs without a window (`DisplayServer.GetName()` is `headless`).
+from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, `ServerHud` unless
+the engine runs without a window (`DisplayServer.GetName()` is `headless`), and `AutoSaveEnabled` of its settings.
 
 ## Level 2: GameStarter
 
@@ -135,8 +132,8 @@ Only helpers, no template method:
   `WorldOrigin.NewWorld`; either way the starter passes the same name as the `WorldSaveFile`, so the World saves
   back to that file. Each server starter wraps it with `Add…World` in a `try` whose `catch` takes any exception;
   **`LogWorldError(e, saveFileName)`** logs it and gives the message for the player.
-* **`ReadLocalPlayer()`** — reads the settings once into a `LocalPlayer`: the same object goes to the World and into
-  the join request, so they cannot disagree.
+* **`ReadLocalPlayer()`** — reads `Services.LocalPlayer` once: the same object goes to the World and into the join
+  request, so they cannot disagree.
 * **`SetLastGame(...)` / `SaveFilesUpdatingLastGame(...)`** — writing the session into `resume-game.json`. The
   second wraps `Services.SaveLoad` into `LastGameUpdatingSaveFiles`, which points "Continue" at every file the World
   writes, so after a "save as" it leads to the new file.
@@ -164,8 +161,9 @@ A host without `Network`: its only peer is its own.
 An ENet server **in this same process**.
 
 1. The `Loading` loading screen, `AddServerNetwork()`.
-2. `resume-game.json` — "own server" with the save files that keep it current: always on the host, on the dedicated
-   server only with `parentPid` (a server started from the console is never resumed). The dedicated server with
+2. `resume-game.json` — "own server": the host writes it, and its save files keep it current. The dedicated server
+   with `parentPid` only keeps it current through its save files, since its client has written it (a server started
+   from the console is never resumed). The dedicated server with
    `parentPid` is a child server, set up by `FollowParentClient`: a `ProcessDeadChecker` (a GodotBox node)
    on `Game` and `AdminLeft` both call `MainScene.Shutdown()`, so a child server is not left hanging after the client
    is closed (see [Shutdown](Shutdown.md)).
@@ -195,15 +193,17 @@ Connecting to someone else's server. Parameters: `host`, `port`.
 
 A **second OS process** plus an ordinary client connection to it.
 
-1. `ReadLocalPlayer()`; `Services.Process.StartNewDedicatedServerApplication(...)` launches a process with
-   `--server`, `--port`, `--savefile`, `--admin` (the uid of that `LocalPlayer`) and **`--parent-pid` with the PID of
-   the current process**. `--headless` is set when the server window is not requested; log mirroring into the Godot
-   console is never passed to the dedicated server. `ProcessService` keeps the PID to wait for the process to exit.
+1. `ReadLocalPlayer()`; the locale and `AutoSaveEnabled` of `GameSettings` go into `child-server-settings.json`, and a
+   failed write goes back to the menu with the hosting error. `Services.Process.StartNewDedicatedServerApplication(...)`
+   launches a process with `--server`, `--port`, `--savefile`, `--admin` (the uid of that `LocalPlayer`),
+   `--settings-file child-server-settings.json` and **`--parent-pid` with the PID of the current process**.
+   `--headless` is set when the server window is not requested; log mirroring into the Godot console is never passed
+   to the dedicated server. `ProcessService` keeps the PID to wait for the process to exit.
    It first binds the port and releases it: on a taken port nothing is started, and the client goes back to the menu
    with the hosting error, so it never joins another server listening there.
 2. `resume-game.json` — "own server", so that "Continue" brings the server up again rather than connecting to it.
-   The child server writes the same mode itself and keeps it current after a "save as"; `Services.LastGame` re-reads
-   the file on every access, so "Continue" in this process follows it.
+   The child server writes it only after its own saves, so it follows a "save as"; `Services.LastGame` re-reads the
+   file on every access, so "Continue" in this process follows it.
 3. `ConnectAndFollow(game, localPlayer, 127.0.0.1, port)` — from here on this is an ordinary connection.
 
 How this process pair is stopped is in [Shutdown](Shutdown.md).

@@ -18,7 +18,7 @@ public partial class MenuGameSettings
     [Category("Player")]
     [Name("SETTING_MENU__PLAYER_UID")]
     [Hint("SETTING_MENU__PLAYER_UID_HINT")]
-    public string PlayerUid { get; set; } = GameSettings.GetDefault().PlayerUid;
+    public string PlayerUid { get; set; } = Scripts.PlayerUid.Generate().Value;
 
     [Category("Player")]
     [Name("SETTING_MENU__AUTOSAVE")]

@@ -18,19 +18,14 @@ public class ClientRootStarter(RootData rootData) : BaseRootStarter(rootData)
         
         _clientArgs = ClientArgs.GetFromCmd(CmdArgsService);
         
-        Services.SaveLoad.Init(false);
         Services.AutoScaling.Init(RootData.SceneTree, Consts.AutoScalingSettings);
         Services.Process.Init(RootData.SceneTree);
-        Services.LastGame.Init();
         Services.KnownServers.Init();
-        
+        Services.PlayerUid.Init();
         Services.GameSettings.Init();
-        if (_clientArgs.Nick != null) Services.GameSettings.SetNickTemporarily(_clientArgs.Nick);
-        if (_clientArgs.Uid != null) Services.GameSettings.SetUidTemporarily(_clientArgs.Uid);
-        
+        Services.LocalPlayer.SetOverrides(_clientArgs.Nick, _clientArgs.Uid);
         // The locale is a setting, so it is set only after the settings are loaded.
         Services.I18N.SetCurrentLocale(Services.GameSettings.GetSettings().Locale);
-        
         // The loading screen comes after the locale, so its text is already translated.
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
     }

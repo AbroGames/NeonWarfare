@@ -10,6 +10,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Ports;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Saves;
@@ -154,9 +155,10 @@ public class SaveServiceTests
     public void SaveOnExit_AutoSaveDisabled_WritesNothing()
     {
         Tick();
-        _files.AutoSaveEnabled = false;
+        var service = new SaveService(Writer(), _server.GetRequiredService<ServerTickClock>(), _files,
+            new WorldSaveFile(OldFile, autoSave: false));
 
-        _service.SaveOnExit();
+        service.SaveOnExit();
 
         AssertThat(_files.Files).IsEmpty();
     }

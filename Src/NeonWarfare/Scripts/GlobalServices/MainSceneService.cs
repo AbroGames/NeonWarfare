@@ -98,12 +98,14 @@ public class MainSceneService
     /// <param name="parentPid">If this process is a dedicated server created from a client,
     /// use the PID of the client process.</param>
     /// <param name="serverHud">Show the ServerHud: false for a server without a window.</param>
+    /// <param name="autoSave">Save the world on exit.</param>
     public void HostMultiplayerGameAsDedicatedServer(
         string saveFileName,
         int? port,
         PlayerUid? adminUid,
         int? parentPid,
-        bool serverHud)
+        bool serverHud,
+        bool autoSave)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -114,7 +116,8 @@ public class MainSceneService
             port: port, 
             adminUid: adminUid, 
             parentPid: parentPid,
-            serverHud: serverHud));
+            serverHud: serverHud,
+            autoSave: autoSave));
         Services.LoadingScreen.Clear();
     }
 

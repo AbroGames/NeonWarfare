@@ -14,7 +14,9 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | `Services.MainScene` | `MainSceneService` | Switching MainMenu ↔ Game, the entry points into all the modes, `Shutdown()` |
 | `Services.QuitRequests` | `QuitRequestsService` | SIGTERM / SIGINT and closing the window → `MainScene.Shutdown()`, see [Shutdown](Shutdown.md) |
 | `Services.LoadingScreen` | `LoadingScreenService` | Showing / hiding the loading screen |
-| `Services.GameSettings` | `GameSettingsService` | Client settings + the temporary `--nick` / `--uid` |
+| `Services.GameSettings` | `GameSettingsService` | Client settings, exactly as stored |
+| `Services.PlayerUid` | `PlayerUidService` | Owns the uid of the client's player, kept across launches in `user://player-uid.json` |
+| `Services.LocalPlayer` | `LocalPlayerService` | Who this process plays as: the uid of `Services.PlayerUid`, the nick and color of `Services.GameSettings`, under the temporary `--nick` / `--uid`; stores nothing |
 | `Services.DedicatedServerSettings` | `DedicatedServerSettingsService` | Dedicated server settings |
 | `Services.MenuGameSettings` | `MenuGameSettingsService` | The bridge between `GameSettings` and the settings screen model |
 | `Services.SaveLoad` | `SaveLoadService` | Save files, `SaveException` / `LoadException`; the `ISaveFiles` of a server World |

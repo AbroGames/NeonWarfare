@@ -44,6 +44,7 @@ the dedicated server detects this mode by `DisplayServer.GetName()` and creates 
 | `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
 | `--admin <uid>` | The UID of the player who will be granted administrator rights |
 | `--parent-pid <pid>` | The parent process PID; the server will shut down when the parent dies |
+| `--settings-file <name>` | The settings file in `user://` (if the flag is not passed, then `dedicated-server-settings.json`) |
 
 The server flags are assembled back into a command line by
 `DedicatedServerArgs.GetArrayToStartDedicatedServer()` — this is exactly what the client uses to launch

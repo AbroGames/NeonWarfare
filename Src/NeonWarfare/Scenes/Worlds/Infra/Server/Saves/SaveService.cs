@@ -82,7 +82,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
     {
         try
         {
-            if (!saveFiles.IsAutoSaveEnabled())
+            if (!saveFile.AutoSave)
             {
                 _log.Information("No autosave: it is disabled");
                 return;
