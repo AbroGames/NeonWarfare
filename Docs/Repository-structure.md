@@ -22,7 +22,7 @@ Src/                                  Code and scenes of the Godot project; a na
     ├── Scenes/                       Scenes (.tscn) and their handlers (.cs) — kept next to each other, in one folder
     │   ├── Root/                     The application entry point and the client and server starters
     │   ├── Game/                     The game session: a wrapper for the network and the game mode starters
-    │   ├── World/                    The game world: one per game session, built from a set of layers
+    │   ├── Worlds/                   The game world: one per game session, built from a set of layers
     │   │   ├── Infra/                Feature-independent machinery: layer attributes, entities and NetId, protocol, network, HUD mailbox; refers to nothing in Features/ or the World root
     │   │   └── Features/             One folder per feature with all its layers and models next to their nodes: Chat, Players, NewWorld…
     │   ├── Screen/                   UI: the main menu, HUD, server console, loading screen

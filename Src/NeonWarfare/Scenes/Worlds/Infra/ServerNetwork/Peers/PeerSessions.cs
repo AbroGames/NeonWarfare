@@ -1,13 +1,13 @@
 using System;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
 /// <summary>
 /// The life of a joined peer, kept in one place: after a valid join the peer is bound to its uid and gets its event

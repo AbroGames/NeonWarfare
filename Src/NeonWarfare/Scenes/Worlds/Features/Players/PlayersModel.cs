@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using RepliCAT;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 public class PlayersModel
 {

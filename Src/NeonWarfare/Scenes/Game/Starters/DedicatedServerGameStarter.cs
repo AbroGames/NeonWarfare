@@ -1,11 +1,11 @@
 using Godot;
 using GodotBox.Godot.Nodes.Process;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Starters;
@@ -40,9 +40,9 @@ public class DedicatedServerGameStarter(
         base.Init(game);
     }
 
-    protected override World.World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles)
+    protected override World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles)
     {
-        World.World world = game.AddWorld(
+        World world = game.AddWorld(
             WorldLayer.Dedicated, origin, serverHud ? Game.Screen.ServerHud : Game.Screen.None, saveFiles, null,
             new WorldAdmin(adminUid), this);
         world.SetVisible(false);

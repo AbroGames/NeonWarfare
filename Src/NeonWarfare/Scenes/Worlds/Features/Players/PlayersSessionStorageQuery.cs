@@ -1,8 +1,8 @@
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [Query]
 public class PlayersSessionStorageQuery(IEntityFinder entityFinder)

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [Query]
 public class PlayerQuery(PlayersStorageQuery players, PlayersSessionStorageQuery session)

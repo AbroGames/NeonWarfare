@@ -1,11 +1,11 @@
 using System;
 using Godot;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using RepliCAT;
 using RepliCAT.Bits;
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// Spawns entities with the NetIds the records give them: the spawn records of <c>StateReplicator</c>, from a state

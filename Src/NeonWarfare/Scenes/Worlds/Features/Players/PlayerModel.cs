@@ -1,7 +1,7 @@
 using Godot;
 using RepliCAT;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 public class PlayerModel
 {

@@ -1,8 +1,8 @@
 using Godot;
-using NeonWarfare.Scenes.World.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using RepliCAT;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 /// <summary>
 /// The entity holding <see cref="PlayersSessionModel"/>: one per world, found through

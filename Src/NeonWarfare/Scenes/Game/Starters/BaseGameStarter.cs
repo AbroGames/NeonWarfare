@@ -1,10 +1,10 @@
 using System;
 using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
@@ -49,8 +49,8 @@ public abstract class BaseGameStarter
     /// <c>null</c> when the save cannot be loaded: the error is logged, and <paramref name="errorMessage"/> is for the
     /// player.
     /// </returns>
-    protected World.World AddServerWorld(
-        string saveFileName, Func<WorldOrigin, World.World> addWorld, out string errorMessage)
+    protected World AddServerWorld(
+        string saveFileName, Func<WorldOrigin, World> addWorld, out string errorMessage)
     {
         ArgumentNullException.ThrowIfNull(saveFileName);
         errorMessage = null;

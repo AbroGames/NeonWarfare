@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using Serilog;
 using FileAccess = Godot.FileAccess;
 

@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using RepliCAT.Bits;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Tick;
 
 /// <summary>
 /// One server tick: the commands received since the last one, then the time rules of the facades, then sending.

@@ -1,9 +1,9 @@
 using System;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.ClientNetwork;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 /// <summary>
 /// "Me" for the UI. Who this process is, is the client's knowledge, not world state: it is in no model, save or

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using RepliCAT;
 using RepliCAT.Bits;
 
-namespace NeonWarfare.Scenes.World.Infra.ClientReplication;
+namespace NeonWarfare.Scenes.Worlds.Infra.ClientReplication;
 
 /// <summary>
 /// Applies the state packet of <c>StateReplicator</c> to the entities of a remote client, as soon as it arrives:

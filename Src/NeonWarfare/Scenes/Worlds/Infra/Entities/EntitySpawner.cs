@@ -1,9 +1,9 @@
 using System;
 using Godot;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// Creates an entity on the server: a kind of the <see cref="EntityCatalog"/> (a scene, or a node type with no

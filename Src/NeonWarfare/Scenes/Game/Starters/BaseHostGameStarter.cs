@@ -1,6 +1,6 @@
 using Godot;
-using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
@@ -20,7 +20,7 @@ public abstract class BaseHostGameStarter(
     {
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
-        Network.Network network = game.AddNetwork();
+        Network network = game.AddNetwork();
         ResumableGame lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated);
         if (mustSetLastGame)
         {
@@ -35,7 +35,7 @@ public abstract class BaseHostGameStarter(
         }
 
         ISaveFiles saveFiles = mustSetLastGame ? SaveFilesUpdatingLastGame(lastGame) : Services.SaveLoad;
-        World.World world = AddServerWorld(
+        World world = AddServerWorld(
             saveFileName, origin => AddWorld(game, origin, saveFiles), out string loadError);
         if (world == null)
         {
@@ -47,7 +47,7 @@ public abstract class BaseHostGameStarter(
         OnServerOpened(game);
     }
 
-    protected abstract World.World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles);
+    protected abstract World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles);
 
     protected virtual void OnServerOpened(Game game) { }
 

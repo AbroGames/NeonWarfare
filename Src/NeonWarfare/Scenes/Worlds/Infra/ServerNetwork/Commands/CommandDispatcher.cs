@@ -1,12 +1,12 @@
 using System;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
 /// <summary>
 /// Drains <see cref="CommandInbox"/> in the server tick and hands every entry to its handler: a join and a

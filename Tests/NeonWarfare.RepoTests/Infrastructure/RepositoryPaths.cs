@@ -121,7 +121,7 @@ public static class RepositoryPaths
     public static string ServicesPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Services.cs");
 
     /// <summary>The World: its root files, Infra/ and Features/ — see Docs/World.md.</summary>
-    public static string WorldDirectory { get; } = Path.Combine(GameSourceDirectory, "Scenes", "World");
+    public static string WorldDirectory { get; } = Path.Combine(GameSourceDirectory, "Scenes", "Worlds");
 
     /// <summary>The features of the World, one folder each — see Docs/World-features.md.</summary>
     public static string WorldFeaturesDirectory { get; } = Path.Combine(WorldDirectory, "Features");

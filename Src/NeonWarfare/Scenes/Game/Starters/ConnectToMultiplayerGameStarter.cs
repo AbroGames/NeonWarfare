@@ -1,10 +1,10 @@
 using System;
 using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using Serilog;
@@ -41,7 +41,7 @@ public class ConnectToMultiplayerGameStarter(
     {
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
         
-        Network.Network network = game.AddNetwork();
+        Network network = game.AddNetwork();
 
         // The World comes from the first snapshot and the Hud with the join right after it, until then the connecting
         // screen stays

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
 /// <summary>
 /// Every network handler of the world, and the command whitelist built from them. The handlers are collected once,

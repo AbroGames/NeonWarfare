@@ -1,7 +1,7 @@
 using Godot;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 /// <summary>
 /// The player of this process, as it joins the World: one object both for the join request and for the World,

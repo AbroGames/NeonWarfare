@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// The World node or some child as a spawn root. The services get this instead of <see cref="World"/>

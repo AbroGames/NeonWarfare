@@ -1,9 +1,9 @@
 using System;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// Hands out <see cref="NetId"/>s on the server: 1, 2, … in order, never <see cref="NetId.None"/>, never twice.

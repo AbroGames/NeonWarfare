@@ -3,18 +3,18 @@ using System.Reflection;
 using Godot;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
-using NeonWarfare.Scenes.World.Features.NewWorld;
-using NeonWarfare.Scenes.World.Infra.ClientNetwork;
-using NeonWarfare.Scenes.World.Infra.ClientReplication;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
+using NeonWarfare.Scenes.Worlds.Features.NewWorld;
+using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.ClientReplication;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Tick;
 
-namespace NeonWarfare.Scenes.World;
+namespace NeonWarfare.Scenes.Worlds;
 
 public partial class World : Node2D, World.IReader, World.ICommandSender
 {

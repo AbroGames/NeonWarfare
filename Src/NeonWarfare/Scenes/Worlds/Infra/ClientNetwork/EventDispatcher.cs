@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ClientNetwork;
+namespace NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
 
 /// <summary>
 /// Delivers a received events section to the <see cref="EventHandlerAttribute"/> methods of the Presentation.

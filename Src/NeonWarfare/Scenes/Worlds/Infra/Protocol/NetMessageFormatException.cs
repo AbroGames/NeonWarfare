@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.World.Infra.Protocol;
+namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
 /// A message read from the network is unknown, not allowed or broken. The packet is dropped.

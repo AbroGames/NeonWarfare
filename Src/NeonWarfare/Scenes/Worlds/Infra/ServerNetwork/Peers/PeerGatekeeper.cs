@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
 /// <summary>
 /// Lets a connected peer in only through a join: one that has not joined by the deadline is disconnected, a rejected

@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 /// <summary>
 /// Who becomes admin on joining a server World: the host itself, or <c>--admin</c> of a dedicated server.

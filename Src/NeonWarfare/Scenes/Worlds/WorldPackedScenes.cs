@@ -1,9 +1,9 @@
 using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
 using GodotBox.Godot.Nodes;
-using NeonWarfare.Scenes.World.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
 
-namespace NeonWarfare.Scenes.World;
+namespace NeonWarfare.Scenes.Worlds;
 
 /// <summary>
 /// The scenes World spawns. <see cref="GodotBox.Godot.Nodes.AbstractStorage.GetScenesList"/>, i.e. the declaration

@@ -8,7 +8,7 @@ World; their layers and the World itself are in [World](World.md).
 
 ## Transport and roles
 
-* **`Network`** ([Scenes/Game/Network/Network.cs](../Src/NeonWarfare/Scenes/Game/Network/Network.cs)) — ENet
+* **`Network`** ([Scenes/Game/Network.cs](../Src/NeonWarfare/Scenes/Game/Network.cs)) — ENet
   only: `HostServer()`, `OpenServer()`, `ConnectToServer()`, `Send(peerId, bytes)`, `Disconnect(peerId)` and the
   connection events. It creates a fresh `SceneMultiplayer` per `Game`, so no handler outlives the session, and
   unsets it on `Game.TreeExiting`. A server is hosted with `RefuseNewConnections` and opened only after its World

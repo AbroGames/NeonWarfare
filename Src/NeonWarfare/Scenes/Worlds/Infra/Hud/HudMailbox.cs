@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using GodotBox.Godot;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Infra.Hud;
+namespace NeonWarfare.Scenes.Worlds.Infra.Hud;
 
 /// <summary>
 /// One-shot HUD notices of the current frame: only a Presentation posts, from an event handler; a widget reads in

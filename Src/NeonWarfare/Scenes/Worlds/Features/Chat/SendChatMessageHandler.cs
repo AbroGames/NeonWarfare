@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Linq;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
-namespace NeonWarfare.Scenes.World.Features.Chat;
+namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 [CommandHandler]
 public class SendChatMessageHandler(ChatSimulationFacade chatSimulationFacade)

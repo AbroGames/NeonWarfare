@@ -1,8 +1,8 @@
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
 // Not an IPlayerCommandHandler: the joining peer has no player yet. Not generic either: a peer-level handler
 // for any command would let commands bypass "the sender is a joined player". Validate checks the fields a client

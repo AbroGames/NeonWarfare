@@ -9,14 +9,14 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
-using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.ClientNetwork;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.GlobalServices;
 using RepliCAT;
 using Serilog;
@@ -24,7 +24,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.Game;
 
 /// <summary>
-/// The transport of the session: routes the packets and the connection events between <see cref="Network.Network"/>
+/// The transport of the session: routes the packets and the connection events between <see cref="Network"/>
 /// and the current World, and loops the host's own packets back into its World synchronously, inside the call.
 /// </summary>
 public partial class Game : Node2D, IClientsConnection, IServerConnection, ILocalPlayerOwner
@@ -60,8 +60,8 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
 
     private readonly ILogger _log = LogFactory.GetForStatic<Game>();
 
-    private Network.Network _network;
-    private World.World _world;
+    private Network _network;
+    private World _world;
     private WorldLayer _layers;
     private EntityCatalog _entities;
     private NetMessageCodec _codec;
@@ -114,14 +114,14 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
     /// server.</param>
     /// <param name="admin"><c>null</c> for a remote client.</param>
     /// <param name="dedicatedServerOwner">Only for a dedicated server.</param>
-    public World.World AddWorld(
+    public World AddWorld(
         WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles, LocalPlayer localPlayer,
         WorldAdmin admin, IDedicatedServerOwner dedicatedServerOwner = null)
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
             this, this, saveFiles, localPlayer, admin, dedicatedServerOwner, localPlayer == null ? null : this);
-        var world = new World.World();
+        var world = new World();
         try
         {
             world.InitPreReady(layers, dependencies, origin);
@@ -155,10 +155,10 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
         return _world;
     }
 
-    public Network.Network AddNetwork()
+    public Network AddNetwork()
     {
         _network?.QueueFree();
-        _network = new Network.Network(this);
+        _network = new Network(this);
         _network.PeerConnectedEvent += PeerConnectedEvent;
         _network.PeerDisconnectedEvent += PeerDisconnectedEvent;
         _network.PacketReceivedEvent += PacketReceivedEvent;

@@ -1,7 +1,7 @@
 using System;
 using Humanizer;
 
-namespace NeonWarfare.Scenes.World.Infra.Protocol;
+namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
 /// The kind byte, then one <see cref="JoinRejectReason"/> byte. The layout never changes: the rejection of

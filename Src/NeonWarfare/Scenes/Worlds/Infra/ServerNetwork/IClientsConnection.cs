@@ -1,7 +1,7 @@
 using System;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
 
 /// <summary>
 /// The transport to the clients, owned by <c>Game</c>. A packet for the host's own peer never reaches the network:

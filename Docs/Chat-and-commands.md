@@ -2,7 +2,7 @@
 
 [← Project README](../README.md)
 
-The chat is the feature `World/Features/Chat/` (see [World features](World-features.md)). It is made of events, not
+The chat is the feature `Worlds/Features/Chat/` (see [World features](World-features.md)). It is made of events, not
 of a model: nothing of it goes into the save or the join snapshot, and the history lives on each client.
 
 1. The `Hud` sends `SendChatMessageCommand(text)` (see [Networking](Networking.md#commands-client--server)).
@@ -31,7 +31,7 @@ shows as the key and the arguments, as does an unknown key.
 
 A chat command is a class implementing `IChatCommand` (`Name`, `Description`, `RequiresAdmin`,
 `Execute(senderUid, arguments)`) — a `[SimulationFacade]` named `*ChatCommandSimulationFacade` in
-`World/Features/Chat/ChatCommands/`, since a command may change the state through other facades. The composition
+`Worlds/Features/Chat/ChatCommands/`, since a command may change the state through other facades. The composition
 root passes every created one to `ChatSimulationFacade.Register`; the name is lower case without whitespace, unique.
 
 `ChatSimulationFacade` logs the command, splits the name from the arguments and runs it. An unknown name or missing

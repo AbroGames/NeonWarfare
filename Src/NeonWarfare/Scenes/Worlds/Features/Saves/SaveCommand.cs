@@ -1,7 +1,7 @@
 using MessagePack;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
-namespace NeonWarfare.Scenes.World.Features.Saves;
+namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 
 /// <summary>
 /// "Save as": the World is saved to <see cref="FileName"/>, which becomes its save file. Admin only.

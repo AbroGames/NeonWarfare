@@ -4,7 +4,7 @@ using System.Linq;
 using Godot;
 using Humanizer;
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// Every kind of entity World may spawn, by kind id: first the scenes in their catalog order, then every concrete

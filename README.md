@@ -23,7 +23,7 @@ on Windows/Linux/macOS.
 |---|---|
 | [Networking](Docs/Networking.md) | `Network`, `ServerTickLoop`, commands, packets, join, `NetId`, replication |
 | [World](Docs/World.md) | `World`, `WorldLayer`, the layer attributes, `WorldServicesBuilder`, the `Infra/` folders |
-| [World features](Docs/World-features.md) | `World/Features/`: what each feature holds, how it plugs in |
+| [World features](Docs/World-features.md) | `Worlds/Features/`: what each feature holds, how it plugs in |
 | [Data and saves](Docs/Data-and-saves.md) | `[Replicated]` models, storages, `[NotSaved]`, RepliCAT saves |
 | [Services](Docs/Services.md) | `Services.*`, the global services |
 | [Startup flow](Docs/Startup-flow.md) | `RootStarter`, `GameStarter`, the four session modes |
@@ -71,10 +71,10 @@ on Windows/Linux/macOS.
 |---|---|
 | [Src/NeonWarfare/Scenes/Root/Root.cs](Src/NeonWarfare/Scenes/Root/Root.cs) | The process entry point, lives for the whole application session |
 | [Src/NeonWarfare/Scenes/Game/Game.cs](Src/NeonWarfare/Scenes/Game/Game.cs) | A single game session: `Network`, `World`, `Hud` / `ServerHud`; created anew on every entry into the game |
-| [Src/NeonWarfare/Scenes/World/World.cs](Src/NeonWarfare/Scenes/World/World.cs) | The World root: its entry points, built from a layer set |
-| [Src/NeonWarfare/Scenes/World/WorldServicesBuilder.cs](Src/NeonWarfare/Scenes/World/WorldServicesBuilder.cs) | The container of the world services, found by their layer attributes |
-| [Src/NeonWarfare/Scenes/World/Infra/Composition/WorldLayer.cs](Src/NeonWarfare/Scenes/World/Infra/Composition/WorldLayer.cs) | The layers and the client / host / dedicated sets |
-| [Src/NeonWarfare/Scenes/World/Features/](Src/NeonWarfare/Scenes/World/Features/) | The game itself, one folder per feature |
+| [Src/NeonWarfare/Scenes/Worlds/World.cs](Src/NeonWarfare/Scenes/Worlds/World.cs) | The World root: its entry points, built from a layer set |
+| [Src/NeonWarfare/Scenes/Worlds/WorldServicesBuilder.cs](Src/NeonWarfare/Scenes/Worlds/WorldServicesBuilder.cs) | The container of the world services, found by their layer attributes |
+| [Src/NeonWarfare/Scenes/Worlds/Infra/Composition/WorldLayer.cs](Src/NeonWarfare/Scenes/Worlds/Infra/Composition/WorldLayer.cs) | The layers and the client / host / dedicated sets |
+| [Src/NeonWarfare/Scenes/Worlds/Features/](Src/NeonWarfare/Scenes/Worlds/Features/) | The game itself, one folder per feature |
 | [Src/NeonWarfare/Scripts/Services.cs](Src/NeonWarfare/Scripts/Services.cs) | The global service registry |
 | [Src/NeonWarfare/Scripts/Consts.cs](Src/NeonWarfare/Scripts/Consts.cs) | Global constants, `Consts.TransferChannel` |
 | [Src/NeonWarfare/Scripts/Content/CmdArgs/](Src/NeonWarfare/Scripts/Content/CmdArgs/) | `CommonArgs`, `ClientArgs`, `DedicatedServerArgs` |

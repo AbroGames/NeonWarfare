@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Features.Chat;
+namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 [SimulationFacade]
 public class ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery players)
