@@ -9,6 +9,11 @@ public readonly record struct ClientArgs(
     bool AutoConnect,
     string AutoConnectIp,
     int? AutoConnectPort,
+    bool AutoHost,
+    bool AutoHostDedicated,
+    string AutoHostSaveFileName,
+    int? AutoHostPort,
+    bool AutoHostDedicatedHeadless,
     string Nick,
     string Uid)
 {
@@ -17,6 +22,11 @@ public readonly record struct ClientArgs(
     public static readonly string AutoConnectFlag = "--auto-connect";
     public static readonly string AutoConnectIpParam = "--auto-connect-ip";
     public static readonly string AutoConnectPortParam = "--auto-connect-port";
+    public static readonly string AutoHostFlag = "--auto-host";
+    public static readonly string AutoHostDedicatedFlag = "--auto-host-dedicated";
+    public static readonly string AutoHostSaveFileNameParam = "--auto-host-savefile";
+    public static readonly string AutoHostPortParam = "--auto-host-port";
+    public static readonly string AutoHostDedicatedHeadlessFlag = "--auto-host-dedicated-headless";
     public static readonly string NickParam = "--nick";
     public static readonly string UidParam = "--uid";
     
@@ -29,6 +39,11 @@ public readonly record struct ClientArgs(
             argsService.ContainsInCmdArgs(AutoConnectFlag),
             argsService.GetStringFromCmdArgs(AutoConnectIpParam),
             argsService.GetIntFromCmdArgs(AutoConnectPortParam),
+            argsService.ContainsInCmdArgs(AutoHostFlag),
+            argsService.ContainsInCmdArgs(AutoHostDedicatedFlag),
+            argsService.GetStringFromCmdArgs(AutoHostSaveFileNameParam),
+            argsService.GetIntFromCmdArgs(AutoHostPortParam),
+            argsService.ContainsInCmdArgs(AutoHostDedicatedHeadlessFlag),
             argsService.GetStringFromCmdArgs(NickParam),
             argsService.GetStringFromCmdArgs(UidParam)
         );

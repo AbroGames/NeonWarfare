@@ -21,6 +21,12 @@ public static class SmokeRun
     private static readonly TimeSpan DepartureTimeout = TimeSpan.FromSeconds(10);
 
     /// <summary>
+    /// How long the exiter of a <see cref="SelfExit"/> gets to quit. ProcessDeadChecker looks every 5 s, and the
+    /// autosave on the way out comes after that.
+    /// </summary>
+    private static readonly TimeSpan SelfExitTimeout = TimeSpan.FromSeconds(15);
+
+    /// <summary>
     /// How long everything keeps running once every milestone is reached, so an error that follows a
     /// successful start — the first frames of a world, a late packet — still gets caught.
     /// </summary>
@@ -32,7 +38,7 @@ public static class SmokeRun
     /// </summary>
     private const int TailLineCount = 15;
 
-    /// <inheritdoc cref="Run(IReadOnlyList{GameLaunch}, Departure?, UserDataDirectories?)"/>
+    /// <inheritdoc cref="Run(IReadOnlyList{GameLaunch}, Departure?, SelfExit?, UserDataDirectories?)"/>
     public static void Run(params GameLaunch[] launches) => Run(launches, departure: null);
 
     /// <summary>
@@ -44,10 +50,16 @@ public static class SmokeRun
     /// the witness must print its milestone, and the rest linger once more before they are stopped too —
     /// in launch order, so otherwise it is always the server that goes first.
     ///
+    /// With a <paramref name="selfExit"/>, once everything has lingered its cause is run, and the exiter must quit
+    /// on its own with exit code 0.
+    ///
     /// Without <paramref name="userData"/> every process gets a fresh user:// that is gone after the run.
     /// </summary>
     public static void Run(
-        IReadOnlyList<GameLaunch> launches, Departure? departure = null, UserDataDirectories? userData = null)
+        IReadOnlyList<GameLaunch> launches,
+        Departure? departure = null,
+        SelfExit? selfExit = null,
+        UserDataDirectories? userData = null)
     {
         UserDataDirectories? ownUserData = userData is null ? new UserDataDirectories() : null;
         List<GameProcess> processes = [];
@@ -60,6 +72,13 @@ public static class SmokeRun
             if (running && departure is not null)
             {
                 Depart(departure, launches, processes, lifecycleProblems);
+            }
+
+            if (running && selfExit is not null)
+            {
+                GameProcess exiter = ProcessOf(selfExit.Exiter, launches, processes);
+                selfExit.Cause();
+                AddProblem(lifecycleProblems, exiter, exiter.WaitForSelfExit(SelfExitTimeout));
             }
 
             // Stopping before scanning is deliberate: the Serilog sink is asynchronous, so the last
@@ -168,8 +187,8 @@ public static class SmokeRun
     }
 
     /// <summary>
-    /// The process launched as <paramref name="name"/>. A departure naming no launch is a mistake in the
-    /// scenario itself, not a game failure, so it throws instead of reporting.
+    /// The process launched as <paramref name="name"/>. A departure or a self-exit naming no launch is a mistake
+    /// in the scenario itself, not a game failure, so it throws instead of reporting.
     /// </summary>
     private static GameProcess ProcessOf(
         string name, IReadOnlyList<GameLaunch> launches, IReadOnlyList<GameProcess> processes)
@@ -179,7 +198,7 @@ public static class SmokeRun
             if (launches[i].Name == name) return processes[i];
         }
 
-        throw new ArgumentException($"The departure names '{name}', but no process of the scenario is called that.");
+        throw new ArgumentException($"The scenario names '{name}', but none of its processes is called that.");
     }
 
     /// <summary>
@@ -226,6 +245,7 @@ public static class SmokeRun
 
         foreach (GameProcess process in processes)
         {
+            problems.AddRange(process.ChildProblems.Select(problem => new Problem(process.Name, problem, [])));
             problems.AddRange(OutputScanner.Scan(process));
         }
 

@@ -13,8 +13,10 @@ see these.
 dotnet test Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csproj
 ```
 
-Needs `GODOT_EXE` (see [Quick start](Quick-start.md)). A fixture builds the game project first, since
-Godot runs already compiled assemblies. The suite takes about 40 s. Not run in CI, only compiled.
+Needs `GODOT_EXE` (see [Quick start](Quick-start.md)). An assembly fixture builds the game project first, since
+Godot runs already compiled assemblies, and runs `--import` once. Every scenario is a test class of its own, so
+the scenarios run in parallel, and the suite takes about the build plus the longest scenario: about 20 s on 16
+cores. Not run in CI, only compiled.
 
 ## Scenarios
 
@@ -23,8 +25,9 @@ Godot runs already compiled assemblies. The suite takes about 40 s. Not run in C
 | `Client_StartsToMenu` | one client, no flags |
 | `Client_StartsSingleplayerGame` | one client with `--auto-start` |
 | `Server_AcceptsTwoClients` | `--server` plus two `--auto-connect` clients |
-| `Client_QuitsFromMultiplayerGame` | `--server` plus two `--auto-connect` clients, `client-1` quits first |
-| `Server_LoadsItsAutosaveAfterRestart` | two runs of `--server --savefile` plus an `--auto-connect` client, the second loads the save of the first |
+| `Client_QuitsFromMultiplayerGame` | an `--auto-host` client plus two `--auto-connect` clients, `client-1` quits first |
+| `Server_LoadsItsAutosaveAfterRestart` | an `--auto-host-dedicated` client, whose child server autosaves; then `--server` loads that save, an `--auto-connect` client joins, and the server autosaves on `SIGTERM` |
+| `Server_ShutsDownWhenParentDies` | `--server --parent-pid` of a stand-in process; the stand-in is killed, and the server must exit with its autosave |
 | `Client_LoadsItsSingleplayerAutosaveAfterRestart` | two runs of `--auto-start --auto-start-savefile`, the second loads the save of the first |
 
 `SmokeRun` flow:
@@ -35,9 +38,14 @@ Godot runs already compiled assemblies. The suite takes about 40 s. Not run in C
 3. Optional `Departure`: the leaver alone is stopped, a witness must print its milestone (the server:
    `Player left: <nick> (<uid>)`), the rest linger again. This is the only path where a client tears down a
    live world on exit and the server sees a player leave.
-4. The rest are stopped in launch order — so without a `Departure` the server always goes first and
+4. Optional `SelfExit`: its cause is run (killing the stand-in parent), and the exiter must exit on its own
+   within 15 s with code 0.
+5. The rest are stopped in launch order — so without a `Departure` the server always goes first and
    clients quit from the menu.
-5. Each process must have printed its `ExitMilestones` (the autosave, say) by the time it is stopped.
+6. Each process must have printed its `ExitMilestones` (the autosave, say) by the time it is stopped.
+
+A client hosting with `--auto-host-dedicated` logs `Started dedicated server process <pid>`. The child inherits
+the client's stdout, so its lines are attributed to the client in the report.
 
 Multiplayer scenarios use a free UDP port instead of the default `25566`, to avoid clashing with a
 server started by hand.
@@ -46,6 +54,8 @@ server started by hand.
 
 * a milestone missed (timeout, or the process exited first) — the report adds the process's last lines;
 * a process exiting on its own while it should keep running;
+* a child server still running once its client has exited (then killed). That the client waits for its child
+  is checked by its exit milestone; this is the safety net;
 * not exiting within 5 s of `SIGTERM` (then killed), or a non-zero exit code after it. While the game
   runs the exit code means nothing — `ExceptionHandlerService` swallows exceptions — so this is the only
   place it is checked;
