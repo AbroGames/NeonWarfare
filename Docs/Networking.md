@@ -126,8 +126,9 @@ only a `Joined` one gets packets and has its commands handled.
 * asks `IPeerSessionHandler.ValidateJoin` — a refusal sends `JoinRejected(reason)` and disconnects the peer;
 * displaces a peer already online with the same uid: the old one is disconnected and leaves with
   `LeaveReason.Displaced`, then the new one joins (a crashed client comes back without waiting for ENet to notice).
-  A displaced admin has not left, so `IServerOwner.AdminLeft` is not called. The host's own uid cannot be taken —
-  `UidInUse`;
+  A displaced admin has not left, so `IServerOwner.AdminLeft` is not called. The uid of the `ProtectedPlayer` port —
+  the host's own player, the admin of a child server — cannot be taken, `UidInUse`: its owner cannot reconnect
+  without leaving the server;
 * marks the peer `Joined` and calls `IPeerSessionHandler.Join`, which joins the player through the Simulation.
 
 `peer_disconnected` enqueues `PeerDisconnected`; in the tick the peer leaves the table and

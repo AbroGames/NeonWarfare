@@ -47,7 +47,7 @@ public class PlayerSimulationFacade(
     }
 
     /// <summary>
-    /// A displaced admin is the same player on a new connection, so the server it started must not stop under it.
+    /// A displaced admin is the same player back on a new connection, so it is not reported as a leave.
     /// </summary>
     public void Leave(PlayerUid uid, LeaveReason reason)
     {

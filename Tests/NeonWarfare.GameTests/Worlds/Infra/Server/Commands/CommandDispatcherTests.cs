@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
@@ -229,7 +230,8 @@ public class CommandDispatcherTests
     {
         var registry = new CommandHandlerRegistry(handlers);
         _inbox = new CommandInbox(_codec, TestProtocol.Hash, _gatekeeper, registry);
-        var sessions = new PeerSessions(new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper);
+        var sessions = new PeerSessions(
+            new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper, new ProtectedPlayer(null));
         return new CommandDispatcher(_inbox, registry, sessions, _peers);
     }
 

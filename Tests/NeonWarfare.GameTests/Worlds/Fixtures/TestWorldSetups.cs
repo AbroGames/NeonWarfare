@@ -26,9 +26,10 @@ public static class TestWorldSetups
             owner ?? new RecordingServerOwner(), localPlayerOwner ?? new RecordingLocalPlayerOwner());
 
     /// <param name="adminUid"><c>null</c> — a World without an admin.</param>
+    /// <param name="protectedUid"><c>null</c> — a server started from the console, which displaces everyone.</param>
     public static WorldSetup.Dedicated Dedicated(
         PlayerUid? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
-        string saveFileName = SaveFileName) =>
+        string saveFileName = SaveFileName, PlayerUid? protectedUid = null) =>
         new(saveFiles ?? new RecordingSaveFiles(), new WorldSaveFile(saveFileName), new WorldAdmin(adminUid),
-            owner ?? new RecordingServerOwner());
+            new ProtectedPlayer(protectedUid), owner ?? new RecordingServerOwner());
 }

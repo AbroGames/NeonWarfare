@@ -13,7 +13,8 @@ namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>A server without a player of its own.</summary>
 /// <param name="parentPid">The client that started this server as its child process.
-/// <c>null</c> for a server started from the console, which outlives its admin and is never resumed by "Continue".
+/// <c>null</c> for a server started from the console, which outlives its admin, lets the admin be displaced and is
+/// never resumed by "Continue".
 /// </param>
 public class DedicatedServerGameStarter(
     string saveFileName,
@@ -43,7 +44,8 @@ public class DedicatedServerGameStarter(
         try
         {
             world = game.AddDedicatedWorld(network, saveFiles, new WorldSaveFile(saveFileName),
-                new WorldAdmin(adminUid), LoadServerOrigin(saveFileName));
+                new WorldAdmin(adminUid), new ProtectedPlayer(parentPid is null ? null : adminUid),
+                LoadServerOrigin(saveFileName));
         }
         catch (Exception e)
         {

@@ -2,6 +2,7 @@ using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
@@ -12,7 +13,11 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 /// events of its own join.
 /// </summary>
 [Server]
-public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable peers, PeerGatekeeper gatekeeper)
+public class PeerSessions(
+    IPeerSessionHandler sessionHandler,
+    PeerStateTable peers,
+    PeerGatekeeper gatekeeper,
+    ProtectedPlayer protectedPlayer)
 {
     private readonly ILogger _log = LogFactory.GetForStatic<PeerSessions>();
 
@@ -61,10 +66,10 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
         PlayerUid uid = command.Uid;
         if (peers.TryGetPeerIdByUid(uid, out int oldPeerId))
         {
-            // The host cannot reconnect from another peer, so displacing it would lock it out of its own world.
-            if (gatekeeper.IsLocal(oldPeerId))
+            if (uid == protectedPlayer.Uid)
             {
-                _log.Warning("Peer {peerId} joins as {uid}, which is the host's own: rejected", peerId, uid);
+                _log.Warning("Peer {peerId} joins as {uid}, which is protected from displacement: rejected",
+                    peerId, uid);
                 gatekeeper.Reject(peerId, JoinRejectReason.UidInUse);
                 return;
             }

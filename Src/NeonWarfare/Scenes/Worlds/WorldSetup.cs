@@ -33,6 +33,7 @@ public abstract record WorldSetup
         : WorldSetup
     {
         public WorldAdmin Admin => new(LocalPlayer.Uid);
+        public ProtectedPlayer ProtectedPlayer => new(LocalPlayer.Uid);
 
         /// <summary>
         /// There is no <c>ClientReplication</c>, because the host's Simulation writes the very models its Presentation
@@ -43,7 +44,12 @@ public abstract record WorldSetup
 
     /// <summary>A dedicated server, with <c>ServerHud</c> or without.</summary>
     public sealed record Dedicated(
-        ISaveFiles SaveFiles, WorldSaveFile SaveFile, WorldAdmin Admin, IServerOwner ServerOwner) : WorldSetup
+        ISaveFiles SaveFiles,
+        WorldSaveFile SaveFile,
+        WorldAdmin Admin,
+        ProtectedPlayer ProtectedPlayer,
+        IServerOwner ServerOwner)
+        : WorldSetup
     {
         public override WorldLayer Layers => ServerLayers;
     }

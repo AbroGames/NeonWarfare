@@ -99,10 +99,10 @@ can come too early.
 * **`ConnectToServer(localPlayer, host, port)`** — `Network` of a remote client and its `ClientTransport`, which
   sends the join once connected. **No World yet**: `Game` builds it from the join snapshot itself.
 * **`AddSingleplayerWorld(saveFiles, saveFile, localPlayer, origin)`** / **`AddHostWorld(network, saveFiles,
-  saveFile, localPlayer, origin)`** / **`AddDedicatedWorld(network, saveFiles, saveFile, admin, origin)`** — the
-  World of its configuration (`WorldSetup`, see [World](World.md)) over its transport, put into `WorldContainer`. The
-  first two also send the host's join: its own peer first "connects", so it passes the same gatekeeper as a remote
-  one (see [Networking](Networking.md#join-and-leave)).
+  saveFile, localPlayer, origin)`** / **`AddDedicatedWorld(network, saveFiles, saveFile, admin,
+  protectedPlayer, origin)`** — the World of its configuration (`WorldSetup`, see [World](World.md)) over its
+  transport, put into `WorldContainer`. The first two also send the host's join: its own peer first "connects", so
+  it passes the same gatekeeper as a remote one (see [Networking](Networking.md#join-and-leave)).
 * **`ShowServerHud()`** — the screen of a dedicated server.
 
 `WorldAssembler` builds each configuration: its transports, `WorldDependencies`, `InitPreReady`. A World that throws
@@ -166,7 +166,7 @@ An ENet server **in this same process**.
 1. The `Loading` loading screen, `AddServerNetwork()`.
 2. `resume-game.json` — "own server" with the save files that keep it current: always on the host, on the dedicated
    server only with `parentPid` (a server started from the console is never resumed). The dedicated server with
-   `parentPid` is a child server, set up in one place, `FollowParentClient`: a `ProcessDeadChecker` (a GodotBox node)
+   `parentPid` is a child server, set up by `FollowParentClient`: a `ProcessDeadChecker` (a GodotBox node)
    on `Game` and `AdminLeft` both call `MainScene.Shutdown()`, so a child server is not left hanging after the client
    is closed (see [Shutdown](Shutdown.md)).
 3. `network.HostServer(port ?? 25566)` — the port is open but refuses connections. An error (a busy port, say) →
