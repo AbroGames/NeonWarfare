@@ -19,10 +19,10 @@ explicit implementation of a nested role interface, so a caller holds only the r
 | `ICommandSender.Send<TCommand>(command)` | The `Hud`: the only way a command leaves the World |
 | `IReader.Get<T>()` | The screens: only `[Query]` and `[Presentation]` services are handed out |
 | `IServerEndpoint`: `StartHandshake`, `QueueDisconnection`, `ReceiveFromClient` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
-| `IClientEndpoint`: `ReceiveState`, `ReceiveEvents` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the body of a packet |
+| `IClientEndpoint`: `ReceiveTickUpdate` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the tick and the sections of a tick update |
 
 `WorldOrigin` says where the state comes from: `NewWorld()` — `NewWorldSimulationFacade.Create()` spawns
-what a world starts with; `FromSave(save)` — `SaveLoader`; `FromSnapshot(body)` — the join snapshot,
+what a world starts with; `FromSave(save)` — `SaveLoader`; `FromSnapshot(tick, records)` — the join snapshot,
 on a remote client. A World is never empty: a remote client creates it only from the first snapshot. A broken save
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
@@ -55,7 +55,7 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`) | `[Query]` | All |
 | `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]`; `[Presentation]` only as a collection | RemoteClient, Host |
 | `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | RemoteClient, Host |
-| `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
+| `[ClientReplication]` | `StateApplier`: the state sections of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
 
 Every layer may also take the models, the `WorldDependencies` and the `WorldSetup` types, except those with an
 effect beyond the world, which only their owner takes: `IClientsConnection`, `ISaveFiles`, `WorldSaveFile` —
@@ -126,10 +126,10 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>`; `ICommandHandler` — what every player handler interface extends |
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
-| `Infra/Server/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
+| `Infra/Server/Replication` | `StateReplicator` — the state section, the join snapshot and the save records, from the RepliCAT baselines |
 | `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter` (the format only), `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
 | `Infra/Client/Events` | `EventDispatcher`, `EventHandlerAttribute` and `IEventHandlerOwner` — a Presentation with handlers |
-| `Infra/Client/Replication` | `StateApplier` — the state packets and the join snapshot of a remote client |
+| `Infra/Client/Replication` | `StateApplier` — the state sections and the join snapshot of a remote client |
 | `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `GameProtocol`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
 | `Infra/Presentation` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |

@@ -5,14 +5,16 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.GameTests.Worlds.Fixtures;
 
 /// <summary>
-/// Which <see cref="IClientsConnection"/> method sent a packet: the World never sees the transport's kind byte.
+/// What a packet carries: the World never sees the transport's kind byte.
+/// A tick update is <see cref="State"/>, <see cref="Events"/> or both.
 /// </summary>
+[Flags]
 public enum SentKind
 {
-    State,
-    Snapshot,
-    Events,
-    JoinRejected
+    Snapshot = 1,
+    State = 2,
+    Events = 4,
+    JoinRejected = 8
 }
 
 /// <summary>
@@ -28,7 +30,9 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 {
     public const int HostPeer = 1;
 
-    public record Sent(int PeerId, SentKind Kind, byte[] Body);
+    // Body: the records of a snapshot, the reason byte of a rejection, the state section of a tick update.
+    // Events: the events section of a tick update, empty otherwise.
+    public record Sent(int PeerId, SentKind Kind, long Tick, byte[] Body, byte[] Events);
 
     public List<Sent> Packets { get; } = [];
 
@@ -39,25 +43,33 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 
     public Action<ReadOnlyMemory<byte>>? CommandLoopback { get; set; }
 
-    public Dictionary<int, Action<SentKind, ReadOnlyMemory<byte>>> Receivers { get; } = [];
+    public Dictionary<int, Action<Sent>> Receivers { get; } = [];
 
     public int? FailingPeer { get; set; }
 
-    // Null: every packet to FailingPeer fails
+    // Null: every packet to FailingPeer fails; otherwise every packet that carries any of these kinds
     public SentKind? FailingKind { get; set; }
+
+    // A packet that carries any of these kinds throws, as a transport bug would
+    public SentKind? ThrowingKind { get; set; }
 
     public List<int> Disconnected { get; } = [];
 
     public int? LocalPeerId { get; set; }
 
-    public bool SendState(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.State, body);
+    public bool SendTickUpdate(int peerId, long tick, ReadOnlySpan<byte> state, ReadOnlySpan<byte> events)
+    {
+        if (state.IsEmpty && events.IsEmpty) throw new ArgumentException("A tick update with neither section");
 
-    public bool SendSnapshot(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.Snapshot, body);
+        SentKind kind = (state.IsEmpty ? 0 : SentKind.State) | (events.IsEmpty ? 0 : SentKind.Events);
+        return Record(new Sent(peerId, kind, tick, state.ToArray(), events.ToArray()));
+    }
 
-    public bool SendEvents(int peerId, ReadOnlySpan<byte> body) => Record(peerId, SentKind.Events, body);
+    public bool SendSnapshot(int peerId, long tick, ReadOnlySpan<byte> records) =>
+        Record(new Sent(peerId, SentKind.Snapshot, tick, records.ToArray(), []));
 
     public bool Reject(int peerId, JoinRejectReason reason) =>
-        Record(peerId, SentKind.JoinRejected, [(byte) reason]);
+        Record(new Sent(peerId, SentKind.JoinRejected, 0, [(byte) reason], []));
 
     public void Send(ReadOnlySpan<byte> packet)
     {
@@ -68,20 +80,23 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 
     public void Disconnect(int peerId) => Disconnected.Add(peerId);
 
-    private bool Record(int peerId, SentKind kind, ReadOnlySpan<byte> body)
+    private bool Record(Sent sent)
     {
-        if (peerId == FailingPeer && (FailingKind == null || kind == FailingKind)) return false;
-
-        byte[] copy = body.ToArray();
-        Packets.Add(new Sent(peerId, kind, copy));
-        if (kind == SentKind.JoinRejected) return true;
-        if (peerId == HostPeer)
+        if (ThrowingKind is { } throwing && (sent.Kind & throwing) != 0)
         {
-            if (kind == SentKind.Events) Loopback?.Invoke(copy);
+            throw new InvalidOperationException($"{sent.Kind} throws");
         }
-        else if (Receivers.TryGetValue(peerId, out Action<SentKind, ReadOnlyMemory<byte>>? receiver))
+        if (sent.PeerId == FailingPeer && (FailingKind == null || (sent.Kind & FailingKind) != 0)) return false;
+
+        Packets.Add(sent);
+        if (sent.Kind == SentKind.JoinRejected) return true;
+        if (sent.PeerId == HostPeer)
         {
-            receiver(kind, copy);
+            if (sent.Events.Length > 0) Loopback?.Invoke(sent.Events);
+        }
+        else if (Receivers.TryGetValue(sent.PeerId, out Action<Sent>? receiver))
+        {
+            receiver(sent);
         }
         return true;
     }

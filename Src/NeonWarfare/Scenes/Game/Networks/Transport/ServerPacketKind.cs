@@ -8,7 +8,6 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 public enum ServerPacketKind : byte
 {
     Snapshot = 1,
-    State = 2,
-    Events = 3,
-    JoinRejected = 4
+    JoinRejected = 4,
+    TickUpdate = 5
 }

@@ -12,7 +12,7 @@ public interface ILocalPlayerOwner
     /// <summary>
     /// The server has applied this process's join, and the player is online.
     /// On the host it is called inside the tick.
-    /// On a remote client it is called from the events packet of the join tick.
+    /// On a remote client it is called from the tick update of the join tick.
     /// </summary>
     void Joined();
 

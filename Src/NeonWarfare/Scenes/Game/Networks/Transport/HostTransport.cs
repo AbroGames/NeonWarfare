@@ -36,18 +36,22 @@ public sealed class HostTransport(
         ((IServerConnection) this).Send(codec.Encode(localPlayer.ToJoinRequest(protocolHash)));
     }
 
-    bool IClientsConnection.SendState(int peerId, ReadOnlySpan<byte> body) => Remote(peerId).SendState(peerId, body);
+    bool IClientsConnection.SendSnapshot(int peerId, long tick, ReadOnlySpan<byte> records) =>
+        Remote(peerId).SendSnapshot(peerId, tick, records);
 
-    bool IClientsConnection.SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
-        Remote(peerId).SendSnapshot(peerId, body);
-
-    bool IClientsConnection.SendEvents(int peerId, ReadOnlySpan<byte> body)
+    /// <exception cref="InvalidOperationException">The host's own peer gets a state section.</exception>
+    bool IClientsConnection.SendTickUpdate(int peerId, long tick, ReadOnlySpan<byte> state, ReadOnlySpan<byte> events)
     {
-        if (peerId != LocalPeer) return Remote(peerId).SendEvents(peerId, body);
+        if (peerId != LocalPeer) return Remote(peerId).SendTickUpdate(peerId, tick, state, events);
+        if (!state.IsEmpty)
+        {
+            throw new InvalidOperationException(
+                $"Peer {peerId} is the host's own: its World is the server's and needs no state");
+        }
 
         try
         {
-            client.ReceiveEvents(body.ToArray());
+            client.ReceiveTickUpdate(tick, ReadOnlyMemory<byte>.Empty, events.ToArray());
         }
         // The events are delivered inside the server's tick, so a failure of the host's own World must not cost the
         // remote peers their events.

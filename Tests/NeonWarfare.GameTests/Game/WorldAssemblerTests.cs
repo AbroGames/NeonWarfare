@@ -67,11 +67,11 @@ public class WorldAssemblerTests
     public void RemoteClient_BrokenSnapshot_FreesTheWorld()
     {
         var transport = new ClientTransport(
-            new FakeNetwork(), _protocol.Codec, _protocol.Hash, TestWorldSetups.LocalPlayer(), _owner, _ => { });
+            new FakeNetwork(), _protocol.Codec, _protocol.Hash, TestWorldSetups.LocalPlayer(), _owner, (_, _) => { });
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
         NetMessageCodecTests.AssertRejected(() => _assembler.RemoteClient(
-            TestWorldSetups.RemoteClient(localPlayerOwner: _owner), new byte[] { 1 }, transport));
+            TestWorldSetups.RemoteClient(localPlayerOwner: _owner), 1, new byte[] { 1 }, transport));
 
         AssertThat(Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount)).IsEqual(orphans);
     }

@@ -13,13 +13,10 @@ public sealed class NoConnection : IClientsConnection, IServerConnection
 {
     public int? LocalPeerId => null;
 
-    public bool SendState(int peerId, ReadOnlySpan<byte> body) =>
+    public bool SendTickUpdate(int peerId, long tick, ReadOnlySpan<byte> state, ReadOnlySpan<byte> events) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
-    public bool SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
-        throw new InvalidOperationException("This World has no connection in this direction");
-
-    public bool SendEvents(int peerId, ReadOnlySpan<byte> body) =>
+    public bool SendSnapshot(int peerId, long tick, ReadOnlySpan<byte> records) =>
         throw new InvalidOperationException("This World has no connection in this direction");
 
     public bool Reject(int peerId, JoinRejectReason reason) =>

@@ -102,7 +102,7 @@ public class TickStateReplicationTests
             .IsEqual("Renamed");
     }
 
-    // Done when: the state packet of a tick is applied before the events of the same tick are handled
+    // Done when: the state section of a tick is applied before the events of the same tick update are handled
     [TestCase]
     [RequireGodotRuntime]
     public void JoinEvent_IsHandledOnAClientWhoseModelsAreAlreadyAtTheEndOfTheTick()
@@ -114,10 +114,10 @@ public class TickStateReplicationTests
             .ContainsExactly(new JoinRecorder.Sight(BobUid, true, "Bob"));
     }
 
-    // Done when: in the join tick the joiner receives the snapshot and then its events packet, and no state packet
+    // Done when: in the join tick the joiner receives the snapshot, then a tick update with its events and no state
     [TestCase]
     [RequireGodotRuntime]
-    public void PeerJoinedInTheTick_GetsTheSnapshotThenItsEvents_NoStatePacket()
+    public void PeerJoinedInTheTick_GetsTheSnapshotThenItsEvents_NoState()
     {
         var counter = Spawner().SpawnOnRoot<CounterNode>(node => node.Value = 1);
         Tick();
@@ -129,7 +129,7 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.Snapshot, SentKind.Events);
-        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State | SentKind.Events);
         AssertClientHasTheServerEntities(bob);
         AssertThat(((CounterNode) bob.GetRequiredService<EntityRegistry>().GetNode(ServerId(counter))).Value)
             .IsEqual(2);
@@ -178,7 +178,7 @@ public class TickStateReplicationTests
         Tick();
 
         Spawner().Despawn(parent);
-        byte[] snapshot = SnapshotPacket();
+        byte[] snapshot = SnapshotRecords();
 
         AssertThat(_server.GetRequiredService<IEntityFinder>().TryGetNode(parentId, out _)).IsFalse();
         ServiceProvider bob = ClientOf(BobPeer, out _);
@@ -189,7 +189,7 @@ public class TickStateReplicationTests
         AssertThat(registry.GetKindId(childId)).IsEqual(_catalog.GetKindId(typeof(CounterNode)));
     }
 
-    // It would go into the snapshot without state, and the next state packet would spawn it again
+    // It would go into the snapshot without state, and the next state section would spawn it again
     [TestCase]
     [RequireGodotRuntime]
     public void SnapshotWithASpawnSinceTheLastSend_Throws()
@@ -214,7 +214,7 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(Kinds(HostPeer)).ContainsExactly(SentKind.Events);
-        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State | SentKind.Events);
     }
 
     // Without a consistent snapshot the joiner's models would drift from the next deltas; the peers already in
@@ -237,7 +237,7 @@ public class TickStateReplicationTests
         AssertThat(Sent(BobPeer)).ContainsExactly(rejection);
         AssertThat(Sent(CarolPeer)).ContainsExactly(rejection);
         AssertThat(_connection.Disconnected).ContainsExactlyInAnyOrder(BobPeer, CarolPeer);
-        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State | SentKind.Events);
         _connection.Packets.Clear();
 
         // Until their peer_disconnected they stay joined, and Dave's join is an event for them too
@@ -246,7 +246,7 @@ public class TickStateReplicationTests
 
         AssertThat(Kinds(BobPeer)).IsEmpty();
         AssertThat(Kinds(CarolPeer)).IsEmpty();
-        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(SentKind.State | SentKind.Events);
     }
 
     // A rejection that does not reach its peer still disconnects it, and costs the other joiners nothing
@@ -293,16 +293,16 @@ public class TickStateReplicationTests
         Tick();
 
         AssertThat(Kinds(BobPeer)).IsEmpty();
-        AssertThat(Kinds(CarolPeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(CarolPeer)).ContainsExactly(SentKind.State | SentKind.Events);
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void ApplySnapshot_NoEndOfTheRecords_Throws()
     {
-        byte[] packet = [1];
+        byte[] records = [];
 
-        NetMessageCodecTests.AssertRejected(() => Applier().ApplySnapshot(packet));
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplySnapshot(records));
     }
 
     [TestCase]
@@ -310,10 +310,10 @@ public class TickStateReplicationTests
     public void ApplySnapshot_TrailingBytes_Throws()
     {
         Tick();
-        byte[] packet = [..SnapshotPacket(), 0, 0];
+        byte[] records = [..SnapshotRecords(), 0, 0];
         ServiceProvider bob = ClientOf(BobPeer, out _);
 
-        NetMessageCodecTests.AssertRejected(() => bob.GetRequiredService<StateApplier>().ApplySnapshot(packet));
+        NetMessageCodecTests.AssertRejected(() => bob.GetRequiredService<StateApplier>().ApplySnapshot(records));
     }
 
     [TestCase]
@@ -333,19 +333,19 @@ public class TickStateReplicationTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void StatePacket_IsTheSameBytesForEveryPeer_NoneForTheHost()
+    public void StateSection_IsTheSameBytesForEveryPeer_NoneForTheHost()
     {
         JoinDirectly(BobUid, "Bob", BobPeer);
 
         Tick();
 
         AssertThat(Kinds(HostPeer)).IsEmpty();
-        AssertThat(StatePacket(BobPeer)).IsEqual(StatePacket(AlicePeer));
+        AssertThat(StateSection(BobPeer)).IsEqual(StateSection(AlicePeer));
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void TickWithoutChanges_SendsNoStatePacket()
+    public void TickWithoutChanges_SendsNoState()
     {
         Tick();
         _connection.Packets.Clear();
@@ -357,16 +357,16 @@ public class TickStateReplicationTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void StatePacket_HasOnlyTheChangedEntities()
+    public void StateSection_HasOnlyTheChangedEntities()
     {
         Tick();
-        AssertThat(Parse(StatePacket(AlicePeer)).Models).IsEmpty();
+        AssertThat(Parse(StateSection(AlicePeer)).Models).IsEmpty();
         _connection.Packets.Clear();
 
         Online().Remove(HostUid);
         Tick();
 
-        StateRecords records = Parse(StatePacket(AlicePeer));
+        StateRecords records = Parse(StateSection(AlicePeer));
         AssertThat(records.Spawns).IsEmpty();
         AssertThat(records.Models).ContainsExactly(ServerId<OnlinePlayersStorage>());
         AssertThat(records.Despawns).IsEmpty();
@@ -380,7 +380,7 @@ public class TickStateReplicationTests
     {
         Tick();
 
-        AssertThat(Parse(StatePacket(AlicePeer)).Spawns.Select(spawn => spawn.Id))
+        AssertThat(Parse(StateSection(AlicePeer)).Spawns.Select(spawn => spawn.Id))
             .ContainsExactly(ServerId<PlayersStorage>(), ServerId<OnlinePlayersStorage>());
         AssertClientCopy<PlayersStorage>();
         AssertClientCopy<OnlinePlayersStorage>();
@@ -425,7 +425,7 @@ public class TickStateReplicationTests
         AssertThat(((CounterNode) clientChild).Value).IsEqual(5);
     }
 
-    // The first delta threw: the record goes without state, and the models section of the next packet brings it all
+    // The first delta threw: the record goes without state, and the models part of the next section brings it all
     [TestCase]
     [RequireGodotRuntime]
     public void SpawnWhoseFirstDeltaFailed_ReachesTheClient_TheStateComesNextTick()
@@ -460,7 +460,7 @@ public class TickStateReplicationTests
         Spawner().Despawn(parent);
         Tick();
 
-        AssertThat(Parse(StatePacket(AlicePeer)).Despawns).ContainsExactlyInAnyOrder(parentId, childId);
+        AssertThat(Parse(StateSection(AlicePeer)).Despawns).ContainsExactlyInAnyOrder(parentId, childId);
         AssertThat(AliceRegistry().TryGetNode(parentId, out _)).IsFalse();
         AssertThat(AliceRegistry().TryGetNode(childId, out _)).IsFalse();
         AssertThat(_aliceRoot.GetChildren()).NotContains(clientParent);
@@ -495,27 +495,29 @@ public class TickStateReplicationTests
         Spawner().Despawn(node);
         Tick();
 
-        AssertThat(Parse(StatePacket(AlicePeer)).Models).ContainsExactly(ServerId<OnlinePlayersStorage>());
+        AssertThat(Parse(StateSection(AlicePeer)).Models).ContainsExactly(ServerId<OnlinePlayersStorage>());
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void StatePacket_StartsWithTheTickNumber()
+    public void TickUpdateAndSnapshot_CarryTheTickNumber()
     {
         Tick();
         _connection.Packets.Clear();
         Online().Remove(HostUid);
+        Join(BobPeer, BobUid, "Bob");
         Tick();
 
-        var reader = new BitReader(StatePacket(AlicePeer));
-        AssertThat(reader.ReadVarUInt()).IsEqual(2UL);
+        AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Kind, sent.Tick))).ContainsExactlyInAnyOrder(
+            (AlicePeer, SentKind.State | SentKind.Events, 2L), (BobPeer, SentKind.Snapshot, 2L),
+            (BobPeer, SentKind.Events, 2L), (HostPeer, SentKind.Events, 2L));
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void ApplyState_UnknownNetId_Throws()
     {
-        BitWriter writer = PacketStart();
+        BitWriter writer = new BitWriter();
         writer.WriteVarUInt(0);
         writer.WriteVarUInt(999);
         writer.WriteVarUInt(0);
@@ -529,7 +531,7 @@ public class TickStateReplicationTests
     public void ApplyState_TruncatedDelta_Throws()
     {
         Tick();
-        BitWriter writer = PacketStart();
+        BitWriter writer = new BitWriter();
         writer.WriteVarUInt(0);
         writer.WriteVarUInt((ulong) ServerId<PlayersStorage>().Value);
 
@@ -540,18 +542,18 @@ public class TickStateReplicationTests
     [RequireGodotRuntime]
     public void ApplyState_NoEndOfTheModelsSection_Throws()
     {
-        byte[] packet = [1, 0];
+        byte[] section = [0];
 
-        NetMessageCodecTests.AssertRejected(() => Applier().ApplyState(packet));
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyState(section));
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void ApplyState_NoEndOfTheDespawnsSection_Throws()
     {
-        byte[] packet = [1, 0, 0];
+        byte[] section = [0, 0];
 
-        NetMessageCodecTests.AssertRejected(() => Applier().ApplyState(packet));
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyState(section));
     }
 
     [TestCase]
@@ -590,7 +592,7 @@ public class TickStateReplicationTests
     public void ApplyState_DespawnOfAnUnregisteredNetId_Throws_RemovesNothing()
     {
         Tick();
-        BitWriter writer = PacketStart();
+        BitWriter writer = new BitWriter();
         writer.WriteVarUInt(0);
         writer.WriteVarUInt(0);
         writer.WriteVarUInt((ulong) ServerId<PlayersStorage>().Value);
@@ -606,12 +608,12 @@ public class TickStateReplicationTests
     [RequireGodotRuntime]
     public void ApplyState_TrailingBytes_Throws()
     {
-        // Alice's own client is not attached here, so the packet is not applied twice
+        // Alice's own client is not attached here, so the section is not applied twice
         _connection.Receivers.Clear();
         Tick();
-        byte[] packet = [..StatePacket(AlicePeer), 0, 0];
+        byte[] section = [..StateSection(AlicePeer), 0, 0];
 
-        NetMessageCodecTests.AssertRejected(() => Applier().ApplyState(packet));
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyState(section));
     }
 
     // Not a format error in RepliCAT: the delta is well-formed, the client's model just cannot take it
@@ -626,7 +628,7 @@ public class TickStateReplicationTests
         _clientNodes.Add(client);
         AliceRegistry().Register(id, client, 0);
         var replicator = NetMessageCodecTests.CreateReplicator();
-        BitWriter writer = PacketStart();
+        BitWriter writer = new BitWriter();
         writer.WriteVarUInt(0);
         writer.WriteVarUInt((ulong) id.Value);
         AssertThat(replicator.TryWriteDelta(replicator.CreateBaseline(server), writer)).IsTrue();
@@ -638,7 +640,7 @@ public class TickStateReplicationTests
     // A failed send leaves the peer behind the baselines for good
     [TestCase]
     [RequireGodotRuntime]
-    public void StatePacketSendFailed_DisconnectsOnlyThatPeer()
+    public void StateSendFailed_DisconnectsOnlyThatPeer()
     {
         JoinDirectly(BobUid, "Bob", BobPeer);
         _connection.FailingPeer = AlicePeer;
@@ -649,28 +651,29 @@ public class TickStateReplicationTests
 
         AssertThat(_connection.Disconnected).ContainsExactly(AlicePeer);
         AssertThat(Kinds(AlicePeer)).IsEmpty();
-        AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.State | SentKind.Events);
         _connection.Packets.Clear();
 
         Join(DavePeer, DaveUid, "Dave");
         Tick();
 
         AssertThat(Kinds(AlicePeer)).IsEmpty();
-        AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.State, SentKind.Events);
+        AssertThat(Kinds(BobPeer)).ContainsExactly(SentKind.State | SentKind.Events);
     }
 
     // The host's Simulation has written the state already: nothing in its World applies it
     [TestCase]
     [RequireGodotRuntime]
-    public void ReceiveState_InAHostWorld_Throws()
+    public void ReceiveTickUpdateWithState_InAHostWorld_Throws()
     {
         Tick();
-        byte[] packet = StatePacket(AlicePeer);
+        byte[] state = StateSection(AlicePeer);
         World host = AutoFree(new World())!.InitPreReady(
             TestWorldSetups.Host(), Dependencies(new RecordingClientsConnection()),
             new WorldOrigin.NewWorld());
 
-        AssertThrown(() => host.ReceiveState(packet)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => host.ReceiveTickUpdate(2, state, ReadOnlyMemory<byte>.Empty))
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
@@ -688,20 +691,16 @@ public class TickStateReplicationTests
 
         var applier = client.GetRequiredService<StateApplier>();
         var events = client.GetRequiredService<EventDispatcher>();
-        _connection.Receivers[peerId] = (kind, body) =>
+        // In the order of World.IClientEndpoint
+        _connection.Receivers[peerId] = sent =>
         {
-            switch (kind)
+            if (sent.Kind == SentKind.Snapshot)
             {
-                case SentKind.State:
-                    applier.ApplyState(body);
-                    break;
-                case SentKind.Snapshot:
-                    applier.ApplySnapshot(body);
-                    break;
-                default:
-                    events.Dispatch(body);
-                    break;
+                applier.ApplySnapshot(sent.Body);
+                return;
             }
+            if (sent.Body.Length > 0) applier.ApplyState(sent.Body);
+            if (sent.Events.Length > 0) events.Dispatch(sent.Events);
         };
         return client;
     }
@@ -759,11 +758,10 @@ public class TickStateReplicationTests
         }
     }
 
-    // The join snapshot as the tick loop writes it
-    private byte[] SnapshotPacket()
+    // The records of the join snapshot as the tick loop writes them
+    private byte[] SnapshotRecords()
     {
         var writer = new BitWriter();
-        writer.WriteVarUInt(1);
         _server.GetRequiredService<StateReplicator>().WriteSnapshot(writer);
         return writer.ToArray();
     }
@@ -779,17 +777,10 @@ public class TickStateReplicationTests
         AssertThat(client.GetParent()).IsSame(_aliceRoot);
     }
 
-    private static BitWriter PacketStart()
-    {
-        var writer = new BitWriter();
-        writer.WriteVarUInt(1);
-        return writer;
-    }
-
-    // One spawn record without state, then empty models and despawns sections
+    // One spawn record without state, then empty models and despawns parts
     private static byte[] SpawnPacket(NetId id, int kindId, NetId parent)
     {
-        BitWriter writer = PacketStart();
+        BitWriter writer = new BitWriter();
         writer.WriteVarUInt((ulong) id.Value);
         writer.WriteVarUInt((ulong) kindId);
         writer.WriteVarUInt((ulong) parent.Value);
@@ -818,8 +809,8 @@ public class TickStateReplicationTests
             .Select(sent => (sent.Kind, sent.Body[0]))
             .ToList();
 
-    private byte[] StatePacket(int peerId) =>
-        _connection.Packets.Single(sent => sent.PeerId == peerId && sent.Kind == SentKind.State)
+    private byte[] StateSection(int peerId) =>
+        _connection.Packets.Single(sent => sent.PeerId == peerId && sent.Kind.HasFlag(SentKind.State))
             .Body;
 
     private NetId ServerId(Node node) =>
@@ -835,11 +826,10 @@ public class TickStateReplicationTests
     private record StateRecords(List<SpawnRecord> Spawns, List<NetId> Models, List<NetId> Despawns);
 
     // Every delta is applied to a scratch node of its kind: a delta has no length to skip it by
-    private StateRecords Parse(byte[] packet)
+    private StateRecords Parse(byte[] section)
     {
         var finder = _server.GetRequiredService<IEntityFinder>();
-        var reader = new BitReader(packet);
-        reader.ReadVarUInt();
+        var reader = new BitReader(section);
         var records = new StateRecords([], [], []);
         for (ulong id = reader.ReadVarUInt(); id != 0; id = reader.ReadVarUInt())
         {

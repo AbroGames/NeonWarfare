@@ -13,7 +13,7 @@ public abstract record WorldOrigin
     public sealed record NewWorld : WorldOrigin;
 
     /// <summary>The world of a remote client, from the snapshot the server sends it on joining.</summary>
-    public sealed record FromSnapshot(ReadOnlyMemory<byte> Body) : WorldOrigin;
+    public sealed record FromSnapshot(long Tick, ReadOnlyMemory<byte> Records) : WorldOrigin;
 
     /// <summary>A world loaded from a save on the server.</summary>
     public sealed record FromSave(ReadOnlyMemory<byte> Save) : WorldOrigin;

@@ -181,13 +181,13 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
         HudContainer.ChangeStoredNode(hud);
     }
 
-    // Called inside the transport's packet handling, before the events packet of the join tick arrives.
-    private void OnSnapshotReceived(ReadOnlyMemory<byte> snapshot)
+    // Called inside the transport's packet handling, before the tick update of the join tick arrives.
+    private void OnSnapshotReceived(long tick, ReadOnlyMemory<byte> records)
     {
         if (IsQueuedForDeletion()) return;
         try
         {
-            Store(_assembler.RemoteClient(_clientSetup, snapshot, _clientTransport));
+            Store(_assembler.RemoteClient(_clientSetup, tick, records, _clientTransport));
         }
         // Any failure ends the session, because the World is already freed and the server sends no second snapshot.
         // Otherwise the connecting screen would stay forever.

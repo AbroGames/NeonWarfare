@@ -57,7 +57,7 @@ public class ConstructorLayerTests
             [WorldLayers.WorldNamespace + ".Ports.IClientsConnection"] = [Layer.Server],
             // Only PlayerCommandSender sends to the server, so every command passes one whitelisted path
             [WorldLayers.WorldNamespace + ".Ports.IServerConnection"] = [Layer.Client],
-            // A delta written or applied past the state packet would move a baseline the clients never follow
+            // A delta written or applied past the state section would move a baseline the clients never follow
             ["RepliCAT.Replicator"] = [Layer.Server, Layer.ClientReplication],
             // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
             // nobody replicates into the world. The client's state applier is the spawn of a remote client

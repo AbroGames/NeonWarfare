@@ -8,7 +8,8 @@ namespace NeonWarfare.GameTests.Game.Fixtures;
 /// </summary>
 public class RecordingWorldEndpoint : World.IServerEndpoint, World.IClientEndpoint
 {
-    public record Call(string Name, int? PeerId = null, byte[]? Body = null);
+    // A tick update is recorded with its tick, its state section as the body and its events section
+    public record Call(string Name, int? PeerId = null, byte[]? Body = null, long? Tick = null, byte[]? Events = null);
 
     public List<Call> Calls { get; } = [];
 
@@ -22,13 +23,9 @@ public class RecordingWorldEndpoint : World.IServerEndpoint, World.IClientEndpoi
     public void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
         Calls.Add(new Call(nameof(ReceiveFromClient), peerId, packet.ToArray()));
 
-    public void ReceiveState(ReadOnlyMemory<byte> body) => Receive(nameof(ReceiveState), body);
-
-    public void ReceiveEvents(ReadOnlyMemory<byte> body) => Receive(nameof(ReceiveEvents), body);
-
-    private void Receive(string name, ReadOnlyMemory<byte> body)
+    public void ReceiveTickUpdate(long tick, ReadOnlyMemory<byte> state, ReadOnlyMemory<byte> events)
     {
-        Calls.Add(new Call(name, Body: body.ToArray()));
-        if (ThrowOnReceive) throw new NetMessageFormatException("Broken body");
+        Calls.Add(new Call(nameof(ReceiveTickUpdate), Body: state.ToArray(), Tick: tick, Events: events.ToArray()));
+        if (ThrowOnReceive) throw new NetMessageFormatException("Broken section");
     }
 }

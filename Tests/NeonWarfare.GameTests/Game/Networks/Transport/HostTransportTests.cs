@@ -79,26 +79,28 @@ public class HostTransportTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void SendEvents_LocalPeer_LoopsBackIntoTheWorld()
+    public void SendTickUpdate_LocalPeer_LoopsTheEventsBackIntoTheWorld()
     {
         IClientsConnection clients = FakeHost();
 
-        clients.SendEvents(LocalPeer, Body);
+        clients.SendTickUpdate(LocalPeer, 7, [], Body);
 
         Call call = _endpoint.Calls.Single();
-        AssertThat(call.Name).IsEqual(nameof(World.IClientEndpoint.ReceiveEvents));
-        AssertThat(call.Body).ContainsExactly(Body);
+        AssertThat(call.Name).IsEqual(nameof(World.IClientEndpoint.ReceiveTickUpdate));
+        AssertThat(call.Tick).IsEqual(7);
+        AssertThat(call.Body).IsEmpty();
+        AssertThat(call.Events).ContainsExactly(Body);
     }
 
     // Delivered inside the server's tick: a throw would cost the remote peers their events, false would cut the host
     [TestCase]
     [RequireGodotRuntime]
-    public void SendEvents_LocalPeerWorldThrows_ReportsSent()
+    public void SendTickUpdate_LocalPeerWorldThrows_ReportsSent()
     {
         IClientsConnection clients = FakeHost();
         _endpoint.ThrowOnReceive = true;
 
-        AssertThat(clients.SendEvents(LocalPeer, Body)).IsTrue();
+        AssertThat(clients.SendTickUpdate(LocalPeer, 1, [], Body)).IsTrue();
     }
 
     [TestCase]
@@ -108,16 +110,14 @@ public class HostTransportTests
         var network = new FakeNetwork();
         IClientsConnection clients = FakeHost(network);
 
-        clients.SendState(RemotePeer, Body);
-        clients.SendSnapshot(RemotePeer, Body);
-        clients.SendEvents(RemotePeer, Body);
+        clients.SendTickUpdate(RemotePeer, 1, Body, Body);
+        clients.SendSnapshot(RemotePeer, 1, Body);
         clients.Reject(RemotePeer, JoinRejectReason.UidInUse);
         clients.Disconnect(RemotePeer);
 
         AssertThat(network.Packets.Select(sent => sent.PeerId).Distinct()).ContainsExactly(RemotePeer);
         AssertThat(network.Packets.Select(sent => sent.Packet[0])).ContainsExactly(
-            (byte) ServerPacketKind.State, (byte) ServerPacketKind.Snapshot, (byte) ServerPacketKind.Events,
-            (byte) ServerPacketKind.JoinRejected);
+            (byte) ServerPacketKind.TickUpdate, (byte) ServerPacketKind.Snapshot, (byte) ServerPacketKind.JoinRejected);
         AssertThat(network.Disconnected).ContainsExactly(RemotePeer);
         AssertThat(_endpoint.Calls).IsEmpty();
     }
@@ -129,8 +129,10 @@ public class HostTransportTests
     {
         IClientsConnection clients = FakeHost(new FakeNetwork());
 
-        AssertThrown(() => clients.SendState(LocalPeer, Body)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => clients.SendSnapshot(LocalPeer, Body)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => clients.SendTickUpdate(LocalPeer, 1, Body, Body))
+            .IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => clients.SendSnapshot(LocalPeer, 1, Body)).IsInstanceOf<InvalidOperationException>();
+        AssertThat(_endpoint.Calls).IsEmpty();
     }
 
     // Single player has no network
@@ -140,7 +142,8 @@ public class HostTransportTests
     {
         IClientsConnection clients = FakeHost();
 
-        AssertThrown(() => clients.SendEvents(RemotePeer, Body)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => clients.SendTickUpdate(RemotePeer, 1, [], Body))
+            .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => clients.Reject(RemotePeer, JoinRejectReason.UidInUse))
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => clients.Disconnect(RemotePeer)).IsInstanceOf<InvalidOperationException>();

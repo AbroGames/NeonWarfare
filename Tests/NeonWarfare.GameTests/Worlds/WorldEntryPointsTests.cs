@@ -17,6 +17,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts;
 using RepliCAT;
+using RepliCAT.Bits;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds;
@@ -71,8 +72,10 @@ public class WorldEntryPointsTests
         World dedicated = CreateWorld(DedicatedSetup());
         World notInitialized = AutoFree(new World())!;
 
-        AssertThrown(() => dedicated.ReceiveState(new byte[] { 0 })).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => dedicated.ReceiveEvents(new byte[] { 0 })).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => dedicated.ReceiveTickUpdate(1, new byte[] { 0 }, ReadOnlyMemory<byte>.Empty))
+            .IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => dedicated.ReceiveTickUpdate(1, ReadOnlyMemory<byte>.Empty, new byte[] { 0 }))
+            .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.ReceiveFromClient(HostPeer, new byte[] { 0 }))
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.StartHandshake(HostPeer)).IsInstanceOf<InvalidOperationException>();
@@ -89,7 +92,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
 
-        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(RemoteClientSetup(), RemoteSnapshot());
 
         AssertThat(client.Get<PlayerQuery>().GetOnlinePlayers().Select(player => player.Nick))
             .ContainsExactlyInAnyOrder("Host", "Remote");
@@ -153,7 +156,7 @@ public class WorldEntryPointsTests
         World host = HostWorld();
         JoinHost(host);
         JoinRemote(host);
-        World client = InTree(CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot())));
+        World client = InTree(CreateWorld(RemoteClientSetup(), RemoteSnapshot()));
 
         client.GetParent().RemoveChild(client);
 
@@ -231,14 +234,14 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
 
-        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(RemoteClientSetup(), RemoteSnapshot());
 
         PlayerModel player = client.Get<LocalPlayerPresentation>().Player;
         AssertThat(player.Uid).IsEqual(RemoteUid);
         AssertThat(player.Nick).IsEqual("Remote");
     }
 
-    // The snapshot makes the player online, but the UI waits for the events packet of the join tick, as on the host
+    // The snapshot makes the player online, but the UI waits for the events of the join tick, as on the host
     [TestCase]
     [RequireGodotRuntime]
     public void LocalPlayer_OnARemoteClient_IsReportedByTheEventsOfItsJoinTick()
@@ -246,16 +249,36 @@ public class WorldEntryPointsTests
         World host = HostWorld();
         JoinHost(host);
         JoinRemote(host);
-        byte[] events = _connection.Packets
-            .Single(sent => sent.PeerId == RemotePeer && sent.Kind == SentKind.Events)
-            .Body;
+        byte[] events = RemoteJoinEvents();
         var owner = new RecordingLocalPlayerOwner();
-        World client = CreateWorld(RemoteClientSetup(owner), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(RemoteClientSetup(owner), RemoteSnapshot());
         AssertThat(owner.JoinedCount).IsEqual(0);
 
-        client.ReceiveEvents(events);
+        client.ReceiveTickUpdate(2, ReadOnlyMemory<byte>.Empty, events);
 
         AssertThat(owner.JoinedCount).IsEqual(1);
+    }
+
+    // The state section is applied first, so a broken one stops the events before any handler runs
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReceiveTickUpdate_BrokenStateSection_DispatchesNoEvents()
+    {
+        World host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+        byte[] events = RemoteJoinEvents();
+        var owner = new RecordingLocalPlayerOwner();
+        World client = CreateWorld(RemoteClientSetup(owner), RemoteSnapshot());
+        var state = new BitWriter();
+        state.WriteVarUInt(0);
+        state.WriteVarUInt(999);
+        state.WriteVarUInt(0);
+        state.WriteVarUInt(0);
+
+        NetMessageCodecTests.AssertRejected(() => client.ReceiveTickUpdate(2, state.ToArray(), events));
+
+        AssertThat(owner.JoinedCount).IsEqual(0);
     }
 
     [TestCase]
@@ -270,7 +293,7 @@ public class WorldEntryPointsTests
     private World HostWorld(WorldOrigin? origin = null, ILocalPlayerOwner? owner = null)
     {
         World world = CreateWorld(HostSetup(owner), origin);
-        _connection.Loopback = section => world.ReceiveEvents(section);
+        _connection.Loopback = section => world.ReceiveTickUpdate(0, ReadOnlyMemory<byte>.Empty, section);
         _connection.CommandLoopback = packet => world.ReceiveFromClient(HostPeer, packet);
         return world;
     }
@@ -325,10 +348,18 @@ public class WorldEntryPointsTests
         Tick(world);
     }
 
-    private byte[] RemoteSnapshot() =>
+    private WorldOrigin RemoteSnapshot()
+    {
+        RecordingClientsConnection.Sent snapshot =
+            _connection.Packets.Single(sent => sent.PeerId == RemotePeer && sent.Kind == SentKind.Snapshot);
+        return new WorldOrigin.FromSnapshot(snapshot.Tick, snapshot.Body);
+    }
+
+    // The remote peer's tick update of its join tick carries only events: the snapshot already is the state
+    private byte[] RemoteJoinEvents() =>
         _connection.Packets
-            .Single(sent => sent.PeerId == RemotePeer && sent.Kind == SentKind.Snapshot)
-            .Body;
+            .Single(sent => sent.PeerId == RemotePeer && sent.Kind == SentKind.Events)
+            .Events;
 
     private static World InTree(World world)
     {

@@ -23,8 +23,8 @@ using static NeonWarfare.Scenes.Worlds.Features.Chat.ChatPresentation;
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Tick;
 
 // A host through the real composition root: the fake transport delivers the host's own packets to its own
-// EventDispatcher, as Game does, so the host's chat is filled the way a remote client's is. The state packets are
-// covered by TickStateReplicationTests
+// EventDispatcher, as Game does, so the host's chat is filled the way a remote client's is. The content of the state
+// section is covered by TickStateReplicationTests
 [TestSuite]
 public class ServerTickLoopTests
 {
@@ -96,7 +96,7 @@ public class ServerTickLoopTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void RunTick_SendsEveryPeerAnEventsPacket_HostIncluded()
+    public void RunTick_SendsEveryPeerItsEvents_HostIncluded()
     {
         Build(new WorldServicesBuilder());
         Outbox().PublishToAll(Hello);
@@ -106,10 +106,54 @@ public class ServerTickLoopTests
         AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
         foreach (RecordingClientsConnection.Sent sent in EventPackets())
         {
-            IReadOnlyList<object> events = _codec.ReadSection(sent.Body, EventTypes, out int read);
-            AssertThat(read).IsEqual(sent.Body.Length);
+            IReadOnlyList<object> events = _codec.ReadSection(sent.Events, EventTypes, out int read);
+            AssertThat(read).IsEqual(sent.Events.Length);
             AssertThat(events).ContainsExactly(Hello);
         }
+    }
+
+    // One tick update per peer: the state only to a remote peer, the events to whoever has them, the tick in each
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RunTick_TickUpdateCarriesTheStateAndTheEventsOfThePeer()
+    {
+        Build(new WorldServicesBuilder());
+
+        Outbox().PublishToAll(Hello);
+        Loop().RunTick();
+        AssertThat(Sections()).ContainsExactlyInAnyOrder(
+            (HostPeer, SentKind.Events, 1L), (AlicePeer, SentKind.State | SentKind.Events, 1L));
+        _clientsConnection.Packets.Clear();
+
+        Outbox().PublishToAll(Hello);
+        Loop().RunTick();
+        AssertThat(Sections()).ContainsExactlyInAnyOrder(
+            (HostPeer, SentKind.Events, 2L), (AlicePeer, SentKind.Events, 2L));
+        _clientsConnection.Packets.Clear();
+
+        Players().PlayerByUid[AliceUid].Nick = "Renamed";
+        Loop().RunTick();
+        AssertThat(Sections()).ContainsExactly((AlicePeer, SentKind.State, 3L));
+    }
+
+    // The baselines have moved at the state write: a remote peer that misses the state would drift silently
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RunTick_StepAfterTheStateWriteThrows_PeersJoinedBeforeStillGetTheState_TheExceptionPropagates()
+    {
+        const int bobPeer = 3;
+        Build(new WorldServicesBuilder());
+        Loop().RunTick();
+        _clientsConnection.Packets.Clear();
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(bobPeer);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, BobUid, "Bob", Colors.White);
+        _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(bobPeer, _codec.Encode(join));
+        _clientsConnection.ThrowingKind = SentKind.Snapshot;
+
+        AssertThrown(() => Loop().RunTick()).IsInstanceOf<InvalidOperationException>();
+
+        AssertThat(_clientsConnection.Packets.Where(sent => sent.PeerId == AlicePeer).Select(sent => sent.Kind))
+            .ContainsExactly(SentKind.State | SentKind.Events);
     }
 
     [TestCase]
@@ -142,11 +186,10 @@ public class ServerTickLoopTests
     // The failing peer is the remote one, so the host's chat shows whether the other peer still got its packet
     [TestCase]
     [RequireGodotRuntime]
-    public void RunTick_FailedEventsSend_DisconnectsOnlyThatPeer()
+    public void RunTick_FailedSend_DisconnectsOnlyThatPeer()
     {
         Build(new WorldServicesBuilder());
         _clientsConnection.FailingPeer = AlicePeer;
-        _clientsConnection.FailingKind = SentKind.Events;
         Outbox().PublishToAll(Hello);
 
         Loop().RunTick();
@@ -189,7 +232,7 @@ public class ServerTickLoopTests
     // Displaced by a join of this tick, the old peer was joined at its start, yet gets none of its state
     [TestCase]
     [RequireGodotRuntime]
-    public void RunTick_PeerDisplacedInTheTick_GetsNoStatePacket()
+    public void RunTick_PeerDisplacedInTheTick_GetsNoState()
     {
         const int bobPeer = 3;
         const int bobSecondPeer = 4;
@@ -201,7 +244,9 @@ public class ServerTickLoopTests
 
         Loop().RunTick();
 
-        AssertThat(_clientsConnection.Packets.Where(sent => sent.Kind == SentKind.State).Select(sent => sent.PeerId))
+        AssertThat(_clientsConnection.Packets
+                .Where(sent => sent.Kind.HasFlag(SentKind.State))
+                .Select(sent => sent.PeerId))
             .ContainsExactly(AlicePeer);
         AssertThat(_clientsConnection.Packets.Where(sent => sent.Kind == SentKind.Snapshot).Select(sent => sent.PeerId))
             .ContainsExactly(bobSecondPeer);
@@ -262,7 +307,10 @@ public class ServerTickLoopTests
     private PlayersModel Players() => _provider.GetRequiredService<PlayerQuery>().PlayersModel;
 
     private IEnumerable<RecordingClientsConnection.Sent> EventPackets() =>
-        _clientsConnection.Packets.Where(sent => sent.Kind == SentKind.Events);
+        _clientsConnection.Packets.Where(sent => sent.Kind.HasFlag(SentKind.Events));
+
+    private List<(int, SentKind, long)> Sections() =>
+        _clientsConnection.Packets.Select(sent => (sent.PeerId, sent.Kind, sent.Tick)).ToList();
 
     private ServerTickLoop Loop() => _provider.GetRequiredService<ServerTickLoop>();
 
