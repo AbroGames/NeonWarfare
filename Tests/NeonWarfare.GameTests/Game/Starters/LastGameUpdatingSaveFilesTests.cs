@@ -1,9 +1,9 @@
 using GdUnit4;
 using NeonWarfare.GameTests.Worlds.Fixtures;
-using NeonWarfare.Scenes.Game;
+using NeonWarfare.Scenes.Game.Starters;
 using static GdUnit4.Assertions;
 
-namespace NeonWarfare.GameTests.Game;
+namespace NeonWarfare.GameTests.Game.Starters;
 
 // In the engine: outside it the logging of a failed last game update crashes the test host
 [TestSuite]

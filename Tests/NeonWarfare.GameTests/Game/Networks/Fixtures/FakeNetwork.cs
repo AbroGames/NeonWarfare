@@ -1,6 +1,6 @@
-using NeonWarfare.Scenes.Game;
+using NeonWarfare.Scenes.Game.Networks;
 
-namespace NeonWarfare.GameTests.Game.Fixtures;
+namespace NeonWarfare.GameTests.Game.Networks.Fixtures;
 
 /// <summary>
 /// Plays ENet's part: records what is sent and disconnected, raises the connection events and the packets on demand.

@@ -4,7 +4,7 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 
-namespace NeonWarfare.Scenes.Game.Transport;
+namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
 /// The remote peers of a server World. The server is opened only once its World is built, so nothing reaches a

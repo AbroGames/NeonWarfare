@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Humanizer;
+using NeonWarfare.Scenes.Game.Networks;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 

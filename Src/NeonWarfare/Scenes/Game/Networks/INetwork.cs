@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.Game;
+namespace NeonWarfare.Scenes.Game.Networks;
 
 /// <summary>
 /// What the transports use of <see cref="Network"/>.

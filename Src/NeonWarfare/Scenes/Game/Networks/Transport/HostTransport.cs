@@ -6,7 +6,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
-namespace NeonWarfare.Scenes.Game.Transport;
+namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
 /// The host is the server and a client in one process: its own peer is the server's, and its packets are looped

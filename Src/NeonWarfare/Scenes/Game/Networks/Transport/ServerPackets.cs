@@ -3,7 +3,7 @@ using System.Buffers;
 using Humanizer;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
-namespace NeonWarfare.Scenes.Game.Transport;
+namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
 /// The layout of a server packet: the <see cref="ServerPacketKind"/> byte, then the body the World wrote. The body of
