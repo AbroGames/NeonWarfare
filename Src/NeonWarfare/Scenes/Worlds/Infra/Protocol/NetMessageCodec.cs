@@ -7,7 +7,6 @@ using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
 using NeonWarfare.Scripts.GlobalServices;
-using RepliCAT;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
@@ -38,16 +37,12 @@ public sealed class NetMessageCodec
             new IFormatterResolver[] { StandardResolver.Instance }))
         .WithSecurity(MessagePackSecurity.UntrustedData);
 
-    public ulong ProtocolHash { get; }
-
     /// <summary>Every type the codec can read or write.</summary>
     public IReadOnlyList<Type> MappedTypes => _mapping.Types;
 
-    /// <param name="entityKinds">The <see cref="Entities.EntityCatalog.Descriptors"/>.</param>
-    public NetMessageCodec(TypesMappingService mapping, IReadOnlyList<string> entityKinds)
+    public NetMessageCodec(TypesMappingService mapping)
     {
         _mapping = mapping;
-        ProtocolHash = new ProtocolHasher(new Replicator(mapping)).Compute(mapping.Types, entityKinds);
     }
 
     public void Write(IBufferWriter<byte> output, object message)

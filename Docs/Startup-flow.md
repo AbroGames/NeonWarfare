@@ -88,7 +88,7 @@ the engine runs without a window (`DisplayServer.GetName()` is `headless`).
 `MainSceneService` creates the `Game` scene, puts it into `MainSceneContainer` and hands it a **game starter** — an
 object that knows how to bring this session up. `Game.Init(starter)` first creates `GameProtocol` — what the
 session needs before any World exists: `EntityCatalog` (from `WorldPackedScenes` and the type mapping),
-`NetMessageCodec` with the protocol hash, the RepliCAT `Replicator` — and the `WorldAssembler` over it, then calls
+`NetMessageCodec`, the `ProtocolHash`, the RepliCAT `Replicator` — and the `WorldAssembler` over it, then calls
 `starter.Start(game)`. Each starter is one top-to-bottom script over `Game`'s methods, one set per mode, so no step
 can come too early.
 

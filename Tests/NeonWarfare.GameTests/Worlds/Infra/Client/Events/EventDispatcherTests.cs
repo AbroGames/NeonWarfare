@@ -25,7 +25,7 @@ public class EventDispatcherTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
     }
 
     // Built through the world container: the composition root registering the handlers is covered too
@@ -121,7 +121,7 @@ public class EventDispatcherTests
     private WorldDependencies Dependencies()
     {
         WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
-        return new(TimeProvider.System, _codec,
+        return new(TimeProvider.System, _codec, TestProtocol.Hash,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());

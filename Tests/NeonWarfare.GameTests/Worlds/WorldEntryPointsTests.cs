@@ -42,7 +42,7 @@ public class WorldEntryPointsTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _saveFiles = new RecordingSaveFiles();
     }
@@ -111,7 +111,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void InitPreReady_FromSave_HasThePlayersOfTheSave()
     {
-        byte[] save = HostSave(_codec);
+        byte[] save = HostSave(TestProtocol.Hash);
 
         World loaded = CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save, SaveFileName));
 
@@ -123,7 +123,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void InitPreReady_FromSaveOnAHost_TheHostJoinsIt()
     {
-        World world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName));
+        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash), SaveFileName));
 
         JoinHost(world);
 
@@ -136,7 +136,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void InitPreReady_FromSaveOfAnotherProtocol_Throws()
     {
-        byte[] save = HostSave(new NetMessageCodec(NetMessageCodecTests.CreateMapping(), ["Another kind"]));
+        byte[] save = HostSave(new ProtocolHash(TestProtocol.Hash.Value + 1));
         World world = AutoFree(new World())!;
 
         AssertThrown(() => world.InitPreReady(DedicatedSetup(), Dependencies(),
@@ -229,7 +229,7 @@ public class WorldEntryPointsTests
     public void LocalPlayer_OnAHostFromSave_IsOnlineOnlyAfterItsJoin()
     {
         var owner = new RecordingLocalPlayerOwner();
-        World world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName), owner);
+        World world = HostWorld(new WorldOrigin.FromSave(HostSave(TestProtocol.Hash), SaveFileName), owner);
         var localPlayer = world.Get<LocalPlayerPresentation>();
 
         AssertThrown(() => { _ = localPlayer.Player; }).IsInstanceOf<InvalidOperationException>();
@@ -249,7 +249,7 @@ public class WorldEntryPointsTests
         var invalid = new LocalPlayer(HostUid, "", Colors.White);
 
         world.StartHandshake(HostPeer);
-        ((IServerConnection) _connection).Send(_codec.Encode(invalid.ToJoinRequest(_codec.ProtocolHash)));
+        ((IServerConnection) _connection).Send(_codec.Encode(invalid.ToJoinRequest(TestProtocol.Hash)));
         Tick(world);
 
         AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Kind)))
@@ -338,21 +338,21 @@ public class WorldEntryPointsTests
 
     private WorldSetup.Dedicated DedicatedSetup() => TestWorldSetups.Dedicated(saveFiles: _saveFiles);
 
-    private WorldDependencies Dependencies(NetMessageCodec? codec = null)
+    private WorldDependencies Dependencies(ProtocolHash? hash = null)
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new WorldDependencies(
-            new ManualTimeProvider(Now), codec ?? _codec,
+            new ManualTimeProvider(Now), _codec, hash ?? TestProtocol.Hash,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), _connection, _connection);
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way
-    private byte[] HostSave(NetMessageCodec codec)
+    private byte[] HostSave(ProtocolHash hash)
     {
         Node root = AutoFree(new Node())!;
         using ServiceProvider host = new WorldServicesBuilder()
-            .Build(HostSetup(), Dependencies(codec), new WorldRoot(root));
+            .Build(HostSetup(), Dependencies(hash), new WorldRoot(root));
         host.GetRequiredService<NewWorldSimulationFacade>().Create();
         host.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(HostUid).Nick = "Host";
         host.GetRequiredService<ServerTickLoop>().RunTick();
@@ -363,7 +363,7 @@ public class WorldEntryPointsTests
     private void JoinHost(World world)
     {
         world.StartHandshake(HostPeer);
-        ((IServerConnection) _connection).Send(_codec.Encode(HostPlayer.ToJoinRequest(_codec.ProtocolHash)));
+        ((IServerConnection) _connection).Send(_codec.Encode(HostPlayer.ToJoinRequest(TestProtocol.Hash)));
         Tick(world);
     }
 
@@ -371,7 +371,7 @@ public class WorldEntryPointsTests
     private void JoinRemote(World world)
     {
         world.StartHandshake(RemotePeer);
-        world.ReceiveFromClient(RemotePeer, _codec.Encode(RemotePlayer.ToJoinRequest(_codec.ProtocolHash)));
+        world.ReceiveFromClient(RemotePeer, _codec.Encode(RemotePlayer.ToJoinRequest(TestProtocol.Hash)));
         Tick(world);
     }
 

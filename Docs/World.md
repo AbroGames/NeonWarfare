@@ -27,7 +27,7 @@ on a remote client. A World is never empty: a remote client creates it only from
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
 `WorldDependencies` is what `Game` hands to every World, none of it `null`: `TimeProvider`, `NetMessageCodec`,
-`Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog` and both connections.
+`ProtocolHash`, `Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog` and both connections.
 `WorldSetup` adds the ports of its configuration, see [Layers](#layers); the ones the owning process supplies are in
 `Ports/`. With the Simulation the World also adds `ServerTickNode`, with the Server layer `SaveOnExitNode`.
 
@@ -104,7 +104,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
-| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
+| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher` and its `ProtocolHash`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
 | `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step; `ServerTickClock` — the tick counter |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>`; `ICommandHandler` — what every player handler interface extends |

@@ -37,7 +37,8 @@ public class ClientTransportTests
         _snapshots = [];
         _onSnapshot = RecordSnapshot;
         _transport = new ClientTransport(
-            _network, _worlds.Codec, TestWorldSetups.LocalPlayer(), _owner, snapshot => _onSnapshot(snapshot));
+            _network, _worlds.Codec, TestProtocol.Hash, TestWorldSetups.LocalPlayer(), _owner,
+            snapshot => _onSnapshot(snapshot));
     }
 
     [TestCase]
@@ -49,7 +50,7 @@ public class ClientTransportTests
         FakeNetwork.Sent sent = _network.Packets.Single();
         AssertThat(sent.PeerId).IsEqual(ServerPeer);
         AssertThat(sent.Packet).ContainsExactly(
-            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer().ToJoinRequest(_worlds.Codec.ProtocolHash)));
+            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer().ToJoinRequest(TestProtocol.Hash)));
     }
 
     [TestCase]
@@ -124,7 +125,7 @@ public class ClientTransportTests
 
         _serverNetwork.Connect(OtherPeer);
         _serverNetwork.Receive(OtherPeer,
-            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer(OtherUid).ToJoinRequest(_worlds.Codec.ProtocolHash)));
+            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer(OtherUid).ToJoinRequest(TestProtocol.Hash)));
         TransportWorlds.Tick(_server);
 
         AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Uid))

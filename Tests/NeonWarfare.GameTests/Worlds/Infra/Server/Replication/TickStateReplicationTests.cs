@@ -55,7 +55,7 @@ public class TickStateReplicationTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _scenes = TestWorldScenes.Create();
         // The test kinds after the game's: the same catalog on both sides
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
@@ -651,8 +651,9 @@ public class TickStateReplicationTests
     }
 
     private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
-        new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
-            new ManualFrameProvider(), _scenes, _catalog, connection, connection);
+        new(new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
+            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
+            connection, connection);
 
     private ServiceProvider ClientOf(int peerId, out Node root)
     {
@@ -694,7 +695,7 @@ public class TickStateReplicationTests
     private void Join(int peerId, string uid, string nick)
     {
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
-        var join = new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, Colors.White);
         _server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(join));
     }
 

@@ -32,7 +32,7 @@ public class EventOutboxTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _peers = new PeerStateTable();
         _outbox = new EventOutbox(_codec, _peers);
         Join(Alice, AlicePeer);

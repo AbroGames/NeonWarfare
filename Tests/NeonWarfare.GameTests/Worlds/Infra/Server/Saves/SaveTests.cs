@@ -45,7 +45,7 @@ public class SaveTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _scenes = TestWorldScenes.Create();
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
             [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode),
@@ -117,7 +117,7 @@ public class SaveTests
     {
         Tick(_server);
         byte[] save = Saver().Write();
-        ulong foreign = _codec.ProtocolHash ^ 1;
+        ulong foreign = TestProtocol.Hash.Value ^ 1;
         BinaryPrimitives.WriteUInt64LittleEndian(save, foreign);
         ServiceProvider loaded = Build(TestWorldSetups.Dedicated(), new RecordingClientsConnection(), out _);
 
@@ -125,8 +125,8 @@ public class SaveTests
             () => loaded.GetRequiredService<SaveLoader>().Load(save));
 
         AssertThat(error.SaveHash).IsEqual(foreign);
-        AssertThat(error.ExpectedHash).IsEqual(_codec.ProtocolHash);
-        AssertThat(error.Message).Contains(foreign.ToString("X16")).Contains(_codec.ProtocolHash.ToString("X16"));
+        AssertThat(error.ExpectedHash).IsEqual(TestProtocol.Hash.Value);
+        AssertThat(error.Message).Contains(foreign.ToString("X16")).Contains(TestProtocol.Hash.Value.ToString("X16"));
         AssertThat(loaded.GetRequiredService<IEntityFinder>().GetAll<Node>()).IsEmpty();
     }
 
@@ -361,7 +361,7 @@ public class SaveTests
 
         loaded.GetRequiredService<PeerGatekeeper>().StartHandshake(BobPeer);
         loaded.GetRequiredService<CommandInbox>().EnqueueFromPeer(BobPeer,
-            _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, BobUid, "Bob", Colors.White)));
+            _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value, BobUid, "Bob", Colors.White)));
         Tick(loaded);
 
         var registry = bob.GetRequiredService<IEntityFinder>();
@@ -376,7 +376,7 @@ public class SaveTests
     {
         server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId,
-            _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White)));
+            _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, Colors.White)));
         server.GetRequiredService<CommandDispatcher>().ProcessAll();
     }
 
@@ -385,7 +385,7 @@ public class SaveTests
         root = new Node();
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(root);
         _roots.Add(root);
-        var dependencies = new WorldDependencies(new ManualTimeProvider(Now), _codec,
+        var dependencies = new WorldDependencies(new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
             connection, connection);
         ServiceProvider provider = new WorldServicesBuilder().Build(setup, dependencies, new WorldRoot(root));
@@ -428,7 +428,7 @@ public class SaveTests
     private BitWriter Header(long next, long tick)
     {
         var writer = new BitWriter();
-        writer.WriteBits(_codec.ProtocolHash, SaveWriter.HashBits);
+        writer.WriteBits(TestProtocol.Hash.Value, SaveWriter.HashBits);
         writer.WriteVarUInt((ulong) next);
         writer.WriteVarUInt((ulong) tick);
         return writer;
@@ -473,7 +473,7 @@ public class SaveTests
     private void Join(int peerId, string uid, string nick)
     {
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
-        var join = new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, Colors.White);
         _server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(join));
     }
 

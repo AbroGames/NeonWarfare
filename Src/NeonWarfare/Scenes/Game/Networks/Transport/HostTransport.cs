@@ -16,6 +16,7 @@ public sealed class HostTransport(
     World.IServerEndpoint server,
     World.IClientEndpoint client,
     NetMessageCodec codec,
+    ProtocolHash protocolHash,
     ILocalPlayerOwner owner,
     ServerTransport remote
     ) : IClientsConnection, IServerConnection
@@ -37,7 +38,7 @@ public sealed class HostTransport(
     public void SendJoinRequest(LocalPlayer localPlayer)
     {
         server.StartHandshake(LocalPeer);
-        ((IServerConnection) this).Send(codec.Encode(localPlayer.ToJoinRequest(codec.ProtocolHash)));
+        ((IServerConnection) this).Send(codec.Encode(localPlayer.ToJoinRequest(protocolHash)));
     }
 
     void IClientsConnection.SendState(int peerId, ReadOnlySpan<byte> body) => Remote(peerId).SendState(peerId, body);

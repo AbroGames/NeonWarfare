@@ -18,7 +18,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 /// one the joining peers get: a request made during the tick is served after its packets are written.
 /// </summary>
 [Server]
-public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, NetMessageCodec codec)
+public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, ProtocolHash protocolHash)
 {
     public const int HashBits = 64;
 
@@ -37,7 +37,7 @@ public class SaveWriter(StateReplicator stateReplicator, NetIdGenerator netIds, 
     public byte[] Write()
     {
         var writer = new BitWriter();
-        writer.WriteBits(codec.ProtocolHash, HashBits);
+        writer.WriteBits(protocolHash.Value, HashBits);
         writer.WriteVarUInt((ulong) netIds.NextValue);
         writer.WriteVarUInt((ulong) stateReplicator.LastSentTick);
         stateReplicator.WriteSave(writer);

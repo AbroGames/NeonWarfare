@@ -20,7 +20,7 @@ World; their layers and the World itself are in [World](World.md).
   `ClientTransport` is a remote client's connection: it has no World until the join snapshot, then routes into
   `World.IClientEndpoint`. The World hands `IClientsConnection` bodies only, one method per packet kind. The direction
   a configuration does not use is `NoConnection`. `GameProtocol` holds what the client needs before its World exists:
-  `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
+  `EntityCatalog`, `NetMessageCodec`, the `ProtocolHash` and the RepliCAT `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
   `HostTransport` hands it to its own World synchronously, inside the call. So the host's commands pass the same
   decoding and whitelist as a remote client's, and its event handlers run in the physics step, before `_Process`.
@@ -177,5 +177,5 @@ is its number.
 Commands and events — MessagePack, behind a 2-byte type id from `TypesMappingService` (`NetMessageCodec`); the
 codec reads untrusted data and only the types it is given. Models, snapshots and saves — RepliCAT. The protocol hash
 in `JoinRequestCommand` and in the save header covers the mapped types, their MessagePack keys, the RepliCAT schemas
-and the entity kinds (`ProtocolHasher`), so a peer or a save of another build is refused instead of read as
-garbage.
+and the entity kinds (`ProtocolHasher`, computed once by `GameProtocol`), so a peer or a save of another build is
+refused instead of read as garbage.

@@ -58,6 +58,7 @@ public class WorldServicesBuilder
         var services = new ServiceCollection();
         services.AddSingleton(dependencies.Time);
         services.AddSingleton(dependencies.Codec);
+        services.AddSingleton(dependencies.ProtocolHash);
         services.AddSingleton(dependencies.Replicator);
         services.AddSingleton(dependencies.Frames);
         services.AddSingleton(dependencies.Scenes);

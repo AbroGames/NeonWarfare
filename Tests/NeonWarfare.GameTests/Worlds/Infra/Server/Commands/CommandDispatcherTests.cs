@@ -40,7 +40,7 @@ public class CommandDispatcherTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _peers = new PeerStateTable();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
@@ -198,7 +198,8 @@ public class CommandDispatcherTests
         _calls.Clear();
 
         _inbox.EnqueueFromPeer(
-            AlicePeer, _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash + 1, AliceUid, AliceUid, Colors.Red)));
+            AlicePeer,
+            _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value + 1, AliceUid, AliceUid, Colors.Red)));
         Chat(AlicePeer, "still here");
         dispatcher.ProcessAll();
 
@@ -236,7 +237,7 @@ public class CommandDispatcherTests
     private CommandDispatcher Dispatcher(params ICommandHandler[] handlers)
     {
         var registry = new CommandHandlerRegistry(handlers);
-        _inbox = new CommandInbox(_codec, _gatekeeper, registry);
+        _inbox = new CommandInbox(_codec, TestProtocol.Hash, _gatekeeper, registry);
         var sessions = new PeerSessions(new FakeSessionHandler(_calls, _peers), _peers, _gatekeeper);
         return new CommandDispatcher(_inbox, registry, sessions, _peers);
     }
@@ -249,7 +250,7 @@ public class CommandDispatcherTests
 
     private void Join(int peerId, string uid) =>
         _inbox.EnqueueFromPeer(
-            peerId, _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, uid, uid, Colors.Red)));
+            peerId, _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value, uid, uid, Colors.Red)));
 
     private void AssertBound(int peerId, string uid)
     {

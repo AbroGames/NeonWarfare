@@ -49,7 +49,7 @@ public class SaveCommandTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(_root);
@@ -59,7 +59,7 @@ public class SaveCommandTests
         _server = new WorldServicesBuilder().Build(
             TestWorldSetups.Host(saveFiles: _files),
             new WorldDependencies(
-                new ManualTimeProvider(Now), _codec,
+                new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
                 new Replicator(NetMessageCodecTests.CreateMapping()), _frames, _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _connection, _connection),
             new WorldRoot(_root));

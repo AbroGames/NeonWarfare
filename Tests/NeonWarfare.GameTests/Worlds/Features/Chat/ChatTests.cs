@@ -42,13 +42,13 @@ public class ChatTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _provider = new WorldServicesBuilder().Build(
             TestWorldSetups.Dedicated(),
             new WorldDependencies(
-                new ManualTimeProvider(Now), _codec,
+                new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection(), new RecordingClientsConnection()),

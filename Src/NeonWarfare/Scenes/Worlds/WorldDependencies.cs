@@ -10,6 +10,7 @@ namespace NeonWarfare.Scenes.Worlds;
 public record WorldDependencies(
     TimeProvider Time,
     NetMessageCodec Codec,
+    ProtocolHash ProtocolHash,
     Replicator Replicator,
     FrameProvider Frames,
     WorldPackedScenes Scenes,

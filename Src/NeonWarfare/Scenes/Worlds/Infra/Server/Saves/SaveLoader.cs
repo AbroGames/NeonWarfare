@@ -19,7 +19,7 @@ public class SaveLoader(
     EntityRecordReader records,
     NetIdGenerator netIds,
     ServerTickClock clock,
-    NetMessageCodec codec)
+    ProtocolHash protocolHash)
 {
     private const string TooShortError = "The save is {0} bytes long, shorter than its protocol hash.";
     private const string NetIdOutOfRangeError = "The save has {0}, but its next NetId is {1}.";
@@ -46,9 +46,9 @@ public class SaveLoader(
         {
             var reader = new BitReader(save.Span);
             ulong hash = reader.ReadBits(SaveWriter.HashBits);
-            if (hash != codec.ProtocolHash)
+            if (hash != protocolHash.Value)
             {
-                throw new SaveVersionMismatchException(hash, codec.ProtocolHash);
+                throw new SaveVersionMismatchException(hash, protocolHash.Value);
             }
 
             next = (long) reader.ReadVarUInt();

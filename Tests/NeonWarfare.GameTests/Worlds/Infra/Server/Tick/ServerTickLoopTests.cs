@@ -45,7 +45,7 @@ public class ServerTickLoopTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
@@ -207,7 +207,7 @@ public class ServerTickLoopTests
         Build(new WorldServicesBuilder());
         JoinDirectly(bobUid, "Bob", bobPeer);
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(bobSecondPeer);
-        var join = new JoinRequestCommand(_codec.ProtocolHash, bobUid, "Bob", Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, bobUid, "Bob", Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(bobSecondPeer, _codec.Encode(join));
 
         Loop().RunTick();
@@ -230,7 +230,7 @@ public class ServerTickLoopTests
         var gatekeeper = _provider.GetRequiredService<PeerGatekeeper>();
         gatekeeper.StartHandshake(latePeer);
         gatekeeper.StartHandshake(joiningPeer);
-        var join = new JoinRequestCommand(_codec.ProtocolHash, "BobBobBobB-Bbbbbbbbbb", "Bob", Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, "BobBobBobB-Bbbbbbbbbb", "Bob", Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(joiningPeer, _codec.Encode(join));
 
         _time.Now += PeerGatekeeper.HandshakeTimeout;
@@ -245,7 +245,8 @@ public class ServerTickLoopTests
         _provider = builder.Build(
             TestWorldSetups.Host(),
             new WorldDependencies(
-                _time, _codec, new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
+                _time, _codec, TestProtocol.Hash, new Replicator(NetMessageCodecTests.CreateMapping()),
+                new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 _clientsConnection, _clientsConnection),
             new WorldRoot(_root));

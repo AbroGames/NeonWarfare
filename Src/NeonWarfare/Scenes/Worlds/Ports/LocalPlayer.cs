@@ -11,5 +11,5 @@ namespace NeonWarfare.Scenes.Worlds.Ports;
 /// they are read from <c>PlayerModel</c>, not from here.</param>
 public record LocalPlayer(string Uid, string Nick, Color Color)
 {
-    public JoinRequestCommand ToJoinRequest(ulong protocolHash) => new(protocolHash, Uid, Nick, Color);
+    public JoinRequestCommand ToJoinRequest(ProtocolHash protocolHash) => new(protocolHash.Value, Uid, Nick, Color);
 }

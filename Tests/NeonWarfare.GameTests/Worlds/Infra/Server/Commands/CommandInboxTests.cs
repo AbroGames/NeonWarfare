@@ -27,10 +27,11 @@ public class CommandInboxTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _clientsConnection = new RecordingClientsConnection();
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), new PeerStateTable());
-        _inbox = new CommandInbox(_codec, _gatekeeper, new CommandHandlerRegistry([new ChatHandler()]));
+        _inbox = new CommandInbox(
+            _codec, TestProtocol.Hash, _gatekeeper, new CommandHandlerRegistry([new ChatHandler()]));
     }
 
     [TestCase]
@@ -72,9 +73,9 @@ public class CommandInboxTests
     [RequireGodotRuntime]
     public void EnqueueFromPeer_JoinWithAnotherProtocolHash_IsRejectedAndNotEnqueued()
     {
-        var join = new JoinRequestCommand(_codec.ProtocolHash, "alice", "Alice", Colors.Red);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, "alice", "Alice", Colors.Red);
 
-        _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(join with { ProtocolHash = _codec.ProtocolHash + 1 }));
+        _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(join with { ProtocolHash = TestProtocol.Hash.Value + 1 }));
         _inbox.EnqueueFromPeer(BobPeer, _codec.Encode(join));
 
         AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(BobPeer, join));

@@ -15,7 +15,8 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 /// and never reaches the queue; whatever depends on the world state is left to <see cref="CommandDispatcher"/>.
 /// </summary>
 [Server]
-public class CommandInbox(NetMessageCodec codec, PeerGatekeeper gatekeeper, CommandHandlerRegistry handlers)
+public class CommandInbox(
+    NetMessageCodec codec, ProtocolHash protocolHash, PeerGatekeeper gatekeeper, CommandHandlerRegistry handlers)
 {
     private const string RejectedPacketLog = "Packet from peer {peerId} dropped: {reason}";
     private const string TrailingBytesReason = "{0} of {1} bytes read, a packet carries one command";
@@ -53,9 +54,9 @@ public class CommandInbox(NetMessageCodec codec, PeerGatekeeper gatekeeper, Comm
 
         // A protocol check, not a game rule, so it is not the session handler's: a client of another build is rejected
         // before its join can reach the world
-        if (command is JoinRequestCommand join && join.ProtocolHash != codec.ProtocolHash)
+        if (command is JoinRequestCommand join && join.ProtocolHash != protocolHash.Value)
         {
-            _log.Warning(ProtocolMismatchLog, peerId, join.ProtocolHash, codec.ProtocolHash);
+            _log.Warning(ProtocolMismatchLog, peerId, join.ProtocolHash, protocolHash.Value);
             gatekeeper.Reject(peerId, JoinRejectReason.ProtocolMismatch);
             return;
         }

@@ -30,7 +30,7 @@ public class PeerSessionsTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _peers = new PeerStateTable();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
@@ -263,7 +263,7 @@ public class PeerSessionsTests
 
     private void Join(int peerId, string uid) => _sessions.Join(peerId, Command(uid));
 
-    private JoinRequestCommand Command(string uid) => new(_codec.ProtocolHash, uid, uid, Colors.Red);
+    private JoinRequestCommand Command(string uid) => new(TestProtocol.Hash.Value, uid, uid, Colors.Red);
 
     private void AssertJoined(int peerId, string uid)
     {
