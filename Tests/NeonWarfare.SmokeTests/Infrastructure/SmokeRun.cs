@@ -32,7 +32,7 @@ public static class SmokeRun
     /// </summary>
     private const int TailLineCount = 15;
 
-    /// <inheritdoc cref="Run(IReadOnlyList{GameLaunch}, Departure?)"/>
+    /// <inheritdoc cref="Run(IReadOnlyList{GameLaunch}, Departure?, UserDataDirectories?)"/>
     public static void Run(params GameLaunch[] launches) => Run(launches, departure: null);
 
     /// <summary>
@@ -43,14 +43,18 @@ public static class SmokeRun
     /// With a <paramref name="departure"/>, once everything has lingered the leaver is stopped alone,
     /// the witness must print its milestone, and the rest linger once more before they are stopped too —
     /// in launch order, so otherwise it is always the server that goes first.
+    ///
+    /// Without <paramref name="userData"/> every process gets a fresh user:// that is gone after the run.
     /// </summary>
-    public static void Run(IReadOnlyList<GameLaunch> launches, Departure? departure)
+    public static void Run(
+        IReadOnlyList<GameLaunch> launches, Departure? departure = null, UserDataDirectories? userData = null)
     {
+        UserDataDirectories? ownUserData = userData is null ? new UserDataDirectories() : null;
         List<GameProcess> processes = [];
         List<(GameProcess Process, string Problem)> lifecycleProblems = [];
         try
         {
-            bool running = Launch(launches, processes, lifecycleProblems)
+            bool running = Launch(launches, userData ?? ownUserData!, processes, lifecycleProblems)
                 && LingerAndCheck(processes, lifecycleProblems);
 
             if (running && departure is not null)
@@ -65,6 +69,11 @@ public static class SmokeRun
                 AddProblem(lifecycleProblems, process, process.Stop());
             }
 
+            if (running)
+            {
+                CheckExitMilestones(launches, processes, lifecycleProblems);
+            }
+
             Report(processes, lifecycleProblems);
         }
         finally
@@ -73,6 +82,7 @@ public static class SmokeRun
             {
                 process.Dispose();
             }
+            ownUserData?.Dispose();
         }
     }
 
@@ -81,12 +91,13 @@ public static class SmokeRun
     /// </summary>
     private static bool Launch(
         IReadOnlyList<GameLaunch> launches,
+        UserDataDirectories userData,
         List<GameProcess> processes,
         List<(GameProcess Process, string Problem)> problems)
     {
         foreach (GameLaunch launch in launches)
         {
-            GameProcess process = GameProcess.Start(launch.Name, launch.Arguments);
+            GameProcess process = GameProcess.Start(launch.Name, launch.Arguments, userData.Of(launch.Name));
             processes.Add(process);
 
             string? problem = ReachMilestones(process, launch.Milestones, StartupTimeout);
@@ -134,6 +145,26 @@ public static class SmokeRun
         }
 
         LingerAndCheck(processes.Where(process => process != leaver), problems);
+    }
+
+    /// <summary>
+    /// Runs on stopped processes: the Serilog sink is asynchronous, so a line printed on the way out arrives
+    /// only as the process shuts down.
+    /// </summary>
+    private static void CheckExitMilestones(
+        IReadOnlyList<GameLaunch> launches,
+        IReadOnlyList<GameProcess> processes,
+        List<(GameProcess Process, string Problem)> problems)
+    {
+        for (int i = 0; i < launches.Count; i++)
+        {
+            foreach (string milestone in launches[i].ExitMilestones)
+            {
+                if (processes[i].HasPrinted(milestone)) continue;
+
+                problems.Add((processes[i], $"did not print '{milestone}' by the time it was stopped"));
+            }
+        }
     }
 
     /// <summary>

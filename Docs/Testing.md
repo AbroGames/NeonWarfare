@@ -150,4 +150,5 @@ separate project on a separate framework — [Game testing](Game-testing.md).
 
 Launching the game as an external process and reading its output is a different thing and does exist —
 [Smoke testing](Smoke-testing.md), a separate project that covers startup in several modes, including a
-server with two clients. Anything beyond starting up stays manual, see [Quick start](Quick-start.md).
+server with two clients, and a world saved on exit and loaded by the next start. Anything beyond that stays
+manual, see [Quick start](Quick-start.md).

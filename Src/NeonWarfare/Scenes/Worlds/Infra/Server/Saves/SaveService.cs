@@ -94,6 +94,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickClock clock, ISaveFile
                 return;
             }
             saveFiles.SaveToDisk(saveWriter.Write(), SaveFileName);
+            _log.Information("Autosaved to '{saveFileName}'", SaveFileName);
         }
         catch (Exception e)
         {

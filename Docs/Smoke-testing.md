@@ -14,7 +14,7 @@ dotnet test Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csproj
 ```
 
 Needs `GODOT_EXE` (see [Quick start](Quick-start.md)). A fixture builds the game project first, since
-Godot runs already compiled assemblies. The suite takes about 25 s. Not run in CI, only compiled.
+Godot runs already compiled assemblies. The suite takes about 40 s. Not run in CI, only compiled.
 
 ## Scenarios
 
@@ -24,6 +24,8 @@ Godot runs already compiled assemblies. The suite takes about 25 s. Not run in C
 | `Client_StartsSingleplayerGame` | one client with `--auto-start` |
 | `Server_AcceptsTwoClients` | `--server` plus two `--auto-connect` clients |
 | `Client_QuitsFromMultiplayerGame` | `--server` plus two `--auto-connect` clients, `client-1` quits first |
+| `Server_LoadsItsAutosaveAfterRestart` | two runs of `--server --savefile` plus an `--auto-connect` client, the second loads the save of the first |
+| `Client_LoadsItsSingleplayerAutosaveAfterRestart` | two runs of `--auto-start --auto-start-savefile`, the second loads the save of the first |
 
 `SmokeRun` flow:
 
@@ -35,6 +37,7 @@ Godot runs already compiled assemblies. The suite takes about 25 s. Not run in C
    live world on exit and the server sees a player leave.
 4. The rest are stopped in launch order — so without a `Departure` the server always goes first and
    clients quit from the menu.
+5. Each process must have printed its `ExitMilestones` (the autosave, say) by the time it is stopped.
 
 Multiplayer scenarios use a free UDP port instead of the default `25566`, to avoid clashing with a
 server started by hand.
@@ -60,5 +63,6 @@ no `SIGTERM`: processes are killed and their exit is not checked (Windows not ve
 ## Known gotchas
 
 * Every process gets a fresh `user://` in the temp directory (via `XDG_DATA_HOME` / `APPDATA`; macOS uses
-  the real one). So only first-run default settings are exercised.
+  the real one). So only first-run default settings are exercised. Runs sharing one `UserDataDirectories` give
+  a process of the same name the same `user://` — that is how a restart scenario finds its save.
 * A headless client is not a mode players use; window-dependent code may behave differently.

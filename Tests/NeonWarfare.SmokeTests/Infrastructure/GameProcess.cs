@@ -25,16 +25,14 @@ public sealed partial class GameProcess : IDisposable
     private const int Sigterm = 15;
 
     private readonly Process _process;
-    private readonly string _userDataPath;
     private readonly List<string> _output = [];
     private readonly Lock _outputLock = new();
 
 
-    private GameProcess(string name, Process process, string userDataPath)
+    private GameProcess(string name, Process process)
     {
         Name = name;
         _process = process;
-        _userDataPath = userDataPath;
     }
 
     /// <summary>
@@ -71,9 +69,10 @@ public sealed partial class GameProcess : IDisposable
 
     /// <summary>
     /// Launches the engine against the repository. <paramref name="arguments"/> are the game flags —
-    /// --path and --headless are added here, since every scenario needs them.
+    /// --path and --headless are added here, since every scenario needs them. <paramref name="userDataPath"/>
+    /// is the directory Godot puts its user:// under.
     /// </summary>
-    public static GameProcess Start(string name, IEnumerable<string> arguments)
+    public static GameProcess Start(string name, IEnumerable<string> arguments, string userDataPath)
     {
         ProcessStartInfo startInfo = new()
         {
@@ -95,10 +94,10 @@ public sealed partial class GameProcess : IDisposable
             startInfo.ArgumentList.Add(argument);
         }
 
-        string userDataPath = IsolateUserData(startInfo, name);
+        IsolateUserData(startInfo, userDataPath);
 
         Process process = new() { StartInfo = startInfo };
-        GameProcess gameProcess = new(name, process, userDataPath);
+        GameProcess gameProcess = new(name, process);
 
         process.OutputDataReceived += (_, args) => gameProcess.Collect(args.Data);
         process.ErrorDataReceived += (_, args) => gameProcess.Collect(args.Data);
@@ -180,22 +179,16 @@ public sealed partial class GameProcess : IDisposable
         finally
         {
             _process.Dispose();
-            DeleteUserData();
         }
     }
 
     /// <summary>
-    /// Points user:// of the launched process at a fresh temporary directory, so the developer's own
-    /// settings and saves neither affect the result nor get polluted by it, and processes of one scenario
-    /// do not share settings, saves or godot.log. Godot derives user:// from XDG_DATA_HOME on Linux
-    /// (checked) and from APPDATA on Windows (not verified). On macOS it hangs off HOME, which is too
-    /// broad to override, so there the real user:// is still used.
+    /// Godot derives user:// from XDG_DATA_HOME on Linux (checked) and from APPDATA on Windows (not
+    /// verified). On macOS it hangs off HOME, which is too broad to override, so there the real user:// is
+    /// still used.
     /// </summary>
-    private static string IsolateUserData(ProcessStartInfo startInfo, string name)
+    private static void IsolateUserData(ProcessStartInfo startInfo, string path)
     {
-        string path = Path.Combine(Path.GetTempPath(), "NeonWarfare.SmokeTests", $"{name}-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(path);
-
         if (OperatingSystem.IsLinux())
         {
             startInfo.Environment["XDG_DATA_HOME"] = path;
@@ -203,24 +196,6 @@ public sealed partial class GameProcess : IDisposable
         else if (OperatingSystem.IsWindows())
         {
             startInfo.Environment["APPDATA"] = path;
-        }
-
-        return path;
-    }
-
-    private void DeleteUserData()
-    {
-        try
-        {
-            Directory.Delete(_userDataPath, recursive: true);
-        }
-        catch (IOException)
-        {
-            // Left behind in the temp directory — harmless, and not worth failing a test over.
-        }
-        catch (UnauthorizedAccessException)
-        {
-            // Same as above.
         }
     }
 
@@ -245,7 +220,10 @@ public sealed partial class GameProcess : IDisposable
     /// </summary>
     private void DrainOutput() => _process.WaitForExit();
 
-    private bool HasPrinted(string fragment)
+    /// <summary>
+    /// Looks only at the lines received so far: the whole output only once <see cref="Stop"/> has returned.
+    /// </summary>
+    public bool HasPrinted(string fragment)
     {
         lock (_outputLock)
         {

@@ -1,10 +1,13 @@
 using System;
+using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using RepliCAT.Bits;
+using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 
@@ -17,8 +20,11 @@ public class SaveLoader(
     EntityRecordReader records,
     NetIdGenerator netIds,
     ServerTickClock clock,
-    ProtocolHash protocolHash)
+    ProtocolHash protocolHash,
+    WorldSaveFile saveFile)
 {
+    private readonly ILogger _log = LogFactory.GetForStatic<SaveLoader>();
+
     /// <summary>
     /// Not atomic. On an error the entities before the broken record stay spawned, so the World must be freed.
     /// A save of another version spawns nothing.
@@ -66,5 +72,6 @@ public class SaveLoader(
 
         netIds.Restore(next);
         clock.Restore(tick);
+        _log.Information("Loaded the save '{saveFileName}' at tick {tick}", saveFile.FileName, tick);
     }
 }
