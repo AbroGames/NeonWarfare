@@ -4,7 +4,7 @@ This file gives Claude Code (claude.ai/code) instructions for working with the c
 repository.
 
 It is deliberately short: only **how to build and verify**. All documentation lives in `README.md`.
-It is not duplicated here.
+It is not duplicated here, except the rules in [Comments](#comments).
 
 ## Required reading
 
@@ -52,6 +52,25 @@ may be added as needed. Work with them through the `task` skill.
   even when the work is finished and verified. Report what changed and stop.
 - The user can run the game and read the Godot log. When verification
   requires launching Godot, ask the user to run it and paste the output.
+
+## Comments
+
+Duplicated from `Docs/Code-style.md#comments` on purpose; a change there is made here too.
+
+No comment is the default. Write one only when a reader would otherwise get it wrong: a hidden constraint, a
+non-obvious *why*, a workaround. If the code and names already say it — no comment.
+
+Write comments as if the current code was always this way. No "X instead of Y, because…" — the replaced version is
+history, not context.
+
+Write plain full sentences, one thought each: the conclusion first, then the reason, in the same sentence. No chains
+of facts joined by colons and commas. A fact from `Docs/` is not retold: the comment refers to it as
+`Docs/<File>.md#<anchor>`, without the anchor when the fact is above the first heading, and `CodeDocsReferenceTests`
+checks the reference.
+
+A comment on a non-private member is a `<summary>`; on a private member and inside a body it is `//`. A `<summary>`
+is not mandatory: it is written only where the contract is not visible from the signature, one sentence per
+constraint.
 
 ## Review
 
