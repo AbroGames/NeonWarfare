@@ -84,5 +84,6 @@ Other files in `user://` (JSON, `System.Text.Json`):
 | `known-servers.json` | The server list of the multiplayer menu |
 
 Every file in `user://` is written atomically through KludgeBox's `UserStorage`, and every JSON file is read through its
-`JsonFile`, which keeps a corrupt file as `<name>.corrupt`. The two settings files are read field by field
-(`JsonFile.ReadOverDefault`): a missing or bad setting gets its default, and the others stay.
+`JsonFile`, which keeps a corrupt file as `<name>.corrupt` and reads and writes Godot's `Color`, `Vector2`, `Vector3`
+with no options. The two settings files are read field by field (`JsonFile.ReadOverDefault`): a missing or bad
+setting gets its default, and the others stay.

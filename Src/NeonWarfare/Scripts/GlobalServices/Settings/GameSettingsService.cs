@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json;
 using KludgeBox.Logging;
 using KludgeBox.Persistence;
 using NeonWarfare.Scenes.Worlds.Ports;
@@ -15,12 +14,6 @@ public class GameSettingsService
 {
     private const string DefaultFileName = "game-settings.json";
 
-    // Color is a Godot struct whose R/G/B/A are fields, which System.Text.Json skips by default.
-    // Without the converter it writes only the computed properties (R8, H, OkHslH, ...), whose
-    // setters then overwrite each other on read and produce a wrong color.
-    private static readonly JsonSerializerOptions JsonOptions =
-        new(JsonSerializerOptions.Default) { Converters = { new ColorJsonConverter() } };
-
     private readonly ILogger _log = LogFactory.GetForStatic<GameSettingsService>();
     private readonly JsonFile<GameSettings> _file;
 
@@ -28,7 +21,7 @@ public class GameSettingsService
 
     public GameSettingsService(string fileName = DefaultFileName)
     {
-        _file = new JsonFile<GameSettings>(fileName, JsonOptions);
+        _file = new JsonFile<GameSettings>(fileName);
     }
 
     /// <summary>
