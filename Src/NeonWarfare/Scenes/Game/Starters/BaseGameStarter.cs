@@ -26,6 +26,7 @@ public abstract class BaseGameStarter
     private const string VersionMismatchMessage = "The save was made by another version of the game";
     private const string BrokenSaveMessage = "The save is broken or cannot be read";
     private const string LoadFailedLog = "Loading the save '{saveFileName}' failed";
+    private const string HudFailedLog = "The Hud failed to be created after the join";
 
     private readonly ILogger _log = LogFactory.GetForStatic<BaseGameStarter>();
 
@@ -86,28 +87,34 @@ public abstract class BaseGameStarter
     }
 
     /// <summary>
-    /// For every process with a player of its own: a refused join leaves a remote client on the connecting screen
-    /// and a host in a World without its player. <see cref="Game"/> dies with the handler.
+    /// <see cref="ILocalPlayerOwner.Joined"/> of every process with a player of its own: the <c>Hud</c> appears only
+    /// with the join, and until then the loading screen covers the World.
     /// </summary>
-    protected void GoToMenuOnJoinRejected(Game game)
+    protected void ShowHudOnJoined(Game game)
     {
-        // Game has already logged the reason
-        game.JoinRejected += reason =>
+        if (!IsGameAlive(game)) return;
+        try
         {
-            if (IsGameAlive(game)) GoToMenuAndShowError(JoinRejectedMessage(reason));
-        };
+            game.ShowHud();
+        }
+        catch (Exception e)
+        {
+            // The event dispatch would swallow it and leave the loading screen forever: the join fails instead
+            _log.Error(e, HudFailedLog);
+            GoToMenuOnJoinRejected(game, JoinRejectReason.InternalError);
+            return;
+        }
+        Services.LoadingScreen.Clear();
     }
 
     /// <summary>
-    /// For every process with a player of its own: the <see cref="Game.Screen.Hud"/> appears only with the join,
-    /// and until then the loading screen covers the World.
+    /// <see cref="ILocalPlayerOwner.JoinRejected"/> of every process with a player of its own: a refused join leaves
+    /// a remote client on the connecting screen and a host in a World without its player.
     /// </summary>
-    protected void ClearLoadingScreenOnJoined(Game game)
+    protected void GoToMenuOnJoinRejected(Game game, JoinRejectReason reason)
     {
-        game.LocalPlayerJoined += () =>
-        {
-            if (IsGameAlive(game)) Services.LoadingScreen.Clear();
-        };
+        // The transport has already logged the reason
+        if (IsGameAlive(game)) GoToMenuAndShowError(JoinRejectedMessage(reason));
     }
 
     private static string JoinRejectedMessage(JoinRejectReason reason) => Services.I18N.Tr(reason switch

@@ -21,8 +21,8 @@ public class ProducedMessageTests
         WorldLayers.WorldNamespace + ".Infra.Client.Events.EventHandlerAttribute";
 
     /// <summary>
-    /// <c>JoinRequestCommand</c> is sent by <c>Game.SendJoinRequest</c> before a remote client has a World, so no
-    /// command sender ever carries it; it must still be built somewhere.
+    /// <c>JoinRequestCommand</c> is sent by the transports, a remote client's before it has a World, so no command
+    /// sender ever carries it; it must still be built somewhere.
     /// </summary>
     private static readonly string[] SentPastCommandSenders =
         [WorldLayers.WorldNamespace + ".Infra.Protocol.JoinRequestCommand"];

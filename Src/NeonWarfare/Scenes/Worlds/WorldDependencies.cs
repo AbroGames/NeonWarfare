@@ -15,5 +15,4 @@ public record WorldDependencies(
     WorldPackedScenes Scenes,
     EntityCatalog Entities,
     IClientsConnection ClientsConnection,
-    IServerConnection ServerConnection,
-    ILocalPlayerOwner LocalPlayerOwner);
+    IServerConnection ServerConnection);

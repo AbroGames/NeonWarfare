@@ -8,10 +8,11 @@ using Serilog;
 namespace NeonWarfare.Scenes.Game;
 
 /// <summary>
-/// ENet only: raw packets and connection events, no RPC. Knows nothing of the World, <c>Game</c> routes between them.
+/// ENet only: raw packets and connection events, no RPC. Knows nothing of the World, the transports route between
+/// them.
 /// </summary>
 // ReSharper disable once Godot.MissingParameterlessConstructor
-public partial class Network(Node multiplayerRoot) : Node
+public partial class Network(Node multiplayerRoot) : Node, INetwork
 {
     private const string SendFailedError = "Sending {0} bytes to peer {1} failed: {2}";
     private const string NotServerError = "Only a server disconnects peers";

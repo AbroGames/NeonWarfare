@@ -31,9 +31,9 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
 
 * `Event` names only a protocol record (`PlayerJoinedEvent`); `Handle` / `…Handler` only its handler
   (`[EventHandler] Handle`, `IPlayerCommandHandler.Handle`). A C# event has no suffix (`Network.PeerConnected`,
-  `Game.LocalPlayerJoined`), its handler is a private `On<Event>` (`OnPeerConnected`); a hook the base class
+  `Network.ConnectedToServer`), its handler is a private `On<Event>` (`OnPeerConnected`); a hook the base class
   calls when something has happened is a protected `On…` (`OnLoadFailed`). A method called from the outside
-  is named by what it does (`World.AddClient`, `PeerGatekeeper.StartHandshake`). Checked in
+  is named by what it does (`World.QueueDisconnection`, `PeerGatekeeper.StartHandshake`). Checked in
   `Root/`, `Game/`, `Worlds/` by `EventNamingTests`.
 * No static game logic: it goes into the [world services or `Services`](Services.md). Statics are left
   for extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings

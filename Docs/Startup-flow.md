@@ -86,21 +86,24 @@ the engine runs without a window (`DisplayServer.GetName()` is `headless`).
 ## Level 2: GameStarter
 
 `MainSceneService` creates the `Game` scene, puts it into `MainSceneContainer` and hands it a **game starter** — an
-object that knows how to bring this session up. `Game.Init(starter)` first creates what the session needs before
-any World exists — `EntityCatalog` (from `WorldPackedScenes` and the type mapping), `NetMessageCodec` with the
-protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. The starters build the session from
-`Game`'s methods:
+object that knows how to bring this session up. `Game.Init(starter)` first creates `GameProtocol` — what the
+session needs before any World exists: `EntityCatalog` (from `WorldPackedScenes` and the type mapping),
+`NetMessageCodec` with the protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. The starters
+build the session from `Game`'s methods, one set per mode, so no step can come too early:
 
-* **`AddNetwork()`** — creates `Network` (ENet); single player has none.
-* **`AddWorld(setup, origin, screen)`** — builds the World from the configuration (`WorldSetup`) and the origin
-  (see [World](World.md)), puts it into `WorldContainer` and creates its screen: `ServerHud` or none at once,
-  `Hud` only once this process's player has joined. A World that throws while being built is freed.
-* **`SendJoinRequest(localPlayer)`** — the join of this process's player. On the host its own peer first
-  "connects", so it passes the same gatekeeper as a remote one (see [Networking](Networking.md#join-and-leave)).
-* **`WorldSnapshotReceived`** — a remote client without a World got the join snapshot.
-* **`LocalPlayerJoined`** — the World reported, through `ILocalPlayerOwner`, its own `PlayerJoinedEvent`: the
-  player is online and its `Hud` is created. So the UI never sees "me" offline. A `Hud` that fails to be created
-  raises `JoinRejected` (`InternalError`) instead.
+* **`AddServerNetwork()`** — `Network` (ENet) of a host or a dedicated server; single player has none.
+* **`AddClientNetwork(localPlayer, owner, snapshotReceived)`** — `Network` of a remote client and its
+  `ClientTransport`, which sends the join once connected and hands the join snapshot to `snapshotReceived`.
+* **`AddHostWorld(setup, origin)`** / **`AddDedicatedWorld(setup, origin)`** / **`AddClientWorld(snapshot)`** —
+  builds the World of its configuration (`WorldSetup`, see [World](World.md)) over its transport and puts it into
+  `WorldContainer`. A World that throws while being built is freed. `AddHostWorld` also sends the host's join: its
+  own peer first "connects", so it passes the same gatekeeper as a remote one (see
+  [Networking](Networking.md#join-and-leave)).
+* **`ShowHud()`** / **`ShowServerHud()`** — the screen of the World.
+
+Every starter with a player of its own is its World's `ILocalPlayerOwner` and travels in the `WorldSetup`:
+`Joined()` — the World reported its own `PlayerJoinedEvent`, so the player is online and the starter shows the
+`Hud`; the UI never sees "me" offline. `JoinRejected(reason)` — the transport read a rejection.
 
 | Starter | `MainSceneService` method | Network | World | When it is used |
 |---|---|---|---|---|
@@ -123,10 +126,11 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
   writes, so after a "save as" it leads to the new file.
 * **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu; never called by
   `DedicatedServerGameStarter`, since a dedicated server has no menu.
-* **`GoToMenuOnJoinRejected(game)`** — every starter with a player of its own: `Game.JoinRejected` → to the
-  menu with the localized reason.
-* **`ClearLoadingScreenOnJoined(game)`** — the same starters: `Game.LocalPlayerJoined` → the loading screen is
-  cleared.
+* **`ShowHudOnJoined(game)`** — `ILocalPlayerOwner.Joined` of every starter with a player of its own: the `Hud`,
+  then the loading screen is cleared. A `Hud` that fails to be created leads to the menu as an `InternalError`
+  rejection.
+* **`GoToMenuOnJoinRejected(game, reason)`** — `ILocalPlayerOwner.JoinRejected` of the same starters: to the menu
+  with the localized reason.
 
 The admin of a server World (`WorldAdmin`) is the uid of the host's `LocalPlayer`, or `--admin` of a dedicated
 server. Every server starter is the World's `IServerOwner`: the host ones ignore `AdminLeft()`, since their admin is
@@ -138,10 +142,8 @@ A host without `Network`: its only peer is its own.
 
 1. The `Loading` loading screen.
 2. `resume-game.json` — the "single-player game" mode, with the save files that keep it current.
-3. `AddServerWorld(...)` → `AddWorld(Host(saveFiles, localPlayer, this), origin, Hud)`. A load error → back to the
-   menu with the message.
-4. `GoToMenuOnJoinRejected(game)`, `ClearLoadingScreenOnJoined(game)`, `SendJoinRequest(localPlayer)`. The join is
-   applied in the next tick.
+3. `AddServerWorld(...)` → `AddHostWorld(Host(saveFiles, localPlayer, this, this), origin)`, which sends the join;
+   it is applied in the next tick. A load error → back to the menu with the message.
 
 ### 2. `HostMultiplayerGameStarter` and `DedicatedServerGameStarter`
 
@@ -153,16 +155,15 @@ the World, the screen and what happens on a failure and after `OpenServer()`.
    `MainScene.Shutdown()` when the parent process dies, and so does the admin leaving (the starter is the World's
    `IServerOwner`), so a child server is not left hanging after the client is closed (see
    [Shutdown](Shutdown.md)).
-3. `AddNetwork()`; `mustSetLastGame` → a write into `resume-game.json` (a server started from the console has
+3. `AddServerNetwork()`; `mustSetLastGame` → a write into `resume-game.json` (a server started from the console has
    none).
 4. `network.HostServer(port ?? 25566)` — the port is open but refuses connections. An error (a busy port, say) →
    the host goes back to the menu, the dedicated server shuts down.
-5. `AddServerWorld(...)`: the host — `Host` with `Hud` and its `LocalPlayer`; the dedicated server — `Dedicated`
-   with `ServerHud` or no screen, no local player, the World hidden. A load error → the host goes back to the menu,
-   the dedicated server shuts down: a new world in its place would overwrite the save on exit.
+5. `AddServerWorld(...)`: the host — `AddHostWorld(Host(...))` with its `LocalPlayer`, whose join leaves before the
+   server is opened; the dedicated server — `AddDedicatedWorld(Dedicated(...))`, no local player, the World hidden,
+   then `ShowServerHud()` if requested. A load error → the host goes back to the menu, the dedicated server shuts
+   down: a new world in its place would overwrite the save on exit.
 6. `network.OpenServer()`.
-7. Only the host: `SendJoinRequest(localPlayer)` (`GoToMenuOnJoinRejected` and `ClearLoadingScreenOnJoined` are
-   subscribed before step 1).
 
 > [!IMPORTANT]
 > The server is opened for incoming connections **only after** the World is built. Otherwise a client would knock
@@ -173,15 +174,12 @@ the World, the screen and what happens on a failure and after `OpenServer()`.
 Connecting to someone else's server. Parameters: `host`, `port`, `mustSetLastGame`.
 
 1. The `Connecting` loading screen — with a cancel button that calls `GoToMenu()`.
-2. `AddNetwork()`, `ReadLocalPlayer()`. **No World yet**: it is created from the server's join snapshot.
-3. Subscriptions to the events of `Network` and `Game`, which die with the `Game`, so nothing unsubscribes:
-   * `ConnectedToServer` → `SendJoinRequest(localPlayer)`;
-   * `WorldSnapshotReceived` → `AddWorld(RemoteClient(localPlayer), FromSnapshot(snapshot), Hud)`; a broken
-     snapshot or a failure to build the World → back to the menu with the error;
+2. `ReadLocalPlayer()`, `AddClientNetwork(localPlayer, this, snapshotReceived)`. **No World yet**: the join snapshot
+   → `AddClientWorld(snapshot)`; a broken snapshot or a failure to build the World → back to the menu with the
+   error. The `Hud` comes through `Joined()` with the events packet of the join tick, right after the snapshot.
+3. Subscriptions to the events of `Network`, which dies with the `Game`, so nothing unsubscribes:
    * `ConnectionFailed` → to the menu with "Connection to the server failed" (no answer within the timeout);
-   * `ServerDisconnected` → to the menu with "Server disconnected" (can arrive even hours into the game);
-   * `GoToMenuOnJoinRejected(game)`, `ClearLoadingScreenOnJoined(game)`: the `Hud` comes with the events packet of
-     the join tick, right after the snapshot.
+   * `ServerDisconnected` → to the menu with "Server disconnected" (can arrive even hours into the game).
 
    Each does nothing once its `Game` is queued for deletion: the multiplayer is still polled until the end of that
    frame.

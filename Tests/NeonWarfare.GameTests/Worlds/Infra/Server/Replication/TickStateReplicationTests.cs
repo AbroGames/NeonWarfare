@@ -674,7 +674,7 @@ public class TickStateReplicationTests
 
     private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
         new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
-            new ManualFrameProvider(), _scenes, _catalog, connection, connection, new RecordingLocalPlayerOwner());
+            new ManualFrameProvider(), _scenes, _catalog, connection, connection);
 
     private ServiceProvider ClientOf(int peerId, out Node root)
     {

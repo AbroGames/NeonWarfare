@@ -39,10 +39,13 @@ public class DedicatedServerGameStarter(
 
     protected override World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles)
     {
-        World world = game.AddWorld(
-            new WorldSetup.Dedicated(saveFiles, new WorldAdmin(adminUid), this), origin,
-            serverHud ? Game.Screen.ServerHud : Game.Screen.None);
+        World world = game.AddDedicatedWorld(
+            new WorldSetup.Dedicated(saveFiles, new WorldAdmin(adminUid), this), origin);
         world.SetVisible(false);
+        if (serverHud)
+        {
+            game.ShowServerHud();
+        }
         return world;
     }
 

@@ -42,7 +42,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     private const string EmptyPacketError = "The packet is empty.";
     private const string UnknownKindError = "Unknown server packet kind {0}.";
     private const string SecondSnapshotError = "A snapshot for a World that already has one.";
-    private const string JoinRejectedError = "A join rejection is read by Game, not by the World.";
+    private const string JoinRejectedError = "A join rejection is read by the transport, not by the World.";
 
     private ServiceProvider _services;
     private WorldLayer _layers;
@@ -111,10 +111,10 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     public void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
         Service<CommandInbox>().EnqueueFromPeer(peerId, packet);
 
-    public void AddClient(int peerId) =>
+    public void StartHandshake(int peerId) =>
         Service<PeerGatekeeper>().StartHandshake(peerId);
 
-    public void RemoveClient(int peerId) =>
+    public void QueueDisconnection(int peerId) =>
         Service<CommandInbox>().EnqueuePeerDisconnected(peerId);
 
     /// <exception cref="NetMessageFormatException">The packet is broken or of an unknown kind.</exception>

@@ -13,15 +13,18 @@ World; their layers and the World itself are in [World](World.md).
   connection events. It creates a fresh `SceneMultiplayer` per `Game`, so no handler outlives the session, and
   unsets it on `Game.TreeExiting`. A server is hosted with `RefuseNewConnections` and opened only after its World
   is built.
-* **`Game`** ([Scenes/Game/Game.cs](../Src/NeonWarfare/Scenes/Game/Game.cs)) — the transport of the World: it
-  implements `IClientsConnection` (server → clients) and `IServerConnection` (client → server) and routes the
-  packets and connection events of `Network` into `World.ReceiveFromClient` / `ReceiveFromServer` /
-  `AddClient` / `RemoveClient`. `Game` also owns what the client needs before its World exists:
-  `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
+* **The transports** ([Scenes/Game/Transport/](../Src/NeonWarfare/Scenes/Game/Transport/)) — plain objects
+  implementing `IClientsConnection` (server → clients) and `IServerConnection` (client → server), created by `Game`
+  with their World. `ServerTransport` routes the remote peers of a server into `World.StartHandshake` /
+  `QueueDisconnection` / `ReceiveFromClient`; `HostTransport` loops the host's own peer back and hands the others to
+  its `ServerTransport`; `ClientTransport` is a remote client's connection, which has no World until the join
+  snapshot. The direction a configuration does not use is `NoConnection`. `GameProtocol` holds what the client
+  needs before its World exists: `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT
+  `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
-  `Game` hands it to its own World synchronously, inside the call. So the host's commands pass the same decoding and
-  whitelist as a remote client's, and its event handlers run in the physics step, before `_Process`. Single player
-  is a host without `Network`.
+  `HostTransport` hands it to its own World synchronously, inside the call. So the host's commands pass the same
+  decoding and whitelist as a remote client's, and its event handlers run in the physics step, before `_Process`.
+  Single player is a host without `Network`.
 
 A process has no role. What runs is decided by the set of layers the starter builds the World from
 (see [World](World.md#layers)): no code asks "am I the server".
@@ -46,8 +49,9 @@ The Simulation changes the models only inside the tick: it has no deferred calls
 ## Commands: client → server
 
 A command is a `Command` record with MessagePack keys. The HUD sends it through `World.Send<T>` →
-`PlayerCommandSender`, the only sender in the World; `JoinRequestCommand` alone is sent by `Game`
-(`SendJoinRequest`), before a remote client has a World. A command is sent at once, not at the tick.
+`PlayerCommandSender`, the only sender in the World; `JoinRequestCommand` alone is sent by the transport: the
+host's by `Game.AddHostWorld`, a remote client's on connecting, before it has a World. A command is sent at once,
+not at the tick.
 
 On the server `CommandInbox` decodes a packet on arrival, against the whitelist `CommandHandlerRegistry` builds from
 the found handlers: a type without a network handler, a broken body or trailing bytes is logged as `WARN` and
@@ -75,8 +79,9 @@ ENet delivers a fragmented reliable packet whole, so a client applies a tick ato
 
 A client applies a packet at once, in `peer_packet`, with no queue: `StateApplier` the state, `EventDispatcher` the
 events. The host gets only its events packet: its Simulation has already written the state.
-`JoinRejected` never reaches a World: `Game` reads it, with or without a World, and raises `Game.JoinRejected`; the
-starter leaves for the menu with the reason, on a remote client and on a host refused its own join alike.
+`JoinRejected` never reaches a World: the transport reads it, with or without a World, and calls
+`ILocalPlayerOwner.JoinRejected`; the starter leaves for the menu with the reason, on a remote client and on a host
+refused its own join alike.
 
 Events are published only by the Simulation, into `EventOutbox` (`PublishToAll` / `PublishTo(uid)`), one buffer per
 joined peer, so personal and common events keep the order of publication. An event is encoded when published, so
@@ -105,22 +110,22 @@ command of the peer is dropped.
 sequenceDiagram
     autonumber
     participant C as Joining client
-    participant G as Server Game
+    participant G as Server transport
     participant W as Server World
     participant O as Other clients
 
     Note over C: loading screen Connecting, no World yet
     C->>G: ENet connect
-    G->>W: AddClient: handshake deadline
+    G->>W: StartHandshake: handshake deadline
     C->>G: JoinRequestCommand(protocolHash, uid, nick, color)
     G->>W: ReceiveFromClient: hash check, into the inbox
     Note over W: next tick
     W->>W: PeerSessions.Join: Validate, bind uid,<br/>event buffer, Process → join message, PlayerJoinedEvent
     W-->>O: State packet: the tick's changes (OnlinePlayerUids)
     W-->>C: Snapshot: every entity at the end of the tick
-    C->>C: Game.WorldSnapshotReceived → World from the snapshot
+    C->>C: ClientTransport → the starter builds the World from the snapshot
     W-->>C: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
-    C->>C: its own PlayerJoinedEvent → Hud, the loading screen is cleared
+    C->>C: its own PlayerJoinedEvent → ILocalPlayerOwner.Joined: Hud, the loading screen is cleared
     W-->>O: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
     Note over C: from the next tick on: State, then Events, like everyone
 ```

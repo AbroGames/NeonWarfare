@@ -12,12 +12,13 @@ Root (Node2D)                                      The entry point, lives for th
 ├── LoadingScreenContainer                         The loading screen on top of everything (CanvasLayer)
 └── PackedScenes (RootPackedScenes)                Prototypes of the scenes created in Root: Game, MainMenu, LoadingScreen
 
-Game (Node2D)                                      A single game session (single-player or networked)
+Game (Node2D)                                      A single game session: its scene, network, transport and World
 ├── WorldContainer → World                         The container holds the World
 ├── HudContainer                                   Holds Hud OR ServerHud
 │   └── Hud | ServerHud
 ├── PackedScenes (GamePackedScenes)                Prototypes of the scenes created in Game: World, Hud, ServerHud
-└── Network                                        Created from code, lives together with Game
+└── Network                                        Created from code, lives together with Game; the transports
+                                                   over it are plain objects
 
 World (Node2D)                                     The game world, its services are plain C# objects, see World.md
 ├── ServerTickNode                                 With the Simulation: runs the server tick
