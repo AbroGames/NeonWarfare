@@ -96,16 +96,22 @@ public partial class Hud : Control
             _ => throw new ArgumentOutOfRangeException(nameof(entry), entry, null)
         };
 
-    // A translation may expect more arguments than a server of another version sends: the line stays readable
+    // A server of another version may send a key this client lacks (Tr returns the key itself) or fewer
+    // arguments than the translation expects: the line stays readable and keeps the arguments
     private static string FormatLocalized(string key, string[] args, Func<string, string> tr)
     {
+        string translation = tr(key);
+        if (translation == key) return KeyWithArgs(key, args);
+
         try
         {
-            return string.Format(tr(key), args);
+            return string.Format(translation, args);
         }
         catch (FormatException)
         {
-            return string.Join(" ", [key, ..args]);
+            return KeyWithArgs(key, args);
         }
     }
+
+    private static string KeyWithArgs(string key, string[] args) => string.Join(" ", [key, ..args]);
 }

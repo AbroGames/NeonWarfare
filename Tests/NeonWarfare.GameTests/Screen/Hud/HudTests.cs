@@ -45,6 +45,15 @@ public class HudTests
         AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs)).IsEqual("[server]: SAVED");
     }
 
+    // A server of another version may send a key this client has no translation for
+    [TestCase]
+    public void FormatChatLine_LocalizedServerMessageUnknownKey_ShowsKeyAndArgs()
+    {
+        var entry = new ChatPresentation.LocalizedServerEntry(Now, "UNKNOWN", ["my save"]);
+
+        AssertThat(HudScreen.FormatChatLine(entry, TranslateWithArgs)).IsEqual("[server]: UNKNOWN my save");
+    }
+
     [TestCase]
     public void LocalizedServerEntry_EqualArgs_AreEqual()
     {

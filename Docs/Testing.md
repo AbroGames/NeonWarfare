@@ -75,7 +75,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Docs/ChatCommandsDocTests` | Command table of [Chat and commands](Chat-and-commands.md) ↔ the `IChatCommand` classes: name, rights |
 | `Docs/NetworkingDocTests` | Channel table of [Networking](Networking.md) ↔ `Consts.TransferChannel`, order included |
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
-| `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot` |
+| `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot`, same `{n}` everywhere |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |
 | `Localization/JoinRejectedTextTests` | The numbers of the invalid nick text in every translation are `JoinRequestHandler`'s nick length limits |
 | `Conventions/NamespaceTests` | Namespace matches the folder path relative to `Src/` |
