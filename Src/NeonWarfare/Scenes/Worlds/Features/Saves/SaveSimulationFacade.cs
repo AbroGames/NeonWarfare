@@ -23,7 +23,7 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
         
         // The reply comes at the end of the tick and is not guaranteed: the sender may have left by then
         saveService.RequestSave(fileName,
-            () => chatSimulation.SendLocalizedMessageAsServerToPlayer(senderUid, SavedMessageKey, fileName),
-            _ => chatSimulation.SendLocalizedMessageAsServerToPlayer(senderUid, SaveFailedMessageKey, fileName));
+            () => chatSimulation.SendLocalizedMessageAsServerToPlayer(SavedMessageKey, [fileName], senderUid),
+            _ => chatSimulation.SendLocalizedMessageAsServerToPlayer(SaveFailedMessageKey, [fileName], senderUid));
     }
 }
