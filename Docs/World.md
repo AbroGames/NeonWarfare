@@ -53,7 +53,7 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[Simulation]` | An optional leaf: one side effect (a model write, or an event with its log), no decisions; made only when several facades share it or it holds an invariant beyond the model (`ChatSimulation`, `EntitySpawner`) | `[Query]`, `[Server]` | Host, Dedicated |
 | `[SimulationFacade]` | A finished operation: checks, decisions, order of steps; writes and publishes itself or through leaves (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[Server]` | Host, Dedicated |
 | `[CommandHandler]` | `IPlayerCommandHandler<T>`, `IPeerSessionHandler`: validate and call a facade | Facades, `[Query]` | Host, Dedicated |
-| `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]`; `[CommandHandler]` only as a collection, and `IPeerSessionHandler` | Host, Dedicated |
+| `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]`; `[CommandHandler]` only as a collection, `[SimulationFacade]` only as `IEnumerable<ITickingFacade>`, and `IPeerSessionHandler` | Host, Dedicated |
 | `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`) | `[Query]` | All |
 | `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]`; `[Presentation]` only as a collection | RemoteClient, Host |
 | `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | RemoteClient, Host |
@@ -91,6 +91,7 @@ through:
 | `CommandDispatcher` | One inbox entry | Logged; a facade has no rollback, so the model may stay half-changed |
 | `PeerSessions.Join` | One join | The peer is rejected with `InternalError`, released if it has joined |
 | `StateReplicator` | One entity's delta | Its baseline is reset: its next delta is complete |
+| `ServerTickLoop` | One facade's `Tick()` | Logged, the model may stay half-changed; the other facades and the tick go on |
 | `ServerTickLoop` | The snapshot of the tick | The peers joined in the tick are rejected |
 | `SaveService` | The save of the tick, each request, each callback; the save on exit | The requester is told; the teardown goes on |
 | `EventDispatcher` | One `[EventHandler]` call | Logged: a Presentation writes no model |
@@ -124,7 +125,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher` and its `ProtocolHash`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
-| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickClock` — the tick counter, the `IWorldClock` of a server |
+| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickClock` — the tick counter, the `IWorldClock` of a server; `ITickingFacade` — a facade with a time rule |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>`; `ICommandHandler` — what every player handler interface extends |
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |

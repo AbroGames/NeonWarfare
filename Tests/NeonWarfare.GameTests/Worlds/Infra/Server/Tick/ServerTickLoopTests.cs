@@ -15,6 +15,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scripts;
 using RepliCAT;
 using static GdUnit4.Assertions;
@@ -274,6 +275,50 @@ public class ServerTickLoopTests
         AssertThat(_provider.GetRequiredService<PeerStateTable>().IsJoined(joiningPeer)).IsTrue();
     }
 
+    // A peer joins in the second tick, so a facade ticked before the commands or the clock would see otherwise
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickingFacade_SeesTheCommandsAndTheTickOfItsTick()
+    {
+        Build(new WorldServicesBuilder([..GameTypes(), typeof(RecordingFacade)]));
+        Loop().RunTick();
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(3);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, BobUid, "Bob", Colors.White);
+        _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(3, _codec.Encode(join));
+
+        Loop().RunTick();
+
+        AssertThat(_provider.GetRequiredService<RecordingFacade>().Ticks).ContainsExactly((1L, false), (2L, true));
+    }
+
+    // The first tick sends the whole state anyway, so the facade writes only in the second one
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickingFacade_ModelWrite_ReachesThePeersInItsTick()
+    {
+        Build(new WorldServicesBuilder([..GameTypes(), typeof(RenamingFacade)]));
+        Loop().RunTick();
+        _clientsConnection.Packets.Clear();
+
+        Loop().RunTick();
+
+        AssertThat(Sections()).ContainsExactly((AlicePeer, SentKind.State, 2L));
+    }
+
+    // The throwing facade is listed first, so the other one shows whether the ticks after it still run
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TickingFacade_Throws_OtherFacadesAndTheTickGoOn()
+    {
+        Build(new WorldServicesBuilder([..GameTypes(), typeof(ThrowingFacade), typeof(RenamingFacade)]));
+        Loop().RunTick();
+        _clientsConnection.Packets.Clear();
+
+        Loop().RunTick();
+
+        AssertThat(Sections()).ContainsExactly((AlicePeer, SentKind.State, 2L));
+    }
+
     private void Build(WorldServicesBuilder builder)
     {
         _provider = builder.Build(
@@ -335,5 +380,28 @@ public class ServerTickLoopTests
             outbox.PublishToAll(new ChatPlayerMessageEvent(Now, senderUid, nick, command.Text));
             EntriesRightAfterPublish = chat.Entries.Count;
         }
+    }
+
+    [SimulationFacade]
+    private class RecordingFacade(IWorldClock clock, PlayerQuery players) : ITickingFacade
+    {
+        public List<(long Tick, bool BobOnline)> Ticks { get; } = [];
+
+        public void Tick() => Ticks.Add((clock.CurrentTick, players.OnlineModel.Uids.Contains(BobUid)));
+    }
+
+    [SimulationFacade]
+    private class RenamingFacade(IWorldClock clock, PlayerQuery players) : ITickingFacade
+    {
+        public void Tick()
+        {
+            if (clock.CurrentTick == 2) players.PlayersModel.PlayerByUid[AliceUid].Nick = "Renamed";
+        }
+    }
+
+    [SimulationFacade]
+    private class ThrowingFacade : ITickingFacade
+    {
+        public void Tick() => throw new InvalidOperationException("The facade fails");
     }
 }

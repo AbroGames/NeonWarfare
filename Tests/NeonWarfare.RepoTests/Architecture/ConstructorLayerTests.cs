@@ -23,6 +23,7 @@ public class ConstructorLayerTests
     private const string WorldSetup = WorldLayers.WorldNamespace + ".WorldSetup";
     private const string Builder = WorldLayers.WorldNamespace + ".WorldServicesBuilder";
     private const string BuildMethod = "Build";
+    private const string TickingFacade = WorldLayers.WorldNamespace + ".Infra.Server.Tick.ITickingFacade";
 
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
         new Dictionary<Layer, Layer[]>
@@ -48,6 +49,17 @@ public class ConstructorLayerTests
             [Layer.Server] = [Layer.CommandHandler],
             // EventDispatcher hands every event to the [EventHandler] methods
             [Layer.Client] = [Layer.Presentation],
+        };
+
+    /// <summary>
+    /// What a layer may take only as the collection of one interface, on top of <see cref="AllowedCollectionLayers"/>:
+    /// any other collection of that layer would be a way into it past its usual entry.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<Layer, (Layer Held, string Element)[]> AllowedCollectionInterfaces =
+        new Dictionary<Layer, (Layer Held, string Element)[]>
+        {
+            // ServerTickLoop ticks every ticking facade, while every other way into a facade goes through a command
+            [Layer.Server] = [(Layer.SimulationFacade, TickingFacade)],
         };
 
     private static readonly IReadOnlyDictionary<string, Layer[]> RestrictedDependencies =
@@ -102,6 +114,7 @@ public class ConstructorLayerTests
         IReadOnlySet<string> open = dependencies.Concat(OpenTypes).ToHashSet(StringComparer.Ordinal);
         // Otherwise a rename would leave the restriction nothing to check
         foreach (string name in RestrictedDependencies.Keys.Concat(OpenTypes)
+                     .Concat(AllowedCollectionInterfaces.Values.SelectMany(allowed => allowed.Select(a => a.Element)))
                      .Where(name => game.FindByName(name) == null && !dependencies.Contains(name)))
         {
             report.Add($"{name} is restricted or open but no longer exists");
@@ -159,6 +172,34 @@ public class ConstructorLayerTests
 
         string failure = Assert.Single(report.Failures);
         Assert.Contains("Single::.ctor", failure);
+    }
+
+    [Fact]
+    public void Constructors_CollectionOfInterfaceOnlyLayer_IsAllowedOnlyForThatInterface()
+    {
+        GameAssembly fixture = GameAssembly.Compile(ArchitectureFixtures.LayerAttributes + """
+            namespace NeonWarfare.Scenes.Worlds.Infra.Server.Tick
+            {
+                public interface ITickingFacade;
+            }
+
+            namespace Fixture
+            {
+                using NeonWarfare.Scenes.Worlds.Infra.Composition;
+                using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+
+                public interface IOperation;
+                [SimulationFacade] public class Facade : ITickingFacade, IOperation;
+                [Server] public class Ticking(System.Collections.Generic.IEnumerable<ITickingFacade> facades);
+                [Server] public class Other(System.Collections.Generic.IEnumerable<IOperation> facades);
+            }
+            """);
+        FailureReport report = new("fixture");
+
+        CheckParameters(fixture, new HashSet<string>(), report);
+
+        string failure = Assert.Single(report.Failures);
+        Assert.Contains("Other::.ctor", failure);
     }
 
     [Fact]
@@ -320,11 +361,14 @@ public class ConstructorLayerTests
                         {
                             if (WorldLayers.DeclaredLayer(implementation) is { } held
                                 && !AllowedParameterLayers[layer].Contains(held)
-                                && !CollectionOnlyLayers(layer).Contains(held))
+                                && !CollectionOnlyLayers(layer).Contains(held)
+                                && !CollectionInterfaces(layer).Contains((held, element.FullName)))
                             {
-                                string collections = CollectionOnlyLayers(layer).Length == 0
-                                    ? ""
-                                    : $", and collections of {string.Join(", ", CollectionOnlyLayers(layer))}";
+                                string collections = string.Concat(
+                                    CollectionOnlyLayers(layer)
+                                        .Select(only => $", and collections of {only}")
+                                        .Concat(CollectionInterfaces(layer).Select(only =>
+                                            $", and {only.Held} only as IEnumerable<{only.Element}>")));
                                 report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
                                            $"'{parameter.Name}' of IEnumerable<{GameAssembly.ShortName(element)}>, " +
                                            $"which holds {GameAssembly.ShortName(implementation)}, a {held} " +
@@ -371,6 +415,9 @@ public class ConstructorLayerTests
 
     private static Layer[] CollectionOnlyLayers(Layer layer) =>
         AllowedCollectionLayers.TryGetValue(layer, out Layer[]? layers) ? layers : [];
+
+    private static (Layer Held, string Element)[] CollectionInterfaces(Layer layer) =>
+        AllowedCollectionInterfaces.TryGetValue(layer, out (Layer Held, string Element)[]? allowed) ? allowed : [];
 
     private static string Allowed(Layer layer) =>
         AllowedParameterLayers[layer].Length == 0

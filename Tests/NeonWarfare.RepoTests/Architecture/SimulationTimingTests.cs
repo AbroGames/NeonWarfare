@@ -8,7 +8,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// <summary>
 /// The Simulation changes state only inside the tick: the server sends strictly at the end of it, so
 /// anything deferred past it — a deferred call, a timer, a tween, an <c>await</c> — lands between two
-/// ticks, outside the outbox and the replicated delta of either. Time-based rules go into <c>Tick()</c>.
+/// ticks, outside the outbox and the replicated delta of either. Time-based rules go into <c>ITickingFacade.Tick()</c>.
 /// </summary>
 [Collection(GameAssembly.Collection)]
 public class SimulationTimingTests
