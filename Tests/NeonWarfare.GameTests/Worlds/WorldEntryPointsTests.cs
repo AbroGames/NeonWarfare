@@ -15,6 +15,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 using NeonWarfare.Scenes.Worlds.Ports;
+using NeonWarfare.Scripts;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -27,9 +28,9 @@ public class WorldEntryPointsTests
 
     private const long Now = 1_700_000_000;
     private const int HostPeer = RecordingClientsConnection.HostPeer;
-    private const string HostUid = "HostHostHo-Hhhhhhhhhh";
+    private static readonly PlayerUid HostUid = new("HostHostHo-Hhhhhhhhhh");
     private const int RemotePeer = 2;
-    private const string RemoteUid = "RemoteRemo-Rrrrrrrrrr";
+    private static readonly PlayerUid RemoteUid = new("RemoteRemo-Rrrrrrrrrr");
 
     private static readonly LocalPlayer HostPlayer = new(HostUid, "Host", Colors.White);
     private static readonly LocalPlayer RemotePlayer = new(RemoteUid, "Remote", Colors.White);
@@ -316,7 +317,7 @@ public class WorldEntryPointsTests
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new WorldDependencies(
             new ManualTimeProvider(Now), _codec, hash ?? TestProtocol.Hash,
-            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
+            NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), _connection, _connection);
     }
 

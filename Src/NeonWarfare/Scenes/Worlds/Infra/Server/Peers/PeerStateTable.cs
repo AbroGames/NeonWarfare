@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
@@ -16,18 +17,18 @@ public class PeerStateTable
 {
     public abstract record PeerState;
     public record Connecting(DateTimeOffset Deadline) : PeerState;
-    public record Joined(string Uid) : PeerState
+    public record Joined(PlayerUid Uid) : PeerState
     {
         /// <summary>
         /// The encoded events of the tick in the order of publication. <c>EventOutbox</c> fills and drains it.
         /// </summary>
         public List<ReadOnlyMemory<byte>> Events { get; } = [];
     }
-    public record Leaving(string Uid) : PeerState;
+    public record Leaving(PlayerUid Uid) : PeerState;
     public record TurnedAway : PeerState;
 
     private readonly Dictionary<int, PeerState> _stateByPeerId = new();
-    private readonly Dictionary<string, int> _peerIdByUid = new();
+    private readonly Dictionary<PlayerUid, int> _peerIdByUid = new();
 
     public IEnumerable<int> JoinedPeerIds =>
         _stateByPeerId.Where(pair => pair.Value is Joined).Select(pair => pair.Key);
@@ -44,7 +45,7 @@ public class PeerStateTable
         _stateByPeerId.Add(peerId, new Connecting(deadline));
     }
 
-    public void Join(int peerId, string uid)
+    public void Join(int peerId, PlayerUid uid)
     {
         if (_peerIdByUid.TryGetValue(uid, out int takenBy))
         {
@@ -98,13 +99,13 @@ public class PeerStateTable
     {
         if (!_stateByPeerId.Remove(peerId, out PeerState state)) return null;
 
-        string uid = state switch
+        PlayerUid? uid = state switch
         {
             Joined joined => joined.Uid,
             Leaving leaving => leaving.Uid,
             _ => null,
         };
-        if (uid != null) _peerIdByUid.Remove(uid);
+        if (uid is { } held) _peerIdByUid.Remove(held);
         return state;
     }
 
@@ -114,7 +115,7 @@ public class PeerStateTable
         return joined != null;
     }
 
-    public bool TryGetJoinedByUid(string uid, out Joined joined)
+    public bool TryGetJoinedByUid(PlayerUid uid, out Joined joined)
     {
         joined = null;
         return _peerIdByUid.TryGetValue(uid, out int peerId) && TryGetJoined(peerId, out joined);
@@ -123,7 +124,7 @@ public class PeerStateTable
     /// <summary>
     /// It finds a leaving peer too, because the uid is still taken until its <c>peer_disconnected</c>.
     /// </summary>
-    public bool TryGetPeerIdByUid(string uid, out int peerId) => _peerIdByUid.TryGetValue(uid, out peerId);
+    public bool TryGetPeerIdByUid(PlayerUid uid, out int peerId) => _peerIdByUid.TryGetValue(uid, out peerId);
 
     public bool IsConnecting(int peerId) => _stateByPeerId.GetValueOrDefault(peerId) is Connecting;
 

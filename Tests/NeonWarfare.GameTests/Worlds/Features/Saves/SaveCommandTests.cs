@@ -17,6 +17,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scripts;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -31,9 +32,9 @@ public class SaveCommandTests
     private const int HostPeer = RecordingClientsConnection.HostPeer;
     private const int AdminPeer = 2;
     private const int PlayerPeer = 3;
-    private const string HostUid = "host";
-    private const string AdminUid = "admin";
-    private const string PlayerUid = "player";
+    private static readonly PlayerUid HostUid = new("host");
+    private static readonly PlayerUid AdminUid = new("admin");
+    private static readonly PlayerUid PlayerUid = new("player");
     private const string FileName = "my save";
 
     private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent)];
@@ -60,7 +61,7 @@ public class SaveCommandTests
             TestWorldSetups.Host(saveFiles: _files, saveFileName: "old"),
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
-                new Replicator(NetMessageCodecTests.CreateMapping()), _frames, _scenes,
+                NetMessageCodecTests.CreateReplicator(), _frames, _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _connection, _connection),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
@@ -151,10 +152,10 @@ public class SaveCommandTests
     }
 
     // Past the join, whose events would mix with the replies
-    private PlayerModel JoinDirectly(string uid, int peerId)
+    private PlayerModel JoinDirectly(PlayerUid uid, int peerId)
     {
         PlayerModel player = _server.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(uid);
-        player.Nick = uid;
+        player.Nick = uid.Value;
         _server.GetRequiredService<PlayerQuery>().OnlineModel.Uids.Add(uid);
         _server.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _server.GetRequiredService<PeerStateTable>().Join(peerId, uid);

@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers;
 using System.Reflection;
 using GdUnit4;
@@ -6,6 +7,7 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scripts.GlobalServices;
+using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Protocol;
@@ -22,6 +24,7 @@ public class NetMessageCodecTests
         [typeof(long)] = 1_700_000_000L,
         [typeof(ulong)] = 0xFEDC_BA98_7654_3210UL,
         [typeof(Color)] = new Color(0.1f, 0.2f, 0.3f, 0.4f),
+        [typeof(PlayerUid)] = new PlayerUid("Sample"),
         [typeof(LocalizedText)] = new LocalizedText("sample", ["first", "second"]),
     };
 
@@ -181,6 +184,8 @@ public class NetMessageCodecTests
         mapping.SetTypes(typeof(JoinRequestCommand).Assembly.GetTypes().ToList());
         return mapping;
     }
+
+    internal static Replicator CreateReplicator() => ProtocolCodecs.CreateReplicator(CreateMapping());
 
     // Not AssertThrown: it reports the inner exception, and the codec wraps the one it caught
     internal static void AssertRejected(Action read)

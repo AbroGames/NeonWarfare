@@ -9,7 +9,7 @@ namespace NeonWarfare.Scenes.Worlds.Ports;
 /// </summary>
 /// <param name="Nick">The nick the player asks for on join.
 /// A returning player keeps the stored nick and color, so read them from <c>PlayerModel</c>, not from here.</param>
-public record LocalPlayer(string Uid, string Nick, Color Color)
+public record LocalPlayer(PlayerUid Uid, string Nick, Color Color)
 {
     public JoinRequestCommand ToJoinRequest(ProtocolHash protocolHash) => new(protocolHash.Value, Uid, Nick, Color);
 }

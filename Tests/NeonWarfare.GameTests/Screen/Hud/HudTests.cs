@@ -1,6 +1,7 @@
 using GdUnit4;
 using HudScreen = NeonWarfare.Scenes.Screen.Hud.Hud;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Screen.Hud;
@@ -14,7 +15,7 @@ public class HudTests
     [TestCase]
     public void FormatChatLine_PlayerMessage_ShowsNickAndText()
     {
-        var entry = new ChatPresentation.PlayerMessageEntry(Now, "uid", "Alice", "hello");
+        var entry = new ChatPresentation.PlayerMessageEntry(Now, new PlayerUid("uid"), "Alice", "hello");
 
         AssertThat(HudScreen.FormatChatLine(entry, Translate)).IsEqual("[Alice]: hello");
     }

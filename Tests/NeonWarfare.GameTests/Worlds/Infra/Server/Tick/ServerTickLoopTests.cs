@@ -15,6 +15,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scripts;
 using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.Worlds.Features.Chat.ChatPresentation;
@@ -31,9 +32,12 @@ public class ServerTickLoopTests
     private const long Now = 1_700_000_000;
     private const int HostPeer = RecordingClientsConnection.HostPeer;
     private const int AlicePeer = 2;
+    private static readonly PlayerUid HostUid = new("host");
+    private static readonly PlayerUid AliceUid = new("alice");
+    private static readonly PlayerUid BobUid = new("BobBobBobB-Bbbbbbbbbb");
 
     private static readonly HashSet<Type> EventTypes = [typeof(ChatPlayerMessageEvent)];
-    private static readonly ChatPlayerMessageEvent Hello = new(Now, "host", "Host", "hello");
+    private static readonly ChatPlayerMessageEvent Hello = new(Now, HostUid, "Host", "hello");
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
@@ -73,7 +77,7 @@ public class ServerTickLoopTests
         Loop().RunTick();
 
         AssertThat(_provider.GetRequiredService<PublishingHandler>().EntriesRightAfterPublish).IsEqual(0);
-        AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, "host", "Host", "hello"));
+        AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, HostUid, "Host", "hello"));
     }
 
     [TestCase]
@@ -87,7 +91,7 @@ public class ServerTickLoopTests
         AssertThat(Chat().Entries).IsEmpty();
         AssertThat(_clientsConnection.Packets).IsEmpty();
         Loop().RunTick();
-        AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, "host", "Host", "hello"));
+        AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, HostUid, "Host", "hello"));
     }
 
     [TestCase]
@@ -128,7 +132,7 @@ public class ServerTickLoopTests
     public void RunTick_PeerWithoutEvents_GetsNoPacket()
     {
         Build(new WorldServicesBuilder());
-        Outbox().PublishTo(Hello, "alice");
+        Outbox().PublishTo(Hello, AliceUid);
 
         Loop().RunTick();
 
@@ -178,7 +182,7 @@ public class ServerTickLoopTests
 
         Loop().RunTick();
 
-        AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, "alice", "Alice", "hi"));
+        AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, AliceUid, "Alice", "hi"));
         AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
     }
 
@@ -203,13 +207,12 @@ public class ServerTickLoopTests
     [RequireGodotRuntime]
     public void RunTick_PeerDisplacedInTheTick_GetsNoStatePacket()
     {
-        const string bobUid = "BobBobBobB-Bbbbbbbbbb";
         const int bobPeer = 3;
         const int bobSecondPeer = 4;
         Build(new WorldServicesBuilder());
-        JoinDirectly(bobUid, "Bob", bobPeer);
+        JoinDirectly(BobUid, "Bob", bobPeer);
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(bobSecondPeer);
-        var join = new JoinRequestCommand(TestProtocol.Hash.Value, bobUid, "Bob", Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, BobUid, "Bob", Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(bobSecondPeer, _codec.Encode(join));
 
         Loop().RunTick();
@@ -232,7 +235,7 @@ public class ServerTickLoopTests
         var gatekeeper = _provider.GetRequiredService<PeerGatekeeper>();
         gatekeeper.StartHandshake(latePeer);
         gatekeeper.StartHandshake(joiningPeer);
-        var join = new JoinRequestCommand(TestProtocol.Hash.Value, "BobBobBobB-Bbbbbbbbbb", "Bob", Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, BobUid, "Bob", Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(joiningPeer, _codec.Encode(join));
 
         _time.Now += PeerGatekeeper.HandshakeTimeout;
@@ -247,7 +250,7 @@ public class ServerTickLoopTests
         _provider = builder.Build(
             TestWorldSetups.Host(),
             new WorldDependencies(
-                _time, _codec, TestProtocol.Hash, new Replicator(NetMessageCodecTests.CreateMapping()),
+                _time, _codec, TestProtocol.Hash, NetMessageCodecTests.CreateReplicator(),
                 new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 _clientsConnection, _clientsConnection),
@@ -255,12 +258,12 @@ public class ServerTickLoopTests
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().Dispatch;
 
-        JoinDirectly("host", "Host", HostPeer);
-        JoinDirectly("alice", "Alice", AlicePeer);
+        JoinDirectly(HostUid, "Host", HostPeer);
+        JoinDirectly(AliceUid, "Alice", AlicePeer);
     }
 
     // Past the join, whose events would mix with the ones under test
-    private void JoinDirectly(string uid, string nick, int peerId)
+    private void JoinDirectly(PlayerUid uid, string nick, int peerId)
     {
         Players().AddPlayer(uid).Nick = nick;
         _provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids.Add(uid);
@@ -292,9 +295,9 @@ public class ServerTickLoopTests
     {
         public int EntriesRightAfterPublish { get; private set; } = -1;
 
-        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
+        public bool Validate(PlayerUid senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(string senderUid, SendChatMessageCommand command)
+        public void Process(PlayerUid senderUid, SendChatMessageCommand command)
         {
             string nick = players.Get(senderUid).Nick;
             outbox.PublishToAll(new ChatPlayerMessageEvent(Now, senderUid, nick, command.Text));

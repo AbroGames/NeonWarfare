@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers;
 using GdUnit4;
 using Godot;
@@ -31,9 +32,9 @@ public class PlayerJoinLeaveTests
     private const int AlicePeer = 2;
     private const int BobPeer = 3;
     private const int AliceSecondPeer = 4;
-    private const string HostUid = "HostHostHo-Hhhhhhhhhh";
-    private const string AliceUid = "AliceAlice-Aaaaaaaaaa";
-    private const string BobUid = "BobBobBobB-Bbbbbbbbbb";
+    private static readonly PlayerUid HostUid = new("HostHostHo-Hhhhhhhhhh");
+    private static readonly PlayerUid AliceUid = new("AliceAlice-Aaaaaaaaaa");
+    private static readonly PlayerUid BobUid = new("BobBobBobB-Bbbbbbbbbb");
 
     private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent), typeof(PlayerJoinedEvent)];
     private static readonly Color Pink = new(1, 0.5f, 0.8f);
@@ -185,23 +186,23 @@ public class PlayerJoinLeaveTests
             ("Aaaaaaaaaa-Aaaaaaaaa-", "Alice", Colors.White, JoinRejectReason.InvalidUid),
             ("Aaaaaaaaaa-Aaaaaaaaa ", "Alice", Colors.White, JoinRejectReason.InvalidUid),
             ("Aaaaaaaaaa-Aaaaaaaaaé", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            (AliceUid, null, Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid, "Al", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid, new string('a', 26), Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid, "Al ice", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid, "Al\tice", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid, "Al​ice", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid, "Alice", Colors.Black, JoinRejectReason.InvalidColor),
-            (AliceUid, "Alice", new Color(2, 2, 2), JoinRejectReason.InvalidColor),
-            (AliceUid, "Alice", new Color(1, 1, 1, -1), JoinRejectReason.InvalidColor),
-            (AliceUid, "Alice", new Color(float.NaN, 1, 1), JoinRejectReason.InvalidColor),
+            (AliceUid.Value, null, Colors.White, JoinRejectReason.InvalidNick),
+            (AliceUid.Value, "Al", Colors.White, JoinRejectReason.InvalidNick),
+            (AliceUid.Value, new string('a', 26), Colors.White, JoinRejectReason.InvalidNick),
+            (AliceUid.Value, "Al ice", Colors.White, JoinRejectReason.InvalidNick),
+            (AliceUid.Value, "Al\tice", Colors.White, JoinRejectReason.InvalidNick),
+            (AliceUid.Value, "Al​ice", Colors.White, JoinRejectReason.InvalidNick),
+            (AliceUid.Value, "Alice", Colors.Black, JoinRejectReason.InvalidColor),
+            (AliceUid.Value, "Alice", new Color(2, 2, 2), JoinRejectReason.InvalidColor),
+            (AliceUid.Value, "Alice", new Color(1, 1, 1, -1), JoinRejectReason.InvalidColor),
+            (AliceUid.Value, "Alice", new Color(float.NaN, 1, 1), JoinRejectReason.InvalidColor),
         };
 
         int peerId = 10;
         foreach ((string? uid, string? nick, Color color, JoinRejectReason reason) in cases)
         {
             peerId++;
-            Join(peerId, uid!, nick!, color);
+            Join(peerId, new PlayerUid(uid!), nick!, color);
             Tick();
 
             AssertThat(Rejections()).ContainsExactly((peerId, reason));
@@ -223,22 +224,6 @@ public class PlayerJoinLeaveTests
 
         AssertThat(Rejections()).IsEmpty();
         AssertThat(Online()).HasSize(2);
-    }
-
-    // The uid rule repeats the client's generator, so the two may drift apart
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Join_GeneratedUids_Pass()
-    {
-        var generator = new UidGenerator();
-        for (int peerId = 10; peerId < 110; peerId++)
-        {
-            Join(peerId, generator.Generate(), "Alice");
-        }
-        Tick();
-
-        AssertThat(Rejections()).IsEmpty();
-        AssertThat(Online()).HasSize(100);
     }
 
     // Done when: a child server stops once the client that started it leaves, its admin
@@ -309,14 +294,14 @@ public class PlayerJoinLeaveTests
             setup,
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
-                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
+                NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
         provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         return provider;
     }
 
-    private void Join(int peerId, string uid, string nick, Color? color = null)
+    private void Join(int peerId, PlayerUid uid, string nick, Color? color = null)
     {
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         var join = new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, color ?? Colors.White);
@@ -330,7 +315,7 @@ public class PlayerJoinLeaveTests
 
     private PlayersModel Players() => _provider.GetRequiredService<PlayerQuery>().PlayersModel;
 
-    private IEnumerable<string> Online() =>
+    private IEnumerable<PlayerUid> Online() =>
         _provider.GetRequiredService<PlayerQuery>().OnlineModel.Uids.ToList();
 
     private EventOutbox Outbox() => _provider.GetRequiredService<EventOutbox>();
@@ -358,7 +343,7 @@ public class PlayerJoinLeaveTests
             .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Body[0]))
             .ToList();
 
-    private static object[] Joined(string uid, string nick) =>
+    private static object[] Joined(PlayerUid uid, string nick) =>
         [
             new LocalizedChatMessageEvent(Now, new LocalizedText("HUD__CHAT_PLAYER_JOINED", [nick])),
             new PlayerJoinedEvent(uid),

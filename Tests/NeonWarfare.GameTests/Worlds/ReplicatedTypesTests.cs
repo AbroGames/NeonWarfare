@@ -21,7 +21,7 @@ public class ReplicatedTypesTests
     [RequireGodotRuntime]
     public void ReplicatedTypes_RoundTripWithDefaults()
     {
-        var replicator = new Replicator(NetMessageCodecTests.CreateMapping());
+        var replicator = NetMessageCodecTests.CreateReplicator();
         List<Type> types = typeof(PlayersStorage).Assembly.GetTypes()
             .Where(type => type is { IsAbstract: false, ContainsGenericParameters: false } && DeclaresReplicated(type))
             .ToList();

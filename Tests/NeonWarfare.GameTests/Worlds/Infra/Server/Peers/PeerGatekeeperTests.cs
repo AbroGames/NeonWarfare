@@ -2,6 +2,7 @@ using GdUnit4;
 using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Peers;
@@ -51,7 +52,7 @@ public class PeerGatekeeperTests
     public void DisconnectExpired_JoinedPeer_StaysAfterTheDeadline()
     {
         _gatekeeper.StartHandshake(AlicePeer);
-        _peers.Join(AlicePeer, "alice");
+        _peers.Join(AlicePeer, new PlayerUid("alice"));
         _time.Now += PeerGatekeeper.HandshakeTimeout;
 
         _gatekeeper.DisconnectExpired();
@@ -92,7 +93,7 @@ public class PeerGatekeeperTests
         _gatekeeper.Disconnect(AlicePeer);
         _gatekeeper.Disconnect(AlicePeer);
         _gatekeeper.StartHandshake(BobPeer);
-        _peers.Join(BobPeer, "bob");
+        _peers.Join(BobPeer, new PlayerUid("bob"));
         _gatekeeper.Disconnect(BobPeer);
         _gatekeeper.Disconnect(BobPeer);
 
@@ -105,7 +106,7 @@ public class PeerGatekeeperTests
     public void Reject_CutPeer_SendsNothing()
     {
         _gatekeeper.StartHandshake(AlicePeer);
-        _peers.Join(AlicePeer, "alice");
+        _peers.Join(AlicePeer, new PlayerUid("alice"));
         _gatekeeper.Disconnect(AlicePeer);
 
         _gatekeeper.Reject(AlicePeer, JoinRejectReason.InternalError);

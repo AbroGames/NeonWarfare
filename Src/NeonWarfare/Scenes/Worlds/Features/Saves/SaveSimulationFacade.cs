@@ -2,6 +2,7 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using Serilog;
 
@@ -15,7 +16,7 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
 
     private readonly ILogger _log = LogFactory.GetForStatic<SaveSimulationFacade>();
 
-    public void Save(string senderUid, string fileName)
+    public void Save(PlayerUid senderUid, string fileName)
     {
         PlayerModel sender = players.Get(senderUid);
         _log.Information("{nick} ({uid}) saves the game as '{fileName}'", sender.Nick, sender.Uid, fileName);

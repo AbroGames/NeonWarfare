@@ -7,4 +7,4 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 /// The fact of a join, apart from its chat line. A client learns from its own one that its player is online.
 /// </summary>
 [MessagePackObject]
-public record PlayerJoinedEvent([property: Key(0)] string Uid) : Event;
+public record PlayerJoinedEvent([property: Key(0)] PlayerUid Uid) : Event;

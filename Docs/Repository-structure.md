@@ -33,6 +33,7 @@ Src/                                  Code and scenes of the Godot project; a na
         ├── GlobalServices/           Global services
         ├── Services.cs               The registry of all global services
         ├── Consts.cs                 Global constants
+        ├── PlayerUid.cs              The player's identity across sessions, saves and processes
         └── GlobalUsings.cs           Here we declare global using and global using static
 
 Tests/                                xUnit v3 tests

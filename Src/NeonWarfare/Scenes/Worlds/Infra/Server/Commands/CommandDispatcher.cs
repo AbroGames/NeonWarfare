@@ -74,7 +74,7 @@ public class CommandDispatcher(
             _log.Warning("{command} from peer {peerId} dropped: the peer has not joined", name, peerId);
             return;
         }
-        string uid = joined.Uid;
+        PlayerUid uid = joined.Uid;
 
         CommandHandlerRegistry.PlayerHandler handler = handlers.GetPlayerHandler(command.GetType());
         if (!handler.Validate(uid, command))

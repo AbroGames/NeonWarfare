@@ -4,6 +4,7 @@ using System.Linq;
 using Humanizer;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 
@@ -22,7 +23,7 @@ public class HelpChatCommandSimulationFacade(
     public string Description => "Show list of available commands.";
     public bool RequiresAdmin => false;
 
-    public void Execute(string senderUid, string arguments)
+    public void Execute(PlayerUid senderUid, string arguments)
     {
         string message = PlayerCommandsMessage.FormatWith(
             ListOf(_commands.Where(command => !command.RequiresAdmin)));

@@ -20,7 +20,7 @@ public interface IPeerSessionHandler
     /// <summary>
     /// Called once for a joined peer, when it disconnects or when another peer displaces it.
     /// </summary>
-    void Leave(string uid, LeaveReason reason);
+    void Leave(PlayerUid uid, LeaveReason reason);
 }
 
 public enum LeaveReason

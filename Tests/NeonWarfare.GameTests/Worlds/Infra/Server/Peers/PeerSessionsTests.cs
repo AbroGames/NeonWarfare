@@ -5,6 +5,7 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
 
@@ -14,9 +15,9 @@ namespace NeonWarfare.GameTests.Worlds.Infra.Server.Peers;
 public class PeerSessionsTests
 {
     private const int HostPeer = RecordingClientsConnection.HostPeer;
-    private const string HostUid = "host";
+    private static readonly PlayerUid HostUid = new("host");
     private const int AlicePeer = 2;
-    private const string AliceUid = "alice";
+    private static readonly PlayerUid AliceUid = new("alice");
     private const int BobPeer = 3;
     private const int AliceSecondPeer = 4;
 
@@ -59,7 +60,7 @@ public class PeerSessionsTests
     public void Join_RepeatedFromJoinedPeer_IsDropped()
     {
         Join(AlicePeer, AliceUid);
-        Join(AlicePeer, "other");
+        Join(AlicePeer, new PlayerUid("other"));
 
         AssertThat(_calls).ContainsExactly("validate join alice", Joined(AliceUid));
         AssertJoined(AlicePeer, AliceUid);
@@ -175,7 +176,7 @@ public class PeerSessionsTests
     public void Join_FromCutPeer_IsDroppedAndDisplacesNobody()
     {
         Join(AlicePeer, AliceUid);
-        Join(BobPeer, "bob");
+        Join(BobPeer, new PlayerUid("bob"));
         _gatekeeper.Disconnect(BobPeer);
         _gatekeeper.Disconnect(AliceSecondPeer);
         _calls.Clear();
@@ -263,11 +264,11 @@ public class PeerSessionsTests
         AssertThat(_peers.TryGetPeerIdByUid(ThrowInLeave, out _)).IsFalse();
     }
 
-    private void Join(int peerId, string uid) => _sessions.Join(peerId, Command(uid));
+    private void Join(int peerId, PlayerUid uid) => _sessions.Join(peerId, Command(uid));
 
-    private JoinRequestCommand Command(string uid) => new(TestProtocol.Hash.Value, uid, uid, Colors.Red);
+    private JoinRequestCommand Command(PlayerUid uid) => new(TestProtocol.Hash.Value, uid, uid.Value, Colors.Red);
 
-    private void AssertJoined(int peerId, string uid)
+    private void AssertJoined(int peerId, PlayerUid uid)
     {
         AssertThat(_peers.TryGetJoined(peerId, out PeerStateTable.Joined? joined)).IsTrue();
         AssertThat(joined!.Uid).IsEqual(uid);

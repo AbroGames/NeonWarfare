@@ -1,5 +1,6 @@
 using Godot;
 using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Ports;
 
 namespace NeonWarfare.GameTests.Worlds.Fixtures;
@@ -9,10 +10,10 @@ namespace NeonWarfare.GameTests.Worlds.Fixtures;
 /// </summary>
 public static class TestWorldSetups
 {
-    public const string LocalPlayerUid = "LocalLocal-Llllllllll";
+    public static readonly PlayerUid LocalPlayerUid = new("LocalLocal-Llllllllll");
     public const string SaveFileName = "save";
 
-    public static LocalPlayer LocalPlayer(string uid = LocalPlayerUid) => new(uid, "Local", Colors.White);
+    public static LocalPlayer LocalPlayer(PlayerUid? uid = null) => new(uid ?? LocalPlayerUid, "Local", Colors.White);
 
     public static WorldSetup.RemoteClient RemoteClient(
         LocalPlayer? localPlayer = null, ILocalPlayerOwner? localPlayerOwner = null) =>
@@ -26,7 +27,7 @@ public static class TestWorldSetups
 
     /// <param name="adminUid"><c>null</c> — a World without an admin.</param>
     public static WorldSetup.Dedicated Dedicated(
-        string? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
+        PlayerUid? adminUid = null, ISaveFiles? saveFiles = null, IServerOwner? owner = null,
         string saveFileName = SaveFileName) =>
         new(saveFiles ?? new RecordingSaveFiles(), new WorldSaveFile(saveFileName), new WorldAdmin(adminUid),
             owner ?? new RecordingServerOwner());

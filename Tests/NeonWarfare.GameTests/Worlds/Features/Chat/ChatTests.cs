@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers;
 using GdUnit4;
 using Godot;
@@ -29,6 +30,10 @@ public class ChatTests
     private const int MaxLength = 1024;
     private const int AlicePeer = 2;
     private const int BobPeer = 3;
+    private static readonly PlayerUid AliceUid = new("alice");
+    private static readonly PlayerUid BobUid = new("bob");
+    private static readonly PlayerUid RootUid = new("root");
+    private static readonly PlayerUid GhostUid = new("ghost");
 
     private static readonly HashSet<Type> EventTypes = [typeof(ChatServerMessageEvent), typeof(ChatPlayerMessageEvent)];
 
@@ -49,15 +54,15 @@ public class ChatTests
             TestWorldSetups.Dedicated(),
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
-                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
+                NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection(), new RecordingClientsConnection()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();
 
-        JoinDirectly("alice", "Alice", AlicePeer);
-        _bob = JoinDirectly("bob", "Bob", BobPeer);
+        JoinDirectly(AliceUid, "Alice", AlicePeer);
+        _bob = JoinDirectly(BobUid, "Bob", BobPeer);
     }
 
     [AfterTest]
@@ -74,7 +79,7 @@ public class ChatTests
     {
         From(AlicePeer, "hello");
 
-        var expected = new ChatPlayerMessageEvent(Now, "alice", "Alice", "hello");
+        var expected = new ChatPlayerMessageEvent(Now, AliceUid, "Alice", "hello");
         AssertAll([expected], [expected]);
     }
 
@@ -102,7 +107,7 @@ public class ChatTests
         {
             From(AlicePeer, text);
 
-            AssertThat(PeerEvents(BobPeer)).ContainsExactly(new ChatPlayerMessageEvent(Now, "alice", "Alice", text));
+            AssertThat(PeerEvents(BobPeer)).ContainsExactly(new ChatPlayerMessageEvent(Now, AliceUid, "Alice", text));
         }
     }
 
@@ -151,14 +156,14 @@ public class ChatTests
     {
         const int ghostPeer = 4;
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(ghostPeer);
-        _provider.GetRequiredService<PeerStateTable>().Join(ghostPeer, "ghost");
+        _provider.GetRequiredService<PeerStateTable>().Join(ghostPeer, GhostUid);
         var inbox = _provider.GetRequiredService<CommandInbox>();
 
         inbox.EnqueueFromPeer(ghostPeer, _codec.Encode(new SendChatMessageCommand("lost")));
         inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(new SendChatMessageCommand("hi")));
         _provider.GetRequiredService<CommandDispatcher>().ProcessAll();
 
-        var expected = new ChatPlayerMessageEvent(Now, "alice", "Alice", "hi");
+        var expected = new ChatPlayerMessageEvent(Now, AliceUid, "Alice", "hi");
         AssertAll([expected], [expected]);
     }
 
@@ -172,15 +177,15 @@ public class ChatTests
         var calls = new List<string>();
         (ChatSimulationFacade facade, EventOutbox outbox, PeerStateTable peers) =
             HandMade((_, _) => [new FixtureCommand("admin", RequiresAdmin: true, calls)]);
-        PlayerModel root = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer("root");
+        PlayerModel root = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(RootUid);
         root.Nick = "Root";
         root.IsAdmin = true;
         peers.Connect(AlicePeer, DateTimeOffset.MaxValue);
-        peers.Join(AlicePeer, "alice");
+        peers.Join(AlicePeer, AliceUid);
         peers.Connect(BobPeer, DateTimeOffset.MaxValue);
         peers.Join(BobPeer, root.Uid);
 
-        facade.HandleInput("alice", "/admin x");
+        facade.HandleInput(AliceUid, "/admin x");
         facade.HandleInput(root.Uid, "/ADMIN  y ");
 
         AssertThat(calls).ContainsExactly("root: admin y");
@@ -232,14 +237,14 @@ public class ChatTests
             ];
             return [..listed, new HelpChatCommandSimulationFacade(listed, chat, players)];
         });
-        PlayerModel root = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer("root");
+        PlayerModel root = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(RootUid);
         root.IsAdmin = true;
         peers.Connect(AlicePeer, DateTimeOffset.MaxValue);
-        peers.Join(AlicePeer, "alice");
+        peers.Join(AlicePeer, AliceUid);
         peers.Connect(BobPeer, DateTimeOffset.MaxValue);
         peers.Join(BobPeer, root.Uid);
 
-        facade.HandleInput("alice", "/help");
+        facade.HandleInput(AliceUid, "/help");
         facade.HandleInput(root.Uid, "/help");
 
         string player = ((ChatServerMessageEvent) PeerEvents(outbox, AlicePeer).Single()).Text;
@@ -251,7 +256,7 @@ public class ChatTests
     }
 
     // Past the join, whose events would mix with the chat's
-    private PlayerModel JoinDirectly(string uid, string nick, int peerId)
+    private PlayerModel JoinDirectly(PlayerUid uid, string nick, int peerId)
     {
         PlayerModel player = _provider.GetRequiredService<PlayerQuery>().PlayersModel.AddPlayer(uid);
         player.Nick = nick;
@@ -309,6 +314,6 @@ public class ChatTests
     {
         public string Description => "fixture";
 
-        public void Execute(string senderUid, string arguments) => Calls.Add($"{senderUid}: {Name} {arguments}");
+        public void Execute(PlayerUid senderUid, string arguments) => Calls.Add($"{senderUid}: {Name} {arguments}");
     }
 }

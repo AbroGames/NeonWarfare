@@ -2,6 +2,7 @@ using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scripts;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using Serilog;
 
@@ -12,7 +13,7 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
 {
     private readonly ILogger _log = LogFactory.GetForStatic<ChatSimulation>();
 
-    public void SendMessageAsPlayerToAll(string senderUid, string text)
+    public void SendMessageAsPlayerToAll(PlayerUid senderUid, string text)
     {
         PlayerModel sender = players.Get(senderUid);
         _log.Information("Chat {nick} ({uid}) to all: {text}", sender.Nick, sender.Uid, ToOneLine(text));
@@ -20,7 +21,7 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
         outbox.PublishToAll(message);
     }
 
-    public void SendMessageAsServerToPlayer(string text, string receiverUid)
+    public void SendMessageAsServerToPlayer(string text, PlayerUid receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
         _log.Information("Chat server to {nick} ({uid}): {text}", receiver.Nick, receiver.Uid, ToOneLine(text));
@@ -34,7 +35,7 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
         outbox.PublishToAll(new LocalizedChatMessageEvent(NowUnixSeconds(), new LocalizedText(key, args)));
     }
 
-    public void SendLocalizedMessageAsServerToPlayer(string key, string[] args, string receiverUid)
+    public void SendLocalizedMessageAsServerToPlayer(string key, string[] args, PlayerUid receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
         _log.Information("Chat server to {nick} ({uid}): {key} {args}", receiver.Nick, receiver.Uid, key, args);

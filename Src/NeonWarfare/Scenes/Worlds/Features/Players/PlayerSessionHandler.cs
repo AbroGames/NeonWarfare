@@ -10,9 +10,6 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 [CommandHandler]
 public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade) : IPeerSessionHandler
 {
-    // The client's uid is two groups of Latin letters joined by a dash.
-    private const int UidGroupLength = 10;
-    private const char UidSeparator = '-';
     private const int NickMinLength = 3;
     private const int NickMaxLength = 25;
     // A darker color is lost on the dark background of the game.
@@ -20,7 +17,7 @@ public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade)
 
     public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
     {
-        if (!IsValidUid(command.Uid))
+        if (!command.Uid.IsValid)
         {
             reason = JoinRejectReason.InvalidUid;
             return false;
@@ -43,14 +40,7 @@ public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade)
     public void Join(JoinRequestCommand command) =>
         playerSimulationFacade.Join(command.Uid, command.Nick, command.Color);
 
-    public void Leave(string uid, LeaveReason reason) => playerSimulationFacade.Leave(uid, reason);
-
-    private static bool IsValidUid(string uid)
-    {
-        return uid is { Length: UidGroupLength * 2 + 1 }
-               && uid[UidGroupLength] == UidSeparator
-               && uid.Where((_, i) => i != UidGroupLength).All(char.IsAsciiLetter);
-    }
+    public void Leave(PlayerUid uid, LeaveReason reason) => playerSimulationFacade.Leave(uid, reason);
 
     private static bool IsValidNick(string nick)
     {

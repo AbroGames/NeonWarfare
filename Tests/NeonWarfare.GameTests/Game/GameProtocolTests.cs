@@ -22,7 +22,7 @@ public class GameProtocolTests
 
         GameProtocol protocol = GameProtocol.Create(scenes, mapping);
 
-        ProtocolHash expected = new ProtocolHasher(new Replicator(mapping))
+        ProtocolHash expected = new ProtocolHasher(ProtocolCodecs.CreateReplicator(mapping))
             .Compute(mapping.Types, TestWorldScenes.CreateCatalog(scenes).Descriptors);
         AssertThat(protocol.Hash).IsEqual(expected);
     }

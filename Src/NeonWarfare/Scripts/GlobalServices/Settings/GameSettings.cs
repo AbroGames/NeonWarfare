@@ -20,7 +20,7 @@ public record GameSettings(
     public static GameSettings GetDefault()
     {
         return new(
-            PlayerUid: new UidGenerator().Generate(),
+            PlayerUid: Scripts.PlayerUid.Generate().Value,
             PlayerNick: "Player",
             PlayerColor: new Color(1, 1, 1),
             Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code,

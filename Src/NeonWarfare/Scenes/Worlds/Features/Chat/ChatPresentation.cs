@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Presentation;
+using NeonWarfare.Scripts;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
@@ -18,7 +19,7 @@ public class ChatPresentation(HudMailbox hudMailbox) : IEventHandlerOwner
     /// The replies of chat commands are not localized, see Docs/Localization.md#locale-files.
     /// </summary>
     public abstract record ChatEntry(long SentAtUnixSeconds);
-    public record PlayerMessageEntry(long SentAtUnixSeconds, string SenderUid, string SenderNick, string Text)
+    public record PlayerMessageEntry(long SentAtUnixSeconds, PlayerUid SenderUid, string SenderNick, string Text)
         : ChatEntry(SentAtUnixSeconds);
     public record ServerTextEntry(long SentAtUnixSeconds, string Text) : ChatEntry(SentAtUnixSeconds);
 

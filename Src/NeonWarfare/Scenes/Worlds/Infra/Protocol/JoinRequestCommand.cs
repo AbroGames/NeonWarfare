@@ -6,6 +6,6 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 [MessagePackObject]
 public record JoinRequestCommand(
     [property: Key(0)] ulong ProtocolHash,
-    [property: Key(1)] string Uid,
+    [property: Key(1)] PlayerUid Uid,
     [property: Key(2)] string Nick,
     [property: Key(3)] Color Color) : Command;

@@ -59,7 +59,7 @@ public class PeerSessions(IPeerSessionHandler sessionHandler, PeerStateTable pee
             return;
         }
 
-        string uid = command.Uid;
+        PlayerUid uid = command.Uid;
         if (peers.TryGetPeerIdByUid(uid, out int oldPeerId))
         {
             // The host cannot reconnect from another peer, so displacing it would lock it out of its own world.

@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scripts;
 using static GdUnit4.Assertions;
 using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
 
@@ -20,10 +21,12 @@ public class CommandDispatcherTests
 {
     private const int HostPeer = RecordingClientsConnection.HostPeer;
     private const int AlicePeer = 2;
-    private const string AliceUid = "alice";
+    private static readonly PlayerUid AliceUid = new("alice");
     private const int BobPeer = 3;
-    private const string BobUid = "bob";
+    private static readonly PlayerUid BobUid = new("bob");
     private const int AliceSecondPeer = 4;
+    private const string ThrowInValidate = "throw in validate";
+    private const string Invalid = "invalid";
     private const string ThrowInProcess = "throw in process";
 
     private NetMessageCodec _codec = null!;
@@ -199,7 +202,7 @@ public class CommandDispatcherTests
 
         _inbox.EnqueueFromPeer(
             AlicePeer,
-            _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value + 1, AliceUid, AliceUid, Colors.Red)));
+            _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value + 1, AliceUid, AliceUid.Value, Colors.Red)));
         Chat(AlicePeer, "still here");
         dispatcher.ProcessAll();
 
@@ -243,16 +246,16 @@ public class CommandDispatcherTests
     }
 
     // The dispatcher looks only at the peer's state: whether the player exists is the handler's lookup
-    private void JoinDirectly(string uid, int peerId) => _peers.Join(peerId, uid);
+    private void JoinDirectly(PlayerUid uid, int peerId) => _peers.Join(peerId, uid);
 
     private void Chat(int peerId, string text) =>
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
 
-    private void Join(int peerId, string uid) =>
+    private void Join(int peerId, PlayerUid uid) =>
         _inbox.EnqueueFromPeer(
-            peerId, _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value, uid, uid, Colors.Red)));
+            peerId, _codec.Encode(new JoinRequestCommand(TestProtocol.Hash.Value, uid, uid.Value, Colors.Red)));
 
-    private void AssertBound(int peerId, string uid)
+    private void AssertBound(int peerId, PlayerUid uid)
     {
         AssertThat(_peers.TryGetJoined(peerId, out PeerStateTable.Joined? joined)).IsTrue();
         AssertThat(joined!.Uid).IsEqual(uid);
@@ -262,7 +265,7 @@ public class CommandDispatcherTests
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {
-        public bool Validate(string senderUid, SendChatMessageCommand command)
+        public bool Validate(PlayerUid senderUid, SendChatMessageCommand command)
         {
             calls.Add($"validate {senderUid}: {command.Text}");
             return command.Text switch
@@ -273,7 +276,7 @@ public class CommandDispatcherTests
             };
         }
 
-        public void Process(string senderUid, SendChatMessageCommand command)
+        public void Process(PlayerUid senderUid, SendChatMessageCommand command)
         {
             calls.Add($"process {senderUid}: {command.Text}");
             if (command.Text == ThrowInProcess) throw new InvalidOperationException("process failed");
@@ -283,9 +286,9 @@ public class CommandDispatcherTests
     private class LookingUpHandler(List<string> calls, PlayerQuery players)
         : IPlayerCommandHandler<SendChatMessageCommand>
     {
-        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
+        public bool Validate(PlayerUid senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(string senderUid, SendChatMessageCommand command) =>
+        public void Process(PlayerUid senderUid, SendChatMessageCommand command) =>
             calls.Add($"{players.Get(senderUid).Nick}: {command.Text}");
     }
 }

@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using NeonWarfare.Scripts;
 using RepliCAT;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 public class PlayersModel
 {
-    public IReadOnlyDictionary<string, PlayerModel> PlayerByUid => _playerByUid;
-    [Replicated] private readonly ReplicatedDictionary<string, PlayerModel> _playerByUid = new();
+    public IReadOnlyDictionary<PlayerUid, PlayerModel> PlayerByUid => _playerByUid;
+    [Replicated] private readonly ReplicatedDictionary<PlayerUid, PlayerModel> _playerByUid = new();
 
-    public PlayerModel AddPlayer(string uid)
+    public PlayerModel AddPlayer(PlayerUid uid)
     {
         var player = new PlayerModel(uid);
         _playerByUid.Add(uid, player);

@@ -43,7 +43,7 @@ public class SaveServiceTests
             TestWorldSetups.Dedicated(saveFiles: _files, saveFileName: OldFile),
             new WorldDependencies(new ManualTimeProvider(0),
                 new NetMessageCodec(NetMessageCodecTests.CreateMapping()), TestProtocol.Hash,
-                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, catalog,
+                NetMessageCodecTests.CreateReplicator(), new ManualFrameProvider(), _scenes, catalog,
                 connection, connection),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();

@@ -1,3 +1,4 @@
+using NeonWarfare.Scripts;
 using System.Buffers;
 using GdUnit4;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
@@ -21,9 +22,9 @@ public class EventOutboxTests
     private static readonly HashSet<Type> EventTypes =
         [typeof(ChatServerMessageEvent), typeof(ChatPlayerMessageEvent), typeof(LocalizedChatMessageEvent)];
 
-    private const string Alice = "alice";
-    private const string Bob = "bob";
-    private const string Offline = "offline";
+    private static readonly PlayerUid Alice = new("alice");
+    private static readonly PlayerUid Bob = new("bob");
+    private static readonly PlayerUid Offline = new("offline");
 
     private NetMessageCodec _codec = null!;
     private PeerStateTable _peers = null!;
@@ -123,7 +124,7 @@ public class EventOutboxTests
     public void Join_Later_GetsNoEarlierEvents()
     {
         _outbox.PublishToAll(Event("before"));
-        Join("carol", 4);
+        Join(new PlayerUid("carol"), 4);
         ChatServerMessageEvent after = Event("after");
 
         _outbox.PublishToAll(after);
@@ -145,7 +146,7 @@ public class EventOutboxTests
             .IsInstanceOf<InvalidOperationException>();
     }
 
-    private void Join(string uid, int peerId)
+    private void Join(PlayerUid uid, int peerId)
     {
         _peers.Connect(peerId, DateTimeOffset.MaxValue);
         _peers.Join(peerId, uid);
