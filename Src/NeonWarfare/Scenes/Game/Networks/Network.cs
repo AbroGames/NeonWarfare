@@ -139,7 +139,7 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
     }
 
     /// <summary>
-    /// Disconnects the peer after the packets already queued for it, so a rejection still reaches it.
+    /// Disconnects the peer after the packets already queued for it, so a disconnect reason still reaches it.
     /// </summary>
     public void Disconnect(int peerId)
     {
@@ -151,7 +151,7 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
             return;
         }
 
-        // DisconnectPeer would reset the peer's queues and drop a queued rejection.
+        // DisconnectPeer would reset the peer's queues and drop a queued disconnect reason.
         // With PeerDisconnectLater the peer stays in the list, and its peer_disconnected comes once the disconnect is
         // acknowledged.
         ((ENetMultiplayerPeer) _api.MultiplayerPeer).GetPeer(peerId).PeerDisconnectLater();

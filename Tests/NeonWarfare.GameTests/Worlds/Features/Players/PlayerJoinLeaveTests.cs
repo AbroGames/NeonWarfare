@@ -178,7 +178,7 @@ public class PlayerJoinLeaveTests
         Join(AlicePeer, HostUid, "Host");
         Tick();
 
-        AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.UidInUse));
+        AssertThat(Reasons()).ContainsExactly((AlicePeer, DisconnectReason.UidInUse));
         AssertThat(Peers().JoinedPeerIds).ContainsExactly(HostPeer);
         AssertThat(Online()).ContainsExactly(HostUid);
     }
@@ -198,7 +198,7 @@ public class PlayerJoinLeaveTests
         Join(AliceSecondPeer, AliceUid, "Alice");
         Tick();
 
-        AssertThat(Rejections()).ContainsExactly((AliceSecondPeer, JoinRejectReason.UidInUse));
+        AssertThat(Reasons()).ContainsExactly((AliceSecondPeer, DisconnectReason.UidInUse));
         AssertThat(Peers().JoinedPeerIds).ContainsExactly(AlicePeer);
         AssertThat(Online()).ContainsExactly(AliceUid);
         AssertThat(owner.AdminLeftCount).IsEqual(0);
@@ -208,38 +208,38 @@ public class PlayerJoinLeaveTests
     [RequireGodotRuntime]
     public void Join_InvalidFields_AreRejectedWithTheirReason()
     {
-        var cases = new (string? Uid, string? Nick, Color Color, JoinRejectReason Reason)[]
+        var cases = new (string? Uid, string? Nick, Color Color, DisconnectReason Reason)[]
         {
-            (null, "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("TestPlayer1", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaaa-Aaaaaaaaa", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaaa-Aaaaaaaaaaa", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaaa_Aaaaaaaaaa", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaa1-Aaaaaaaaaa", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaaa-Aaaaaaaaa-", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaaa-Aaaaaaaaa ", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            ("Aaaaaaaaaa-Aaaaaaaaaé", "Alice", Colors.White, JoinRejectReason.InvalidUid),
-            (AliceUid.Value, null, Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid.Value, "Al", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid.Value, new string('a', 26), Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid.Value, "Al ice", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid.Value, "Al\tice", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid.Value, "Al​ice", Colors.White, JoinRejectReason.InvalidNick),
-            (AliceUid.Value, "Alice", Colors.Black, JoinRejectReason.InvalidColor),
-            (AliceUid.Value, "Alice", new Color(2, 2, 2), JoinRejectReason.InvalidColor),
-            (AliceUid.Value, "Alice", new Color(1, 1, 1, -1), JoinRejectReason.InvalidColor),
-            (AliceUid.Value, "Alice", new Color(float.NaN, 1, 1), JoinRejectReason.InvalidColor),
+            (null, "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("TestPlayer1", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaaa-Aaaaaaaaa", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaaa-Aaaaaaaaaaa", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaaa_Aaaaaaaaaa", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaa1-Aaaaaaaaaa", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaaa-Aaaaaaaaa-", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaaa-Aaaaaaaaa ", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            ("Aaaaaaaaaa-Aaaaaaaaaé", "Alice", Colors.White, DisconnectReason.InvalidUid),
+            (AliceUid.Value, null, Colors.White, DisconnectReason.InvalidNick),
+            (AliceUid.Value, "Al", Colors.White, DisconnectReason.InvalidNick),
+            (AliceUid.Value, new string('a', 26), Colors.White, DisconnectReason.InvalidNick),
+            (AliceUid.Value, "Al ice", Colors.White, DisconnectReason.InvalidNick),
+            (AliceUid.Value, "Al\tice", Colors.White, DisconnectReason.InvalidNick),
+            (AliceUid.Value, "Al​ice", Colors.White, DisconnectReason.InvalidNick),
+            (AliceUid.Value, "Alice", Colors.Black, DisconnectReason.InvalidColor),
+            (AliceUid.Value, "Alice", new Color(2, 2, 2), DisconnectReason.InvalidColor),
+            (AliceUid.Value, "Alice", new Color(1, 1, 1, -1), DisconnectReason.InvalidColor),
+            (AliceUid.Value, "Alice", new Color(float.NaN, 1, 1), DisconnectReason.InvalidColor),
         };
 
         int peerId = 10;
-        foreach ((string? uid, string? nick, Color color, JoinRejectReason reason) in cases)
+        foreach ((string? uid, string? nick, Color color, DisconnectReason reason) in cases)
         {
             peerId++;
             Join(peerId, new PlayerUid(uid!), nick!, color);
             Tick();
 
-            AssertThat(Rejections()).ContainsExactly((peerId, reason));
+            AssertThat(Reasons()).ContainsExactly((peerId, reason));
             AssertThat(_clientsConnection.Disconnected).ContainsExactly(peerId);
             AssertThat(Online()).IsEmpty();
             AssertThat(Players().PlayerByUid).IsEmpty();
@@ -256,7 +256,7 @@ public class PlayerJoinLeaveTests
         Join(BobPeer, BobUid, new string('б', 25), Pink);
         Tick();
 
-        AssertThat(Rejections()).IsEmpty();
+        AssertThat(Reasons()).IsEmpty();
         AssertThat(Online()).HasSize(2);
     }
 
@@ -371,10 +371,10 @@ public class PlayerJoinLeaveTests
         return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
     }
 
-    private List<(int, JoinRejectReason)> Rejections() =>
+    private List<(int, DisconnectReason)> Reasons() =>
         _clientsConnection.Packets
-            .Where(sent => sent.Kind == SentKind.JoinRejected)
-            .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Body[0]))
+            .Where(sent => sent.Kind == SentKind.DisconnectReason)
+            .Select(sent => (sent.PeerId, (DisconnectReason) sent.Body[0]))
             .ToList();
 
     private static object[] Joined(PlayerUid uid, string nick) =>

@@ -47,7 +47,7 @@ public class PeerSessions(
             _log.Error(e, "{handler} failed on {command} from peer {peerId}, the peer is rejected",
                 sessionHandler.GetType().Name, name, peerId);
             bool wasJoined = peers.IsJoined(peerId);
-            gatekeeper.Reject(peerId, JoinRejectReason.InternalError);
+            gatekeeper.Disconnect(peerId, DisconnectReason.InternalError);
             if (wasJoined) peers.Release(peerId);
         }
     }
@@ -55,11 +55,11 @@ public class PeerSessions(
     private void JoinChecked(int peerId, JoinRequestCommand command)
     {
         string name = command.GetType().Name;
-        if (!sessionHandler.ValidateJoin(command, out JoinRejectReason reason))
+        if (!sessionHandler.ValidateJoin(command, out DisconnectReason reason))
         {
             _log.Warning("{command} from peer {peerId} rejected by {handler}: {reason}",
                 name, peerId, sessionHandler.GetType().Name, reason);
-            gatekeeper.Reject(peerId, reason);
+            gatekeeper.Disconnect(peerId, reason);
             return;
         }
 
@@ -70,13 +70,13 @@ public class PeerSessions(
             {
                 _log.Warning("Peer {peerId} joins as {uid}, which is protected from displacement: rejected",
                     peerId, uid);
-                gatekeeper.Reject(peerId, JoinRejectReason.UidInUse);
+                gatekeeper.Disconnect(peerId, DisconnectReason.UidInUse);
                 return;
             }
 
             // Displacement lets a crashed client come back before ENet notices that the old connection is gone.
             _log.Information("Peer {newPeerId} joins as {uid}, displacing peer {oldPeerId}", peerId, uid, oldPeerId);
-            gatekeeper.Disconnect(oldPeerId);
+            gatekeeper.Disconnect(oldPeerId, DisconnectReason.Displaced);
             // The uid is released before Leave, so a throwing handler cannot keep it from the new peer.
             peers.Release(oldPeerId);
             sessionHandler.Leave(uid, LeaveReason.Displaced);

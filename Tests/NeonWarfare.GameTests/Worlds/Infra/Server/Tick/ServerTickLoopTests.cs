@@ -221,7 +221,8 @@ public class ServerTickLoopTests
         Build(new WorldServicesBuilder());
         Outbox().PublishToAll(Hello);
 
-        _provider.GetRequiredService<PeerGatekeeper>().Disconnect(AlicePeer);
+        _provider.GetRequiredService<PeerGatekeeper>().Disconnect(AlicePeer, DisconnectReason.MissedPacket);
+        _clientsConnection.Packets.Clear();
         Outbox().PublishToAll(Hello);
         Loop().RunTick();
 

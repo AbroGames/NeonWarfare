@@ -23,10 +23,10 @@ public interface IClientsConnection
 
     bool SendSnapshot(int peerId, long tick, ReadOnlySpan<byte> records);
 
-    bool Reject(int peerId, JoinRejectReason reason);
+    bool SendDisconnectReason(int peerId, DisconnectReason reason);
 
     /// <summary>
-    /// Disconnects the peer after the packets already sent to it, so a rejection still reaches it.
+    /// Disconnects the peer after the packets already sent to it, so its disconnect reason still reaches it.
     /// <c>peer_disconnected</c> follows, as for any other disconnection.
     /// </summary>
     void Disconnect(int peerId);

@@ -10,7 +10,7 @@ public class RecordingLocalPlayerOwner : ILocalPlayerOwner
 {
     public int JoinedCount { get; private set; }
 
-    public List<JoinRejectReason> Rejections { get; } = [];
+    public List<DisconnectReason> Disconnections { get; } = [];
 
     // What the UI would do the moment it is created
     public Action? OnJoined { get; set; }
@@ -21,5 +21,5 @@ public class RecordingLocalPlayerOwner : ILocalPlayerOwner
         OnJoined?.Invoke();
     }
 
-    public void JoinRejected(JoinRejectReason reason) => Rejections.Add(reason);
+    public void Disconnected(DisconnectReason reason) => Disconnections.Add(reason);
 }

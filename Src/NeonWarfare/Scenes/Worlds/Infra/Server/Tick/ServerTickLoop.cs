@@ -99,14 +99,17 @@ public class ServerTickLoop(
         catch (Exception e)
         {
             _log.Error(e, "The snapshot failed, rejecting the peers joined in the tick: {peerIds}", joined);
-            joined.ForEach(peerId => gatekeeper.Reject(peerId, JoinRejectReason.InternalError));
+            joined.ForEach(peerId => gatekeeper.Disconnect(peerId, DisconnectReason.InternalError));
             return;
         }
 
         ReadOnlySpan<byte> records = writer.AsSpan();
         foreach (int peerId in joined)
         {
-            if (!clientsConnection.SendSnapshot(peerId, clock.CurrentTick, records)) gatekeeper.Disconnect(peerId);
+            if (!clientsConnection.SendSnapshot(peerId, clock.CurrentTick, records))
+            {
+                gatekeeper.Disconnect(peerId, DisconnectReason.MissedPacket);
+            }
         }
     }
 
@@ -128,7 +131,7 @@ public class ServerTickLoop(
             // The peer has missed a reliable packet, so it comes back through a join with a fresh snapshot.
             if (!clientsConnection.SendTickUpdate(peerId, clock.CurrentTick, peerState, peerEvents))
             {
-                gatekeeper.Disconnect(peerId);
+                gatekeeper.Disconnect(peerId, DisconnectReason.MissedPacket);
             }
         }
     }

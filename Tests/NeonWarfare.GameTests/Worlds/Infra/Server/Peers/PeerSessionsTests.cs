@@ -80,8 +80,8 @@ public class PeerSessionsTests
         AssertNotJoined(AlicePeer);
         AssertNotJoined(BobPeer);
         // The exception text stays in the log: the peer gets only the neutral code
-        AssertThat(Rejections()).ContainsExactly(
-            (AlicePeer, JoinRejectReason.InvalidNick), (BobPeer, JoinRejectReason.InternalError));
+        AssertThat(Reasons()).ContainsExactly(
+            (AlicePeer, DisconnectReason.InvalidNick), (BobPeer, DisconnectReason.InternalError));
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, BobPeer);
     }
 
@@ -95,7 +95,7 @@ public class PeerSessionsTests
         AssertNotJoined(AlicePeer);
         AssertThat(_peers.TryGetPeerIdByUid(ThrowInJoin, out _)).IsFalse();
         AssertThat(_peers.IsCut(AlicePeer)).IsTrue();
-        AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.InternalError));
+        AssertThat(Reasons()).ContainsExactly((AlicePeer, DisconnectReason.InternalError));
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
@@ -113,7 +113,7 @@ public class PeerSessionsTests
         AssertJoined(AliceSecondPeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
         AssertThat(_peers.IsCut(AlicePeer)).IsTrue();
-        AssertThat(Rejections()).IsEmpty();
+        AssertThat(Reasons()).ContainsExactly((AlicePeer, DisconnectReason.Displaced));
 
         _sessions.Disconnected(AlicePeer);
 
@@ -127,8 +127,9 @@ public class PeerSessionsTests
     public void Join_WithUidOfLeavingPeer_DisplacesItWithOneLeave()
     {
         Join(AlicePeer, AliceUid);
-        _gatekeeper.Disconnect(AlicePeer);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.MissedPacket);
         _calls.Clear();
+        _clientsConnection.Packets.Clear();
 
         Join(AliceSecondPeer, AliceUid);
         _sessions.Disconnected(AlicePeer);
@@ -136,6 +137,7 @@ public class PeerSessionsTests
         AssertThat(_calls).ContainsExactly("validate join alice", Displaced(AliceUid), Joined(AliceUid));
         AssertJoined(AliceSecondPeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+        AssertThat(Reasons()).IsEmpty();
     }
 
     // The uid would otherwise stay taken by a peer that never leaves
@@ -151,7 +153,8 @@ public class PeerSessionsTests
         AssertNotJoined(AlicePeer);
         AssertNotJoined(AliceSecondPeer);
         AssertThat(_peers.TryGetPeerIdByUid(ThrowInLeave, out _)).IsFalse();
-        AssertThat(Rejections()).ContainsExactly((AliceSecondPeer, JoinRejectReason.InternalError));
+        AssertThat(Reasons()).ContainsExactly(
+            (AlicePeer, DisconnectReason.Displaced), (AliceSecondPeer, DisconnectReason.InternalError));
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, AliceSecondPeer);
     }
 
@@ -168,7 +171,7 @@ public class PeerSessionsTests
         AssertThat(_calls).ContainsExactly("validate join host");
         AssertJoined(HostPeer, HostUid);
         AssertNotJoined(AlicePeer);
-        AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.UidInUse));
+        AssertThat(Reasons()).ContainsExactly((AlicePeer, DisconnectReason.UidInUse));
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
@@ -179,9 +182,10 @@ public class PeerSessionsTests
     {
         Join(AlicePeer, AliceUid);
         Join(BobPeer, new PlayerUid("bob"));
-        _gatekeeper.Disconnect(BobPeer);
-        _gatekeeper.Disconnect(AliceSecondPeer);
+        _gatekeeper.Disconnect(BobPeer, DisconnectReason.MissedPacket);
+        _gatekeeper.Disconnect(AliceSecondPeer, DisconnectReason.MissedPacket);
         _calls.Clear();
+        _clientsConnection.Packets.Clear();
 
         Join(BobPeer, AliceUid);
         Join(AliceSecondPeer, AliceUid);
@@ -189,7 +193,7 @@ public class PeerSessionsTests
         AssertThat(_calls).IsEmpty();
         AssertJoined(AlicePeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(BobPeer, AliceSecondPeer);
-        AssertThat(Rejections()).IsEmpty();
+        AssertThat(Reasons()).IsEmpty();
     }
 
     [TestCase]
@@ -226,7 +230,7 @@ public class PeerSessionsTests
         Join(AlicePeer, AliceUid);
         _calls.Clear();
 
-        _gatekeeper.Disconnect(AlicePeer);
+        _gatekeeper.Disconnect(AlicePeer, DisconnectReason.MissedPacket);
 
         AssertThat(_calls).IsEmpty();
         AssertThat(_peers.TryGetPeerIdByUid(AliceUid, out _)).IsTrue();
@@ -278,9 +282,9 @@ public class PeerSessionsTests
 
     private void AssertNotJoined(int peerId) => AssertThat(_peers.IsJoined(peerId)).IsFalse();
 
-    private List<(int, JoinRejectReason)> Rejections() =>
+    private List<(int, DisconnectReason)> Reasons() =>
         _clientsConnection.Packets
-            .Where(sent => sent.Kind == SentKind.JoinRejected)
-            .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Body[0]))
+            .Where(sent => sent.Kind == SentKind.DisconnectReason)
+            .Select(sent => (sent.PeerId, (DisconnectReason) sent.Body[0]))
             .ToList();
 }

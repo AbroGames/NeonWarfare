@@ -70,7 +70,7 @@ A command is sent at once, not at the tick.
 
 On the server `CommandInbox` decodes a packet on arrival, against the whitelist `CommandHandlerRegistry` builds from
 the found handlers: a type without a network handler, a broken body or trailing bytes is logged as `WARN` and
-dropped. A `JoinRequestCommand` with another protocol hash is rejected right here (`JoinRejected` + disconnect).
+dropped. A `JoinRequestCommand` with another protocol hash is rejected right here (`Disconnecting` + disconnect).
 The rest waits in the inbox together with the `PeerDisconnected` entries, one order per peer.
 
 `CommandDispatcher` drains the inbox in the tick: a join goes to `PeerSessions`, a disconnection too, and any other
@@ -86,14 +86,15 @@ The first byte of every packet is its `ServerPacketKind`; the layout is written 
 |---|---|---|
 | `Snapshot` | The tick, then a spawn record of every entity (`StateReplicator.WriteSnapshot`) | A peer that joined in this tick, except the host's own |
 | `TickUpdate` | The tick, the state section's length, the state section — spawns → models → despawns (`StateReplicator.TryWrite`), then the events section (`EventOutbox.DrainEvents`) | Every joined peer with a non-empty section; the state only to the peers joined before this tick, except the host's own |
-| `JoinRejected` | One `JoinRejectReason` byte, frozen across builds | A peer whose join is refused, just before the disconnect |
+| `Disconnecting` | One `DisconnectReason` byte, frozen across builds | A peer the server cuts off with a reason, just before the disconnect |
 
 The state section is the same for everyone and written once. An empty section is absent, and a tick update with
 neither is not sent. The state section comes before the events section, so an event handler sees the models already
 at the end of the tick, on the host and on a remote client alike.
 ENet delivers a fragmented reliable packet whole, so a client applies a tick atomically.
 
-A send that fails (`IClientsConnection` returns `false`) disconnects the peer: it has missed a reliable packet.
+A send that fails (`IClientsConnection` returns `false`) disconnects the peer with `MissedPacket`: it has missed a
+reliable packet.
 
 A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes a tick update to
 `World.IClientEndpoint.ReceiveTickUpdate`, which applies the state section (`StateApplier`), then dispatches the
@@ -102,8 +103,8 @@ Simulation has already written the state.
 A packet the client cannot read or apply ends its session (`ClientTransport.ConnectionBroken` → `Game.Failed`): it may
 be applied in part while the server's baselines have moved on, so the models would drift; a new join brings a fresh
 snapshot.
-`JoinRejected` never reaches a World: the transport reads it, with or without a World, and calls
-`ILocalPlayerOwner.JoinRejected`; `Game` reports it as `Failed`, and the starter leaves for the menu with the reason,
+`Disconnecting` never reaches a World: the transport reads it, with or without a World, and calls
+`ILocalPlayerOwner.Disconnected`; `Game` reports it as `Failed`, and the starter leaves for the menu with the reason,
 on a remote client and on a host refused its own join alike.
 
 Events are published only by the Simulation, into `EventOutbox` (`PublishToAll` / `PublishTo(uid)`), one buffer per
@@ -119,13 +120,15 @@ buffer. The server cuts a joined peer off as `Leaving(uid)`, whose uid stays tak
 unless displacement frees it at once; any other cut-off peer is `TurnedAway`. Only a `Connecting` peer may join, and
 only a `Joined` one gets packets and has its commands handled.
 
-`peer_connected` only starts the handshake deadline in `PeerGatekeeper`. The peer joins by sending
+`peer_connected` only starts the handshake deadline in `PeerGatekeeper`, which cuts the peer off with
+`HandshakeTimeout`. The peer joins by sending
 `JoinRequestCommand(protocolHash, uid, nick, color)`; until then it receives nothing. In the tick, `PeerSessions`:
 
 * drops a second join of a joined peer;
-* asks `IPeerSessionHandler.ValidateJoin` — a refusal sends `JoinRejected(reason)` and disconnects the peer;
-* displaces a peer already online with the same uid: the old one is disconnected and leaves with
-  `LeaveReason.Displaced`, then the new one joins (a crashed client comes back without waiting for ENet to notice).
+* asks `IPeerSessionHandler.ValidateJoin` — a refusal sends `Disconnecting(reason)` and disconnects the peer;
+* displaces a peer already online with the same uid: the old one gets `Disconnecting(Displaced)`, is disconnected
+  and leaves with `LeaveReason.Displaced`, then the new one joins (a crashed client comes back without waiting for
+  ENet to notice).
   A displaced admin has not left, so `IServerOwner.AdminLeft` is not called. The uid of the `ProtectedPlayer` port —
   the host's own player, the admin of a child server — cannot be taken, `UidInUse`: its owner cannot reconnect
   without leaving the server;

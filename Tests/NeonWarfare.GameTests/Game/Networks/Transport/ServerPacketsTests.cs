@@ -34,15 +34,15 @@ public class ServerPacketsTests
             .ContainsExactly((byte) ServerPacketKind.Snapshot, 2, 1, 0, 0, 0, 0, 0, 0, 5, 6);
     }
 
-    // A client of another build reads the rejection of a protocol mismatch
+    // A client of another build reads the disconnect reason of a protocol mismatch
     [TestCase]
     [RequireGodotRuntime]
-    public void WriteJoinRejected_IsTheKindThenTheReason()
+    public void WriteDisconnecting_IsTheKindThenTheReason()
     {
         var output = new ArrayBufferWriter<byte>();
-        ServerPackets.WriteJoinRejected(JoinRejectReason.InvalidNick, output);
+        ServerPackets.WriteDisconnecting(DisconnectReason.InvalidNick, output);
 
-        AssertThat(output.WrittenSpan.ToArray()).ContainsExactly((byte) ServerPacketKind.JoinRejected, 3);
+        AssertThat(output.WrittenSpan.ToArray()).ContainsExactly((byte) ServerPacketKind.Disconnecting, 3);
     }
 
     [TestCase]
@@ -121,18 +121,18 @@ public class ServerPacketsTests
         }
     }
 
-    // A server of another build may send a code this one does not know: it is still a rejection
+    // A server of another build may send a code this one does not know: it is still a disconnect
     [TestCase]
     [RequireGodotRuntime]
-    public void ReadJoinRejected_OfWrite_IsTheReason_AnUnknownOneToo()
+    public void ReadDisconnecting_OfWrite_IsTheReason_AnUnknownOneToo()
     {
-        foreach (JoinRejectReason reason in Enum.GetValues<JoinRejectReason>().Append((JoinRejectReason) 200))
+        foreach (DisconnectReason reason in Enum.GetValues<DisconnectReason>().Append((DisconnectReason) 200))
         {
             var output = new ArrayBufferWriter<byte>();
-            ServerPackets.WriteJoinRejected(reason, output);
+            ServerPackets.WriteDisconnecting(reason, output);
             (_, ReadOnlyMemory<byte> body) = ServerPackets.Read(output.WrittenMemory);
 
-            AssertThat(ServerPackets.ReadJoinRejected(body.Span)).IsEqual(reason);
+            AssertThat(ServerPackets.ReadDisconnecting(body.Span)).IsEqual(reason);
         }
     }
 
@@ -148,11 +148,11 @@ public class ServerPacketsTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ReadJoinRejected_NotOneByte_Throws()
+    public void ReadDisconnecting_NotOneByte_Throws()
     {
         foreach (byte[] body in new byte[][] { [], [1, 1] })
         {
-            NetMessageCodecTests.AssertRejected(() => ServerPackets.ReadJoinRejected(body));
+            NetMessageCodecTests.AssertRejected(() => ServerPackets.ReadDisconnecting(body));
         }
     }
 

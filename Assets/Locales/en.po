@@ -66,26 +66,35 @@ msgstr "Ok"
 msgid "MESSAGE_MENU__DEFAULT_ERROR"
 msgstr "Unknown error"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH"
+msgid "MESSAGE_MENU__DISCONNECTED_PROTOCOL_MISMATCH"
 msgstr "The server runs another version of the game"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID"
+msgid "MESSAGE_MENU__DISCONNECTED_INVALID_UID"
 msgstr "The server rejected your player id"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK"
+msgid "MESSAGE_MENU__DISCONNECTED_INVALID_NICK"
 msgstr "The nick must be 3 to 25 characters long, with no spaces"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR"
+msgid "MESSAGE_MENU__DISCONNECTED_INVALID_COLOR"
 msgstr "The player color is too dark"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE"
+msgid "MESSAGE_MENU__DISCONNECTED_UID_IN_USE"
 msgstr "A player with your id is already on the server"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR"
+msgid "MESSAGE_MENU__DISCONNECTED_INTERNAL_ERROR"
 msgstr "The server failed to let you in because of an internal error"
 
-msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
-msgstr "The server rejected the connection"
+msgid "MESSAGE_MENU__DISCONNECTED_DISPLACED"
+msgstr "A player with the same UID connected to the server"
+
+msgid "MESSAGE_MENU__DISCONNECTED_HANDSHAKE_TIMEOUT"
+msgstr "The server did not get your join in time"
+
+msgid "MESSAGE_MENU__DISCONNECTED_MISSED_PACKET"
+msgstr "The connection to the server broke, connect again"
+
+msgid "MESSAGE_MENU__DISCONNECTED_UNKNOWN"
+msgstr "The server disconnected you"
 
 msgid "MESSAGE_MENU__CONNECTION_FAILED"
 msgstr "Connection to the server failed"

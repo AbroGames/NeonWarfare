@@ -11,9 +11,9 @@ namespace NeonWarfare.RepoTests.Localization;
 /// server's constants: a change to the rule would otherwise leave every translation quietly wrong.
 /// </summary>
 [Collection(GameAssembly.Collection)]
-public partial class JoinRejectedTextTests
+public partial class DisconnectedTextTests
 {
-    private const string InvalidNickKey = "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK";
+    private const string InvalidNickKey = "MESSAGE_MENU__DISCONNECTED_INVALID_NICK";
     private const string PlayerSessionHandler = WorldLayers.WorldNamespace + ".Features.Players.PlayerSessionHandler";
     private const string NickMinLength = "NickMinLength";
     private const string NickMaxLength = "NickMaxLength";

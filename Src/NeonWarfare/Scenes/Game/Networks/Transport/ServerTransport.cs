@@ -38,10 +38,10 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
         return _network.Send(peerId, _packet.WrittenSpan);
     }
 
-    public bool Reject(int peerId, JoinRejectReason reason)
+    public bool SendDisconnectReason(int peerId, DisconnectReason reason)
     {
         _packet.ResetWrittenCount();
-        ServerPackets.WriteJoinRejected(reason, _packet);
+        ServerPackets.WriteDisconnecting(reason, _packet);
         return _network.Send(peerId, _packet.WrittenSpan);
     }
 

@@ -14,10 +14,10 @@ public class FakeSessionHandler(List<string> calls, PeerStateTable peers) : IPee
 
     public static string Joined(PlayerUid uid) => $"join {uid}: joined";
 
-    public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
+    public bool ValidateJoin(JoinRequestCommand command, out DisconnectReason reason)
     {
         calls.Add($"validate join {command.Uid}");
-        reason = JoinRejectReason.InvalidNick;
+        reason = DisconnectReason.InvalidNick;
         if (command.Uid == ThrowInValidate) throw new InvalidOperationException("validate failed");
         return command.Uid != Invalid;
     }

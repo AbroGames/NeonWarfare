@@ -63,15 +63,15 @@ public sealed class HostTransport(
         return true;
     }
 
-    bool IClientsConnection.Reject(int peerId, JoinRejectReason reason)
+    bool IClientsConnection.SendDisconnectReason(int peerId, DisconnectReason reason)
     {
         if (peerId == LocalPeer)
         {
-            _log.Error("The server rejected the join: {reason}", reason);
-            owner.JoinRejected(reason);
+            _log.Error("The server is disconnecting the host's own player: {reason}", reason);
+            owner.Disconnected(reason);
             return true;
         }
-        return Remote(peerId).Reject(peerId, reason);
+        return Remote(peerId).SendDisconnectReason(peerId, reason);
     }
 
     void IClientsConnection.Disconnect(int peerId)

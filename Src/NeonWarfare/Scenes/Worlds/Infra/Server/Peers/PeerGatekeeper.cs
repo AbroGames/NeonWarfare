@@ -28,22 +28,18 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
         foreach (int peerId in peers.ExpiredConnecting(timeProvider.GetUtcNow()))
         {
             _log.Information("Peer {peerId} has not joined in {timeout}, disconnecting", peerId, HandshakeTimeout);
-            Disconnect(peerId);
+            Disconnect(peerId, DisconnectReason.HandshakeTimeout);
         }
     }
 
-    public void Reject(int peerId, JoinRejectReason reason)
+    public void Disconnect(int peerId, DisconnectReason reason)
     {
-        if (peers.IsCut(peerId)) return;
+        if (!peers.Disconnect(peerId)) return;
 
-        _log.Warning("Peer {peerId} rejected: {reason}", peerId, reason);
+        // The caller logs why at its own level, because a refused join is a warning and a displacement is not.
+        _log.Information("Peer {peerId} disconnected: {reason}", peerId, reason);
         // The peer is disconnected whether the reason reached it or not.
-        clientsConnection.Reject(peerId, reason);
-        Disconnect(peerId);
-    }
-
-    public void Disconnect(int peerId)
-    {
-        if (peers.Disconnect(peerId)) clientsConnection.Disconnect(peerId);
+        clientsConnection.SendDisconnectReason(peerId, reason);
+        clientsConnection.Disconnect(peerId);
     }
 }
