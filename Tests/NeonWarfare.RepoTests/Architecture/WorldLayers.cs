@@ -29,11 +29,14 @@ public static class WorldLayers
     public const string EventBase = WorldNamespace + ".Infra.Protocol.Event";
     public const string NoticeBase = WorldNamespace + ".Infra.Presentation.Notice";
     public const string EventHandlerAttribute = WorldNamespace + ".Infra.Client.Events.EventHandlerAttribute";
+    public const string EventHandlerOwner = WorldNamespace + ".Infra.Client.Events.IEventHandlerOwner";
+    public const string CommandHandler = WorldNamespace + ".Infra.Server.Commands.ICommandHandler";
 
     private const string CompositionNamespace = WorldNamespace + ".Infra.Composition";
     private const string LayerAttributeBase = CompositionNamespace + ".WorldServiceAttribute";
     private const string ReplicatedAttribute = "RepliCAT.ReplicatedAttribute";
     private const string GodotObject = "Godot.GodotObject";
+    private const string Enumerable = "System.Collections.Generic.IEnumerable`1";
 
     /// <summary>
     /// Every layer attribute the tests know, by Cecil full name. A new subclass of WorldServiceAttribute
@@ -111,7 +114,7 @@ public static class WorldLayers
     {
         for (TypeReference? current = type.BaseType;
              current != null;
-             current = GameAssembly.Instance.Find(current)?.BaseType)
+             current = GameAssembly.Of(current).Find(current)?.BaseType)
         {
             if (current.FullName == baseFullName)
             {
@@ -136,6 +139,55 @@ public static class WorldLayers
         return ns == FeaturesNamespace || ns.StartsWith(FeaturesNamespace + ".", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Every interface the type implements, those of its base classes and of the interfaces themselves included:
+    /// Cecil lists only the ones a type declares, while MS.DI and the dispatchers see them all.
+    /// </summary>
+    public static IEnumerable<TypeReference> Interfaces(TypeDefinition type)
+    {
+        GameAssembly assembly = GameAssembly.Of(type);
+        for (TypeDefinition? current = type;
+             current != null;
+             current = current.BaseType == null ? null : assembly.Find(current.BaseType))
+        {
+            foreach (InterfaceImplementation implementation in current.Interfaces)
+            {
+                yield return implementation.InterfaceType;
+                if (assembly.Find(implementation.InterfaceType) is { } declared)
+                {
+                    foreach (TypeReference inherited in Interfaces(declared))
+                    {
+                        yield return inherited;
+                    }
+                }
+            }
+        }
+    }
+
+    public static bool Implements(TypeDefinition type, string interfaceFullName) =>
+        Interfaces(type).Any(implemented => implemented.FullName == interfaceFullName);
+
+    /// <summary>
+    /// The <c>I</c> of a constructor parameter <c>IEnumerable&lt;I&gt;</c> when <c>I</c> is an interface of the same
+    /// assembly: the builder registers every service under such an interface, so the parameter takes every
+    /// implementation. Null for any other parameter.
+    /// </summary>
+    public static TypeReference? CollectionElement(TypeReference parameterType)
+    {
+        if (parameterType is not GenericInstanceType { ElementType.FullName: Enumerable } enumerable)
+        {
+            return null;
+        }
+
+        TypeReference element = enumerable.GenericArguments[0];
+        return GameAssembly.Of(parameterType).Find(element) is { IsInterface: true } ? element : null;
+    }
+
+    /// <summary>The concrete types of the assembly that implement the interface, by its full name.</summary>
+    public static IEnumerable<TypeDefinition> Implementations(GameAssembly assembly, TypeReference implemented) =>
+        assembly.Types.Where(type => type is { IsInterface: false, IsAbstract: false }
+                                     && Implements(type, implemented.FullName));
+
     public static bool IsEventHandler(MethodDefinition method) =>
         method.CustomAttributes.Any(attribute => attribute.AttributeType.FullName == EventHandlerAttribute);
 
@@ -145,9 +197,10 @@ public static class WorldLayers
 
     private static bool IsLayerAttribute(TypeReference attributeType)
     {
-        for (TypeDefinition? current = GameAssembly.Instance.Find(attributeType);
+        GameAssembly assembly = GameAssembly.Of(attributeType);
+        for (TypeDefinition? current = assembly.Find(attributeType);
              current != null;
-             current = current.BaseType == null ? null : GameAssembly.Instance.Find(current.BaseType))
+             current = current.BaseType == null ? null : assembly.Find(current.BaseType))
         {
             if (current.BaseType?.FullName == LayerAttributeBase)
             {

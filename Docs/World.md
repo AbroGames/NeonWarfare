@@ -62,13 +62,17 @@ effect beyond the world, which only their owner takes: `IClientsConnection`, `IS
 `[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`; `EntityRegistry`
 and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
 `ILocalPlayerOwner` — `[Presentation]`.
-`IEntityFinder` is open to all. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
+`IEntityFinder` is open to all. A parameter `IEnumerable<I>` is a dependency on the layer of every implementation
+of `I`; an `I` the root registers itself (a port, a `WorldDependencies` type) is never taken as a
+collection. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
 
 * leaf simulations never call each other, a command handler calls only facades;
 * no Simulation constructor chain reaches the tick loop, the command machinery or `PeerSessions`: they reach the
   handlers, which are built from the Simulation;
 * only the Simulation writes models and publishes events, and only inside the tick;
 * events reach only `[EventHandler]` methods of the Presentation, `HudMailbox.Post` is reached only from them;
+* an implementation of an interface taken as `IEnumerable<>` is a layer service, a type with an `[EventHandler]` is an
+  `IEventHandlerOwner`, a `[CommandHandler]` is an `ICommandHandler` — otherwise it silently misses its collection;
 * a Presentation exposes only property getters, and they change nothing (`HudMailbox` aside);
 * no World service touches `Services.*` (`Di` aside): only the composition root does and passes what is needed;
 * a service reads no entity in its constructor: when it is built, the world is still empty.
@@ -81,7 +85,10 @@ and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]
 assembly, keeps the classes of the selected layers and creates every one of them eagerly: a Presentation with only event
 handlers is taken by no constructor. Last, it passes what MS.DI cannot inject: the Presentation to
 `EventDispatcher.Register`, every `IChatCommand` to `ChatSimulationFacade.Register`, every `[CommandHandler]` to
-`CommandHandlerRegistry.Register`. Adding a service is one class with a layer attribute; nothing else is edited. No
+`CommandHandlerRegistry.Register`. Adding a service is one class with a layer attribute; nothing else is edited.
+Every service is also registered under each interface of the game it implements, so a constructor takes every
+service of a kind as `IEnumerable<I>`: a new collection is an interface and a parameter, validated in the
+consumer's constructor. A service implementing an interface the root registers itself (a port) is rejected. No
 constructor of a service has an optional parameter: MS.DI would fill it silently. The GameTests build the container for
 every configuration.
 

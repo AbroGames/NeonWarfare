@@ -12,6 +12,7 @@ namespace NeonWarfare.Scenes.Worlds.Features.Players;
 /// </summary>
 [Presentation]
 public class LocalPlayerPresentation(LocalPlayer localPlayer, ILocalPlayerOwner owner, PlayerQuery players)
+    : IEventHandlerOwner
 {
     private const string NotOnlineError = "The local player {0} is not online";
 

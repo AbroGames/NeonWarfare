@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -17,6 +20,8 @@ public sealed class GameAssembly
 
     private static readonly Lazy<GameAssembly> Loaded = new(Load);
 
+    private static readonly ConditionalWeakTable<ModuleDefinition, GameAssembly> ByModule = new();
+
     private readonly Dictionary<string, TypeDefinition> _typesByFullName;
 
     private GameAssembly(ModuleDefinition module)
@@ -24,9 +29,50 @@ public sealed class GameAssembly
         Module = module;
         Types = module.Types.SelectMany(WithNested).Where(type => type.Name != "<Module>").ToList();
         _typesByFullName = Types.ToDictionary(type => type.FullName, StringComparer.Ordinal);
+        ByModule.Add(module, this);
     }
 
     public static GameAssembly Instance => Loaded.Value;
+
+    /// <summary>
+    /// The assembly a type or a reference was read from: the game, or a fixture of <see cref="Compile"/>. A rule
+    /// that follows base types through it works on both.
+    /// </summary>
+    public static GameAssembly Of(TypeReference type) =>
+        ByModule.TryGetValue(type.Module, out GameAssembly? assembly)
+            ? assembly
+            : throw new InvalidOperationException($"{type.FullName} was read by no {nameof(GameAssembly)}");
+
+    /// <summary>
+    /// A fixture for an architecture rule: the source compiled in memory and read as the game is. It declares
+    /// stubs of the game types the rule looks for under their full names, so a rule can be shown to catch a
+    /// violation the game itself does not have.
+    /// </summary>
+    public static GameAssembly Compile(string source)
+    {
+        CSharpCompilation compilation = CSharpCompilation.Create(
+            "Fixture",
+            [CSharpSyntaxTree.ParseText(source)],
+            CompileReferences.AsMetadata(),
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        // Not disposed: Cecil reads method bodies from it lazily, even in the immediate mode
+        MemoryStream stream = new();
+        Microsoft.CodeAnalysis.Emit.EmitResult result = compilation.Emit(stream);
+        if (!result.Success)
+        {
+            IEnumerable<Diagnostic> errors =
+                result.Diagnostics.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+            throw new InvalidOperationException($"The fixture does not compile:\n{string.Join("\n", errors)}");
+        }
+
+        stream.Position = 0;
+        return new GameAssembly(ModuleDefinition.ReadModule(stream, new ReaderParameters
+        {
+            InMemory = true,
+            ReadingMode = ReadingMode.Immediate,
+        }));
+    }
 
     public ModuleDefinition Module { get; }
 
