@@ -84,7 +84,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/DiTests` | `Di.Process(this)` is the first statement; every class with injected members calls it; an override of the method running it calls `base` |
 | `Conventions/ChildInjectionTests` | A `[Child]` member name resolves to a reachable node in the scene |
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
-| `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
+| `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals, no `[Logger]` |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
 | `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `ServerNetwork`, `IServerConnection` only in `ClientNetwork`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `ServerNetwork` and `ClientReplication`, `ISaveFiles` only in `ServerNetwork`; every `Build` parameter is open or restricted explicitly |

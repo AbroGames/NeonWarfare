@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 using Humanizer;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Network;
@@ -29,12 +29,10 @@ public partial class Network(Node multiplayerRoot) : Node
     private SceneMultiplayer _api;
     private bool _isInitialized;
 
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<Network>();
 
     public override void _Ready()
     {
-        Di.Process(this);
-
         // A fresh multiplayer per Game, so that old handlers and lambdas cannot outlive the session
         _api = new SceneMultiplayer();
         GetTree().SetMultiplayer(_api, multiplayerRoot.GetPath());

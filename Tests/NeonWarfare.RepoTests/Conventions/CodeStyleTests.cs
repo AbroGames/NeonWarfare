@@ -26,6 +26,8 @@ public class CodeStyleTests
 
     private static readonly string[] LoadMethods = ["Load", "LoadThreadedRequest", "LoadThreadedGet"];
 
+    private const string LoggerAttribute = "Logger";
+
     /// <summary>
     /// "Events are named <c>&lt;What&gt;Event</c> with the side spelled out" from Docs/Code-style.md.
     /// The suffix is what tells a subscription apart from a method call at the use site, where the two
@@ -151,6 +153,28 @@ public class CodeStyleTests
                     report.Add($"{file.Describe(interpolated)}: {interpolated} — a res:// path in code is " +
                                $"checked by nothing and survives every rename");
                 }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
+    /// "The logger is a field initializer" from Docs/Code-style.md. <c>[Logger]</c> is filled by reflection,
+    /// so the compiler reports the field as never assigned; suppressing CS0649 for it would also hide the
+    /// fields that really are never assigned.
+    /// </summary>
+    [Fact]
+    public void Loggers_AreNotInjected()
+    {
+        FailureReport report = new("Loggers injected with [Logger]");
+
+        foreach (CSharpFile file in CSharpFile.LoadAll())
+        {
+            foreach (AttributedMember member in file.MembersWith(LoggerAttribute))
+            {
+                report.Add($"{file.Describe(member.Declaration)}: {member.Name} — write " +
+                           $"'private readonly ILogger {member.Name} = LogFactory.GetForStatic<T>();'");
             }
         }
 

@@ -18,7 +18,7 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
 ## Initialization
 
 * If dependency injection is required, write `Di.Process(this)` as the **first line** in `_Ready()` (or
-  in the constructor for a non-node). Without it all `[Child]` / `[Logger]` silently stay
+  in the constructor for a non-node). Without it all `[Child]` silently stay
   `null` — see [Dependency injection](Dependency-injection.md).
 * Data needed **before** `_Ready()` goes through `InitPreReady(...)`, which returns `this`:
   `PackedScene.Instantiate<Hud>().InitPreReady(world)`. After readiness — `InitPostReady(...)`.
@@ -43,14 +43,18 @@ files on disk — **JSON** (`System.Text.Json`). These two must not be confused:
 
 ## Logging
 
-Serilog through `[Logger] private ILogger _log`, with named template parameters:
+Serilog. The logger is a field initializer, with named template parameters:
 
 ```csharp
+private readonly ILogger _log = LogFactory.GetForStatic<Network>();
+
 _log.Information("Connecting to the server at {host}:{port}", host, port);
 ```
 
 An error goes into the Error log at the place where it happens, and only then is rethrown as an
 exception or raised as an event for the `Hud`.
+
+KludgeBox's `[Logger]` is not used: the compiler does not see a field filled by reflection and reports `CS0649`.
 
 ## Precision: float vs double
 

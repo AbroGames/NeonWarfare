@@ -69,9 +69,6 @@ dotnet test                               # unit tests, documentation and code-s
 "$GODOT_EXE" --path "./" --auto-connect   # straight to connecting to a dedicated server
 ```
 
-**Build noise that does not need fixing:** `CS0649`, suppressed in `.csproj` (these fields are
-filled through DI, not through a constructor).
-
 ## Shared libraries
 
 The `KLUDGEBOX_SRC` environment variable points to the source code of `KludgeBox` — our own shared

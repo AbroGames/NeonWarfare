@@ -14,7 +14,7 @@ on Windows/Linux/macOS.
 | Document | What is inside |
 |---|---|
 | [Scene tree](Docs/Scene-tree.md) | `NodeContainer`, "calls go down, events go up" |
-| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Logger]` |
+| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]` |
 | [Code style conventions](Docs/Code-style.md) | Namespaces, initialization, serialization, `.editorconfig` |
 
 ### Area-by-area design — read when the task touches that area

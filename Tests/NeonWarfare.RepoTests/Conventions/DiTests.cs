@@ -26,7 +26,7 @@ public class DiTests
     /// The attributes that need an injector run. <c>[NotNull]</c> is deliberately not one of them: it
     /// validates an <c>[Export]</c> filled in by the Godot editor.
     /// </summary>
-    private static readonly string[] InjectionAttributes = ["Child", "Parent", "SceneService", "Logger"];
+    private static readonly string[] InjectionAttributes = ["Child", "Parent", "SceneService"];
 
     /// <summary>
     /// "Write <c>Di.Process(this)</c> as the first line in <c>_Ready()</c>" from Docs/Code-style.md,
@@ -67,9 +67,8 @@ public class DiTests
     }
 
     /// <summary>
-    /// A class that annotates fields but never runs the injector. The call may live in a base class —
-    /// ClientRootStarter and DedicatedServerRootStarter carry a <c>[Logger]</c> and inherit the
-    /// <c>Di.Process(this)</c> that BaseRootStarter.Init() makes.
+    /// A class that annotates fields but never runs the injector. The call may live in a base class: a
+    /// derived type inherits the <c>Di.Process(this)</c> its base makes and only declares the fields.
     /// </summary>
     [Fact]
     public void TypesWithInjectedMembers_CallDiProcess()
@@ -92,9 +91,9 @@ public class DiTests
     }
 
     /// <summary>
-    /// The inherited call only runs if every override on the way down chains to it: ClientRootStarter
-    /// without <c>base.Init(rootData)</c> still passes the check above, yet nothing injects its
-    /// <c>[Logger]</c>. Only overrides of a method that runs <c>Di.Process(this)</c> in a repository base
+    /// The inherited call only runs if every override on the way down chains to it: an override of the
+    /// base method without <c>base.Method(...)</c> still passes the check above, yet nothing injects its
+    /// fields. Only overrides of a method that runs <c>Di.Process(this)</c> in a repository base
     /// type are checked; a call that sits in a method nobody invokes is out of reach of the syntax.
     /// </summary>
     [Fact]

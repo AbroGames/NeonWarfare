@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Godot;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using Serilog;
 using FileAccess = Godot.FileAccess;
@@ -24,14 +24,13 @@ public class SaveLoadService : ISaveFiles
     private const string BackupSuffix = ".backup";
     private const string NewSaveNameFormat = "yyyy-MM-dd_HH-mm";
 
-    [Logger] ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<SaveLoadService>();
 
     private readonly string _saveDirPath;
     private bool _isDedicatedServer;
 
     public SaveLoadService(string saveDirPath = DefaultSaveDirPath)
     {
-        Di.Process(this);
         _saveDirPath = saveDirPath;
     }
 
