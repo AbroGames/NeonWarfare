@@ -13,13 +13,13 @@ public class EntityCatalogTests
 {
     [TestCase]
     [RequireGodotRuntime]
-    public void KindIds_ScenesFirstInCatalogOrder_ThenNodeTypesInMappingOrder()
+    public void KindIds_ScenesFirstByResourcePath_ThenNodeTypesInMappingOrder()
     {
-        PackedScene first = TestWorldScenes.Pack(new Node());
-        PackedScene second = TestWorldScenes.Pack(new Node());
+        PackedScene first = PackAt("res://EntityCatalogTests/a.tscn");
+        PackedScene second = PackAt("res://EntityCatalogTests/b.tscn");
 
         var catalog = new EntityCatalog(
-            [first, second], [typeof(PlayersModel), typeof(OnlinePlayersStorage), typeof(PlayersStorage)]);
+            [second, first], [typeof(PlayersModel), typeof(OnlinePlayersStorage), typeof(PlayersStorage)]);
 
         AssertThat(catalog.GetKindId(first)).IsEqual(0);
         AssertThat(catalog.GetKindId(second)).IsEqual(1);
@@ -103,6 +103,14 @@ public class EntityCatalogTests
         AssertThat(players).IsInstanceOf<PlayersStorage>();
         AssertThat(onlinePlayers).IsInstanceOf<OnlinePlayersStorage>();
         AssertThat(client.Descriptors.Skip(1)).ContainsExactly(server.Descriptors.Skip(1));
+    }
+
+    // A scene packed in memory has an empty path, so the ordering by path needs a path set by hand
+    private static PackedScene PackAt(string path)
+    {
+        PackedScene scene = TestWorldScenes.Pack(new Node());
+        scene.TakeOverPath(path);
+        return scene;
     }
 }
 
