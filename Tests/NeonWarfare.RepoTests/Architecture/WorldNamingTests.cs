@@ -37,6 +37,7 @@ public class WorldNamingTests
     private static readonly string[] NotMessages =
     [
         WorldLayers.FeaturesNamespace + ".Chat.ChatCommands.IChatCommand",
+        WorldLayers.FeaturesNamespace + ".Chat.ChatCommands.IListedChatCommand",
     ];
 
     [Fact]

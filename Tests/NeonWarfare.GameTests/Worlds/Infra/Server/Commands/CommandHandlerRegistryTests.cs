@@ -22,7 +22,7 @@ public class CommandHandlerRegistryTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_FindsEveryHandlerOfAnObject()
+    public void Constructor_FindsEveryHandlerOfAnObject()
     {
         var chat = new ChatHandler();
         var session = new SessionHandler();
@@ -46,56 +46,32 @@ public class CommandHandlerRegistryTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void NetworkCommandTypes_BeforeRegister_Throw()
+    public void Constructor_SecondHandlerOfOneCommand_Throws()
     {
-        var registry = new CommandHandlerRegistry();
-
-        AssertThat(registry.IsRegistered).IsFalse();
-        AssertThrown(() => _ = registry.NetworkCommandTypes).IsInstanceOf<InvalidOperationException>();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Register_Twice_Throws()
-    {
-        CommandHandlerRegistry registry = Registered(new ChatHandler());
-
-        AssertThrown(() => registry.Register([])).IsInstanceOf<InvalidOperationException>();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Register_SecondHandlerOfOneCommand_Throws()
-    {
-        foreach (object[] handlers in new[]
+        foreach (ICommandHandler[] handlers in new[]
                  {
-                     new object[] { new ChatHandler(), new ChatHandler() },
+                     new ICommandHandler[] { new ChatHandler(), new ChatHandler() },
                      [new SessionHandler(), new SessionHandler()],
                  })
         {
-            var registry = new CommandHandlerRegistry();
-
-            AssertThrown(() => registry.Register(handlers)).IsInstanceOf<InvalidOperationException>();
+            AssertThrown(() => new CommandHandlerRegistry(handlers)).IsInstanceOf<InvalidOperationException>();
         }
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_ObjectImplementingNoHandler_Throws()
+    public void Constructor_MarkerWithoutHandlerInterface_Throws()
     {
-        var registry = new CommandHandlerRegistry();
-
-        AssertThrown(() => registry.Register([new object()])).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => new CommandHandlerRegistry([new BareHandler()])).IsInstanceOf<InvalidOperationException>();
     }
 
     // CommandDispatcher routes every join to the session handler: a player handler of it would silently never run
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_PlayerHandlerOfJoinRequest_Throws()
+    public void Constructor_PlayerHandlerOfJoinRequest_Throws()
     {
-        var registry = new CommandHandlerRegistry();
-
-        AssertThrown(() => registry.Register([new PlayerJoinHandler()])).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => new CommandHandlerRegistry([new PlayerJoinHandler()]))
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     // The real game types through the composition root: the whitelist is built from the handlers it found and
@@ -120,12 +96,7 @@ public class CommandHandlerRegistryTests
         AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(AlicePeer, chat));
     }
 
-    private static CommandHandlerRegistry Registered(params object[] handlers)
-    {
-        var registry = new CommandHandlerRegistry();
-        registry.Register(handlers);
-        return registry;
-    }
+    private static CommandHandlerRegistry Registered(params ICommandHandler[] handlers) => new(handlers);
 
     private static WorldDependencies Dependencies(NetMessageCodec codec)
     {
@@ -149,6 +120,8 @@ public class CommandHandlerRegistryTests
 
         public void Process(string senderUid, JoinRequestCommand command) { }
     }
+
+    private class BareHandler : ICommandHandler;
 
     private class SessionHandler : IPeerSessionHandler
     {

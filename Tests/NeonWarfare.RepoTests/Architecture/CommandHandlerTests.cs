@@ -5,8 +5,8 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
-/// The network command whitelist is built from the handlers <c>CommandHandlerRegistry</c> was given, so a command
-/// without a handler, or a handler the composition root never passed, is silently dropped at run time.
+/// The network command whitelist is built from the handlers <c>CommandHandlerRegistry</c> takes, so a command
+/// without a handler, or a handler outside the container, is silently dropped at run time.
 /// </summary>
 [Collection(GameAssembly.Collection)]
 public class CommandHandlerTests
@@ -79,7 +79,7 @@ public class CommandHandlerTests
     }
 
     /// <summary>
-    /// <c>CommandHandlerRegistry.Register</c> takes at most one, but only at run time: without it a peer could
+    /// <c>CommandHandlerRegistry</c> takes at most one, but only at run time: without it a peer could
     /// neither join nor leave.
     /// </summary>
     [Fact]
@@ -95,7 +95,8 @@ public class CommandHandlerTests
     }
 
     /// <summary>
-    /// The composition root passes the dispatcher only the services of the <c>[CommandHandler]</c> layer.
+    /// The collection rules let the registry, a <c>[Server]</c>, take <c>[Server]</c> and <c>[Query]</c> handlers too,
+    /// and those would skip "a handler calls only facades".
     /// </summary>
     [Fact]
     public void CommandHandlers_AreCommandHandlerLayer()
@@ -110,8 +111,7 @@ public class CommandHandlerTests
         {
             if (WorldLayers.DeclaredLayer(handler) != Layer.CommandHandler)
             {
-                report.Add($"{GameAssembly.Describe(handler)}: is not marked [CommandHandler], so the dispatcher " +
-                           "never gets it");
+                report.Add($"{GameAssembly.Describe(handler)}: is not marked [CommandHandler]");
             }
         }
 

@@ -9,15 +9,10 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
-/// <summary>
-/// Every network handler of the world, and the command whitelist built from them. The handlers are collected once,
-/// by the composition root, since MS.DI cannot inject "every <see cref="IPlayerCommandHandler{TCommand}"/>".
-/// </summary>
+/// <summary>Every network handler of the world, and the command whitelist built from them.</summary>
 [Server]
 public class CommandHandlerRegistry
 {
-    private const string RegisteredError = "The command handlers are already registered.";
-    private const string NotRegisteredError = "The command handlers are not registered yet.";
     private const string NoInterfaceError = "{0} is a [CommandHandler] but implements no command handler interface.";
     private const string SecondHandlerError = "{0} and {1} both handle {2}.";
     private const string JoinAsPlayerCommandError =
@@ -33,7 +28,6 @@ public class CommandHandlerRegistry
         typeof(CommandHandlerRegistry).GetMethod(nameof(Wrap), BindingFlags.Static | BindingFlags.NonPublic)!;
 
     private readonly Dictionary<Type, PlayerHandler> _playerHandlerByType = new();
-    private IReadOnlySet<Type> _networkCommandTypes;
 
     /// <summary><c>null</c> when the world has none.</summary>
     public IPeerSessionHandler SessionHandler { get; private set; }
@@ -42,24 +36,16 @@ public class CommandHandlerRegistry
     /// The commands a peer may send: those with a player handler, and <see cref="JoinRequestCommand"/> when there
     /// is a session handler. Everything else is rejected by <see cref="CommandInbox"/> before its body is read.
     /// </summary>
-    public IReadOnlySet<Type> NetworkCommandTypes =>
-        _networkCommandTypes ?? throw new InvalidOperationException(NotRegisteredError);
+    public IReadOnlySet<Type> NetworkCommandTypes { get; }
 
-    public bool IsRegistered => _networkCommandTypes != null;
-
-    public void Register(IEnumerable<object> handlers)
+    public CommandHandlerRegistry(IEnumerable<ICommandHandler> handlers)
     {
-        if (IsRegistered)
-        {
-            throw new InvalidOperationException(RegisteredError);
-        }
-
-        foreach (object handler in handlers)
+        foreach (ICommandHandler handler in handlers)
         {
             bool found = false;
             foreach (Type implemented in handler.GetType().GetInterfaces())
             {
-                found |= TryRegister(handler, implemented);
+                found |= TryAdd(handler, implemented);
             }
 
             if (!found)
@@ -73,13 +59,13 @@ public class CommandHandlerRegistry
         {
             networkTypes.Add(typeof(JoinRequestCommand));
         }
-        _networkCommandTypes = networkTypes;
+        NetworkCommandTypes = networkTypes;
     }
 
     public bool TryGetPlayerHandler(Type commandType, out PlayerHandler handler) =>
         _playerHandlerByType.TryGetValue(commandType, out handler);
 
-    private bool TryRegister(object handler, Type implemented)
+    private bool TryAdd(object handler, Type implemented)
     {
         if (implemented == typeof(IPeerSessionHandler))
         {

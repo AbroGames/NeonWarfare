@@ -50,9 +50,9 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[Simulation]` | An optional leaf: one side effect (a model write, or an event with its log), no decisions; made only when several facades share it or it holds an invariant beyond the model (`ChatSimulation`, `EntitySpawner`) | `[Query]`, `[Server]` | Host, Dedicated |
 | `[SimulationFacade]` | A finished operation: checks, decisions, order of steps; writes and publishes itself or through leaves (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[Server]` | Host, Dedicated |
 | `[CommandHandler]` | `IPlayerCommandHandler<T>`, `IPeerSessionHandler`: validate and call a facade | Facades, `[Query]` | Host, Dedicated |
-| `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]` | Host, Dedicated |
+| `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]`; `[CommandHandler]` only as a collection | Host, Dedicated |
 | `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`, `*StorageQuery`) | `[Query]` | All |
-| `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]` | RemoteClient, Host |
+| `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]`; `[Presentation]` only as a collection | RemoteClient, Host |
 | `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | RemoteClient, Host |
 | `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
 
@@ -82,10 +82,9 @@ collection. `ConstructorLayerTests` checks all of it, the other `Architecture/` 
 `WorldServicesBuilder.Build` (Microsoft.Extensions.DependencyInjection, `ValidateOnBuild`) registers the
 `WorldDependencies`, the ports of the `WorldSetup`, the `WorldRoot`, and by hand `EntityRegistry` (also as
 `IEntityFinder`) and `EntityRecordReader` — they belong to no single layer. Then it scans the layer attributes of the
-assembly, keeps the classes of the selected layers and creates every one of them eagerly: a Presentation with only event
-handlers is taken by no constructor. Last, it passes what MS.DI cannot inject: the Presentation to
-`EventDispatcher.Register`, every `IChatCommand` to `ChatSimulationFacade.Register`, every `[CommandHandler]` to
-`CommandHandlerRegistry.Register`. Adding a service is one class with a layer attribute; nothing else is edited.
+assembly, keeps the classes of the selected layers and creates every one of them eagerly: a service nobody takes still
+exists, and a collection rejected by its consumer fails the build. Adding a service is one class with a layer
+attribute; nothing else is edited.
 Every service is also registered under each interface of the game it implements, so a constructor takes every
 service of a kind as `IEnumerable<I>`: a new collection is an interface and a parameter, validated in the
 consumer's constructor. A service implementing an interface the root registers itself (a port) is rejected. No
@@ -105,13 +104,13 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
 | `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step; `ServerTickClock` — the tick counter |
-| `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
+| `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>`; `ICommandHandler` — what every handler interface extends |
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
 | `Infra/Server/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
 | `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
-| `Infra/Client/Events` | `EventDispatcher` and `EventHandlerAttribute` |
+| `Infra/Client/Events` | `EventDispatcher`, `EventHandlerAttribute` and `IEventHandlerOwner` — a Presentation with handlers |
 | `Infra/Client/Replication` | `StateApplier` — the state packets and the join snapshot of a remote client |
 | `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `GameProtocol`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
 | `Infra/Presentation` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |

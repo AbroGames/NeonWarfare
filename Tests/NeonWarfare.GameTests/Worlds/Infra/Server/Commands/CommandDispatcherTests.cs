@@ -34,7 +34,6 @@ public class CommandDispatcherTests
     private PlayersSessionStorage _sessionStorage = null!;
     private PlayersModel _playersModel = null!;
     private PlayerQuery _players = null!;
-    private CommandHandlerRegistry _handlers = null!;
     private CommandInbox _inbox = null!;
     private List<string> _calls = null!;
 
@@ -52,8 +51,6 @@ public class CommandDispatcherTests
         registry.Register(new NetId(2), _sessionStorage, 0);
         _playersModel = _playersStorage.Model;
         _players = new PlayerQuery(new PlayersStorageQuery(registry), new PlayersSessionStorageQuery(registry));
-        _handlers = new CommandHandlerRegistry();
-        _inbox = new CommandInbox(_codec, _gatekeeper, _handlers);
         _calls = [];
         foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
         {
@@ -235,23 +232,13 @@ public class CommandDispatcherTests
         AssertThat(_peers.TryGetPeerIdByUid(AliceUid, out _)).IsFalse();
     }
 
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ProcessAll_BeforeRegister_Throws()
+    // The inbox shares the registry, so it is created here, before a test enqueues anything
+    private CommandDispatcher Dispatcher(params ICommandHandler[] handlers)
     {
-        CommandDispatcher dispatcher = Unregistered();
-
-        AssertThrown(() => dispatcher.ProcessAll()).IsInstanceOf<InvalidOperationException>();
+        var registry = new CommandHandlerRegistry(handlers);
+        _inbox = new CommandInbox(_codec, _gatekeeper, registry);
+        return new CommandDispatcher(_inbox, registry, new PeerSessions(registry, _peers, _gatekeeper), _peers);
     }
-
-    private CommandDispatcher Dispatcher(params object[] handlers)
-    {
-        _handlers.Register(handlers);
-        return Unregistered();
-    }
-
-    private CommandDispatcher Unregistered() =>
-        new(_inbox, _handlers, new PeerSessions(_handlers, _peers, _gatekeeper), _peers);
 
     private FakeSessionHandler SessionHandler() => new(_calls, _peers);
 

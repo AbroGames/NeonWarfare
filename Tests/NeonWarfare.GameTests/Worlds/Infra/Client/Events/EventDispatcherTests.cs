@@ -20,11 +20,6 @@ namespace NeonWarfare.GameTests.Worlds.Infra.Client.Events;
 public class EventDispatcherTests
 {
 
-    private static readonly HashSet<Type> EventTypes =
-    [
-        typeof(ChatPlayerMessageEvent), typeof(ChatServerMessageEvent), typeof(LocalizedChatMessageEvent),
-    ];
-
     private NetMessageCodec _codec = null!;
 
     [BeforeTest]
@@ -107,18 +102,13 @@ public class EventDispatcherTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_HandlerOfNonEventType_Throws()
+    public void Constructor_HandlerOfNonEventType_Throws()
     {
         AssertThrown(() => Dispatcher(new NonEventPresentation()))
             .IsInstanceOf<InvalidOperationException>();
     }
 
-    private EventDispatcher Dispatcher(params object[] presentations)
-    {
-        var dispatcher = new EventDispatcher(_codec);
-        dispatcher.Register(presentations, EventTypes);
-        return dispatcher;
-    }
+    private EventDispatcher Dispatcher(params IEventHandlerOwner[] presentations) => new(_codec, presentations);
 
     private byte[] Section(params object[] events)
     {
@@ -137,13 +127,13 @@ public class EventDispatcherTests
             new RecordingClientsConnection());
     }
 
-    private class ThrowingPresentation
+    private class ThrowingPresentation : IEventHandlerOwner
     {
         [EventHandler]
         private void Handle(ChatServerMessageEvent e) => throw new InvalidOperationException("handler failed");
     }
 
-    private class BasePresentation
+    private class BasePresentation : IEventHandlerOwner
     {
         public List<string> Received { get; } = [];
 
@@ -153,7 +143,7 @@ public class EventDispatcherTests
 
     private class DerivedPresentation : BasePresentation;
 
-    private class NonEventPresentation
+    private class NonEventPresentation : IEventHandlerOwner
     {
         [EventHandler]
         private void Handle(string text) { }

@@ -116,24 +116,10 @@ public class CommandInboxTests
         AssertThat(_inbox.TakeAll()).IsEmpty();
     }
 
-    [TestCase]
-    [RequireGodotRuntime]
-    public void EnqueueFromPeer_BeforeRegister_Throws()
-    {
-        var inbox = new CommandInbox(_codec, _gatekeeper, new CommandHandlerRegistry());
-        byte[] packet = _codec.Encode(new SendChatMessageCommand("hi"));
-
-        AssertThrown(() => inbox.EnqueueFromPeer(AlicePeer, packet)).IsInstanceOf<InvalidOperationException>();
-    }
-
     private CommandInbox JoinInbox() => Inbox(new SessionHandler());
 
-    private CommandInbox Inbox(params object[] handlers)
-    {
-        var registry = new CommandHandlerRegistry();
-        registry.Register(handlers);
-        return new CommandInbox(_codec, _gatekeeper, registry);
-    }
+    private CommandInbox Inbox(params ICommandHandler[] handlers) =>
+        new(_codec, _gatekeeper, new CommandHandlerRegistry(handlers));
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>
     {

@@ -4,13 +4,8 @@ using System.Linq;
 using System.Reflection;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
-using NeonWarfare.Scenes.Worlds.Features.Chat;
-using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
-using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
-using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
 namespace NeonWarfare.Scenes.Worlds;
 
@@ -43,14 +38,13 @@ public class WorldServicesBuilder
             ValidateScopes = true
         });
 
-        // Eagerly, or a service nobody takes in a constructor (a Presentation with only event handlers)
-        // would silently never be created
+        // Eagerly: a service nobody takes in a constructor would silently never be created, and the constructors
+        // that check their collections must fail here, not in the middle of a tick
         foreach ((Type type, _) in selected)
         {
             provider.GetRequiredService(type);
         }
 
-        PassWhatCannotBeInjected(provider, layers, selected);
         return provider;
     }
 
@@ -121,39 +115,6 @@ public class WorldServicesBuilder
     private static Func<Type, bool> IsOwnInterface(Type service) =>
         implemented => implemented.Assembly == service.Assembly
                        || implemented.Assembly == typeof(WorldServicesBuilder).Assembly;
-
-    private void PassWhatCannotBeInjected(
-        ServiceProvider provider,
-        WorldLayer layers,
-        List<(Type Type, WorldServiceAttribute Attribute)> selected)
-    {
-        if (layers.HasFlag(WorldLayer.Client))
-        {
-            IEnumerable<object> presentations = selected
-                .Where(service => service.Attribute is PresentationAttribute)
-                .Select(service => provider.GetRequiredService(service.Type));
-            HashSet<Type> eventTypes = _candidates
-                .Where(type => type.IsSubclassOf(typeof(Event)) && type is { IsNested: false, IsAbstract: false })
-                .ToHashSet();
-            provider.GetRequiredService<EventDispatcher>().Register(presentations, eventTypes);
-        }
-
-        if (layers.HasFlag(WorldLayer.SimulationFacade))
-        {
-            IEnumerable<IChatCommand> commands = selected
-                .Select(service => provider.GetRequiredService(service.Type))
-                .OfType<IChatCommand>();
-            provider.GetRequiredService<ChatSimulationFacade>().Register(commands);
-        }
-
-        if (layers.HasFlag(WorldLayer.Server))
-        {
-            IEnumerable<object> handlers = selected
-                .Where(service => service.Attribute is CommandHandlerAttribute)
-                .Select(service => provider.GetRequiredService(service.Type));
-            provider.GetRequiredService<CommandHandlerRegistry>().Register(handlers);
-        }
-    }
 
     private List<(Type Type, WorldServiceAttribute Attribute)> SelectWorldServices(WorldLayer layers) {
         return ScanWorldServices()

@@ -26,7 +26,6 @@ public class CommandDispatcher(
     private const string NotValidLog = "{command} from peer {peerId} dropped: {handler} did not validate it";
     private const string DisconnectingLog = "{entry} dropped: the peer is being disconnected";
     private const string EntryFailedLog = "{entry} failed, the rest of the tick goes on";
-    private const string NotRegisteredError = "The command handlers are not registered yet.";
     private const string UnknownEntryError = "{0} has no branch in Process.";
     private const string NoPlayerHandlerError =
         "{0} from peer {1} passed the inbox, but there is no player handler: the whitelist is miswired.";
@@ -35,11 +34,6 @@ public class CommandDispatcher(
 
     public void ProcessAll()
     {
-        if (!handlers.IsRegistered)
-        {
-            throw new InvalidOperationException(NotRegisteredError);
-        }
-
         foreach (CommandInbox.Entry entry in inbox.TakeAll())
         {
             // TakeAll has already emptied the inbox, so a throw must not cost the rest of the entries: a lost

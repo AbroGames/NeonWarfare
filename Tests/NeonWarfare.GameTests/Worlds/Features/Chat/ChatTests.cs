@@ -114,7 +114,7 @@ public class ChatTests
 
         IReadOnlyList<object> alice = PeerEvents(AlicePeer);
         AssertThat(alice.Count).IsEqual(1);
-        AssertThat(((ChatServerMessageEvent) alice[0]).Text).Contains("'/help' -> ").NotContains("Admin commands");
+        AssertThat(((ChatServerMessageEvent) alice[0]).Text).Contains("Player commands").NotContains("Admin commands");
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
     }
 
@@ -128,7 +128,7 @@ public class ChatTests
 
         IReadOnlyList<object> bob = PeerEvents(BobPeer);
         AssertThat(bob.Count).IsEqual(1);
-        AssertThat(((ChatServerMessageEvent) bob[0]).Text).Contains("'/help' -> ").Contains("Admin commands");
+        AssertThat(((ChatServerMessageEvent) bob[0]).Text).Contains("Player commands").Contains("Admin commands");
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
     }
 
@@ -162,15 +162,16 @@ public class ChatTests
         AssertAll([expected], [expected]);
     }
 
-    // Hand-made facades below: the game has no admin command yet, and Register's checks need fixture commands
+    // Hand-made facades below: the game has no listed or admin command yet, and the constructor's checks need
+    // fixture commands
 
     [TestCase]
     [RequireGodotRuntime]
     public void AdminCommand_RefusedToPlayerRunForAdmin()
     {
         var calls = new List<string>();
-        (ChatSimulationFacade facade, EventOutbox outbox, PeerStateTable peers) = HandMade();
-        facade.Register([new FixtureCommand("admin", RequiresAdmin: true, calls)]);
+        (ChatSimulationFacade facade, EventOutbox outbox, PeerStateTable peers) =
+            HandMade((_, _) => [new FixtureCommand("admin", RequiresAdmin: true, calls)]);
         PlayerModel root = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer("root");
         root.Nick = "Root";
         root.IsAdmin = true;
@@ -190,13 +191,9 @@ public class ChatTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_TwiceDuplicateOrBadName_Throws()
+    public void Constructor_DuplicateOrBadName_Throws()
     {
         var calls = new List<string>();
-        (ChatSimulationFacade twice, _, _) = HandMade();
-        twice.Register([]);
-        AssertThrown(() => twice.Register([])).IsInstanceOf<InvalidOperationException>();
-
         foreach (IChatCommand[] commands in new[]
                  {
                      new IChatCommand[] { new FixtureCommand("a", false, calls), new FixtureCommand("a", true, calls) },
@@ -205,20 +202,41 @@ public class ChatTests
                      [new FixtureCommand("Upper", false, calls)],
                  })
         {
-            (ChatSimulationFacade facade, _, _) = HandMade();
-
-            AssertThrown(() => facade.Register(commands)).IsInstanceOf<InvalidOperationException>();
+            AssertThrown(() => HandMade((_, _) => commands)).IsInstanceOf<InvalidOperationException>();
         }
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Execute_BeforeRegister_Throws()
+    public void Help_ListsTheListedCommandsByRights()
     {
-        (ChatSimulationFacade facade, _, _) = HandMade();
+        var calls = new List<string>();
+        (ChatSimulationFacade facade, EventOutbox outbox, PeerStateTable peers) = HandMade((chat, players) =>
+        {
+            IListedChatCommand[] listed =
+            [
+                new FixtureCommand("zeta", false, calls),
+                new FixtureCommand("alpha", false, calls),
+                new FixtureCommand("op", RequiresAdmin: true, calls),
+            ];
+            return [..listed, new HelpChatCommandSimulationFacade(listed, chat, players)];
+        });
+        PlayerModel root = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer("root");
+        root.IsAdmin = true;
+        peers.Connect(AlicePeer, DateTimeOffset.MaxValue);
+        peers.Join(AlicePeer, "alice");
+        peers.Connect(BobPeer, DateTimeOffset.MaxValue);
+        peers.Join(BobPeer, root.Uid);
 
-        AssertThrown(() => facade.HandleInput("alice", "/help"))
-            .IsInstanceOf<InvalidOperationException>();
+        facade.HandleInput("alice", "/help");
+        facade.HandleInput(root.Uid, "/help");
+
+        string player = ((ChatServerMessageEvent) PeerEvents(outbox, AlicePeer).Single()).Text;
+        string admin = ((ChatServerMessageEvent) PeerEvents(outbox, BobPeer).Single()).Text;
+        AssertThat(player.IndexOf("'/alpha'", StringComparison.Ordinal))
+            .IsLess(player.IndexOf("'/zeta'", StringComparison.Ordinal));
+        AssertThat(player).NotContains("'/op'").NotContains("'/help'");
+        AssertThat(admin).Contains("'/alpha'").Contains("'/op'").NotContains("'/help'");
     }
 
     // Past the join, whose events would mix with the chat's
@@ -265,16 +283,18 @@ public class ChatTests
     }
 
     // Players come from the container's storages, the outbox and the peers are the facade's own
-    private (ChatSimulationFacade, EventOutbox, PeerStateTable) HandMade()
+    private (ChatSimulationFacade, EventOutbox, PeerStateTable) HandMade(
+        Func<ChatSimulation, PlayerQuery, IEnumerable<IChatCommand>> commands)
     {
         var peers = new PeerStateTable();
         var outbox = new EventOutbox(_codec, peers);
         var players = _provider.GetRequiredService<PlayerQuery>();
         var chatSimulation = new ChatSimulation(new ManualTimeProvider(Now), outbox, players);
-        return (new ChatSimulationFacade(chatSimulation, players), outbox, peers);
+        var facade = new ChatSimulationFacade(chatSimulation, players, commands(chatSimulation, players));
+        return (facade, outbox, peers);
     }
 
-    private record FixtureCommand(string Name, bool RequiresAdmin, List<string> Calls) : IChatCommand
+    private record FixtureCommand(string Name, bool RequiresAdmin, List<string> Calls) : IListedChatCommand
     {
         public string Description => "fixture";
 

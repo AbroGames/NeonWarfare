@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
@@ -8,11 +9,14 @@ namespace NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 
 [SimulationFacade]
 public class HelpChatCommandSimulationFacade(
-    ChatSimulationFacade chatFacade, ChatSimulation chatSimulation, PlayerQuery players) : IChatCommand
+    IEnumerable<IListedChatCommand> commands, ChatSimulation chatSimulation, PlayerQuery players) : IChatCommand
 {
     private const string PlayerCommandsMessage = "\nPlayer commands:\n{0}";
     private const string AdminCommandsMessage = "\nAdmin commands:\n{0}";
     private const string CommandFormat = "   '/{0}' -> {1}";
+
+    private readonly IReadOnlyList<IListedChatCommand> _commands =
+        commands.OrderBy(command => command.Name, StringComparer.Ordinal).ToList();
 
     public string Name => "help";
     public string Description => "Show list of available commands.";
@@ -21,11 +25,11 @@ public class HelpChatCommandSimulationFacade(
     public void Execute(string senderUid, string arguments)
     {
         string message = PlayerCommandsMessage.FormatWith(
-            ListOf(chatFacade.Commands.Where(command => !command.RequiresAdmin)));
+            ListOf(_commands.Where(command => !command.RequiresAdmin)));
         if (players.Get(senderUid).IsAdmin)
         {
             message += AdminCommandsMessage.FormatWith(
-                ListOf(chatFacade.Commands.Where(command => command.RequiresAdmin)));
+                ListOf(_commands.Where(command => command.RequiresAdmin)));
         }
 
         chatSimulation.SendMessageAsServerToPlayer(message, senderUid);

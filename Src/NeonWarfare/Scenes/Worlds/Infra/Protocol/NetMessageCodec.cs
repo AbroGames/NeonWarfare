@@ -40,6 +40,9 @@ public sealed class NetMessageCodec
 
     public ulong ProtocolHash { get; }
 
+    /// <summary>Every type the codec can read or write.</summary>
+    public IReadOnlyList<Type> MappedTypes => _mapping.Types;
+
     /// <param name="entityKinds">The <see cref="Entities.EntityCatalog.Descriptors"/>.</param>
     public NetMessageCodec(TypesMappingService mapping, IReadOnlyList<string> entityKinds)
     {

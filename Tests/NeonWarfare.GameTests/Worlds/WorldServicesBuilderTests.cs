@@ -112,17 +112,15 @@ public class WorldServicesBuilderTests
         }
     }
 
-    // The commands reach the facade through Register, not the constructor: nothing else would notice a missed call
     [TestCase]
     [RequireGodotRuntime]
-    public void Build_ServerConfigurations_RegisterChatCommands()
+    public void Build_ServerConfigurations_HaveChatCommands()
     {
         foreach (WorldSetup setup in new WorldSetup[] { TestWorldSetups.Host(), TestWorldSetups.Dedicated() })
         {
             using ServiceProvider provider = Build(setup);
 
-            IEnumerable<IChatCommand> commands = provider.GetRequiredService<ChatSimulationFacade>().Commands;
-            AssertThat(commands.Select(command => command.GetType()))
+            AssertThat(provider.GetServices<IChatCommand>().Select(command => command.GetType()))
                 .Contains(typeof(HelpChatCommandSimulationFacade));
         }
 
