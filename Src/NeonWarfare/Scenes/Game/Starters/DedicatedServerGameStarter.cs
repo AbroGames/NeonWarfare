@@ -46,10 +46,10 @@ public class DedicatedServerGameStarter(
             world = game.AddDedicatedWorld(
                 network, saveFiles, new WorldAdmin(adminUid), LoadServerOrigin(saveFileName));
         }
-        catch (Exception e) when (IsLoadError(e))
+        catch (Exception e)
         {
             // Starting a new world instead would overwrite the save on exit
-            LogLoadError(e, saveFileName);
+            LogWorldError(e, saveFileName);
             Services.MainScene.Shutdown();
             return;
         }

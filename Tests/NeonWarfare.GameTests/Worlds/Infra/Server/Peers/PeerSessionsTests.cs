@@ -138,16 +138,18 @@ public class PeerSessionsTests
     // The uid would otherwise stay taken by a peer that never leaves
     [TestCase]
     [RequireGodotRuntime]
-    public void Join_ThrowingLeaveOfDisplacedPeer_StillDisconnectsItAndFreesTheUid()
+    public void Join_ThrowingLeaveOfDisplacedPeer_FreesTheUid_RejectsTheNewPeer()
     {
         Join(AlicePeer, ThrowInLeave);
 
-        AssertThrown(() => Join(AliceSecondPeer, ThrowInLeave)).IsInstanceOf<InvalidOperationException>();
+        Join(AliceSecondPeer, ThrowInLeave);
 
         AssertThat(_calls).Contains(Displaced(ThrowInLeave));
         AssertNotJoined(AlicePeer);
+        AssertNotJoined(AliceSecondPeer);
         AssertThat(_peers.TryGetPeerIdByUid(ThrowInLeave, out _)).IsFalse();
-        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+        AssertThat(Rejections()).ContainsExactly((AliceSecondPeer, JoinRejectReason.InternalError));
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, AliceSecondPeer);
     }
 
     // The host cannot reconnect from another peer, so it is never displaced

@@ -138,16 +138,18 @@ public class ServerTickLoopTests
     // The failing peer is the remote one, so the host's chat shows whether the other peer still got its packet
     [TestCase]
     [RequireGodotRuntime]
-    public void RunTick_FailingPeer_DoesNotCostTheOthersTheirEvents()
+    public void RunTick_FailedEventsSend_DisconnectsOnlyThatPeer()
     {
         Build(new WorldServicesBuilder());
         _clientsConnection.FailingPeer = AlicePeer;
+        _clientsConnection.FailingKind = SentKind.Events;
         Outbox().PublishToAll(Hello);
 
         Loop().RunTick();
 
         AssertThat(Chat().Entries).HasSize(1);
-        AssertThat(_clientsConnection.Packets.Select(sent => sent.PeerId)).ContainsExactly(HostPeer);
+        AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactly(HostPeer);
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
     [TestCase]

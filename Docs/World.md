@@ -79,6 +79,22 @@ collection. `ConstructorLayerTests` checks all of it, the other `Architecture/` 
 * no World service touches `Services.*` (`Di` aside): only the composition root does and passes what is needed;
 * a service reads no entity in its constructor: when it is built, the world is still empty.
 
+## Failures
+
+The fault boundaries of the World (see [Code style](Code-style.md#exceptions)); everything else lets an exception
+through:
+
+| Boundary | Unit | After the catch |
+|---|---|---|
+| `CommandDispatcher` | One inbox entry | Logged; a facade has no rollback, so the model may stay half-changed |
+| `PeerSessions.Join` | One join | The peer is rejected with `InternalError`, released if it has joined |
+| `StateReplicator` | One entity's delta | Its baseline is reset: its next delta is complete |
+| `ServerTickLoop` | The snapshot of the tick | The peers joined in the tick are rejected |
+| `SaveService` | The save of the tick, each request, each callback; the save on exit | The requester is told; the teardown goes on |
+| `EventDispatcher` | One `[EventHandler]` call | Logged: a Presentation writes no model |
+| `ClientTransport` | One packet | The session ends: the models may have drifted |
+| `HostTransport` | The host's own events of the tick | Logged: the remote peers still get theirs |
+
 ## The container
 
 `WorldServicesBuilder.Build` (Microsoft.Extensions.DependencyInjection, `ValidateOnBuild`) registers the

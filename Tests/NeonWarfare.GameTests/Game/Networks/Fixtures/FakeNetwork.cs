@@ -24,11 +24,12 @@ public class FakeNetwork : INetwork
     public bool HasListeners =>
         PeerConnected != null || PeerDisconnected != null || PacketReceived != null || ConnectedToServer != null;
 
-    public void Send(int peerId, ReadOnlySpan<byte> packet)
+    public bool Send(int peerId, ReadOnlySpan<byte> packet)
     {
         byte[] copy = packet.ToArray();
         Packets.Add(new Sent(peerId, copy));
         Wire?.Invoke(peerId, copy);
+        return true;
     }
 
     public void Disconnect(int peerId) => Disconnected.Add(peerId);

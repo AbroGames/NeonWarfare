@@ -78,6 +78,8 @@ The state packet is the same for everyone and written once; an empty one is not 
 so an event handler sees the models already at the end of the tick, on the host and on a remote client alike.
 ENet delivers a fragmented reliable packet whole, so a client applies a tick atomically.
 
+A send that fails (`IClientsConnection` returns `false`) disconnects the peer: it has missed a reliable packet.
+
 A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes it by kind, the state to
 `World.IClientEndpoint.ReceiveState` (`StateApplier`), the events to `ReceiveEvents` (`EventDispatcher`). The host
 gets only its events: its Simulation has already written the state.

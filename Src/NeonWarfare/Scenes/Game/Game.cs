@@ -196,18 +196,12 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
         {
             Store(_assembler.RemoteClient(_clientSetup, snapshot, _clientTransport));
         }
-        catch (NetMessageFormatException e)
-        {
-            // The server sends no second snapshot, so waiting for one is pointless
-            _log.Error(e, "The join snapshot from the server is broken");
-            Fail(BrokenWorldMessage);
-            return;
-        }
+        // The World is already freed, and the server sends no second snapshot: without a failure the connecting screen
+        // would stay forever
         catch (Exception e)
         {
-            // The World is already freed, so without a failure the connecting screen would stay forever
             _log.Error(e, "Creating the World from the join snapshot failed");
-            Fail(WorldCreationFailedMessage);
+            Fail(e is NetMessageFormatException ? BrokenWorldMessage : WorldCreationFailedMessage);
             return;
         }
         _log.Information("Entered the world from the join snapshot");

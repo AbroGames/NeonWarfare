@@ -27,17 +27,17 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
 
     public int? LocalPeerId => null;
 
-    public void SendState(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.State, body);
+    public bool SendState(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.State, body);
 
-    public void SendSnapshot(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.Snapshot, body);
+    public bool SendSnapshot(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.Snapshot, body);
 
-    public void SendEvents(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.Events, body);
+    public bool SendEvents(int peerId, ReadOnlySpan<byte> body) => Send(peerId, ServerPacketKind.Events, body);
 
-    public void Reject(int peerId, JoinRejectReason reason)
+    public bool Reject(int peerId, JoinRejectReason reason)
     {
         _packet.ResetWrittenCount();
         ServerPackets.WriteJoinRejected(reason, _packet);
-        _network.Send(peerId, _packet.WrittenSpan);
+        return _network.Send(peerId, _packet.WrittenSpan);
     }
 
     public void Disconnect(int peerId) => _network.Disconnect(peerId);
@@ -52,11 +52,11 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
         _network.PacketReceived -= OnPacketReceived;
     }
 
-    private void Send(int peerId, ServerPacketKind kind, ReadOnlySpan<byte> body)
+    private bool Send(int peerId, ServerPacketKind kind, ReadOnlySpan<byte> body)
     {
         _packet.ResetWrittenCount();
         ServerPackets.Write(kind, body, _packet);
-        _network.Send(peerId, _packet.WrittenSpan);
+        return _network.Send(peerId, _packet.WrittenSpan);
     }
 
     private void OnPeerConnected(int peerId) => _endpoint.StartHandshake(peerId);

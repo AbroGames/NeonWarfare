@@ -38,10 +38,10 @@ public class HostMultiplayerGameStarter(string saveFileName, int? port) : BaseGa
             game.AddHostWorld(
                 network, SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
         }
-        catch (Exception e) when (IsLoadError(e))
+        catch (Exception e)
         {
             // The server is not opened: nobody has connected yet
-            GoToMenuAndShowError(LogLoadError(e, saveFileName));
+            GoToMenuAndShowError(LogWorldError(e, saveFileName));
             return;
         }
 

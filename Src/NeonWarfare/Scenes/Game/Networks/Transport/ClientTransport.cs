@@ -56,6 +56,7 @@ public sealed class ClientTransport : IServerConnection
         _endpoint = endpoint;
     }
 
+    // A failed send is already logged: the connection is going down, and Network reports its end
     public void Send(ReadOnlySpan<byte> packet) => _network.Send(ServerPeer, packet);
 
     private void OnConnectedToServer() => Send(_codec.Encode(_localPlayer.ToJoinRequest(_protocolHash)));

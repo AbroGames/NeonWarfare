@@ -128,16 +128,18 @@ public partial class Network(Node multiplayerRoot) : Node, INetwork
     }
 
     /// <summary>
-    /// Reliable and ordered, on <see cref="Consts.TransferChannel.Default"/>.
+    /// Reliable and ordered, on <see cref="Consts.TransferChannel.Default"/>. Not an exception on a failure: a peer may
+    /// be gone from ENet before its <c>peer_disconnected</c> is handled.
     /// </summary>
-    public void Send(int peerId, ReadOnlySpan<byte> packet)
+    /// <returns><c>false</c>: the packet is not sent, already logged.</returns>
+    public bool Send(int peerId, ReadOnlySpan<byte> packet)
     {
         Error error = _api.SendBytes(
             packet, peerId, MultiplayerPeer.TransferModeEnum.Reliable, (int) Consts.TransferChannel.Default);
-        if (error != Error.Ok)
-        {
-            throw new InvalidOperationException($"Sending {packet.Length} bytes to peer {peerId} failed: {error}");
-        }
+        if (error == Error.Ok) return true;
+
+        _log.Error("Sending {length} bytes to peer {peerId} failed: {error}", packet.Length, peerId, error);
+        return false;
     }
 
     /// <summary>
