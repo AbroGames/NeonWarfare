@@ -54,7 +54,7 @@ public class ProcessService
             commonArgs,
             port,
             saveFileName,
-            adminUid.Value,
+            adminUid,
             OS.GetProcessId(),
             settingsFileName);
 

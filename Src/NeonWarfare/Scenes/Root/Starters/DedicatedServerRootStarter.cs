@@ -37,7 +37,7 @@ public class DedicatedServerRootStarter(RootData rootData) : BaseRootStarter(roo
         Services.MainScene.HostMultiplayerGameAsDedicatedServer(
             _dedicatedServerArgs.SaveFileName ?? Services.SaveLoad.GenNewSaveFileName(),
             _dedicatedServerArgs.Port,
-            _dedicatedServerArgs.Admin is { } admin ? new PlayerUid(admin) : null,
+            _dedicatedServerArgs.Admin,
             _dedicatedServerArgs.ParentPid,
             DisplayServer.GetName() != HeadlessDisplayServer,
             Services.DedicatedServerSettings.GetSettings().AutoSaveIntervalMinutes);

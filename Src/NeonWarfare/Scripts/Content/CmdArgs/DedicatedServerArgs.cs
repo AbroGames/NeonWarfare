@@ -7,7 +7,7 @@ public readonly record struct DedicatedServerArgs(
     CommonArgs CommonArgs,
     int? Port, 
     string SaveFileName, 
-    string Admin, 
+    PlayerUid? Admin, 
     int? ParentPid,
     string SettingsFileName)
 {
@@ -25,7 +25,7 @@ public readonly record struct DedicatedServerArgs(
             CommonArgs.GetFromCmd(argsService),
             argsService.GetIntFromCmdArgs(PortParam),
             argsService.GetStringFromCmdArgs(SaveFileNameParam),
-            argsService.GetStringFromCmdArgs(AdminParam),
+            argsService.GetParsedFromCmdArgs<PlayerUid>(AdminParam, PlayerUid.TryParse),
             argsService.GetIntFromCmdArgs(ParentPidParam),
             argsService.GetStringFromCmdArgs(SettingsFileNameParam)
         );
@@ -39,7 +39,7 @@ public readonly record struct DedicatedServerArgs(
         listParams.AddRange([PortParam, Port.ToString()]);
         
         if (SaveFileName != null) listParams.AddRange([SaveFileNameParam, SaveFileName]);
-        if (Admin != null) listParams.AddRange([AdminParam, Admin]);
+        if (Admin is { } admin) listParams.AddRange([AdminParam, admin.Value]);
         if (ParentPid.HasValue) listParams.AddRange([ParentPidParam, ParentPid.ToString()]);
         if (SettingsFileName != null) listParams.AddRange([SettingsFileNameParam, SettingsFileName]);
         if (CommonArgs.GodotLogPush) listParams.Add(CommonArgs.GodotLogPushParam);
