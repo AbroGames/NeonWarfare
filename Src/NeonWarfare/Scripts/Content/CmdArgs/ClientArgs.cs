@@ -15,7 +15,7 @@ public readonly record struct ClientArgs(
     int? AutoHostPort,
     bool AutoHostDedicatedHeadless,
     string Nick,
-    string Uid)
+    PlayerUid? Uid)
 {
     public static readonly string AutoStartFlag = "--auto-start";
     public static readonly string AutoStartSaveFileNameParam = "--auto-start-savefile";
@@ -45,7 +45,7 @@ public readonly record struct ClientArgs(
             argsService.GetIntFromCmdArgs(AutoHostPortParam),
             argsService.ContainsInCmdArgs(AutoHostDedicatedHeadlessFlag),
             argsService.GetStringFromCmdArgs(NickParam),
-            argsService.GetStringFromCmdArgs(UidParam)
+            argsService.GetParsedFromCmdArgs<PlayerUid>(UidParam, PlayerUid.TryParse)
         );
     }
 }

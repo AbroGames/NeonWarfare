@@ -44,7 +44,7 @@ public class LocalPlayerServiceTests
     [RequireGodotRuntime]
     public void Read_HasTheOverrides_OverTheStoredColor()
     {
-        _localPlayer.SetOverrides("Temp", OverrideUid);
+        _localPlayer.SetOverrides("Temp", new PlayerUid(OverrideUid));
 
         AssertThat(_localPlayer.Read().Uid).IsEqual(new PlayerUid(OverrideUid));
         AssertThat(_localPlayer.Read().Nick).IsEqual("Temp");
@@ -66,7 +66,7 @@ public class LocalPlayerServiceTests
     [RequireGodotRuntime]
     public void SettingsSavedWithOverrides_TheFileKeepsTheStoredNick()
     {
-        _localPlayer.SetOverrides("Temp", OverrideUid);
+        _localPlayer.SetOverrides("Temp", new PlayerUid(OverrideUid));
 
         Services.GameSettings.SetSettings(Services.GameSettings.GetSettings() with { MasterVolume = 50 });
 

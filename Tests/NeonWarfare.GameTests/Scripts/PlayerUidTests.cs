@@ -21,4 +21,25 @@ public class PlayerUidTests
 
         AssertThat(uids).HasSize(100);
     }
+
+    [TestCase]
+    public void TryParse_Valid_IsTheUid()
+    {
+        AssertThat(PlayerUid.TryParse("Abcdefghij-KLMNOPQRST", out PlayerUid uid)).IsTrue();
+        AssertThat(uid).IsEqual(new PlayerUid("Abcdefghij-KLMNOPQRST"));
+    }
+
+    [TestCase]
+    public void TryParse_Invalid_IsDefault()
+    {
+        string?[] values =
+            [null, "", "alice", "Abcdefghij_KLMNOPQRST", "Abcdefghi1-KLMNOPQRST", "Abcdefghij-KLMNOPQRSTU"];
+
+        foreach (string? value in values)
+        {
+            AssertThat(PlayerUid.TryParse(value!, out PlayerUid uid))
+                .OverrideFailureMessage($"'{value}' parsed").IsFalse();
+            AssertThat(uid).IsEqual(default(PlayerUid));
+        }
+    }
 }

@@ -10,11 +10,11 @@ namespace NeonWarfare.Scripts.GlobalServices;
 public class LocalPlayerService
 {
     private string _nickOverride;
-    private string _uidOverride;
+    private PlayerUid? _uidOverride;
 
     /// <param name="nick"><c>null</c> — the stored nick.</param>
     /// <param name="uid"><c>null</c> — the stored uid.</param>
-    public void SetOverrides(string nick, string uid)
+    public void SetOverrides(string nick, PlayerUid? uid)
     {
         _nickOverride = nick;
         _uidOverride = uid;
@@ -24,7 +24,7 @@ public class LocalPlayerService
     {
         GameSettings stored = Services.GameSettings.GetSettings();
         return new LocalPlayer(
-            _uidOverride != null ? new PlayerUid(_uidOverride) : Services.PlayerUid.Get(),
+            _uidOverride ?? Services.PlayerUid.Get(),
             _nickOverride ?? stored.PlayerNick,
             stored.PlayerColor);
     }

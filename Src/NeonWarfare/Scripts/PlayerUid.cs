@@ -17,6 +17,15 @@ public readonly record struct PlayerUid(string Value)
                            && Value[GroupLength] == Separator
                            && Value.Where((_, i) => i != GroupLength).All(char.IsAsciiLetter);
 
+    /// <summary>For a uid this process takes on trust, so that a malformed one is caught where it enters.</summary>
+    /// <returns><c>false</c> and <c>default</c> when the uid is invalid.</returns>
+    public static bool TryParse(string value, out PlayerUid uid)
+    {
+        var parsed = new PlayerUid(value);
+        uid = parsed.IsValid ? parsed : default;
+        return parsed.IsValid;
+    }
+
     public static PlayerUid Generate() =>
         new(RandomNumberGenerator.GetString(Alphabet, GroupLength)
             + Separator

@@ -97,7 +97,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `Scripts/GlobalServices/ResumableGame/ResumableGameServiceTests` | A missing file, a game missing a field of its type, an unknown type are no game and write nothing; a set game reads back |
 | `Scripts/GlobalServices/ProcessServiceTests` | A dedicated server on a taken port is not started, the bind error is returned |
 | `Scripts/GlobalServices/ServerLog/ServerLogServiceTests` | The last 1000 records in order; a read returns only the records after the version given; the message rendered with its properties, the level, source and exception kept; a read is a snapshot |
-| `Scripts/PlayerUidTests` | A generated uid is valid and unique |
+| `Scripts/PlayerUidTests` | A generated uid is valid and unique; `TryParse` gives a valid uid as is, an invalid or null one as `false` and `default` |
 | `Worlds/Features/Chat/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; the admin gate; a bound peer without a player loses only its own message; `/help` lists the listed commands by name and rights, not itself; the facade rejects a duplicate or bad name |
 | `Worlds/Features/Saves/SaveCommandTests` | An admin's save is written and answered in chat; a disk error reaches the host's HUD as "failed" and keeps the previous file; a save from a player who leaves in the tick is still written; a non-admin's command and a bad name are dropped without a file or a reply |
 | `Worlds/Features/Saves/SaveFileNameTests` | A save file name valid on every OS: no separators, no leading dot, no Windows device name in any case or with an extension; the length limit |

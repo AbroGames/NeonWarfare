@@ -28,7 +28,7 @@ public class PlayerUidService
     public void Init()
     {
         StoredPlayerUid stored = _file.ReadOrWriteDefault(
-            read => new PlayerUid(read.Value).IsValid,
+            read => PlayerUid.TryParse(read.Value, out _),
             () => new StoredPlayerUid(PlayerUid.Generate().Value));
         _uid = new PlayerUid(stored.Value);
     }
