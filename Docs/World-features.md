@@ -23,7 +23,8 @@ Nothing is registered by hand: the composition root finds a feature by its types
 * **State** — models (`[Replicated]` fields) live in entities, and the world-wide state of a feature in its own
   storage entities: one saved, one `[NotSaved]` whose model is not saved on leaving the world.
   `NewWorldSimulationFacade` spawns them in a new world; a save and the join snapshot bring them back. A `[Query]`
-  finds a storage through `IEntityFinder.GetSingle<T>()` — see [Data and saves](Data-and-saves.md).
+  finds a storage through `IEntityFinder.GetSingle<T>()` — see [Data and saves](Data-and-saves.md). A cooldown or a
+  duration is a `TickTimer` member: it is only read, so an expiry that changes the game is checked inside the tick.
 * **Chat commands** — a `[SimulationFacade]` named `*ChatCommandSimulationFacade` implementing `IChatCommand`, see
   [Chat and commands](Chat-and-commands.md).
 

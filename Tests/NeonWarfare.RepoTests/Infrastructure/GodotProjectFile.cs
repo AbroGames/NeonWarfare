@@ -4,9 +4,9 @@ namespace NeonWarfare.RepoTests.Infrastructure;
 
 /// <summary>
 /// <c>project.godot</c>, read as the things the tests have questions about: the input actions the
-/// engine knows and the <c>uid://</c> and <c>res://</c> references the settings point at. The file is an
-/// INI, and nothing in the build reads it — a renamed action or a deleted scene shows up only when the
-/// game runs.
+/// engine knows, the <c>uid://</c> and <c>res://</c> references the settings point at, and the plain
+/// settings. The file is an INI, and nothing in the build reads it — a renamed action or a deleted scene
+/// shows up only when the game runs.
 /// </summary>
 public sealed class GodotProjectFile
 {
@@ -27,12 +27,16 @@ public sealed class GodotProjectFile
     private GodotProjectFile(
         IReadOnlyList<string> inputActions,
         IReadOnlyList<GodotUidReference> uidReferences,
-        IReadOnlyList<GodotPathReference> pathReferences)
+        IReadOnlyList<GodotPathReference> pathReferences,
+        IReadOnlyDictionary<string, string> settings)
     {
         InputActions = inputActions;
         UidReferences = uidReferences;
         PathReferences = pathReferences;
+        _settings = settings;
     }
+
+    private readonly IReadOnlyDictionary<string, string> _settings;
 
     public static GodotProjectFile Current => Instance.Value;
 
@@ -48,6 +52,12 @@ public sealed class GodotProjectFile
     /// </summary>
     public IReadOnlyList<GodotPathReference> PathReferences { get; }
 
+    /// <summary>
+    /// The raw value of a one-line setting, by <c>section/key</c> (<c>physics/common/physics_ticks_per_second</c>), or
+    /// <c>null</c> when the file has none: the editor writes no setting left at its default value.
+    /// </summary>
+    public string? Setting(string path) => _settings.GetValueOrDefault(path);
+
     private static GodotProjectFile Load()
     {
         string[] lines = TextFile.ReadLines(RepositoryPaths.ProjectSettingsPath);
@@ -55,6 +65,7 @@ public sealed class GodotProjectFile
         List<string> actions = [];
         List<GodotUidReference> references = [];
         List<GodotPathReference> paths = [];
+        Dictionary<string, string> settings = new(StringComparer.Ordinal);
         string section = string.Empty;
 
         for (int i = 0; i < lines.Length; i++)
@@ -78,7 +89,12 @@ public sealed class GodotProjectFile
             }
 
             // The setting a reference belongs to, for a message that says which one went stale.
-            string setting = line.Split('=', 2)[0].Trim();
+            string[] pair = line.Split('=', 2);
+            string setting = pair[0].Trim();
+            if (pair.Length == 2 && section.Length > 0)
+            {
+                settings.TryAdd($"{section}/{setting}", pair[1].Trim());
+            }
 
             foreach (Match uid in UidRegex.Matches(line))
             {
@@ -91,7 +107,7 @@ public sealed class GodotProjectFile
             }
         }
 
-        return new GodotProjectFile(actions, references, paths);
+        return new GodotProjectFile(actions, references, paths, settings);
     }
 }
 

@@ -191,7 +191,7 @@ is its number.
 
 Commands and events — MessagePack, behind a 2-byte type id from `TypesMappingService` (`NetMessageCodec`); the
 codec reads untrusted data and only the types it is given. Models, snapshots and saves — RepliCAT. A custom wire type
-(`PlayerUid`, `NetId`) gets its formatter and its codec in `ProtocolCodecs`. The protocol hash
+(`PlayerUid`, `NetId`, `TickTimer`) gets its formatter and its codec in `ProtocolCodecs`. The protocol hash
 in `JoinRequestCommand` and in the save header covers the mapped types, their MessagePack keys, the RepliCAT schemas
 and the entity kinds (`ProtocolHasher`, computed once by `GameProtocol`), so a peer or a save of another build is
 refused instead of read as garbage.

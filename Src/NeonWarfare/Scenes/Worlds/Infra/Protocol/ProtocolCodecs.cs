@@ -13,7 +13,10 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 public static class ProtocolCodecs
 {
     public static readonly IFormatterResolver Resolver = CompositeResolver.Create(
-        new IMessagePackFormatter[] { ColorFormatter.Instance, PlayerUidFormatter.Instance, NetIdFormatter.Instance },
+        new IMessagePackFormatter[]
+        {
+            ColorFormatter.Instance, PlayerUidFormatter.Instance, NetIdFormatter.Instance, TickTimerFormatter.Instance,
+        },
         new IFormatterResolver[] { StandardResolver.Instance });
 
     public static Replicator CreateReplicator(ITypeIdMapping mapping)
@@ -21,6 +24,7 @@ public static class ProtocolCodecs
         var codecs = new ReplicationCodecs();
         codecs.Register(PlayerUidCodec.Instance);
         codecs.Register(NetIdCodec.Instance);
+        codecs.Register(TickTimerCodec.Instance);
         return new Replicator(mapping, codecs);
     }
 }

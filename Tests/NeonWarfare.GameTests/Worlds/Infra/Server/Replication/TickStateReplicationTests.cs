@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Tick;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
@@ -17,6 +18,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using NeonWarfare.Scripts;
 using RepliCAT;
 using RepliCAT.Bits;
@@ -61,7 +63,7 @@ public class TickStateReplicationTests
         // The test kinds after the game's: the same catalog on both sides
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
             [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode),
-                typeof(ManualTextNode)]);
+                typeof(ManualTextNode), typeof(TimerNode)]);
         _serverRoot = InTree(new Node());
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = new WorldServicesBuilder()
@@ -513,6 +515,30 @@ public class TickStateReplicationTests
             (BobPeer, SentKind.Events, 2L), (HostPeer, SentKind.Events, 2L));
     }
 
+    // Done when: a timer read on a remote client. It reaches a late joiner in the snapshot, unchanged since its start
+    [TestCase]
+    [RequireGodotRuntime]
+    public void TimerStartedBeforeAJoin_ReadsOnTheJoinerAsOnTheServer()
+    {
+        var server = Spawner().SpawnOnRoot<TimerNode>();
+        Tick();
+        server.Timer = TickTimer.Start(_server.GetRequiredService<ServerTickClock>().CurrentTick, 10);
+        Tick();
+        Tick();
+        ServiceProvider bob = ClientOf(BobPeer, out _);
+
+        Join(BobPeer, BobUid, "Bob");
+        Tick();
+
+        long serverTick = _server.GetRequiredService<ServerTickClock>().CurrentTick;
+        long bobTick = bob.GetRequiredService<ClientTickClock>().CurrentTick;
+        TickTimer copy = ((TimerNode) bob.GetRequiredService<EntityRegistry>().GetNode(ServerId(server))).Timer;
+        AssertThat(bobTick).IsEqual(serverTick);
+        AssertThat(copy).IsEqual(server.Timer);
+        AssertThat(copy.Elapsed(bobTick)).IsEqual(3L);
+        AssertThat(copy.Remaining(bobTick)).IsEqual(server.Timer.Remaining(serverTick));
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void ApplyState_UnknownNetId_Throws()
@@ -689,11 +715,13 @@ public class TickStateReplicationTests
             .Build(TestWorldSetups.RemoteClient(), Dependencies(new RecordingClientsConnection()), new WorldRoot(root));
         _clients.Add(client);
 
+        var clock = client.GetRequiredService<ClientTickClock>();
         var applier = client.GetRequiredService<StateApplier>();
         var events = client.GetRequiredService<EventDispatcher>();
         // In the order of World.IClientEndpoint
         _connection.Receivers[peerId] = sent =>
         {
+            clock.Sync(sent.Tick);
             if (sent.Kind == SentKind.Snapshot)
             {
                 applier.ApplySnapshot(sent.Body);
@@ -909,6 +937,11 @@ public partial class FixedPartNode : Node
 public partial class CounterNode : Node
 {
     [Replicated] public int Value;
+}
+
+public partial class TimerNode : Node
+{
+    [Replicated] public TickTimer Timer;
 }
 
 public partial class ManualTextNode : Node

@@ -16,6 +16,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Tick;
 using RepliCAT;
 using RepliCAT.Bits;
 using static GdUnit4.Assertions;
@@ -50,7 +51,7 @@ public class SaveTests
         _scenes = TestWorldScenes.Create();
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
             [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode),
-                typeof(ManualTextNode)]);
+                typeof(ManualTextNode), typeof(TimerNode)]);
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = Build(TestWorldSetups.Host(), _connection, out _);
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
@@ -93,6 +94,28 @@ public class SaveTests
         AssertThat(loaded.GetRequiredService<ServerTickClock>().CurrentTick).IsEqual(3L);
         long next = _server.GetRequiredService<NetIdGenerator>().NextValue;
         AssertThat(Id(loaded, Spawner(loaded).SpawnOnRoot<CounterNode>()).Value).IsEqual(next);
+    }
+
+    // Done when: a save/load round trip of a timer. The restored tick counter goes on, so the timer runs on with it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Load_RunningTimer_ReadsAsBeforeTheSave_AndRunsOn()
+    {
+        var timer = Spawner(_server).SpawnOnRoot<TimerNode>();
+        Tick(_server);
+        timer.Timer = TickTimer.Start(_server.GetRequiredService<ServerTickClock>().CurrentTick, 10);
+        Tick(_server);
+        Tick(_server);
+        long savedTick = _server.GetRequiredService<ServerTickClock>().CurrentTick;
+
+        ServiceProvider loaded = Load(Saver().Write());
+
+        var copy = (TimerNode) loaded.GetRequiredService<IEntityFinder>().GetNode(Id(_server, timer));
+        var clock = loaded.GetRequiredService<ServerTickClock>();
+        AssertThat(copy.Timer).IsEqual(timer.Timer);
+        AssertThat(copy.Timer.Remaining(clock.CurrentTick)).IsEqual(timer.Timer.Remaining(savedTick));
+        Tick(loaded);
+        AssertThat(copy.Timer.Elapsed(clock.CurrentTick)).IsEqual(timer.Timer.Elapsed(savedTick) + 1);
     }
 
     // Done when: a [NotSaved] storage comes back empty after load, under the same NetId
