@@ -23,13 +23,6 @@ namespace NeonWarfare.Scenes.Game;
 /// </summary>
 public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 {
-    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md.
-    private const string ConnectionFailedMessage = "Connection to the server failed";
-    private const string DisconnectedFromServerMessage = "Server disconnected";
-    private const string ConnectionBrokenMessage = "The data received from the server is broken";
-    private const string BrokenWorldMessage = "The world received from the server is broken";
-    private const string WorldCreationFailedMessage = "Failed to enter the world received from the server";
-
     /// <summary>This process's player is online and sees its World.</summary>
     public event Action LocalPlayerJoined;
 
@@ -201,19 +194,21 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
         catch (Exception e)
         {
             _log.Error(e, "Creating the World from the join snapshot failed");
-            Fail(e is NetMessageFormatException ? BrokenWorldMessage : WorldCreationFailedMessage);
+            Fail(Services.I18N.Tr(e is NetMessageFormatException
+                ? "MESSAGE_MENU__BROKEN_WORLD"
+                : "MESSAGE_MENU__WORLD_ENTRY_FAILED"));
             return;
         }
         _log.Information("Entered the world from the join snapshot");
     }
 
     // The server did not answer within the timeout. Network has already logged it.
-    private void OnConnectionFailed() => Fail(ConnectionFailedMessage);
+    private void OnConnectionFailed() => Fail(Services.I18N.Tr("MESSAGE_MENU__CONNECTION_FAILED"));
 
-    private void OnServerDisconnected() => Fail(DisconnectedFromServerMessage);
+    private void OnServerDisconnected() => Fail(Services.I18N.Tr("MESSAGE_MENU__SERVER_DISCONNECTED"));
 
     // The transport has already logged the packet.
-    private void OnConnectionBroken() => Fail(ConnectionBrokenMessage);
+    private void OnConnectionBroken() => Fail(Services.I18N.Tr("MESSAGE_MENU__CONNECTION_BROKEN"));
 
     // Does nothing once the Game is queued for deletion, because the multiplayer is still polled until the end of that
     // frame while the session has already been left.

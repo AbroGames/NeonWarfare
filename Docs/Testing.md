@@ -95,7 +95,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
 | `Conventions/CodeStyleTests` | Single `GlobalUsings.cs`, no `GD.Load` / `res://` literals, no `[Logger]` |
 | `Conventions/EventNamingTests` | In `Root/`, `Game/`, `Worlds/`: no `…Event` C# event, `On…` methods private or protected, a subscribed method is `On…` |
-| `Conventions/MessageStringTests` | Log templates are string literals in the call; no exception message from a constant or `FormatWith` |
+| `Conventions/MessageStringTests` | Log templates are string literals in the call; no exception message from a constant or `FormatWith`; no TrKey in a constant |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
 | `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles`, `WorldSaveFile` and `IPeerSessionHandler` only in `Server`; every `Build` parameter is open or restricted explicitly; an `IEnumerable<I>` is a dependency on every implementation of `I`, never of a type the root registers; `[CommandHandler]` and `[Presentation]` only as a collection, of `[Server]` and `[Client]`; no optional parameter |

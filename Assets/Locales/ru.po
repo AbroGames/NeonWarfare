@@ -88,6 +88,33 @@ msgstr "Сервер не смог впустить вас из-за внутр�
 msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
 msgstr "Сервер отклонил подключение"
 
+msgid "MESSAGE_MENU__CONNECTION_FAILED"
+msgstr "Не удалось подключиться к серверу"
+
+msgid "MESSAGE_MENU__SERVER_DISCONNECTED"
+msgstr "Сервер отключился"
+
+msgid "MESSAGE_MENU__CONNECTION_BROKEN"
+msgstr "Данные, полученные от сервера, повреждены"
+
+msgid "MESSAGE_MENU__BROKEN_WORLD"
+msgstr "Мир, полученный от сервера, повреждён"
+
+msgid "MESSAGE_MENU__WORLD_ENTRY_FAILED"
+msgstr "Не удалось войти в мир, полученный от сервера"
+
+msgid "MESSAGE_MENU__SAVE_VERSION_MISMATCH"
+msgstr "Сохранение сделано другой версией игры"
+
+msgid "MESSAGE_MENU__BROKEN_SAVE"
+msgstr "Сохранение повреждено или не читается"
+
+msgid "MESSAGE_MENU__WORLD_CREATION_FAILED"
+msgstr "Не удалось создать мир"
+
+msgid "MESSAGE_MENU__HOSTING_FAILED"
+msgstr "Не удалось запустить сервер: {0}"
+
 msgid "HUD__CHAT_PLACEHOLDER"
 msgstr "Введите сообщение или команду, начиная с /"
 
