@@ -15,18 +15,18 @@ namespace NeonWarfare.Scenes.Game;
 public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
 {
     /// <summary>
-    /// Single player, or a host over <paramref name="network"/>. The host's own join is sent right away and applied in
-    /// the next tick.
+    /// A host without a network. Its own join is sent right away and applied in the next tick.
     /// </summary>
-    /// <param name="network"><c>null</c> in single player.</param>
+    public World Singleplayer(WorldSetup.Host setup, WorldOrigin origin) =>
+        BuildHost(new World(), setup, origin, null);
+
+    /// <summary>
+    /// A host over <paramref name="network"/>. Its own join is sent right away and applied in the next tick.
+    /// </summary>
     public World Host(WorldSetup.Host setup, WorldOrigin origin, INetwork network)
     {
         var world = new World();
-        ServerTransport remote = network != null ? new ServerTransport(network, world) : null;
-        var transport = new HostTransport(world, world, protocol.Codec, protocol.Hash, setup.LocalPlayerOwner, remote);
-        Build(world, setup, origin, transport, transport, remote);
-        transport.SendJoinRequest(setup.LocalPlayer);
-        return world;
+        return BuildHost(world, setup, origin, new ServerTransport(network, world));
     }
 
     public World Dedicated(WorldSetup.Dedicated setup, WorldOrigin origin, INetwork network)
@@ -43,6 +43,14 @@ public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
         var world = new World();
         Build(world, setup, new WorldOrigin.FromSnapshot(snapshot), new NoConnection(), transport, null);
         transport.Enter(world);
+        return world;
+    }
+
+    private World BuildHost(World world, WorldSetup.Host setup, WorldOrigin origin, ServerTransport remote)
+    {
+        var transport = new HostTransport(world, world, protocol.Codec, protocol.Hash, setup.LocalPlayerOwner, remote);
+        Build(world, setup, origin, transport, transport, remote);
+        transport.SendJoinRequest(setup.LocalPlayer);
         return world;
     }
 

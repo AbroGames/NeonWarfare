@@ -35,7 +35,8 @@ public class HostMultiplayerGameStarter(string saveFileName, int? port) : BaseGa
         try
         {
             // The host's join leaves before the server is opened, so the host is the first to join
-            game.AddHostWorld(SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
+            game.AddHostWorld(
+                network, SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
         }
         catch (Exception e) when (IsLoadError(e))
         {

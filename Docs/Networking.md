@@ -50,8 +50,8 @@ The Simulation changes the models only inside the tick: it has no deferred calls
 
 A command is a `Command` record with MessagePack keys. The HUD sends it through `World.ICommandSender` →
 `PlayerCommandSender`, the only sender in the World; `JoinRequestCommand` alone is sent by the transport: the
-host's by `Game.AddHostWorld`, a remote client's on connecting, before it has a World. A command is sent at once,
-not at the tick.
+host's by `Game.AddSingleplayerWorld` / `Game.AddHostWorld`, a remote client's on connecting, before it has a World.
+A command is sent at once, not at the tick.
 
 On the server `CommandInbox` decodes a packet on arrival, against the whitelist `CommandHandlerRegistry` builds from
 the found handlers: a type without a network handler, a broken body or trailing bytes is logged as `WARN` and

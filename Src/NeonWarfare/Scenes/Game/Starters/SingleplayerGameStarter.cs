@@ -20,7 +20,8 @@ public class SingleplayerGameStarter(string saveFileName) : BaseGameStarter
 
         try
         {
-            game.AddHostWorld(SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
+            game.AddSingleplayerWorld(
+                SaveFilesUpdatingLastGame(lastGame), ReadLocalPlayer(), LoadServerOrigin(saveFileName));
         }
         catch (Exception e) when (IsLoadError(e))
         {
