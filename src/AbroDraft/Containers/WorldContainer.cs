@@ -15,6 +15,7 @@ public partial class WorldContainer : Node2D, INodeContainer<Node2D>
 	public void ClearStoredNode()
 	{
 		CurrentStoredNode?.QueueFree();
+		CurrentStoredNode = null;
 	}
 }
 

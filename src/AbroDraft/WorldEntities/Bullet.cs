@@ -41,6 +41,11 @@ public partial class Bullet : Node2D
 						_remainingDamage -= character.Hp;
 						character.Hp = 0;
 						character.QueueFree();
+
+						References.Instance.WorldContainer.ClearStoredNode();
+						
+						var firstScene = References.Instance.FirstSceneBlueprint;
+						References.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
 					}
 				}
 			}

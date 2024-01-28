@@ -15,7 +15,7 @@ public partial class World : Node2D
 		var camera = new PlayerCamera();
 		camera.Position = character.Position;
 		camera.TargetNode = character;
-		camera.Zoom = Vec(0.5);
+		camera.Zoom = Vec(0.65);
 		AddChild(camera);
 		camera.Enabled = true;
 		
@@ -23,7 +23,7 @@ public partial class World : Node2D
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 25; i++)
 		{
 			CreateEnemyRandomPosAroundCharacter(character as Character);
 		}

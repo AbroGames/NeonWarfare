@@ -70,7 +70,7 @@ public partial class Enemy : CharacterBody2D
 		// Установка начальной позиции снаряда
 		bullet.GlobalPosition = GlobalPosition;
 		// Установка направления движения снаряда
-		bullet.Rotation = Rotation + Mathf.Pi / 2;
+		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.ENEMY;
 		
 		GetParent().AddChild(bullet);
