@@ -1,11 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://dbwbtt0g1g8m3"]
+[gd_scene load_steps=12 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/References.cs" id="1_c614h"]
 [ext_resource type="Script" path="res://src/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/Network.cs" id="2_7rhp3"]
-[ext_resource type="PackedScene" uid="uid://crc10v8fjt3mk" path="res://Scenes/Menu.tscn" id="2_dlrff"]
+[ext_resource type="PackedScene" path="res://Scenes/Menu.tscn" id="2_dlrff"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkClient.cs" id="3_6mjvq"]
-[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/Character.tscn" id="3_bqxph"]
+[ext_resource type="PackedScene" path="res://Scenes/Character.tscn" id="3_bqxph"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkServer.cs" id="4_s3m2k"]
 [ext_resource type="Script" path="res://src/AbroDraft/Game.cs" id="5_cj2vp"]
 [ext_resource type="Script" path="res://src/AbroDraft/Containers/WorldContainer.cs" id="6_we2o4"]
@@ -14,13 +14,16 @@
 
 [node name="Root" type="Node2D"]
 
-[node name="References" type="Node" parent="." node_paths=PackedStringArray("WorldContainer", "HudContainer", "MenuContainer")]
+[node name="References" type="Node" parent="."]
 script = ExtResource("1_c614h")
-WorldContainer = NodePath("../Game/WorldContainer")
-HudContainer = NodePath("../Game/CanvasLayer/HudContainer")
-MenuContainer = NodePath("../Game/CanvasLayer/MeniuContainer")
 FirstSceneBlueprint = ExtResource("2_dlrff")
 CharacterBlueprint = ExtResource("3_bqxph")
+WorldContainer = Object(Node2D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"position":Vector2(0, 0),"rotation":0.0,"scale":Vector2(1, 1),"skew":0.0,"script":ExtResource("6_we2o4"))
+
+HudContainer = Object(Control,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"clip_contents":false,"custom_minimum_size":Vector2(0, 0),"layout_direction":0,"layout_mode":3,"anchors_preset":0,"anchor_left":0.0,"anchor_top":0.0,"anchor_right":0.0,"anchor_bottom":0.0,"offset_left":0.0,"offset_top":0.0,"offset_right":40.0,"offset_bottom":40.0,"grow_horizontal":1,"grow_vertical":1,"rotation":0.0,"scale":Vector2(1, 1),"pivot_offset":Vector2(0, 0),"size_flags_horizontal":1,"size_flags_vertical":1,"size_flags_stretch_ratio":1.0,"auto_translate":true,"localize_numeral_system":true,"tooltip_text":"","focus_neighbor_left":NodePath(""),"focus_neighbor_top":NodePath(""),"focus_neighbor_right":NodePath(""),"focus_neighbor_bottom":NodePath(""),"focus_next":NodePath(""),"focus_previous":NodePath(""),"focus_mode":0,"mouse_filter":0,"mouse_force_pass_scroll_events":true,"mouse_default_cursor_shape":0,"shortcut_context":null,"theme":null,"theme_type_variation":&"","script":ExtResource("7_ft1v4"))
+
+MenuContainer = Object(Control,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"clip_children":0,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"clip_contents":false,"custom_minimum_size":Vector2(0, 0),"layout_direction":0,"layout_mode":3,"anchors_preset":0,"anchor_left":0.0,"anchor_top":0.0,"anchor_right":0.0,"anchor_bottom":0.0,"offset_left":0.0,"offset_top":0.0,"offset_right":40.0,"offset_bottom":40.0,"grow_horizontal":1,"grow_vertical":1,"rotation":0.0,"scale":Vector2(1, 1),"pivot_offset":Vector2(0, 0),"size_flags_horizontal":1,"size_flags_vertical":1,"size_flags_stretch_ratio":1.0,"auto_translate":true,"localize_numeral_system":true,"tooltip_text":"","focus_neighbor_left":NodePath(""),"focus_neighbor_top":NodePath(""),"focus_neighbor_right":NodePath(""),"focus_neighbor_bottom":NodePath(""),"focus_next":NodePath(""),"focus_previous":NodePath(""),"focus_mode":0,"mouse_filter":0,"mouse_force_pass_scroll_events":true,"mouse_default_cursor_shape":0,"shortcut_context":null,"theme":null,"theme_type_variation":&"","script":ExtResource("8_7mtu2"))
+
 
 [node name="Audio2D" type="Node2D" parent="."]
 script = ExtResource("1_wg44d")
@@ -49,7 +52,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("7_ft1v4")
 
-[node name="MeniuContainer" type="Control" parent="Game/CanvasLayer"]
+[node name="MenuContainer" type="Control" parent="Game/CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
