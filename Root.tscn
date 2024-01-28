@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dbwbtt0g1g8m3"]
+[gd_scene load_steps=15 format=3 uid="uid://dbwbtt0g1g8m3"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/References.cs" id="1_c614h"]
 [ext_resource type="Script" path="res://src/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
@@ -7,12 +7,19 @@
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkClient.cs" id="3_6mjvq"]
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/Character.tscn" id="3_bqxph"]
 [ext_resource type="PackedScene" path="res://Scenes/MainMenu.tscn" id="4_coua8"]
-[ext_resource type="PackedScene" uid="uid://diu5b6k3ea6fn" path="res://Scenes/Enemy.tscn" id="4_kd0xx"]
+[ext_resource type="PackedScene" path="res://Scenes/Enemy.tscn" id="4_kd0xx"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkServer.cs" id="4_s3m2k"]
 [ext_resource type="Script" path="res://src/AbroDraft/Game.cs" id="5_cj2vp"]
 [ext_resource type="Script" path="res://src/AbroDraft/Containers/WorldContainer.cs" id="6_we2o4"]
 [ext_resource type="Script" path="res://src/AbroDraft/Containers/HudContainer.cs" id="7_ft1v4"]
 [ext_resource type="Script" path="res://src/AbroDraft/Containers/MenuContainer.cs" id="8_7mtu2"]
+
+[sub_resource type="Environment" id="Environment_hp6r4"]
+background_mode = 3
+glow_enabled = true
+glow_bloom = 0.72
+glow_blend_mode = 0
+glow_hdr_threshold = 0.0
 
 [node name="Root" type="Node2D"]
 
@@ -61,3 +68,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("8_7mtu2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hp6r4")
