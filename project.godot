@@ -12,7 +12,7 @@ config_version=5
 
 config/name="AbroDraft"
 run/main_scene="res://Scenes/Game.tscn"
-config/features=PackedStringArray("4.2", "Double Precision", "Forward Plus")
+config/features=PackedStringArray("4.2", "C#", "Double Precision", "Forward Plus")
 config/icon="res://icon.svg"
 
 [dotnet]
