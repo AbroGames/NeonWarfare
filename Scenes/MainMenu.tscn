@@ -1,0 +1,44 @@
+[gd_scene load_steps=4 format=3 uid="uid://dkmaek7egfvff"]
+
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_n5xfm"]
+[ext_resource type="Script" path="res://src/AbroDraft/Screen/SetWorldAndCloseMenuButton.cs" id="2_rrs6k"]
+[ext_resource type="PackedScene" uid="uid://coj480phcskd4" path="res://Scenes/World.tscn" id="3_36r24"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -171.0
+offset_top = -208.0
+offset_right = 171.0
+offset_bottom = 208.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CreateServerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Создать сервер"
+icon = ExtResource("1_n5xfm")
+script = ExtResource("2_rrs6k")
+_newWorldScene = ExtResource("3_36r24")
+
+[node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Подключиться к серверу"
+icon = ExtResource("1_n5xfm")
+
+[node name="ProfileButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Профиль"
+icon = ExtResource("1_n5xfm")
