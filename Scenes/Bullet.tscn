@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://dvgdmxyshymdx"]
+[gd_scene load_steps=4 format=3 uid="uid://dvgdmxyshymdx"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_3ti53"]
 [ext_resource type="Script" path="res://src/AbroDraft/WorldEntities/Bullet.cs" id="1_w368o"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_gdlum"]
+a = Vector2(0, -12)
+b = Vector2(0, 12)
 
 [node name="Bullet" type="Node2D"]
 script = ExtResource("1_w368o")
@@ -10,3 +14,9 @@ script = ExtResource("1_w368o")
 modulate = Color(0.835294, 0, 0, 1)
 scale = Vector2(0.01, 0.2)
 texture = ExtResource("1_3ti53")
+
+[node name="Area2D" type="Area2D" parent="."]
+input_pickable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("SegmentShape2D_gdlum")

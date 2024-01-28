@@ -41,7 +41,7 @@ public partial class Character : CharacterBody2D
 
 	private void RotateToMouse(double delta)
 	{
-		//Куда хоти повернуться
+		//Куда хотим повернуться
 		double targetAngle = GetAngleToMouse();
 		//На какой угол надо повернуться (знак указывает направление)
 		double deltaAngleToTargetAngel = Mathf.AngleDifference(Rotation - Mathf.Pi / 2, targetAngle);
@@ -78,11 +78,12 @@ public partial class Character : CharacterBody2D
 		_secToNextAttack = 1.0 / _attackSpeed;
 		
 		// Создание снаряда
-		Node2D bullet = _bulletBlueprint.Instantiate() as Node2D;
+		Bullet bullet = _bulletBlueprint.Instantiate() as Bullet;
 		// Установка начальной позиции снаряда
 		bullet.GlobalPosition = GlobalPosition;
 		// Установка направления движения снаряда
 		bullet.Rotation = GetAngleToMouse() + Mathf.Pi / 2;
+		bullet.AuthorIsPlayer = true;
 		
 		GetParent().AddChild(bullet);
 	}
