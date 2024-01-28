@@ -23,7 +23,7 @@ public partial class World : Node2D
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 
-		for (int i = 0; i < 25; i++)
+		for (int i = 0; i < 75; i++)
 		{
 			CreateEnemyRandomPosAroundCharacter(character as Character);
 		}
