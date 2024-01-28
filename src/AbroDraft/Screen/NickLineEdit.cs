@@ -5,7 +5,7 @@ public partial class NickLineEdit : LineEdit
 {
 	public override void _Ready()
 	{
-		Text = References.Instance.player.playerName;
+		Text = References.Instance.PlayerInfo.playerName;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

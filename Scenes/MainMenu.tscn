@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=7 format=3 uid="uid://dkmaek7egfvff"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_n5xfm"]
 [ext_resource type="Script" path="res://src/AbroDraft/Screen/SetWorldAndCloseMenuButton.cs" id="2_rrs6k"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World.tscn" id="3_36r24"]
 [ext_resource type="Script" path="res://src/AbroDraft/Screen/ChangeMenuButton.cs" id="4_y41xp"]
-[ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/ProfileMenu.tscn" id="5_x26bg"]
+[ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/ConnectToServerMenu.tscn" id="5_0mhqh"]
+[ext_resource type="Script" path="res://Scenes/ProfileButton.cs" id="6_7616d"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -39,10 +40,11 @@ _newWorldScene = ExtResource("3_36r24")
 layout_mode = 2
 text = "Подключиться к серверу"
 icon = ExtResource("1_n5xfm")
+script = ExtResource("4_y41xp")
+_newMenu = ExtResource("5_0mhqh")
 
 [node name="ProfileButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Профиль"
 icon = ExtResource("1_n5xfm")
-script = ExtResource("4_y41xp")
-_newMenu = ExtResource("5_x26bg")
+script = ExtResource("6_7616d")

@@ -1,5 +1,6 @@
 ﻿using Godot;
 using System;
+using KludgeBox;
 
 public partial class ChangeMenuButton : Godot.Button
 {
@@ -13,6 +14,6 @@ public partial class ChangeMenuButton : Godot.Button
 	private void OnClick()
 	{
 		var menu = References.Instance.MenuContainer.CurrentStoredNode as Menu;
-		menu.changeMenu(_newMenu.Instantiate() as Control);
+		menu.changeMenu(_newMenu.Instantiate<Control>());
 	}
 }
