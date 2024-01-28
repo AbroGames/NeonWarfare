@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using AbroDraft.WorldEntities;
 using KludgeBox;
 
 public partial class World : Node2D
@@ -10,6 +11,12 @@ public partial class World : Node2D
 		var character = References.Instance.CharacterBlueprint.Instantiate() as Node2D;
 		character.Position = Vec(500, 500);
 		AddChild(character);
+		
+		var camera = new PlayerCamera();
+		camera.Position = character.Position;
+		camera.TargetNode = character;
+		AddChild(camera);
+		camera.Enabled = true;
 		
 		var ally = References.Instance.AllyBlueprint.Instantiate() as Node2D;
 		ally.Position = Vec(600, 600);
