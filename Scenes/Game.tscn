@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://dbwbtt0g1g8m3"]
+[gd_scene load_steps=8 format=3 uid="uid://dbwbtt0g1g8m3"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/Game.cs" id="1_f2glu"]
 [ext_resource type="Script" path="res://src/KludgeBox/Threading.cs" id="2_7velx"]
 [ext_resource type="Script" path="res://src/KludgeBox/Godot/Nodes/Audio2D.cs" id="3_njo8a"]
+[ext_resource type="Script" path="res://src/AbroDraft/Character.cs" id="4_8mm6k"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/Network.cs" id="4_f6e37"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkClient.cs" id="5_mhe81"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkServer.cs" id="6_12pny"]
@@ -17,6 +18,11 @@ script = ExtResource("2_7velx")
 script = ExtResource("3_njo8a")
 
 [node name="World" type="Node2D" parent="."]
+
+[node name="Character" type="Node2D" parent="World"]
+script = ExtResource("4_8mm6k")
+
+[node name="Sprite" type="Sprite2D" parent="World/Character"]
 
 [node name="Network" type="Node" parent="."]
 script = ExtResource("4_f6e37")
