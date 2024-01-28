@@ -1,0 +1,57 @@
+[gd_scene load_steps=12 format=3 uid="uid://dbwbtt0g1g8m3"]
+
+[ext_resource type="Script" path="res://src/AbroDraft/References.cs" id="1_c614h"]
+[ext_resource type="Script" path="res://src/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
+[ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/Network.cs" id="2_7rhp3"]
+[ext_resource type="PackedScene" uid="uid://crc10v8fjt3mk" path="res://Scenes/Menu.tscn" id="2_dlrff"]
+[ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkClient.cs" id="3_6mjvq"]
+[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/Character.tscn" id="3_bqxph"]
+[ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkServer.cs" id="4_s3m2k"]
+[ext_resource type="Script" path="res://src/AbroDraft/Game.cs" id="5_cj2vp"]
+[ext_resource type="Script" path="res://src/AbroDraft/Containers/WorldContainer.cs" id="6_we2o4"]
+[ext_resource type="Script" path="res://src/AbroDraft/Containers/HudContainer.cs" id="7_ft1v4"]
+[ext_resource type="Script" path="res://src/AbroDraft/Containers/MenuContainer.cs" id="8_7mtu2"]
+
+[node name="Root" type="Node2D"]
+
+[node name="References" type="Node" parent="." node_paths=PackedStringArray("WorldContainer", "HudContainer", "MenuContainer")]
+script = ExtResource("1_c614h")
+WorldContainer = NodePath("../Game/WorldContainer")
+HudContainer = NodePath("../Game/CanvasLayer/HudContainer")
+MenuContainer = NodePath("../Game/CanvasLayer/MeniuContainer")
+FirstSceneBlueprint = ExtResource("2_dlrff")
+CharacterBlueprint = ExtResource("3_bqxph")
+
+[node name="Audio2D" type="Node2D" parent="."]
+script = ExtResource("1_wg44d")
+
+[node name="Network" type="Node" parent="."]
+script = ExtResource("2_7rhp3")
+
+[node name="NetworkClient" type="Node" parent="Network"]
+script = ExtResource("3_6mjvq")
+
+[node name="NetworkServer" type="Node" parent="Network"]
+script = ExtResource("4_s3m2k")
+
+[node name="Game" type="Node2D" parent="."]
+script = ExtResource("5_cj2vp")
+
+[node name="WorldContainer" type="Node2D" parent="Game"]
+script = ExtResource("6_we2o4")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Game"]
+
+[node name="HudContainer" type="Control" parent="Game/CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_ft1v4")
+
+[node name="MeniuContainer" type="Control" parent="Game/CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("8_7mtu2")

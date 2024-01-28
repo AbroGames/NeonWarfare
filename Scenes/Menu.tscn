@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://crc10v8fjt3mk"]
+
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_rcux2"]
+[ext_resource type="Script" path="res://src/AbroDraft/Screen/SetWorldAndCloseMenuButton.cs" id="2_s53g2"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World.tscn" id="3_mne0u"]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(76, 574)
+texture = ExtResource("1_rcux2")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 465.0
+offset_top = 263.0
+offset_right = 473.0
+offset_bottom = 271.0
+text = "БАТОН"
+script = ExtResource("2_s53g2")
+_newWorldScene = ExtResource("3_mne0u")
