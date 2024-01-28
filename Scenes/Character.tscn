@@ -9,4 +9,6 @@ script = ExtResource("1_277rc")
 _bulletBlueprint = ExtResource("2_yfr61")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 1, 1, 1)
+scale = Vector2(0.3, 0.3)
 texture = ExtResource("1_gdu7k")
