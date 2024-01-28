@@ -7,6 +7,8 @@ public partial class Enemy : CharacterBody2D
 	[Export] private double _movementSpeed = 200; // in pixels/sec
 	[Export] public int Hp = 250;
 
+	private RayCast2D RayCast => GetNode("RayCast") as RayCast2D;
+
 	public Character Target;
 	
 	// Called when the node enters the scene tree for the first time.
@@ -35,5 +37,16 @@ public partial class Enemy : CharacterBody2D
 		var targetDir = GlobalPosition.DirectionTo(targetPos);
 		// Вычисляем направление от объекта к мыши
 		return targetDir.Angle();
+	}
+
+	private bool CanShoot()
+	{
+		var collider = RayCast.GetCollider();
+		if (collider is Character chara)
+		{
+			return true;
+		}
+
+		return false;
 	}
 }

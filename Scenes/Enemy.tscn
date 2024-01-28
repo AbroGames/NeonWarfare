@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://diu5b6k3ea6fn"]
+[gd_scene load_steps=4 format=3 uid="uid://1dnrsp1fnuoh"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_3caks"]
 [ext_resource type="Script" path="res://src/AbroDraft/WorldEntities/Enemy.cs" id="1_a1pot"]
@@ -16,3 +16,6 @@ texture = ExtResource("1_3caks")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_awgad")
+
+[node name="RayCast" type="RayCast2D" parent="."]
+target_position = Vector2(0, -500)
