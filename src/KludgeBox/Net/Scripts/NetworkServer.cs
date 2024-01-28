@@ -37,57 +37,57 @@ public sealed partial class NetworkServer : Node
     public void SendDataToClientsUnreliable(byte[] data)
     {
         if (!IsLocal || !IsActive) throw new InvalidOperationException("Local NetworkServer must be active to send data");
-        if (!KludgeBox.Net.Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
+        if (!Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
         
-        if (KludgeBox.Net.Network.Client.IsLocal) KludgeBox.Net.Network.Client.ReceiveDataUnreliable(data);
-        if (KludgeBox.Net.Network.Client.IsRemote) KludgeBox.Net.Network.Client.ReceiveDataByRpcUnreliable(data);
+        if (Network.Client.IsLocal) Network.Client.ReceiveDataUnreliable(data);
+        if (Network.Client.IsRemote) Network.Client.ReceiveDataByRpcUnreliable(data);
     }
 
     public void SendDataToClientsReliable(byte[] data)
     {
         if (!IsLocal || !IsActive) throw new InvalidOperationException("Local NetworkServer must be active to send data");
-        if (!KludgeBox.Net.Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
+        if (!Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
         
-        if (KludgeBox.Net.Network.Client.IsLocal) KludgeBox.Net.Network.Client.ReceiveDataReliable(data);
-        if (KludgeBox.Net.Network.Client.IsRemote) KludgeBox.Net.Network.Client.ReceiveDataByRpcReliable(data);
+        if (Network.Client.IsLocal) Network.Client.ReceiveDataReliable(data);
+        if (Network.Client.IsRemote) Network.Client.ReceiveDataByRpcReliable(data);
     }
 
     public void SendDataToClientUnreliable(int peerId, byte[] data)
     {
         if (!IsLocal || !IsActive) throw new InvalidOperationException("Local NetworkServer must be active to send data");
-        if (!KludgeBox.Net.Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
+        if (!Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
         
-        if (KludgeBox.Net.Network.Client.IsRemote && peerId is not (0 or 1))
-            KludgeBox.Net.Network.Client.ReceiveDataByRpcIdUnreliable(peerId, data);
+        if (Network.Client.IsRemote && peerId is not (0 or 1))
+            Network.Client.ReceiveDataByRpcIdUnreliable(peerId, data);
 
-        if (KludgeBox.Net.Network.Client.IsLocal && peerId is 0) KludgeBox.Net.Network.Client.ReceiveDataUnreliable(data);
+        if (Network.Client.IsLocal && peerId is 0) Network.Client.ReceiveDataUnreliable(data);
     }
 
     public void SendDataToClientReliable(int peerId, byte[] data)
     {
         if (!IsLocal || !IsActive) throw new InvalidOperationException("Local NetworkServer must be active to send data");
-        if (!KludgeBox.Net.Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
+        if (!Network.Client.IsActive) throw new InvalidOperationException("NetworkClient must be active to send data");
         
-        if (KludgeBox.Net.Network.Client.IsRemote && peerId is not (0 or 1)) KludgeBox.Net.Network.Client.ReceiveDataByRpcIdReliable(peerId, data);
+        if (Network.Client.IsRemote && peerId is not (0 or 1)) Network.Client.ReceiveDataByRpcIdReliable(peerId, data);
 
-        if (KludgeBox.Net.Network.Client.IsLocal && peerId is 0) KludgeBox.Net.Network.Client.ReceiveDataReliable(data);
+        if (Network.Client.IsLocal && peerId is 0) Network.Client.ReceiveDataReliable(data);
     }
 
 
     [Rpc(RpcMode.AnyPeer, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
     internal void ReceiveDataUnreliable(byte[] data)
     {
-        var sender = KludgeBox.Net.Network.Api.GetRemoteSenderId();
+        var sender = Network.Api.GetRemoteSenderId();
         var packet = new Packet(sender, TransferModeEnum.Unreliable, data);
-        KludgeBox.Net.Network.ReceivePacket(packet);
+        Network.ReceivePacket(packet);
     }
 
     [Rpc(RpcMode.AnyPeer, TransferMode = TransferModeEnum.Reliable, CallLocal = false)]
     internal void ReceiveDataReliable(byte[] data)
     {
-        var sender = KludgeBox.Net.Network.Api.GetRemoteSenderId();
+        var sender = Network.Api.GetRemoteSenderId();
         var packet = new Packet(sender, TransferModeEnum.Reliable, data);
-        KludgeBox.Net.Network.ReceivePacket(packet);
+        Network.ReceivePacket(packet);
     }
 
 
@@ -95,17 +95,17 @@ public sealed partial class NetworkServer : Node
     {
         if (IsRemote) throw new InvalidOperationException("Can't execute Disconnect() on Server in remote mode");
 
-        foreach (var peer in KludgeBox.Net.Network.Api.GetPeers()) Disconnect(peer);
+        foreach (var peer in Network.Api.GetPeers()) Disconnect(peer);
 
         IsActive = false;
         IsRemote = false;
         IsLocal = false;
-        KludgeBox.Net.Network.Peer.Close();
+        Network.Peer.Close();
     }
 
     public void Disconnect(int peerId)
     {
-        KludgeBox.Net.Network.Peer.DisconnectPeer(peerId);
+        Network.Peer.DisconnectPeer(peerId);
     }
 
     internal void ConfigureLocal()

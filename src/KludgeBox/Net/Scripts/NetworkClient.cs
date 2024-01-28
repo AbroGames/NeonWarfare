@@ -45,19 +45,19 @@ public sealed partial class NetworkClient : Node
     public void SendDataReliable(byte[] data)
     {
         if (!IsLocal || !IsActive) throw new InvalidOperationException("Local NetworkClient must be active to send data to server");
-        if (!KludgeBox.Net.Network.Server.IsActive) throw new InvalidOperationException("NetworkServer must be active to send data to server");
+        if (!Network.Server.IsActive) throw new InvalidOperationException("NetworkServer must be active to send data to server");
         
-        if (KludgeBox.Net.Network.Server.IsLocal) KludgeBox.Net.Network.Server.ReceiveDataReliable(data);
-        if (KludgeBox.Net.Network.Server.IsRemote) KludgeBox.Net.Network.Server.ReceiveDataByRpcReliable(data);
+        if (Network.Server.IsLocal) Network.Server.ReceiveDataReliable(data);
+        if (Network.Server.IsRemote) Network.Server.ReceiveDataByRpcReliable(data);
     }
 
     public void SendDataUnreliable(byte[] data)
     {
         if (!IsLocal || !IsActive) throw new InvalidOperationException("Local NetworkClient must be active to send data to server");
-        if (!KludgeBox.Net.Network.Server.IsActive) throw new InvalidOperationException("NetworkServer must be active to send data to server");
+        if (!Network.Server.IsActive) throw new InvalidOperationException("NetworkServer must be active to send data to server");
         
-        if (KludgeBox.Net.Network.Server.IsLocal) KludgeBox.Net.Network.Server.ReceiveDataUnreliable(data);
-        if (KludgeBox.Net.Network.Server.IsRemote) KludgeBox.Net.Network.Server.ReceiveDataByRpcUnreliable(data);
+        if (Network.Server.IsLocal) Network.Server.ReceiveDataUnreliable(data);
+        if (Network.Server.IsRemote) Network.Server.ReceiveDataByRpcUnreliable(data);
     }
 
 
@@ -66,7 +66,7 @@ public sealed partial class NetworkClient : Node
     {
         var sender = DefaultNetworkSettings.ServerPeerId;
         var packet = new Packet(sender, TransferModeEnum.Reliable, data);
-        KludgeBox.Net.Network.ReceivePacket(packet);
+        Network.ReceivePacket(packet);
     }
 
     [Rpc(TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
@@ -74,7 +74,7 @@ public sealed partial class NetworkClient : Node
     {
         var sender = DefaultNetworkSettings.ServerPeerId;
         var packet = new Packet(sender, TransferModeEnum.Unreliable, data);
-        KludgeBox.Net.Network.ReceivePacket(packet);
+        Network.ReceivePacket(packet);
     }
 
     internal void ReceiveDataByRpcReliable(byte[] data)
