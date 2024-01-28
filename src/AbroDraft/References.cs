@@ -8,6 +8,7 @@ public partial class References : Node
     
     [Export] public PackedScene FirstSceneBlueprint { get; private set; }
     [Export] public PackedScene CharacterBlueprint { get; private set; }
+    [Export] public PackedScene AllyBlueprint { get; private set; }
     [Export] public PackedScene EnemyBlueprint { get; private set; }
     [Export] public PackedScene MainMenu { get; private set; }
     [Export] public Player player { get; private set; }

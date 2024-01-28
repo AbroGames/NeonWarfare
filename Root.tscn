@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=17 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/References.cs" id="1_c614h"]
 [ext_resource type="Script" path="res://src/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://crc10v8fjt3mk" path="res://Scenes/Menu.tscn" id="2_dlrff"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkClient.cs" id="3_6mjvq"]
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/Character.tscn" id="3_bqxph"]
+[ext_resource type="PackedScene" uid="uid://vu7pqr4sjb6n" path="res://Scenes/Ally.tscn" id="4_5im1w"]
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/MainMenu.tscn" id="4_coua8"]
 [ext_resource type="PackedScene" uid="uid://diu5b6k3ea6fn" path="res://Scenes/Enemy.tscn" id="4_kd0xx"]
 [ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkServer.cs" id="4_s3m2k"]
@@ -31,6 +32,7 @@ HudContainer = NodePath("../Game/CanvasLayer/HudContainer")
 MenuContainer = NodePath("../Game/CanvasLayer/MenuContainer")
 FirstSceneBlueprint = ExtResource("2_dlrff")
 CharacterBlueprint = ExtResource("3_bqxph")
+AllyBlueprint = ExtResource("4_5im1w")
 EnemyBlueprint = ExtResource("4_kd0xx")
 MainMenu = ExtResource("4_coua8")
 player = NodePath("../Game/Player")

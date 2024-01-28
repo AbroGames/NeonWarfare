@@ -10,6 +10,10 @@ public partial class World : Node2D
 		var character = References.Instance.CharacterBlueprint.Instantiate() as Node2D;
 		character.Position = Vec(500, 500);
 		AddChild(character);
+		
+		var ally = References.Instance.AllyBlueprint.Instantiate() as Node2D;
+		ally.Position = Vec(600, 600);
+		AddChild(ally);
 
 		for (int i = 0; i < 100; i++)
 		{

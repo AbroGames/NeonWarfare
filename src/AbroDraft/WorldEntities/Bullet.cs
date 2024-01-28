@@ -10,6 +10,7 @@ public partial class Bullet : Node2D
 	[Export] private double _speed = 700; //pixels/sec
 
 	public AuthorEnum Author;
+	private int _remainingDamage;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
