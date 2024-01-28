@@ -83,7 +83,7 @@ public partial class Character : CharacterBody2D
 		// Установка начальной позиции снаряда
 		bullet.GlobalPosition = GlobalPosition;
 		// Установка направления движения снаряда
-		bullet.Rotation = GetAngleToMouse() + Mathf.Pi / 2;
+		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.PLAYER;
 		
 		GetParent().AddChild(bullet);

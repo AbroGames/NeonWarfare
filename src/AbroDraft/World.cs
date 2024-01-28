@@ -15,6 +15,7 @@ public partial class World : Node2D
 		var camera = new PlayerCamera();
 		camera.Position = character.Position;
 		camera.TargetNode = character;
+		camera.Zoom = Vec(0.5);
 		AddChild(camera);
 		camera.Enabled = true;
 		

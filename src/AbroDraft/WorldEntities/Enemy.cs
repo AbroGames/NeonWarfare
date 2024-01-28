@@ -6,10 +6,14 @@ public partial class Enemy : CharacterBody2D
 	
 	[Export] private double _movementSpeed = 200; // in pixels/sec
 	[Export] public int Hp = 250;
+	[Export] private double _attackSpeed = 1; // attack/sec
 
 	private RayCast2D RayCast => GetNode("RayCast") as RayCast2D;
 
+	[Export] private PackedScene _bulletBlueprint;
+	
 	public Character Target;
+	private double _secToNextAttack = 0;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -20,6 +24,10 @@ public partial class Enemy : CharacterBody2D
 	public override void _Process(double delta)
 	{
 		Rotation = GetAngleToTarget() + Mathf.Pi / 2;
+		if (CanShoot())
+		{
+			Attack(delta);
+		}
 	}
 	
 	public override void _PhysicsProcess(double delta)
@@ -48,5 +56,23 @@ public partial class Enemy : CharacterBody2D
 		}
 
 		return false;
+	}
+
+	private void Attack(double delta)
+	{
+		_secToNextAttack -= delta;
+		if (_secToNextAttack > 0) return;
+
+		_secToNextAttack = 1.0 / _attackSpeed;
+		
+		// Создание снаряда
+		Bullet bullet = _bulletBlueprint.Instantiate() as Bullet;
+		// Установка начальной позиции снаряда
+		bullet.GlobalPosition = GlobalPosition;
+		// Установка направления движения снаряда
+		bullet.Rotation = Rotation + Mathf.Pi / 2;
+		bullet.Author = Bullet.AuthorEnum.ENEMY;
+		
+		GetParent().AddChild(bullet);
 	}
 }
