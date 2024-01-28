@@ -8,8 +8,11 @@ public partial class Character : Node2D
 	
 	[Export] private double _movementSpeed = 250; // in pixels/sec
 	[Export] private double _rotationSpeed = 300; // in degree/sec
+	[Export] private double _attackSpeed = 3; // attack/sec
 	
 	[Export] private PackedScene _bulletBlueprint;
+
+	private double _secToNextAttack = 0;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -22,11 +25,7 @@ public partial class Character : Node2D
 	{
 		RotateToMouse(delta);
 		Move(delta);
-		
-		if (Input.IsActionJustPressed(Keys.Shoot))
-		{
-			Shoot();
-		}
+		Attack(delta);
 	}
 
 	private void Move(double delta)
@@ -70,8 +69,14 @@ public partial class Character : Node2D
 		return mouseDir.Angle();
 	}
 	
-	private void Shoot()
+	private void Attack(double delta)
 	{
+		_secToNextAttack -= delta;
+		if (!Input.IsActionPressed(Keys.Attack)) return;
+		if (_secToNextAttack > 0) return;
+
+		_secToNextAttack = 1.0 / _attackSpeed;
+		
 		// Создание снаряда
 		Node2D bullet = _bulletBlueprint.Instantiate() as Node2D;
 		// Установка начальной позиции снаряда
