@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://cjrxgi0aql38u"]
+[gd_scene load_steps=3 format=3 uid="uid://cjrxgi0aql38u"]
 
+[ext_resource type="Script" path="res://Scenes/NickLineEdit.cs" id="1_8c4kn"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="6_ohljf"]
 
 [node name="ProfileMenu" type="Control"]
@@ -31,8 +32,9 @@ layout_mode = 2
 layout_mode = 2
 text = "Имя игрока:"
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer"]
+[node name="NickLineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer"]
 layout_mode = 2
+script = ExtResource("1_8c4kn")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

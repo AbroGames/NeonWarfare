@@ -10,6 +10,7 @@ public partial class References : Node
     [Export] public PackedScene CharacterBlueprint { get; private set; }
     [Export] public PackedScene EnemyBlueprint { get; private set; }
     [Export] public PackedScene MainMenu { get; private set; }
+    [Export] public Player player { get; private set; }
     
     public static References Instance { get; private set; }
     public override void _Ready()

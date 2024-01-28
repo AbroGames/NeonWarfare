@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=6 format=3 uid="uid://dkmaek7egfvff"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_n5xfm"]
 [ext_resource type="Script" path="res://src/AbroDraft/Screen/SetWorldAndCloseMenuButton.cs" id="2_rrs6k"]
-[ext_resource type="PackedScene" uid="uid://coj480phcskd4" path="res://Scenes/World.tscn" id="3_36r24"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World.tscn" id="3_36r24"]
+[ext_resource type="Script" path="res://src/AbroDraft/Screen/ChangeMenuButton.cs" id="4_y41xp"]
+[ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/ProfileMenu.tscn" id="5_x26bg"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -42,3 +44,5 @@ icon = ExtResource("1_n5xfm")
 layout_mode = 2
 text = "Профиль"
 icon = ExtResource("1_n5xfm")
+script = ExtResource("4_y41xp")
+_newMenu = ExtResource("5_x26bg")

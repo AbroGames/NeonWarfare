@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_nq6w6"]
 [ext_resource type="Script" path="res://src/AbroDraft/Screen/SetWorldAndCloseMenuButton.cs" id="2_ltsim"]
-[ext_resource type="PackedScene" uid="uid://coj480phcskd4" path="res://Scenes/World.tscn" id="3_vah7j"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World.tscn" id="3_vah7j"]
 
 [node name="ConnectToServerMenu" type="Control"]
 layout_mode = 3
