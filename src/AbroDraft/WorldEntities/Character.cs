@@ -1,5 +1,7 @@
+using System;
 using Game.Content;
 using Godot;
+using MicroSurvivors;
 
 namespace AbroDraft;
 
@@ -24,7 +26,6 @@ public partial class Character : Node2D
 	public override void _Ready()
 	{
 		SetSprite(GD.Load("res://Assets/Textures/Sprites/Square.png") as Texture2D);
-		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
