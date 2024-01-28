@@ -1,10 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://n0xmwymx5ba5"]
+[gd_scene load_steps=4 format=3 uid="uid://n0xmwymx5ba5"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/WorldEntities/Character.cs" id="1_277rc"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_gdu7k"]
+[ext_resource type="PackedScene" uid="uid://dvgdmxyshymdx" path="res://Scenes/Bullet.tscn" id="2_yfr61"]
 
 [node name="Character" type="Node2D"]
 script = ExtResource("1_277rc")
+_bulletBlueprint = ExtResource("2_yfr61")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_gdu7k")

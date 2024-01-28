@@ -3,13 +3,13 @@ using Game.Content;
 using Godot;
 using MicroSurvivors;
 
-namespace AbroDraft;
-
 public partial class Character : Node2D
 {
 	
 	[Export] private double _movementSpeed = 250; // in pixels/sec
 	[Export] private double _rotationSpeed = 300; // in degree/sec
+	
+	[Export] private PackedScene _bulletBlueprint;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -22,6 +22,11 @@ public partial class Character : Node2D
 	{
 		RotateToMouse(delta);
 		Move(delta);
+		
+		if (Input.IsActionJustPressed(Keys.Shoot))
+		{
+			Shoot();
+		}
 	}
 
 	private void Move(double delta)
@@ -63,5 +68,17 @@ public partial class Character : Node2D
 		var mouseDir = GlobalPosition.DirectionTo(mousePos);
 		// Вычисляем направление от объекта к мыши
 		return mouseDir.Angle();
+	}
+	
+	private void Shoot()
+	{
+		// Создание снаряда
+		Node2D bullet = _bulletBlueprint.Instantiate() as Node2D;
+		// Установка начальной позиции снаряда
+		bullet.GlobalPosition = GlobalPosition;
+		// Установка направления движения снаряда
+		bullet.Rotation = GetAngleToMouse() + Mathf.Pi / 2;
+		
+		GetParent().AddChild(bullet);
 	}
 }
