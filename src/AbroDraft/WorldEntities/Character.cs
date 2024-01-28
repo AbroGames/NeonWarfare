@@ -3,7 +3,7 @@ using Game.Content;
 using Godot;
 using MicroSurvivors;
 
-public partial class Character : Node2D
+public partial class Character : CharacterBody2D
 {
 	
 	[Export] private double _movementSpeed = 250; // in pixels/sec
@@ -24,14 +24,14 @@ public partial class Character : Node2D
 	public override void _Process(double delta)
 	{
 		RotateToMouse(delta);
-		Move(delta);
 		Attack(delta);
 	}
-
-	private void Move(double delta)
+	
+	public override void _PhysicsProcess(double delta)
 	{
 		var movementInput = GetInput();
-		Position += movementInput * _movementSpeed * delta;
+		// Переместить и првоерить физику
+		MoveAndCollide(movementInput * _movementSpeed * delta);
 	}
 	
 	private Vector2 GetInput()

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://diu5b6k3ea6fn"]
+
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_3caks"]
+[ext_resource type="Script" path="res://src/AbroDraft/WorldEntities/Enemy.cs" id="1_a1pot"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_awgad"]
+radius = 20.0
+
+[node name="Enemy" type="CharacterBody2D"]
+script = ExtResource("1_a1pot")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_3caks")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_awgad")
