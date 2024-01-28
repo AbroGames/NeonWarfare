@@ -12,7 +12,9 @@ public partial class SetWorldAndCloseMenuButton : Godot.Button
 
     private void OnClick()
     {
-        References.Instance.WorldContainer.ChangeStoredNode(_newWorldScene.Instantiate() as Node2D);
+        var instatinatedNode = _newWorldScene.Instantiate();
+        var world = instatinatedNode as Node2D;
+        References.Instance.WorldContainer.ChangeStoredNode(world);
         References.Instance.MenuContainer.ClearStoredNode();
     }
 
