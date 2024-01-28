@@ -1,8 +1,28 @@
-[gd_scene load_steps=2 format=3 uid="uid://dbwbtt0g1g8m3"]
+[gd_scene load_steps=7 format=3 uid="uid://dbwbtt0g1g8m3"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/Game.cs" id="1_f2glu"]
+[ext_resource type="Script" path="res://src/KludgeBox/Threading.cs" id="2_7velx"]
+[ext_resource type="Script" path="res://src/KludgeBox/Godot/Nodes/Audio2D.cs" id="3_njo8a"]
+[ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/Network.cs" id="4_f6e37"]
+[ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkClient.cs" id="5_mhe81"]
+[ext_resource type="Script" path="res://src/KludgeBox/Net/Scripts/NetworkServer.cs" id="6_12pny"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_f2glu")
 
+[node name="Threading" type="Node" parent="."]
+script = ExtResource("2_7velx")
+
+[node name="Audio2D" type="Node2D" parent="."]
+script = ExtResource("3_njo8a")
+
 [node name="World" type="Node2D" parent="."]
+
+[node name="Network" type="Node" parent="."]
+script = ExtResource("4_f6e37")
+
+[node name="NetworkClient" type="Node" parent="Network"]
+script = ExtResource("5_mhe81")
+
+[node name="NetworkServer" type="Node" parent="Network"]
+script = ExtResource("6_12pny")
