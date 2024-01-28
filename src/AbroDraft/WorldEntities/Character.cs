@@ -9,6 +9,7 @@ public partial class Character : CharacterBody2D
 	[Export] private double _movementSpeed = 250; // in pixels/sec
 	[Export] private double _rotationSpeed = 300; // in degree/sec
 	[Export] private double _attackSpeed = 3; // attack/sec
+	[Export] public int Hp = 10000;
 	
 	[Export] private PackedScene _bulletBlueprint;
 

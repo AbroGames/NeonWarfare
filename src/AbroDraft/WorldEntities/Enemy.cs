@@ -5,6 +5,7 @@ public partial class Enemy : CharacterBody2D
 {
 	
 	[Export] private double _movementSpeed = 200; // in pixels/sec
+	[Export] public int Hp = 250;
 
 	public Character Target;
 	

@@ -8,9 +8,10 @@ public partial class Bullet : Node2D
 {
 
 	[Export] private double _speed = 700; //pixels/sec
+	[Export] private double _remainingDistance = 2000; //pixels
 
 	public AuthorEnum Author;
-	private int _remainingDamage;
+	private int _remainingDamage = 1000;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -30,8 +31,17 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
-					character.QueueFree();
-					QueueFree();
+					if (character.Hp >= _remainingDamage)
+					{
+						character.Hp -= _remainingDamage;
+						QueueFree();
+					}
+					else
+					{
+						_remainingDamage -= character.Hp;
+						character.Hp = 0;
+						character.QueueFree();
+					}
 				}
 			}
 			
@@ -39,8 +49,17 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.ENEMY)
 				{
-					enemy.QueueFree();
-					QueueFree();
+					if (enemy.Hp >= _remainingDamage)
+					{
+						enemy.Hp -= _remainingDamage;
+						QueueFree();
+					}
+					else
+					{
+						_remainingDamage -= enemy.Hp;
+						enemy.Hp = 0;
+						enemy.QueueFree();
+					}
 				}
 			}
 			
@@ -48,8 +67,7 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.ALLY)
 				{
-					ally.QueueFree();
-					QueueFree();
+					
 				}
 			}
 		};
@@ -59,6 +77,11 @@ public partial class Bullet : Node2D
 	public override void _Process(double delta)
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * _speed * delta;
+		_remainingDistance -= _speed * delta;
+		if (_remainingDistance <= 0)
+		{
+			QueueFree();
+		}
 	}
 	
 	public enum AuthorEnum
