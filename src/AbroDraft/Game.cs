@@ -1,4 +1,8 @@
+using System.Runtime.CompilerServices;
+using AbroDraft.Net;
+using AbroDraft.Net.Packets;
 using Godot;
+using KludgeBox;
 
 namespace AbroDraft;
 
@@ -9,6 +13,17 @@ public partial class Game : Node2D
 	{
 		var firstScene = References.Instance.FirstSceneBlueprint;
 		References.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
+
+		PacketRegistry.RegisterPacketType(typeof(HelloPacket));
+		
+		Network.ReceivedPacket += packet =>
+		{
+			Log.Info($"{Network.Mode} Received packet of type {packet}");
+			if (packet is HelloPacket hp)
+			{
+				Log.Info($"Received Hello packet: {hp.Message}");
+			}
+		};
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
