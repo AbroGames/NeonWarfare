@@ -1,28 +1,33 @@
-[gd_scene load_steps=7 format=3 uid="uid://n0xmwymx5ba5"]
+[gd_scene load_steps=8 format=3 uid="uid://n0xmwymx5ba5"]
 
 [ext_resource type="Script" path="res://src/AbroDraft/WorldEntities/Character.cs" id="1_277rc"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_gdu7k"]
 [ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/Bullet.tscn" id="2_yfr61"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_ihnmf"]
+[ext_resource type="Texture2D" uid="uid://b0qm63iqy84j2" path="res://Assets/Textures/Particles/Effects/circle_01.png" id="5_w8edv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qkp5b"]
 shader = ExtResource("3_ihnmf")
 shader_parameter/colorMaskFactor = 0.0
-shader_parameter/colorMask = Color(1, 1, 1, 1)
+shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
 shader_parameter/grayscaleFactor = 0.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rfcs5"]
 radius = 20.0
 
 [node name="Character" type="CharacterBody2D"]
+modulate = Color(0, 1, 1, 1)
 script = ExtResource("1_277rc")
 _bulletBlueprint = ExtResource("2_yfr61")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 1, 1, 1)
 material = SubResource("ShaderMaterial_qkp5b")
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("1_gdu7k")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_rfcs5")
+
+[node name="ShieldSprite" type="Sprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("5_w8edv")
