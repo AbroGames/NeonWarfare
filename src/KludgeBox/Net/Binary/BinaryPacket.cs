@@ -8,7 +8,7 @@ public enum PacketSource
     Server
 }
 
-public sealed record Packet (
+public sealed record BinaryPacket (
     int SenderId,
     MultiplayerPeer.TransferModeEnum TransferMode,
     byte[] Data)

@@ -1,4 +1,4 @@
-﻿namespace AbroDraft.Net;
+﻿namespace KludgeBox.Net;
 
 public record PacketSender(long Id)
 {

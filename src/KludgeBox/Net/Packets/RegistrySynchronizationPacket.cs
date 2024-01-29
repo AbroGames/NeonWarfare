@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AbroDraft.Net.Packets;
+namespace KludgeBox.Net.Packets;
 
 public class RegistrySynchronizationPacket : AbstractPacket
 {

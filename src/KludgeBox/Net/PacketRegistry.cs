@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using AbroDraft.Net.Packets;
-using KludgeBox;
+using KludgeBox.Net.Packets;
 
-namespace AbroDraft.Net;
+namespace KludgeBox.Net;
 
 public static class PacketRegistry
 {
@@ -48,7 +47,7 @@ public static class PacketRegistry
 
     public static RegistrySynchronizationPacket BuildSynchronizationPacket()
     {
-        if (!Network.IsServer) throw new InvalidOperationException("Only server can send synchronization packets");
+        if (!KludgeBox.Net.Network.IsServer) throw new InvalidOperationException("Only server can send synchronization packets");
 
         var packet = new RegistrySynchronizationPacket();
         var types = packet.PacketTypeOrder;
@@ -63,8 +62,8 @@ public static class PacketRegistry
 
     public static void SynchronizeRegistry(RegistrySynchronizationPacket packet)
     {
-        if (Network.BothLocal) return; // Already synchronized
-        if (Network.IsServer) throw new InvalidOperationException("Only client can synchronize registry from packet");
+        if (KludgeBox.Net.Network.BothLocal) return; // Already synchronized
+        if (KludgeBox.Net.Network.IsServer) throw new InvalidOperationException("Only client can synchronize registry from packet");
         
         ClearRegistry();
         for (var i = 0; i < packet.PacketTypeOrder.Count; i++)

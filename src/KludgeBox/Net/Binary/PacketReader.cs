@@ -3,11 +3,11 @@ using System.IO;
 
 namespace KludgeBox.Net;
 
-public class PacketReader (Packet packet)
+public class PacketReader (BinaryPacket binaryPacket)
 {
-    private BinaryReader _reader = new BinaryReader(new MemoryStream(packet.Data));
+    private BinaryReader _reader = new BinaryReader(new MemoryStream(binaryPacket.Data));
 
-    public void Process() => packet.Processed = true;
+    public void Process() => binaryPacket.Processed = true;
     
     public sbyte ReadSByte() => _reader.ReadSByte();
     public short ReadShort() => _reader.ReadInt16();

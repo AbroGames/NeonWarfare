@@ -2,10 +2,10 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using AbroDraft.Net.Packets;
+using KludgeBox.Net.Packets;
 using Newtonsoft.Json;
 
-namespace AbroDraft.Net;
+namespace KludgeBox.Net;
 
 public static class PacketConverter
 {

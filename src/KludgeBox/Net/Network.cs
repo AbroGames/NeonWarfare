@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Net.Sockets;
-using AbroDraft.Net.Packets;
 using Godot;
-using KludgeBox;
+using KludgeBox.Net.Packets;
 using static Godot.MultiplayerPeer;
 
-namespace AbroDraft.Net;
+namespace KludgeBox.Net;
 
 public enum NetworkMode
 {
