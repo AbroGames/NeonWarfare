@@ -8,7 +8,7 @@ using KludgeBox;
 public partial class Bullet : Node2D
 {
 
-	[Export] private double _speed = 700; //pixels/sec
+	[Export] public double Speed = 700; //pixels/sec
 	[Export] private double _remainingDistance = 2000; //pixels
 
 	public AuthorEnum Author;
@@ -85,8 +85,8 @@ public partial class Bullet : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * _speed * delta;
-		_remainingDistance -= _speed * delta;
+		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
+		_remainingDistance -= Speed * delta;
 		if (_remainingDistance <= 0)
 		{
 			QueueFree();

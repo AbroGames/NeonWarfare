@@ -93,7 +93,7 @@ public partial class Character : CharacterBody2D
 		// Установка направления движения снаряда
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.PLAYER;
-		
+		bullet.Speed *= 2;
 		Audio2D.PlaySoundAt(Sfx.LaserShot, Position);
 		GetParent().AddChild(bullet);
 	}
