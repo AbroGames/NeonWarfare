@@ -17,6 +17,7 @@ public partial class Character : CharacterBody2D
 	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
 
 	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
+	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -32,6 +33,8 @@ public partial class Character : CharacterBody2D
 		// flash effect on hit processing
 		HitFlash -= 0.02;
 		HitFlash = Mathf.Max(HitFlash, 0);
+
+		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 	}
