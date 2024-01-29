@@ -2,6 +2,8 @@ using System;
 using AbroDraft.WorldEntities;
 using Game.Content;
 using Godot;
+using KludgeBox;
+using KludgeBox.Scheduling;
 using MicroSurvivors;
 
 public partial class Character : CharacterBody2D
@@ -22,11 +24,14 @@ public partial class Character : CharacterBody2D
 	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
 
 	private PlayerCamera _camera;
+
+	private Cooldown _secondaryCd = new(0.1);
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_spritePos = GlobalPosition;
 		_camera = GetParent().GetChild<PlayerCamera>();
+		_secondaryCd.Ready += AttackSecondary;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -35,6 +40,8 @@ public partial class Character : CharacterBody2D
 		RotateToMouse(delta);
 		Attack(delta);
 		MoveSprite(delta);
+
+		_secondaryCd.Update(delta);
 		
 		// flash effect on hit processing
 		HitFlash -= 0.02;
@@ -102,7 +109,7 @@ public partial class Character : CharacterBody2D
 	private void Attack(double delta)
 	{
 		_secToNextAttack -= delta;
-		if (!Input.IsActionPressed(Keys.Attack)) return;
+		if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
 		if (_secToNextAttack > 0) return;
 
 		_secToNextAttack = 1.0 / _attackSpeed;
@@ -114,8 +121,30 @@ public partial class Character : CharacterBody2D
 		// Установка направления движения снаряда
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.PLAYER;
-		bullet.Speed *= 2;
+		bullet.Speed *= 3;
+		bullet.GetNode<Sprite2D>("Sprite2D").Scale *= 2;
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f);
+		GetParent().AddChild(bullet);
+	}
+	
+	private void AttackSecondary()
+	{
+		if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
+		
+		// Создание снаряда
+		Bullet bullet = _bulletBlueprint.Instantiate() as Bullet;
+		// Установка начальной позиции снаряда
+		bullet.GlobalPosition = GlobalPosition;
+		// Установка направления движения снаряда
+		var spread = Mathf.DegToRad(6);
+		bullet.Rotation = Rotation + Rand.Range(-spread, spread);
+		bullet.Author = Bullet.AuthorEnum.PLAYER;
+		bullet.Speed *= 2;
+		bullet.RemainingDistance /= 2;
+		bullet.RemainingDamage = 50;
+		var modulate = bullet.GetNode<Sprite2D>("Sprite2D").Modulate;
+		bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);
+		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 0.5f);
 		GetParent().AddChild(bullet);
 	}
 

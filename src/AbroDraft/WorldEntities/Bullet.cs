@@ -9,10 +9,10 @@ public partial class Bullet : Node2D
 {
 
 	[Export] public double Speed = 700; //pixels/sec
-	[Export] private double _remainingDistance = 2000; //pixels
+	[Export] public double RemainingDistance = 2000; //pixels
 
 	public AuthorEnum Author;
-	private int _remainingDamage = 1000;
+	public int RemainingDamage = 1000;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -34,14 +34,14 @@ public partial class Bullet : Node2D
 				{
 					Audio2D.PlaySoundAt(Sfx.FuturisticHit, character.Position);
 					character.HitFlash = 1;
-					if (character.Hp >= _remainingDamage)
+					if (character.Hp >= RemainingDamage)
 					{
-						character.Hp -= _remainingDamage;
+						character.Hp -= RemainingDamage;
 						QueueFree();
 					}
 					else
 					{
-						_remainingDamage -= character.Hp;
+						RemainingDamage -= character.Hp;
 						character.Hp = 0;
 						character.QueueFree();
 
@@ -58,14 +58,15 @@ public partial class Bullet : Node2D
 				if (Author != AuthorEnum.ENEMY)
 				{
 					Audio2D.PlaySoundAt(Sfx.Hit, enemy.Position);
-					if (enemy.Hp >= _remainingDamage)
+					enemy.HitFlash = 1;
+					if (enemy.Hp >= RemainingDamage)
 					{
-						enemy.Hp -= _remainingDamage;
+						enemy.Hp -= RemainingDamage;
 						QueueFree();
 					}
 					else
 					{
-						_remainingDamage -= enemy.Hp;
+						RemainingDamage -= enemy.Hp;
 						enemy.Hp = 0;
 						enemy.QueueFree();
 					}
@@ -86,8 +87,8 @@ public partial class Bullet : Node2D
 	public override void _Process(double delta)
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
-		_remainingDistance -= Speed * delta;
-		if (_remainingDistance <= 0)
+		RemainingDistance -= Speed * delta;
+		if (RemainingDistance <= 0)
 		{
 			QueueFree();
 		}

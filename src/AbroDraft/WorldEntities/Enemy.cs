@@ -5,6 +5,7 @@ using Game.Content;
 public partial class Enemy : CharacterBody2D
 {
 	
+	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
 	[Export] private double _movementSpeed = 200; // in pixels/sec
 	[Export] public int Hp = 250;
 	[Export] private double _attackSpeed = 1; // attack/sec
@@ -16,6 +17,7 @@ public partial class Enemy : CharacterBody2D
 	public Character Target;
 	private double _secToNextAttack = 0;
 	
+	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -25,6 +27,13 @@ public partial class Enemy : CharacterBody2D
 	public override void _Process(double delta)
 	{
 		Rotation = GetAngleToTarget() + Mathf.Pi / 2;
+		
+		// flash effect on hit processing
+		HitFlash -= 0.02;
+		HitFlash = Mathf.Max(HitFlash, 0);
+		var shader = Sprite.Material as ShaderMaterial;
+		shader.SetShaderParameter("colorMaskFactor", HitFlash);
+		
 		if (CanShoot())
 		{
 			Attack(delta);
