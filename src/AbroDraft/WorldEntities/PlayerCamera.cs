@@ -26,11 +26,11 @@ public partial class PlayerCamera : Camera2D
 	public override void _Process(double delta)
 	{
 		TargetPosition = TargetNode.Position;
-		var availableMovement = TargetPosition - ActualPosition;
+		var availableMovement = (TargetPosition + PositionShift) - ActualPosition;
 		var actualMovement = availableMovement * Mathf.Pow(SmoothingBase, SmoothingPower);
 		
 		ActualPosition += actualMovement;
 		
-		Position = ActualPosition + PositionShift;
+		Position = ActualPosition;
 	}
 }

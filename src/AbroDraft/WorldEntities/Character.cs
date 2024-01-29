@@ -1,4 +1,5 @@
 using System;
+using AbroDraft.WorldEntities;
 using Game.Content;
 using Godot;
 using MicroSurvivors;
@@ -19,10 +20,13 @@ public partial class Character : CharacterBody2D
 
 	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
+
+	private PlayerCamera _camera;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		_spritePos = GlobalPosition;
+		_camera = GetParent().GetChild<PlayerCamera>();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -40,6 +44,17 @@ public partial class Character : CharacterBody2D
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 		
+		// Camera shift processing
+		if (Input.IsActionPressed(Keys.CameraShift))
+		{
+			var maxShift = GetGlobalMousePosition() - GlobalPosition;
+			var zoomFactor = (_camera.Zoom.X + _camera.Zoom.Y) / 2;
+			_camera.PositionShift = maxShift * 0.7 * zoomFactor;
+		}
+		else
+		{
+			_camera.PositionShift = Vec();
+		}
 	}
 	
 	public override void _PhysicsProcess(double delta)
