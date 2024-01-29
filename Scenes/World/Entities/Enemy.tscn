@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://diu5b6k3ea6fn"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_3caks"]
-[ext_resource type="Script" path="res://src/AbroDraft/WorldEntities/Enemy.cs" id="1_a1pot"]
-[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/Bullet.tscn" id="2_64t2h"]
+[ext_resource type="Script" path="res://Scripts/World/Entities/Enemy.cs" id="1_a1pot"]
+[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet.tscn" id="2_64t2h"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_awwub"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_holv0"]

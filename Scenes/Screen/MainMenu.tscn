@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://dkmaek7egfvff"]
 
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_n5xfm"]
-[ext_resource type="Script" path="res://src/AbroDraft/Screen/SetWorldAndCloseMenuButton.cs" id="2_rrs6k"]
-[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World.tscn" id="3_36r24"]
-[ext_resource type="Script" path="res://src/AbroDraft/Screen/ChangeMenuButton.cs" id="4_y41xp"]
-[ext_resource type="Script" path="res://Scenes/ProfileButton.cs" id="6_7616d"]
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_0ah2t"]
+[ext_resource type="Script" path="res://Scripts/Screen/SetWorldAndCloseMenuButton.cs" id="2_fc60g"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/World.tscn" id="3_36dbp"]
+[ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="4_666cv"]
+[ext_resource type="Script" path="res://Scripts/Screen/ProfileButton.cs" id="5_pydka"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -31,18 +31,18 @@ grow_vertical = 2
 [node name="CreateServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Создать сервер"
-icon = ExtResource("1_n5xfm")
-script = ExtResource("2_rrs6k")
-_newWorldScene = ExtResource("3_36r24")
+icon = ExtResource("1_0ah2t")
+script = ExtResource("2_fc60g")
+_newWorldScene = ExtResource("3_36dbp")
 
 [node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Подключиться к серверу"
-icon = ExtResource("1_n5xfm")
-script = ExtResource("4_y41xp")
+icon = ExtResource("1_0ah2t")
+script = ExtResource("4_666cv")
 
 [node name="ProfileButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Профиль"
-icon = ExtResource("1_n5xfm")
-script = ExtResource("6_7616d")
+icon = ExtResource("1_0ah2t")
+script = ExtResource("5_pydka")

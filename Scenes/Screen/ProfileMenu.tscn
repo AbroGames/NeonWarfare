@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://cjrxgi0aql38u"]
 
-[ext_resource type="Script" path="res://src/AbroDraft/Screen/NickLineEdit.cs" id="1_8c4kn"]
-[ext_resource type="Script" path="res://src/AbroDraft/Screen/ChangeMenuButton.cs" id="3_ct1yi"]
-[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/MainMenu.tscn" id="4_d4618"]
+[ext_resource type="Script" path="res://Scripts/Screen/NickLineEdit.cs" id="1_8c4kn"]
+[ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="3_ct1yi"]
+[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="4_d4618"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="6_ohljf"]
 
 [node name="ProfileMenu" type="Control"]

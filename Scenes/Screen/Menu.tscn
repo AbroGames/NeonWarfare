@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://crc10v8fjt3mk"]
 
-[ext_resource type="Script" path="res://src/AbroDraft/Screen/Menu.cs" id="1_ntalu"]
+[ext_resource type="Script" path="res://Scripts/Screen/Menu.cs" id="1_ntalu"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_rcux2"]
 
 [node name="Menu" type="Control"]
