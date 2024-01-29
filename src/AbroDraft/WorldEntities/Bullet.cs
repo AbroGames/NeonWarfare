@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Game.Content;
 using KludgeBox;
 
 public partial class Bullet : Node2D
@@ -31,6 +32,8 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
+					Audio2D.PlaySoundAt(Sfx.Hit, character.Position);
+					character.HitFlash = 1;
 					if (character.Hp >= _remainingDamage)
 					{
 						character.Hp -= _remainingDamage;
@@ -54,6 +57,7 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.ENEMY)
 				{
+					Audio2D.PlaySoundAt(Sfx.Hit, enemy.Position);
 					if (enemy.Hp >= _remainingDamage)
 					{
 						enemy.Hp -= _remainingDamage;

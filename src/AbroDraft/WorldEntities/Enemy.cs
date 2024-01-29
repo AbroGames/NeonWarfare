@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Game.Content;
 
 public partial class Enemy : CharacterBody2D
 {
@@ -73,6 +74,7 @@ public partial class Enemy : CharacterBody2D
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.ENEMY;
 		
+		Audio2D.PlaySoundAt(Sfx.LaserShotShort, Position);
 		GetParent().AddChild(bullet);
 	}
 }
