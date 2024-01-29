@@ -2,6 +2,7 @@ using Godot;
 using System;
 using AbroDraft.WorldEntities;
 using KludgeBox;
+using MicroSurvivors;
 
 public partial class World : Node2D
 {
@@ -10,7 +11,6 @@ public partial class World : Node2D
 	{
 		var character = References.Instance.CharacterBlueprint.Instantiate() as Node2D;
 		character.Position = Vec(500, 500);
-		AddChild(character);
 		
 		var camera = new PlayerCamera();
 		camera.Position = character.Position;
@@ -18,10 +18,15 @@ public partial class World : Node2D
 		camera.Zoom = Vec(0.65);
 		AddChild(camera);
 		camera.Enabled = true;
+
+		var floor = new Floor();
+		floor.Camera = camera;
+		AddChild(floor);
 		
 		var ally = References.Instance.AllyBlueprint.Instantiate() as Node2D;
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
+		AddChild(character); // must be here to draw over the floor
 
 		for (int i = 0; i < 75; i++)
 		{
