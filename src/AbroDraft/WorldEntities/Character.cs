@@ -14,7 +14,9 @@ public partial class Character : CharacterBody2D
 	[Export] private PackedScene _bulletBlueprint;
 
 	private double _secToNextAttack = 0;
-	
+	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
+
+	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -26,6 +28,12 @@ public partial class Character : CharacterBody2D
 	{
 		RotateToMouse(delta);
 		Attack(delta);
+		
+		// flash effect on hit processing
+		HitFlash -= 0.02;
+		HitFlash = Mathf.Max(HitFlash, 0);
+		var shader = Sprite.Material as ShaderMaterial;
+		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 	}
 	
 	public override void _PhysicsProcess(double delta)
