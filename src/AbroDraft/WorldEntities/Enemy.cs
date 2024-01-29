@@ -74,7 +74,7 @@ public partial class Enemy : CharacterBody2D
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.ENEMY;
 		
-		Audio2D.PlaySoundAt(Sfx.LaserShotShort, Position);
+		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 0.7f);
 		GetParent().AddChild(bullet);
 	}
 }

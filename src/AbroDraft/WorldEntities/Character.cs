@@ -94,7 +94,7 @@ public partial class Character : CharacterBody2D
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.PLAYER;
 		bullet.Speed *= 2;
-		Audio2D.PlaySoundAt(Sfx.LaserShot, Position);
+		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f);
 		GetParent().AddChild(bullet);
 	}
 }

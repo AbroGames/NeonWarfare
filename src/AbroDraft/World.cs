@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using AbroDraft.WorldEntities;
+using Game.Content;
 using KludgeBox;
 using MicroSurvivors;
 
@@ -27,6 +28,8 @@ public partial class World : Node2D
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 		AddChild(character); // must be here to draw over the floor
+		
+		Audio2D.PlaySoundAt(Sfx.Bass, character.Position, 0.1f); // dat bass on start
 
 		for (int i = 0; i < 75; i++)
 		{
