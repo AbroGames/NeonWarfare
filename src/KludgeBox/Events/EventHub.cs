@@ -23,10 +23,13 @@ internal sealed class EventHub
     {
         if (@event is not null)
         {
+            var handleableEvent = @event as HandleableEvent;
+            var isHandleable = handleableEvent is not null;
             foreach (var priority in _listenersByPriority)
             {
                 foreach (var listener in priority)
                 {
+                    if (isHandleable && handleableEvent.IsHandled) break;
                     listener?.Deliver(@event);
                 }
             }
