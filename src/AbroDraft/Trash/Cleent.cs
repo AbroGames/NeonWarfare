@@ -23,6 +23,6 @@ public partial class Cleent : Button
 	private static void Greeting()
 	{
 		Network.Api.ConnectedToServer -= Greeting;
-		Network.SendPacket(new HelloPacket());
+		Network.SendPacketToServer(new HelloPacket());
 	}
 }

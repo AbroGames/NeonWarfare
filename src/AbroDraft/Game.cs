@@ -17,7 +17,7 @@ public partial class Game : Node2D
 
 		PacketRegistry.RegisterPacketType(typeof(HelloPacket));
 		
-		Network.ReceivedPacket += packet =>
+		Network.ReceivedPacket += (sender, packet) =>
 		{
 			Log.Info($"{Network.Mode} Received packet of type {packet}");
 			if (packet is HelloPacket hp)
