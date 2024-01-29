@@ -200,19 +200,21 @@ public partial class Network : Node
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
-    internal void ReceivePacketFromClient(string packet)
-    {
-        var senderId = Api.GetRemoteSenderId();
-        ReceivedRawPacket?.Invoke(senderId, packet);
-        ReceivedPacket?.Invoke(senderId, PacketConverter.Deserialize(packet));
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
-    internal void ReceivePacketFromServer(string packet)
-    {
-        ReceivedRawPacket?.Invoke(1, packet);
-        ReceivedPacket?.Invoke(1, PacketConverter.Deserialize(packet));
-    }
+        internal void ReceivePacketFromClient(string packet)
+        {
+            if (!IsServer) return;
+            var senderId = Api.GetRemoteSenderId();
+            ReceivedRawPacket?.Invoke(senderId, packet);
+            ReceivedPacket?.Invoke(senderId, PacketConverter.Deserialize(packet));
+        }
+    
+        [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
+        internal void ReceivePacketFromServer(string packet)
+        {
+            if (!IsClient) return;
+            ReceivedRawPacket?.Invoke(1, packet);
+            ReceivedPacket?.Invoke(1, PacketConverter.Deserialize(packet));
+        }
     
     
     private static void DefaultPacketProcessor(PacketSender sender, AbstractPacket packet)
