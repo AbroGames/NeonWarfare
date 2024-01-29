@@ -154,13 +154,13 @@ public partial class Audio2D : Node2D
 	/// <param name="path">Path to the sound resource.</param>
 	/// <param name="position">Position in the game world.</param>
 	/// <param name="volume">Volume of the sound (0.0 to 1.0).</param>
-	public static AudioStreamPlayer2D PlaySoundAt(string path, Node2D world, Vector2 position, float volume = 1)
+	public static AudioStreamPlayer2D PlaySoundAt(string path, Vector2 position, float volume = 1)
 	{
 		var stream = ConfigureSound(path,volume);
 
-		_instance.AddChild(stream);
 		stream.Position = position;
 		stream.Autoplay = true;
+		_instance.AddChild(stream);
 		return stream;
 	}
 
