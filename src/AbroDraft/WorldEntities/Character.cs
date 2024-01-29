@@ -38,7 +38,7 @@ public partial class Character : CharacterBody2D
 	public override void _Process(double delta)
 	{
 		RotateToMouse(delta);
-		Attack(delta);
+		AttackPrimary(delta);
 		MoveSprite(delta);
 
 		_secondaryCd.Update(delta);
@@ -106,7 +106,7 @@ public partial class Character : CharacterBody2D
 		return mouseDir.Angle();
 	}
 	
-	private void Attack(double delta)
+	private void AttackPrimary(double delta)
 	{
 		_secToNextAttack -= delta;
 		if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
