@@ -14,6 +14,7 @@ public partial class Character : CharacterBody2D
 	[Export] private PackedScene _bulletBlueprint;
 
 	private double _secToNextAttack = 0;
+	private Vector2 _spritePos;
 	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
 
 	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
@@ -21,7 +22,7 @@ public partial class Character : CharacterBody2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		
+		_spritePos = GlobalPosition;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -29,6 +30,7 @@ public partial class Character : CharacterBody2D
 	{
 		RotateToMouse(delta);
 		Attack(delta);
+		MoveSprite(delta);
 		
 		// flash effect on hit processing
 		HitFlash -= 0.02;
@@ -37,6 +39,7 @@ public partial class Character : CharacterBody2D
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
+		
 	}
 	
 	public override void _PhysicsProcess(double delta)
@@ -99,5 +102,17 @@ public partial class Character : CharacterBody2D
 		bullet.Speed *= 2;
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f);
 		GetParent().AddChild(bullet);
+	}
+
+	private void MoveSprite(double delta)
+	{
+		var requiredMovement = GlobalPosition - _spritePos;
+
+		var stepFactor = delta / (1.0 / 60);
+		var smoothingFactor = 0.5;
+		_spritePos += requiredMovement * stepFactor * smoothingFactor;
+		
+		Sprite.GlobalPosition = _spritePos;
+		ShieldSprite.GlobalPosition = _spritePos;
 	}
 }

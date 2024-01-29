@@ -17,6 +17,7 @@ public partial class World : Node2D
 		camera.Position = character.Position;
 		camera.TargetNode = character;
 		camera.Zoom = Vec(0.65);
+		camera.SmoothingPower = 1.5;
 		AddChild(camera);
 		camera.Enabled = true;
 
