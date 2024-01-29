@@ -32,7 +32,7 @@ public partial class World : Node2D
 		
 		Audio2D.PlaySoundAt(Sfx.Bass, character.Position, 0.1f); // dat bass on start
 
-		for (int i = 0; i < 75; i++)
+		for (int i = 0; i < 25; i++)
 		{
 			CreateEnemyRandomPosAroundCharacter(character as Character);
 		}
