@@ -32,7 +32,7 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
-					Audio2D.PlaySoundAt(Sfx.Hit, character.Position);
+					Audio2D.PlaySoundAt(Sfx.FuturisticHit, character.Position);
 					character.HitFlash = 1;
 					if (character.Hp >= _remainingDamage)
 					{
