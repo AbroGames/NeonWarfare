@@ -13,7 +13,7 @@ shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
 shader_parameter/grayscaleFactor = 0.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rfcs5"]
-radius = 20.0
+radius = 17.0
 
 [node name="Character" type="CharacterBody2D"]
 modulate = Color(0, 1, 1, 1)
