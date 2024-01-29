@@ -19,7 +19,8 @@ vec4 toGrayscale(vec4 source){
 }
 
 vec4 applyMask(vec4 source){
-	vec4 result = mix(source, colorMask, colorMaskFactor);
+	float alphaFactor = colorMask.a;
+	vec4 result = mix(source, colorMask, colorMaskFactor * alphaFactor);
 	result.a = source.a;
 	return result;
 }
