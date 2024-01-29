@@ -37,14 +37,14 @@ public class EventBus
     {
         if (IncludeBaseEvents)
         {
-            foreach (var hub in FindApplicableHubs(typeof(T)))
+            foreach (var hub in FindApplicableHubs(@event.GetType()))
             {
                 hub.Publish(@event);
             }
         }
         else
         {
-            GetHub(typeof(T)).Publish(@event);
+            GetHub(@event.GetType()).Publish(@event);
         }
     }
 
@@ -63,6 +63,15 @@ public class EventBus
     public void ResetEvent<T>() where T : IEvent
     {
         GetHub(typeof(T)).Reset();
+    }
+    
+    /// <summary>
+    /// Resets the EventHub associated with the specified event type.
+    /// </summary>
+    public void ResetEvent(Type type)
+    {
+        if (!type.IsAssignableTo(typeof(IEvent))) throw new ArgumentException("Provided type does not implement IEvent");
+        GetHub(type).Reset();
     }
 
     private EventHub GetHub(Type eventType)
