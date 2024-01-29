@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using KludgeBox.Loggers;
@@ -20,9 +21,11 @@ public static class Log
     
     private static readonly HashSet<ILogger> _loggers = [];
     private static readonly string[] _prefixes;
-
+    private static int PID;
+    
     static Log()
     {
+        PID = Environment.ProcessId;
         var rawPrefixes = Enum.GetNames<PrefixType>();
         var prefixes = new List<string>();
         
@@ -83,7 +86,7 @@ public static class Log
         string text = msg.ToString();
         
         var now = DateTime.Now;
-        return $"{now:dd.MM.yyyy HH:mm:ss.fff} {_prefixes[(int)prefix]} {text}";
+        return $"[{PID:D6}] {now:dd.MM.yyyy HH:mm:ss.fff} {_prefixes[(int)prefix]} {text}";
     }
 }
 
