@@ -11,9 +11,7 @@ public partial class PlayerCamera : Camera2D
 	public Vector2 TargetPosition = Vector2.Zero; // Position where camera wants to be
 	public Vector2 ActualPosition = Vector2.Zero; // Position where camera is currently in
 	public Vector2 PositionShift = Vector2.Zero; // Additional shift to ActualPosition
-	// Note that PlayerCamera.Position is always being calculated to represent additional PositionShift
-	// from ActualPosition (e.g. shake or punch).
-	// ActualPosition represents main movement between current and desired position. It mostly used for custom smoothing.
+	public Vector2 HardPositionShift = Vector2.Zero; // Additional shift to ActualPosition that will not be smoothed. Usable for shake
 
 	
 	public override void _Ready()
@@ -31,6 +29,6 @@ public partial class PlayerCamera : Camera2D
 		
 		ActualPosition += actualMovement;
 		
-		Position = ActualPosition;
+		Position = ActualPosition + HardPositionShift;
 	}
 }
