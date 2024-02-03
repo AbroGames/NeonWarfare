@@ -7,15 +7,22 @@ using MicroSurvivors;
 
 public partial class World : Node2D
 {
+
+	private const int OneWaveEnemyCount = 25; 
+	private const int WaveTimeout = 5; 
+	
+	private Character _character;
+	private double _nextWaveTimer = 0;
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var character = Root.Instance.PackedScenes.World.Character.Instantiate() as Node2D;
-		character.Position = Vec(500, 500);
+		_character = Root.Instance.PackedScenes.World.Character.Instantiate() as Character;
+		_character.Position = Vec(500, 500);
 		
 		var camera = new PlayerCamera();
-		camera.Position = character.Position;
-		camera.TargetNode = character;
+		camera.Position = _character.Position;
+		camera.TargetNode = _character;
 		camera.Zoom = Vec(0.65);
 		camera.SmoothingPower = 1.5;
 		AddChild(camera);
@@ -28,19 +35,30 @@ public partial class World : Node2D
 		var ally = Root.Instance.PackedScenes.World.Ally.Instantiate() as Node2D;
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
-		AddChild(character); // must be here to draw over the floor
+		AddChild(_character); // must be here to draw over the floor
 		
-		Audio2D.PlaySoundAt(Sfx.Bass, character.Position, 0.1f); // dat bass on start
-
-		for (int i = 0; i < 25; i++)
-		{
-			CreateEnemyRandomPosAroundCharacter(character as Character);
-		}
+		Audio2D.PlaySoundAt(Sfx.Bass, _character.Position, 0.1f); // dat bass on start
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		SpawnWave(delta);
+	}
+
+	private void SpawnWave(double delta)
+	{
+		_nextWaveTimer -= delta;
+		if (_nextWaveTimer > 0)
+		{
+			return;
+		}
+		_nextWaveTimer = WaveTimeout;
+		
+		for (int i = 0; i < OneWaveEnemyCount; i++)
+		{
+			CreateEnemyRandomPosAroundCharacter(_character);
+		}
 	}
 
 	private void CreateEnemyRandomPosAroundCharacter(Character character)
