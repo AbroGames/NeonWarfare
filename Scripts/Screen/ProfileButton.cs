@@ -8,7 +8,7 @@ public partial class ProfileButton : Button
 	{
 		Pressed += () =>
 		{
-			var playerMenu = GD.Load<PackedScene>("res://Scenes/ProfileMenu.tscn").Instantiate<Control>();
+			var playerMenu = Root.Instance.ScreenPackedScenesContainer.ProfileMenu.Instantiate<Control>();
 			var menu = Root.Instance.MenuContainer.CurrentStoredNode as Menu;
 			menu.changeMenu(playerMenu);
 		};

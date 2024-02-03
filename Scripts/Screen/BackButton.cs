@@ -8,7 +8,7 @@ public partial class BackButton : Button
 	{
 		Pressed += () =>
 		{
-			var playerMenu = GD.Load<PackedScene>("res://Scenes/MainMenu.tscn").Instantiate<Control>();
+			var playerMenu = Root.Instance.ScreenPackedScenesContainer.MainMenu.Instantiate<Control>();
 			var menu = Root.Instance.MenuContainer.CurrentStoredNode as Menu;
 			menu.changeMenu(playerMenu);
 		};
