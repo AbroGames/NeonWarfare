@@ -47,7 +47,7 @@ public partial class Bullet : Node2D
 
 						Root.Instance.WorldContainer.ClearStoredNode();
 						
-						var firstScene = References.Instance.FirstSceneBlueprint;
+						var firstScene = Root.Instance.ScreenPackedScenesContainer.FirstScene;
 						Root.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
 					}
 				}

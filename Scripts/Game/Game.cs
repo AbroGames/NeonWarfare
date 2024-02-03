@@ -8,7 +8,7 @@ public partial class Game : Node2D
 	public override void _Ready()
 	{
 		DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
-		var firstScene = References.Instance.FirstSceneBlueprint;
+		var firstScene = Root.Instance.ScreenPackedScenesContainer.FirstScene;
 		Root.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
 	}
 

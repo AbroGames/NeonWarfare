@@ -10,6 +10,9 @@ public partial class Root : Node2D
 	[Export] [NotNull] public ControlContainer MenuContainer { get; private set; }
 	[Export] [NotNull] public ControlContainer ForegroundContainer { get; private set; }
 	
+	[Export] [NotNull] public WorldPackedScenesContainer WorldPackedScenesContainer { get; private set; }
+	[Export] [NotNull] public ScreenPackedScenesContainer ScreenPackedScenesContainer { get; private set; }
+	
 	[Export] [NotNull] public PlayerInfo PlayerInfo { get; private set; }
 	
 	public static Root Instance { get; private set; }

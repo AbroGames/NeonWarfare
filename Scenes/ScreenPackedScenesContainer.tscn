@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://3jftjd3egrvl"]
-
-[ext_resource type="Script" path="res://Scripts/PackedScenes/ScreenPackedScenesContainer.cs" id="1_n0tu8"]
-
-[node name="ScreenPackedScenesContainer" type="Node"]
-script = ExtResource("1_n0tu8")

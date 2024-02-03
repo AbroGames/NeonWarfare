@@ -7,7 +7,7 @@ public partial class Menu : Control
 	private Control _currentMenu;
 	public override void _Ready()
 	{
-		var mainMenu = References.Instance.MainMenu.Instantiate() as Control;
+		var mainMenu = Root.Instance.ScreenPackedScenesContainer.MainMenu.Instantiate() as Control;
 		_currentMenu = mainMenu;
 		AddChild(mainMenu);
 	}

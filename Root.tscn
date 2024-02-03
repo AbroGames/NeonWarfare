@@ -1,14 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=11 format=3 uid="uid://b63edjeq18obm"]
 
-[ext_resource type="Script" path="res://Scripts/References.cs" id="1_c614h"]
 [ext_resource type="Script" path="res://Scripts/Root.cs" id="1_vkd83"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Net/Network.cs" id="2_7rhp3"]
-[ext_resource type="PackedScene" uid="uid://crc10v8fjt3mk" path="res://Scenes/Screen/Menu.tscn" id="2_dlrff"]
-[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character.tscn" id="3_bqxph"]
-[ext_resource type="PackedScene" uid="uid://vu7pqr4sjb6n" path="res://Scenes/World/Entities/Ally.tscn" id="4_5im1w"]
-[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="4_coua8"]
-[ext_resource type="PackedScene" uid="uid://diu5b6k3ea6fn" path="res://Scenes/World/Entities/Enemy.tscn" id="4_kd0xx"]
+[ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainers/ScreenPackedScenesContainer.tscn" id="2_yb1b1"]
+[ext_resource type="PackedScene" uid="uid://cx42uux5b88nw" path="res://Scenes/PackedScenesContainers/WorldPackedScenesContainer.tscn" id="3_tib1g"]
 [ext_resource type="Script" path="res://Scripts/Game/Game.cs" id="5_cj2vp"]
 [ext_resource type="Script" path="res://Scripts/Game/PlayerInfo.cs" id="11_go00r"]
 [ext_resource type="Script" path="res://Scripts/Containers/Node2DContainer.cs" id="11_ykyyd"]
@@ -21,23 +17,22 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="Root" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer", "PlayerInfo")]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer", "WorldPackedScenesContainer", "ScreenPackedScenesContainer", "PlayerInfo")]
 script = ExtResource("1_vkd83")
 WorldContainer = NodePath("Game/WorldContainer")
 BackgroundContainer = NodePath("Game/Screen/BackgroundContainer")
 HudContainer = NodePath("Game/Screen/HudContainer")
 MenuContainer = NodePath("Game/Screen/MenuContainer")
 ForegroundContainer = NodePath("Game/Screen/ForegroundContainer")
+WorldPackedScenesContainer = NodePath("PackedScenes/WorldPackedScenesContainer")
+ScreenPackedScenesContainer = NodePath("PackedScenes/ScreenPackedScenesContainer")
 PlayerInfo = NodePath("Game/PlayerInfo")
 
-[node name="References" type="Node" parent="." node_paths=PackedStringArray("PlayerInfo")]
-script = ExtResource("1_c614h")
-FirstSceneBlueprint = ExtResource("2_dlrff")
-CharacterBlueprint = ExtResource("3_bqxph")
-AllyBlueprint = ExtResource("4_5im1w")
-EnemyBlueprint = ExtResource("4_kd0xx")
-MainMenu = ExtResource("4_coua8")
-PlayerInfo = NodePath("")
+[node name="PackedScenes" type="Node" parent="."]
+
+[node name="ScreenPackedScenesContainer" parent="PackedScenes" instance=ExtResource("2_yb1b1")]
+
+[node name="WorldPackedScenesContainer" parent="PackedScenes" instance=ExtResource("3_tib1g")]
 
 [node name="Audio2D" type="Node2D" parent="."]
 script = ExtResource("1_wg44d")
