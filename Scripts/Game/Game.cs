@@ -15,12 +15,10 @@ public partial class Game : Node2D
 	
 	public override void _Ready()
 	{
+        NotNullChecker.CheckProperties(this);
+        
 		DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
 		var firstScene = Root.Instance.PackedScenes.Screen.FirstScene;
 		MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
-	}
-	
-	public override void _Process(double delta)
-	{
 	}
 }
