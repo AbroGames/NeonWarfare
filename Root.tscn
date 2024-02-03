@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Root.cs" id="1_vkd83"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Net/Network.cs" id="2_7rhp3"]
-[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer.tscn" id="2_nvmyu"]
+[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainers/PackedScenesContainer.tscn" id="2_nvmyu"]
 [ext_resource type="PackedScene" uid="uid://dgu67x4aam3po" path="res://Scenes/Game.tscn" id="6_6ixpv"]
 
 [sub_resource type="Environment" id="Environment_hp6r4"]
