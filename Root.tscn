@@ -54,9 +54,11 @@ script = ExtResource("6_we2o4")
 
 [node name="HudContainer" type="Control" parent="Game/CanvasLayer"]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("7_ft1v4")
 
 [node name="MenuContainer" type="Control" parent="Game/CanvasLayer"]
