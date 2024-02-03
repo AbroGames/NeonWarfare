@@ -10,7 +10,7 @@ public partial class World : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var character = Root.Instance.WorldPackedScenesContainer.Character.Instantiate() as Node2D;
+		var character = Root.Instance.PackedScenes.World.Character.Instantiate() as Node2D;
 		character.Position = Vec(500, 500);
 		
 		var camera = new PlayerCamera();
@@ -25,7 +25,7 @@ public partial class World : Node2D
 		floor.Camera = camera;
 		AddChild(floor);
 		
-		var ally = Root.Instance.WorldPackedScenesContainer.Ally.Instantiate() as Node2D;
+		var ally = Root.Instance.PackedScenes.World.Ally.Instantiate() as Node2D;
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 		AddChild(character); // must be here to draw over the floor
@@ -53,7 +53,7 @@ public partial class World : Node2D
 		var targetPositionDelta = Vector2.FromAngle(angle) * distance;
 		var targetPosition = character.Position + targetPositionDelta;
 			
-		var enemy = Root.Instance.WorldPackedScenesContainer.Enemy.Instantiate() as Enemy;
+		var enemy = Root.Instance.PackedScenes.World.Enemy.Instantiate() as Enemy;
 		enemy.Position = targetPosition;
 		enemy.Rotation = angle - Math.PI / 2;
 		enemy.Target = character as Character;

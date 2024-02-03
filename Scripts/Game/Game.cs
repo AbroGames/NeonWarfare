@@ -4,15 +4,22 @@ namespace AbroDraft;
 
 public partial class Game : Node2D
 {
-	// Called when the node enters the scene tree for the first time.
+	
+	[Export] [NotNull] public Node2DContainer WorldContainer { get; private set; }
+	[Export] [NotNull] public ControlContainer BackgroundContainer { get; private set; }
+	[Export] [NotNull] public ControlContainer HudContainer { get; private set; }
+	[Export] [NotNull] public ControlContainer MenuContainer { get; private set; }
+	[Export] [NotNull] public ControlContainer ForegroundContainer { get; private set; }
+	
+	[Export] [NotNull] public PlayerInfo PlayerInfo { get; private set; }
+	
 	public override void _Ready()
 	{
 		DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
-		var firstScene = Root.Instance.ScreenPackedScenesContainer.FirstScene;
-		Root.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
+		var firstScene = Root.Instance.PackedScenes.Screen.FirstScene;
+		MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
 	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	
 	public override void _Process(double delta)
 	{
 	}

@@ -45,10 +45,10 @@ public partial class Bullet : Node2D
 						character.Hp = 0;
 						character.QueueFree();
 
-						Root.Instance.WorldContainer.ClearStoredNode();
+						Root.Instance.Game.WorldContainer.ClearStoredNode();
 						
-						var firstScene = Root.Instance.ScreenPackedScenesContainer.FirstScene;
-						Root.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
+						var firstScene = Root.Instance.PackedScenes.Screen.FirstScene;
+						Root.Instance.Game.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
 					}
 				}
 			}

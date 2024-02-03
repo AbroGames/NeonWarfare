@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://5vh8drujl1s5"]
+
+[ext_resource type="Script" path="res://Scripts/PackedScenes/PackedScenesContainer.cs" id="1_mm4hi"]
+[ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainers/ScreenPackedScenesContainer.tscn" id="1_vrsdm"]
+[ext_resource type="PackedScene" uid="uid://cx42uux5b88nw" path="res://Scenes/PackedScenesContainers/WorldPackedScenesContainer.tscn" id="2_u1emc"]
+
+[node name="PackedScenesContainer" type="Node" node_paths=PackedStringArray("World", "Screen")]
+script = ExtResource("1_mm4hi")
+World = NodePath("World")
+Screen = NodePath("Screen")
+
+[node name="Screen" parent="." instance=ExtResource("1_vrsdm")]
+
+[node name="World" parent="." instance=ExtResource("2_u1emc")]

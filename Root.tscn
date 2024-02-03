@@ -1,14 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=7 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://Scripts/Root.cs" id="1_vkd83"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Net/Network.cs" id="2_7rhp3"]
-[ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainers/ScreenPackedScenesContainer.tscn" id="2_yb1b1"]
-[ext_resource type="PackedScene" uid="uid://cx42uux5b88nw" path="res://Scenes/PackedScenesContainers/WorldPackedScenesContainer.tscn" id="3_tib1g"]
-[ext_resource type="Script" path="res://Scripts/Game/Game.cs" id="5_cj2vp"]
-[ext_resource type="Script" path="res://Scripts/Game/PlayerInfo.cs" id="11_go00r"]
-[ext_resource type="Script" path="res://Scripts/Containers/Node2DContainer.cs" id="11_ykyyd"]
-[ext_resource type="Script" path="res://Scripts/Containers/ControlContainer.cs" id="13_xpftp"]
+[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer.tscn" id="2_nvmyu"]
+[ext_resource type="PackedScene" uid="uid://dgu67x4aam3po" path="res://Scenes/Game.tscn" id="6_6ixpv"]
 
 [sub_resource type="Environment" id="Environment_hp6r4"]
 background_mode = 3
@@ -17,22 +13,12 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="Root" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer", "WorldPackedScenesContainer", "ScreenPackedScenesContainer", "PlayerInfo")]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Game")]
 script = ExtResource("1_vkd83")
-WorldContainer = NodePath("Game/WorldContainer")
-BackgroundContainer = NodePath("Game/Screen/BackgroundContainer")
-HudContainer = NodePath("Game/Screen/HudContainer")
-MenuContainer = NodePath("Game/Screen/MenuContainer")
-ForegroundContainer = NodePath("Game/Screen/ForegroundContainer")
-WorldPackedScenesContainer = NodePath("PackedScenes/WorldPackedScenesContainer")
-ScreenPackedScenesContainer = NodePath("PackedScenes/ScreenPackedScenesContainer")
-PlayerInfo = NodePath("Game/PlayerInfo")
+PackedScenes = NodePath("PackedScenesContainer")
+Game = NodePath("Game")
 
-[node name="PackedScenes" type="Node" parent="."]
-
-[node name="ScreenPackedScenesContainer" parent="PackedScenes" instance=ExtResource("2_yb1b1")]
-
-[node name="WorldPackedScenesContainer" parent="PackedScenes" instance=ExtResource("3_tib1g")]
+[node name="PackedScenesContainer" parent="." instance=ExtResource("2_nvmyu")]
 
 [node name="Audio2D" type="Node2D" parent="."]
 script = ExtResource("1_wg44d")
@@ -40,53 +26,7 @@ script = ExtResource("1_wg44d")
 [node name="Network" type="Node" parent="."]
 script = ExtResource("2_7rhp3")
 
-[node name="Game" type="Node2D" parent="."]
-script = ExtResource("5_cj2vp")
-
-[node name="PlayerInfo" type="Node2D" parent="Game"]
-script = ExtResource("11_go00r")
-
-[node name="WorldContainer" type="Node2D" parent="Game"]
-script = ExtResource("11_ykyyd")
-
-[node name="Screen" type="CanvasLayer" parent="Game"]
-
-[node name="BackgroundContainer" type="Control" parent="Game/Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("13_xpftp")
-
-[node name="HudContainer" type="Control" parent="Game/Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("13_xpftp")
-
-[node name="MenuContainer" type="Control" parent="Game/Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("13_xpftp")
-
-[node name="ForegroundContainer" type="Control" parent="Game/Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("13_xpftp")
+[node name="Game" parent="." instance=ExtResource("6_6ixpv")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_hp6r4")
