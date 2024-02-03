@@ -2,9 +2,9 @@ using Godot;
 
 public partial class References : Node
 {
-    [Export] public WorldContainer WorldContainer { get; private set; }
-    [Export] public HudContainer HudContainer { get; private set; }
-    [Export] public MenuContainer MenuContainer { get; private set; }
+    [Export] public Node2DContainer WorldContainer { get; private set; }
+    [Export] public ControlContainer HudContainer { get; private set; }
+    [Export] public ControlContainer MenuContainer { get; private set; }
     
     [Export] public PackedScene FirstSceneBlueprint { get; private set; }
     [Export] public PackedScene CharacterBlueprint { get; private set; }

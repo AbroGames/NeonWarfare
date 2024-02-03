@@ -1,16 +1,14 @@
 using Godot;
-using System;
 
-public partial interface INodeContainer <TStored> where TStored : Node
+public partial class NodeContainer<TStored> : Node where TStored : Node
 {
-	
-	protected TStored CurrentStoredNode { get; set; }
+	public TStored CurrentStoredNode { get; private set; }
 
 	public void ChangeStoredNode(TStored newStoredNode)
 	{
 		CurrentStoredNode?.QueueFree();
 		CurrentStoredNode = newStoredNode;
-		(this as Node)?.AddChild(newStoredNode);
+		AddChild(newStoredNode);
 	}
 
 	public void ClearStoredNode()

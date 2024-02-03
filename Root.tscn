@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=14 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://Scripts/References.cs" id="1_c614h"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
@@ -9,10 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="4_coua8"]
 [ext_resource type="PackedScene" uid="uid://diu5b6k3ea6fn" path="res://Scenes/World/Entities/Enemy.tscn" id="4_kd0xx"]
 [ext_resource type="Script" path="res://Scripts/Game.cs" id="5_cj2vp"]
-[ext_resource type="Script" path="res://Scripts/Containers/WorldContainer.cs" id="6_we2o4"]
-[ext_resource type="Script" path="res://Scripts/Containers/HudContainer.cs" id="7_ft1v4"]
-[ext_resource type="Script" path="res://Scripts/Containers/MenuContainer.cs" id="8_7mtu2"]
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="11_h6vrf"]
+[ext_resource type="Script" path="res://Scripts/Containers/Node2DContainer.cs" id="11_ykyyd"]
+[ext_resource type="Script" path="res://Scripts/Containers/ControlContainer.cs" id="13_xpftp"]
 
 [sub_resource type="Environment" id="Environment_hp6r4"]
 background_mode = 3
@@ -26,8 +25,8 @@ glow_hdr_threshold = 0.0
 [node name="References" type="Node" parent="." node_paths=PackedStringArray("WorldContainer", "HudContainer", "MenuContainer", "PlayerInfo")]
 script = ExtResource("1_c614h")
 WorldContainer = NodePath("../Game/WorldContainer")
-HudContainer = NodePath("../Game/CanvasLayer/HudContainer")
-MenuContainer = NodePath("../Game/CanvasLayer/MenuContainer")
+HudContainer = NodePath("../Game/Screen/HudContainer")
+MenuContainer = NodePath("../Game/Screen/MenuContainer")
 FirstSceneBlueprint = ExtResource("2_dlrff")
 CharacterBlueprint = ExtResource("3_bqxph")
 AllyBlueprint = ExtResource("4_5im1w")
@@ -48,27 +47,46 @@ script = ExtResource("5_cj2vp")
 script = ExtResource("11_h6vrf")
 
 [node name="WorldContainer" type="Node2D" parent="Game"]
-script = ExtResource("6_we2o4")
+script = ExtResource("11_ykyyd")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="Game"]
+[node name="Screen" type="CanvasLayer" parent="Game"]
 
-[node name="HudContainer" type="Control" parent="Game/CanvasLayer"]
+[node name="BackgroundContainer" type="Control" parent="Game/Screen"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("7_ft1v4")
+script = ExtResource("13_xpftp")
 
-[node name="MenuContainer" type="Control" parent="Game/CanvasLayer"]
+[node name="HudContainer" type="Control" parent="Game/Screen"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("8_7mtu2")
+script = ExtResource("13_xpftp")
+
+[node name="MenuContainer" type="Control" parent="Game/Screen"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("13_xpftp")
+
+[node name="ForegroundContainer" type="Control" parent="Game/Screen"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_xpftp")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_hp6r4")
