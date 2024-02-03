@@ -1,6 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=15 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://Scripts/References.cs" id="1_c614h"]
+[ext_resource type="Script" path="res://Scripts/Root.cs" id="1_vkd83"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="1_wg44d"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Net/Network.cs" id="2_7rhp3"]
 [ext_resource type="PackedScene" uid="uid://crc10v8fjt3mk" path="res://Scenes/Screen/Menu.tscn" id="2_dlrff"]
@@ -8,8 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://vu7pqr4sjb6n" path="res://Scenes/World/Entities/Ally.tscn" id="4_5im1w"]
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="4_coua8"]
 [ext_resource type="PackedScene" uid="uid://diu5b6k3ea6fn" path="res://Scenes/World/Entities/Enemy.tscn" id="4_kd0xx"]
-[ext_resource type="Script" path="res://Scripts/Game.cs" id="5_cj2vp"]
-[ext_resource type="Script" path="res://Scripts/Player.cs" id="11_h6vrf"]
+[ext_resource type="Script" path="res://Scripts/Game/Game.cs" id="5_cj2vp"]
+[ext_resource type="Script" path="res://Scripts/Game/PlayerInfo.cs" id="11_go00r"]
 [ext_resource type="Script" path="res://Scripts/Containers/Node2DContainer.cs" id="11_ykyyd"]
 [ext_resource type="Script" path="res://Scripts/Containers/ControlContainer.cs" id="13_xpftp"]
 
@@ -20,19 +21,23 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="Root" type="Node2D"]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer", "PlayerInfo")]
+script = ExtResource("1_vkd83")
+WorldContainer = NodePath("Game/WorldContainer")
+BackgroundContainer = NodePath("Game/Screen/BackgroundContainer")
+HudContainer = NodePath("Game/Screen/HudContainer")
+MenuContainer = NodePath("Game/Screen/MenuContainer")
+ForegroundContainer = NodePath("Game/Screen/ForegroundContainer")
+PlayerInfo = NodePath("Game/PlayerInfo")
 
-[node name="References" type="Node" parent="." node_paths=PackedStringArray("WorldContainer", "HudContainer", "MenuContainer", "PlayerInfo")]
+[node name="References" type="Node" parent="." node_paths=PackedStringArray("PlayerInfo")]
 script = ExtResource("1_c614h")
-WorldContainer = NodePath("../Game/WorldContainer")
-HudContainer = NodePath("../Game/Screen/HudContainer")
-MenuContainer = NodePath("../Game/Screen/MenuContainer")
 FirstSceneBlueprint = ExtResource("2_dlrff")
 CharacterBlueprint = ExtResource("3_bqxph")
 AllyBlueprint = ExtResource("4_5im1w")
 EnemyBlueprint = ExtResource("4_kd0xx")
 MainMenu = ExtResource("4_coua8")
-PlayerInfo = NodePath("../Game/Player")
+PlayerInfo = NodePath("")
 
 [node name="Audio2D" type="Node2D" parent="."]
 script = ExtResource("1_wg44d")
@@ -43,8 +48,8 @@ script = ExtResource("2_7rhp3")
 [node name="Game" type="Node2D" parent="."]
 script = ExtResource("5_cj2vp")
 
-[node name="Player" type="Node2D" parent="Game"]
-script = ExtResource("11_h6vrf")
+[node name="PlayerInfo" type="Node2D" parent="Game"]
+script = ExtResource("11_go00r")
 
 [node name="WorldContainer" type="Node2D" parent="Game"]
 script = ExtResource("11_ykyyd")

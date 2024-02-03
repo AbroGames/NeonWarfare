@@ -9,7 +9,7 @@ public partial class Game : Node2D
 	{
 		DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
 		var firstScene = References.Instance.FirstSceneBlueprint;
-		References.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
+		Root.Instance.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

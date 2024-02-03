@@ -9,7 +9,7 @@ public partial class BackButton : Button
 		Pressed += () =>
 		{
 			var playerMenu = GD.Load<PackedScene>("res://Scenes/MainMenu.tscn").Instantiate<Control>();
-			var menu = References.Instance.MenuContainer.CurrentStoredNode as Menu;
+			var menu = Root.Instance.MenuContainer.CurrentStoredNode as Menu;
 			menu.changeMenu(playerMenu);
 		};
 	}
