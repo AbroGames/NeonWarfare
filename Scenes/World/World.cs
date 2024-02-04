@@ -1,13 +1,18 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using Game.Content;
 using KludgeBox;
 
 public partial class World : Node2D
 {
 
-	private const int OneWaveEnemyCount = 25; 
-	private const int WaveTimeout = 5; 
+	private const int OneWaveEnemyCount = 20; 
+	private const int WaveTimeout = 7;
+
+	public Character Player;
+	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
+	public int WaveNumber;
 	
 	private Character _character;
 	private double _nextWaveTimer = 0;
@@ -74,5 +79,6 @@ public partial class World : Node2D
 		enemy.Rotation = angle - Math.PI / 2;
 		enemy.Target = character as Character;
 		AddChild(enemy);
+		Enemies.Add(enemy);
 	}
 }

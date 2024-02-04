@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlelsat4bmqw3"]
+
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_4xfol"]
+
+[node name="Hud" type="Control" node_paths=PackedStringArray("Hp", "Waves", "Enemies")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4xfol")
+Hp = NodePath("LeftUpInfo/Hp")
+Waves = NodePath("LeftUpInfo/Waves")
+Enemies = NodePath("LeftUpInfo/Enemies")
+
+[node name="LeftUpInfo" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Hp" type="Label" parent="LeftUpInfo"]
+layout_mode = 2
+
+[node name="Waves" type="Label" parent="LeftUpInfo"]
+layout_mode = 2
+
+[node name="Enemies" type="Label" parent="LeftUpInfo"]
+layout_mode = 2
