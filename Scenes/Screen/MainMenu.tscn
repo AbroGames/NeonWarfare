@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=7 format=3 uid="uid://dkmaek7egfvff"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_0ah2t"]
 [ext_resource type="Script" path="res://Scripts/Screen/SetWorldAndCloseMenuButton.cs" id="2_fc60g"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/World.tscn" id="3_36dbp"]
+[ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/Hud/Hud.tscn" id="4_5sw1t"]
 [ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="4_666cv"]
 [ext_resource type="Script" path="res://Scripts/Screen/ProfileButton.cs" id="5_pydka"]
 
@@ -34,6 +35,7 @@ text = "Создать сервер"
 icon = ExtResource("1_0ah2t")
 script = ExtResource("2_fc60g")
 _newWorldScene = ExtResource("3_36dbp")
+_hud = ExtResource("4_5sw1t")
 
 [node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2

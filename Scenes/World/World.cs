@@ -7,12 +7,13 @@ using KludgeBox;
 public partial class World : Node2D
 {
 
-	private const int OneWaveEnemyCount = 20; 
-	private const int WaveTimeout = 7;
+	private const int OneWaveEnemyCount = 15; 
+	private const int OneWaveEnemyCountDelta = 5; 
+	private const int WaveTimeout = 6;
 
 	public Character Player;
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
-	public int WaveNumber;
+	public int WaveNumber = 0;
 	
 	private Character _character;
 	private double _nextWaveTimer = 0;
@@ -22,6 +23,7 @@ public partial class World : Node2D
 	{
 		_character = Root.Instance.PackedScenes.World.Character.Instantiate() as Character;
 		_character.Position = Vec(500, 500);
+		Player = _character;
 		
 		var camera = new PlayerCamera();
 		camera.Position = _character.Position;
@@ -57,8 +59,9 @@ public partial class World : Node2D
 			return;
 		}
 		_nextWaveTimer = WaveTimeout;
+		WaveNumber++;
 		
-		for (int i = 0; i < OneWaveEnemyCount; i++)
+		for (int i = 0; i < OneWaveEnemyCount + WaveNumber * OneWaveEnemyCountDelta; i++)
 		{
 			CreateEnemyRandomPosAroundCharacter(_character);
 		}

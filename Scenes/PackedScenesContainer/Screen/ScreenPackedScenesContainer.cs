@@ -4,6 +4,7 @@ public partial class ScreenPackedScenesContainer : Node
 {
     [Export] [NotNull] public PackedScene MainMenu { get; private set; }
     [Export] [NotNull] public PackedScene ProfileMenu { get; private set; }
+    [Export] [NotNull] public PackedScene Hud { get; private set; }
     
     public PackedScene FirstScene { get; private set; }
     

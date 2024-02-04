@@ -11,6 +11,7 @@ public partial class Character : CharacterBody2D
 	[Export] private double _movementSpeed = 250; // in pixels/sec
 	[Export] private double _rotationSpeed = 300; // in degree/sec
 	[Export] private double _attackSpeed = 3; // attack/sec
+	[Export] private double _regenHpSpeed = 500; // hp/sec
 
 	[Export] private PackedScene _bulletBlueprint;
 
@@ -41,6 +42,9 @@ public partial class Character : CharacterBody2D
 		RotateToMouse(delta);
 		AttackPrimary(delta);
 		MoveSprite(delta);
+
+		Hp += (int) (_regenHpSpeed * delta);
+		Hp = Math.Min(Hp, MaxHp);
 
 		_secondaryCd.Update(delta);
 		
