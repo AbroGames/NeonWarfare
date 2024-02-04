@@ -13,7 +13,7 @@ public partial class ChangeMenuButton : Godot.Button
 
 	private void OnClick()
 	{
-		var menu = Root.Instance.Game.MenuContainer.CurrentStoredNode as Menu;
+		var menu = Root.Instance.Game.MenuContainer.GetCurrentStoredNode<Menu>();
 		menu.changeMenu(_newMenu.Instantiate<Control>());
 	}
 }

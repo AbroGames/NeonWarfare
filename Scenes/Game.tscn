@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgu67x4aam3po"]
+[gd_scene load_steps=4 format=3 uid="uid://dgu67x4aam3po"]
 
 [ext_resource type="Script" path="res://Scripts/Game/Game.cs" id="1_kwdsd"]
 [ext_resource type="Script" path="res://Scripts/Game/PlayerInfo.cs" id="2_4yl4c"]
-[ext_resource type="Script" path="res://Scripts/Containers/Node2DContainer.cs" id="3_8ix7s"]
-[ext_resource type="Script" path="res://Scripts/Containers/ControlContainer.cs" id="4_h4pwv"]
+[ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="3_n1bll"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer", "PlayerInfo")]
 script = ExtResource("1_kwdsd")
@@ -18,7 +17,7 @@ PlayerInfo = NodePath("PlayerInfo")
 script = ExtResource("2_4yl4c")
 
 [node name="WorldContainer" type="Node2D" parent="."]
-script = ExtResource("3_8ix7s")
+script = ExtResource("3_n1bll")
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
@@ -29,7 +28,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_h4pwv")
+script = ExtResource("3_n1bll")
 
 [node name="HudContainer" type="Control" parent="Screen"]
 layout_mode = 3
@@ -38,7 +37,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_h4pwv")
+script = ExtResource("3_n1bll")
 
 [node name="MenuContainer" type="Control" parent="Screen"]
 layout_mode = 3
@@ -47,7 +46,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_h4pwv")
+script = ExtResource("3_n1bll")
 
 [node name="ForegroundContainer" type="Control" parent="Screen"]
 layout_mode = 3
@@ -57,4 +56,4 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("4_h4pwv")
+script = ExtResource("3_n1bll")

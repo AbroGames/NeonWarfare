@@ -1,19 +1,24 @@
 using Godot;
 
-public partial class NodeContainer<TStored> : Node where TStored : Node
+public partial class NodeContainer : Node
 {
-	public TStored CurrentStoredNode { get; private set; }
+	private Node _currentStoredNode;
 
-	public void ChangeStoredNode(TStored newStoredNode)
+	public void ChangeStoredNode(Node newStoredNode)
 	{
-		CurrentStoredNode?.QueueFree();
-		CurrentStoredNode = newStoredNode;
+		_currentStoredNode?.QueueFree();
+		_currentStoredNode = newStoredNode;
 		AddChild(newStoredNode);
 	}
 
 	public void ClearStoredNode()
 	{
-		CurrentStoredNode?.QueueFree();
-		CurrentStoredNode = null;
+		_currentStoredNode?.QueueFree();
+		_currentStoredNode = null;
+	}
+
+	public TStored GetCurrentStoredNode<TStored>() where TStored : Node
+	{
+		return _currentStoredNode as TStored;
 	}
 }
