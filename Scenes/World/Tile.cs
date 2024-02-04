@@ -1,7 +1,5 @@
 ﻿using Godot;
 
-namespace MicroSurvivors;
-
 public partial class Tile : Sprite2D
 {
 	public float Width;

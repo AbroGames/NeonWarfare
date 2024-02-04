@@ -3,8 +3,6 @@ using System.Linq;
 using Godot;
 using KludgeBox.Scheduling;
 
-namespace MicroSurvivors;
-
 [GlobalClass]
 public partial class Floor : Node2D
 {

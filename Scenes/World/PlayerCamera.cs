@@ -1,7 +1,5 @@
 ﻿using Godot;
 
-namespace AbroDraft.WorldEntities;
-
 public partial class PlayerCamera : Camera2D
 {
 	[Export] public Node2D TargetNode;
