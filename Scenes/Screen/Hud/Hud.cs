@@ -8,7 +8,7 @@ public partial class Hud : Control
 	[Export] [NotNull] public Label Waves { get; private set; }
 	[Export] [NotNull] public Label Enemies { get; private set; }
 
-	[Export] [NotNull] public World World { get; private set; }
+	public BattleWorld BattleWorld { get; set; }
 	
 	public override void _Ready()
 	{
@@ -17,10 +17,10 @@ public partial class Hud : Control
 
 	public override void _Process(double delta)
 	{
-		if (World == null || !World.IsValid()) return;
+		if (BattleWorld == null || !BattleWorld.IsNodeReady()) return;
 		
-		Hp.Text = $"HP: {World.Player.Hp}/{World.Player.MaxHp}";
-		Waves.Text = $"Wave: {World.WaveNumber}";
-		Enemies.Text = $"Enemies: {World.Enemies.Count}";
+		Hp.Text = $"HP: {BattleWorld.Player.Hp}/{BattleWorld.Player.MaxHp}";
+		Waves.Text = $"Wave: {BattleWorld.WaveNumber}";
+		Enemies.Text = $"Enemies: {BattleWorld.Enemies.Count}";
 	}
 }

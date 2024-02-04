@@ -1,15 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://851poce6mggu"]
+[gd_scene load_steps=5 format=3 uid="uid://851poce6mggu"]
 
+[ext_resource type="Script" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.cs" id="1_fyl7v"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_jc0ji"]
-[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/World.tscn" id="2_yk26h"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld.tscn" id="1_pgtsk"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/Hud/Hud.tscn" id="3_fl3ru"]
 
-[node name="BattleWorld" type="Node2D"]
+[node name="BattleWorld" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer")]
+script = ExtResource("1_fyl7v")
+WorldContainer = NodePath("WorldContainer")
+BackgroundContainer = NodePath("Screen/BackgroundContainer")
+HudContainer = NodePath("Screen/HudContainer")
+MenuContainer = NodePath("Screen/MenuContainer")
+ForegroundContainer = NodePath("Screen/ForegroundContainer")
 
 [node name="WorldContainer" type="Node2D" parent="."]
 script = ExtResource("1_jc0ji")
 
-[node name="World" parent="WorldContainer" instance=ExtResource("2_yk26h")]
+[node name="World" parent="WorldContainer" instance=ExtResource("1_pgtsk")]
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
@@ -33,9 +40,8 @@ grow_vertical = 2
 script = ExtResource("1_jc0ji")
 metadata/_edit_use_anchors_ = true
 
-[node name="Hud" parent="Screen/HudContainer" node_paths=PackedStringArray("World") instance=ExtResource("3_fl3ru")]
+[node name="Hud" parent="Screen/HudContainer" instance=ExtResource("3_fl3ru")]
 layout_mode = 1
-World = NodePath("../../../WorldContainer/World")
 
 [node name="MenuContainer" type="Control" parent="Screen"]
 layout_mode = 3

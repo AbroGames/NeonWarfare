@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Game.Content;
 using KludgeBox;
 
-public partial class World : Node2D
+public partial class BattleWorld : Node2D
 {
 
 	private const int OneWaveEnemyCount = 15; 
@@ -15,19 +15,17 @@ public partial class World : Node2D
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public int WaveNumber = 0;
 	
-	private Character _character;
 	private double _nextWaveTimer = 0;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		_character = Root.Instance.PackedScenes.World.Character.Instantiate() as Character;
-		_character.Position = Vec(500, 500);
-		Player = _character;
+		Player = Root.Instance.PackedScenes.World.Character.Instantiate() as Character;
+		Player.Position = Vec(500, 500);
 		
 		var camera = new PlayerCamera();
-		camera.Position = _character.Position;
-		camera.TargetNode = _character;
+		camera.Position = Player.Position;
+		camera.TargetNode = Player;
 		camera.Zoom = Vec(0.65);
 		camera.SmoothingPower = 1.5;
 		AddChild(camera);
@@ -40,9 +38,9 @@ public partial class World : Node2D
 		var ally = Root.Instance.PackedScenes.World.Ally.Instantiate() as Node2D;
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
-		AddChild(_character); // must be here to draw over the floor
+		AddChild(Player); // must be here to draw over the floor
 		
-		Audio2D.PlaySoundAt(Sfx.Bass, _character.Position, 0.1f); // dat bass on start
+		Audio2D.PlaySoundAt(Sfx.Bass, Player.Position, 0.1f); // dat bass on start
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -63,7 +61,7 @@ public partial class World : Node2D
 		
 		for (int i = 0; i < OneWaveEnemyCount + WaveNumber * OneWaveEnemyCountDelta; i++)
 		{
-			CreateEnemyRandomPosAroundCharacter(_character);
+			CreateEnemyRandomPosAroundCharacter(Player);
 		}
 	}
 
