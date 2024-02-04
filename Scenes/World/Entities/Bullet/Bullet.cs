@@ -28,22 +28,22 @@ public partial class Bullet : Node2D
 		
 		GetNode<Area2D>("Area2D").BodyEntered += body =>
 		{
-			if (body is Character character)
+			if (body is Player player)
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
-					Audio2D.PlaySoundAt(Sfx.FuturisticHit, character.Position);
-					character.HitFlash = 1;
-					if (character.Hp >= RemainingDamage)
+					Audio2D.PlaySoundAt(Sfx.FuturisticHit, player.Position);
+					player.HitFlash = 1;
+					if (player.Hp >= RemainingDamage)
 					{
-						character.Hp -= RemainingDamage;
+						player.Hp -= RemainingDamage;
 						QueueFree();
 					}
 					else
 					{
-						RemainingDamage -= character.Hp;
-						character.Hp = 0;
-						character.QueueFree();
+						RemainingDamage -= player.Hp;
+						player.Hp = 0;
+						player.QueueFree();
 						
 						var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
 						Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());

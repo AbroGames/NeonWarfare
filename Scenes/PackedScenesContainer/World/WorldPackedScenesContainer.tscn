@@ -1,12 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://cx42uux5b88nw"]
+[gd_scene load_steps=6 format=3 uid="uid://cx42uux5b88nw"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/World/WorldPackedScenesContainer.cs" id="1_6ysvl"]
-[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character/Character.tscn" id="2_tfr4q"]
-[ext_resource type="PackedScene" uid="uid://vu7pqr4sjb6n" path="res://Scenes/World/Entities/Character/Ally/Ally.tscn" id="3_7qhw5"]
-[ext_resource type="PackedScene" uid="uid://diu5b6k3ea6fn" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_42jh4"]
+[ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/World/Entities/Character/Player/Player.tscn" id="2_mnaw1"]
+[ext_resource type="PackedScene" uid="uid://beqibs6gp5l0y" path="res://Scenes/World/Entities/Character/Ally/Ally.tscn" id="3_7qhw5"]
+[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_8nru5"]
+[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet/Bullet.tscn" id="5_ntxjo"]
 
 [node name="WorldPackedScenesContainer" type="Node"]
 script = ExtResource("1_6ysvl")
-Character = ExtResource("2_tfr4q")
+Player = ExtResource("2_mnaw1")
 Ally = ExtResource("3_7qhw5")
-Enemy = ExtResource("4_42jh4")
+Enemy = ExtResource("4_8nru5")
+Bullet = ExtResource("5_ntxjo")

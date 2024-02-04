@@ -1,10 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://n0xmwymx5ba5"]
+[gd_scene load_steps=6 format=3 uid="uid://n0xmwymx5ba5"]
 
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Character.cs" id="1_y827s"]
-[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet/Bullet.tscn" id="2_62cbe"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_qd6n2"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="4_vcssn"]
-[ext_resource type="Texture2D" uid="uid://b0qm63iqy84j2" path="res://Assets/Textures/Particles/Effects/circle_01.png" id="5_iv1dq"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qkp5b"]
 shader = ExtResource("3_qd6n2")
@@ -16,18 +14,13 @@ shader_parameter/grayscaleFactor = 0.0
 radius = 17.0
 
 [node name="Character" type="CharacterBody2D"]
-modulate = Color(0, 1, 1, 1)
 script = ExtResource("1_y827s")
-_bulletBlueprint = ExtResource("2_62cbe")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 1, 1, 1)
 material = SubResource("ShaderMaterial_qkp5b")
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("4_vcssn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_rfcs5")
-
-[node name="ShieldSprite" type="Sprite2D" parent="."]
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("5_iv1dq")

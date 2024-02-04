@@ -11,7 +11,7 @@ public partial class BattleWorld : Node2D
 	private const int OneWaveEnemyCountDelta = 5; 
 	private const int WaveTimeout = 6;
 
-	public Character Player;
+	public Player Player;
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public int WaveNumber = 0;
 	
@@ -20,7 +20,7 @@ public partial class BattleWorld : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Player = Root.Instance.PackedScenes.World.Character.Instantiate() as Character;
+		Player = Root.Instance.PackedScenes.World.Player.Instantiate() as Player;
 		Player.Position = Vec(500, 500);
 		
 		var camera = new PlayerCamera();

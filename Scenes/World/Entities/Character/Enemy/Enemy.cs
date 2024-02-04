@@ -2,17 +2,15 @@ using Godot;
 using System;
 using Game.Content;
 
-public partial class Enemy : CharacterBody2D
+public partial class Enemy : Character
 {
 	
 	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
-	[Export] private double _movementSpeed = 200; // in pixels/sec
-	[Export] public int Hp = 250;
-	[Export] private double _attackSpeed = 1; // attack/sec
+	private double _movementSpeed = 200; // in pixels/sec
+	public int Hp = 250;
+	private double _attackSpeed = 1; // attack/sec
 
 	private RayCast2D RayCast => GetNode("RayCast") as RayCast2D;
-
-	[Export] private PackedScene _bulletBlueprint;
 	
 	public Character Target;
 	private double _secToNextAttack = 0;
@@ -76,7 +74,7 @@ public partial class Enemy : CharacterBody2D
 		_secToNextAttack = 1.0 / _attackSpeed;
 		
 		// Создание снаряда
-		Bullet bullet = _bulletBlueprint.Instantiate() as Bullet;
+		Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
 		// Установка начальной позиции снаряда
 		bullet.GlobalPosition = GlobalPosition;
 		// Установка направления движения снаряда
