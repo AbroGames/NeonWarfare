@@ -1,8 +1,18 @@
+using System;
 using Godot;
 
 public partial class NodeContainer : Node
 {
 	private Node _currentStoredNode;
+
+	public override void _Ready()
+	{
+		if (GetChildCount() > 1) throw new InvalidOperationException($"NodeContainer must has not more 1 child. Has '{GetChildCount()}' children.");
+		if (GetChildCount() == 1)
+		{
+			_currentStoredNode = GetChildren()[0];
+		}
+	}
 
 	public void ChangeStoredNode(Node newStoredNode)
 	{

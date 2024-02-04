@@ -3,8 +3,7 @@ using System;
 
 public partial class SetWorldAndCloseMenuButton : Godot.Button
 {
-    [Export] private PackedScene _newWorldScene;
-    [Export] private PackedScene _hud;
+    [Export] private PackedScene _newWorldMainScene;
 	
     public override void _Ready()
     {
@@ -13,13 +12,7 @@ public partial class SetWorldAndCloseMenuButton : Godot.Button
 
     private void OnClick()
     {
-        World world = _newWorldScene.Instantiate<World>();
-        Hud hud = _hud.Instantiate<Hud>();
-        hud.World = world;
-        
-        Root.Instance.Game.WorldContainer.ChangeStoredNode(world);
-        Root.Instance.Game.HudContainer.ChangeStoredNode(hud);
-        Root.Instance.Game.MenuContainer.ClearStoredNode();
+        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(_newWorldMainScene.Instantiate());
     }
 
 }

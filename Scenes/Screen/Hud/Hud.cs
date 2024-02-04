@@ -8,7 +8,7 @@ public partial class Hud : Control
 	[Export] [NotNull] public Label Waves { get; private set; }
 	[Export] [NotNull] public Label Enemies { get; private set; }
 
-	public World World;
+	[Export] [NotNull] public World World { get; private set; }
 	
 	public override void _Ready()
 	{

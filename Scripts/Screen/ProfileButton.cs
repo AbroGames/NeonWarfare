@@ -8,9 +8,9 @@ public partial class ProfileButton : Button
 	{
 		Pressed += () =>
 		{
-			var playerMenu = Root.Instance.PackedScenes.Screen.ProfileMenu.Instantiate<Control>();
+			/*var playerMenu = Root.Instance.PackedScenes.Screen.ProfileMenu.Instantiate<Control>();
 			var menu = Root.Instance.Game.MenuContainer.GetCurrentStoredNode<Menu>();
-			menu.changeMenu(playerMenu);
+			menu.changeMenu(playerMenu);*/ //TODO 
 		};
 	}
 

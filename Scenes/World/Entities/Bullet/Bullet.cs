@@ -44,11 +44,9 @@ public partial class Bullet : Node2D
 						RemainingDamage -= character.Hp;
 						character.Hp = 0;
 						character.QueueFree();
-
-						Root.Instance.Game.WorldContainer.ClearStoredNode();
 						
-						var firstScene = Root.Instance.PackedScenes.Screen.FirstScene;
-						Root.Instance.Game.MenuContainer.ChangeStoredNode(firstScene.Instantiate() as Control);
+						var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
+						Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
 					}
 				}
 			}

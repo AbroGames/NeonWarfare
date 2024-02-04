@@ -1,59 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://dgu67x4aam3po"]
+[gd_scene load_steps=5 format=3 uid="uid://dgu67x4aam3po"]
 
 [ext_resource type="Script" path="res://Scenes/Game/Game.cs" id="1_kwdsd"]
 [ext_resource type="Script" path="res://Scenes/Game/PlayerInfo.cs" id="2_4yl4c"]
+[ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.tscn" id="3_balju"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="3_n1bll"]
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer", "PlayerInfo")]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "PlayerInfo")]
 script = ExtResource("1_kwdsd")
-WorldContainer = NodePath("WorldContainer")
-BackgroundContainer = NodePath("Screen/BackgroundContainer")
-HudContainer = NodePath("Screen/HudContainer")
-MenuContainer = NodePath("Screen/MenuContainer")
-ForegroundContainer = NodePath("Screen/ForegroundContainer")
+MainSceneContainer = NodePath("MainSceneContainer")
 PlayerInfo = NodePath("PlayerInfo")
+
+[node name="MainSceneContainer" type="Node" parent="."]
+script = ExtResource("3_n1bll")
+
+[node name="MainMenu" parent="MainSceneContainer" instance=ExtResource("3_balju")]
 
 [node name="PlayerInfo" type="Node2D" parent="."]
 script = ExtResource("2_4yl4c")
-
-[node name="WorldContainer" type="Node2D" parent="."]
-script = ExtResource("3_n1bll")
-
-[node name="Screen" type="CanvasLayer" parent="."]
-
-[node name="BackgroundContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("3_n1bll")
-
-[node name="HudContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("3_n1bll")
-
-[node name="MenuContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("3_n1bll")
-
-[node name="ForegroundContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("3_n1bll")
