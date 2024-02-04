@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=3 uid="uid://b63edjeq18obm"]
+
+[ext_resource type="Script" path="res://Scenes/Root/Root.cs" id="1_lyqs7"]
+[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.tscn" id="2_642j6"]
+[ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="3_4kgkm"]
+[ext_resource type="Script" path="res://Scripts/KludgeBox/Net/Network.cs" id="4_ymr1a"]
+[ext_resource type="PackedScene" uid="uid://dgu67x4aam3po" path="res://Scenes/Game/Game.tscn" id="5_o4my6"]
+
+[sub_resource type="Environment" id="Environment_hp6r4"]
+background_mode = 3
+glow_enabled = true
+glow_bloom = 0.72
+glow_blend_mode = 0
+glow_hdr_threshold = 0.0
+
+[node name="Root" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Game")]
+script = ExtResource("1_lyqs7")
+PackedScenes = NodePath("PackedScenesContainer")
+Game = NodePath("Game")
+
+[node name="PackedScenesContainer" parent="." instance=ExtResource("2_642j6")]
+
+[node name="Audio2D" type="Node2D" parent="."]
+script = ExtResource("3_4kgkm")
+
+[node name="Network" type="Node" parent="."]
+script = ExtResource("4_ymr1a")
+
+[node name="Game" parent="." instance=ExtResource("5_o4my6")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hp6r4")
