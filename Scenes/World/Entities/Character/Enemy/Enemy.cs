@@ -58,7 +58,7 @@ public partial class Enemy : Character
 	private bool CanShoot()
 	{
 		var collider = RayCast.GetCollider();
-		if (collider is Character chara)
+		if (collider is Player chara)
 		{
 			return true;
 		}
