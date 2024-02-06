@@ -8,11 +8,33 @@ namespace KludgeBox.Godot;
 [GlobalClass]
 public partial class Audio2D : Node2D
 {
-	private static Audio2D _instance;
-	public override void _Ready()
+	
+	private static Audio2D Instance
 	{
-		_instance = this;
+		get
+		{
+			if (_instance == null)
+			{
+				// Check if we were loaded via Autoload
+				_instance = ((SceneTree)Engine.GetMainLoop()).Root.GetNodeOrNull<Audio2D>(typeof(Audio2D).Name);
+				if (_instance == null)
+				{
+					// Instantiate to root at runtime
+					_instance = new Audio2D();
+					_instance.Name = typeof(Audio2D).Name;
+					_instance.CallDeferred(nameof(InitGlobalInstance));
+				}
+			}
+			return _instance;
+		}
 	}
+	
+	private void InitGlobalInstance()
+	{
+		((SceneTree)Engine.GetMainLoop()).Root.AddChild(this);
+	}
+	
+	private static Audio2D _instance;
 
 	private static HashSet<AudioStreamPlayer> _uiSounds = new HashSet<AudioStreamPlayer>();
     private static HashSet<AudioStreamPlayer2D> _worldSounds = new HashSet<AudioStreamPlayer2D>();
@@ -115,7 +137,7 @@ public partial class Audio2D : Node2D
 		stream.Autoplay = true;
 
 		CurrentMusic = stream;
-		_instance.AddChild(stream);
+		Instance.AddChild(stream);
 		return stream;
 	}
 
@@ -144,7 +166,7 @@ public partial class Audio2D : Node2D
 		};
 		stream.Autoplay = true;
 
-		_instance.AddChild(stream);
+		Instance.AddChild(stream);
 		return stream;
 	}
 
@@ -160,7 +182,7 @@ public partial class Audio2D : Node2D
 
 		stream.Position = position;
 		stream.Autoplay = true;
-		_instance.AddChild(stream);
+		Instance.AddChild(stream);
 		return stream;
 	}
 

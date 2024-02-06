@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=6 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://Scenes/Root/Root.cs" id="1_lyqs7"]
 [ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.tscn" id="2_642j6"]
-[ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Audio2D.cs" id="3_4kgkm"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Net/Network.cs" id="4_ymr1a"]
 [ext_resource type="PackedScene" uid="uid://dgu67x4aam3po" path="res://Scenes/Game/Game.tscn" id="5_o4my6"]
 
@@ -19,9 +18,6 @@ PackedScenes = NodePath("PackedScenesContainer")
 Game = NodePath("Game")
 
 [node name="PackedScenesContainer" parent="." instance=ExtResource("2_642j6")]
-
-[node name="Audio2D" type="Node2D" parent="."]
-script = ExtResource("3_4kgkm")
 
 [node name="Network" type="Node" parent="."]
 script = ExtResource("4_ymr1a")
