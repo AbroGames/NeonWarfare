@@ -60,17 +60,42 @@ public partial class BattleWorld : Node2D
 		
 		for (int i = 0; i < OneWaveEnemyCount + WaveNumber * OneWaveEnemyCountDelta; i++)
 		{
-			CreateEnemyRandomPosAroundCharacter(Player);
+			CreateEnemyAroundCharacter(Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
 		}
+
+		if (WaveNumber % 5 == 0)
+		{
+			for (int i = 0; i < WaveNumber / 5; i++)
+			{
+				CreateBossEnemyAroundCharacter(Player, Rand.Double * Mathf.Pi * 2, Rand.Range(2600, 3000));
+			}
+		}
+
+
 		Audio2D.PlayUiSound(Sfx.Bass, 0.1f); // dat bass on start
 	}
 
-	private void CreateEnemyRandomPosAroundCharacter(Character character)
+	private void CreateEnemyAroundCharacter(Character character, double angle, double distance)
 	{
-		CreateEnemyAroundCharacter(character, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
+		var enemy = genEnemyAroundCharacter(character, angle, distance);
+		AddChild(enemy);
+		Enemies.Add(enemy);
+	}
+	
+	private void CreateBossEnemyAroundCharacter(Character character, double angle, double distance)
+	{
+		var enemy = genEnemyAroundCharacter(character, angle, distance);
+		var scale = 1 + 0.1 * WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
+		enemy.Transform = enemy.Transform.ScaledLocal(Vec(scale));  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
+		enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.
+		enemy.Damage *= 5 * scale; //5 волна = *5, 10 волна = *10, 20 волна = *15 ... и т.д.
+		enemy.MovementSpeed *= scale; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
+		enemy.BaseXp *= (int) (100 * scale); //5 волна = 150, 10 волна = 200, 20 волна = 300 ... и т.д.
+		AddChild(enemy);
+		Enemies.Add(enemy);
 	}
 
-	private void CreateEnemyAroundCharacter(Character character, double angle, double distance)
+	private Enemy genEnemyAroundCharacter(Character character, double angle, double distance)
 	{
 		var targetPositionDelta = Vector2.FromAngle(angle) * distance;
 		var targetPosition = character.Position + targetPositionDelta;
@@ -78,8 +103,9 @@ public partial class BattleWorld : Node2D
 		var enemy = Root.Instance.PackedScenes.World.Enemy.Instantiate() as Enemy;
 		enemy.Position = targetPosition;
 		enemy.Rotation = angle - Math.PI / 2;
-		enemy.Target = character as Character;
-		AddChild(enemy);
-		Enemies.Add(enemy);
+		enemy.Target = character;
+		enemy.Hp = 250;
+		enemy.MovementSpeed = 200; // in pixels/sec
+		return enemy;
 	}
 }

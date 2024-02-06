@@ -8,16 +8,14 @@ public partial class Enemy : Character
 	private RayCast2D RayCast => GetNode("RayCast") as RayCast2D;
 	
 	public Character Target;
+	public double Damage = 1000;
 	
 	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	// Called when the node enters the scene tree for the first time.
 	public override void Init()
 	{
 		_regenHpSpeed = 0;
-		_movementSpeed = 200; // in pixels/sec
-		Hp = 250;
 		MaxHp = Hp;
-		_movementSpeed *= 0.95;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -36,7 +34,7 @@ public partial class Enemy : Character
 	{
 		var directionToMove = Vector2.FromAngle(Rotation - Mathf.Pi / 2);
 		// Переместить и првоерить физику
-		MoveAndCollide(directionToMove * _movementSpeed * delta);
+		MoveAndCollide(directionToMove * MovementSpeed * delta);
 	}
 	
 	private double GetAngleToTarget()
@@ -75,6 +73,11 @@ public partial class Enemy : Character
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.ENEMY;
 		bullet.Source = this;
+		bullet.RemainingDamage = Damage;
+		if (Damage > 1000)
+		{
+			bullet.Transform = bullet.Transform.ScaledLocal(Vec(Math.Log(Damage/1000)));
+		}
 		
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 0.7f);
 		GetParent().AddChild(bullet);

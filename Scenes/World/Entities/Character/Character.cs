@@ -16,9 +16,9 @@ public partial class Character : CharacterBody2D
 	protected Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	protected Vector2 SmoothedPosition => _smoothedPos;
 	protected double HitFlash = 0;
-	
-	
-	protected double _movementSpeed = 250; // in pixels/sec
+
+
+	public double MovementSpeed { get; set; } = 250; // in pixels/sec
 	protected double _rotationSpeed = 300; // in degree/sec
 	protected double _regenHpSpeed = 500; // hp/sec
 	protected double _attackSpeed = 1; // attack/sec

@@ -56,7 +56,7 @@ public partial class Player : Character
 		PrimaryDamage *= 1.1;
 		SecondaryDamage *= 1.5;
 
-		_movementSpeed *= 1.05;
+		MovementSpeed *= 1.05;
 		
 		_attackSpeed *= 1.1;
 		_secondaryCd.Duration /= 1.1;
@@ -103,7 +103,7 @@ public partial class Player : Character
 	{
 		var movementInput = GetInput();
 		// Переместить и првоерить физику
-		MoveAndCollide(movementInput * _movementSpeed * delta);
+		MoveAndCollide(movementInput * MovementSpeed * delta);
 	}
 	
 	private Vector2 GetInput()
