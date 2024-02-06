@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cpeupva8xuj3x"]
+[gd_scene load_steps=6 format=3 uid="uid://cpeupva8xuj3x"]
 
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character/Character.tscn" id="1_btvsj"]
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Enemy/Enemy.cs" id="2_00irn"]
@@ -11,12 +11,19 @@ shader_parameter/colorMaskFactor = 0.0
 shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
 shader_parameter/grayscaleFactor = 0.0
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_6epl0"]
+resource_local_to_scene = true
+radius = 27.0
+
 [node name="Enemy" instance=ExtResource("1_btvsj")]
 script = ExtResource("2_00irn")
 
 [node name="Sprite2D" parent="." index="0"]
 modulate = Color(1, 0, 0, 1)
 material = SubResource("ShaderMaterial_o5gow")
+
+[node name="CollisionShape2D" parent="." index="1"]
+shape = SubResource("CircleShape2D_6epl0")
 
 [node name="RayCast" type="RayCast2D" parent="." index="2"]
 target_position = Vector2(0, -500)

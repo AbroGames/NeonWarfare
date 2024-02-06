@@ -12,7 +12,8 @@ shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
 shader_parameter/grayscaleFactor = 0.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rfcs5"]
-radius = 17.0
+resource_local_to_scene = true
+radius = 18.0
 
 [node name="Character" type="CharacterBody2D"]
 script = ExtResource("1_y827s")
