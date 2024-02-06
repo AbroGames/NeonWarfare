@@ -9,7 +9,7 @@ public partial class BattleWorld : Node2D
 
 	private const int OneWaveEnemyCount = 15; 
 	private const int OneWaveEnemyCountDelta = 5; 
-	private const int WaveTimeout = 6;
+	private const int WaveTimeout = 12;
 
 	public Player Player;
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
