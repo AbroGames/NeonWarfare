@@ -42,7 +42,7 @@ public partial class Character : CharacterBody2D
 				.Instantiate() as DamageLabel;
 		
 		dmgLabel.WithDamage(damage);
-		dmgLabel.GlobalPosition = GlobalPosition;
+		dmgLabel.Position = damage.Position;
 		GetParent().AddChild(dmgLabel);
 	}
 	

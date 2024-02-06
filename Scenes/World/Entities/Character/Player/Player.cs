@@ -120,20 +120,27 @@ public partial class Player : Character
 	{
 		if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
 		
-		// Создание снаряда
-		Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
-		// Установка начальной позиции снаряда
-		bullet.GlobalPosition = GlobalPosition;
-		// Установка направления движения снаряда
-		var spread = Mathf.DegToRad(6);
-		bullet.Rotation = Rotation + Rand.Range(-spread, spread);
-		bullet.Author = Bullet.AuthorEnum.PLAYER;
-		bullet.Speed *= 2;
-		bullet.RemainingDistance /= 2;
-		bullet.RemainingDamage = 50;
-		var modulate = bullet.GetNode<Sprite2D>("Sprite2D").Modulate;
-		bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 0.5f);
-		GetParent().AddChild(bullet);
+		var bulletsCount = 5;
+		var spread = Mathf.DegToRad(18);
+		var speedSpread = 0.1;
+		
+		for (int i = 0; i < 5; i++)
+		{
+			// Создание снаряда
+			Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+			// Установка начальной позиции снаряда
+			bullet.GlobalPosition = GlobalPosition;
+			// Установка направления движения снаряда
+			bullet.Rotation = Rotation + Rand.Range(-spread, spread);
+			bullet.Author = Bullet.AuthorEnum.PLAYER;
+			bullet.Speed = bullet.Speed * 2 + Rand.Range(-bullet.Speed * speedSpread, bullet.Speed * speedSpread);
+			bullet.RemainingDistance /= 2;
+			bullet.RemainingDamage = 5;
+			var modulate = bullet.GetNode<Sprite2D>("Sprite2D").Modulate;
+			bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);
+			GetParent().AddChild(bullet);
+		}
+		
 	}
 }

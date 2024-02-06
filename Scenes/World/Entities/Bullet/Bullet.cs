@@ -45,6 +45,7 @@ public partial class Bullet : Node2D
 				{
 					ApplyDamage(enemy, _colors[AuthorEnum.ENEMY]);
 					Audio2D.PlaySoundAt(Sfx.Hit, body.Position);
+					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * 0.025;
 				}
 			}
 			
@@ -64,7 +65,7 @@ public partial class Bullet : Node2D
 			return;
 		
 		var hp = to.Hp;
-		to.TakeDamage(new Damage(Author, color, RemainingDamage));
+		to.TakeDamage(new Damage(Author, color, RemainingDamage, Position));
 		RemainingDamage -= hp;
 		
 
