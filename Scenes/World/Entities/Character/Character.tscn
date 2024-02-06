@@ -4,7 +4,8 @@
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_qd6n2"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="4_vcssn"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qkp5b"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fxydm"]
+resource_local_to_scene = true
 shader = ExtResource("3_qd6n2")
 shader_parameter/colorMaskFactor = 0.0
 shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
@@ -18,7 +19,7 @@ script = ExtResource("1_y827s")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0, 1, 1, 1)
-material = SubResource("ShaderMaterial_qkp5b")
+material = SubResource("ShaderMaterial_fxydm")
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("4_vcssn")
 
