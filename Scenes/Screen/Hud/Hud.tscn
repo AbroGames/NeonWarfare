@@ -1,8 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://dlelsat4bmqw3"]
+[gd_scene load_steps=6 format=3 uid="uid://dlelsat4bmqw3"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_4xfol"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_ypiqw"]
 
-[node name="Hud" type="Control" node_paths=PackedStringArray("Hp", "Waves", "Enemies")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cra4"]
+bg_color = Color(0, 0.180392, 0.211765, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ucm43"]
+bg_color = Color(0, 0.462745, 0.419608, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_chnxn"]
+font = ExtResource("2_ypiqw")
+font_size = 14
+
+[node name="Hud" type="Control" node_paths=PackedStringArray("Xp", "XpLabel", "Hp", "Waves", "Enemies", "Level")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,20 +21,63 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4xfol")
+Xp = NodePath("LeftUpInfo/Xp")
+XpLabel = NodePath("LeftUpInfo/Xp/Label")
 Hp = NodePath("LeftUpInfo/Hp")
 Waves = NodePath("LeftUpInfo/Waves")
 Enemies = NodePath("LeftUpInfo/Enemies")
+Level = NodePath("LeftUpInfo/Level")
 
 [node name="LeftUpInfo" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Xp" type="ProgressBar" parent="LeftUpInfo"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_styles/background = SubResource("StyleBoxFlat_4cra4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ucm43")
+max_value = 1.0
+step = 0.001
+value = 0.5
+show_percentage = false
+
+[node name="Label" type="Label" parent="LeftUpInfo/Xp"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "SAMPLE_TEXT 101"
+label_settings = SubResource("LabelSettings_chnxn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Level" type="Label" parent="LeftUpInfo"]
+layout_mode = 2
+text = "SAMPLE_TEXT 101"
+label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="Hp" type="Label" parent="LeftUpInfo"]
 layout_mode = 2
+text = "SAMPLE_TEXT 101"
+label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="Waves" type="Label" parent="LeftUpInfo"]
 layout_mode = 2
+text = "SAMPLE_TEXT 101"
+label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="Enemies" type="Label" parent="LeftUpInfo"]
 layout_mode = 2
+text = "SAMPLE_TEXT 101"
+label_settings = SubResource("LabelSettings_chnxn")

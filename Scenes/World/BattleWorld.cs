@@ -39,6 +39,7 @@ public partial class BattleWorld : Node2D
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 		AddChild(Player); // must be here to draw over the floor
+		Audio2D.PlayMusic(Music.WorldBgm);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

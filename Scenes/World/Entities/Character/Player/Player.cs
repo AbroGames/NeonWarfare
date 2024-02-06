@@ -7,6 +7,17 @@ using MicroSurvivors;
 
 public partial class Player : Character
 {
+	public static double RequiredXpLevelFactor { get; set; } = 1.5;
+	public static int BasicRequiredXp { get; set; } = 10;
+	public int Xp { get; protected set; }
+	public int RequiredXp => (int)(BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, Level));
+
+	public int Level { get; protected set; } = 1;
+
+	public double PrimaryDamage { get; protected set; } = 1000;
+	public double SecondaryDamage { get; protected set; } = 5;
+	
+	
 	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
 
 	private PlayerCamera _camera;
@@ -26,6 +37,41 @@ public partial class Player : Character
 		};
 	}
 
+	public void AddXp(int amount)
+	{
+		Xp += amount;
+		if (Xp >= RequiredXp)
+			LevelUp();
+	}
+	
+	protected void LevelUp()
+	{
+		Xp -= RequiredXp;
+		Level++;
+		
+		MaxHp *= 1.1;
+		_regenHpSpeed *= 1.1;
+		Hp = MaxHp;
+
+		PrimaryDamage *= 1.1;
+		SecondaryDamage *= 1.5;
+
+		_movementSpeed *= 1.05;
+		
+		_attackSpeed *= 1.1;
+		_secondaryCd.Duration /= 1.1;
+		
+		
+		Audio2D.PlaySoundOn(Sfx.LevelUp, this, 1f);
+		var lvlUpLabel =
+			GD.Load<PackedScene>("res://Scenes/World/Entities/DamageLabel/FloatingLabel.tscn")
+				.Instantiate() as FloatingLabel;
+		
+		lvlUpLabel.Configure($"Level up!\n({Level-1} -> {Level})", Colors.Gold, 1.3);
+		lvlUpLabel.Position = Position - Vec(0, 100);
+		GetParent().AddChild(lvlUpLabel);
+	}
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void Update(double delta)
 	{
@@ -33,7 +79,7 @@ public partial class Player : Character
 		AttackPrimary(delta);
 		ShieldSprite.GlobalPosition = SmoothedPosition;
 
-		Hp += (int) (_regenHpSpeed * delta);
+		Hp += _regenHpSpeed * delta;
 		Hp = Math.Min(Hp, MaxHp);
 
 		_secondaryCd.Update(delta);
@@ -111,7 +157,9 @@ public partial class Player : Character
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.PLAYER;
 		bullet.Speed *= 3;
+		bullet.RemainingDamage = PrimaryDamage;
 		bullet.GetNode<Sprite2D>("Sprite2D").Scale *= 2;
+		bullet.Source = this;
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f);
 		GetParent().AddChild(bullet);
 	}
@@ -136,9 +184,10 @@ public partial class Player : Character
 			bullet.Author = Bullet.AuthorEnum.PLAYER;
 			bullet.Speed = bullet.Speed * 2 + Rand.Range(-bullet.Speed * speedSpread, bullet.Speed * speedSpread);
 			bullet.RemainingDistance /= 2;
-			bullet.RemainingDamage = 5;
+			bullet.RemainingDamage = SecondaryDamage;
 			var modulate = bullet.GetNode<Sprite2D>("Sprite2D").Modulate;
 			bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);
+			bullet.Source = this;
 			GetParent().AddChild(bullet);
 		}
 		

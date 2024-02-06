@@ -74,6 +74,7 @@ public partial class Enemy : Character
 		// Установка направления движения снаряда
 		bullet.Rotation = Rotation;
 		bullet.Author = Bullet.AuthorEnum.ENEMY;
+		bullet.Source = this;
 		
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 0.7f);
 		GetParent().AddChild(bullet);

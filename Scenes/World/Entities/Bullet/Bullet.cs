@@ -12,8 +12,9 @@ public partial class Bullet : Node2D
 	[Export] public double Speed = 700; //pixels/sec
 	[Export] public double RemainingDistance = 2000; //pixels
 
+	public Character Source { get; set; }
 	public AuthorEnum Author;
-	public int RemainingDamage = 1000;
+	public double RemainingDamage = 1000;
 	
 	private Dictionary<AuthorEnum, Color> _colors = new Dictionary<AuthorEnum, Color>()
 	{
@@ -65,7 +66,7 @@ public partial class Bullet : Node2D
 			return;
 		
 		var hp = to.Hp;
-		to.TakeDamage(new Damage(Author, color, RemainingDamage, Position));
+		to.TakeDamage(new Damage(Author, color, RemainingDamage, Position, Source));
 		RemainingDamage -= hp;
 		
 

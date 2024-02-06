@@ -3,7 +3,7 @@ using System;
 using KludgeBox;
 using Scenes.World;
 
-public partial class DamageLabel : Node2D
+public partial class FloatingLabel : Node2D
 {
 	private double _riseDist = 100;
 	private double _targetTime = 1;
@@ -22,13 +22,14 @@ public partial class DamageLabel : Node2D
 		Rotation += Mathf.DegToRad(Rand.Range(-rotation, rotation));
 	}
 
-	public void WithDamage(Damage damage)
+	public void Configure(string text, Color color, double scale)
 	{
 		var label = GetNode("Label") as Label;
 		var settings = label.LabelSettings;
 		
-		label.Text = $"{damage.Amount}";
-		settings.FontColor = damage.LabelColor.Darkened(0.6f);
+		label.Text = text;
+		settings.FontColor = color;
+		settings.FontSize = (int)(settings.FontSize * scale);
 	}
 
 	/// <inheritdoc />

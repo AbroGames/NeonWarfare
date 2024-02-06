@@ -9,8 +9,10 @@ using Scenes.World;
 public partial class Character : CharacterBody2D
 {
 	public event Action Died;
-	public int MaxHp { get; protected set; } = 10000;
-	public int Hp { get; set; } = 10000;
+
+	public int BaseXp { get; set; } = 1;
+	public double MaxHp { get; protected set; } = 10000;
+	public double Hp { get; set; } = 10000;
 	protected Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	protected Vector2 SmoothedPosition => _smoothedPos;
 	protected double HitFlash = 0;
@@ -21,6 +23,8 @@ public partial class Character : CharacterBody2D
 	protected double _regenHpSpeed = 500; // hp/sec
 	protected double _attackSpeed = 1; // attack/sec
 	protected double _secToNextAttack = 0;
+	
+	
 	
 	private Vector2 _smoothedPos;
 
@@ -34,14 +38,18 @@ public partial class Character : CharacterBody2D
 		if (Hp <= 0)
 		{
 			Died?.Invoke();
+			if (damage.Source is Player ply)
+			{
+				ply.AddXp(BaseXp);
+			}
 			QueueFree();
 		}
 		
 		var dmgLabel =
-			GD.Load<PackedScene>("res://Scenes/World/Entities/DamageLabel/DamageLabel.tscn")
-				.Instantiate() as DamageLabel;
+			GD.Load<PackedScene>("res://Scenes/World/Entities/DamageLabel/FloatingLabel.tscn")
+				.Instantiate() as FloatingLabel;
 		
-		dmgLabel.WithDamage(damage);
+		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 75), 0.8));
 		dmgLabel.Position = damage.Position;
 		GetParent().AddChild(dmgLabel);
 	}
