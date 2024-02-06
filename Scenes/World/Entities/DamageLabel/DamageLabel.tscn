@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfv2jfwdn10pn"]
+
+[ext_resource type="Script" path="res://Scenes/World/Entities/DamageLabel/DamageLabel.cs" id="1_5d6k8"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="1_arth8"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_m7m7t"]
+resource_local_to_scene = true
+font = ExtResource("1_arth8")
+font_size = 22
+font_color = Color(1, 0, 1, 1)
+outline_size = 10
+outline_color = Color(0.572549, 0.572549, 0.572549, 1)
+
+[node name="DamageLabel" type="Node2D"]
+script = ExtResource("1_5d6k8")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -81.5
+offset_top = -11.5
+offset_right = 81.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "88005553535"
+label_settings = SubResource("LabelSettings_m7m7t")
+horizontal_alignment = 1
+vertical_alignment = 1

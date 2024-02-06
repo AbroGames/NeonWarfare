@@ -4,33 +4,27 @@ using Game.Content;
 
 public partial class Enemy : Character
 {
-	
-	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
-	private double _movementSpeed = 200; // in pixels/sec
-	public int Hp = 250;
-	private double _attackSpeed = 1; // attack/sec
 
 	private RayCast2D RayCast => GetNode("RayCast") as RayCast2D;
 	
 	public Character Target;
-	private double _secToNextAttack = 0;
 	
 	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public override void Init()
 	{
+		_regenHpSpeed = 0;
+		_movementSpeed = 200; // in pixels/sec
+		Hp = 250;
+		MaxHp = Hp;
+		_movementSpeed *= 0.95;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override void Update(double delta)
 	{
 		Rotation = GetAngleToTarget() + Mathf.Pi / 2;
 		
-		// flash effect on hit processing
-		HitFlash -= 0.02;
-		HitFlash = Mathf.Max(HitFlash, 0);
-		var shader = Sprite.Material as ShaderMaterial;
-		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 		
 		if (CanShoot())
 		{
@@ -38,7 +32,7 @@ public partial class Enemy : Character
 		}
 	}
 	
-	public override void _PhysicsProcess(double delta)
+	public override void PhysicsUpdate(double delta)
 	{
 		var directionToMove = Vector2.FromAngle(Rotation - Mathf.Pi / 2);
 		// Переместить и првоерить физику

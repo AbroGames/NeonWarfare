@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Game.Content;
 using KludgeBox;
+using Scenes.World;
 
 public partial class Bullet : Node2D
 {
@@ -14,17 +15,18 @@ public partial class Bullet : Node2D
 	public AuthorEnum Author;
 	public int RemainingDamage = 1000;
 	
+	private Dictionary<AuthorEnum, Color> _colors = new Dictionary<AuthorEnum, Color>()
+	{
+		{ AuthorEnum.PLAYER, new Color(0, 1, 1)},
+		{ AuthorEnum.ALLY, new Color(0, 1, 0)},
+		{ AuthorEnum.ENEMY, new Color(1, 0, 0)}
+			
+	};
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Dictionary<AuthorEnum, Color> colors = new Dictionary<AuthorEnum, Color>()
-		{
-			{ AuthorEnum.PLAYER, new Color(0, 1, 1)},
-			{ AuthorEnum.ALLY, new Color(0, 1, 0)},
-			{ AuthorEnum.ENEMY, new Color(1, 0, 0)}
-			
-		};
-		GetNode<Sprite2D>("Sprite2D").Modulate = colors[Author];
+		
+		GetNode<Sprite2D>("Sprite2D").Modulate = _colors[Author];
 		
 		GetNode<Area2D>("Area2D").BodyEntered += body =>
 		{
@@ -32,22 +34,8 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
-					Audio2D.PlaySoundAt(Sfx.FuturisticHit, player.Position);
-					player.HitFlash = 1;
-					if (player.Hp >= RemainingDamage)
-					{
-						player.Hp -= RemainingDamage;
-						QueueFree();
-					}
-					else
-					{
-						RemainingDamage -= player.Hp;
-						player.Hp = 0;
-						player.QueueFree();
-						
-						var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
-						Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
-					}
+					ApplyDamage(player, _colors[AuthorEnum.PLAYER]);
+					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position);
 				}
 			}
 			
@@ -55,19 +43,8 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.ENEMY)
 				{
-					Audio2D.PlaySoundAt(Sfx.Hit, enemy.Position);
-					enemy.HitFlash = 1;
-					if (enemy.Hp >= RemainingDamage)
-					{
-						enemy.Hp -= RemainingDamage;
-						QueueFree();
-					}
-					else
-					{
-						RemainingDamage -= enemy.Hp;
-						enemy.Hp = 0;
-						enemy.QueueFree();
-					}
+					ApplyDamage(enemy, _colors[AuthorEnum.ENEMY]);
+					Audio2D.PlaySoundAt(Sfx.Hit, body.Position);
 				}
 			}
 			
@@ -79,6 +56,22 @@ public partial class Bullet : Node2D
 				}
 			}
 		};
+	}
+
+	private void ApplyDamage(Character to, Color color)
+	{
+		if (RemainingDamage <= 0)
+			return;
+		
+		var hp = to.Hp;
+		to.TakeDamage(new Damage(Author, color, RemainingDamage));
+		RemainingDamage -= hp;
+		
+
+		if (RemainingDamage <= 0)
+		{
+			QueueFree();
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

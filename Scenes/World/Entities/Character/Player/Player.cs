@@ -7,52 +7,38 @@ using MicroSurvivors;
 
 public partial class Player : Character
 {
-	
-	private double _movementSpeed = 250; // in pixels/sec
-	private double _rotationSpeed = 300; // in degree/sec
-	private double _attackSpeed = 3; // attack/sec
-	private double _regenHpSpeed = 500; // hp/sec
-
-	public int MaxHp { get; private set; } = 10000;
-	public int Hp { get; set; } = 10000;
-
-	private double _secToNextAttack = 0;
-	private Vector2 _spritePos;
-	public double HitFlash = 0; // needs to be public since all hit logic is in Bullet class
-
-	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
 
 	private PlayerCamera _camera;
 
 	private Cooldown _secondaryCd = new(0.1);
 	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public override void Init()
 	{
-		_spritePos = GlobalPosition;
 		_camera = GetParent().GetChild<PlayerCamera>();
 		_secondaryCd.Ready += AttackSecondary;
+
+		_attackSpeed = 3;
+		Died += () =>
+		{
+			var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
+			Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+		};
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override void Update(double delta)
 	{
 		RotateToMouse(delta);
 		AttackPrimary(delta);
-		MoveSprite(delta);
+		ShieldSprite.GlobalPosition = SmoothedPosition;
 
 		Hp += (int) (_regenHpSpeed * delta);
 		Hp = Math.Min(Hp, MaxHp);
 
 		_secondaryCd.Update(delta);
-		
-		// flash effect on hit processing
-		HitFlash -= 0.02;
-		HitFlash = Mathf.Max(HitFlash, 0);
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
-		var shader = Sprite.Material as ShaderMaterial;
-		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 		
 		// Camera shift processing
 		if (Input.IsActionPressed(Keys.CameraShift))
@@ -67,7 +53,7 @@ public partial class Player : Character
 		}
 	}
 	
-	public override void _PhysicsProcess(double delta)
+	public override void PhysicsUpdate(double delta)
 	{
 		var movementInput = GetInput();
 		// Переместить и првоерить физику
@@ -149,17 +135,5 @@ public partial class Player : Character
 		bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 0.5f);
 		GetParent().AddChild(bullet);
-	}
-
-	private void MoveSprite(double delta)
-	{
-		var requiredMovement = GlobalPosition - _spritePos;
-
-		var stepFactor = delta / (1.0 / 60);
-		var smoothingFactor = 0.5;
-		_spritePos += requiredMovement * stepFactor * smoothingFactor;
-		
-		Sprite.GlobalPosition = _spritePos;
-		ShieldSprite.GlobalPosition = _spritePos;
 	}
 }
