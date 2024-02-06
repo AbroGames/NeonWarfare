@@ -67,7 +67,7 @@ public partial class Player : Character
 			GD.Load<PackedScene>("res://Scenes/World/Entities/DamageLabel/FloatingLabel.tscn")
 				.Instantiate() as FloatingLabel;
 		
-		lvlUpLabel.Configure($"Level up!\n({Level-1} -> {Level})", Colors.Gold, 1.3);
+		lvlUpLabel.Configure($"Level up!\n({Level-1} -> {Level})", new Color(0, 1, 1), 1.3);
 		lvlUpLabel.Position = Position - Vec(0, 100);
 		GetParent().AddChild(lvlUpLabel);
 	}

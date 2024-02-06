@@ -35,7 +35,7 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
-					ApplyDamage(player, _colors[AuthorEnum.PLAYER]);
+					ApplyDamage(player, new Color(0, 0, 0));
 					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position);
 				}
 			}
@@ -44,7 +44,7 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.ENEMY)
 				{
-					ApplyDamage(enemy, _colors[AuthorEnum.ENEMY]);
+					ApplyDamage(enemy,new Color(1, 0, 0));
 					Audio2D.PlaySoundAt(Sfx.Hit, body.Position);
 					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * 0.025;
 				}
