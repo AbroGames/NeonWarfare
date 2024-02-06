@@ -39,8 +39,6 @@ public partial class BattleWorld : Node2D
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 		AddChild(Player); // must be here to draw over the floor
-		
-		Audio2D.PlaySoundAt(Sfx.Bass, Player.Position, 0.1f); // dat bass on start
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -63,6 +61,7 @@ public partial class BattleWorld : Node2D
 		{
 			CreateEnemyRandomPosAroundCharacter(Player);
 		}
+		Audio2D.PlayUiSound(Sfx.Bass, 0.1f); // dat bass on start
 	}
 
 	private void CreateEnemyRandomPosAroundCharacter(Character character)
