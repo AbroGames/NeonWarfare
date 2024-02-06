@@ -127,6 +127,10 @@ namespace Game.Content
 			$"{SoundsDir}/normal/misc/throw{{0}}.wav".BatchNumber(1, 5)
 		);
 
+		public static RandomPicker<string> LevelUp { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/misc/level_up.wav"
+		);
+
 		
 		
 		// weapons
