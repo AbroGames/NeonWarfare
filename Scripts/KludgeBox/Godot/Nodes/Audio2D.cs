@@ -120,12 +120,12 @@ public partial class Audio2D : Node2D
         get => AudioServer.GetBusVolumeDb(SoundsIndex);
         set => AudioServer.SetBusVolumeDb(SoundsIndex, value);
     }
-    
+
     /// <summary>
-	/// Plays music at the specified path.
-	/// </summary>
-	/// <param name="path">Path to the music resource.</param>
-	public static AudioStreamPlayer PlayMusic(string path)
+    /// Plays music at the specified path.
+    /// </summary>
+    /// <param name="path">Path to the music resource.</param>
+    public static AudioStreamPlayer PlayMusic(string path, float volume = 1f)
 	{
 		if (CurrentMusic.IsValid())
 		{
@@ -135,6 +135,7 @@ public partial class Audio2D : Node2D
 		stream.Stream = GD.Load<AudioStream>(path);
 		stream.Bus = MusicBus;
 		stream.Autoplay = true;
+		stream.VolumeDb = Mathf.LinearToDb(volume);
 
 		CurrentMusic = stream;
 		Instance.AddChild(stream);
@@ -217,6 +218,12 @@ public partial class Audio2D : Node2D
 
 		foreach (var stream in _worldSounds)
 			stream.QueueFree();
+	}
+
+	public static void StopMusic()
+	{
+		CurrentMusic.QueueFree();
+		CurrentMusic = null;
 	}
 
 	/// <summary>

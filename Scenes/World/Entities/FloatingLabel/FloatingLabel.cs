@@ -52,4 +52,16 @@ public partial class FloatingLabel : Node2D
 			QueueFree();
 		}
 	}
+
+	public static FloatingLabel Create()
+	{
+		return GD.Load<PackedScene>("res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn")
+			.Instantiate() as FloatingLabel;
+	}
+	public static FloatingLabel Create(string text, Color color, double scale)
+	{
+		var label = Create();
+		label.Configure(text, color, scale);
+		return label;
+	}
 }

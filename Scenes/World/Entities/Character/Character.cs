@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using Game.Content;
 using Godot;
 using KludgeBox;
@@ -31,24 +32,49 @@ public partial class Character : CharacterBody2D
 
 	public void TakeDamage(Damage damage)
 	{
+		if (Hp <= 0) return;
+		
 		HitFlash = 1;
 		var appliedDamage = Mathf.Min(Hp, damage.Amount);
 		Hp -= damage.Amount;
 		
 		if (Hp <= 0)
 		{
-			Died?.Invoke();
-			if (damage.Source is Player ply)
+			if (damage.Source is Player ply && this is Enemy enemy)
 			{
-				ply.AddXp(BaseXp);
+				
+				if (enemy.IsBoss)
+				{
+					int orbs = 10;
+					int xpPerOrb = BaseXp / orbs;
+					for (int i = 0; i < orbs; i++)
+					{
+						var orb = XpOrb.Create();
+						orb.Position = Position;
+						orb.Configure(ply, xpPerOrb);
+						GetParent().AddChild(orb);
+					}
+				}
+				else
+				{
+					var orb = XpOrb.Create();
+					orb.Position = Position;
+					orb.Configure(ply, BaseXp);
+					GetParent().AddChild(orb);
+				}
 			}
+			
+			Died?.Invoke();
+
+			Audio2D.PlaySoundAt(Sfx.FuturisticCrack, GlobalPosition);
 			QueueFree();
 		}
 		
-		var dmgLabel =
-			GD.Load<PackedScene>("res://Scenes/World/Entities/DamageLabel/FloatingLabel.tscn")
-				.Instantiate() as FloatingLabel;
+		var dmgLabel = FloatingLabel.Create();
 		
+		if(appliedDamage <= 0)
+			Log.Debug(appliedDamage.ToString("N0"));
+			
 		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 75), 0.8));
 		dmgLabel.Position = damage.Position;
 		GetParent().AddChild(dmgLabel);

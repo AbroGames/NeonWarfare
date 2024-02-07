@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmgxgxoergfj1"]
+
+[ext_resource type="Script" path="res://Scenes/World/Entities/XpOrb/XpOrb.cs" id="1_jldce"]
+[ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="1_uhk42"]
+[ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Trail.cs" id="2_b6ucg"]
+
+[node name="XpOrb" type="Node2D"]
+modulate = Color(0, 0.721569, 0.721569, 1)
+script = ExtResource("1_jldce")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.01, 0.01)
+texture = ExtResource("1_uhk42")
+
+[node name="Trail" type="Node2D" parent="."]
+script = ExtResource("2_b6ucg")
+SegmentsCount = 20
+StartWidth = 5.0
+EndWidth = 5.0
+Length = 0.25
+EndAlpha = 0.0

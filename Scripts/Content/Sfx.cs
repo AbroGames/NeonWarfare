@@ -15,6 +15,10 @@ namespace Game.Content
 			$"{SoundsDir}/normal/impact/hit_futuristic{{0}}.wav".BatchNumber(1, 4)
 		);
 
+		public static RandomPicker<string> FuturisticCrack { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/impact/futuristic_crack{{0}}.wav".BatchNumber(1, 5)
+		);
+
 		public static RandomPicker<string> Zap { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/impact/zap_impact{{0}}.wav".BatchNumber(1, 3)
 		);
@@ -27,7 +31,7 @@ namespace Game.Content
 			$"{SoundsDir}/normal/impact/horn_impact{{0}}.wav".BatchNumber(1, 3)
 		);
 
-		public static RandomPicker<string> DeepImpack { get; } = new RandomPicker<string>(
+		public static RandomPicker<string> DeepImpact { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/impact/deep_impact{{0}}.wav".BatchNumber(1, 4)
 		);
 
@@ -129,6 +133,10 @@ namespace Game.Content
 
 		public static RandomPicker<string> LevelUp { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/misc/level_up.wav"
+		);
+
+		public static RandomPicker<string> Beep { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/misc/beep.wav"
 		);
 
 		

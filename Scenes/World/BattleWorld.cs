@@ -6,6 +6,7 @@ using KludgeBox;
 
 public partial class BattleWorld : Node2D
 {
+	public event Action NewWave;
 
 	private const int OneWaveEnemyCount = 15; 
 	private const int OneWaveEnemyCountDelta = 5; 
@@ -39,7 +40,7 @@ public partial class BattleWorld : Node2D
 		ally.Position = Vec(600, 600);
 		AddChild(ally);
 		AddChild(Player); // must be here to draw over the floor
-		Audio2D.PlayMusic(Music.WorldBgm);
+		StartMusic();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -48,6 +49,12 @@ public partial class BattleWorld : Node2D
 		SpawnWave(delta);
 	}
 
+	public void StartMusic()
+	{
+		var music = Audio2D.PlayMusic(Music.WorldBgm, 0.7f);
+		music.Finished += StartMusic;
+	}
+	
 	private void SpawnWave(double delta)
 	{
 		_nextWaveTimer -= delta;
@@ -69,10 +76,12 @@ public partial class BattleWorld : Node2D
 			{
 				CreateBossEnemyAroundCharacter(Player, Rand.Double * Mathf.Pi * 2, Rand.Range(2600, 3000));
 			}
+			Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss
+			Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss again to make it  L O U D E R
 		}
 
-
-		Audio2D.PlayUiSound(Sfx.Bass, 0.1f); // dat bass on start
+		Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
+		NewWave?.Invoke();
 	}
 
 	private void CreateEnemyAroundCharacter(Character character, double angle, double distance)
@@ -91,6 +100,7 @@ public partial class BattleWorld : Node2D
 		enemy.Damage *= 5 * scale; //5 волна = *5, 10 волна = *10, 20 волна = *15 ... и т.д.
 		enemy.MovementSpeed *= scale; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
 		enemy.BaseXp *= (int) (100 * scale); //5 волна = 150, 10 волна = 200, 20 волна = 300 ... и т.д.
+		enemy.IsBoss = true; //
 		AddChild(enemy);
 		Enemies.Add(enemy);
 	}

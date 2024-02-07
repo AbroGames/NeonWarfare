@@ -15,7 +15,10 @@ public partial class Player : Character
 	public int Level { get; protected set; } = 1;
 
 	public double PrimaryDamage { get; protected set; } = 1000;
+	public double PrimaryDistance { get; protected set; } = 2000;
+	
 	public double SecondaryDamage { get; protected set; } = 5;
+	public double SecondaryDistance { get; protected set; } = 1000;
 	
 	
 	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
@@ -34,6 +37,7 @@ public partial class Player : Character
 		{
 			var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
 			Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+			Audio2D.StopMusic();
 		};
 	}
 
@@ -54,17 +58,22 @@ public partial class Player : Character
 		Hp = MaxHp;
 
 		PrimaryDamage *= 1.1;
-		SecondaryDamage *= 1.5;
+		SecondaryDamage *= 1.1;
 
 		MovementSpeed *= 1.05;
 		
 		_attackSpeed *= 1.1;
 		_secondaryCd.Duration /= 1.1;
+
+		_rotationSpeed *= 1.1;
+
+		PrimaryDistance *= 1.1;
+		SecondaryDistance *= 1.1;
 		
 		
 		Audio2D.PlaySoundOn(Sfx.LevelUp, this, 1f);
 		var lvlUpLabel =
-			GD.Load<PackedScene>("res://Scenes/World/Entities/DamageLabel/FloatingLabel.tscn")
+			GD.Load<PackedScene>("res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn")
 				.Instantiate() as FloatingLabel;
 		
 		lvlUpLabel.Configure($"Level up!\n({Level-1} -> {Level})", new Color(0, 1, 1), 1.3);
@@ -158,6 +167,7 @@ public partial class Player : Character
 		bullet.Author = Bullet.AuthorEnum.PLAYER;
 		bullet.Speed *= 3;
 		bullet.RemainingDamage = PrimaryDamage;
+		bullet.RemainingDistance = PrimaryDistance;
 		bullet.GetNode<Sprite2D>("Sprite2D").Scale *= 2;
 		bullet.Source = this;
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f);
@@ -183,7 +193,7 @@ public partial class Player : Character
 			bullet.Rotation = Rotation + Rand.Range(-spread, spread);
 			bullet.Author = Bullet.AuthorEnum.PLAYER;
 			bullet.Speed = bullet.Speed * 2 + Rand.Range(-bullet.Speed * speedSpread, bullet.Speed * speedSpread);
-			bullet.RemainingDistance /= 2;
+			bullet.RemainingDistance = SecondaryDistance;
 			bullet.RemainingDamage = SecondaryDamage;
 			var modulate = bullet.GetNode<Sprite2D>("Sprite2D").Modulate;
 			bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);

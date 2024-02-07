@@ -9,6 +9,7 @@ public partial class Enemy : Character
 	
 	public Character Target;
 	public double Damage = 1000;
+	public bool IsBoss = false;
 	
 	private Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
 	// Called when the node enters the scene tree for the first time.
@@ -16,6 +17,10 @@ public partial class Enemy : Character
 	{
 		_regenHpSpeed = 0;
 		MaxHp = Hp;
+		Died += () =>
+		{
+			(GetParent() as BattleWorld)?.Enemies.Remove(this);
+		};
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
