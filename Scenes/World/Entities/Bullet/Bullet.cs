@@ -46,7 +46,8 @@ public partial class Bullet : Node2D
 				{
 					ApplyDamage(enemy,new Color(1, 0, 0));
 					Audio2D.PlaySoundAt(Sfx.Hit, body.Position, 0.5f);
-					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * 0.025;
+					double K = enemy.IsBoss ? 0.0025 : 0.025;
+					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * K;
 				}
 			}
 			
