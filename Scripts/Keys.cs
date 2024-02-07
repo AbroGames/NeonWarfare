@@ -1,7 +1,5 @@
 ﻿using Godot;
 
-namespace MicroSurvivors;
-
 public static class Keys
 {
     // Basic movement
