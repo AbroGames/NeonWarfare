@@ -6,32 +6,32 @@ using KludgeBox.Scheduling;
 
 public partial class Player : Character
 {
+	[Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
+	
 	public static double RequiredXpLevelFactor { get; set; } = 1.5;
 	public static int BasicRequiredXp { get; set; } = 10;
-	public int Xp { get; protected set; }
+	public int Xp { get; set; }
 	public int RequiredXp => (int)(BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, Level));
 
-	public int Level { get; protected set; } = 1;
+	public int Level { get; set; } = 1;
 
-	public double PrimaryDamage { get; protected set; } = 1000;
-	public double PrimaryDistance { get; protected set; } = 2000;
+	public double PrimaryDamage { get; set; } = 1000;
+	public double PrimaryDistance { get; set; } = 2000;
 	
-	public double SecondaryDamage { get; protected set; } = 5;
-	public double SecondaryDistance { get; protected set; } = 1000;
-	
-	
-	private Sprite2D ShieldSprite => GetNode("ShieldSprite") as Sprite2D;
+	public double SecondaryDamage { get; set; } = 5;
+	public double SecondaryDistance { get; set; } = 1000;
 
-	private PlayerCamera _camera;
+	public PlayerCamera Camera;
 
-	private Cooldown _secondaryCd = new(0.1);
+	public Cooldown _secondaryCd { get; set; } = new(0.1);
 	// Called when the node enters the scene tree for the first time.
-	public override void Init()
+	public override void _Ready()
 	{
-		_camera = GetParent().GetChild<PlayerCamera>();
+		base._Ready();
+		Camera = GetParent().GetChild<PlayerCamera>();
 		_secondaryCd.Ready += AttackSecondary;
 
-		_attackSpeed = 3;
+		AttackSpeed = 3;
 		Died += () =>
 		{
 			var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
@@ -40,60 +40,15 @@ public partial class Player : Character
 		};
 	}
 
-	public void AddXp(int amount)
-	{
-		Xp += amount;
-		if (Xp >= RequiredXp)
-			LevelUp();
-	}
-	
-	protected void LevelUp()
-	{
-		Xp -= RequiredXp;
-		Level++;
-		
-		MaxHp *= 1.1;
-		_regenHpSpeed *= 1.1;
-		Hp = MaxHp;
-
-		PrimaryDamage *= 1.1;
-		SecondaryDamage *= 1.1;
-
-		MovementSpeed *= 1.05;
-		
-		_attackSpeed *= 1.1;
-		_secondaryCd.Duration /= 1.1;
-
-		RotationSpeed *= 1.1;
-
-		PrimaryDistance *= 1.1;
-		SecondaryDistance *= 1.1;
-
-
-		var zoomTween = GetTree().CreateTween();
-		zoomTween.SetTrans(Tween.TransitionType.Cubic);
-		zoomTween.TweenProperty(_camera, "zoom", _camera.Zoom / 1.05, 1);
-		
-		
-		Audio2D.PlaySoundOn(Sfx.LevelUp, this, 1f);
-		var lvlUpLabel =
-			GD.Load<PackedScene>("res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn")
-				.Instantiate() as FloatingLabel;
-		
-		lvlUpLabel.Configure($"Level up!\n({Level-1} -> {Level})", new Color(0, 1, 1), 1.3);
-		lvlUpLabel.Position = Position - Vec(0, 100);
-		GetParent().AddChild(lvlUpLabel);
-	}
-
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void Update(double delta)
+	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new PlayerUpdateEvent(this, delta));
+		Root.Instance.EventBus.Publish(new PlayerProcessEvent(this, delta));
 		
 		AttackPrimary(delta);
 		ShieldSprite.GlobalPosition = SmoothedPosition;
 
-		Hp += _regenHpSpeed * delta;
+		Hp += RegenHpSpeed * delta;
 		Hp = Math.Min(Hp, MaxHp);
 
 		_secondaryCd.Update(delta);
@@ -104,27 +59,29 @@ public partial class Player : Character
 		if (Input.IsActionPressed(Keys.CameraShift))
 		{
 			var maxShift = GetGlobalMousePosition() - GlobalPosition;
-			var zoomFactor = (_camera.Zoom.X + _camera.Zoom.Y) / 2;
-			_camera.PositionShift = maxShift * 0.7 * zoomFactor;
+			var zoomFactor = (Camera.Zoom.X + Camera.Zoom.Y) / 2;
+			Camera.PositionShift = maxShift * 0.7 * zoomFactor;
 		}
 		else
 		{
-			_camera.PositionShift = Vec();
+			Camera.PositionShift = Vec();
 		}
+		
+		base._Process(delta); //TODO del
 	}
 
-	public override void PhysicsUpdate(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
-		Root.Instance.EventBus.Publish(new PlayerPhysicsUpdateEvent(this, delta));
+		Root.Instance.EventBus.Publish(new PlayerPhysicsProcessEvent(this, delta));
 	}
 
 	private void AttackPrimary(double delta)
 	{
-		_secToNextAttack -= delta;
+		SecToNextAttack -= delta;
 		if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
-		if (_secToNextAttack > 0) return;
+		if (SecToNextAttack > 0) return;
 
-		_secToNextAttack = 1.0 / _attackSpeed;
+		SecToNextAttack = 1.0 / AttackSpeed;
 		
 		// Создание снаряда
 		Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;

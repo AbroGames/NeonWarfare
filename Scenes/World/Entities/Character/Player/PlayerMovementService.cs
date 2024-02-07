@@ -4,11 +4,11 @@ public class PlayerMovementService
 {
     public PlayerMovementService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerPhysicsUpdateEvent>(OnPlayerPhysicsUpdateEvent);
+        Root.Instance.EventBus.Subscribe<PlayerPhysicsProcessEvent>(OnPlayerPhysicsProcessEvent);
     }
     
-    public void OnPlayerPhysicsUpdateEvent(PlayerPhysicsUpdateEvent playerPhysicsUpdateEvent) {
-        MoveByKeyboard(playerPhysicsUpdateEvent.Player, playerPhysicsUpdateEvent.Delta);
+    public void OnPlayerPhysicsProcessEvent(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) {
+        MoveByKeyboard(playerPhysicsProcessEvent.Player, playerPhysicsProcessEvent.Delta);
     }
     
     private void MoveByKeyboard(Player player, double delta)

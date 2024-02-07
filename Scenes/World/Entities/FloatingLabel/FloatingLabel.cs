@@ -55,8 +55,7 @@ public partial class FloatingLabel : Node2D
 
 	public static FloatingLabel Create()
 	{
-		return GD.Load<PackedScene>("res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn")
-			.Instantiate() as FloatingLabel;
+		return Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
 	}
 	public static FloatingLabel Create(string text, Color color, double scale)
 	{

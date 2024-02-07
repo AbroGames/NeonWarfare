@@ -5,6 +5,8 @@ using KludgeBox;
 
 public partial class XpOrb : Node2D
 {
+	[Export] [NotNull] public Trail Trail { get; private set; }
+	
 	public int Xp { get; private set; }
 	public Player Target { get; private set; }
 
@@ -14,12 +16,11 @@ public partial class XpOrb : Node2D
 	private double _speed;
 	private Vector2 _initialVelocity;
 	
-	/// <inheritdoc />
 	public override void _Ready()
 	{
+		NotNullChecker.CheckProperties(this);
 		_initialVelocity = Rand.UnitVector * 500;
-		var trail = GetNode<Trail>("Trail");
-		trail.Reset();
+		Trail.Reset();
 	}
 
 	public void Configure(Player target, int xp)
@@ -41,12 +42,11 @@ public partial class XpOrb : Node2D
 
 		if (dist < _speed * delta)
 		{
-			var trail = GetNode<Trail>("Trail");
-			var dummy = trail.Drop();
+			var dummy = Trail.Drop();
 			dummy.Modulate = Modulate;
-			trail.Target = trail.GetParent() as Node2D;
-			trail.Destruct(trail.Length);
-			Target.AddXp(Xp);
+			Trail.Target = Trail.GetParent() as Node2D;
+			Trail.Destruct(Trail.Length);
+			Root.Instance.EventBus.Publish(new PlayerGainXpEvent(Target, Xp));
 			
 			var label = FloatingLabel.Create($"+{Xp}", Modulate, 0.6);
 			label.Position = Position;
@@ -60,6 +60,6 @@ public partial class XpOrb : Node2D
 
 	public static XpOrb Create()
 	{
-		return GD.Load<PackedScene>("res://Scenes/World/Entities/XpOrb/XpOrb.tscn").Instantiate() as XpOrb;
+		return Root.Instance.PackedScenes.World.XpOrb.Instantiate<XpOrb>();
 	}
 }

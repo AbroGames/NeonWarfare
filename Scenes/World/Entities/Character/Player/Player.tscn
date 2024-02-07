@@ -16,8 +16,9 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 17.0
 
-[node name="Player" instance=ExtResource("1_630e1")]
+[node name="Player" node_paths=PackedStringArray("ShieldSprite") instance=ExtResource("1_630e1")]
 script = ExtResource("2_1gm72")
+ShieldSprite = NodePath("ShieldSprite")
 
 [node name="Sprite2D" parent="." index="0"]
 material = SubResource("ShaderMaterial_p0ws3")

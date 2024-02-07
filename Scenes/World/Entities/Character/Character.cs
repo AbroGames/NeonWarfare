@@ -6,24 +6,28 @@ using Scenes.World;
 
 public partial class Character : CharacterBody2D
 {
+	[Export] [NotNull] public Sprite2D Sprite { get; private set; }
+	[Export] [NotNull] public CollisionShape2D CollisionShape { get; private set; }
+	
 	public event Action Died;
-
-	public int BaseXp { get; set; } = 1;
-	public double MaxHp { get; protected set; } = 10000;
+	
+	public double MaxHp { get; set; } = 10000;
 	public double Hp { get; set; } = 10000;
-	protected Sprite2D Sprite => GetNode("Sprite2D") as Sprite2D;
-	protected Vector2 SmoothedPosition => _smoothedPos;
+	public double RegenHpSpeed { get; set; } = 500; // hp/sec
+	public double MovementSpeed { get; set; } = 250; // in pixels/sec
+	public double RotationSpeed { get; set; } = 300; // in degree/sec
+	
+	public double AttackSpeed { get; set; } = 1; // attack/sec
+	public double SecToNextAttack { get; set; } = 0;
+	
+	public Vector2 SmoothedPosition { get; private set; }
 	protected double HitFlash = 0;
 
-
-	public double MovementSpeed { get; set; } = 250; // in pixels/sec
-	public double RotationSpeed = 300; // in degree/sec
-	protected double _regenHpSpeed = 500; // hp/sec
-	protected double _attackSpeed = 1; // attack/sec
-	protected double _secToNextAttack = 0;
-	
-	private Vector2 _smoothedPos;
-
+	public override void _Ready()
+	{
+		NotNullChecker.CheckProperties(this);
+		SmoothedPosition = GlobalPosition;
+	}
 
 	public void TakeDamage(Damage damage)
 	{
@@ -41,7 +45,7 @@ public partial class Character : CharacterBody2D
 				if (enemy.IsBoss)
 				{
 					int orbs = 10;
-					int xpPerOrb = BaseXp / orbs;
+					int xpPerOrb = enemy.BaseXp / orbs;
 					for (int i = 0; i < orbs; i++)
 					{
 						var orb = XpOrb.Create();
@@ -54,7 +58,7 @@ public partial class Character : CharacterBody2D
 				{
 					var orb = XpOrb.Create();
 					orb.Position = Position;
-					orb.Configure(ply, BaseXp);
+					orb.Configure(ply, enemy.BaseXp);
 					GetParent().AddChild(orb);
 				}
 			}
@@ -74,35 +78,13 @@ public partial class Character : CharacterBody2D
 		dmgLabel.Position = damage.Position;
 		GetParent().AddChild(dmgLabel);
 	}
-	
-	public virtual void Update(double delta)
-	{
-	}
-
-	public virtual void PhysicsUpdate(double delta)
-	{
-		
-	}
-
-	public virtual void Init()
-	{
-		
-	}
-
-	/// <inheritdoc />
-	public override void _Ready()
-	{
-		_smoothedPos = GlobalPosition;
-		Init();
-	}
 
 	/// <inheritdoc />
 	public override void _Process(double delta)
 	{
-		Update(delta);
 		UpdateSmoothedPosition(delta);
 		
-		Sprite.GlobalPosition = _smoothedPos;
+		Sprite.GlobalPosition = SmoothedPosition;
 		// flash effect on hit processing
 		HitFlash -= 0.02;
 		HitFlash = Mathf.Max(HitFlash, 0);
@@ -110,18 +92,12 @@ public partial class Character : CharacterBody2D
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 	}
 
-	/// <inheritdoc />
-	public override void _PhysicsProcess(double delta)
-	{
-		PhysicsUpdate(delta);
-	}
-
 	private void UpdateSmoothedPosition(double delta)
 	{
-		var requiredMovement = GlobalPosition - _smoothedPos;
+		var requiredMovement = GlobalPosition - SmoothedPosition;
 
 		var stepFactor = delta / (1.0 / 60);
 		var smoothingFactor = 0.5;
-		_smoothedPos += requiredMovement * stepFactor * smoothingFactor;
+		SmoothedPosition += requiredMovement * stepFactor * smoothingFactor;
 	}
 }

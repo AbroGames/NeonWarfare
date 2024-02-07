@@ -8,6 +8,9 @@ public partial class WorldPackedScenesContainer : Node
     
     [Export] [NotNull] public PackedScene Bullet { get; private set; }
     
+    [Export] [NotNull] public PackedScene XpOrb { get; private set; }
+    [Export] [NotNull] public PackedScene FloatingLabel { get; private set; }
+    
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);

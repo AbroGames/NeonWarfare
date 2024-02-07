@@ -30,5 +30,9 @@ public partial class Root : Node2D
 	{
 		Services.Add(new PlayerRotateService());
 		Services.Add(new PlayerMovementService());
+		Services.Add(new PlayerXpService());
+		Services.Add(new EnemyMovementService());
+		Services.Add(new EnemyAttackService());
+		Services.Add(new EnemyRotateService());
 	}
 }

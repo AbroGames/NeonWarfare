@@ -15,8 +15,10 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 18.0
 
-[node name="Character" type="CharacterBody2D"]
+[node name="Character" type="CharacterBody2D" node_paths=PackedStringArray("Sprite", "CollisionShape")]
 script = ExtResource("1_y827s")
+Sprite = NodePath("Sprite2D")
+CollisionShape = NodePath("CollisionShape2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0, 1, 1, 1)

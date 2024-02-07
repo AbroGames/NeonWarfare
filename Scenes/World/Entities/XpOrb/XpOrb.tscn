@@ -4,9 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="1_uhk42"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Trail.cs" id="2_b6ucg"]
 
-[node name="XpOrb" type="Node2D"]
+[node name="XpOrb" type="Node2D" node_paths=PackedStringArray("Trail")]
 modulate = Color(0, 0.482353, 0.482353, 1)
 script = ExtResource("1_jldce")
+Trail = NodePath("Trail")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.005, 0.005)

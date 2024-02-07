@@ -1,28 +1,27 @@
 using System;
 using Godot;
 
-//TODO добавить аннотацию [EventBusListener] или типа того, чтобы автоматически подписывать соответствующиме методы сервиса на события шины
-public class PlayerRotateService
+public class EnemyRotateService
 {
-    public PlayerRotateService()
+    public EnemyRotateService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerProcessEvent>(OnPlayerProcessEvent);
+        Root.Instance.EventBus.Subscribe<EnemyProcessEvent>(OnEnemyProcessEvent);
     }
     
-    public void OnPlayerProcessEvent(PlayerProcessEvent playerProcessEvent) {
-        RotateToMouse(playerProcessEvent.Player, playerProcessEvent.Delta);
+    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent) {
+        RotateToTarget(enemyProcessEvent.Enemy, enemyProcessEvent.Delta);
     }
     
-    private void RotateToMouse(Player player, double delta)
+    private void RotateToTarget(Enemy enemy, double delta) //TODO дублируется с Player. Вынести в Utils?
     {
         //Куда хотим повернуться
-        double targetAngle = GetAngleToMouse(player);
+        double targetAngle = GetAngleToTarget(enemy);
         //На какой угол надо повернуться (знак указывает направление)
-        double deltaAngleToTargetAngel = Mathf.AngleDifference(player.Rotation - Mathf.Pi / 2, targetAngle);
+        double deltaAngleToTargetAngel = Mathf.AngleDifference(enemy.Rotation - Mathf.Pi / 2, targetAngle);
         //Только направление (-1, 0, 1)
         double directionToTargetAngel = Mathf.Sign(deltaAngleToTargetAngel);
         //Максимальная скорость поворота (за секунду)
-        double rotationSpeedRad = Mathf.DegToRad(player.RotationSpeed);
+        double rotationSpeedRad = Mathf.DegToRad(enemy.RotationSpeed);
         //Максимальная скорость поворота (за прошедшее время)
         rotationSpeedRad *= delta;
         //Если надо повернуться на угол меньший максимальной скорости, то обрезаем скорость, чтобы повернуться ровно в цель
@@ -30,16 +29,16 @@ public class PlayerRotateService
         //Добавляем к скорости поворота направление, чтобы поворачивать в сторону цели
         rotationSpeedRad *= directionToTargetAngel;
         //Поворачиваемся на угол
-        player.Rotation += rotationSpeedRad;
+        enemy.Rotation += rotationSpeedRad;
     }
     
-    private double GetAngleToMouse(Player player)
+    private double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
     {
         // Получаем текущую позицию мыши
-        var mousePos = player.GetGlobalMousePosition();
+        var targetPos = enemy.Target.GlobalPosition;
         // Вычисляем вектор направления от объекта к мыши
-        var mouseDir = player.GlobalPosition.DirectionTo(mousePos);
+        var targetDir = enemy.GlobalPosition.DirectionTo(targetPos);
         // Вычисляем направление от объекта к мыши
-        return mouseDir.Angle();
+        return targetDir.Angle();
     }
 }
