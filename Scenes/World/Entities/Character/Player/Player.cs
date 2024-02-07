@@ -69,6 +69,11 @@ public partial class Player : Character
 
 		PrimaryDistance *= 1.1;
 		SecondaryDistance *= 1.1;
+
+
+		var zoomTween = GetTree().CreateTween();
+		zoomTween.SetTrans(Tween.TransitionType.Cubic);
+		zoomTween.TweenProperty(_camera, "zoom", _camera.Zoom / 1.05, 1);
 		
 		
 		Audio2D.PlaySoundOn(Sfx.LevelUp, this, 1f);

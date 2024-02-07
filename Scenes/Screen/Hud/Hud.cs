@@ -35,7 +35,8 @@ public partial class Hud : Control
 		if (BattleWorld == null || !BattleWorld.IsNodeReady()) return;
 
 		Xp.Value = (double)BattleWorld.Player.Xp / BattleWorld.Player.RequiredXp;
-		XpLabel.Text = $"To next level: {BattleWorld.Player.Xp} / {BattleWorld.Player.RequiredXp}";
+		XpLabel.Text = $"Level: {BattleWorld.Player.Level}";
+		XpLabel.TooltipText = $"Xp: {BattleWorld.Player.Xp} / {BattleWorld.Player.RequiredXp}";
 		Level.Text = $"Level: {BattleWorld.Player.Level}";
 		
 		//Hp.Text = $"HP: {BattleWorld.Player.Hp:N0}/{BattleWorld.Player.MaxHp:N0}";
