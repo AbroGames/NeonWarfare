@@ -3,7 +3,6 @@ using System;
 using Game.Content;
 using KludgeBox;
 using KludgeBox.Scheduling;
-using MicroSurvivors;
 
 public partial class Player : Character
 {
@@ -65,7 +64,7 @@ public partial class Player : Character
 		_attackSpeed *= 1.1;
 		_secondaryCd.Duration /= 1.1;
 
-		_rotationSpeed *= 1.1;
+		RotationSpeed *= 1.1;
 
 		PrimaryDistance *= 1.1;
 		SecondaryDistance *= 1.1;
@@ -89,7 +88,8 @@ public partial class Player : Character
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void Update(double delta)
 	{
-		RotateToMouse(delta);
+		Root.Instance.EventBus.Publish(new PlayerUpdateEvent(this, delta));
+		
 		AttackPrimary(delta);
 		ShieldSprite.GlobalPosition = SmoothedPosition;
 
@@ -112,49 +112,12 @@ public partial class Player : Character
 			_camera.PositionShift = Vec();
 		}
 	}
-	
+
 	public override void PhysicsUpdate(double delta)
 	{
-		var movementInput = GetInput();
-		// Переместить и првоерить физику
-		MoveAndCollide(movementInput * MovementSpeed * delta);
-	}
-	
-	private Vector2 GetInput()
-	{
-		return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
+		Root.Instance.EventBus.Publish(new PlayerPhysicsUpdateEvent(this, delta));
 	}
 
-	private void RotateToMouse(double delta)
-	{
-		//Куда хотим повернуться
-		double targetAngle = GetAngleToMouse();
-		//На какой угол надо повернуться (знак указывает направление)
-		double deltaAngleToTargetAngel = Mathf.AngleDifference(Rotation - Mathf.Pi / 2, targetAngle);
-		//Только направление (-1, 0, 1)
-		double directionToTargetAngel = Mathf.Sign(deltaAngleToTargetAngel);
-		//Максимальная скорость поворота (за секунду)
-		double rotationSpeedRad = Mathf.DegToRad(_rotationSpeed);
-		//Максимальная скорость поворота (за прошедшее время)
-		rotationSpeedRad *= delta;
-		//Если надо повернуться на угол меньший максимальной скорости, то обрезаем скорость, чтобы повернуться ровно в цель
-		rotationSpeedRad = Math.Min(rotationSpeedRad, Math.Abs(deltaAngleToTargetAngel));
-		//Добавляем к скорости поворота направление, чтобы поворачивать в сторону цели
-		rotationSpeedRad *= directionToTargetAngel;
-		//Поворачиваемся на угол
-		Rotation += rotationSpeedRad;
-	}
-	
-	private double GetAngleToMouse()
-	{
-		// Получаем текущую позицию мыши
-		var mousePos = GetGlobalMousePosition();
-		// Вычисляем вектор направления от объекта к мыши
-		var mouseDir = GlobalPosition.DirectionTo(mousePos);
-		// Вычисляем направление от объекта к мыши
-		return mouseDir.Angle();
-	}
-	
 	private void AttackPrimary(double delta)
 	{
 		_secToNextAttack -= delta;

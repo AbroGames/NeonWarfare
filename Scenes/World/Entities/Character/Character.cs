@@ -1,10 +1,7 @@
 using System;
-using System.Security.Cryptography;
 using Game.Content;
 using Godot;
 using KludgeBox;
-using KludgeBox.Scheduling;
-using MicroSurvivors;
 using Scenes.World;
 
 public partial class Character : CharacterBody2D
@@ -20,12 +17,10 @@ public partial class Character : CharacterBody2D
 
 
 	public double MovementSpeed { get; set; } = 250; // in pixels/sec
-	protected double _rotationSpeed = 300; // in degree/sec
+	public double RotationSpeed = 300; // in degree/sec
 	protected double _regenHpSpeed = 500; // hp/sec
 	protected double _attackSpeed = 1; // attack/sec
 	protected double _secToNextAttack = 0;
-	
-	
 	
 	private Vector2 _smoothedPos;
 
