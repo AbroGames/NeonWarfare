@@ -8,10 +8,7 @@ public partial class Player : Character
 {
 	[Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
 	
-	public static double RequiredXpLevelFactor { get; set; } = 1.5;
-	public static int BasicRequiredXp { get; set; } = 10;
 	public int Xp { get; set; }
-	public int RequiredXp => (int)(BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, Level));
 
 	public int Level { get; set; } = 1;
 
@@ -21,15 +18,17 @@ public partial class Player : Character
 	public double SecondaryDamage { get; set; } = 5;
 	public double SecondaryDistance { get; set; } = 1000;
 
-	public PlayerCamera Camera;
+	public Camera Camera;
 
-	public Cooldown _secondaryCd { get; set; } = new(0.1);
+	public Cooldown SecondaryCd { get; set; } = new(0.1);
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		base._Ready();
-		Camera = GetParent().GetChild<PlayerCamera>();
-		_secondaryCd.Ready += AttackSecondary;
+		Root.Instance.EventBus.Publish(new PlayerReadyEvent(this));
+		
+		Camera = GetParent().GetChild<Camera>();
+		SecondaryCd.Ready += AttackSecondary;
 
 		AttackSpeed = 3;
 		Died += () =>
@@ -43,15 +42,15 @@ public partial class Player : Character
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		base._Process(delta);
 		Root.Instance.EventBus.Publish(new PlayerProcessEvent(this, delta));
 		
 		AttackPrimary(delta);
-		ShieldSprite.GlobalPosition = SmoothedPosition;
 
 		Hp += RegenHpSpeed * delta;
 		Hp = Math.Min(Hp, MaxHp);
 
-		_secondaryCd.Update(delta);
+		SecondaryCd.Update(delta);
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 		
@@ -67,7 +66,6 @@ public partial class Player : Character
 			Camera.PositionShift = Vec();
 		}
 		
-		base._Process(delta); //TODO del
 	}
 
 	public override void _PhysicsProcess(double delta)

@@ -84,7 +84,7 @@ grow_horizontal = 2
 grow_vertical = 2
 tooltip_text = "Sosi Bibu"
 mouse_filter = 1
-text = "SAMPLE_TEXT 101"
+text = "Xp"
 label_settings = SubResource("LabelSettings_chnxn")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -121,7 +121,7 @@ offset_top = -11.5
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "SAMPLE_TEXT 123"
+text = "Hp"
 label_settings = SubResource("LabelSettings_e1d48")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -135,7 +135,7 @@ size_flags_horizontal = 3
 
 [node name="Level" type="Label" parent="Rows/Columns/LeftUpInfo"]
 layout_mode = 2
-text = "SAMPLE_TEXT 101"
+text = "Level"
 label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="Hp" type="Label" parent="Rows/Columns/LeftUpInfo"]
@@ -146,12 +146,12 @@ label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="Waves" type="Label" parent="Rows/Columns/LeftUpInfo"]
 layout_mode = 2
-text = "SAMPLE_TEXT 101"
+text = "Waves"
 label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="Enemies" type="Label" parent="Rows/Columns/LeftUpInfo"]
 layout_mode = 2
-text = "SAMPLE_TEXT 101"
+text = "Enemies"
 label_settings = SubResource("LabelSettings_chnxn")
 
 [node name="RightUpInfo" type="VBoxContainer" parent="Rows/Columns"]
@@ -160,7 +160,7 @@ size_flags_horizontal = 3
 
 [node name="FPS" type="Label" parent="Rows/Columns/RightUpInfo"]
 layout_mode = 2
-text = "SAMPLE_TEXT 101"
+text = "FPS"
 label_settings = SubResource("LabelSettings_phhwh")
 horizontal_alignment = 2
 

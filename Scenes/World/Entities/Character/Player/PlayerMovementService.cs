@@ -11,13 +11,13 @@ public class PlayerMovementService
         MoveByKeyboard(playerPhysicsProcessEvent.Player, playerPhysicsProcessEvent.Delta);
     }
     
-    private void MoveByKeyboard(Player player, double delta)
+    public void MoveByKeyboard(Player player, double delta)
     {
         var movementInput = GetInput();
         player.MoveAndCollide(movementInput * player.MovementSpeed * delta);
     }
     
-    private Vector2 GetInput()
+    public Vector2 GetInput()
     {
         return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
     }

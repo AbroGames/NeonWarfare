@@ -24,7 +24,7 @@ public partial class BattleWorld : Node2D
 		Player = Root.Instance.PackedScenes.World.Player.Instantiate() as Player;
 		Player.Position = Vec(500, 500);
 		
-		var camera = new PlayerCamera();
+		var camera = new Camera();
 		camera.Position = Player.Position;
 		camera.TargetNode = Player;
 		camera.Zoom = Vec(0.65);
@@ -114,8 +114,14 @@ public partial class BattleWorld : Node2D
 		enemy.Position = targetPosition;
 		enemy.Rotation = angle - Math.PI / 2;
 		enemy.Target = character;
-		enemy.Hp = 250;
-		enemy.MovementSpeed = 200; // in pixels/sec
+		enemy.MaxHp = 250;
+		enemy.Hp = enemy.MaxHp;
+		enemy.MovementSpeed = 200; // in pixels/secRegenHpSpeed = 0;
+		enemy.Died += () =>
+		{
+			(GetParent() as BattleWorld)?.Enemies.Remove(enemy);
+		};
+		
 		return enemy;
 	}
 }

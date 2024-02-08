@@ -13,7 +13,7 @@ public class PlayerRotateService
         RotateToMouse(playerProcessEvent.Player, playerProcessEvent.Delta);
     }
     
-    private void RotateToMouse(Player player, double delta)
+    public void RotateToMouse(Player player, double delta)
     {
         //Куда хотим повернуться
         double targetAngle = GetAngleToMouse(player);
@@ -33,7 +33,7 @@ public class PlayerRotateService
         player.Rotation += rotationSpeedRad;
     }
     
-    private double GetAngleToMouse(Player player)
+    public double GetAngleToMouse(Player player)
     {
         // Получаем текущую позицию мыши
         var mousePos = player.GetGlobalMousePosition();

@@ -34,5 +34,6 @@ public partial class Root : Node2D
 		Services.Add(new EnemyMovementService());
 		Services.Add(new EnemyAttackService());
 		Services.Add(new EnemyRotateService());
+		Services.Add(new PlayerCameraService());
 	}
 }
