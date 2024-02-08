@@ -1,5 +1,5 @@
-public readonly struct BattleHudProcessEvent(BattleHud BattleHud, double delta)
+public readonly struct BattleHudProcessEvent(BattleHud battleHud, double delta)
 {
-    public BattleHud BattleHud { get; } = BattleHud;
+    public BattleHud BattleHud { get; } = battleHud;
     public double Delta { get; }  = delta;
 }

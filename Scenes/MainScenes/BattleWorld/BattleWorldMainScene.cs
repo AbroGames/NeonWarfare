@@ -13,8 +13,6 @@ public partial class BattleWorldMainScene : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-
-		BattleHud battleHud = HudContainer.GetCurrentStoredNode<BattleHud>();
-		battleHud.BattleWorld = WorldContainer.GetCurrentStoredNode<BattleWorld>();
+		Root.Instance.EventBus.Publish(new BattleWorldMainSceneReadyEvent(this));
 	}
 }

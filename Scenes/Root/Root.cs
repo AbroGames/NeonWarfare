@@ -28,14 +28,20 @@ public partial class Root : Node2D
 	//Todo вынести в другое место (автоматически через аннотации, например. Хранить сервисы тоже в другом месте, наверн)
 	public void ServicesInit()
 	{
+		PlayerXpService playerXpService = new PlayerXpService();
+		
+		Services.Add(playerXpService);
+		
 		Services.Add(new PlayerRotateService());
 		Services.Add(new PlayerMovementService());
-		Services.Add(new PlayerXpService());
 		Services.Add(new EnemyMovementService());
 		Services.Add(new EnemyAttackService());
 		Services.Add(new EnemyRotateService());
 		Services.Add(new CameraService());
 		Services.Add(new TwoColoredBarService());
-		Services.Add(new BattleHudService());
+		Services.Add(new BattleWorldService());
+		Services.Add(new BattleWorldMainSceneService());
+		
+		Services.Add(new BattleHudService(playerXpService));
 	}
 }

@@ -1,4 +1,4 @@
-public readonly struct BattleHudReadyEvent(BattleHud BattleHud)
+public readonly struct BattleHudReadyEvent(BattleHud battleHud)
 {
-    public BattleHud BattleHud { get; } = BattleHud;
+    public BattleHud BattleHud { get; } = battleHud;
 }

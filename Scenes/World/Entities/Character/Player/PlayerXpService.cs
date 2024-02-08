@@ -63,6 +63,6 @@ public class PlayerXpService
 
     public int GetRequiredXp(Player player)
     {
-        return (int)(BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, player.Level));
+        return (int) (BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, player.Level));
     }
 }

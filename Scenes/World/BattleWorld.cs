@@ -6,8 +6,6 @@ using KludgeBox;
 
 public partial class BattleWorld : Node2D
 {
-	public event Action NewWave;
-
 	private const int OneWaveEnemyCount = 15; 
 	private const int OneWaveEnemyCountDelta = 5; 
 	private const int WaveTimeout = 12;
@@ -15,6 +13,7 @@ public partial class BattleWorld : Node2D
 	public Player Player;
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public int WaveNumber = 0;
+	public BattleHud BattleHud { get; set; }
 	
 	private double _nextWaveTimer = 0;
 	
@@ -81,7 +80,7 @@ public partial class BattleWorld : Node2D
 		}
 
 		Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
-		NewWave?.Invoke();
+		Root.Instance.EventBus.Publish(new BattleWorldNewWaveEvent(this, WaveNumber));
 	}
 
 	private void CreateEnemyAroundCharacter(Character character, double angle, double distance)
