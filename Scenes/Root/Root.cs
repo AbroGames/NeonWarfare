@@ -42,6 +42,7 @@ public partial class Root : Node2D
 		Services.Add(new BattleWorldService());
 		Services.Add(new BattleWorldMainSceneService());
 		Services.Add(new BattleHudWaveService());
+		Services.Add(new BattleWorldWavesService());
 		
 		Services.Add(new BattleHudService(playerXpService));
 	}

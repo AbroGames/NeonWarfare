@@ -9,9 +9,11 @@ public partial class Player : Character
 	[Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
 	
 	public int Xp { get; set; }
-
 	public int Level { get; set; } = 1;
-
+	
+	public double FastRegenHpSpeed { get; set; } = 300;
+	public double HpCanBeFastRegen { get; set; } = 0;
+	
 	public double PrimaryDamage { get; set; } = 1000;
 	public double PrimaryDistance { get; set; } = 2000;
 	
@@ -49,6 +51,13 @@ public partial class Player : Character
 
 		Hp += RegenHpSpeed * delta;
 		Hp = Math.Min(Hp, MaxHp);
+
+		if (HpCanBeFastRegen > 0)
+		{
+			double hpForFastRegen = Mathf.Min(FastRegenHpSpeed * delta, HpCanBeFastRegen);
+			HpCanBeFastRegen -= hpForFastRegen;
+			Hp += hpForFastRegen;
+		}
 
 		SecondaryCd.Update(delta);
 
@@ -106,7 +115,7 @@ public partial class Player : Character
 		var spread = Mathf.DegToRad(18);
 		var speedSpread = 0.1;
 		
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < bulletsCount; i++)
 		{
 			// Создание снаряда
 			Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;

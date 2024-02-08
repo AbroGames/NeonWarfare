@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.cs" id="1_fyl7v"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_jc0ji"]
-[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld.tscn" id="1_pgtsk"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/BattleWorld.tscn" id="1_pgtsk"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="3_fl3ru"]
 
 [node name="BattleWorld" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer")]

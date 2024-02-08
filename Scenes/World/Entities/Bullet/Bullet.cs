@@ -35,7 +35,9 @@ public partial class Bullet : Node2D
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
+					double damage = RemainingDamage;
 					ApplyDamage(player, new Color(0, 0, 0));
+					player.HpCanBeFastRegen += damage / 2;
 					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f);
 				}
 			}

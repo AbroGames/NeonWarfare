@@ -13,7 +13,7 @@ public partial class Character : CharacterBody2D
 	
 	public double MaxHp { get; set; } = 10000;
 	public double Hp { get; set; } = 10000;
-	public double RegenHpSpeed { get; set; } = 500; // hp/sec
+	public double RegenHpSpeed { get; set; } = 100; // hp/sec
 	public double MovementSpeed { get; set; } = 250; // in pixels/sec
 	public double RotationSpeed { get; set; } = 300; // in degree/sec
 	
