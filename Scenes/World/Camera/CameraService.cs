@@ -11,21 +11,21 @@ public class CameraService
     
     public void OnCameraReadyEvent(CameraReadyEvent cameraReadyEvent)
     {
-        initCamera(cameraReadyEvent.Camera);
+        InitCamera(cameraReadyEvent.Camera);
     }
     
     public void OnCameraProcessEvent(CameraProcessEvent cameraProcessEvent) 
     {
-        moveCamera(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
+        MoveCamera(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
     }
 
-    public void initCamera(Camera camera)
+    public void InitCamera(Camera camera)
     {
         camera.ActualPosition = camera.Position;
         camera.TargetPosition = camera.Position;
     }
 
-    public void moveCamera(Camera camera, double delta)
+    public void MoveCamera(Camera camera, double delta)
     {
         if (camera.TargetNode is null) return;
         

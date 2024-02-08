@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://dlelsat4bmqw3"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_4xfol"]
+[ext_resource type="Script" path="res://Scenes/Screen/BattleHud/BattleHud.cs" id="1_rjfnb"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_ypiqw"]
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_1iemm"]
 
@@ -29,14 +29,14 @@ font_color = Color(0.592157, 0, 0, 1)
 outline_size = 24
 outline_color = Color(0, 0, 0, 1)
 
-[node name="Hud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "WaveMessage", "Fps")]
+[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "WaveMessage", "Fps")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_4xfol")
+script = ExtResource("1_rjfnb")
 Xp = NodePath("Rows/Xp")
 HpBar = NodePath("Rows/HpBar")
 XpLabel = NodePath("Rows/Xp/Label")

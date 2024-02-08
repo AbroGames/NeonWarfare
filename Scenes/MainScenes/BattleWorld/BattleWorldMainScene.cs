@@ -14,11 +14,7 @@ public partial class BattleWorldMainScene : Node2D
 	{
 		NotNullChecker.CheckProperties(this);
 
-		Hud hud = HudContainer.GetCurrentStoredNode<Hud>();
-		hud.BattleWorld = WorldContainer.GetCurrentStoredNode<BattleWorld>();
-	}
-
-	public override void _Process(double delta)
-	{
+		BattleHud battleHud = HudContainer.GetCurrentStoredNode<BattleHud>();
+		battleHud.BattleWorld = WorldContainer.GetCurrentStoredNode<BattleWorld>();
 	}
 }

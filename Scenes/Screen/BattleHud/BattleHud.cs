@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.AccessControl;
 
 
-public partial class Hud : Control
+public partial class BattleHud : Control
 {
 	[Export] [NotNull] public ProgressBar Xp { get; private set; }
 	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
@@ -25,12 +25,16 @@ public partial class Hud : Control
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
+		Root.Instance.EventBus.Publish(new BattleHudReadyEvent(this));
+		
 		_waveMessageInitialPosition = WaveMessage.Position;
 		CallDeferred(nameof(Subscribe));
 	}
 
 	public override void _Process(double delta)
 	{
+		Root.Instance.EventBus.Publish(new BattleHudProcessEvent(this, delta));
+		
 		if (BattleWorld == null || !BattleWorld.IsNodeReady()) return;
 
 		Xp.Value = (double) BattleWorld.Player.Xp / 10000; //TODO
