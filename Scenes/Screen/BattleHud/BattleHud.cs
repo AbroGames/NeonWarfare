@@ -1,8 +1,4 @@
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
 
 
 public partial class BattleHud : Control
@@ -16,9 +12,8 @@ public partial class BattleHud : Control
 	[Export] [NotNull] public Label WaveMessage { get; private set; }
 	[Export] [NotNull] public Label Fps { get; private set; }
 	
-	public Vector2 WaveMessageInitialPosition { get; set; }
 	public BattleWorld BattleWorld { get; set; }
-	public Queue<double> Deltas { get; set; } = new();
+	public Vector2 WaveMessageInitialPosition { get; set; }
 	
 	public override void _Ready()
 	{

@@ -1,40 +1,24 @@
 using System.Linq;
+using Godot;
 
 public class BattleHudService
 {
 
-    private PlayerXpService _playerXpService;
+    private readonly PlayerXpService _playerXpService;
     
     public BattleHudService(PlayerXpService playerXpService)
     {
         _playerXpService = playerXpService;
         
-        Root.Instance.EventBus.Subscribe<BattleHudReadyEvent>(OnBattleHudReadyEvent);
         Root.Instance.EventBus.Subscribe<BattleHudProcessEvent>(OnBattleHudProcessEvent);
-        Root.Instance.EventBus.Subscribe<BattleWorldNewWaveEvent>(OnBattleWorldNewWaveEvent);
-    }
-    
-    public void OnBattleHudReadyEvent(BattleHudReadyEvent battleHudReadyEvent)
-    {
-        InitBattleHud(battleHudReadyEvent.BattleHud);
     }
     
     public void OnBattleHudProcessEvent(BattleHudProcessEvent battleHudProcessEvent) 
     {
-        UpdateBattleHud(battleHudProcessEvent.BattleHud, battleHudProcessEvent.BattleHud.BattleWorld, battleHudProcessEvent.Delta);
-    }
-    
-    public void OnBattleWorldNewWaveEvent(BattleWorldNewWaveEvent battleWorldNewWaveEvent) 
-    {
-        ShowWaveMessage(battleWorldNewWaveEvent.BattleWorld.BattleHud, battleWorldNewWaveEvent.WaveNumber);
+        UpdateBattleHud(battleHudProcessEvent.BattleHud, battleHudProcessEvent.BattleHud.BattleWorld);
     }
 
-    public void InitBattleHud(BattleHud battleHud)
-    {
-        battleHud.WaveMessageInitialPosition = battleHud.WaveMessage.Position;
-    }
-
-    public void UpdateBattleHud(BattleHud battleHud, BattleWorld battleWorld, double delta)
+    public void UpdateBattleHud(BattleHud battleHud, BattleWorld battleWorld)
     {
         int playerRequiredXp = _playerXpService.GetRequiredXp(battleWorld.Player);
         
@@ -49,32 +33,6 @@ public class BattleHudService
         battleHud.HpBar.CurrentLowerValue = battleHud.HpBar.CurrentUpperValue * 1.1;
         battleHud.HpBar.MaxValue = battleWorld.Player.MaxHp;
         battleHud.HpBar.Label.Text = $"Health: {battleWorld.Player.Hp:N0} / {battleWorld.Player.MaxHp:N0}";
-		
-        battleHud.Deltas.Enqueue(delta);
-        if (battleHud.Deltas.Count >= 240)
-        {
-            battleHud.Deltas.Dequeue();
-            var fps = 1 / battleHud.Deltas.Average();
-            battleHud.Fps.Text = $"FPS: {fps:N0}";
-        }
-    }
-    
-    public void ShowWaveMessage(BattleHud battleHud, int waveNumber)
-    {
-        battleHud.WaveMessage.Text = $"WAVE {waveNumber}";
-        var colorTween = battleHud.GetTree().CreateTween();
-        var positionTween = battleHud.GetTree().CreateTween();
-
-        double fadeInTime = 0.5;
-        double holdTime = 1;
-        double fadeOutTime = 0.5;
-
-        colorTween.TweenProperty(battleHud.WaveMessage, "modulate:a", 1f, fadeInTime);
-        colorTween.TweenInterval(holdTime);
-        colorTween.TweenProperty(battleHud.WaveMessage, "modulate:a", 0f, fadeOutTime);
-		
-        positionTween.TweenProperty(battleHud.WaveMessage, "position", battleHud.WaveMessageInitialPosition + Vec(0,50), fadeInTime);
-        positionTween.TweenInterval(holdTime);
-        positionTween.TweenProperty(battleHud.WaveMessage, "position", battleHud.WaveMessageInitialPosition, fadeOutTime);
+        battleHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
     }
 }
