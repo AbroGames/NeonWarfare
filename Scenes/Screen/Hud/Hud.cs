@@ -8,9 +8,8 @@ using System.Security.AccessControl;
 public partial class Hud : Control
 {
 	[Export] [NotNull] public ProgressBar Xp { get; private set; }
-	[Export] [NotNull] public HpBar HpBar { get; private set; }
+	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
 	[Export] [NotNull] public Label XpLabel { get; private set; }
-	//[Export] [NotNull] public Label Hp { get; private set; }
 	[Export] [NotNull] public Label Waves { get; private set; }
 	[Export] [NotNull] public Label Enemies { get; private set; }
 	[Export] [NotNull] public Label Level { get; private set; }
@@ -43,8 +42,10 @@ public partial class Hud : Control
 		Waves.Text = $"Wave: {BattleWorld.WaveNumber}";
 		Enemies.Text = $"Enemies: {BattleWorld.Enemies.Count}";
 
-		HpBar.Hp = BattleWorld.Player.Hp;
-		HpBar.MaxHp = BattleWorld.Player.MaxHp;
+		HpBar.CurrentUpperValue = BattleWorld.Player.Hp;
+		HpBar.CurrentLowerValue = HpBar.CurrentUpperValue * 1.1;
+		HpBar.MaxValue = BattleWorld.Player.MaxHp;
+		HpBar.Label.Text = $"Health: {BattleWorld.Player.Hp:N0} / {BattleWorld.Player.MaxHp:N0}";
 		
 		_deltas.Enqueue(delta);
 		if (_deltas.Count >= 240)
