@@ -1,5 +1,5 @@
-public class PlayerPhysicsProcessEvent(Player player, double delta)
+public readonly struct PlayerPhysicsProcessEvent(Player player, double delta)
 {
-    public Player Player { get; private set; } = player;
-    public double Delta { get; private set; } = delta;
+    public Player Player { get; } = player;
+    public double Delta { get; } = delta;
 }

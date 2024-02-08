@@ -1,5 +1,5 @@
-public class EnemyPhysicsProcessEvent(Enemy enemy, double delta)
+public readonly struct EnemyPhysicsProcessEvent(Enemy enemy, double delta)
 {
-    public Enemy Enemy { get; private set; } = enemy;
-    public double Delta { get; private set; } = delta;
+    public Enemy Enemy { get; } = enemy;
+    public double Delta { get; } = delta;
 }

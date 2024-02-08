@@ -1,4 +1,4 @@
-public class EnemyReadyEvent(Enemy enemy)
+public readonly struct EnemyReadyEvent(Enemy enemy)
 {
-    public Enemy Enemy { get; private set; } = enemy;
+    public Enemy Enemy { get; } = enemy;
 }

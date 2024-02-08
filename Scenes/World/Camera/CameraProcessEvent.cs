@@ -1,5 +1,5 @@
-public class CameraProcessEvent(Camera camera, double delta)
+public readonly struct CameraProcessEvent(Camera camera, double delta)
 {
-    public Camera Camera { get; private set; } = camera;
-    public double Delta { get; private set; } = delta;
+    public Camera Camera { get; } = camera;
+    public double Delta { get; }  = delta;
 }

@@ -1,9 +1,9 @@
 using Godot;
 
-public class PlayerCameraService
+public class CameraService
 {
     
-    public PlayerCameraService()
+    public CameraService()
     {
         Root.Instance.EventBus.Subscribe<CameraReadyEvent>(OnCameraReadyEvent);
         Root.Instance.EventBus.Subscribe<CameraProcessEvent>(OnCameraProcessEvent);

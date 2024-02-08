@@ -1,4 +1,4 @@
-public class CameraReadyEvent(Camera camera)
+public readonly struct CameraReadyEvent(Camera camera)
 {
-    public Camera Camera { get; private set; } = camera;
+    public Camera Camera { get; } = camera;
 }

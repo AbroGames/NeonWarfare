@@ -1,4 +1,4 @@
-public class CharacterReadyEvent(Character character)
+public readonly struct CharacterReadyEvent(Character character)
 {
-    public Character Character { get; private set; } = character;
+    public Character Character { get; } = character;
 }
