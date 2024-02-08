@@ -12,7 +12,7 @@ public class EnemyRotateService
         RotateToTarget(enemyProcessEvent.Enemy, enemyProcessEvent.Delta);
     }
     
-    private void RotateToTarget(Enemy enemy, double delta) //TODO дублируется с Player. Вынести в Utils?
+    public void RotateToTarget(Enemy enemy, double delta) //TODO дублируется с Player. Вынести в Utils?
     {
         //Куда хотим повернуться
         double targetAngle = GetAngleToTarget(enemy);
@@ -32,7 +32,7 @@ public class EnemyRotateService
         enemy.Rotation += rotationSpeedRad;
     }
     
-    private double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
+    public double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
     {
         // Получаем текущую позицию мыши
         var targetPos = enemy.Target.GlobalPosition;

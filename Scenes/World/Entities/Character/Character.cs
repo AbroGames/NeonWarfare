@@ -20,13 +20,12 @@ public partial class Character : CharacterBody2D
 	public double AttackSpeed { get; set; } = 1; // attack/sec
 	public double SecToNextAttack { get; set; } = 0;
 	
-	public Vector2 SmoothedPosition { get; private set; }
 	protected double HitFlash = 0;
 
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		SmoothedPosition = GlobalPosition;
+		Root.Instance.EventBus.Publish(new CharacterReadyEvent(this));
 	}
 
 	public void TakeDamage(Damage damage)
@@ -78,26 +77,19 @@ public partial class Character : CharacterBody2D
 		dmgLabel.Position = damage.Position;
 		GetParent().AddChild(dmgLabel);
 	}
-
-	/// <inheritdoc />
+	
 	public override void _Process(double delta)
 	{
-		UpdateSmoothedPosition(delta);
-		
-		Sprite.GlobalPosition = SmoothedPosition;
+		Root.Instance.EventBus.Publish(new CharacterProcessEvent(this, delta));
 		// flash effect on hit processing
 		HitFlash -= 0.02;
 		HitFlash = Mathf.Max(HitFlash, 0);
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 	}
-
-	private void UpdateSmoothedPosition(double delta)
+	
+	public override void _PhysicsProcess(double delta)
 	{
-		var requiredMovement = GlobalPosition - SmoothedPosition;
-
-		var stepFactor = delta / (1.0 / 60);
-		var smoothingFactor = 0.5;
-		SmoothedPosition += requiredMovement * stepFactor * smoothingFactor;
+		Root.Instance.EventBus.Publish(new CharacterPhysicsProcessEvent(this, delta));
 	}
 }

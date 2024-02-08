@@ -12,7 +12,7 @@ public class EnemyAttackService
         TryAttack(enemyProcessEvent.Enemy, enemyProcessEvent.Delta);
     }
     
-    private void TryAttack(Enemy enemy, double delta)
+    public void TryAttack(Enemy enemy, double delta)
     {
         enemy.SecToNextAttack -= delta;
         if (enemy.SecToNextAttack > 0) return;
@@ -20,7 +20,7 @@ public class EnemyAttackService
         if (CanSeePlayer(enemy)) Attack(enemy);
     }
     
-    private void Attack(Enemy enemy)
+    public void Attack(Enemy enemy)
     {
         enemy.SecToNextAttack = 1.0 / enemy.AttackSpeed;
 		
@@ -42,7 +42,7 @@ public class EnemyAttackService
         enemy.GetParent().AddChild(bullet); //TODO refactor
     }
     
-    private bool CanSeePlayer(Enemy enemy)
+    public bool CanSeePlayer(Enemy enemy)
     {
         var collider = enemy.RayCast.GetCollider();
         return collider is Player;
