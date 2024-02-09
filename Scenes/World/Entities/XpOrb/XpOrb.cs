@@ -21,6 +21,7 @@ public partial class XpOrb : Node2D
 		NotNullChecker.CheckProperties(this);
 		_initialVelocity = Rand.UnitVector * 500;
 		Trail.Reset();
+		Modulate = Colors.Gold.Darkened(0.2f);
 	}
 
 	public void Configure(Player target, int xp)

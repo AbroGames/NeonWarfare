@@ -5,7 +5,6 @@
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Trail.cs" id="2_b6ucg"]
 
 [node name="XpOrb" type="Node2D" node_paths=PackedStringArray("Trail")]
-modulate = Color(0, 0.482353, 0.482353, 1)
 script = ExtResource("1_jldce")
 Trail = NodePath("Trail")
 
