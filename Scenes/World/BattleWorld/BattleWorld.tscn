@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" path="res://Scenes/World/BattleWorld/BattleWorld.cs" id="1_175qr"]
 
-[node name="World" type="Node2D"]
+[node name="BattleWorld" type="Node2D"]
 script = ExtResource("1_175qr")

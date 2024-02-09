@@ -20,19 +20,20 @@ public class BattleHudService
 
     public void UpdateBattleHud(BattleHud battleHud, BattleWorld battleWorld)
     {
-        int playerRequiredXp = _playerXpService.GetRequiredXp(battleWorld.Player);
+        Player player = battleWorld.Player;
+        int playerRequiredXp = _playerXpService.GetRequiredXp(player);
         
-        battleHud.Xp.Value = (double) battleWorld.Player.Xp / playerRequiredXp;
-        battleHud.XpLabel.Text = $"Xp: {battleWorld.Player.Xp} / {playerRequiredXp}";
-        battleHud.Level.Text = $"Level: {battleWorld.Player.Level}";
+        battleHud.Xp.Value = (double) player.Xp / playerRequiredXp;
+        battleHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";
+        battleHud.Level.Text = $"Level: {player.Level}";
 		
         battleHud.Waves.Text = $"Wave: {battleWorld.EnemyWave.WaveNumber}";
         battleHud.Enemies.Text = $"Enemies: {battleWorld.Enemies.Count}";
 
-        battleHud.HpBar.CurrentUpperValue = battleWorld.Player.Hp;
-        battleHud.HpBar.CurrentLowerValue = battleWorld.Player.Hp + battleWorld.Player.HpCanBeFastRegen;
-        battleHud.HpBar.MaxValue = battleWorld.Player.MaxHp;
-        battleHud.HpBar.Label.Text = $"Health: {battleWorld.Player.Hp:N0} / {battleWorld.Player.MaxHp:N0}";
+        battleHud.HpBar.CurrentUpperValue = player.Hp;
+        battleHud.HpBar.CurrentLowerValue = player.Hp + player.HpCanBeFastRegen;
+        battleHud.HpBar.MaxValue = player.MaxHp;
+        battleHud.HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
         battleHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
     }
 }

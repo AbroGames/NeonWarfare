@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://xid2ekx5i2m"]
+
+[ext_resource type="Script" path="res://Scenes/World/SafeWorld/SafeWorld.cs" id="1_4o87r"]
+
+[node name="SafeWorld" type="Node2D"]
+script = ExtResource("1_4o87r")

@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_0ah2t"]
 [ext_resource type="Script" path="res://Scripts/Screen/SetWorldAndCloseMenuButton.cs" id="2_fc60g"]
-[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="3_ol71e"]
+[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="3_diq8x"]
 [ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="4_666cv"]
 [ext_resource type="Script" path="res://Scripts/Screen/ProfileButton.cs" id="5_pydka"]
 
@@ -33,7 +33,7 @@ layout_mode = 2
 text = "Создать сервер"
 icon = ExtResource("1_0ah2t")
 script = ExtResource("2_fc60g")
-_newWorldMainScene = ExtResource("3_ol71e")
+_newWorldMainScene = ExtResource("3_diq8x")
 
 [node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2

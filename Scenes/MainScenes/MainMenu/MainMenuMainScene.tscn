@@ -1,9 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://dw24k3p4lhskq"]
+[gd_scene load_steps=4 format=3 uid="uid://dw24k3p4lhskq"]
 
+[ext_resource type="Script" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.cs" id="1_tlyle"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_ugbjc"]
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="2_ubsiq"]
 
-[node name="MainMenu" type="Node2D"]
+[node name="MainMenuMainScene" type="Node2D" node_paths=PackedStringArray("BackgroundContainer", "MenuContainer", "ForegroundContainer")]
+script = ExtResource("1_tlyle")
+BackgroundContainer = NodePath("Screen/BackgroundContainer")
+MenuContainer = NodePath("Screen/MenuContainer")
+ForegroundContainer = NodePath("Screen/ForegroundContainer")
 
 [node name="Screen" type="CanvasLayer" parent="."]
 

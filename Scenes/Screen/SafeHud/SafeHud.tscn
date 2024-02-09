@@ -1,8 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dlelsat4bmqw3"]
+[gd_scene load_steps=8 format=3 uid="uid://cfr65i5i8050m"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/BattleHud/BattleHud.cs" id="1_rjfnb"]
-[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_ypiqw"]
-[ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_1iemm"]
+[ext_resource type="Script" path="res://Scenes/Screen/SafeHud/SafeHud.cs" id="1_lcuda"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_dqjfh"]
+[ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_y67ng"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cra4"]
 bg_color = Color(0, 0.180392, 0.211765, 1)
@@ -12,38 +12,27 @@ bg_color = Color(0, 0.462745, 0.419608, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_chnxn"]
 resource_local_to_scene = true
-font = ExtResource("2_ypiqw")
+font = ExtResource("2_dqjfh")
 font_size = 14
 
 [sub_resource type="LabelSettings" id="LabelSettings_phhwh"]
 resource_local_to_scene = true
-font = ExtResource("2_ypiqw")
+font = ExtResource("2_dqjfh")
 font_size = 14
 font_color = Color(0.34902, 0.34902, 0.34902, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_2k0io"]
-resource_local_to_scene = true
-font = ExtResource("2_ypiqw")
-font_size = 42
-font_color = Color(0.592157, 0, 0, 1)
-outline_size = 24
-outline_color = Color(0, 0, 0, 1)
-
-[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "WaveMessage", "Fps")]
+[node name="SafeHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Level", "Fps")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_rjfnb")
+script = ExtResource("1_lcuda")
 Xp = NodePath("Rows/Xp")
 HpBar = NodePath("Rows/HpBar")
 XpLabel = NodePath("Rows/Xp/Label")
-Waves = NodePath("Rows/Columns/LeftUpInfo/Waves")
-Enemies = NodePath("Rows/Columns/LeftUpInfo/Enemies")
 Level = NodePath("Rows/Columns/LeftUpInfo/Level")
-WaveMessage = NodePath("WaveMessage")
 Fps = NodePath("Rows/Columns/RightUpInfo/FPS")
 
 [node name="Rows" type="VBoxContainer" parent="."]
@@ -84,7 +73,7 @@ label_settings = SubResource("LabelSettings_chnxn")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HpBar" parent="Rows" instance=ExtResource("3_1iemm")]
+[node name="HpBar" parent="Rows" instance=ExtResource("3_y67ng")]
 layout_mode = 2
 
 [node name="Columns" type="HBoxContainer" parent="Rows"]
@@ -99,16 +88,6 @@ layout_mode = 2
 text = "Level"
 label_settings = SubResource("LabelSettings_chnxn")
 
-[node name="Waves" type="Label" parent="Rows/Columns/LeftUpInfo"]
-layout_mode = 2
-text = "Waves"
-label_settings = SubResource("LabelSettings_chnxn")
-
-[node name="Enemies" type="Label" parent="Rows/Columns/LeftUpInfo"]
-layout_mode = 2
-text = "Enemies"
-label_settings = SubResource("LabelSettings_chnxn")
-
 [node name="RightUpInfo" type="VBoxContainer" parent="Rows/Columns"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -118,13 +97,3 @@ layout_mode = 2
 text = "FPS"
 label_settings = SubResource("LabelSettings_phhwh")
 horizontal_alignment = 2
-
-[node name="WaveMessage" type="Label" parent="."]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 2
-offset_right = 1152.0
-offset_bottom = 57.0
-grow_horizontal = 2
-text = "SAMPLE_TEXT"
-label_settings = SubResource("LabelSettings_2k0io")
-horizontal_alignment = 1

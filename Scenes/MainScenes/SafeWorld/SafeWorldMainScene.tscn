@@ -1,12 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://851poce6mggu"]
+[gd_scene load_steps=5 format=3 uid="uid://ckusgv6yysi45"]
 
-[ext_resource type="Script" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.cs" id="1_fyl7v"]
-[ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_jc0ji"]
-[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/BattleWorld.tscn" id="1_pgtsk"]
-[ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="3_fl3ru"]
+[ext_resource type="Script" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.cs" id="1_qjvtp"]
+[ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="2_4trxm"]
+[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/SafeWorld.tscn" id="3_q7sd6"]
+[ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="4_3nxq5"]
 
-[node name="BattleWorldMainScene" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer")]
-script = ExtResource("1_fyl7v")
+[node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer")]
+script = ExtResource("1_qjvtp")
 WorldContainer = NodePath("WorldContainer")
 BackgroundContainer = NodePath("Screen/BackgroundContainer")
 HudContainer = NodePath("Screen/HudContainer")
@@ -14,9 +14,9 @@ MenuContainer = NodePath("Screen/MenuContainer")
 ForegroundContainer = NodePath("Screen/ForegroundContainer")
 
 [node name="WorldContainer" type="Node2D" parent="."]
-script = ExtResource("1_jc0ji")
+script = ExtResource("2_4trxm")
 
-[node name="BattleWorld" parent="WorldContainer" instance=ExtResource("1_pgtsk")]
+[node name="SafeWorld" parent="WorldContainer" instance=ExtResource("3_q7sd6")]
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
@@ -27,7 +27,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_jc0ji")
+script = ExtResource("2_4trxm")
 metadata/_edit_use_anchors_ = true
 
 [node name="HudContainer" type="Control" parent="Screen"]
@@ -37,10 +37,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_jc0ji")
+script = ExtResource("2_4trxm")
 metadata/_edit_use_anchors_ = true
 
-[node name="BattleHud" parent="Screen/HudContainer" instance=ExtResource("3_fl3ru")]
+[node name="SafeHud" parent="Screen/HudContainer" instance=ExtResource("4_3nxq5")]
 layout_mode = 1
 
 [node name="MenuContainer" type="Control" parent="Screen"]
@@ -50,7 +50,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_jc0ji")
+script = ExtResource("2_4trxm")
 metadata/_edit_use_anchors_ = true
 
 [node name="ForegroundContainer" type="Control" parent="Screen"]
@@ -61,5 +61,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_jc0ji")
+script = ExtResource("2_4trxm")
 metadata/_edit_use_anchors_ = true
