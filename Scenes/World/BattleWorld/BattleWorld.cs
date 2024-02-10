@@ -20,4 +20,9 @@ public partial class BattleWorld : Node2D
 	{
 		Root.Instance.EventBus.Publish(new BattleWorldProcessEvent(this, delta));
 	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		Root.Instance.EventBus.Publish(new BattleWorldPhysicsProcessEvent(this, delta));
+	}
 }

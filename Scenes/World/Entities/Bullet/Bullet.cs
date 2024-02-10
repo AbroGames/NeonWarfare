@@ -29,8 +29,10 @@ public partial class Bullet : Node2D
 		
 		GetNode<Sprite2D>("Sprite2D").Modulate = _colors[Author];
 		
-		GetNode<Area2D>("Area2D").BodyEntered += body =>
+		GetNode<Area2D>("Area2D").AreaEntered += area =>
 		{
+			if(area.GetParent() is not Character body) return;
+			
 			if (body is Player player)
 			{
 				if (Author != AuthorEnum.PLAYER)

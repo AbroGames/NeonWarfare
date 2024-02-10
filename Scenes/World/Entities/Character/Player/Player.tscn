@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://coh85utcj5br5"]
+[gd_scene load_steps=8 format=3 uid="uid://coh85utcj5br5"]
 
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character/Character.tscn" id="1_630e1"]
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Player/Player.cs" id="2_1gm72"]
@@ -12,9 +12,13 @@ shader_parameter/colorMaskFactor = 0.0
 shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
 shader_parameter/grayscaleFactor = 0.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_vjruu"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_p4o54"]
 resource_local_to_scene = true
-radius = 17.0
+radius = 19.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jtqwc"]
+resource_local_to_scene = true
+radius = 15.0
 
 [node name="Player" node_paths=PackedStringArray("ShieldSprite") instance=ExtResource("1_630e1")]
 script = ExtResource("2_1gm72")
@@ -23,9 +27,12 @@ ShieldSprite = NodePath("ShieldSprite")
 [node name="Sprite2D" parent="." index="0"]
 material = SubResource("ShaderMaterial_p0ws3")
 
-[node name="CollisionShape2D" parent="." index="1"]
-shape = SubResource("CircleShape2D_vjruu")
+[node name="CharacterShape" parent="." index="1"]
+shape = SubResource("CircleShape2D_p4o54")
 
 [node name="ShieldSprite" type="Sprite2D" parent="." index="2"]
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("5_cm7d8")
+
+[node name="HitBoxShape" parent="HitBox" index="0"]
+shape = SubResource("CircleShape2D_jtqwc")
