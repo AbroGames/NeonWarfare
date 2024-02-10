@@ -47,6 +47,8 @@ public class PlayerXpService
         player.PrimaryDistance *= 1.1;
         player.SecondaryDistance *= 1.1;
 
+        player.UniversalDamageMultiplier *= 1.1;
+
 
         var zoomTween = player.GetTree().CreateTween();
         zoomTween.SetTrans(Tween.TransitionType.Cubic);

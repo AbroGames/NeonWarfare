@@ -18,6 +18,7 @@ public class PlayerBasicSkillService
         player.AddChild(beam);
         beam.Source = player;
         beam.Modulate = player.Sprite.Modulate;
+        beam.Dps *= player.UniversalDamageMultiplier;
         
         Audio2D.PlaySoundOn(Sfx.LaserBeam, player);
         Audio2D.PlaySoundOn(Sfx.LaserBig, player);

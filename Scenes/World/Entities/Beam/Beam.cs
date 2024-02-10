@@ -6,7 +6,7 @@ using Scenes.World;
 public partial class Beam : Node2D
 {
 	public Player Source { get; set; }
-	public double DPS { get; set; } = 3000;
+	public double Dps { get; set; } = 3000;
 	[Export] [NotNull] public Area2D HitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D SpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D BeamSprite { get; set; }
@@ -40,7 +40,7 @@ public partial class Beam : Node2D
 		SpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
 		BeamSprite.Scale = BeamSprite.Scale with { Y = _startWidth + _startWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.03 };
 		
-		var damage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), DPS * delta, Source);
+		var damage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta, Source);
 		var others = HitArea.GetOverlappingAreas();
 		Log.Info(others.Count);
 		foreach (var area in others)

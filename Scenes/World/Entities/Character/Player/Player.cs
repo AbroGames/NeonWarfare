@@ -16,6 +16,7 @@ public partial class Player : Character
 	
 	public double PrimaryDamage { get; set; } = 1000;
 	public double PrimaryDistance { get; set; } = 2000;
+	public double UniversalDamageMultiplier { get; set; } = 1;
 	
 	public double SecondaryDamage { get; set; } = 5;
 	public double SecondaryDistance { get; set; } = 1000;
