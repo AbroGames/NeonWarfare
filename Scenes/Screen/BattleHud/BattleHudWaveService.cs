@@ -39,8 +39,8 @@ public class BattleHudWaveService
         colorTween.TweenInterval(HoldTime);
         colorTween.TweenProperty(battleHud.WaveMessage, "modulate:a", 0f, FadeOutTime);
 		
-        positionTween.TweenProperty(battleHud.WaveMessage, "position", battleHud.WaveMessageInitialPosition + Vec(0,50), FadeInTime);
+        positionTween.TweenProperty(battleHud.WaveMessage, "position:y", battleHud.WaveMessageInitialPosition.Y + 50, FadeInTime);
         positionTween.TweenInterval(HoldTime);
-        positionTween.TweenProperty(battleHud.WaveMessage, "position", battleHud.WaveMessageInitialPosition, FadeOutTime);
+        positionTween.TweenProperty(battleHud.WaveMessage, "position:y", battleHud.WaveMessageInitialPosition.Y, FadeOutTime);
     }
 }

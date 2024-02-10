@@ -35,5 +35,10 @@ public class BattleHudService
         battleHud.HpBar.MaxValue = player.MaxHp;
         battleHud.HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
         battleHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
+
+        var shader = battleHud.TimerSprite.Material as ShaderMaterial;
+        shader.SetShaderParameter("Progress", battleWorld.EnemyWave.NextWaveTimer / battleWorld.EnemyWave.WaveTimeout);
+
+        battleHud.TimerLabel.Text = battleWorld.EnemyWave.NextWaveTimer.ToString("N0");
     }
 }

@@ -12,6 +12,9 @@ public partial class BattleHud : Control
 	[Export] [NotNull] public Label WaveMessage { get; private set; }
 	[Export] [NotNull] public Label Fps { get; private set; }
 	
+	[Export] [NotNull] public Sprite2D TimerSprite { get; private set; }
+	[Export] [NotNull] public Label TimerLabel { get; private set; }
+	
 	public BattleWorld BattleWorld { get; set; }
 	public Vector2 WaveMessageInitialPosition { get; set; }
 	
