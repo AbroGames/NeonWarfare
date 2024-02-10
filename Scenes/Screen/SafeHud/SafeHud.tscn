@@ -1,8 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cfr65i5i8050m"]
+[gd_scene load_steps=10 format=3 uid="uid://cfr65i5i8050m"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/SafeHud/SafeHud.cs" id="1_lcuda"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_dqjfh"]
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_y67ng"]
+[ext_resource type="Script" path="res://Scripts/Screen/ToBattleButton.cs" id="4_xe4em"]
+[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="5_57n0a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cra4"]
 bg_color = Color(0, 0.180392, 0.211765, 1)
@@ -28,6 +30,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_lcuda")
 Xp = NodePath("Rows/Xp")
 HpBar = NodePath("Rows/HpBar")
@@ -87,6 +90,14 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Level"
 label_settings = SubResource("LabelSettings_chnxn")
+
+[node name="Button" type="Button" parent="Rows/Columns/LeftUpInfo"]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "To battle!"
+script = ExtResource("4_xe4em")
+_battleMainScene = ExtResource("5_57n0a")
 
 [node name="RightUpInfo" type="VBoxContainer" parent="Rows/Columns"]
 layout_mode = 2
