@@ -91,7 +91,7 @@ layout_mode = 2
 text = "Level"
 label_settings = SubResource("LabelSettings_chnxn")
 
-[node name="Button" type="Button" parent="Rows/Columns/LeftUpInfo"]
+[node name="ToBattleButton" type="Button" parent="Rows/Columns/LeftUpInfo"]
 modulate = Color(1, 0, 0, 1)
 layout_mode = 2
 size_flags_horizontal = 0
