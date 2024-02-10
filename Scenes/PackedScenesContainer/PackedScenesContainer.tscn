@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://5vh8drujl1s5"]
+[gd_scene load_steps=6 format=3 uid="uid://5vh8drujl1s5"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.cs" id="1_mm4hi"]
 [ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainer/Screen/ScreenPackedScenesContainer.tscn" id="1_vrsdm"]
 [ext_resource type="PackedScene" uid="uid://cx42uux5b88nw" path="res://Scenes/PackedScenesContainer/World/WorldPackedScenesContainer.tscn" id="2_u1emc"]
 [ext_resource type="PackedScene" uid="uid://b86vwuwqs6kgc" path="res://Scenes/PackedScenesContainer/Main/MainPackedScenesContainer.tscn" id="4_3h06v"]
+[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/World/Entities/Beam/Beam.tscn" id="5_bxdm7"]
 
 [node name="PackedScenesContainer" type="Node" node_paths=PackedStringArray("Main", "World", "Screen")]
 script = ExtResource("1_mm4hi")
@@ -16,3 +17,4 @@ Screen = NodePath("Screen")
 [node name="Screen" parent="." instance=ExtResource("1_vrsdm")]
 
 [node name="World" parent="." instance=ExtResource("2_u1emc")]
+Beam = ExtResource("5_bxdm7")

@@ -14,4 +14,8 @@ public static class Keys
     
     // Special
     public static readonly StringName CameraShift = "KeyCameraShift";
+    
+    // Abilities
+    public static readonly StringName AbilityBasic = "KeyAbilityBasic";
+    public static readonly StringName AbilityAdvanced = "KeyAbilityAdvanced";
 }

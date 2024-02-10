@@ -205,6 +205,18 @@ namespace Game.Content
 		public static RandomPicker<string> SupressedShot { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/weapons/supressed_shot.wav"
 		);
+
+		public static RandomPicker<string> Beam { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/weapons/beam.ogg"
+		);
+
+		public static RandomPicker<string> LaserBig { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/weapons/laserbig.ogg"
+		);
+
+		public static RandomPicker<string> LaserBeam { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/weapons/laserbeam.ogg"
+		);
 		
 		
 		

@@ -12,10 +12,11 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="Root" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Game")]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Game", "Environment")]
 script = ExtResource("1_lyqs7")
 PackedScenes = NodePath("PackedScenesContainer")
 Game = NodePath("Game")
+Environment = NodePath("WorldEnvironment")
 
 [node name="PackedScenesContainer" parent="." instance=ExtResource("2_642j6")]
 

@@ -23,6 +23,8 @@ public partial class Player : Character
 	public Camera Camera;
 
 	public Cooldown SecondaryCd { get; set; } = new(0.1);
+
+	public Cooldown BasicAbilityCd { get; set; } = new(20, CooldownMode.Single, true);
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -60,6 +62,9 @@ public partial class Player : Character
 		}
 
 		SecondaryCd.Update(delta);
+		BasicAbilityCd.Update(delta);
+
+		
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 		
@@ -132,6 +137,16 @@ public partial class Player : Character
 			bullet.Source = this;
 			GetParent().AddChild(bullet);
 		}
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is not InputEvent action) return;
+		if (!action.IsActionPressed(Keys.AbilityBasic)) return;
 		
+		if (BasicAbilityCd.Use())
+		{
+			Root.Instance.EventBus.Publish(new PlayerBasicSkillUseEvent(this));
+		}
 	}
 }

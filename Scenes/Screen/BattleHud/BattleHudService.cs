@@ -37,7 +37,7 @@ public class BattleHudService
         battleHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
 
         var shader = battleHud.TimerSprite.Material as ShaderMaterial;
-        shader.SetShaderParameter("Progress", battleWorld.EnemyWave.NextWaveTimer / battleWorld.EnemyWave.WaveTimeout);
+        shader.SetShaderParameter("Progress", 1-battleWorld.EnemyWave.NextWaveTimer / battleWorld.EnemyWave.WaveTimeout);
 
         battleHud.TimerLabel.Text = battleWorld.EnemyWave.NextWaveTimer.ToString("N0");
     }

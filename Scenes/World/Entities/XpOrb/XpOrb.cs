@@ -11,7 +11,7 @@ public partial class XpOrb : Node2D
 	public Player Target { get; private set; }
 
 
-	private double MaxSpeed => Target.MovementSpeed * 2.5;
+	private double MaxSpeed => Target.MovementSpeed * 3;
 	private static double _speedUp = 500;
 	private double _speed;
 	private Vector2 _initialVelocity;
@@ -19,9 +19,9 @@ public partial class XpOrb : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		_initialVelocity = Rand.UnitVector * 500;
+		_initialVelocity = Rand.UnitVector * MaxSpeed;
 		Trail.Reset();
-		Modulate = Colors.Gold.Darkened(0.2f);
+		Modulate = Colors.Gold.Darkened(0.5f);
 	}
 
 	public void Configure(Player target, int xp)

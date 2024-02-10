@@ -17,15 +17,9 @@ resource_local_to_scene = true
 font = ExtResource("2_ypiqw")
 font_size = 14
 
-[sub_resource type="LabelSettings" id="LabelSettings_phhwh"]
-resource_local_to_scene = true
-font = ExtResource("2_ypiqw")
-font_size = 14
-font_color = Color(0.34902, 0.34902, 0.34902, 1)
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ecmjs"]
 shader = ExtResource("4_d8thp")
-shader_parameter/Progress = 1.0
+shader_parameter/Progress = 0.3
 
 [sub_resource type="LabelSettings" id="LabelSettings_vg18n"]
 resource_local_to_scene = true
@@ -33,6 +27,12 @@ font = ExtResource("2_ypiqw")
 font_size = 14
 outline_size = 11
 outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_phhwh"]
+resource_local_to_scene = true
+font = ExtResource("2_ypiqw")
+font_size = 14
+font_color = Color(0.34902, 0.34902, 0.34902, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_2k0io"]
 resource_local_to_scene = true
@@ -58,8 +58,8 @@ Enemies = NodePath("Rows/Columns/LeftUpInfo/Enemies")
 Level = NodePath("Rows/Columns/LeftUpInfo/Level")
 WaveMessage = NodePath("WaveMessage")
 Fps = NodePath("Rows/Columns/RightUpInfo/FPS")
-TimerSprite = NodePath("Rows/CenterContainer/AnusVastera/TimerTexture")
-TimerLabel = NodePath("Rows/CenterContainer/AnusVastera/Label")
+TimerSprite = NodePath("Rows/MarginContainer/CenterContainer/TimerTexture")
+TimerLabel = NodePath("Rows/MarginContainer/CenterContainer/Control/Label")
 
 [node name="Rows" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -102,6 +102,45 @@ vertical_alignment = 1
 [node name="HpBar" parent="Rows" instance=ExtResource("3_1iemm")]
 layout_mode = 2
 
+[node name="MarginContainer" type="MarginContainer" parent="Rows"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="CenterContainer" type="CenterContainer" parent="Rows/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="TimerTexture" type="Sprite2D" parent="Rows/MarginContainer/CenterContainer"]
+material = SubResource("ShaderMaterial_ecmjs")
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("4_v5koi")
+
+[node name="Control" type="Control" parent="Rows/MarginContainer/CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="Rows/MarginContainer/CenterContainer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -7.875
+offset_right = 0.5
+offset_bottom = 7.875
+grow_horizontal = 2
+grow_vertical = 2
+text = "12"
+label_settings = SubResource("LabelSettings_vg18n")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Columns" type="HBoxContainer" parent="Rows"]
 layout_mode = 2
 
@@ -133,37 +172,6 @@ layout_mode = 2
 text = "FPS"
 label_settings = SubResource("LabelSettings_phhwh")
 horizontal_alignment = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="Rows"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="AnusVastera" type="Control" parent="Rows/CenterContainer"]
-layout_mode = 2
-
-[node name="TimerTexture" type="Sprite2D" parent="Rows/CenterContainer/AnusVastera"]
-material = SubResource("ShaderMaterial_ecmjs")
-scale = Vector2(0.1, 0.1)
-texture = ExtResource("4_v5koi")
-
-[node name="Label" type="Label" parent="Rows/CenterContainer/AnusVastera"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -22.5
-offset_top = -11.5
-offset_right = 22.5
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "Sosi"
-label_settings = SubResource("LabelSettings_vg18n")
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="WaveMessage" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0)

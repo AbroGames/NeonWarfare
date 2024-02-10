@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using Game.Content;
 using Godot;
 using KludgeBox;
@@ -74,7 +75,7 @@ public partial class Character : CharacterBody2D
 			Log.Debug(appliedDamage.ToString("N0"));
 			
 		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 75), 0.8));
-		dmgLabel.Position = damage.Position;
+		dmgLabel.Position = Position + Rand.UnitVector * 50;
 		GetParent().AddChild(dmgLabel);
 	}
 	

@@ -71,7 +71,7 @@ public partial class Bullet : Node2D
 			return;
 		
 		var hp = to.Hp;
-		to.TakeDamage(new Damage(Author, color, RemainingDamage, Position, Source));
+		to.TakeDamage(new Damage(Author, color, RemainingDamage, Source));
 		RemainingDamage -= hp;
 		
 

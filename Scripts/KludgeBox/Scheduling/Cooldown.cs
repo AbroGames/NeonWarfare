@@ -38,7 +38,12 @@ public class Cooldown
 	public float FractionElapsed => (float)(_elapsedTime / Duration);
 
 	public double TimeLeft => (1-FractionElapsed) * Duration;
-	public double TimeElapsed => _elapsedTime;
+
+	public double TimeElapsed
+	{
+		get => _elapsedTime;
+		set => _elapsedTime = value;
+	}
 
 	public event Action Ready;
 
@@ -51,10 +56,14 @@ public class Cooldown
 	/// Initializes a new instance of the <see cref="Cooldown"/> class with the specified duration.
 	/// </summary>
 	/// <param name="duration">The duration of the cooldown in seconds.</param>
-	public Cooldown(double duration, CooldownMode mode = CooldownMode.Cyclic) 
+	public Cooldown(double duration, CooldownMode mode = CooldownMode.Cyclic, bool isReady = false) 
 	{
 		Duration = duration; 
 		Mode = mode;
+		if (isReady)
+		{
+			_elapsedTime = duration;
+		}
 	}
 
 	public Cooldown AddAction(Action action)
@@ -102,6 +111,7 @@ public class Cooldown
 	{
 		_elapsedTime = 0;
 	}
+	
 
 	public bool Use()
 	{
