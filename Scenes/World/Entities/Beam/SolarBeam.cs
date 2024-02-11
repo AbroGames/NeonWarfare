@@ -47,12 +47,12 @@ public partial class SolarBeam : Node2D
 		_ttl -= delta;
 		_ang += 1800 * delta;
 		_ang %= 360;
-		var shrinkFactor = Mathf.Min(1, _ttl * 10);
+		var shrinkFactor = Mathf.Min(1, _ttl * 4);
 
 		InnerSpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
 		OuterSpawnSprite.Rotation -= Mathf.DegToRad(360 * delta);
-		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = _outerStartWidth + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07 * shrinkFactor };
-		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = _innerStartWidth + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07 * shrinkFactor };
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (_outerStartWidth + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (_innerStartWidth + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor };
 		
 		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
 		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
