@@ -46,6 +46,8 @@ public partial class Beam : Node2D
 		foreach (var area in others)
 		{
 			if(area.GetParent() is not Enemy body) continue;
+			var distFactor = Mathf.Max(1, 1 - (body.Position - Source.Position).Length() / 1000);
+			body.Position += Source.Up() * distFactor * 5;
 			body.TakeDamage(damage);
 		}
 	}
