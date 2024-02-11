@@ -12,8 +12,9 @@ shader_parameter/Progress = 0.33
 [node name="LaserBeamIcon" instance=ExtResource("1_knyii")]
 
 [node name="IconImage" parent="." index="0"]
+modulate = Color(0.137255, 1, 1, 1)
 texture = ExtResource("2_2fekg")
 expand_mode = 2
 
-[node name="ColorRect" parent="." index="1"]
+[node name="ColorRect" parent="." index="2"]
 material = SubResource("ShaderMaterial_pe5rr")
