@@ -63,7 +63,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += Source.Up() * distFactor * 15 * Source.UniversalDamageMultiplier * 0.5;
+			body.Position += this.Right() * distFactor * 15 * Source.UniversalDamageMultiplier * 0.5;
 			body.TakeDamage(outerDamage);
 		}
 		
@@ -71,7 +71,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += Source.Up() * distFactor * 15 * Source.UniversalDamageMultiplier;
+			body.Position += this.Right() * distFactor * 15 * Source.UniversalDamageMultiplier;
 			body.TakeDamage(innerDamage);
 		}
 	}
