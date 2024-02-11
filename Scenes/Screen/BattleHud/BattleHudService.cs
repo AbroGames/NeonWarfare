@@ -64,6 +64,8 @@ public class BattleHudService
         battleHud.HpBar.MaxValue = player.MaxHp;
         battleHud.HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
         battleHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
+
+        battleHud.BasicAbilityIcon.Progress = player.BasicAbilityCd.FractionElapsed;
                     
 
         var shader = battleHud.TimerSprite.Material as ShaderMaterial;

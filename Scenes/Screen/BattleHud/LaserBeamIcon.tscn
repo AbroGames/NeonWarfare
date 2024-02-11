@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://dq5jdxeqtu3w5"]
+
+[ext_resource type="PackedScene" uid="uid://cr1rdhtrdpo7j" path="res://Scenes/Screen/BattleHud/Icon.tscn" id="1_knyii"]
+[ext_resource type="Texture2D" uid="uid://dh63xg7ugs5dx" path="res://Assets/Textures/Icons/LaserBeamIcon.png" id="2_2fekg"]
+[ext_resource type="Shader" path="res://Assets/Shaders/TransparentCooldown.gdshader" id="2_edq07"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pe5rr"]
+resource_local_to_scene = true
+shader = ExtResource("2_edq07")
+shader_parameter/Progress = 0.33
+
+[node name="LaserBeamIcon" instance=ExtResource("1_knyii")]
+
+[node name="IconImage" parent="." index="0"]
+texture = ExtResource("2_2fekg")
+expand_mode = 2
+
+[node name="ColorRect" parent="." index="1"]
+material = SubResource("ShaderMaterial_pe5rr")

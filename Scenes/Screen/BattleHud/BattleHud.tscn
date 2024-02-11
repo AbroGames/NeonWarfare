@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://dlelsat4bmqw3"]
+[gd_scene load_steps=14 format=3 uid="uid://dlelsat4bmqw3"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/BattleHud/BattleHud.cs" id="1_rjfnb"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_ypiqw"]
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_1iemm"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Cooldown.gdshader" id="4_d8thp"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="4_v5koi"]
+[ext_resource type="PackedScene" uid="uid://dq5jdxeqtu3w5" path="res://Scenes/Screen/BattleHud/LaserBeamIcon.tscn" id="6_l38hl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cra4"]
 bg_color = Color(0, 0.180392, 0.211765, 1)
@@ -42,7 +43,7 @@ font_color = Color(0.592157, 0, 0, 1)
 outline_size = 24
 outline_color = Color(0, 0, 0, 1)
 
-[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "WaveMessage", "Fps", "Tps", "TimerSprite", "TimerLabel")]
+[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "Fps", "Tps", "WaveMessage", "TimerSprite", "TimerLabel", "BasicAbilityIcon")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,11 +57,12 @@ XpLabel = NodePath("Rows/Xp/Label")
 Waves = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Waves")
 Enemies = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Enemies")
 Level = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Level")
-WaveMessage = NodePath("WaveMessage")
 Fps = NodePath("Rows/MarginContainer/Columns/RightUpInfo/FPS")
 Tps = NodePath("Rows/MarginContainer/Columns/RightUpInfo/TPS")
+WaveMessage = NodePath("WaveMessage")
 TimerSprite = NodePath("Rows/MarginContainer/CenterContainer/TimerTexture")
 TimerLabel = NodePath("Rows/MarginContainer/CenterContainer/Control/Label")
+BasicAbilityIcon = NodePath("MarginContainer/AbilitiesPanel/LaserBeamIcon")
 
 [node name="Rows" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -106,7 +108,7 @@ layout_mode = 2
 [node name="MarginContainer" type="MarginContainer" parent="Rows"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-size_flags_vertical = 4
+size_flags_vertical = 0
 
 [node name="Columns" type="HBoxContainer" parent="Rows/MarginContainer"]
 layout_mode = 2
@@ -178,6 +180,27 @@ text = "12"
 label_settings = SubResource("LabelSettings_vg18n")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="AbilitiesPanel" type="HBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="LaserBeamIcon" parent="MarginContainer/AbilitiesPanel" instance=ExtResource("6_l38hl")]
+layout_mode = 2
 
 [node name="WaveMessage" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0)
