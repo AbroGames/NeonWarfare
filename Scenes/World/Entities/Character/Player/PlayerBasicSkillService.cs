@@ -13,15 +13,16 @@ public class PlayerBasicSkillService
     public void UseSkill(PlayerBasicSkillUseEvent useEvent)
     {
         var player = useEvent.Player;
-        var beam = Root.Instance.PackedScenes.World.Beam.Instantiate() as Beam;
-        beam.Rotation = -Mathf.Pi / 2;
-        player.AddChild(beam);
+        var node = Root.Instance.PackedScenes.World.Beam.Instantiate();
+        var beam = node as Beam;
+        beam.Rotation = player.Rotation - Mathf.Pi / 2;
+        player.GetParent().AddChild(beam);
+        beam.Position = player.Position;
         beam.Source = player;
         //beam.Modulate = player.Sprite.Modulate;
         beam.Dps *= player.UniversalDamageMultiplier;
         
-        Audio2D.PlaySoundOn(Sfx.LaserBeam, player);
-        Audio2D.PlaySoundOn(Sfx.LaserBig, player);
-        Audio2D.PlaySoundOn(Sfx.Beam, player);
+        Audio2D.PlaySoundOn(Sfx.HornImpact3, player);
+        Audio2D.PlaySoundOn(Sfx.DeepImpact, player);
     }
 }

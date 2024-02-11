@@ -10,3 +10,5 @@ public enum WheelEventType
     WheelDown
 }
 public readonly record struct PlayerMouseWheelInputEvent(Player Player, WheelEventType wheelEvent);
+public readonly record struct PlayerBasicSkillUseEvent(Player Player);
+public readonly record struct PlayerAdvancedSkillUseEvent(Player Player);

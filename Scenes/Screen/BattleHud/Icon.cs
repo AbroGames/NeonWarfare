@@ -3,6 +3,7 @@ using System;
 
 public partial class Icon : TextureRect
 {
+	[Export] [NotNull] public Label KeyLabel { get; private set; }
 	[Export] [NotNull] public TextureRect IconImage { get; private set; }
 	[Export] [NotNull] public TextureRect Overlay { get; private set; }
 	[Export] [NotNull] public ColorRect CooldownOverlay { get; private set; }
@@ -21,6 +22,12 @@ public partial class Icon : TextureRect
 	{
 		get => !Overlay.Visible;
 		set => Overlay.Visible = !value;
+	}
+
+	public char Key
+	{
+		get => KeyLabel.Text[0];
+		set => KeyLabel.Text = value.ToString();
 	}
 
 

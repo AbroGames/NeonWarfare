@@ -25,7 +25,8 @@ public partial class Player : Character
 
 	public Cooldown SecondaryCd { get; set; } = new(0.1);
 
-	public Cooldown BasicAbilityCd { get; set; } = new(20, CooldownMode.Single, true);
+	public Cooldown BasicAbilityCd { get; set; } = new(12, CooldownMode.Single, true);
+	public Cooldown AdvancedAbilityCd { get; set; } = new(32, CooldownMode.Single, true);
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -143,10 +144,16 @@ public partial class Player : Character
 	public override void _Input(InputEvent @event)
 	{
 		if (@event.IsActionPressed(Keys.AbilityBasic))
-		if (BasicAbilityCd.Use())
-		{
-			Root.Instance.EventBus.Publish(new PlayerBasicSkillUseEvent(this));
-		}
+			if (BasicAbilityCd.Use())
+			{
+				Root.Instance.EventBus.Publish(new PlayerBasicSkillUseEvent(this));
+			}
+		
+		if (@event.IsActionPressed(Keys.AbilityAdvanced))
+			if (AdvancedAbilityCd.Use())
+			{
+				Root.Instance.EventBus.Publish(new PlayerAdvancedSkillUseEvent(this));
+			}
 
 		if (@event.IsActionPressed(Keys.WheelUp))
 		{

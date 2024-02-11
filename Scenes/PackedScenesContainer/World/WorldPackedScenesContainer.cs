@@ -7,6 +7,7 @@ public partial class WorldPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene Enemy { get; private set; }
     
     [Export] [NotNull] public PackedScene Bullet { get; private set; }
+    [Export] [NotNull] public PackedScene SolarBeam { get; private set; }
     [Export] [NotNull] public PackedScene Beam { get; private set; }
     
     [Export] [NotNull] public PackedScene XpOrb { get; private set; }

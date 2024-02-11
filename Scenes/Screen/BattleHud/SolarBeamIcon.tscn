@@ -1,0 +1,29 @@
+[gd_scene load_steps=7 format=3 uid="uid://dq5jdxeqtu3w5"]
+
+[ext_resource type="PackedScene" uid="uid://cr1rdhtrdpo7j" path="res://Scenes/Screen/BattleHud/Icon.tscn" id="1_jeuos"]
+[ext_resource type="Texture2D" uid="uid://cr3s213f0omkj" path="res://Assets/Textures/Icons/SolarBeamIcon.png" id="2_xoyfw"]
+[ext_resource type="Shader" path="res://Assets/Shaders/TransparentCooldown.gdshader" id="3_l4a04"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="4_tcggq"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pe5rr"]
+resource_local_to_scene = true
+shader = ExtResource("3_l4a04")
+shader_parameter/Progress = 0.33
+
+[sub_resource type="LabelSettings" id="LabelSettings_v2fje"]
+resource_local_to_scene = true
+font = ExtResource("4_tcggq")
+font_size = 14
+
+[node name="SolarBeamIcon" instance=ExtResource("1_jeuos")]
+
+[node name="IconImage" parent="." index="0"]
+texture = ExtResource("2_xoyfw")
+expand_mode = 2
+
+[node name="ColorRect" parent="." index="2"]
+material = SubResource("ShaderMaterial_pe5rr")
+
+[node name="Label" parent="MarginContainer" index="0"]
+text = "Q"
+label_settings = SubResource("LabelSettings_v2fje")

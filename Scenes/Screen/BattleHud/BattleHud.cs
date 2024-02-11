@@ -15,7 +15,7 @@ public partial class BattleHud : Control
 	[Export] [NotNull] public Label Level { get; private set; }
 	
 	
-	[ExportGroup("FPS/TPS")]
+	[ExportGroup("FPS & TPS")]
 	[Export] [NotNull] public Label Fps { get; private set; }
 	[Export] [NotNull] public Label Tps { get; private set; }
 	
@@ -27,7 +27,8 @@ public partial class BattleHud : Control
 	
 	
 	[ExportGroup("Abilities")]
-	[Export] [NotNull] public Icon BasicAbilityIcon { get; private set; }
+	[Export] [NotNull] public Icon BeamIcon { get; private set; }
+	[Export] [NotNull] public Icon SolarBeamIcon { get; private set; }
 	
 	
 	public BattleWorld BattleWorld { get; set; }

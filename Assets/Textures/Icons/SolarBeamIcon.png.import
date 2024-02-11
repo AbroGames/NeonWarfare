@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dh63xg7ugs5dx"
-path="res://.godot/imported/LaserBeamIcon.png-9a70f9776d48f6a12e5f3ef8da06517e.ctex"
+uid="uid://cr3s213f0omkj"
+path="res://.godot/imported/SolarBeamIcon.png-c0f37a7df2f36f28960fd85b11155c60.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Icons/LaserBeamIcon.png"
-dest_files=["res://.godot/imported/LaserBeamIcon.png-9a70f9776d48f6a12e5f3ef8da06517e.ctex"]
+source_file="res://Assets/Textures/Icons/SolarBeamIcon.png"
+dest_files=["res://.godot/imported/SolarBeamIcon.png-c0f37a7df2f36f28960fd85b11155c60.ctex"]
 
 [params]
 

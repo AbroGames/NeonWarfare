@@ -31,6 +31,15 @@ namespace Game.Content
 			$"{SoundsDir}/normal/impact/horn_impact{{0}}.wav".BatchNumber(1, 3)
 		);
 
+		public static RandomPicker<string> HornImpact1 { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/impact/horn_impact1.wav"
+		);
+		public static RandomPicker<string> HornImpact2 { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/impact/horn_impact2.wav"
+		);
+		public static RandomPicker<string> HornImpact3 { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/impact/horn_impact3.wav"
+		);
 		public static RandomPicker<string> DeepImpact { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/impact/deep_impact{{0}}.wav".BatchNumber(1, 4)
 		);

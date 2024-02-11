@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cx42uux5b88nw"]
+[gd_scene load_steps=10 format=3 uid="uid://cx42uux5b88nw"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/World/WorldPackedScenesContainer.cs" id="1_6ysvl"]
 [ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/World/Entities/Character/Player/Player.tscn" id="2_mnaw1"]
@@ -6,8 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_8nru5"]
 [ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet/Bullet.tscn" id="5_ntxjo"]
 [ext_resource type="PackedScene" uid="uid://bmgxgxoergfj1" path="res://Scenes/World/Entities/XpOrb/XpOrb.tscn" id="6_0vma3"]
-[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/World/Entities/Beam/Beam.tscn" id="6_f7jbg"]
+[ext_resource type="PackedScene" uid="uid://c6f2wg8qd1yec" path="res://Scenes/World/Entities/Beam/Beam.tscn" id="6_f7jbg"]
 [ext_resource type="PackedScene" uid="uid://dfv2jfwdn10pn" path="res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn" id="6_p5pta"]
+[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/World/Entities/Beam/SolarBeam.tscn" id="6_we05o"]
 
 [node name="WorldPackedScenesContainer" type="Node"]
 script = ExtResource("1_6ysvl")
@@ -15,6 +16,7 @@ Player = ExtResource("2_mnaw1")
 Ally = ExtResource("3_7qhw5")
 Enemy = ExtResource("4_8nru5")
 Bullet = ExtResource("5_ntxjo")
+SolarBeam = ExtResource("6_we05o")
 Beam = ExtResource("6_f7jbg")
 XpOrb = ExtResource("6_0vma3")
 FloatingLabel = ExtResource("6_p5pta")
