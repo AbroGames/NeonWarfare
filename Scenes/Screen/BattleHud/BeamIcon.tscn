@@ -1,13 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://dekbo8bdpkepk"]
+[gd_scene load_steps=7 format=3 uid="uid://dekbo8bdpkepk"]
 
 [ext_resource type="PackedScene" uid="uid://cr1rdhtrdpo7j" path="res://Scenes/Screen/BattleHud/Icon.tscn" id="1_fclou"]
 [ext_resource type="Texture2D" uid="uid://dh63xg7ugs5dx" path="res://Assets/Textures/Icons/BeamIcon.png" id="2_fs116"]
 [ext_resource type="Shader" path="res://Assets/Shaders/TransparentCooldown.gdshader" id="3_aughf"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="4_6mux7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pe5rr"]
 resource_local_to_scene = true
 shader = ExtResource("3_aughf")
 shader_parameter/Progress = 0.33
+
+[sub_resource type="LabelSettings" id="LabelSettings_gswpd"]
+resource_local_to_scene = true
+font = ExtResource("4_6mux7")
+font_size = 14
 
 [node name="BeamIcon" instance=ExtResource("1_fclou")]
 
@@ -17,3 +23,6 @@ expand_mode = 2
 
 [node name="ColorRect" parent="." index="2"]
 material = SubResource("ShaderMaterial_pe5rr")
+
+[node name="Label" parent="MarginContainer" index="0"]
+label_settings = SubResource("LabelSettings_gswpd")
