@@ -28,6 +28,12 @@ public class BattleHudService
         UpdateHudPhysics(physEvent.BattleHud, physEvent.BattleHud.BattleWorld);
     }
 
+    /// <summary>
+    /// Мы используем настолько альтернативный подход к расчету ТПС потому, что все значения физической дельты в движке - константы.
+    /// Даже если реальный ТПС упадёт до 1, дельта, приходящая в _PhysicsProcess будет 1/60.
+    /// </summary>
+    /// <param name="battleHud"></param>
+    /// <param name="battleWorld"></param>
     public void UpdateHudPhysics(BattleHud battleHud, BattleWorld battleWorld)
     {
         var delta = _physicsStopwatch.Elapsed.TotalSeconds;
