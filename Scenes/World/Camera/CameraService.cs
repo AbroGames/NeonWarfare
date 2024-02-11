@@ -1,5 +1,6 @@
 using Godot;
 
+[GameService]
 public class CameraService
 {
     private const double OveroptimizedValue = 1 / 1.1;

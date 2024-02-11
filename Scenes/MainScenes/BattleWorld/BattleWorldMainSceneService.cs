@@ -1,3 +1,4 @@
+[GameService]
 public  class BattleWorldMainSceneService
 {
 

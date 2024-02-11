@@ -2,6 +2,7 @@ using Game.Content;
 using Godot;
 using KludgeBox;
 
+[GameService]
 public class BattleWorldService
 {
     

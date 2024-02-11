@@ -58,7 +58,7 @@ public static class ReflectionExtensions
 	/// </summary>
 	/// <param name="typeName">The name of the type implementing IExposable.</param>
 	/// <returns>An instance of the type implementing IExposable or null if not found.</returns>
-	public static object GetInstanceOfType(Type type)
+	public static object GetInstanceOfType(this Type type)
 	{
 		return Activator.CreateInstance(type);
 	}

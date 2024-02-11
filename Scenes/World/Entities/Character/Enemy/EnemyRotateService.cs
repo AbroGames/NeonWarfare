@@ -1,6 +1,6 @@
 using System;
 using Godot;
-
+[GameService]
 public class EnemyRotateService
 {
     public EnemyRotateService()

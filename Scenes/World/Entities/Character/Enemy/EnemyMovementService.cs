@@ -1,5 +1,6 @@
 using Godot;
 
+[GameService]
 public class EnemyMovementService
 {
     public EnemyMovementService()

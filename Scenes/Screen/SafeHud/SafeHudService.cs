@@ -1,6 +1,8 @@
 using System.Linq;
 using Godot;
 
+
+[GameService]
 public class SafeHudService
 {
 

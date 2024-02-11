@@ -1,6 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 
+[GameService]
 public class BattleWorldEnemySpawnService
 {
     private int RequiredEnemies = 0;

@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 
+
+[GameService]
 public class BattleHudService
 {
 

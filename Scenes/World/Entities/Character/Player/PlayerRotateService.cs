@@ -2,6 +2,7 @@ using System;
 using Godot;
 
 //TODO добавить аннотацию [EventBusListener] или типа того, чтобы автоматически подписывать соответствующиме методы сервиса на события шины
+[GameService]
 public class PlayerRotateService
 {
     public PlayerRotateService()

@@ -1,6 +1,7 @@
 using Game.Content;
 using Godot;
 
+[GameService]
 public class PlayerXpService
 {
     

@@ -3,6 +3,7 @@ using Godot;
 
 namespace Scenes.World.Entities.Character.Player;
 
+[GameService]
 public class PlayerBasicSkillService
 {
     public PlayerBasicSkillService()

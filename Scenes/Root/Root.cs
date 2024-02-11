@@ -12,7 +12,8 @@ public partial class Root : Node2D
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	
 	public EventBus EventBus { get; private set; } = new();
-	public List<Object> Services { get; private set; } = new();
+	
+	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 	
 	public static Root Instance { get; private set; }
 
@@ -31,27 +32,29 @@ public partial class Root : Node2D
 	public void ServicesInit()
 	{
 		PlayerXpService playerXpService = new PlayerXpService();
+		ServiceRegistry.RegisterServices();
 		
-		Services.Add(playerXpService);
+		//Services.Add(playerXpService);
+		ServiceRegistry.Register(playerXpService);
 		
-		Services.Add(new PlayerRotateService());
-		Services.Add(new PlayerMovementService());
-		Services.Add(new EnemyMovementService());
-		Services.Add(new EnemyAttackService());
-		Services.Add(new EnemyRotateService());
-		Services.Add(new CameraService());
-		Services.Add(new TwoColoredBarService());
-		Services.Add(new BattleWorldService());
-		Services.Add(new BattleWorldMainSceneService());
-		Services.Add(new BattleHudWaveService());
-		Services.Add(new BattleWorldWavesService());
-		Services.Add(new SafeWorldService());
-		Services.Add(new SafeWorldMainSceneService());
-		Services.Add(new BattleWorldEnemySpawnService());
-		Services.Add(new PlayerBasicSkillService());
-		Services.Add(new PlayerAdvancedSkillService());
+		//Services.Add(new PlayerRotateService());
+		//Services.Add(new PlayerMovementService());
+		//Services.Add(new EnemyMovementService());
+		//Services.Add(new EnemyAttackService());
+		//Services.Add(new EnemyRotateService());
+		//Services.Add(new CameraService());
+		//Services.Add(new TwoColoredBarService());
+		//Services.Add(new BattleWorldService());
+		//Services.Add(new BattleWorldMainSceneService());
+		//Services.Add(new BattleHudWaveService());
+		//Services.Add(new BattleWorldWavesService());
+		//Services.Add(new SafeWorldService());
+		//Services.Add(new SafeWorldMainSceneService());
+		//Services.Add(new BattleWorldEnemySpawnService());
+		//Services.Add(new PlayerBasicSkillService());
+		//Services.Add(new PlayerAdvancedSkillService());
 		
-		Services.Add(new BattleHudService(playerXpService));
-		Services.Add(new SafeHudService(playerXpService));
+		ServiceRegistry.Register(new BattleHudService(playerXpService));
+		ServiceRegistry.Register(new SafeHudService(playerXpService));
 	}
 }
