@@ -17,6 +17,12 @@ resource_local_to_scene = true
 font = ExtResource("2_ypiqw")
 font_size = 14
 
+[sub_resource type="LabelSettings" id="LabelSettings_phhwh"]
+resource_local_to_scene = true
+font = ExtResource("2_ypiqw")
+font_size = 14
+font_color = Color(0.34902, 0.34902, 0.34902, 1)
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ecmjs"]
 shader = ExtResource("4_d8thp")
 shader_parameter/Progress = 0.3
@@ -27,12 +33,6 @@ font = ExtResource("2_ypiqw")
 font_size = 14
 outline_size = 11
 outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_phhwh"]
-resource_local_to_scene = true
-font = ExtResource("2_ypiqw")
-font_size = 14
-font_color = Color(0.34902, 0.34902, 0.34902, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_2k0io"]
 resource_local_to_scene = true
@@ -53,11 +53,11 @@ script = ExtResource("1_rjfnb")
 Xp = NodePath("Rows/Xp")
 HpBar = NodePath("Rows/HpBar")
 XpLabel = NodePath("Rows/Xp/Label")
-Waves = NodePath("Rows/Columns/LeftUpInfo/Waves")
-Enemies = NodePath("Rows/Columns/LeftUpInfo/Enemies")
-Level = NodePath("Rows/Columns/LeftUpInfo/Level")
+Waves = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Waves")
+Enemies = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Enemies")
+Level = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Level")
 WaveMessage = NodePath("WaveMessage")
-Fps = NodePath("Rows/Columns/RightUpInfo/FPS")
+Fps = NodePath("Rows/MarginContainer/Columns/RightUpInfo/FPS")
 TimerSprite = NodePath("Rows/MarginContainer/CenterContainer/TimerTexture")
 TimerLabel = NodePath("Rows/MarginContainer/CenterContainer/Control/Label")
 
@@ -105,8 +105,45 @@ layout_mode = 2
 [node name="MarginContainer" type="MarginContainer" parent="Rows"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[node name="Columns" type="HBoxContainer" parent="Rows/MarginContainer"]
+layout_mode = 2
+
+[node name="LeftUpInfo" type="VBoxContainer" parent="Rows/MarginContainer/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Level" type="Label" parent="Rows/MarginContainer/Columns/LeftUpInfo"]
+layout_mode = 2
+text = "Level"
+label_settings = SubResource("LabelSettings_chnxn")
+
+[node name="Waves" type="Label" parent="Rows/MarginContainer/Columns/LeftUpInfo"]
+layout_mode = 2
+text = "Waves"
+label_settings = SubResource("LabelSettings_chnxn")
+
+[node name="Enemies" type="Label" parent="Rows/MarginContainer/Columns/LeftUpInfo"]
+layout_mode = 2
+text = "Enemies"
+label_settings = SubResource("LabelSettings_chnxn")
+
+[node name="RightUpInfo" type="VBoxContainer" parent="Rows/MarginContainer/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FPS" type="Label" parent="Rows/MarginContainer/Columns/RightUpInfo"]
+layout_mode = 2
+text = "FPS"
+label_settings = SubResource("LabelSettings_phhwh")
+horizontal_alignment = 2
+
+[node name="TPS" type="Label" parent="Rows/MarginContainer/Columns/RightUpInfo"]
+layout_mode = 2
+text = "TPS"
+label_settings = SubResource("LabelSettings_phhwh")
+horizontal_alignment = 2
 
 [node name="CenterContainer" type="CenterContainer" parent="Rows/MarginContainer"]
 layout_mode = 2
@@ -140,38 +177,6 @@ text = "12"
 label_settings = SubResource("LabelSettings_vg18n")
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Columns" type="HBoxContainer" parent="Rows"]
-layout_mode = 2
-
-[node name="LeftUpInfo" type="VBoxContainer" parent="Rows/Columns"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Level" type="Label" parent="Rows/Columns/LeftUpInfo"]
-layout_mode = 2
-text = "Level"
-label_settings = SubResource("LabelSettings_chnxn")
-
-[node name="Waves" type="Label" parent="Rows/Columns/LeftUpInfo"]
-layout_mode = 2
-text = "Waves"
-label_settings = SubResource("LabelSettings_chnxn")
-
-[node name="Enemies" type="Label" parent="Rows/Columns/LeftUpInfo"]
-layout_mode = 2
-text = "Enemies"
-label_settings = SubResource("LabelSettings_chnxn")
-
-[node name="RightUpInfo" type="VBoxContainer" parent="Rows/Columns"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="FPS" type="Label" parent="Rows/Columns/RightUpInfo"]
-layout_mode = 2
-text = "FPS"
-label_settings = SubResource("LabelSettings_phhwh")
-horizontal_alignment = 2
 
 [node name="WaveMessage" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0)
