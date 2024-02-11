@@ -1,43 +1,109 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0w8nqq28xtnw"]
+[gd_scene load_steps=11 format=3 uid="uid://d0w8nqq28xtnw"]
 
 [ext_resource type="Script" path="res://Scenes/World/Entities/Beam/Beam.cs" id="1_q2rq7"]
 [ext_resource type="Texture2D" uid="uid://0lxupe8u6ixf" path="res://Assets/Textures/Particles/Glow/256/spotlight_5.png" id="1_w4etn"]
+[ext_resource type="Texture2D" uid="uid://bf1cf224o02k0" path="res://Assets/Textures/Particles/Effects/fire_01.png" id="2_h2uxa"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="2_m1glf"]
 [ext_resource type="Texture2D" uid="uid://cvj1gxq3db2hc" path="res://Assets/Textures/Sprites/Square.png" id="3_qjm6e"]
+
+[sub_resource type="Curve" id="Curve_2k8l2"]
+_data = [Vector2(0, 0.56044), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_bfx3e"]
+colors = PackedColorArray(1, 1, 0, 1, 1, 0.419608, 0, 0)
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_rrg0j"]
 blend_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ysesi"]
-size = Vector2(606.819, 585)
+size = Vector2(972.118, 831.248)
 
-[node name="Beam" type="Node2D" node_paths=PackedStringArray("HitArea", "SpawnSprite", "BeamSprite")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0k6vi"]
+size = Vector2(972.118, 256)
+
+[node name="Beam" type="Node2D" node_paths=PackedStringArray("OuterHitArea", "InnerHitArea", "OuterSpawnSprite", "OuterBeamSprite", "InnerSpawnSprite", "InnerBeamSprite")]
 script = ExtResource("1_q2rq7")
-HitArea = NodePath("Beam/DamageArea")
-SpawnSprite = NodePath("Spawn")
-BeamSprite = NodePath("Beam")
+OuterHitArea = NodePath("OuterPart/Beam/DamageArea")
+InnerHitArea = NodePath("InnerPart/Beam/DamageArea")
+OuterSpawnSprite = NodePath("OuterPart/Spawn")
+OuterBeamSprite = NodePath("OuterPart/Beam")
+InnerSpawnSprite = NodePath("InnerPart/Spawn")
+InnerBeamSprite = NodePath("InnerPart/Beam")
 
-[node name="Spawn" type="Sprite2D" parent="."]
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+position = Vector2(2069, 0)
+amount = 400
+lifetime = 0.4
+texture = ExtResource("2_h2uxa")
+emission_shape = 3
+emission_rect_extents = Vector2(2000, 1)
+direction = Vector2(10, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_max = 60.61
+angular_velocity_min = -72.73
+angular_velocity_max = 58.18
+scale_amount_min = 0.0
+scale_amount_max = 2.0
+scale_amount_curve = SubResource("Curve_2k8l2")
+color_ramp = SubResource("Gradient_bfx3e")
+hue_variation_min = -0.1
+hue_variation_max = 0.1
+
+[node name="OuterPart" type="Node2D" parent="."]
+modulate = Color(1, 0.52549, 0, 1)
+
+[node name="Spawn" type="Sprite2D" parent="OuterPart"]
+modulate = Color(1, 1, 1, 0.505882)
 material = SubResource("CanvasItemMaterial_rrg0j")
-scale = Vector2(4.22656, 4.22656)
+scale = Vector2(7.54688, 7.54688)
 texture = ExtResource("1_w4etn")
 
-[node name="SpawnWhite" type="Sprite2D" parent="."]
+[node name="SpawnWhite" type="Sprite2D" parent="OuterPart"]
 scale = Vector2(0.398438, 0.398438)
 texture = ExtResource("2_m1glf")
 
-[node name="Beam" type="Sprite2D" parent="."]
+[node name="Beam" type="Sprite2D" parent="OuterPart"]
 position = Vector2(1084.46, 0)
 scale = Vector2(4.26773, 0.332031)
 texture = ExtResource("3_qjm6e")
 
-[node name="EndWhite" type="Sprite2D" parent="Beam"]
+[node name="EndWhite" type="Sprite2D" parent="OuterPart/Beam"]
 position = Vector2(250.845, 0)
-scale = Vector2(0.332, 0.988236)
+scale = Vector2(1.76195, 0.988236)
 texture = ExtResource("2_m1glf")
 
-[node name="DamageArea" type="Area2D" parent="Beam"]
+[node name="DamageArea" type="Area2D" parent="OuterPart/Beam"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Beam/DamageArea"]
-position = Vector2(32.9616, 0)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OuterPart/Beam/DamageArea"]
+position = Vector2(215.611, 0)
 shape = SubResource("RectangleShape2D_ysesi")
+
+[node name="InnerPart" type="Node2D" parent="."]
+
+[node name="Spawn" type="Sprite2D" parent="InnerPart"]
+material = SubResource("CanvasItemMaterial_rrg0j")
+rotation = 0.785398
+scale = Vector2(2.31487, 2.31487)
+texture = ExtResource("1_w4etn")
+
+[node name="SpawnWhite" type="Sprite2D" parent="InnerPart"]
+scale = Vector2(0.199219, 0.199219)
+texture = ExtResource("2_m1glf")
+
+[node name="Beam" type="Sprite2D" parent="InnerPart"]
+position = Vector2(925.461, 0)
+scale = Vector2(3.64664, 0.132812)
+texture = ExtResource("3_qjm6e")
+
+[node name="EndWhite" type="Sprite2D" parent="InnerPart/Beam"]
+position = Vector2(250.845, 0)
+scale = Vector2(1.76195, 0.988236)
+texture = ExtResource("2_m1glf")
+
+[node name="DamageArea" type="Area2D" parent="InnerPart/Beam"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InnerPart/Beam/DamageArea"]
+position = Vector2(215.611, 0)
+shape = SubResource("RectangleShape2D_0k6vi")

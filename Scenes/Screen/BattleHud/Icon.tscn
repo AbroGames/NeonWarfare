@@ -20,7 +20,7 @@ fill_from = Vector2(0.5, 0.5)
 
 [node name="Icon" type="TextureRect" node_paths=PackedStringArray("IconImage", "Overlay", "CooldownOverlay")]
 texture = ExtResource("1_q75y7")
-expand_mode = 2
+expand_mode = 3
 script = ExtResource("2_61fj4")
 IconImage = NodePath("IconImage")
 Overlay = NodePath("IconOverlay")
@@ -33,6 +33,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+expand_mode = 3
 
 [node name="IconBorder" type="TextureRect" parent="."]
 layout_mode = 1
@@ -42,7 +43,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_jeayq")
-expand_mode = 2
+expand_mode = 3
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_a1w3t")
@@ -63,3 +64,4 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_wrg4k")
+expand_mode = 3

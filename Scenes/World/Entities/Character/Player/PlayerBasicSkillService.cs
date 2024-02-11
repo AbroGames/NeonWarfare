@@ -17,7 +17,7 @@ public class PlayerBasicSkillService
         beam.Rotation = -Mathf.Pi / 2;
         player.AddChild(beam);
         beam.Source = player;
-        beam.Modulate = player.Sprite.Modulate;
+        //beam.Modulate = player.Sprite.Modulate;
         beam.Dps *= player.UniversalDamageMultiplier;
         
         Audio2D.PlaySoundOn(Sfx.LaserBeam, player);

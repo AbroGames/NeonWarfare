@@ -7,19 +7,25 @@ public partial class Beam : Node2D
 {
 	public Player Source { get; set; }
 	public double Dps { get; set; } = 3000;
-	[Export] [NotNull] public Area2D HitArea { get; private set; }
-	[Export] [NotNull] public Sprite2D SpawnSprite { get; set; }
-	[Export] [NotNull] public Sprite2D BeamSprite { get; set; }
+	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
+	[Export] [NotNull] public Area2D InnerHitArea { get; private set; }
+	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
+	[Export] [NotNull] public Sprite2D OuterBeamSprite { get; set; }
+	
+	[Export] [NotNull] public Sprite2D InnerSpawnSprite { get; set; }
+	[Export] [NotNull] public Sprite2D InnerBeamSprite { get; set; }
 	
 	private double _ttl = 7;
-	private double _startWidth;
+	private double _innerStartWidth;
+	private double _outerStartWidth;
 	private double _ang;
 	private float _startGlow;
 	
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		_startWidth = BeamSprite.Scale.Y;
+		_outerStartWidth = OuterBeamSprite.Scale.Y;
+		_innerStartWidth = InnerBeamSprite.Scale.Y;
 		var env = Root.Instance.Environment.Environment;
 		_startGlow = env.GlowStrength;
 		env.GlowStrength *= 1.1f;
@@ -37,18 +43,31 @@ public partial class Beam : Node2D
 		_ang += 1800 * delta;
 		_ang %= 360;
 
-		SpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
-		BeamSprite.Scale = BeamSprite.Scale with { Y = _startWidth + _startWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.03 };
+		InnerSpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
+		OuterSpawnSprite.Rotation -= Mathf.DegToRad(360 * delta);
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = _outerStartWidth + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.03 };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = _innerStartWidth + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.03 };
 		
-		var damage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta, Source);
-		var others = HitArea.GetOverlappingAreas();
-		Log.Info(others.Count);
-		foreach (var area in others)
+		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
+		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
+		
+		var outerOthers = OuterHitArea.GetOverlappingAreas();
+		var innerOthers = InnerHitArea.GetOverlappingAreas();
+		
+		foreach (var area in outerOthers)
+		{
+			if(area.GetParent() is not Enemy body) continue;
+			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
+			body.Position += Source.Up() * distFactor * 5 * Source.UniversalDamageMultiplier * 0.5;
+			body.TakeDamage(outerDamage);
+		}
+		
+		foreach (var area in innerOthers)
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
 			body.Position += Source.Up() * distFactor * 5 * Source.UniversalDamageMultiplier;
-			body.TakeDamage(damage);
+			body.TakeDamage(innerDamage);
 		}
 	}
 }
