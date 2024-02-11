@@ -9,7 +9,7 @@
 blend_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ysesi"]
-size = Vector2(560.754, 585)
+size = Vector2(606.819, 585)
 
 [node name="Beam" type="Node2D" node_paths=PackedStringArray("HitArea", "SpawnSprite", "BeamSprite")]
 script = ExtResource("1_q2rq7")
@@ -31,14 +31,13 @@ position = Vector2(1084.46, 0)
 scale = Vector2(4.26773, 0.332031)
 texture = ExtResource("3_qjm6e")
 
+[node name="EndWhite" type="Sprite2D" parent="Beam"]
+position = Vector2(250.845, 0)
+scale = Vector2(0.332, 0.988236)
+texture = ExtResource("2_m1glf")
+
 [node name="DamageArea" type="Area2D" parent="Beam"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Beam/DamageArea"]
-position = Vector2(9.92932, 0)
-scale = Vector2(1, 1)
+position = Vector2(32.9616, 0)
 shape = SubResource("RectangleShape2D_ysesi")
-
-[node name="EndWhite" type="Sprite2D" parent="."]
-position = Vector2(2223, 0)
-scale = Vector2(0.367187, 0.367187)
-texture = ExtResource("2_m1glf")

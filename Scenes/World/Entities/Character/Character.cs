@@ -75,7 +75,7 @@ public partial class Character : CharacterBody2D
 			Log.Debug(appliedDamage.ToString("N0"));
 			
 		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 75), 0.8));
-		dmgLabel.Position = Position + Rand.UnitVector * 50;
+		dmgLabel.Position = Position + Rand.InsideUnitCircle * 50;
 		GetParent().AddChild(dmgLabel);
 	}
 	
