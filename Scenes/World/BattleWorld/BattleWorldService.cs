@@ -30,7 +30,7 @@ public class BattleWorldService
         var camera = new Camera(); //TODO to camera service
         camera.Position = battleWorld.Player.Position;
         camera.TargetNode = battleWorld.Player;
-        camera.Zoom = Vec(0.65);
+        camera.Zoom = Vec(0.3);
         camera.SmoothingPower = 1.5;
         battleWorld.AddChild(camera);
         camera.Enabled = true;

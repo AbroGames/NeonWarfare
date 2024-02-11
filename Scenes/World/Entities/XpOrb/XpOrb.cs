@@ -19,7 +19,7 @@ public partial class XpOrb : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		_initialVelocity = Rand.UnitVector * MaxSpeed;
+		_initialVelocity = Rand.UnitVector * MaxSpeed * 0.5;
 		Trail.Reset();
 		Modulate = Colors.Gold.Darkened(0.5f);
 	}

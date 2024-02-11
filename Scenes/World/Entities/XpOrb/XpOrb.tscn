@@ -14,7 +14,7 @@ texture = ExtResource("1_uhk42")
 
 [node name="Trail" type="Node2D" parent="."]
 script = ExtResource("2_b6ucg")
-SegmentsCount = 20
+SegmentsCount = 5
 StartWidth = 2.0
 EndWidth = 3.0
 Length = 0.15

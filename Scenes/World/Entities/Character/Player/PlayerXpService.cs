@@ -59,7 +59,7 @@ public class PlayerXpService
         Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f);
         var lvlUpLabel = Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
 		
-        lvlUpLabel.Configure($"Level up!\n({player.Level-1} -> {player.Level})", Colors.Gold, 1.3);
+        lvlUpLabel.Configure($"Level up!\n{player.Level-1} -> {player.Level}", Colors.Gold, 1.3);
         lvlUpLabel.Position = player.Position - Vec(0, 100);
         player.GetParent().AddChild(lvlUpLabel);
     }
