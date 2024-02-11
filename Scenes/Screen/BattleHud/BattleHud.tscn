@@ -33,6 +33,7 @@ shader_parameter/Progress = 0.3
 resource_local_to_scene = true
 font = ExtResource("2_ypiqw")
 font_size = 14
+font_color = Color(1, 0.290196, 0.254902, 1)
 outline_size = 11
 outline_color = Color(0, 0, 0, 1)
 
@@ -155,7 +156,13 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
+[node name="TimerBgTexture" type="Sprite2D" parent="Rows/MarginContainer/CenterContainer"]
+modulate = Color(0, 0, 0, 1)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("4_v5koi")
+
 [node name="TimerTexture" type="Sprite2D" parent="Rows/MarginContainer/CenterContainer"]
+modulate = Color(0.592157, 0, 0, 1)
 material = SubResource("ShaderMaterial_ecmjs")
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("4_v5koi")

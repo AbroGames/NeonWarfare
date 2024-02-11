@@ -6,8 +6,8 @@ void fragment() {
 	vec4 color = COLOR;//texture(Texture, UV);
 	float lum = color.r * 0.299 + color.g * 0.587 + color.b * 0.114;
 	vec4 disabled = vec4(lum, lum, lum, color.a);
-	vec4 shadow = disabled * 0.15;
-	shadow.a = disabled.a;
+	vec4 shadow = color * 0.2;
+	shadow.a = color.a;
 	
 	vec2 pos = UV - vec2(0.5, 0.5);
 	float angle = mod(
