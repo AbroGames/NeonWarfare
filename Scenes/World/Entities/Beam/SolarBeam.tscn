@@ -18,10 +18,10 @@ colors = PackedColorArray(1, 1, 0, 1, 0.764706, 0.290196, 0, 0)
 blend_mode = 1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ysesi"]
-size = Vector2(972.118, 831.248)
+size = Vector2(972.118, 1313.13)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0k6vi"]
-size = Vector2(972.118, 256)
+size = Vector2(972.118, 948.706)
 
 [node name="Beam" type="Node2D" node_paths=PackedStringArray("OuterHitArea", "OuterSpawnSprite", "OuterBeamSprite", "InnerHitArea", "InnerSpawnSprite", "InnerBeamSprite")]
 script = ExtResource("1_fmlhb")

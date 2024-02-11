@@ -34,11 +34,11 @@ modulate = Color(0.427451, 0.00392157, 0.886275, 1)
 [node name="Spawn" type="Sprite2D" parent="OuterPart"]
 modulate = Color(1, 1, 1, 0.505882)
 material = SubResource("CanvasItemMaterial_rrg0j")
-scale = Vector2(7.54688, 7.54688)
+scale = Vector2(4.79688, 4.5)
 texture = ExtResource("1_w4etn")
 
 [node name="SpawnWhite" type="Sprite2D" parent="OuterPart"]
-scale = Vector2(0.398438, 0.398438)
+scale = Vector2(0.269531, 0.269531)
 texture = ExtResource("2_m1glf")
 
 [node name="Beam" type="Sprite2D" parent="OuterPart"]
@@ -58,16 +58,16 @@ position = Vector2(215.611, 0)
 shape = SubResource("RectangleShape2D_ysesi")
 
 [node name="InnerPart" type="Node2D" parent="."]
-modulate = Color(0, 0.54902, 0.54902, 1)
+modulate = Color(0, 0.74902, 0.74902, 1)
 
 [node name="Spawn" type="Sprite2D" parent="InnerPart"]
 material = SubResource("CanvasItemMaterial_rrg0j")
 rotation = 0.785398
-scale = Vector2(2.31487, 2.31487)
+scale = Vector2(1.47207, 1.28478)
 texture = ExtResource("1_w4etn")
 
 [node name="SpawnWhite" type="Sprite2D" parent="InnerPart"]
-scale = Vector2(0.199219, 0.199219)
+scale = Vector2(0.144531, 0.144531)
 texture = ExtResource("2_m1glf")
 
 [node name="Beam" type="Sprite2D" parent="InnerPart"]

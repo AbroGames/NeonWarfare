@@ -25,8 +25,8 @@ public partial class Player : Character
 
 	public Cooldown SecondaryCd { get; set; } = new(0.1);
 
-	public Cooldown BasicAbilityCd { get; set; } = new(12, CooldownMode.Single, true);
-	public Cooldown AdvancedAbilityCd { get; set; } = new(32, CooldownMode.Single, true);
+	public Cooldown BasicAbilityCd { get; set; } = new(10, CooldownMode.Single, true);
+	public Cooldown AdvancedAbilityCd { get; set; } = new(44, CooldownMode.Single, true);
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -65,8 +65,7 @@ public partial class Player : Character
 
 		SecondaryCd.Update(delta);
 		BasicAbilityCd.Update(delta);
-
-		
+		AdvancedAbilityCd.Update(delta);
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 		
