@@ -8,7 +8,13 @@ public class CameraService
     {
         Root.Instance.EventBus.Subscribe<CameraReadyEvent>(OnCameraReadyEvent);
         Root.Instance.EventBus.Subscribe<CameraProcessEvent>(OnCameraProcessEvent);
+        Root.Instance.EventBus.Subscribe<CameraDeferredProcessEvent>(OnCameraDeferredProcessEvent);
         Root.Instance.EventBus.Subscribe<PlayerMouseWheelInputEvent>(OnMouseWheel);
+    }
+
+    private void OnCameraDeferredProcessEvent(CameraDeferredProcessEvent deferredProcess)
+    {
+        
     }
 
     public void OnMouseWheel(PlayerMouseWheelInputEvent wheelEvent)
@@ -24,8 +30,24 @@ public class CameraService
     public void OnCameraProcessEvent(CameraProcessEvent cameraProcessEvent) 
     {
         MoveCamera(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
+        UpdateShifts(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
     }
 
+    public void UpdateShifts(Camera camera, double delta)
+    {
+        foreach (var punch in camera.Punches)
+        {
+            punch.Update(delta);
+        }
+
+        foreach (var shake in camera.Shakes)
+        {
+            shake.Update(delta);
+        }
+
+        camera.Punches.RemoveAll(p => !p.IsAlive);
+        camera.Shakes.RemoveAll(s => !s.IsAlive);
+    }
     public void InitCamera(Camera camera)
     {
         camera.ActualPosition = camera.Position;
@@ -41,7 +63,7 @@ public class CameraService
         var actualMovement = availableMovement * Mathf.Pow(camera.SmoothingBase, camera.SmoothingPower);
 		
         camera.ActualPosition += actualMovement;
-        camera.Position = camera.ActualPosition + camera.HardPositionShift;
+        camera.Position = camera.ActualPosition + camera.HardPositionShift + camera.PunchShift + camera.ShakeShift;
     }
 
     public void ProcessZoom(Camera camera, WheelEventType wheelEvent)
