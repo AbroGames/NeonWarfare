@@ -42,7 +42,7 @@ font_color = Color(0.592157, 0, 0, 1)
 outline_size = 24
 outline_color = Color(0, 0, 0, 1)
 
-[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "WaveMessage", "Fps", "TimerSprite", "TimerLabel")]
+[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "WaveMessage", "Fps", "Tps", "TimerSprite", "TimerLabel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,6 +58,7 @@ Enemies = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Enemies")
 Level = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Level")
 WaveMessage = NodePath("WaveMessage")
 Fps = NodePath("Rows/MarginContainer/Columns/RightUpInfo/FPS")
+Tps = NodePath("Rows/MarginContainer/Columns/RightUpInfo/TPS")
 TimerSprite = NodePath("Rows/MarginContainer/CenterContainer/TimerTexture")
 TimerLabel = NodePath("Rows/MarginContainer/CenterContainer/Control/Label")
 

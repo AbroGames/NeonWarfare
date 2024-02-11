@@ -29,4 +29,9 @@ public partial class BattleHud : Control
 	{
 		Root.Instance.EventBus.Publish(new BattleHudProcessEvent(this, delta));
 	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		Root.Instance.EventBus.Publish(new BattleHudPhysicsProcessEvent(this, delta));
+	}
 }
