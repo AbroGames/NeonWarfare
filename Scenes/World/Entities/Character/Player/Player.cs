@@ -142,12 +142,20 @@ public partial class Player : Character
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is not InputEvent action) return;
-		if (!action.IsActionPressed(Keys.AbilityBasic)) return;
-		
+		if (@event.IsActionPressed(Keys.AbilityBasic))
 		if (BasicAbilityCd.Use())
 		{
 			Root.Instance.EventBus.Publish(new PlayerBasicSkillUseEvent(this));
+		}
+
+		if (@event.IsActionPressed(Keys.WheelUp))
+		{
+			Root.Instance.EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelUp));
+		}
+
+		if (@event.IsActionPressed(Keys.WheelDown))
+		{
+			Root.Instance.EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelDown));
 		}
 	}
 }

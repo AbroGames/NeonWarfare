@@ -11,6 +11,8 @@ public static class Keys
     // Mouse
     public static readonly StringName AttackPrimary = "KeyAttackPrimary";
     public static readonly StringName AttackSecondary = "KeyAttackSecondary";
+    public static readonly StringName WheelUp = "WheelUp";
+    public static readonly StringName WheelDown = "WheelDown";
     
     // Special
     public static readonly StringName CameraShift = "KeyCameraShift";
