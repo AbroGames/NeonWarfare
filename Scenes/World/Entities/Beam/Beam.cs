@@ -22,6 +22,7 @@ public partial class Beam : Node2D
 	private double _outerStartWidth;
 	private double _ang;
 	private float _startGlow;
+	private double _interpolationFactor = (240.0 / 60) * 60;
 	
 	public override void _Ready()
 	{
@@ -34,7 +35,7 @@ public partial class Beam : Node2D
 		env.GlowStrength *= 1.1f;
 	}
 
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if (_ttl <= 0)
 		{
@@ -63,7 +64,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * 15 * Source.UniversalDamageMultiplier * 0.5;
+			body.Position += this.Right() * distFactor * 10 * Source.UniversalDamageMultiplier * 0.5 * delta * _interpolationFactor;
 			body.TakeDamage(outerDamage);
 		}
 		
@@ -71,7 +72,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * 15 * Source.UniversalDamageMultiplier;
+			body.Position += this.Right() * distFactor * 10 * Source.UniversalDamageMultiplier * delta * _interpolationFactor;
 			body.TakeDamage(innerDamage);
 		}
 	}

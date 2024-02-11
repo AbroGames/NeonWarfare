@@ -23,7 +23,7 @@ size = Vector2(972.118, 1313.13)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0k6vi"]
 size = Vector2(972.118, 948.706)
 
-[node name="Beam" type="Node2D" node_paths=PackedStringArray("OuterHitArea", "OuterSpawnSprite", "OuterBeamSprite", "InnerHitArea", "InnerSpawnSprite", "InnerBeamSprite")]
+[node name="Beam" type="Node2D" node_paths=PackedStringArray("OuterHitArea", "OuterSpawnSprite", "OuterBeamSprite", "InnerHitArea", "InnerSpawnSprite", "InnerBeamSprite", "Particles")]
 script = ExtResource("1_fmlhb")
 OuterHitArea = NodePath("OuterPart/Beam/DamageArea")
 OuterSpawnSprite = NodePath("OuterPart/Spawn")
@@ -31,11 +31,13 @@ OuterBeamSprite = NodePath("OuterPart/Beam")
 InnerHitArea = NodePath("InnerPart/Beam/DamageArea")
 InnerSpawnSprite = NodePath("InnerPart/Spawn")
 InnerBeamSprite = NodePath("InnerPart/Beam")
+Particles = NodePath("CPUParticles2D")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 position = Vector2(2069, 0)
 amount = 800
-lifetime = 0.3
+lifetime = 0.6
+lifetime_randomness = 0.49
 texture = ExtResource("2_kjrbo")
 emission_shape = 3
 emission_rect_extents = Vector2(2000, 1)
