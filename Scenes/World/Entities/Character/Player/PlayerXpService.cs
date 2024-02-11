@@ -50,9 +50,9 @@ public class PlayerXpService
         player.UniversalDamageMultiplier *= 1.1;
 
 
-        var zoomTween = player.GetTree().CreateTween();
-        zoomTween.SetTrans(Tween.TransitionType.Cubic);
-        zoomTween.TweenProperty(player.Camera, "zoom", player.Camera.Zoom / 1.05, 1);
+        //var zoomTween = player.GetTree().CreateTween();
+        //zoomTween.SetTrans(Tween.TransitionType.Cubic);
+        //zoomTween.TweenProperty(player.Camera, "zoom", player.Camera.Zoom / 1.05, 1);
         
 		
         Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f);
