@@ -83,7 +83,7 @@ public partial class Character : CharacterBody2D
 	{
 		Root.Instance.EventBus.Publish(new CharacterProcessEvent(this, delta));
 		// flash effect on hit processing
-		HitFlash -= 0.02;
+		HitFlash -= 100 * delta;
 		HitFlash = Mathf.Max(HitFlash, 0);
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);

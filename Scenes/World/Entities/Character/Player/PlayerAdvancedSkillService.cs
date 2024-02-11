@@ -21,6 +21,7 @@ public class PlayerAdvancedSkillService
         beam.Source = player;
         //beam.Modulate = player.Sprite.Modulate;
         beam.Dps *= player.UniversalDamageMultiplier;
+        player.Camera.Shake(10, beam.Ttl, false);
         
         Audio2D.PlaySoundOn(Sfx.LaserBeam, player);
         Audio2D.PlaySoundOn(Sfx.LaserBig, player);

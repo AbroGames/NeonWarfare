@@ -7,6 +7,7 @@ public partial class SolarBeam : Node2D
 {
 	public Player Source { get; set; }
 	public double Dps { get; set; } = 3000;
+	public double Ttl => _ttl;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D OuterBeamSprite { get; set; }
