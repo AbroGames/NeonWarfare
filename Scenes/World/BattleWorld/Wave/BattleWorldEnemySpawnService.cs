@@ -44,18 +44,18 @@ public class BattleWorldEnemySpawnService
     
     private void CreateEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(battleWorld, character, angle, distance);
+        var enemy = GenEnemyAroundCharacter(battleWorld, Root.Instance.PackedScenes.World.Enemy, character, angle, distance);
         battleWorld.AddChild(enemy);
         battleWorld.Enemies.Add(enemy);
     }
 
     private int _attractorCounter;
-    private Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance, bool forceAttractor = false)
+    private Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, PackedScene template, Character character, double angle, double distance, bool forceAttractor = false)
     {
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;
 			
-        var enemy = Root.Instance.PackedScenes.World.Enemy.Instantiate() as Enemy;
+        var enemy = template.Instantiate() as Enemy;
         enemy.Position = targetPosition;
         enemy.Rotation = angle - Mathf.Pi / 2;
         enemy.Target = character;
@@ -87,7 +87,7 @@ public class BattleWorldEnemySpawnService
     
     private void CreateBossEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(battleWorld, character, angle, distance, true);
+        var enemy = GenEnemyAroundCharacter(battleWorld, Root.Instance.PackedScenes.World.Boss, character, angle, distance, true);
         var scale = 1 + 0.1 * battleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Transform = enemy.Transform.ScaledLocal(Vec(scale));  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.

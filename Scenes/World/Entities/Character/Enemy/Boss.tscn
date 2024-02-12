@@ -22,6 +22,7 @@ radius = 32.0156
 [node name="Boss" instance=ExtResource("1_t65df")]
 
 [node name="Sprite2D" parent="." index="0"]
+modulate = Color(1, 0.137255, 0, 1)
 material = SubResource("ShaderMaterial_irc74")
 position = Vector2(0, 0)
 texture = ExtResource("3_rasxh")
