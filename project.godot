@@ -13,7 +13,7 @@ config_version=5
 config/name="AbroDraft"
 run/main_scene="res://Scenes/Root/Root.tscn"
 config/features=PackedStringArray("4.2", "C#", "Double Precision", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://game.svg"
 
 [display]
 
