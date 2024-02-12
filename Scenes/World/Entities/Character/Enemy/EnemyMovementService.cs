@@ -42,17 +42,18 @@ public class EnemyMovementService
         Vector2 directionToMove = GetForwardDirection(enemy);
         Vector2 attractionDirection = Vec();
         
+        var velDir = directionToMove;
         if (!enemy.IsBoss)
         {
+            var minSpeedFactor = 0.9;
             attractionDirection = GetAttractionDirection(enemy) * 0.35;
+            velDir += attractionDirection;
+            if (velDir.LengthSquared() < 1)
+            {
+                velDir = velDir.Normalized() * minSpeedFactor;
+            }
         }
         // Переместить и првоерить физику
-        var minSpeedFactor = 0.9;
-        var velDir = (directionToMove + attractionDirection);
-        if (velDir.LengthSquared() < 1)
-        {
-            velDir = velDir.Normalized() * minSpeedFactor;
-        }
         enemy.Velocity = velDir * enemy.MovementSpeed;
         enemy.MoveAndSlide();
     }
