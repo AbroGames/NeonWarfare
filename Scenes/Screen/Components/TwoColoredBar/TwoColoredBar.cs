@@ -19,11 +19,11 @@ public partial class TwoColoredBar : ColorRect
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new TwoColoredBarReadyEvent(this));
+		EventBus.Publish(new TwoColoredBarReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new TwoColoredBarProcessEvent(this, delta));
+		EventBus.Publish(new TwoColoredBarProcessEvent(this, delta));
 	}
 }

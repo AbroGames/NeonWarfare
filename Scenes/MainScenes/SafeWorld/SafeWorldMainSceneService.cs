@@ -4,7 +4,7 @@ public  class SafeWorldMainSceneService
 
 	public SafeWorldMainSceneService()
 	{
-		Root.Instance.EventBus.Subscribe<SafeWorldMainSceneReadyEvent>(OnSafeWorldMainSceneReadyEvent);
+		EventBus.Subscribe<SafeWorldMainSceneReadyEvent>(OnSafeWorldMainSceneReadyEvent);
 	}
     
 	public void OnSafeWorldMainSceneReadyEvent(SafeWorldMainSceneReadyEvent safeWorldMainSceneReadyEvent)

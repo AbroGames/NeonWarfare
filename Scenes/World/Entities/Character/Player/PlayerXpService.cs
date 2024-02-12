@@ -10,7 +10,7 @@ public class PlayerXpService
     
     public PlayerXpService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerGainXpEvent>(OnPlayerGainXpEvent);
+        EventBus.Subscribe<PlayerGainXpEvent>(OnPlayerGainXpEvent);
     }
     
     public void OnPlayerGainXpEvent(PlayerGainXpEvent playerGainXpEvent) {

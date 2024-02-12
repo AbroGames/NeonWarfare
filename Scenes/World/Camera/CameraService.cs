@@ -6,10 +6,10 @@ public class CameraService
     private const double OveroptimizedValue = 1 / 1.1;
     public CameraService()
     {
-        Root.Instance.EventBus.Subscribe<CameraReadyEvent>(OnCameraReadyEvent);
-        Root.Instance.EventBus.Subscribe<CameraProcessEvent>(OnCameraProcessEvent);
-        Root.Instance.EventBus.Subscribe<CameraDeferredProcessEvent>(OnCameraDeferredProcessEvent);
-        Root.Instance.EventBus.Subscribe<PlayerMouseWheelInputEvent>(OnMouseWheel);
+        EventBus.Subscribe<CameraReadyEvent>(OnCameraReadyEvent);
+        EventBus.Subscribe<CameraProcessEvent>(OnCameraProcessEvent);
+        EventBus.Subscribe<CameraDeferredProcessEvent>(OnCameraDeferredProcessEvent);
+        EventBus.Subscribe<PlayerMouseWheelInputEvent>(OnMouseWheel);
     }
 
     private void OnCameraDeferredProcessEvent(CameraDeferredProcessEvent deferredProcess)

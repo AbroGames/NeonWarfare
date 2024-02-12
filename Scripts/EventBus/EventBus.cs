@@ -5,13 +5,13 @@ using System.Reflection;
 using KludgeBox;
 using KludgeBox.Events;
 
-public class EventBus
+public static class EventBus
 {
     // Словарь для хранения событий и их подписчиков
-    private readonly Dictionary<Type, Delegate> _subscribers = new();
+    private static readonly Dictionary<Type, Delegate> _subscribers = new();
 
     // Метод для подписки на событие
-    public void Subscribe<T>(Action<T> handler)
+    public static void Subscribe<T>(Action<T> handler)
     {
         if (_subscribers.ContainsKey(typeof(T)))
         {
@@ -23,7 +23,7 @@ public class EventBus
         }
     }
 
-    public void SubscribeMethod(MethodInfo methodInfo, object invoker)
+    public static void SubscribeMethod(MethodInfo methodInfo, object invoker)
     {
         Type messageType = methodInfo.GetParameters()[0].ParameterType;
 
@@ -33,11 +33,11 @@ public class EventBus
 
         // Subscribe to the message type using the created delegate
         typeof(EventBus).GetMethod("Subscribe")!.MakeGenericMethod(messageType)
-            .Invoke(this, new object[] { actionDelegate });
+            .Invoke(null, new object[] { actionDelegate }); // Замени null на this, если класс и метод не статический
     }
 
     // Метод для отписки от события
-    public void Unsubscribe<T>(Action<T> handler)
+    public static void Unsubscribe<T>(Action<T> handler)
     {
         if (_subscribers.ContainsKey(typeof(T)))
         {
@@ -54,7 +54,7 @@ public class EventBus
     // Метод для публикации события
     // TODO: добавить класс Publisher с прямой ссылкой на делегат, чтоб каждый пердёж не начинал поиск в хэшмапе
     // Publisher целесообразно запихать во все Process и PhysicsProcess
-    public void Publish<T>(T eventData)
+    public static void Publish<T>(T eventData)
     {
         if (_subscribers.TryGetValue(typeof(T), out var handler))
         {
@@ -62,7 +62,7 @@ public class EventBus
         }
     }
     
-    public void RegisterListeners(ServiceRegistry registry)
+    public static void RegisterListeners(ServiceRegistry registry)
     {
         foreach (var service in registry.Services)
         {

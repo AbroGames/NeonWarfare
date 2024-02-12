@@ -15,19 +15,19 @@ public partial class Enemy : Character
 	public override void _Ready()
 	{
 		base._Ready();
-		Root.Instance.EventBus.Publish(new EnemyReadyEvent(this));
+		EventBus.Publish(new EnemyReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
-		Root.Instance.EventBus.Publish(new EnemyProcessEvent(this, delta));
+		EventBus.Publish(new EnemyProcessEvent(this, delta));
 	}
 	
 	public override void _PhysicsProcess(double delta)
 	{
 		base._PhysicsProcess(delta);
-		Root.Instance.EventBus.Publish(new EnemyPhysicsProcessEvent(this, delta));
+		EventBus.Publish(new EnemyPhysicsProcessEvent(this, delta));
 	}
 	
 }

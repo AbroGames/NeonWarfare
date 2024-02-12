@@ -14,11 +14,11 @@ public partial class SafeHud : Control
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new SafeHudReadyEvent(this));
+		EventBus.Publish(new SafeHudReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new SafeHudProcessEvent(this, delta));
+		EventBus.Publish(new SafeHudProcessEvent(this, delta));
 	}
 }

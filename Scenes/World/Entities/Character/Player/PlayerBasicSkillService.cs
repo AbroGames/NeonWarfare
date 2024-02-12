@@ -8,7 +8,7 @@ public class PlayerBasicSkillService
 {
     public PlayerBasicSkillService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerBasicSkillUseEvent>(UseSkill);
+        EventBus.Subscribe<PlayerBasicSkillUseEvent>(UseSkill);
     }
 
     public void UseSkill(PlayerBasicSkillUseEvent useEvent)

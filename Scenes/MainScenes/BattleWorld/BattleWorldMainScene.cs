@@ -13,6 +13,6 @@ public partial class BattleWorldMainScene : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new BattleWorldMainSceneReadyEvent(this));
+		EventBus.Publish(new BattleWorldMainSceneReadyEvent(this));
 	}
 }

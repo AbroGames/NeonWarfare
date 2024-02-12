@@ -8,8 +8,8 @@ public class BattleWorldService
     
     public BattleWorldService()
     {
-        Root.Instance.EventBus.Subscribe<BattleWorldReadyEvent>(OnBattleWorldReadyEvent);
-        Root.Instance.EventBus.Subscribe<BattleWorldProcessEvent>(OnBattleWorldProcessEvent);
+        EventBus.Subscribe<BattleWorldReadyEvent>(OnBattleWorldReadyEvent);
+        EventBus.Subscribe<BattleWorldProcessEvent>(OnBattleWorldProcessEvent);
     }
     
     public void OnBattleWorldReadyEvent(BattleWorldReadyEvent battleWorldReadyEvent)

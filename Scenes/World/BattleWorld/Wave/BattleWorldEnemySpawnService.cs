@@ -9,9 +9,9 @@ public class BattleWorldEnemySpawnService
     
     public BattleWorldEnemySpawnService()
     {
-        Root.Instance.EventBus.Subscribe<BattleWorldPhysicsProcessEvent>(OnBattleWorldPhysicsProcessEvent);
-        Root.Instance.EventBus.Subscribe<BattleWorldSpawnEnemiesRequestEvent>(OnSpawnEnemiesRequest);
-        Root.Instance.EventBus.Subscribe<BattleWorldSpawnBossesRequestEvent>(OnSpawnBossesRequest);
+        EventBus.Subscribe<BattleWorldPhysicsProcessEvent>(OnBattleWorldPhysicsProcessEvent);
+        EventBus.Subscribe<BattleWorldSpawnEnemiesRequestEvent>(OnSpawnEnemiesRequest);
+        EventBus.Subscribe<BattleWorldSpawnBossesRequestEvent>(OnSpawnBossesRequest);
     }
     
     public void OnBattleWorldPhysicsProcessEvent(BattleWorldPhysicsProcessEvent battleWorldProcessEvent)

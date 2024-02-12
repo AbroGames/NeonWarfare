@@ -7,8 +7,8 @@ public class SafeWorldService
     
     public SafeWorldService()
     {
-        Root.Instance.EventBus.Subscribe<SafeWorldReadyEvent>(OnSafeWorldReadyEvent);
-        Root.Instance.EventBus.Subscribe<SafeWorldProcessEvent>(OnSafeWorldProcessEvent);
+        EventBus.Subscribe<SafeWorldReadyEvent>(OnSafeWorldReadyEvent);
+        EventBus.Subscribe<SafeWorldProcessEvent>(OnSafeWorldProcessEvent);
     }
     
     public void OnSafeWorldReadyEvent(SafeWorldReadyEvent safeWorldReadyEvent)

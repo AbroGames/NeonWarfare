@@ -5,7 +5,7 @@ public class PlayerMovementService
 {
     public PlayerMovementService()
     {
-        //Root.Instance.EventBus.Subscribe<PlayerPhysicsProcessEvent>(OnPlayerPhysicsProcessEvent);
+        //EventBus.Subscribe<PlayerPhysicsProcessEvent>(OnPlayerPhysicsProcessEvent);
     }
     
     [GameEventListener]

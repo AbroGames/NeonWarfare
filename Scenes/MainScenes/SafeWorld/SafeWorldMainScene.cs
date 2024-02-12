@@ -13,6 +13,6 @@ public partial class SafeWorldMainScene : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new SafeWorldMainSceneReadyEvent(this));
+		EventBus.Publish(new SafeWorldMainSceneReadyEvent(this));
 	}
 }

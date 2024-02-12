@@ -6,7 +6,7 @@ public class EnemyAttackService
 {
     public EnemyAttackService()
     {
-        Root.Instance.EventBus.Subscribe<EnemyProcessEvent>(OnEnemyProcessEvent);
+        EventBus.Subscribe<EnemyProcessEvent>(OnEnemyProcessEvent);
     }
     
     public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent) {

@@ -26,7 +26,7 @@ public partial class Character : CharacterBody2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new CharacterReadyEvent(this));
+		EventBus.Publish(new CharacterReadyEvent(this));
 	}
 
 	public void TakeDamage(Damage damage)
@@ -81,7 +81,7 @@ public partial class Character : CharacterBody2D
 	
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new CharacterProcessEvent(this, delta));
+		EventBus.Publish(new CharacterProcessEvent(this, delta));
 		// flash effect on hit processing
 		HitFlash -= 100 * delta;
 		HitFlash = Mathf.Max(HitFlash, 0);
@@ -91,6 +91,6 @@ public partial class Character : CharacterBody2D
 	
 	public override void _PhysicsProcess(double delta)
 	{
-		Root.Instance.EventBus.Publish(new CharacterPhysicsProcessEvent(this, delta));
+		EventBus.Publish(new CharacterPhysicsProcessEvent(this, delta));
 	}
 }

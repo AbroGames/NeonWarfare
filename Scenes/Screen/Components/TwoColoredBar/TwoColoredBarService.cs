@@ -3,7 +3,7 @@ public class TwoColoredBarService
 {
 	public TwoColoredBarService()
 	{
-		Root.Instance.EventBus.Subscribe<TwoColoredBarProcessEvent>(OnTwoColoredBarProcessEvent);
+		EventBus.Subscribe<TwoColoredBarProcessEvent>(OnTwoColoredBarProcessEvent);
 	}
     
 	public void OnTwoColoredBarProcessEvent(TwoColoredBarProcessEvent twoColoredBarProcessEvent)

@@ -8,7 +8,7 @@ public class PlayerAdvancedSkillService
 {
     public PlayerAdvancedSkillService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerAdvancedSkillUseEvent>(UseSkill);
+        EventBus.Subscribe<PlayerAdvancedSkillUseEvent>(UseSkill);
     }
 
     public void UseSkill(PlayerAdvancedSkillUseEvent useEvent)

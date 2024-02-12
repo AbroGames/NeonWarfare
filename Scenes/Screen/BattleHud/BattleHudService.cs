@@ -16,8 +16,8 @@ public class BattleHudService
     {
         _playerXpService = playerXpService;
         
-        Root.Instance.EventBus.Subscribe<BattleHudProcessEvent>(OnBattleHudProcessEvent);
-        Root.Instance.EventBus.Subscribe<BattleHudPhysicsProcessEvent>(OnBattleHudPhysicsProcessEvent);
+        EventBus.Subscribe<BattleHudProcessEvent>(OnBattleHudProcessEvent);
+        EventBus.Subscribe<BattleHudPhysicsProcessEvent>(OnBattleHudPhysicsProcessEvent);
     }
     
     public void OnBattleHudProcessEvent(BattleHudProcessEvent battleHudProcessEvent) 

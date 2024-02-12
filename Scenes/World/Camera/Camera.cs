@@ -49,13 +49,13 @@ public partial class Camera : Camera2D
 
 	public override void _Ready()
 	{
-		Root.Instance.EventBus.Publish(new CameraReadyEvent(this));
+		EventBus.Publish(new CameraReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new CameraProcessEvent(this, delta));
-		Root.Instance.EventBus.Publish(new CameraDeferredProcessEvent(this, delta));
+		EventBus.Publish(new CameraProcessEvent(this, delta));
+		EventBus.Publish(new CameraDeferredProcessEvent(this, delta));
 	}
 
 	public Punch Punch(Vector2 dir, double strength, double movementSpeed = 3000)

@@ -4,7 +4,7 @@ public  class BattleWorldMainSceneService
 
 	public BattleWorldMainSceneService()
 	{
-		Root.Instance.EventBus.Subscribe<BattleWorldMainSceneReadyEvent>(OnBattleWorldMainSceneReadyEvent);
+		EventBus.Subscribe<BattleWorldMainSceneReadyEvent>(OnBattleWorldMainSceneReadyEvent);
 	}
     
 	public void OnBattleWorldMainSceneReadyEvent(BattleWorldMainSceneReadyEvent battleWorldMainSceneReadyEvent)

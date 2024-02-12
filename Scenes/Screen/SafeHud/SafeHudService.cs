@@ -12,7 +12,7 @@ public class SafeHudService
     {
         _playerXpService = playerXpService;
         
-        Root.Instance.EventBus.Subscribe<SafeHudProcessEvent>(OnSafeHudProcessEvent);
+        EventBus.Subscribe<SafeHudProcessEvent>(OnSafeHudProcessEvent);
     }
     
     public void OnSafeHudProcessEvent(SafeHudProcessEvent safeHudProcessEvent) 

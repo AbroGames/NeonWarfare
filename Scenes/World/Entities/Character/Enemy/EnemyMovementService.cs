@@ -5,7 +5,7 @@ public class EnemyMovementService
 {
     public EnemyMovementService()
     {
-        Root.Instance.EventBus.Subscribe<EnemyPhysicsProcessEvent>(OnEnemyPhysicsProcessEvent);
+        EventBus.Subscribe<EnemyPhysicsProcessEvent>(OnEnemyPhysicsProcessEvent);
     }
     
     public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent) {

@@ -31,7 +31,7 @@ public partial class Player : Character
 	public override void _Ready()
 	{
 		base._Ready();
-		Root.Instance.EventBus.Publish(new PlayerReadyEvent(this));
+		EventBus.Publish(new PlayerReadyEvent(this));
 		
 		Camera = GetParent().GetChild<Camera>();
 		SecondaryCd.Ready += AttackSecondary;
@@ -49,7 +49,7 @@ public partial class Player : Character
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
-		Root.Instance.EventBus.Publish(new PlayerProcessEvent(this, delta));
+		EventBus.Publish(new PlayerProcessEvent(this, delta));
 		
 		AttackPrimary(delta);
 
@@ -85,7 +85,7 @@ public partial class Player : Character
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Root.Instance.EventBus.Publish(new PlayerPhysicsProcessEvent(this, delta));
+		EventBus.Publish(new PlayerPhysicsProcessEvent(this, delta));
 	}
 
 	private void AttackPrimary(double delta)
@@ -145,23 +145,23 @@ public partial class Player : Character
 		if (@event.IsActionPressed(Keys.AbilityBasic))
 			if (BasicAbilityCd.Use())
 			{
-				Root.Instance.EventBus.Publish(new PlayerBasicSkillUseEvent(this));
+				EventBus.Publish(new PlayerBasicSkillUseEvent(this));
 			}
 		
 		if (@event.IsActionPressed(Keys.AbilityAdvanced))
 			if (AdvancedAbilityCd.Use())
 			{
-				Root.Instance.EventBus.Publish(new PlayerAdvancedSkillUseEvent(this));
+				EventBus.Publish(new PlayerAdvancedSkillUseEvent(this));
 			}
 
 		if (@event.IsActionPressed(Keys.WheelUp))
 		{
-			Root.Instance.EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelUp));
+			EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelUp));
 		}
 
 		if (@event.IsActionPressed(Keys.WheelDown))
 		{
-			Root.Instance.EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelDown));
+			EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelDown));
 		}
 	}
 }

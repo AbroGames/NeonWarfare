@@ -37,16 +37,16 @@ public partial class BattleHud : Control
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new BattleHudReadyEvent(this));
+		EventBus.Publish(new BattleHudReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new BattleHudProcessEvent(this, delta));
+		EventBus.Publish(new BattleHudProcessEvent(this, delta));
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Root.Instance.EventBus.Publish(new BattleHudPhysicsProcessEvent(this, delta));
+		EventBus.Publish(new BattleHudPhysicsProcessEvent(this, delta));
 	}
 }

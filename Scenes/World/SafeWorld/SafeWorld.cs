@@ -8,11 +8,11 @@ public partial class SafeWorld : Node2D
 	
 	public override void _Ready()
 	{
-		Root.Instance.EventBus.Publish(new SafeWorldReadyEvent(this));
+		EventBus.Publish(new SafeWorldReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new SafeWorldProcessEvent(this, delta));
+		EventBus.Publish(new SafeWorldProcessEvent(this, delta));
 	}
 }

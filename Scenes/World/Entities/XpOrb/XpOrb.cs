@@ -47,7 +47,7 @@ public partial class XpOrb : Node2D
 			dummy.Modulate = Modulate;
 			Trail.Target = Trail.GetParent() as Node2D;
 			Trail.Destruct(Trail.Length);
-			Root.Instance.EventBus.Publish(new PlayerGainXpEvent(Target, Xp));
+			EventBus.Publish(new PlayerGainXpEvent(Target, Xp));
 			
 			var label = FloatingLabel.Create($"+{Xp}", Modulate, 0.6);
 			label.Position = Position;

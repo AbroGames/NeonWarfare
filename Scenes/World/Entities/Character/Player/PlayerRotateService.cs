@@ -7,7 +7,7 @@ public class PlayerRotateService
 {
     public PlayerRotateService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerProcessEvent>(OnPlayerProcessEvent);
+        EventBus.Subscribe<PlayerProcessEvent>(OnPlayerProcessEvent);
     }
     
     public void OnPlayerProcessEvent(PlayerProcessEvent playerProcessEvent) {

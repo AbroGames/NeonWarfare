@@ -11,8 +11,8 @@ public class BattleHudWaveService
     
     public BattleHudWaveService()
     {
-        Root.Instance.EventBus.Subscribe<BattleHudReadyEvent>(OnBattleHudReadyEvent);
-        Root.Instance.EventBus.Subscribe<BattleWorldNewWaveEvent>(OnBattleWorldNewWaveEvent);
+        EventBus.Subscribe<BattleHudReadyEvent>(OnBattleHudReadyEvent);
+        EventBus.Subscribe<BattleWorldNewWaveEvent>(OnBattleWorldNewWaveEvent);
     }
     
     public void OnBattleHudReadyEvent(BattleHudReadyEvent battleHudReadyEvent)

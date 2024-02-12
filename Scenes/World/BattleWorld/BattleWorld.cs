@@ -13,18 +13,18 @@ public partial class BattleWorld : Node2D
 	
 	public override void _Ready()
 	{
-		Root.Instance.EventBus.Publish(new BattleWorldReadyEvent(this));
+		EventBus.Publish(new BattleWorldReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		Root.Instance.EventBus.Publish(new BattleWorldProcessEvent(this, delta));
-		Root.Instance.EventBus.Publish(new BattleWorldDeferredProcessEvent(this, delta));
+		EventBus.Publish(new BattleWorldProcessEvent(this, delta));
+		EventBus.Publish(new BattleWorldDeferredProcessEvent(this, delta));
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Root.Instance.EventBus.Publish(new BattleWorldPhysicsProcessEvent(this, delta));
-		Root.Instance.EventBus.Publish(new BattleWorldDeferredPhysicsProcessEvent(this, delta));
+		EventBus.Publish(new BattleWorldPhysicsProcessEvent(this, delta));
+		EventBus.Publish(new BattleWorldDeferredPhysicsProcessEvent(this, delta));
 	}
 }

@@ -10,6 +10,6 @@ public partial class MainMenuMainScene : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Root.Instance.EventBus.Publish(new MainMenuMainSceneReadyEvent(this));
+		EventBus.Publish(new MainMenuMainSceneReadyEvent(this));
 	}
 }
