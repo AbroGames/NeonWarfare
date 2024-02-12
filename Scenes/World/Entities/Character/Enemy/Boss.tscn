@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3 uid="uid://cjqj75fvk34l7"]
+
+[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="1_t65df"]
+[ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_y5vl5"]
+[ext_resource type="Texture2D" uid="uid://drvu6fdhwasqc" path="res://Assets/Textures/Sprites/Boss.svg" id="3_rasxh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_irc74"]
+resource_local_to_scene = true
+shader = ExtResource("2_y5vl5")
+shader_parameter/colorMaskFactor = 0.0
+shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
+shader_parameter/grayscaleFactor = 0.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_x02b7"]
+resource_local_to_scene = true
+radius = 24.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_v0n2k"]
+resource_local_to_scene = true
+radius = 32.0156
+
+[node name="Boss" instance=ExtResource("1_t65df")]
+
+[node name="Sprite2D" parent="." index="0"]
+material = SubResource("ShaderMaterial_irc74")
+position = Vector2(0, 0)
+texture = ExtResource("3_rasxh")
+
+[node name="CharacterShape" parent="." index="1"]
+shape = SubResource("CircleShape2D_x02b7")
+
+[node name="HitBoxShape" parent="HitBox" index="0"]
+shape = SubResource("CircleShape2D_v0n2k")
