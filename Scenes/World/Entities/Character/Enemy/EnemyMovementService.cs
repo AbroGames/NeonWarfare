@@ -42,9 +42,9 @@ public class EnemyMovementService
         Vector2 directionToMove = GetForwardDirection(enemy);
         Vector2 attractionDirection = Vec();
         
-        if (!enemy.IsAttractor)
+        if (!enemy.IsBoss)
         {
-            attractionDirection = GetAttractionDirection(enemy) * 0.25;
+            attractionDirection = GetAttractionDirection(enemy) * 0.35;
         }
         // Переместить и првоерить физику
         var minSpeedFactor = 0.9;
@@ -70,6 +70,7 @@ public class EnemyMovementService
         double dist = closestAttractor.Position.DistanceSquaredTo(enemy.Position);
         foreach (var attractor in _attractors)
         {
+            if (attractor == enemy) continue;
             var newDist = enemy.Position.DistanceSquaredTo(attractor.Position);
             if (newDist < dist)
             {
