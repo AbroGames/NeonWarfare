@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <polygon points="257.21 109 113.93 393 400.49 393 257.21 109" style="fill: #666;stroke: #f2f2f2;stroke-miterlimit: 10;stroke-width: 50px"/>
+  <rect x="251.76" y="275.34" width="10.61" height="61.68" rx="5.31" transform="translate(291.79 -92.09) rotate(45)" style="fill: #666;stroke: #f2f2f2;stroke-miterlimit: 10;stroke-width: 15px"/>
+  <rect x="251.45" y="275.18" width="10.61" height="61.68" rx="5.31" transform="translate(-141.19 271.19) rotate(-45)" style="fill: #666;stroke: #f2f2f2;stroke-miterlimit: 10;stroke-width: 15px"/>
+  <path d="M423.36,50A38.68,38.68,0,0,1,462,88.64V423.36A38.68,38.68,0,0,1,423.36,462H88.64A38.68,38.68,0,0,1,50,423.36V88.64A38.68,38.68,0,0,1,88.64,50H423.36m0-50H88.64A88.65,88.65,0,0,0,0,88.64V423.36A88.65,88.65,0,0,0,88.64,512H423.36A88.65,88.65,0,0,0,512,423.36V88.64A88.65,88.65,0,0,0,423.36,0Z" style="fill: #fff"/>
+</svg>

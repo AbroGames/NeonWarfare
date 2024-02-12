@@ -25,6 +25,7 @@ script = ExtResource("2_1gm72")
 ShieldSprite = NodePath("ShieldSprite")
 
 [node name="Sprite2D" parent="." index="0"]
+modulate = Color(0, 0.529412, 0.529412, 1)
 material = SubResource("ShaderMaterial_p0ws3")
 
 [node name="CharacterShape" parent="." index="1"]

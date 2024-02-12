@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Character.cs" id="1_y827s"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_qd6n2"]
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="4_vcssn"]
+[ext_resource type="Texture2D" uid="uid://d2yh6feky0dp3" path="res://Assets/Textures/Sprites/Player.svg" id="3_qjj7c"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fxydm"]
 resource_local_to_scene = true
@@ -28,8 +28,8 @@ CollisionShape = NodePath("CharacterShape")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0, 1, 1, 1)
 material = SubResource("ShaderMaterial_fxydm")
-scale = Vector2(0.3, 0.3)
-texture = ExtResource("4_vcssn")
+scale = Vector2(0.0939335, 0.0939335)
+texture = ExtResource("3_qjj7c")
 
 [node name="CharacterShape" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_rfcs5")
