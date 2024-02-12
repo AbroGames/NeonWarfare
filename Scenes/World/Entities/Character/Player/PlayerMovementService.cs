@@ -5,9 +5,10 @@ public class PlayerMovementService
 {
     public PlayerMovementService()
     {
-        Root.Instance.EventBus.Subscribe<PlayerPhysicsProcessEvent>(OnPlayerPhysicsProcessEvent);
+        //Root.Instance.EventBus.Subscribe<PlayerPhysicsProcessEvent>(OnPlayerPhysicsProcessEvent);
     }
     
+    [GameEventListener]
     public void OnPlayerPhysicsProcessEvent(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) {
         MoveByKeyboard(playerPhysicsProcessEvent.Player, playerPhysicsProcessEvent.Delta);
     }

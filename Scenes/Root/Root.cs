@@ -56,5 +56,7 @@ public partial class Root : Node2D
 		
 		ServiceRegistry.Register(new BattleHudService(playerXpService));
 		ServiceRegistry.Register(new SafeHudService(playerXpService));
+		
+		EventBus.RegisterListeners(ServiceRegistry);
 	}
 }
