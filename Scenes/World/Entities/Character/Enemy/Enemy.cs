@@ -11,6 +11,7 @@ public partial class Enemy : Character
 	public double Damage { get; set; } = 1000;
 	public bool IsBoss { get; set; } = false;
 	public Character Target { get; set; }
+	public bool IsAttractor { get; set;}
 
 	public override void _Ready()
 	{

@@ -44,12 +44,13 @@ public class BattleWorldEnemySpawnService
     
     private void CreateEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
-        var enemy = genEnemyAroundCharacter(battleWorld, character, angle, distance);
+        var enemy = GenEnemyAroundCharacter(battleWorld, character, angle, distance);
         battleWorld.AddChild(enemy);
         battleWorld.Enemies.Add(enemy);
     }
-    
-    private Enemy genEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
+
+    private int _attractorCounter;
+    private Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance, bool forceAttractor = false)
     {
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;
@@ -61,17 +62,32 @@ public class BattleWorldEnemySpawnService
         enemy.MaxHp = 250;
         enemy.Hp = enemy.MaxHp;
         enemy.MovementSpeed = 200; // in pixels/secRegenHpSpeed = 0;
+        if (_attractorCounter == 0 || forceAttractor)
+        {
+            enemy.IsAttractor = true;
+            enemy.CollisionPriority = 1000;
+            EventBus.Publish(new EnemyStartAttractionEvent(enemy));
+        }
         enemy.Died += () =>
         {
             battleWorld.Enemies.Remove(enemy);
+            if (enemy.IsAttractor)
+            {
+                EventBus.Publish(new EnemyStopAttractionEvent(enemy));
+            }
         };
-		
+
+        if (!forceAttractor)
+        {
+            _attractorCounter++;
+            _attractorCounter %= 20;
+        }
         return enemy;
     }
     
     private void CreateBossEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
-        var enemy = genEnemyAroundCharacter(battleWorld, character, angle, distance);
+        var enemy = GenEnemyAroundCharacter(battleWorld, character, angle, distance, true);
         var scale = 1 + 0.1 * battleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Transform = enemy.Transform.ScaledLocal(Vec(scale));  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.

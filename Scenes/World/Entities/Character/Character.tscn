@@ -20,6 +20,7 @@ resource_local_to_scene = true
 radius = 15.0
 
 [node name="Character" type="CharacterBody2D" node_paths=PackedStringArray("Sprite", "CollisionShape")]
+motion_mode = 1
 script = ExtResource("1_y827s")
 Sprite = NodePath("Sprite2D")
 CollisionShape = NodePath("CharacterShape")

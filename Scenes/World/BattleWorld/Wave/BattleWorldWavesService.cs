@@ -38,7 +38,7 @@ public class BattleWorldWavesService
         {
             EventBus.Publish(new BattleWorldSpawnBossesRequestEvent(enemyWave.WaveNumber / 5));
             Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss
-            Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss again to make it  L O U D E R
+            // Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss again to make it  L O U D E R
         }
 
         Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start

@@ -6,7 +6,7 @@ using Scenes.World;
 public partial class Beam : Node2D
 {
 	public Player Source { get; set; }
-	public double Dps { get; set; } = 1000;
+	public double Dps { get; set; } = 6000;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D OuterBeamSprite { get; set; }

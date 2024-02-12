@@ -25,8 +25,8 @@ public partial class Player : Character
 
 	public Cooldown SecondaryCd { get; set; } = new(0.1);
 
-	public Cooldown BasicAbilityCd { get; set; } = new(10, CooldownMode.Single, true);
-	public Cooldown AdvancedAbilityCd { get; set; } = new(44, CooldownMode.Single, true);
+	public Cooldown BasicAbilityCd { get; set; } = new(6, CooldownMode.Single, true);
+	public Cooldown AdvancedAbilityCd { get; set; } = new(50, CooldownMode.Single, true);
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -41,6 +41,7 @@ public partial class Player : Character
 		{
 			var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
 			Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+			EventBus.Publish(new GameResetEvent());
 			Audio2D.StopMusic();
 		};
 	}
