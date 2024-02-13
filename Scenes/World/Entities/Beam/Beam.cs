@@ -1,12 +1,14 @@
 using Godot;
 using System;
 using KludgeBox;
+using KludgeBox.Scheduling;
 using Scenes.World;
 
 public partial class Beam : Node2D
 {
 	public Player Source { get; set; }
 	public double Dps { get; set; } = 6000;
+	public double PushVel { get; set; } = 1000;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D OuterBeamSprite { get; set; }
@@ -15,6 +17,7 @@ public partial class Beam : Node2D
 	[Export] [NotNull] public Sprite2D InnerSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D InnerBeamSprite { get; set; }
 	[Export] [NotNull] public Curve SizeCurve { get; set; }
+	[Export] [NotNull] public CpuParticles2D Particles { get; set; }
 
 	public ManualShake Shaker;
 	
@@ -24,8 +27,8 @@ public partial class Beam : Node2D
 	private double _outerStartWidth;
 	private double _ang;
 	private float _startGlow;
-	private double _interpolationFactor = (240.0 / 60) * 60;
 	private double _shakeDist = 500;
+	private Cooldown _damageCd = new(duration: 0.1, isReady: true);
 	
 	public override void _Ready()
 	{
@@ -36,6 +39,11 @@ public partial class Beam : Node2D
 		var env = Root.Instance.Environment.Environment;
 		_startGlow = env.GlowStrength;
 		env.GlowStrength *= 1.1f;
+
+		_damageCd.Ready += () =>
+		{
+			DoDamage(_damageCd.Duration);
+		};
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -45,20 +53,36 @@ public partial class Beam : Node2D
 			var env = Root.Instance.Environment.Environment;
 			env.GlowStrength = _startGlow;
 			Shaker.IsAlive = false;
+			
+			var dummy = Particles.Drop();
+			Particles.Emitting = false;
+			dummy.Destruct(Particles.Lifetime * 3);
+			
 			QueueFree();
 		}
-
+		
 		var ttlFactor = _ttl / _startTtl;
 		var sizeFactor = SizeCurve.Sample(ttlFactor);
-
-		Shaker.Strength = 10 * Mathf.Max(0, 1 - Source.DistanceTo(this) / _shakeDist); 
 		
 		_ttl -= delta;
+		_ang += 1800 * delta;
+		_ang %= 360;
 
 		InnerSpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
 		OuterSpawnSprite.Rotation -= Mathf.DegToRad(360 * delta);
-		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = _outerStartWidth * sizeFactor };
-		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = _innerStartWidth * sizeFactor };
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = _outerStartWidth * sizeFactor + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07 };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = _innerStartWidth * sizeFactor + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07 };
+
+		_damageCd.Update(delta);
+	}
+
+	private void DoDamage(double delta)
+	{
+		double interpolationFactor = (240.0 / 60) * 60;
+
+		Shaker.Strength = 10 * Mathf.Max(0, 1 - Source.DistanceTo(this) / _shakeDist); 
+		
+		
 		
 		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
 		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
@@ -70,7 +94,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * 10 * Source.UniversalDamageMultiplier * 0.5 * delta * _interpolationFactor;
+			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta;
 			body.TakeDamage(outerDamage);
 		}
 		
@@ -78,7 +102,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * 10 * Source.UniversalDamageMultiplier * delta * _interpolationFactor;
+			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * delta;
 			body.TakeDamage(innerDamage);
 		}
 	}
