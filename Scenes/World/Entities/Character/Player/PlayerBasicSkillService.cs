@@ -16,6 +16,9 @@ public class PlayerBasicSkillService
         var player = useEvent.Player;
         var node = Root.Instance.PackedScenes.World.Beam.Instantiate();
         var beam = node as Beam;
+        var shaker = player.Camera.ShakeManually();
+        beam.Shaker = shaker;
+        
         beam.Rotation = player.Rotation - Mathf.Pi / 2;
         player.GetParent().AddChild(beam);
         beam.Position = player.Position;

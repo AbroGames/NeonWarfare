@@ -35,18 +35,12 @@ public class CameraService
 
     public void UpdateShifts(Camera camera, double delta)
     {
-        foreach (var punch in camera.Punches)
+        foreach (var punch in camera.Shifts)
         {
             punch.Update(delta);
         }
 
-        foreach (var shake in camera.Shakes)
-        {
-            shake.Update(delta);
-        }
-
-        camera.Punches.RemoveAll(p => !p.IsAlive);
-        camera.Shakes.RemoveAll(s => !s.IsAlive);
+        camera.Shifts.RemoveAll(s => !s.IsAlive);
     }
     public void InitCamera(Camera camera)
     {
@@ -63,7 +57,7 @@ public class CameraService
         var actualMovement = availableMovement * Mathf.Pow(camera.SmoothingBase, camera.SmoothingPower);
 		
         camera.ActualPosition += actualMovement;
-        camera.Position = camera.ActualPosition + camera.HardPositionShift + camera.PunchShift + camera.ShakeShift;
+        camera.Position = camera.ActualPosition + camera.HardPositionShift + camera.AdditionalShift;
     }
 
     public void ProcessZoom(Camera camera, WheelEventType wheelEvent)

@@ -15,6 +15,8 @@ public partial class Beam : Node2D
 	[Export] [NotNull] public Sprite2D InnerSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D InnerBeamSprite { get; set; }
 	[Export] [NotNull] public Curve SizeCurve { get; set; }
+
+	public ManualShake Shaker;
 	
 	private double _ttl = 2;
 	private double _startTtl;
@@ -23,6 +25,7 @@ public partial class Beam : Node2D
 	private double _ang;
 	private float _startGlow;
 	private double _interpolationFactor = (240.0 / 60) * 60;
+	private double _shakeDist = 500;
 	
 	public override void _Ready()
 	{
@@ -41,11 +44,14 @@ public partial class Beam : Node2D
 		{
 			var env = Root.Instance.Environment.Environment;
 			env.GlowStrength = _startGlow;
+			Shaker.IsAlive = false;
 			QueueFree();
 		}
 
 		var ttlFactor = _ttl / _startTtl;
 		var sizeFactor = SizeCurve.Sample(ttlFactor);
+
+		Shaker.Strength = 10 * Mathf.Max(0, 1 - Source.DistanceTo(this) / _shakeDist); 
 		
 		_ttl -= delta;
 
