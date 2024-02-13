@@ -49,11 +49,11 @@ public partial class XpOrb : Node2D
 			Trail.Destruct(Trail.Length);
 			EventBus.Publish(new PlayerGainXpEvent(Target, Xp));
 			
-			var label = FloatingLabel.Create($"+{Xp}", Modulate, 0.6);
+			var label = FloatingLabel.Create($"+{Xp}", Modulate, 0.75);
 			label.Position = Position + Rand.InsideUnitCircle * 50;
 			GetParent().AddChild(label);
 
-			Audio2D.PlaySoundAt(Sfx.Beep, Position, 0.35f).PitchVariation(0.25f);
+			Audio2D.PlaySoundAt(Sfx.Beep, Position, 0.35f).PitchVariation(0.10f);
 			
 			QueueFree();
 		}
