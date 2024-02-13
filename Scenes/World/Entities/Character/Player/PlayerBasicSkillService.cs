@@ -25,7 +25,7 @@ public class PlayerBasicSkillService
         beam.Source = player;
         //beam.Modulate = player.Sprite.Modulate;
         beam.Dps *= player.UniversalDamageMultiplier;
-        player.Position -= player.Up() * 200;
+        player.Position -= player.Up() * 250;
         
         Audio2D.PlaySoundOn(Sfx.HornImpact3, player);
         Audio2D.PlaySoundOn(Sfx.DeepImpact, player);
