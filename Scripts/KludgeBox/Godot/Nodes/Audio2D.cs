@@ -253,3 +253,37 @@ public partial class Audio2D : Node2D
 		return stream;
 	}
 }
+
+public static class AudioExtensions
+{
+	public static AudioStreamPlayer PitchVariation(this AudioStreamPlayer stream, float min, float max)
+	{
+		stream.PitchScale = Rand.Range(min, max);
+		return stream;
+	}
+	
+	public static AudioStreamPlayer PitchVariation(this AudioStreamPlayer stream, float range)
+	{
+		if (range < 0 || range > 1)
+		{
+			throw new ArgumentOutOfRangeException(nameof(range));
+		}
+		
+		return stream.PitchVariation(1 / (1+range), 1 * (1+range));
+	}
+	public static AudioStreamPlayer2D PitchVariation(this AudioStreamPlayer2D stream, float min, float max)
+	{
+		stream.PitchScale = Rand.Range(min, max);
+		return stream;
+	}
+	
+	public static AudioStreamPlayer2D PitchVariation(this AudioStreamPlayer2D stream, float range)
+	{
+		if (range < 0 || range > 1)
+		{
+			throw new ArgumentOutOfRangeException(nameof(range));
+		}
+		
+		return stream.PitchVariation(1 / (1+range), 1 * (1+range));
+	}
+}
