@@ -80,6 +80,8 @@ public static class NodeExtensions
 
         dummy.Position = node.Position;
         dummy.Rotation = node.Rotation;
+        dummy.Scale = node.Scale;
+        dummy.Modulate = node.Modulate;
 
         return dummy;
     }
