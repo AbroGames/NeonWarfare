@@ -31,17 +31,12 @@ public partial class SolarBeam : Node2D
 		NotNullChecker.CheckProperties(this);
 		_outerStartWidth = OuterBeamSprite.Scale.Y;
 		_innerStartWidth = InnerBeamSprite.Scale.Y;
-		var env = Root.Instance.Environment.Environment;
-		_startGlow = env.GlowStrength;
-		env.GlowStrength *= 1.1f;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		if (_ttl <= 0)
 		{
-			var env = Root.Instance.Environment.Environment;
-			env.GlowStrength = _startGlow;
 			QueueFree();
 			var dummy = Particles.Drop();
 			Particles.Emitting = false;

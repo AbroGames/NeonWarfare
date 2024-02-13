@@ -36,9 +36,6 @@ public partial class Beam : Node2D
 		_startTtl = _ttl;
 		_outerStartWidth = OuterBeamSprite.Scale.Y;
 		_innerStartWidth = InnerBeamSprite.Scale.Y;
-		var env = Root.Instance.Environment.Environment;
-		_startGlow = env.GlowStrength;
-		env.GlowStrength *= 1.1f;
 
 		_damageCd.Ready += () =>
 		{
@@ -50,8 +47,6 @@ public partial class Beam : Node2D
 	{
 		if (_ttl <= 0)
 		{
-			var env = Root.Instance.Environment.Environment;
-			env.GlowStrength = _startGlow;
 			Shaker.IsAlive = false;
 			
 			var dummy = Particles.Drop();
