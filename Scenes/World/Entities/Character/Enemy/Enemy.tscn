@@ -28,7 +28,7 @@ RayCast = NodePath("RayCast")
 modulate = Color(0.819608, 0, 0, 1)
 material = SubResource("ShaderMaterial_o5gow")
 position = Vector2(0, -8)
-scale = Vector2(0.116959, 0.0939335)
+scale = Vector2(0.101365, 0.0939335)
 texture = ExtResource("4_allx4")
 
 [node name="CharacterShape" parent="." index="1"]
