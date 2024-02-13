@@ -17,14 +17,15 @@ radius = 24.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_v0n2k"]
 resource_local_to_scene = true
-radius = 32.0156
+radius = 40.0125
 
 [node name="Boss" instance=ExtResource("1_t65df")]
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0.137255, 0, 1)
+modulate = Color(0.886275, 0.360784, 0, 1)
 material = SubResource("ShaderMaterial_irc74")
 position = Vector2(0, 0)
+scale = Vector2(0.09375, 0.0939335)
 texture = ExtResource("3_rasxh")
 
 [node name="CharacterShape" parent="." index="1"]
