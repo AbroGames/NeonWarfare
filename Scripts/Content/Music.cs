@@ -12,4 +12,7 @@ public static class Music
     public static RandomPicker<string> WorldBgm2 { get; } = new RandomPicker<string>(
         $"{SoundsDir}/bgm2.mp3"
     );
+    public static RandomPicker<string> MainBgm { get; } = new RandomPicker<string>(
+        $"{SoundsDir}/main_bgm.mp3"
+    );
 }

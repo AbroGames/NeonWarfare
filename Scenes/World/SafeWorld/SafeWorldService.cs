@@ -44,7 +44,7 @@ public class SafeWorldService
     
     public void PlaySafeMusic()
     {
-        //var music = Audio2D.PlayMusic(Music.WorldBgm, 0.7f); //TODO set safe music (not WorldBgm)
-        //music.Finished += PlaySafeMusic;
+        var music = Audio2D.PlayMusic(Music.MainBgm, 0.5f);
+        music.Finished += PlaySafeMusic;
     }
 }
