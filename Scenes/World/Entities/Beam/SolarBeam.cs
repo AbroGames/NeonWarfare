@@ -8,6 +8,7 @@ public partial class SolarBeam : Node2D
 {
 	public Player Source { get; set; }
 	public double Dps { get; set; } = 3000;
+	public double RotationSpeedFactor = 0.075;
 	public double Ttl => _ttl;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
@@ -31,16 +32,18 @@ public partial class SolarBeam : Node2D
 		NotNullChecker.CheckProperties(this);
 		_outerStartWidth = OuterBeamSprite.Scale.Y;
 		_innerStartWidth = InnerBeamSprite.Scale.Y;
+		Source.RotationSpeed *= RotationSpeedFactor;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		if (_ttl <= 0)
 		{
-			QueueFree();
 			var dummy = Particles.Drop();
 			Particles.Emitting = false;
 			dummy.Destruct(Particles.Lifetime * 3);
+			Source.RotationSpeed /= RotationSpeedFactor;
+			QueueFree();
 		}
 		
 		
