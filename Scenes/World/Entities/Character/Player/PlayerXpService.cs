@@ -32,31 +32,31 @@ public class PlayerXpService
         player.Level++;
 		
         player.MaxHp *= 1.1;
-        player.RegenHpSpeed *= 1.1;
+        player.RegenHpSpeed *= 1.11;
         player.Hp = player.MaxHp;
 
-        player.PrimaryDamage *= 1.1;
-        player.SecondaryDamage *= 1.1;
+        player.PrimaryDamage *= 1.05;
+        player.SecondaryDamage *= 1.05;
 
         player.MovementSpeed *= 1.05;
 		
         player.AttackSpeed *= 1.1;
-        player.SecondaryCd.Duration /= 1.1;
+        player.SecondaryCd.Duration /= 1.05;
 
-        player.RotationSpeed *= 1.1;
+        player.RotationSpeed *= 1.05;
 
-        player.PrimaryDistance *= 1.1;
-        player.SecondaryDistance *= 1.1;
+        player.PrimaryDistance *= 1.05;
+        player.SecondaryDistance *= 1.05;
 
-        player.UniversalDamageMultiplier *= 1.1;
+        player.UniversalDamageMultiplier *= 1.05;
 
-
+        
         //var zoomTween = player.GetTree().CreateTween();
         //zoomTween.SetTrans(Tween.TransitionType.Cubic);
         //zoomTween.TweenProperty(player.Camera, "zoom", player.Camera.Zoom / 1.05, 1);
         
 		
-        Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f);
+        Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f).PitchVariation(0.05f);
         var lvlUpLabel = Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
 		
         lvlUpLabel.Configure($"Level up!\n{player.Level-1} -> {player.Level}", Colors.Gold, 1.3);
