@@ -64,7 +64,17 @@ public partial class Character : CharacterBody2D
 			}
 			
 			Died?.Invoke();
-
+			
+			var deathDummy = this.DropDummy();
+			var derbisDummy = this.DropDummy();
+			var death = Fx.CreateDeathFx();
+			var derbis = Fx.CreateDebrisFx();
+			derbis.Modulate = Sprite.Modulate;
+			deathDummy.AddChild(death);
+			derbisDummy.AddChild(derbis);
+			//GetParent().MoveChild(derbisDummy, GetIndex() - 1);
+			derbisDummy.ToBackground();
+			
 			Audio2D.PlaySoundAt(Sfx.FuturisticCrack, GlobalPosition).PitchVariation(0.25f);
 			QueueFree();
 		}
@@ -74,7 +84,7 @@ public partial class Character : CharacterBody2D
 		if(appliedDamage <= 0)
 			Log.Debug(appliedDamage.ToString("N0"));
 			
-		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 75), 0.8));
+		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 40), 0.8));
 		dmgLabel.Position = Position + Rand.InsideUnitCircle * 50;
 		GetParent().AddChild(dmgLabel);
 	}

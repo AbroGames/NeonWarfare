@@ -107,7 +107,7 @@ public partial class Player : Character
 		bullet.Speed *= 3;
 		bullet.RemainingDamage = PrimaryDamage;
 		bullet.RemainingDistance = PrimaryDistance;
-		bullet.GetNode<Sprite2D>("Sprite2D").Scale *= 2;
+		bullet.Scale *= 2;
 		bullet.Source = this;
 		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f).PitchVariation(0.05f);
 		GetParent().AddChild(bullet);
@@ -134,8 +134,6 @@ public partial class Player : Character
 			bullet.Speed = bullet.Speed * 2 + Rand.Range(-bullet.Speed * speedSpread, bullet.Speed * speedSpread);
 			bullet.RemainingDistance = SecondaryDistance;
 			bullet.RemainingDamage = SecondaryDamage;
-			var modulate = bullet.GetNode<Sprite2D>("Sprite2D").Modulate;
-			bullet.GetNode<Sprite2D>("Sprite2D").SelfModulate = modulate.Darkened(0.2f);
 			bullet.Source = this;
 			GetParent().AddChild(bullet);
 		}

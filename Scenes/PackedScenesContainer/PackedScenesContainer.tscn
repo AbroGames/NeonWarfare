@@ -1,18 +1,31 @@
-[gd_scene load_steps=5 format=3 uid="uid://5vh8drujl1s5"]
+[gd_scene load_steps=10 format=3 uid="uid://5vh8drujl1s5"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.cs" id="1_mm4hi"]
 [ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainer/Screen/ScreenPackedScenesContainer.tscn" id="1_vrsdm"]
 [ext_resource type="PackedScene" uid="uid://cx42uux5b88nw" path="res://Scenes/PackedScenesContainer/World/WorldPackedScenesContainer.tscn" id="2_u1emc"]
 [ext_resource type="PackedScene" uid="uid://b86vwuwqs6kgc" path="res://Scenes/PackedScenesContainer/Main/MainPackedScenesContainer.tscn" id="4_3h06v"]
+[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Effects/EffectsPackedScenesContainer.cs" id="5_mv48e"]
+[ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/DeathFx.tscn" id="6_wrjfq"]
+[ext_resource type="PackedScene" uid="uid://3cohjn4xbp2o" path="res://Scenes/World/Effects/DebrisFx.tscn" id="7_1ft3b"]
+[ext_resource type="PackedScene" uid="uid://5nblerr5d58t" path="res://Scenes/World/Effects/BulletHitFx.tscn" id="8_3fnkg"]
+[ext_resource type="PackedScene" uid="uid://dsktb63djjnqc" path="res://Scenes/World/Effects/SpawnFx.tscn" id="9_vvknc"]
 
-[node name="PackedScenesContainer" type="Node" node_paths=PackedStringArray("Main", "World", "Screen")]
+[node name="PackedScenesContainer" type="Node" node_paths=PackedStringArray("Main", "World", "Screen", "Effects")]
 script = ExtResource("1_mm4hi")
 Main = NodePath("Main")
 World = NodePath("World")
 Screen = NodePath("Screen")
+Effects = NodePath("Effects")
 
 [node name="Main" parent="." instance=ExtResource("4_3h06v")]
 
 [node name="Screen" parent="." instance=ExtResource("1_vrsdm")]
 
 [node name="World" parent="." instance=ExtResource("2_u1emc")]
+
+[node name="Effects" type="Node" parent="."]
+script = ExtResource("5_mv48e")
+DeathFx = ExtResource("6_wrjfq")
+DebrisFx = ExtResource("7_1ft3b")
+BulletHitFx = ExtResource("8_3fnkg")
+SpawnFx = ExtResource("9_vvknc")

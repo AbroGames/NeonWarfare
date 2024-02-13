@@ -27,7 +27,7 @@ public partial class Bullet : Node2D
 	public override void _Ready()
 	{
 		
-		GetNode<Sprite2D>("Sprite2D").Modulate = _colors[Author];
+		Modulate = _colors[Author];
 		
 		GetNode<Area2D>("Area2D").AreaEntered += area =>
 		{
@@ -42,6 +42,13 @@ public partial class Bullet : Node2D
 					player.Camera.Punch(player.Position - Position, 10, 30);
 					player.HpCanBeFastRegen += damage / 2;
 					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f).PitchVariation(0.15f);
+					
+					var hit = Fx.CreateBulletHitFx();
+					hit.Modulate = Modulate;
+					hit.Rotation = Rotation - Mathf.Pi / 2;
+					hit.Scale = Scale;
+					hit.Position = Position;
+					GetParent().AddChild(hit);
 				}
 			}
 			
@@ -53,6 +60,13 @@ public partial class Bullet : Node2D
 					Audio2D.PlaySoundAt(Sfx.Hit, body.Position, 0.5f).PitchVariation(0.25f);
 					double K = enemy.IsBoss ? 0.0025 : 0.025;
 					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * K;
+					
+					var hit = Fx.CreateBulletHitFx();
+					hit.Modulate = Modulate;
+					hit.Rotation = Rotation - Mathf.Pi / 2;
+					hit.Scale = Scale;
+					hit.Position = Position;
+					GetParent().AddChild(hit);
 				}
 			}
 			

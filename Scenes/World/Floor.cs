@@ -79,6 +79,8 @@ public partial class Floor : Node2D
 			if (markedForRemoval.Contains(tile))
 				_grid.Remove(pos);
 		}
+		
+		this.ToBackground();
 	}
 
 

@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://5nblerr5d58t"]
+
+[ext_resource type="Script" path="res://Scenes/World/Effects/GpuParticlesFx.cs" id="1_bv3d5"]
+[ext_resource type="Texture2D" uid="uid://v0sgsd674iy6" path="res://Assets/Textures/Particles/Glow/256/alpha/spotlight_8.png" id="2_stgyx"]
+
+[sub_resource type="Gradient" id="Gradient_ni34l"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_yd3f1"]
+gradient = SubResource("Gradient_ni34l")
+
+[sub_resource type="Curve" id="Curve_b1v3k"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.333333, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_r560e"]
+curve = SubResource("Curve_b1v3k")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_i6ebv"]
+particle_flag_disable_z = true
+angle_min = -161.8
+angle_max = 275.1
+spread = 22.752
+initial_velocity_max = 1500.0
+angular_velocity_min = -720.0
+angular_velocity_max = 720.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.15
+scale_max = 0.35
+scale_curve = SubResource("CurveTexture_r560e")
+color_ramp = SubResource("GradientTexture1D_yd3f1")
+
+[node name="BulletHitFx" type="Node2D" node_paths=PackedStringArray("Particles2D")]
+script = ExtResource("1_bv3d5")
+Particles2D = NodePath("GPUParticles2D")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_i6ebv")
+texture = ExtResource("2_stgyx")
+lifetime = 0.25
+one_shot = true
+explosiveness = 1.0
+local_coords = true

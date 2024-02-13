@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using KludgeBox;
+using KludgeBox.Scheduling;
 using Scenes.World;
 
 public partial class SolarBeam : Node2D
@@ -23,6 +24,7 @@ public partial class SolarBeam : Node2D
 	private double _ang;
 	private float _startGlow;
 	private double _interpolationFactor = (240.0 / 60) * 60;
+
 	
 	public override void _Ready()
 	{
@@ -45,6 +47,8 @@ public partial class SolarBeam : Node2D
 			Particles.Emitting = false;
 			dummy.Destruct(Particles.Lifetime * 3);
 		}
+		
+		
 		_ttl -= delta;
 		_ang += 1800 * delta;
 		_ang %= 360;

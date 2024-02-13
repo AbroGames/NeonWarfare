@@ -1,0 +1,17 @@
+using Godot;
+using System;
+
+public partial class CpuParticlesFx : Node2D
+{
+	public event Action Finished;
+	[Export] [NotNull] public CpuParticles2D Particles2D { get; private set; }
+	public override void _Ready()
+	{
+		Particles2D.Emitting = true;
+		Particles2D.Finished += () =>
+		{
+			Finished?.Invoke();
+			QueueFree();
+		};
+	}
+}
