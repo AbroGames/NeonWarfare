@@ -61,6 +61,7 @@ public class BattleWorldEnemySpawnService
         enemy.Target = character;
         enemy.MaxHp = 250;
         enemy.Hp = enemy.MaxHp;
+        enemy.BaseXp *= 1 + battleWorld.EnemyWave.WaveNumber / 10;
         enemy.MovementSpeed = 200; // in pixels/secRegenHpSpeed = 0;
         if (_attractorCounter == 0 || forceAttractor)
         {
@@ -93,7 +94,7 @@ public class BattleWorldEnemySpawnService
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.
         enemy.Damage *= 5 * scale; //5 волна = *5, 10 волна = *10, 20 волна = *15 ... и т.д.
         enemy.MovementSpeed *= scale; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
-        enemy.BaseXp *= (int) (100 * scale); //5 волна = 150, 10 волна = 200, 20 волна = 300 ... и т.д.
+        enemy.BaseXp += (int) (100 * scale); //5 волна = 150, 10 волна = 200, 20 волна = 300 ... и т.д.
         enemy.IsBoss = true; //
         battleWorld.AddChild(enemy);
         battleWorld.Enemies.Add(enemy);
