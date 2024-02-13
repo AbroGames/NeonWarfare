@@ -27,7 +27,7 @@ public partial class Beam : Node2D
 	private double _outerStartWidth;
 	private double _ang;
 	private float _startGlow;
-	private double _shakeDist = 500;
+	private double _shakeDist = 1500;
 	private Cooldown _damageCd = new(duration: 0.1, isReady: true);
 	
 	public override void _Ready()
