@@ -56,13 +56,13 @@ public class BattleWorldService
     
     public void PlayBattleMusic1()
     {
-        var music = Audio2D.PlayMusic(Music.WorldBgm1, 0.7f);
+        var music = Audio2D.PlayMusic(Music.WorldBgm1, 0.5f);
         music.Finished += PlayBattleMusic2;
     }
     
     public void PlayBattleMusic2()
     {
-        var music = Audio2D.PlayMusic(Music.WorldBgm2, 0.7f);
+        var music = Audio2D.PlayMusic(Music.WorldBgm2, 0.5f);
         music.Finished += PlayBattleMusic1;
     }
 }
