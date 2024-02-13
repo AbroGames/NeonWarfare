@@ -1,8 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://c6f2wg8qd1yec"]
+[gd_scene load_steps=13 format=3 uid="uid://c6f2wg8qd1yec"]
 
 [ext_resource type="Script" path="res://Scenes/World/Entities/Beam/Beam.cs" id="1_q2rq7"]
 [ext_resource type="Texture2D" uid="uid://0lxupe8u6ixf" path="res://Assets/Textures/Particles/Glow/256/spotlight_5.png" id="1_w4etn"]
+[ext_resource type="Texture2D" uid="uid://btrdjnjrhw88o" path="res://Assets/Textures/Sprites/BeamSource.svg" id="2_2sf3i"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="2_m1glf"]
+[ext_resource type="Texture2D" uid="uid://2tm17qrbj0xe" path="res://Assets/Textures/Particles/dash.svg" id="2_wb865"]
 [ext_resource type="Texture2D" uid="uid://cvj1gxq3db2hc" path="res://Assets/Textures/Sprites/Square.png" id="3_qjm6e"]
 
 [sub_resource type="Curve" id="Curve_75b0s"]
@@ -18,7 +20,14 @@ size = Vector2(972.118, 831.248)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0k6vi"]
 size = Vector2(972.118, 350)
 
-[node name="Beam" type="Node2D" node_paths=PackedStringArray("OuterHitArea", "OuterSpawnSprite", "OuterBeamSprite", "InnerHitArea", "InnerSpawnSprite", "InnerBeamSprite")]
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_magm8"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_21yap"]
+offsets = PackedFloat32Array(0, 0.213333, 0.52, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Beam" type="Node2D" node_paths=PackedStringArray("OuterHitArea", "OuterSpawnSprite", "OuterBeamSprite", "InnerHitArea", "InnerSpawnSprite", "InnerBeamSprite", "Particles")]
 script = ExtResource("1_q2rq7")
 OuterHitArea = NodePath("OuterPart/Beam/DamageArea")
 OuterSpawnSprite = NodePath("OuterPart/Spawn")
@@ -27,6 +36,14 @@ InnerHitArea = NodePath("InnerPart/Beam/DamageArea")
 InnerSpawnSprite = NodePath("InnerPart/Spawn")
 InnerBeamSprite = NodePath("InnerPart/Beam")
 SizeCurve = SubResource("Curve_75b0s")
+Particles = NodePath("CPUParticles2D")
+
+[node name="BeamSource" type="Sprite2D" parent="."]
+modulate = Color(0, 0.278431, 0.4, 1)
+position = Vector2(-104, -9.49098e-31)
+rotation = 1.5708
+scale = Vector2(0.277346, 0.277346)
+texture = ExtResource("2_2sf3i")
 
 [node name="OuterPart" type="Node2D" parent="."]
 modulate = Color(0.0980392, 0.0901961, 0.588235, 1)
@@ -85,3 +102,21 @@ texture = ExtResource("2_m1glf")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InnerPart/Beam/DamageArea"]
 position = Vector2(215.611, 0)
 shape = SubResource("RectangleShape2D_0k6vi")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+modulate = Color(0, 0.580392, 1, 1)
+material = SubResource("CanvasItemMaterial_magm8")
+amount = 32
+lifetime = 0.4
+local_coords = true
+texture = ExtResource("2_wb865")
+emission_shape = 3
+emission_rect_extents = Vector2(1, 200)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 7000.0
+initial_velocity_max = 15000.0
+linear_accel_max = 1000.0
+scale_amount_min = 0.0
+scale_amount_max = 0.3
+color_ramp = SubResource("Gradient_21yap")
