@@ -41,7 +41,7 @@ public partial class Bullet : Node2D
 					ApplyDamage(player, new Color(0, 0, 0));
 					player.Camera.Punch(player.Position - Position, 10, 30);
 					player.HpCanBeFastRegen += damage / 2;
-					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f);
+					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f).PitchVariation(0.15f);
 				}
 			}
 			
@@ -50,7 +50,7 @@ public partial class Bullet : Node2D
 				if (Author != AuthorEnum.ENEMY)
 				{
 					ApplyDamage(enemy,new Color(1, 0, 0));
-					Audio2D.PlaySoundAt(Sfx.Hit, body.Position, 0.5f);
+					Audio2D.PlaySoundAt(Sfx.Hit, body.Position, 0.5f).PitchVariation(0.25f);
 					double K = enemy.IsBoss ? 0.0025 : 0.025;
 					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * K;
 				}

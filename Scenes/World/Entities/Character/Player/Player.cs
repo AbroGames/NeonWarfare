@@ -109,7 +109,7 @@ public partial class Player : Character
 		bullet.RemainingDistance = PrimaryDistance;
 		bullet.GetNode<Sprite2D>("Sprite2D").Scale *= 2;
 		bullet.Source = this;
-		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f);
+		Audio2D.PlaySoundAt(Sfx.SmallLaserShot, Position, 1f).PitchVariation(0.15f);
 		GetParent().AddChild(bullet);
 	}
 	

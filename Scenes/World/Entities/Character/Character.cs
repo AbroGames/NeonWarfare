@@ -65,7 +65,7 @@ public partial class Character : CharacterBody2D
 			
 			Died?.Invoke();
 
-			Audio2D.PlaySoundAt(Sfx.FuturisticCrack, GlobalPosition);
+			Audio2D.PlaySoundAt(Sfx.FuturisticCrack, GlobalPosition).PitchVariation(0.25f);
 			QueueFree();
 		}
 		
