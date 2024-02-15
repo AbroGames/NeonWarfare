@@ -9,7 +9,32 @@ namespace KludgeBox;
 [GlobalClass]
 public partial class Threading : Node
 {
-	public static Threading Instance { get; private set; }
+	private static Threading Instance
+	{
+		get
+		{
+			if (_instance == null)
+			{
+				// Check if we were loaded via Autoload
+				_instance = ((SceneTree)Engine.GetMainLoop()).Root.GetNodeOrNull<Threading>(typeof(Threading).Name);
+				if (_instance == null)
+				{
+					// Instantiate to root at runtime
+					_instance = new Threading();
+					_instance.Name = typeof(Threading).Name;
+					_instance.CallDeferred(nameof(InitGlobalInstance));
+				}
+			}
+			return _instance;
+		}
+	}
+	
+	private void InitGlobalInstance()
+	{
+		((SceneTree)Engine.GetMainLoop()).Root.AddChild(this);
+	}
+	
+	private static Threading _instance;
 	public static SynchronizationContext SyncContext { get; private set; }
 
 	private static readonly List<Action> deferredTasks = new();
@@ -19,7 +44,6 @@ public partial class Threading : Node
 	private static readonly object deferredPhysicsLock = new object();
 	public override void _Ready()
 	{
-		Instance = this;
 		SyncContext = SynchronizationContext.Current;
 	}
 	

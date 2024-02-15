@@ -31,30 +31,30 @@ public static class RectExtensions
     /// </summary>
     /// <param name="rect">The Rect2 object.</param>
     /// <returns>The X-coordinate of the top-left corner.</returns>
-    public static double X(this Rect2 rect) => rect.Position.X;
+    public static real X(this Rect2 rect) => rect.Position.X;
 
     /// <summary>
     /// Gets the Y-coordinate of the top-left corner of the specified Rect2.
     /// </summary>
     /// <param name="rect">The Rect2 object.</param>
     /// <returns>The Y-coordinate of the top-left corner.</returns>
-    public static double Y(this Rect2 rect) => rect.Position.Y;
+    public static real Y(this Rect2 rect) => rect.Position.Y;
 
     /// <summary>
     /// Gets the width of the specified Rect2.
     /// </summary>
     /// <param name="rect">The Rect2 object.</param>
     /// <returns>The width of the Rect2.</returns>
-    public static double Width(this Rect2 rect) => rect.Size.X;
+    public static real Width(this Rect2 rect) => rect.Size.X;
 
     /// <summary>
     /// Gets the height of the specified Rect2.
     /// </summary>
     /// <param name="rect">The Rect2 object.</param>
     /// <returns>The height of the Rect2.</returns>
-    public static double Height(this Rect2 rect) => rect.Size.Y;
+    public static real Height(this Rect2 rect) => rect.Size.Y;
 
-    public static double GetCircumradius(this Rect2 rect)
+    public static real GetCircumradius(this Rect2 rect)
     {
         return Mathf.Sqrt(rect.Width() * rect.Width() + rect.Height() * rect.Height()) / 2;
     }

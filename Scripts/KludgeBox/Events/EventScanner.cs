@@ -18,17 +18,17 @@ public static class EventScanner
     /// Scans for event listener methods of type <see cref="IEvent"/>.
     /// </summary>
     /// <returns>An enumerable collection of <see cref="MethodInfo"/> representing event listener methods.</returns>
-    public static IEnumerable<MethodInfo> ScanEventListeners()
+    public static IEnumerable<MethodSubscriptionInfo> ScanEventListeners()
     {
-        return ScanEventListenersOfType(typeof(IEvent));
+        return ScanStaticEventListenersOfType(typeof(IEvent));
     }
 
     /// <summary>
-    /// Scans for event listener methods of the specified <paramref name="type"/>.
+    /// Scans for event listener methods of the specified <paramref name="paramType"/>.
     /// </summary>
-    /// <param name="type">The type of events for which listeners should be scanned.</param>
+    /// <param name="paramType">The type of events for which listeners should be scanned.</param>
     /// <returns>An enumerable collection of <see cref="MethodInfo"/> representing event listener methods.</returns>
-    public static IEnumerable<MethodInfo> ScanEventListenersOfType(Type type)
+    public static IEnumerable<MethodSubscriptionInfo> ScanStaticEventListenersOfType(Type paramType)
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies(); // Returns all currently loaded assemblies
         var types = assemblies.SelectMany(x => x.GetTypes()); // returns all types defined in these assemblies
@@ -37,10 +37,37 @@ public static class EventScanner
         var staticMethods = methods.Where(x => x.IsStatic); // returns all methods defined in those classes
         var voidReturns = staticMethods.Where(method => method.ReturnType == typeof(void)); // method should return void
         var singleParameter = voidReturns.Where(x => x.GetParameters().Length == 1); // method should accept only one parameter
-        var rightParamType = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(type)); // and that parameter must be assignable to a variable of type
+        var rightParamType = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType)); // and that parameter must be assignable to a variable of type
         var listeners = rightParamType.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
+
+        var subscriptionInfo = listeners.Select(method => 
+            new MethodSubscriptionInfo(method, null, method.GetCustomAttribute<EventListenerAttribute>()!.Priority));
         
-        return listeners;
+        return subscriptionInfo;
+    }
+
+    public static IEnumerable<MethodSubscriptionInfo> ScanEventListenersInTypesOfType(object[] listenerSources,
+        Type paramType)
+    {
+        List<MethodSubscriptionInfo> subscriptions = new();
+        foreach (var source in listenerSources)
+        {
+            var type = source.GetType();
+            var rawMethods = type.GetMethods();
+            var withAttribute = rawMethods.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null);
+            var singleParameter = withAttribute.Where(x => x.GetParameters().Length == 1);
+            var methods = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType));
+            
+            foreach (MethodInfo method in methods)
+            {
+                object invoker = method.IsStatic ? null : source;
+                ListenerPriority priority = method.GetCustomAttribute<EventListenerAttribute>()!.Priority;
+
+                subscriptions.Add(new MethodSubscriptionInfo(method, invoker, priority));
+            }
+        }
+
+        return subscriptions.AsReadOnly();
     }
 
     /// <summary>
@@ -48,12 +75,13 @@ public static class EventScanner
     /// </summary>
     /// <param name="targetEventBus">The event bus to which the methods should be subscribed.</param>
     /// <param name="methods">An enumerable collection of <see cref="MethodInfo"/> representing event listener methods.</param>
-    public static void SubscribeMethods(this EventBus targetEventBus, IEnumerable<MethodInfo> methods)
+    public static void SubscribeMethods(this EventBus targetEventBus, IEnumerable<MethodSubscriptionInfo> methods)
     {
         foreach (var method in methods)
         {
-            var priority = method.GetCustomAttribute<EventListenerAttribute>()!.Priority;
-            targetEventBus.SubscribeMethod(method, priority);
+            targetEventBus.SubscribeMethod(method);
         }
     }
 }
+
+public record MethodSubscriptionInfo(MethodInfo Method, object Invoker, ListenerPriority Priority);

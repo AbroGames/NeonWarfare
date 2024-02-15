@@ -17,13 +17,13 @@ public struct Circle : IEquatable<Circle>
     /// <summary>
     /// The radius of the circle.
     /// </summary>
-    public double Radius = 0f;
+    public real Radius = 0f;
 
     /// <summary>
     /// Gets or sets the X coordinate of the circle's center position.
     /// </summary>
     [JsonIgnore]
-    public double X
+    public real X
     {
         get => Position.X;
         set => Position = Position with { X = value };
@@ -33,7 +33,7 @@ public struct Circle : IEquatable<Circle>
     /// Gets or sets the Y coordinate of the circle's center position.
     /// </summary>
     [JsonIgnore]
-    public double Y
+    public real Y
     {
         get => Position.Y;
         set => Position = Position with { Y = value };
@@ -43,7 +43,7 @@ public struct Circle : IEquatable<Circle>
     /// Gets or sets the diameter of the circle.
     /// </summary>
     [JsonIgnore]
-    public double Diameter
+    public real Diameter
     {
         get => Radius * 2;
         set => Radius = value / 2;
@@ -53,14 +53,14 @@ public struct Circle : IEquatable<Circle>
     /// Calculates and returns the area of the circle.
     /// </summary>
     [JsonIgnore]
-    public double Area => Mathf.Pi * Mathf.Pow(Radius, 2);
+    public real Area => Mathf.Pi * Mathf.Pow(Radius, 2);
 
     /// <summary>
     /// Creates a new instance of the <see cref="Circle"/> struct with the specified position and radius.
     /// </summary>
     /// <param name="position">The center position of the circle.</param>
     /// <param name="radius">The radius of the circle.</param>
-    public Circle(Vector2 position, double radius)
+    public Circle(Vector2 position, real radius)
     {
         Position = position;
         Radius = radius;
@@ -74,7 +74,7 @@ public struct Circle : IEquatable<Circle>
     /// Creates a new instance of the <see cref="Circle"/> struct with the specified radius and default position (0, 0).
     /// </summary>
     /// <param name="radius">The radius of the circle.</param>
-    public Circle(double radius)
+    public Circle(real radius)
     {
         Radius = radius;
     }

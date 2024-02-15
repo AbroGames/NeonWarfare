@@ -13,7 +13,7 @@ public class EventBus
     /// If set to true, EventBus will attempt to publish events to all EventHubs whose types are derived from the event type.
     /// This option can significantly impact performance.
     /// </summary>
-    public bool IncludeBaseEvents = true;
+    public bool IncludeBaseEvents = false;
 
     private Dictionary<Type, EventHub> _hubs = new Dictionary<Type, EventHub>();
 
@@ -46,6 +46,11 @@ public class EventBus
         {
             GetHub(@event.GetType()).Publish(@event);
         }
+    }
+
+    public EventPublisher<T> GetPublisher<T>() where T : IEvent
+    {
+        return new EventPublisher<T>(GetHub(typeof(T)));
     }
 
     /// <summary>
@@ -90,19 +95,19 @@ public class EventBus
     /// <summary>
     ///	Subscribes to a message type using the provided MethodInfo.
     /// </summary>
-    /// <param name="methodInfo">The MethodInfo representing the delivery action.</param>
+    /// <param name="subscriptionInfo">The MethodInfo representing the delivery action.</param>
     /// <returns>Message subscription token that can be used for unsubscribing.</returns>
-    public ListenerToken SubscribeMethod(MethodInfo methodInfo, ListenerPriority priority)
+    public ListenerToken SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
     {
-        Type messageType = methodInfo.GetParameters()[0].ParameterType;
+        Type messageType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
 
         // Create an Action<TArg> delegate from the MethodInfo
         var delegateType = typeof(Action<>).MakeGenericType(messageType);
-        var actionDelegate = Delegate.CreateDelegate(delegateType, null, methodInfo);
+        var actionDelegate = Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
 
         // Subscribe to the message type using the created delegate
         return typeof(EventBus).GetMethod("Subscribe")!.MakeGenericMethod(messageType)
-            .Invoke(this, new object[] { actionDelegate, priority }) as ListenerToken;
+            .Invoke(this, new object[] { actionDelegate, subscriptionInfo.Priority }) as ListenerToken;
     }
 
     private List<EventHub> FindApplicableHubs(Type eventType)

@@ -25,6 +25,12 @@ public static class Rand
 	/// Returns a pseudo-random double between 0.0 and 1.0.
 	/// </summary>
 	public static double Double => ((MurmurHash.GetInt(_seed, _iterations++) - -2147483648.0) / 4294967295.0);
+	
+#if GODOT_REAL_T_IS_DOUBLE
+	public static double Real => Double;
+#else
+	public static float Real => Float;
+#endif
 
 	/// <summary>
 	/// Gets a random boolean value, true with a 50% chance and false with a 50% chance.
@@ -54,7 +60,7 @@ public static class Rand
 	/// Generates a random unit vector in 2D space.
 	/// </summary>
 	/// <returns>A random unit vector in 2D space.</returns>
-	public static Vector2 UnitVector => new Vector2(Gaussian(), Gaussian()).Normalized();
+	public static Vector2 UnitVector => new Vector2((real)Gaussian(), (real)Gaussian()).Normalized();
 		
 
 	/// <summary>
@@ -68,7 +74,7 @@ public static class Rand
 			Vector2 result;
 			do
 			{
-				result = new Vector2(Double - 0.5f, Double - 0.5f) * 2f;
+				result = new Vector2(Real - 0.5f, Real - 0.5f) * 2f;
 			}
 			while (!(result.LengthSquared() <= 1f));
 			return result;
@@ -128,9 +134,9 @@ public static class Rand
 	/// <param name="innerRadius">The inner radius of the annulus.</param>
 	/// <param name="outerRadius">The outer radius of the annulus.</param>
 	/// <returns>A random vector inside the annulus in 2D space.</returns>
-	public static Vector2 InsideAnnulus(double innerRadius, double outerRadius)
+	public static Vector2 InsideAnnulus(real innerRadius, real outerRadius)
 	{
-		double f = Mathf.Pi * 2f * Double;
+		real f = Mathf.Pi * 2f * Real;
 		Vector2 vector = new Vector2(Mathf.Cos(f), Mathf.Sin(f));
 		innerRadius *= innerRadius;
 		outerRadius *= outerRadius;
