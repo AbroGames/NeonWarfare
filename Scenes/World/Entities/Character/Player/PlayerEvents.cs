@@ -14,4 +14,4 @@ public readonly record struct PlayerMouseWheelInputEvent(Player Player, WheelEve
 public readonly record struct PlayerBasicSkillUseEvent(Player Player) : IEvent;
 public readonly record struct PlayerAdvancedSkillUseEvent(Player Player) : IEvent;
 
-public record PlayerGetRequiredXpQuery(Player Player) : QueryEvent<int>;
+public record PlayerGetRequiredXpQuery(Player Player) : QueryEvent<long>;

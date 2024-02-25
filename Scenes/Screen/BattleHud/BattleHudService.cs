@@ -24,13 +24,8 @@ public class BattleHudService
         BattleWorld battleWorld = battleHud.BattleWorld;
         Player player = battleWorld.Player;
         
-        //TODO хочу такую запись: int playerRequiredXp = EventBus.PublishQuery<int>(new PlayerGetRequiredXpQuery(player));
-        //PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
-        //EventBus.Publish(playerGetRequiredXpQuery);
-        int playerRequiredXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));//playerGetRequiredXpQuery.Response;
-        
-        battleHud.Xp.Value = (double) player.Xp / playerRequiredXp;
-        battleHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";
+        battleHud.Xp.Value = (double) player.Xp / player.NextLevelXp;
+        battleHud.XpLabel.Text = $"Xp: {player.Xp} / {player.NextLevelXp}";
         battleHud.Level.Text = $"Level: {player.Level}";
 		
         battleHud.Waves.Text = $"Wave: {battleWorld.EnemyWave.WaveNumber}";

@@ -34,7 +34,7 @@ public class PlayerXpService
     {
         Player player = playerGetRequiredXpQuery.Player;
         
-        int result = (int) (player.BasicRequiredXp * Mathf.Pow(player.RequiredXpLevelFactor, player.Level));
+        long result = (long) (player.BasicRequiredXp * Mathf.Pow(player.RequiredXpLevelFactor, player.Level));
         playerGetRequiredXpQuery.SetResult(result);
         //TODO вместо SetResult хочу, чтобы это было под капотом. А тут просто return result;
         //Ответ на TODO это больно и страшно
@@ -47,6 +47,7 @@ public class PlayerXpService
 
         player.Xp -= player.NextLevelXp;
         player.Level++;
+        player.NextLevelXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
 		
         player.MaxHp *= 1.1;
         player.RegenHpSpeed *= 1.11;

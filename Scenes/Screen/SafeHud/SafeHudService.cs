@@ -18,10 +18,8 @@ public class SafeHudService
         SafeWorld safeWorld = safeHud.SafeWorld;
         Player player = safeWorld.Player;
         
-        int playerRequiredXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
-        
-        safeHud.Xp.Value = (double) player.Xp / playerRequiredXp;
-        safeHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";
+        safeHud.Xp.Value = (double) player.Xp / player.NextLevelXp;
+        safeHud.XpLabel.Text = $"Xp: {player.Xp} / {player.NextLevelXp}";
         safeHud.Level.Text = $"Level: {player.Level}";
 
         safeHud.HpBar.CurrentUpperValue = player.Hp;
