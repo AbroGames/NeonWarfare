@@ -1,4 +1,3 @@
-
 using KludgeBox;
 using KludgeBox.Events;
 

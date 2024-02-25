@@ -1,10 +1,9 @@
 using Godot;
 
-namespace AbroDraft.Scripts.Screen;
+namespace AbroDraft.Scenes.Screen.Menu.ProfileButton;
 
 public partial class ProfileButton : Button
 {
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		Pressed += () =>
@@ -15,7 +14,4 @@ public partial class ProfileButton : Button
 		};
 	}
 
-	public override void _Process(double delta)
-	{
-	}
 }
