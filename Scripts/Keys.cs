@@ -1,5 +1,7 @@
 ﻿using Godot;
 
+namespace AbroDraft.Scripts;
+
 public static class Keys
 {
     // Basic movement

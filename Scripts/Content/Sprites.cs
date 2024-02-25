@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Collections;
 
-namespace Game.Content
+namespace AbroDraft.Scripts.Content
 {
 	public static class Sprites
 	{

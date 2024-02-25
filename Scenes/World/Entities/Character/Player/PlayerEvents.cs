@@ -1,5 +1,6 @@
-﻿using Godot;
-using KludgeBox.Events;
+﻿using KludgeBox.Events;
+
+namespace AbroDraft.Scenes.World.Entities.Character.Player;
 
 public readonly record struct PlayerGainXpEvent(Player Player, int Xp) : IEvent;
 public readonly record struct PlayerProcessEvent(Player Player, double Delta) : IEvent;

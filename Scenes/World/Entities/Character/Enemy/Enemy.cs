@@ -1,7 +1,8 @@
+using AbroDraft.Scripts.EventBus;
 using Godot;
-using System;
-using Game.Content;
 using KludgeBox;
+
+namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 
 public partial class Enemy : Character
 {

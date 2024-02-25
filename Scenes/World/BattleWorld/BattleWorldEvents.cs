@@ -1,5 +1,7 @@
 ﻿using KludgeBox.Events;
 
+namespace AbroDraft.Scenes.World.BattleWorld;
+
 public readonly record struct BattleWorldSpawnEnemiesRequestEvent(int RequiredEnemiesAmount) : IEvent;
 public readonly record struct BattleWorldSpawnBossesRequestEvent(int RequiredBossesAmount) : IEvent;
 public readonly record struct BattleWorldNewWaveEvent(BattleWorld BattleWorld, int WaveNumber) : IEvent;

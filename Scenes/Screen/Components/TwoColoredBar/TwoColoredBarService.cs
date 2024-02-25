@@ -1,4 +1,7 @@
+using AbroDraft.Scripts.Utils;
 using KludgeBox.Events;
+
+namespace AbroDraft.Scenes.Screen.Components.TwoColoredBar;
 
 [GameService]
 public class TwoColoredBarService

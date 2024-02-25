@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using AbroDraft.Scenes.World.Camera.Shifts;
+using AbroDraft.Scripts.EventBus;
 using Godot;
+
+namespace AbroDraft.Scenes.World.Camera;
 
 public partial class Camera : Camera2D
 {

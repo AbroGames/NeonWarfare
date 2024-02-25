@@ -1,7 +1,11 @@
 using System;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
 
 //TODO добавить аннотацию [EventBusListener] или типа того, чтобы автоматически подписывать соответствующиме методы сервиса на события шины
+namespace AbroDraft.Scenes.World.Entities.Character.Player;
+
 [GameService]
 public class PlayerRotateService
 {

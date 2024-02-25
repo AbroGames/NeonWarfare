@@ -1,6 +1,10 @@
-using Game.Content;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
 using KludgeBox.Events;
+
+namespace AbroDraft.Scenes.World.Entities.Character.Player;
 
 [GameService]
 public class PlayerXpService
@@ -58,7 +62,7 @@ public class PlayerXpService
         
 		
         Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f).PitchVariation(0.05f);
-        var lvlUpLabel = Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
+        var lvlUpLabel = Root.Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel.FloatingLabel>();
 		
         lvlUpLabel.Configure($"Level up!\n{player.Level-1} -> {player.Level}", Colors.Gold, 1.3);
         lvlUpLabel.Position = player.Position - Vec(0, 100);

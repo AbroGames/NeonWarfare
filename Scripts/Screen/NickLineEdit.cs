@@ -1,11 +1,12 @@
 using Godot;
-using System;
+
+namespace AbroDraft.Scripts.Screen;
 
 public partial class NickLineEdit : LineEdit
 {
 	public override void _Ready()
 	{
-		Text = Root.Instance.Game.PlayerInfo.playerName;
+		Text = Scenes.Root.Root.Instance.Game.PlayerInfo.playerName;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

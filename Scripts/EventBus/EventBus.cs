@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using KludgeBox;
 using KludgeBox.Events;
+using ServiceRegistry = AbroDraft.Scripts.Utils.ServiceRegistry;
+
+namespace AbroDraft.Scripts.EventBus;
 
 public static class EventBus
 {
@@ -90,4 +91,3 @@ public static class EventBus
         _bus.ResetEvent(type);
     }
 }
-

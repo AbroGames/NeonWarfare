@@ -1,18 +1,19 @@
 using Godot;
-using System;
+
+namespace AbroDraft.Scenes.MainScenes.SafeWorld;
 
 public partial class GreenOverlay : TextureRect
 {
-    private double _ang = 0;
-    private double _rot = 90;
+	private double _ang = 0;
+	private double _rot = 90;
 
 	public override void _Process(double delta)
 	{
-        _ang += _rot * delta;
-        _ang %= 180;
+		_ang += _rot * delta;
+		_ang %= 180;
         
-        var alpha = Mathf.Sin(Mathf.DegToRad(_ang));
+		var alpha = Mathf.Sin(Mathf.DegToRad(_ang));
         
-        Modulate = Modulate with { A = 0.1f + (float)alpha * 0.1f };
+		Modulate = Modulate with { A = 0.1f + (float)alpha * 0.1f };
 	}
 }

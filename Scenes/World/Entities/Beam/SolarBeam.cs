@@ -1,12 +1,11 @@
 using Godot;
-using System;
 using KludgeBox;
-using KludgeBox.Scheduling;
-using Scenes.World;
+
+namespace AbroDraft.Scenes.World.Entities.Beam;
 
 public partial class SolarBeam : Node2D
 {
-	public Player Source { get; set; }
+	public Character.Player.Player Source { get; set; }
 	public double Dps { get; set; } = 3000;
 	public double RotationSpeedFactor = 0.075;
 	public double Ttl => _ttl;
@@ -57,15 +56,15 @@ public partial class SolarBeam : Node2D
 		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (_outerStartWidth + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor };
 		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (_innerStartWidth + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor };
 		
-		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
-		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
+		var outerDamage = new Damage(Bullet.Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
+		var innerDamage = new Damage(Bullet.Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
 		
 		var outerOthers = OuterHitArea.GetOverlappingAreas();
 		var innerOthers = InnerHitArea.GetOverlappingAreas();
 		
 		foreach (var area in outerOthers)
 		{
-			if(area.GetParent() is not Enemy body) continue;
+			if(area.GetParent() is not Character.Enemy.Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
 			body.Position += Source.Up() * distFactor * 5 * Source.UniversalDamageMultiplier * 0.5 * delta * _interpolationFactor;
 			body.TakeDamage(outerDamage);
@@ -73,7 +72,7 @@ public partial class SolarBeam : Node2D
 		
 		foreach (var area in innerOthers)
 		{
-			if(area.GetParent() is not Enemy body) continue;
+			if(area.GetParent() is not Character.Enemy.Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
 			body.Position += Source.Up() * distFactor * 5 * Source.UniversalDamageMultiplier * delta * _interpolationFactor;
 			body.TakeDamage(innerDamage);

@@ -1,7 +1,9 @@
-﻿using Game.Content;
+﻿using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
 
-namespace Scenes.World.Entities.Character.Player;
+namespace AbroDraft.Scenes.World.Entities.Character.Player;
 
 [GameService]
 public class PlayerBasicSkillService
@@ -14,8 +16,8 @@ public class PlayerBasicSkillService
     public void UseSkill(PlayerBasicSkillUseEvent useEvent)
     {
         var player = useEvent.Player;
-        var node = Root.Instance.PackedScenes.World.Beam.Instantiate();
-        var beam = node as Beam;
+        var node = Root.Root.Instance.PackedScenes.World.Beam.Instantiate();
+        var beam = node as Beam.Beam;
         var shaker = player.Camera.ShakeManually();
         beam.Shaker = shaker;
         

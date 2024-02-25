@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.JavaScript;
+using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
-using Scenes.World.Entities.Character.Player;
+using ServiceRegistry = AbroDraft.Scripts.Utils.ServiceRegistry;
+
+namespace AbroDraft.Scenes.Root;
 
 public partial class Root : Node2D
 {
 	
-	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-	[Export] [NotNull] public AbroDraft.Game Game { get; private set; }
+	[Export] [NotNull] public PackedScenesContainer.PackedScenesContainer PackedScenes { get; private set; }
+	[Export] [NotNull] public Game.Game Game { get; private set; }
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();

@@ -1,9 +1,9 @@
-using System;
-using Game.Content;
-using Godot;
-using KludgeBox;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
 
-[GameService]
+namespace AbroDraft.Scenes.World.BattleWorld.Wave;
+
+[Scripts.Utils.GameService]
 public class BattleWorldWavesService
 {
     

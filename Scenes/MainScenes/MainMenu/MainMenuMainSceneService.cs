@@ -1,3 +1,7 @@
+using AbroDraft.Scripts.EventBus;
+
+namespace AbroDraft.Scenes.MainScenes.MainMenu;
+
 public class MainMenuMainSceneService
 {
 

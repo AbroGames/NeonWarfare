@@ -1,5 +1,7 @@
 using KludgeBox.Events;
 
+namespace AbroDraft.Scenes.World.Entities.Character;
+
 public readonly struct CharacterProcessEvent(Character character, double delta) : IEvent
 {
     public Character Character { get; } = character;

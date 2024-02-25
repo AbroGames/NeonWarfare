@@ -1,15 +1,17 @@
+using AbroDraft.Scripts.EventBus;
 using Godot;
-using System;
 using KludgeBox;
+
+namespace AbroDraft.Scenes.MainScenes.BattleWorld;
 
 public partial class BattleWorldMainScene : Node2D
 {
 
-	[Export] [NotNull] public NodeContainer WorldContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer BackgroundContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer HudContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer MenuContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer ForegroundContainer { get; private set; }
+	[Export] [NotNull] public Scripts.Containers.NodeContainer WorldContainer { get; private set; }
+	[Export] [NotNull] public Scripts.Containers.NodeContainer BackgroundContainer { get; private set; }
+	[Export] [NotNull] public Scripts.Containers.NodeContainer HudContainer { get; private set; }
+	[Export] [NotNull] public Scripts.Containers.NodeContainer MenuContainer { get; private set; }
+	[Export] [NotNull] public Scripts.Containers.NodeContainer ForegroundContainer { get; private set; }
 	
 	public override void _Ready()
 	{

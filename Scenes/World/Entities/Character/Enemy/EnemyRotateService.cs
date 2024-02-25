@@ -1,5 +1,10 @@
 using System;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
+
+namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
+
 [GameService]
 public class EnemyRotateService
 {

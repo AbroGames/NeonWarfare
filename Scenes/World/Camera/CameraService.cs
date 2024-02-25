@@ -1,4 +1,9 @@
+using AbroDraft.Scenes.World.Entities.Character.Player;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
+
+namespace AbroDraft.Scenes.World.Camera;
 
 [GameService]
 public class CameraService

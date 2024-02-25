@@ -1,6 +1,6 @@
 ﻿using Godot;
-using System;
-using KludgeBox;
+
+namespace AbroDraft.Scripts.Screen;
 
 public partial class ChangeMenuButton : Godot.Button
 {
@@ -14,6 +14,6 @@ public partial class ChangeMenuButton : Godot.Button
 	private void OnClick()
 	{
 		/*var menu = Root.Instance.Game.MenuContainer.GetCurrentStoredNode<Menu>();
-		menu.changeMenu(_newMenu.Instantiate<Control>());*/ //TODO 
+	menu.changeMenu(_newMenu.Instantiate<Control>());*/ //TODO 
 	}
 }

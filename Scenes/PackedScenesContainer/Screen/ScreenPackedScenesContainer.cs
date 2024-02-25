@@ -1,6 +1,8 @@
 using Godot;
 using KludgeBox;
 
+namespace AbroDraft.Scenes.PackedScenesContainer.Screen;
+
 public partial class ScreenPackedScenesContainer : Node
 {
     [Export] [NotNull] public PackedScene MainMenu { get; private set; }

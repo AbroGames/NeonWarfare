@@ -1,13 +1,13 @@
 using Godot;
-using System;
-using KludgeBox;
+
+namespace AbroDraft.Scripts.Screen;
 
 public partial class Menu : Control
 {
 	private Control _currentMenu;
 	public override void _Ready()
 	{
-		var mainMenu = Root.Instance.PackedScenes.Screen.MainMenu.Instantiate() as Control;
+		var mainMenu = Scenes.Root.Root.Instance.PackedScenes.Screen.MainMenu.Instantiate() as Control;
 		_currentMenu = mainMenu;
 		AddChild(mainMenu);
 	}

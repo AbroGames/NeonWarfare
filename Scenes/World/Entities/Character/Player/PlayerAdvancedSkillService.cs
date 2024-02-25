@@ -1,7 +1,9 @@
-﻿using Game.Content;
+﻿using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
 
-namespace Scenes.World.Entities.Character.Player;
+namespace AbroDraft.Scenes.World.Entities.Character.Player;
 
 [GameService]
 public class PlayerAdvancedSkillService
@@ -14,8 +16,8 @@ public class PlayerAdvancedSkillService
     public void UseSkill(PlayerAdvancedSkillUseEvent useEvent)
     {
         var player = useEvent.Player;
-        var node = Root.Instance.PackedScenes.World.SolarBeam.Instantiate();
-        var beam = node as SolarBeam;
+        var node = Root.Root.Instance.PackedScenes.World.SolarBeam.Instantiate();
+        var beam = node as Beam.SolarBeam;
         beam.Rotation = -Mathf.Pi / 2;
         beam.Source = player;
         //beam.Modulate = player.Sprite.Modulate;

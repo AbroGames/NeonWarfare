@@ -1,5 +1,8 @@
-using Game.Content;
-using Godot;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
+
+namespace AbroDraft.Scenes.World.SafeWorld;
 
 [GameService]
 public class SafeWorldService
@@ -23,10 +26,10 @@ public class SafeWorldService
 
     public void InitSafeWorld(SafeWorld safeWorld)
     {
-        safeWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+        safeWorld.Player = Root.Root.Instance.PackedScenes.World.Player.Instantiate<Entities.Character.Player.Player>();
         safeWorld.Player.Position = Vec(500, 500);
 		
-        var camera = new Camera(); //TODO to camera service
+        var camera = new Camera.Camera(); //TODO to camera service
         camera.Position = safeWorld.Player.Position;
         camera.TargetNode = safeWorld.Player;
         camera.Zoom = Vec(0.65);

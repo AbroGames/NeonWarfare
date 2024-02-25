@@ -1,5 +1,4 @@
-using Godot;
-using Game.Content;
+namespace AbroDraft.Scenes.World.BattleWorld.Wave;
 
 public class EnemyWave 
 {

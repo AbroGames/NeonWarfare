@@ -1,14 +1,17 @@
+using AbroDraft.Scenes.World.Entities.Character.Player;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
 using Godot;
-using System;
-using Game.Content;
 using KludgeBox;
+
+namespace AbroDraft.Scenes.World.Entities.XpOrb;
 
 public partial class XpOrb : Node2D
 {
 	[Export] [NotNull] public Trail Trail { get; private set; }
 	
 	public int Xp { get; private set; }
-	public Player Target { get; private set; }
+	public Character.Player.Player Target { get; private set; }
 
 
 	private double MaxSpeed => Target.MovementSpeed * 3;
@@ -24,7 +27,7 @@ public partial class XpOrb : Node2D
 		Modulate = Colors.Gold.Darkened(0.5f);
 	}
 
-	public void Configure(Player target, int xp)
+	public void Configure(Character.Player.Player target, int xp)
 	{
 		Target = target;
 		Xp = xp;
@@ -49,7 +52,7 @@ public partial class XpOrb : Node2D
 			Trail.Destruct(Trail.Length);
 			EventBus.Publish(new PlayerGainXpEvent(Target, Xp));
 			
-			var label = FloatingLabel.Create($"+{Xp}", Modulate, 0.75);
+			var label = FloatingLabel.FloatingLabel.Create($"+{Xp}", Modulate, 0.75);
 			label.Position = Position + Rand.InsideUnitCircle * 50;
 			GetParent().AddChild(label);
 
@@ -61,6 +64,6 @@ public partial class XpOrb : Node2D
 
 	public static XpOrb Create()
 	{
-		return Root.Instance.PackedScenes.World.XpOrb.Instantiate<XpOrb>();
+		return Root.Root.Instance.PackedScenes.World.XpOrb.Instantiate<XpOrb>();
 	}
 }

@@ -1,6 +1,8 @@
+using AbroDraft.Scripts.EventBus;
 using Godot;
-using System;
 using KludgeBox;
+
+namespace AbroDraft.Scenes.Screen.Components.TwoColoredBar;
 
 public partial class TwoColoredBar : ColorRect
 {

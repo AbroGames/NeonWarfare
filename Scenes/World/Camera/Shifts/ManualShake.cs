@@ -1,6 +1,8 @@
 ﻿using Godot;
 using KludgeBox;
 
+namespace AbroDraft.Scenes.World.Camera.Shifts;
+
 public class ManualShake : IShiftProvider
 {
     /// <inheritdoc />

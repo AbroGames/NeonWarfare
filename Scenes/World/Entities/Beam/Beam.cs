@@ -1,12 +1,13 @@
+using AbroDraft.Scenes.World.Camera.Shifts;
 using Godot;
-using System;
 using KludgeBox;
 using KludgeBox.Scheduling;
-using Scenes.World;
+
+namespace AbroDraft.Scenes.World.Entities.Beam;
 
 public partial class Beam : Node2D
 {
-	public Player Source { get; set; }
+	public Character.Player.Player Source { get; set; }
 	public double Dps { get; set; } = 6000;
 	public double PushVel { get; set; } = 1000;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
@@ -79,15 +80,15 @@ public partial class Beam : Node2D
 		
 		
 		
-		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
-		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
+		var outerDamage = new Damage(Bullet.Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
+		var innerDamage = new Damage(Bullet.Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
 		
 		var outerOthers = OuterHitArea.GetOverlappingAreas();
 		var innerOthers = InnerHitArea.GetOverlappingAreas();
 		
 		foreach (var area in outerOthers)
 		{
-			if(area.GetParent() is not Enemy body) continue;
+			if(area.GetParent() is not Character.Enemy.Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
 			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta;
 			body.TakeDamage(outerDamage);
@@ -95,7 +96,7 @@ public partial class Beam : Node2D
 		
 		foreach (var area in innerOthers)
 		{
-			if(area.GetParent() is not Enemy body) continue;
+			if(area.GetParent() is not Character.Enemy.Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
 			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * delta;
 			body.TakeDamage(innerDamage);

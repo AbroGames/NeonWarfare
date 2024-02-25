@@ -1,5 +1,6 @@
 using Godot;
-using System;
+
+namespace AbroDraft.Scripts.Screen;
 
 public partial class ProfileButton : Button
 {
@@ -9,8 +10,8 @@ public partial class ProfileButton : Button
 		Pressed += () =>
 		{
 			/*var playerMenu = Root.Instance.PackedScenes.Screen.ProfileMenu.Instantiate<Control>();
-			var menu = Root.Instance.Game.MenuContainer.GetCurrentStoredNode<Menu>();
-			menu.changeMenu(playerMenu);*/ //TODO 
+		var menu = Root.Instance.Game.MenuContainer.GetCurrentStoredNode<Menu>();
+		menu.changeMenu(playerMenu);*/ //TODO 
 		};
 	}
 

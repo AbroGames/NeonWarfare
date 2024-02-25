@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using AbroDraft.Scenes.World.Entities.Character.Player;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
 
+namespace AbroDraft.Scenes.Screen.BattleHud;
 
 [GameService]
 public class BattleHudService
@@ -33,7 +37,7 @@ public class BattleHudService
     /// </summary>
     /// <param name="battleHud"></param>
     /// <param name="battleWorld"></param>
-    public void UpdateHudPhysics(BattleHud battleHud, BattleWorld battleWorld)
+    public void UpdateHudPhysics(BattleHud battleHud, World.BattleWorld.BattleWorld battleWorld)
     {
         var delta = _physicsStopwatch.Elapsed.TotalSeconds;
         _deltas.Enqueue(delta);
@@ -46,9 +50,9 @@ public class BattleHudService
         _physicsStopwatch.Restart();
     }
 
-    public void UpdateBattleHud(BattleHud battleHud, BattleWorld battleWorld)
+    public void UpdateBattleHud(BattleHud battleHud, World.BattleWorld.BattleWorld battleWorld)
     {
-        Player player = battleWorld.Player;
+        World.Entities.Character.Player.Player player = battleWorld.Player;
         
         //TODO хочу такую запись: int playerRequiredXp = EventBus.PublishQuery<int>(new PlayerGetRequiredXpQuery(player));
         //PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);

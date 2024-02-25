@@ -1,5 +1,9 @@
-using Game.Content;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
+
+namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 
 [GameService]
 public class EnemyAttackService
@@ -26,12 +30,12 @@ public class EnemyAttackService
         enemy.SecToNextAttack = 1.0 / enemy.AttackSpeed;
 		
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        Bullet.Bullet bullet = Root.Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet.Bullet;
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = enemy.GlobalPosition;
         // Установка направления движения снаряда
         bullet.Rotation = enemy.Rotation;
-        bullet.Author = Bullet.AuthorEnum.ENEMY;
+        bullet.Author = Bullet.Bullet.AuthorEnum.ENEMY;
         bullet.Source = enemy;
         bullet.RemainingDamage = enemy.Damage;
         if (enemy.Damage > 1000)
@@ -46,7 +50,7 @@ public class EnemyAttackService
     public bool CanSeePlayer(Enemy enemy)
     {
         var collider = enemy.RayCast.GetCollider();
-        return collider is Player;
+        return collider is Player.Player;
     }
     
 }

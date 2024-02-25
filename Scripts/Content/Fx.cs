@@ -1,9 +1,9 @@
-﻿namespace Game.Content;
+﻿namespace AbroDraft.Scripts.Content;
 
 public class Fx
 {
-    public static CpuParticlesFx CreateDeathFx() => Root.Instance.PackedScenes.Effects.DeathFx.Instantiate() as CpuParticlesFx;
-    public static CpuParticlesFx CreateSpawnFx() => Root.Instance.PackedScenes.Effects.SpawnFx.Instantiate() as CpuParticlesFx;
-    public static GpuParticlesFx CreateDebrisFx() => Root.Instance.PackedScenes.Effects.DebrisFx.Instantiate() as GpuParticlesFx;
-    public static GpuParticlesFx CreateBulletHitFx() => Root.Instance.PackedScenes.Effects.BulletHitFx.Instantiate() as GpuParticlesFx;
+    public static Scenes.World.Effects.CpuParticlesFx CreateDeathFx() => Scenes.Root.Root.Instance.PackedScenes.Effects.DeathFx.Instantiate() as Scenes.World.Effects.CpuParticlesFx;
+    public static Scenes.World.Effects.CpuParticlesFx CreateSpawnFx() => Scenes.Root.Root.Instance.PackedScenes.Effects.SpawnFx.Instantiate() as Scenes.World.Effects.CpuParticlesFx;
+    public static Scenes.World.Effects.GpuParticlesFx CreateDebrisFx() => Scenes.Root.Root.Instance.PackedScenes.Effects.DebrisFx.Instantiate() as Scenes.World.Effects.GpuParticlesFx;
+    public static Scenes.World.Effects.GpuParticlesFx CreateBulletHitFx() => Scenes.Root.Root.Instance.PackedScenes.Effects.BulletHitFx.Instantiate() as Scenes.World.Effects.GpuParticlesFx;
 }

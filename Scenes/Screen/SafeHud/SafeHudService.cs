@@ -1,6 +1,9 @@
-using System.Linq;
+using AbroDraft.Scenes.World.Entities.Character.Player;
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
 using Godot;
 
+namespace AbroDraft.Scenes.Screen.SafeHud;
 
 [GameService]
 public class SafeHudService
@@ -16,9 +19,9 @@ public class SafeHudService
         UpdateSafeHud(safeHudProcessEvent.SafeHud, safeHudProcessEvent.SafeHud.SafeWorld);
     }
 
-    public void UpdateSafeHud(SafeHud safeHud, SafeWorld safeWorld)
+    public void UpdateSafeHud(SafeHud safeHud, World.SafeWorld.SafeWorld safeWorld)
     {
-        Player player = safeWorld.Player;
+        World.Entities.Character.Player.Player player = safeWorld.Player;
         
         int playerRequiredXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
         

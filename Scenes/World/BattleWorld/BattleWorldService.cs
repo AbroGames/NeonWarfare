@@ -1,8 +1,11 @@
-using Game.Content;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 
-[GameService]
+namespace AbroDraft.Scenes.World.BattleWorld;
+
+[Scripts.Utils.GameService]
 public class BattleWorldService
 {
     
@@ -24,10 +27,10 @@ public class BattleWorldService
 
     public void InitBattleWorld(BattleWorld battleWorld)
     {
-        battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+        battleWorld.Player = Root.Root.Instance.PackedScenes.World.Player.Instantiate<Entities.Character.Player.Player>();
         battleWorld.Player.Position = Vec(500, 500);
 		
-        var camera = new Camera(); //TODO to camera service
+        var camera = new Camera.Camera(); //TODO to camera service
         camera.Position = battleWorld.Player.Position;
         camera.TargetNode = battleWorld.Player;
         camera.Zoom = Vec(0.3);
@@ -38,7 +41,7 @@ public class BattleWorldService
         var floor = battleWorld.Floor;
         floor.Camera = camera;
 		
-        Node2D ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
+        Node2D ally = Root.Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
         ally.Position = Vec(600, 600);
         battleWorld.AddChild(ally);
         battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor

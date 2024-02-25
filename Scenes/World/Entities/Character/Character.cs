@@ -1,9 +1,10 @@
 using System;
-using System.Drawing;
-using Game.Content;
+using AbroDraft.Scripts.Content;
+using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
-using Scenes.World;
+
+namespace AbroDraft.Scenes.World.Entities.Character;
 
 public partial class Character : CharacterBody2D
 {
@@ -39,7 +40,7 @@ public partial class Character : CharacterBody2D
 		
 		if (Hp <= 0)
 		{
-			if (damage.Source is Player ply && this is Enemy enemy)
+			if (damage.Source is Player.Player ply && this is Enemy.Enemy enemy)
 			{
 				
 				if (enemy.IsBoss)
@@ -48,7 +49,7 @@ public partial class Character : CharacterBody2D
 					int xpPerOrb = enemy.BaseXp / orbs;
 					for (int i = 0; i < orbs; i++)
 					{
-						var orb = XpOrb.Create();
+						var orb = XpOrb.XpOrb.Create();
 						orb.Position = Position;
 						orb.Configure(ply, xpPerOrb);
 						GetParent().AddChild(orb);
@@ -56,7 +57,7 @@ public partial class Character : CharacterBody2D
 				}
 				else
 				{
-					var orb = XpOrb.Create();
+					var orb = XpOrb.XpOrb.Create();
 					orb.Position = Position;
 					orb.Configure(ply, enemy.BaseXp);
 					GetParent().AddChild(orb);
@@ -79,7 +80,7 @@ public partial class Character : CharacterBody2D
 			QueueFree();
 		}
 		
-		var dmgLabel = FloatingLabel.Create();
+		var dmgLabel = FloatingLabel.FloatingLabel.Create();
 		
 		if(appliedDamage <= 0)
 			Log.Debug(appliedDamage.ToString("N0"));

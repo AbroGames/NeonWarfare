@@ -1,3 +1,8 @@
+using AbroDraft.Scripts.EventBus;
+using AbroDraft.Scripts.Utils;
+
+namespace AbroDraft.Scenes.MainScenes.SafeWorld;
+
 [GameService]
 public  class SafeWorldMainSceneService
 {
@@ -14,8 +19,8 @@ public  class SafeWorldMainSceneService
 
 	public void InitSafeWorldMainScene(SafeWorldMainScene safeWorldMainScene)
 	{
-		SafeHud safeHud = safeWorldMainScene.HudContainer.GetCurrentStoredNode<SafeHud>();
-		SafeWorld safeWorld = safeWorldMainScene.WorldContainer.GetCurrentStoredNode<SafeWorld>();
+		Screen.SafeHud.SafeHud safeHud = safeWorldMainScene.HudContainer.GetCurrentStoredNode<Screen.SafeHud.SafeHud>();
+		World.SafeWorld.SafeWorld safeWorld = safeWorldMainScene.WorldContainer.GetCurrentStoredNode<World.SafeWorld.SafeWorld>();
 
 		safeHud.SafeWorld = safeWorld;
 		safeWorld.SafeHud = safeHud;

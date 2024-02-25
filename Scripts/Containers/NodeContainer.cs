@@ -1,6 +1,8 @@
 using System;
 using Godot;
 
+namespace AbroDraft.Scripts.Containers;
+
 public partial class NodeContainer : Node
 {
 	private Node _currentStoredNode;

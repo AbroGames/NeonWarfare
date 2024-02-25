@@ -1,6 +1,8 @@
 ﻿using Godot;
 using KludgeBox;
 
+namespace AbroDraft.Scenes.World.Camera.Shifts;
+
 public class Shake(double strength, double time, bool deceising = true) : IShiftProvider
 {
     public double Time { get; private set; } = time;
