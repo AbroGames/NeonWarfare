@@ -9,52 +9,43 @@ namespace AbroDraft.Scenes.World.Camera;
 [GameService]
 public class CameraService
 {
-    private const double OveroptimizedValue = 1 / 1.1;
-    public CameraService()
-    {
-        EventBus.Subscribe<CameraReadyEvent>(OnCameraReadyEvent);
-        EventBus.Subscribe<CameraProcessEvent>(OnCameraProcessEvent);
-        EventBus.Subscribe<CameraDeferredProcessEvent>(OnCameraDeferredProcessEvent);
-        EventBus.Subscribe<PlayerMouseWheelInputEvent>(OnMouseWheel);
-    }
 
-    private void OnCameraDeferredProcessEvent(CameraDeferredProcessEvent deferredProcess)
-    {
-        
-    }
+    [GameEventListener]
+    public void OnCameraDeferredProcessEvent(CameraDeferredProcessEvent deferredProcess) { }
 
+    [GameEventListener]
     public void OnMouseWheel(PlayerMouseWheelInputEvent wheelEvent)
     {
-        wheelEvent.Deconstruct(out var player, out var eventType);
-        ProcessZoom(player.Camera, eventType);
-    }
-    public void OnCameraReadyEvent(CameraReadyEvent cameraReadyEvent)
-    {
-        InitCamera(cameraReadyEvent.Camera);
+        var (player, eventType) = wheelEvent;
+        Camera camera = player.Camera;
+        
+        if (eventType is WheelEventType.WheelUp)
+        {
+            camera.Zoom *= 1.1;
+        }
+        if (eventType is WheelEventType.WheelDown)
+        {
+            camera.Zoom *= 1 / 1.1;
+        }
     }
     
+    [GameEventListener]
+    public void OnCameraReadyEvent(CameraReadyEvent cameraReadyEvent)
+    {
+        Camera camera = cameraReadyEvent.Camera;
+        
+        camera.ActualPosition = camera.Position;
+        camera.TargetPosition = camera.Position;
+    }
+    
+    [GameEventListener]
     public void OnCameraProcessEvent(CameraProcessEvent cameraProcessEvent) 
     {
         MoveCamera(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
         UpdateShifts(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
     }
 
-    public void UpdateShifts(Camera camera, double delta)
-    {
-        foreach (var punch in camera.Shifts)
-        {
-            punch.Update(delta);
-        }
-
-        camera.Shifts.RemoveAll(s => !s.IsAlive);
-    }
-    public void InitCamera(Camera camera)
-    {
-        camera.ActualPosition = camera.Position;
-        camera.TargetPosition = camera.Position;
-    }
-
-    public void MoveCamera(Camera camera, double delta)
+    private void MoveCamera(Camera camera, double delta)
     {
         if (camera.TargetNode is null) return;
         
@@ -66,15 +57,13 @@ public class CameraService
         camera.Position = camera.ActualPosition + camera.HardPositionShift + camera.AdditionalShift;
     }
 
-    public void ProcessZoom(Camera camera, WheelEventType wheelEvent)
+    private void UpdateShifts(Camera camera, double delta)
     {
-        if (wheelEvent is WheelEventType.WheelUp)
+        foreach (var punch in camera.Shifts)
         {
-            camera.Zoom *= 1.1;
+            punch.Update(delta);
         }
-        if (wheelEvent is WheelEventType.WheelDown)
-        {
-            camera.Zoom *= OveroptimizedValue;
-        }
+
+        camera.Shifts.RemoveAll(s => !s.IsAlive);
     }
 }

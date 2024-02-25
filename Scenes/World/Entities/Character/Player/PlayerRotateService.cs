@@ -4,23 +4,17 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-//TODO добавить аннотацию [EventBusListener] или типа того, чтобы автоматически подписывать соответствующиме методы сервиса на события шины
 namespace AbroDraft.Scenes.World.Entities.Character.Player;
 
 [GameService]
 public class PlayerRotateService
 {
-    public PlayerRotateService()
-    {
-        EventBus.Subscribe<PlayerProcessEvent>(OnPlayerProcessEvent);
-    }
     
-    public void OnPlayerProcessEvent(PlayerProcessEvent playerProcessEvent) {
-        RotateToMouse(playerProcessEvent.Player, playerProcessEvent.Delta);
-    }
-    
-    public void RotateToMouse(Player player, double delta)
+    [GameEventListener]
+    public void OnPlayerProcessEvent(PlayerProcessEvent playerProcessEvent)
     {
+        var (player, delta) = playerProcessEvent;
+        
         //Куда хотим повернуться
         double targetAngle = GetAngleToMouse(player);
         //На какой угол надо повернуться (знак указывает направление)
@@ -39,7 +33,7 @@ public class PlayerRotateService
         player.Rotation += rotationSpeedRad;
     }
     
-    public double GetAngleToMouse(Player player)
+    private double GetAngleToMouse(Player player)
     {
         // Получаем текущую позицию мыши
         var mousePos = player.GetGlobalMousePosition();

@@ -1,8 +1,10 @@
-﻿using AbroDraft.Scenes.World.Entities.Character.Enemy;
+﻿using AbroDraft.Scenes.World.Entities.Character;
+using AbroDraft.Scenes.World.Entities.Character.Enemy;
 using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.BattleWorld.Wave;
 
@@ -12,39 +14,35 @@ public class BattleWorldEnemySpawnService
     private int RequiredEnemies = 0;
     private int RequiredBosses = 0;
     
-    public BattleWorldEnemySpawnService()
-    {
-        EventBus.Subscribe<BattleWorldPhysicsProcessEvent>(OnBattleWorldPhysicsProcessEvent);
-        EventBus.Subscribe<BattleWorldSpawnEnemiesRequestEvent>(OnSpawnEnemiesRequest);
-        EventBus.Subscribe<BattleWorldSpawnBossesRequestEvent>(OnSpawnBossesRequest);
-    }
-    
-    public void OnBattleWorldPhysicsProcessEvent(BattleWorldPhysicsProcessEvent battleWorldProcessEvent)
+    [GameEventListener]
+    public void OnBattleWorldPhysicsProcessEvent(BattleWorldPhysicsProcessEvent battleWorldPhysicsProcessEvent)
     {
         //TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
         if (RequiredEnemies > 0)
         {
-            var battleWorld = battleWorldProcessEvent.BattleWorld;
+            var battleWorld = battleWorldPhysicsProcessEvent.BattleWorld;
             CreateEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
             RequiredEnemies--;
         }
 
         if (RequiredBosses > 0)
         {
-            var battleWorld = battleWorldProcessEvent.BattleWorld;
+            var battleWorld = battleWorldPhysicsProcessEvent.BattleWorld;
             CreateBossEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
             RequiredBosses--;
         }
     }
     
-    public void OnSpawnEnemiesRequest(BattleWorldSpawnEnemiesRequestEvent request)
+    [GameEventListener]
+    public void OnBattleWorldSpawnEnemiesRequestEvent(BattleWorldSpawnEnemiesRequestEvent battleWorldSpawnEnemiesRequestEvent)
     {
-        RequiredEnemies += request.RequiredEnemiesAmount;
+        RequiredEnemies += battleWorldSpawnEnemiesRequestEvent.RequiredEnemiesAmount;
     }
     
-    public void OnSpawnBossesRequest(BattleWorldSpawnBossesRequestEvent request)
+    [GameEventListener]
+    public void OnBattleWorldSpawnBossesRequestEvent(BattleWorldSpawnBossesRequestEvent battleWorldSpawnBossesRequestEvent)
     {
-        RequiredBosses += request.RequiredBossesAmount;
+        RequiredBosses += battleWorldSpawnBossesRequestEvent.RequiredBossesAmount;
     }
     
     private void CreateEnemyAroundCharacter(BattleWorld battleWorld, Entities.Character.Character character, double angle, double distance)
@@ -68,7 +66,7 @@ public class BattleWorldEnemySpawnService
     }
 
     private int _attractorCounter;
-    private Entities.Character.Enemy.Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, PackedScene template, Entities.Character.Character character, double angle, double distance, bool forceAttractor = false)
+    private Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, PackedScene template, Character character, double angle, double distance, bool forceAttractor = false)
     {
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;

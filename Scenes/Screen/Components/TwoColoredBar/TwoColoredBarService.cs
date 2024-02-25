@@ -1,4 +1,6 @@
-using KludgeBox;using KludgeBox.Events;
+
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.Screen.Components.TwoColoredBar;
 
