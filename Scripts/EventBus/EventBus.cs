@@ -2,30 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using KludgeBox;
-using KludgeBox.Events;
 
 public class EventBus
 {
     // Словарь для хранения событий и их подписчиков
-    public static EventBus Instance { get; private set; } = new();
-    private Dictionary<Type, Delegate> _subscribers = new();
+    private static Dictionary<Type, Delegate> _subscribers = new();
 
     public static void Reset()
     {
-        Instance = new();
-        Instance._subscribers = new();
+        _subscribers = new();
     }
     // Метод для подписки на событие
     public static void Subscribe<T>(Action<T> handler)
     {
-        if (Instance._subscribers.ContainsKey(typeof(T)))
+        if (_subscribers.ContainsKey(typeof(T)))
         {
-            Instance._subscribers[typeof(T)] = Delegate.Combine(Instance._subscribers[typeof(T)], handler);
+            _subscribers[typeof(T)] = Delegate.Combine(_subscribers[typeof(T)], handler);
         }
         else
         {
-            Instance._subscribers.Add(typeof(T), handler);
+            _subscribers.Add(typeof(T), handler);
         }
     }
 
@@ -45,14 +41,14 @@ public class EventBus
     // Метод для отписки от события
     public static void Unsubscribe<T>(Action<T> handler)
     {
-        if (Instance._subscribers.ContainsKey(typeof(T)))
+        if (_subscribers.ContainsKey(typeof(T)))
         {
-            var currentDel = Instance._subscribers[typeof(T)];
-            Instance._subscribers[typeof(T)] = Delegate.Remove(currentDel, handler);
+            var currentDel = _subscribers[typeof(T)];
+            _subscribers[typeof(T)] = Delegate.Remove(currentDel, handler);
 
-            if (Instance._subscribers[typeof(T)] == null)
+            if (_subscribers[typeof(T)] == null)
             {
-                Instance._subscribers.Remove(typeof(T));
+                _subscribers.Remove(typeof(T));
             }
         }
     }
@@ -62,7 +58,7 @@ public class EventBus
     // Publisher целесообразно запихать во все Process и PhysicsProcess
     public static void Publish<T>(T eventData)
     {
-        if (Instance._subscribers.TryGetValue(typeof(T), out var handler))
+        if (_subscribers.TryGetValue(typeof(T), out var handler))
         {
             (handler as Action<T>)?.Invoke(eventData);
         }

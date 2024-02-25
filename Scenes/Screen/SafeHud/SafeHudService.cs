@@ -5,13 +5,9 @@ using Godot;
 [GameService]
 public class SafeHudService
 {
-
-    private readonly PlayerXpService _playerXpService;
     
-    public SafeHudService(PlayerXpService playerXpService)
+    public SafeHudService()
     {
-        _playerXpService = playerXpService;
-        
         EventBus.Subscribe<SafeHudProcessEvent>(OnSafeHudProcessEvent);
     }
     
@@ -23,7 +19,10 @@ public class SafeHudService
     public void UpdateSafeHud(SafeHud safeHud, SafeWorld safeWorld)
     {
         Player player = safeWorld.Player;
-        int playerRequiredXp = _playerXpService.GetRequiredXp(player);
+        
+        PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
+        EventBus.Publish(playerGetRequiredXpQuery);
+        int playerRequiredXp = playerGetRequiredXpQuery.Result;
         
         safeHud.Xp.Value = (double) player.Xp / playerRequiredXp;
         safeHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";

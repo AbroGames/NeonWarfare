@@ -64,7 +64,15 @@ public class PlayerXpService
         player.GetParent().AddChild(lvlUpLabel);
     }
 
-    public int GetRequiredXp(Player player)
+    [GameEventListener]
+    public void GetRequiredXpQuery(PlayerGetRequiredXpQuery playerGetRequiredXpQuery)
+    {
+        int result = GetRequiredXp(playerGetRequiredXpQuery.Player);
+        playerGetRequiredXpQuery.SetResult(result);
+        //TODO вместо SetResult хочу, чтобы это было под капотом. А тут просто return result;
+    }
+
+    private int GetRequiredXp(Player player)
     {
         return (int) (BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, player.Level));
     }

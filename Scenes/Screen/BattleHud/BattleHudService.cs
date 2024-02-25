@@ -8,14 +8,11 @@ using Godot;
 public class BattleHudService
 {
 
-    private readonly PlayerXpService _playerXpService;
     private readonly Stopwatch _physicsStopwatch = new();
     private readonly Queue<double> _deltas = new();
     
-    public BattleHudService(PlayerXpService playerXpService)
+    public BattleHudService()
     {
-        _playerXpService = playerXpService;
-        
         EventBus.Subscribe<BattleHudProcessEvent>(OnBattleHudProcessEvent);
         EventBus.Subscribe<BattleHudPhysicsProcessEvent>(OnBattleHudPhysicsProcessEvent);
     }
@@ -52,7 +49,11 @@ public class BattleHudService
     public void UpdateBattleHud(BattleHud battleHud, BattleWorld battleWorld)
     {
         Player player = battleWorld.Player;
-        int playerRequiredXp = _playerXpService.GetRequiredXp(player);
+        
+        //TODO хочу такую запись: int playerRequiredXp = EventBus.PublishQuery<int>(new PlayerGetRequiredXpQuery(player));
+        PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
+        EventBus.Publish(playerGetRequiredXpQuery);
+        int playerRequiredXp = playerGetRequiredXpQuery.Result;
         
         battleHud.Xp.Value = (double) player.Xp / playerRequiredXp;
         battleHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";
