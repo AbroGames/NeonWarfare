@@ -1,11 +1,22 @@
 using AbroDraft.Scripts.EventBus;
-using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.MainScenes.MainMenu;
 
 public class MainMenuMainSceneService
 {
+
+	public MainMenuMainSceneService()
+	{
+		EventBus.Subscribe<MainMenuMainSceneReadyEvent>(OnMainMenuMainSceneReadyEvent);
+	}
     
-	[GameEventListener]
-	public void OnMainMenuMainSceneReadyEvent(MainMenuMainSceneReadyEvent mainMenuMainSceneReadyEvent) { }
+	public void OnMainMenuMainSceneReadyEvent(MainMenuMainSceneReadyEvent mainMenuMainSceneReadyEvent)
+	{
+		InitMainMenuMainScene(mainMenuMainSceneReadyEvent.MainMenuMainScene);
+	}
+
+	public void InitMainMenuMainScene(MainMenuMainScene mainMenuMainScene)
+	{
+		
+	}
 }

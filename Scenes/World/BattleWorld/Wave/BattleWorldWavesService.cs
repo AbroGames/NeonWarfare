@@ -1,7 +1,6 @@
 using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
 using KludgeBox;
-using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.BattleWorld.Wave;
 
@@ -9,25 +8,30 @@ namespace AbroDraft.Scenes.World.BattleWorld.Wave;
 public class BattleWorldWavesService
 {
     
-    [GameEventListener]
+    public BattleWorldWavesService()
+    {
+        EventBus.Subscribe<BattleWorldProcessEvent>(OnBattleWorldProcessEvent);
+    }
+    
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
     {
-        var (battleWorld, delta) = battleWorldProcessEvent;
-        
+        TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
+    }
+    public void TrySpawnWave(BattleWorld battleWorld, double delta)
+    {
         battleWorld.EnemyWave.NextWaveTimer -= delta;
         if (battleWorld.EnemyWave.NextWaveTimer > 0) return;
         
-        EventBus.Publish(new BattleWorldNewWaveRequestEvent(battleWorld));
+        SpawnWave(battleWorld);
     }
     
-    [GameEventListener]
-    public void OnBattleWorldNewWaveRequestEvent(BattleWorldNewWaveRequestEvent battleWorldNewWaveRequestEvent)
+    private void SpawnWave(BattleWorld battleWorld)
     {
-        BattleWorld battleWorld = battleWorldNewWaveRequestEvent.BattleWorld;
         EnemyWave enemyWave = battleWorld.EnemyWave;
         
         enemyWave.NextWaveTimer = enemyWave.WaveTimeout;
         enemyWave.WaveNumber++;
+		
         
         EventBus.Publish(new BattleWorldSpawnEnemiesRequestEvent(enemyWave.OneWaveEnemyCount + enemyWave.WaveNumber * enemyWave.OneWaveEnemyCountDelta));
 
@@ -39,6 +43,6 @@ public class BattleWorldWavesService
         }
 
         Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
-        EventBus.Publish(new BattleWorldNewWaveGeneratedEvent(battleWorld, enemyWave.WaveNumber));
+        EventBus.Publish(new BattleWorldNewWaveEvent(battleWorld, enemyWave.WaveNumber));
     }
 }

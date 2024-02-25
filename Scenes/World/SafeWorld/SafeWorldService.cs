@@ -9,11 +9,24 @@ namespace AbroDraft.Scenes.World.SafeWorld;
 public class SafeWorldService
 {
     
-    [GameEventListener]
+    public SafeWorldService()
+    {
+        EventBus.Subscribe<SafeWorldReadyEvent>(OnSafeWorldReadyEvent);
+        EventBus.Subscribe<SafeWorldProcessEvent>(OnSafeWorldProcessEvent);
+    }
+    
     public void OnSafeWorldReadyEvent(SafeWorldReadyEvent safeWorldReadyEvent)
     {
-        SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
+        InitSafeWorld(safeWorldReadyEvent.SafeWorld);
+    }
+    
+    public void OnSafeWorldProcessEvent(SafeWorldProcessEvent safeWorldProcessEvent)
+    {
         
+    }
+
+    public void InitSafeWorld(SafeWorld safeWorld)
+    {
         safeWorld.Player = Root.Root.Instance.PackedScenes.World.Player.Instantiate<Entities.Character.Player.Player>();
         safeWorld.Player.Position = Vec(500, 500);
 		
@@ -31,9 +44,6 @@ public class SafeWorldService
         safeWorld.AddChild(safeWorld.Player); // must be here to draw over the floor
         PlaySafeMusic(); //TODO to music service (safe music service)
     }
-    
-    [GameEventListener]
-    public void OnSafeWorldProcessEvent(SafeWorldProcessEvent safeWorldProcessEvent) { }
     
     public void PlaySafeMusic()
     {

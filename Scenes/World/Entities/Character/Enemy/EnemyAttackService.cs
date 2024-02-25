@@ -9,25 +9,25 @@ namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 [GameService]
 public class EnemyAttackService
 {
-    
-    [GameEventListener]
-    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
+    public EnemyAttackService()
     {
-        var (enemy, delta) = enemyProcessEvent;
-        
-        enemy.SecToNextAttack -= delta;
-        if (enemy.SecToNextAttack > 0) return;
-        if (CanSeePlayer(enemy))
-        {
-            EventBus.Publish(new EnemyAttackEvent(enemy));
-        }
+        EventBus.Subscribe<EnemyProcessEvent>(OnEnemyProcessEvent);
     }
     
-    [GameEventListener]
-    public void OnEnemyAttackEvent(EnemyAttackEvent enemyAttackEvent)
+    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent) {
+        TryAttack(enemyProcessEvent.Enemy, enemyProcessEvent.Delta);
+    }
+    
+    public void TryAttack(Enemy enemy, double delta)
     {
-        Enemy enemy = enemyAttackEvent.Enemy;
+        enemy.SecToNextAttack -= delta;
+        if (enemy.SecToNextAttack > 0) return;
         
+        if (CanSeePlayer(enemy)) Attack(enemy);
+    }
+    
+    public void Attack(Enemy enemy)
+    {
         enemy.SecToNextAttack = 1.0 / enemy.AttackSpeed;
 		
         // Создание снаряда
@@ -45,10 +45,10 @@ public class EnemyAttackService
         }
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
-        enemy.GetParent().AddChild(bullet); //TODO refactor (и поискать все другие места, где используется GetParent().AddChild и просто GetParent
+        enemy.GetParent().AddChild(bullet); //TODO refactor
     }
     
-    private bool CanSeePlayer(Enemy enemy)
+    public bool CanSeePlayer(Enemy enemy)
     {
         var collider = enemy.RayCast.GetCollider();
         return collider is Player.Player;

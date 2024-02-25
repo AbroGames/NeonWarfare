@@ -1,9 +1,6 @@
 using AbroDraft.Scenes.World.Entities.Character.Player;
-using AbroDraft.Scenes.World.SafeWorld;
 using AbroDraft.Scripts.EventBus;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events;
+using KludgeBox;using Godot;
 
 namespace AbroDraft.Scenes.Screen.SafeHud;
 
@@ -11,12 +8,19 @@ namespace AbroDraft.Scenes.Screen.SafeHud;
 public class SafeHudService
 {
     
-    [GameEventListener]
-    public void OnSafeHudProcessEvent(SafeHudProcessEvent safeHudProcessEvent)
+    public SafeHudService()
     {
-        SafeHud safeHud = safeHudProcessEvent.SafeHud;
-        SafeWorld safeWorld = safeHud.SafeWorld;
-        Player player = safeWorld.Player;
+        EventBus.Subscribe<SafeHudProcessEvent>(OnSafeHudProcessEvent);
+    }
+    
+    public void OnSafeHudProcessEvent(SafeHudProcessEvent safeHudProcessEvent) 
+    {
+        UpdateSafeHud(safeHudProcessEvent.SafeHud, safeHudProcessEvent.SafeHud.SafeWorld);
+    }
+
+    public void UpdateSafeHud(SafeHud safeHud, World.SafeWorld.SafeWorld safeWorld)
+    {
+        World.Entities.Character.Player.Player player = safeWorld.Player;
         
         int playerRequiredXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
         

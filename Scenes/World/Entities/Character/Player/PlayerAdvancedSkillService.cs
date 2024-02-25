@@ -9,11 +9,14 @@ namespace AbroDraft.Scenes.World.Entities.Character.Player;
 [GameService]
 public class PlayerAdvancedSkillService
 {
-
-    [GameEventListener]
-    public void OnPlayerAdvancedSkillUseEvent(PlayerAdvancedSkillUseEvent playerAdvancedSkillUseEvent)
+    public PlayerAdvancedSkillService()
     {
-        var player = playerAdvancedSkillUseEvent.Player;
+        EventBus.Subscribe<PlayerAdvancedSkillUseEvent>(UseSkill);
+    }
+
+    public void UseSkill(PlayerAdvancedSkillUseEvent useEvent)
+    {
+        var player = useEvent.Player;
         var node = Root.Root.Instance.PackedScenes.World.SolarBeam.Instantiate();
         var beam = node as Beam.SolarBeam;
         beam.Rotation = -Mathf.Pi / 2;

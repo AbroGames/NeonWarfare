@@ -1,18 +1,24 @@
 using AbroDraft.Scripts.EventBus;
 using KludgeBox;
-using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.MainScenes.BattleWorld;
 
 [GameService]
 public  class BattleWorldMainSceneService
 {
+
+	public BattleWorldMainSceneService()
+	{
+		EventBus.Subscribe<BattleWorldMainSceneReadyEvent>(OnBattleWorldMainSceneReadyEvent);
+	}
     
-	[GameEventListener]
 	public void OnBattleWorldMainSceneReadyEvent(BattleWorldMainSceneReadyEvent battleWorldMainSceneReadyEvent)
 	{
-		BattleWorldMainScene battleWorldMainScene = battleWorldMainSceneReadyEvent.BattleWorldMainScene;
-		
+		InitBattleWorldMainScene(battleWorldMainSceneReadyEvent.BattleWorldMainScene);
+	}
+
+	public void InitBattleWorldMainScene(BattleWorldMainScene battleWorldMainScene)
+	{
 		Screen.BattleHud.BattleHud battleHud = battleWorldMainScene.HudContainer.GetCurrentStoredNode<Screen.BattleHud.BattleHud>();
 		World.BattleWorld.BattleWorld battleWorld = battleWorldMainScene.WorldContainer.GetCurrentStoredNode<World.BattleWorld.BattleWorld>();
 

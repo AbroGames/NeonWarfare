@@ -11,6 +11,7 @@ namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 public class EnemyMovementService
 {
     private HashSet<Enemy> _attractors = new();
+    
 
     [GameEventListener]
     public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
@@ -31,10 +32,12 @@ public class EnemyMovementService
     }
     
     [GameEventListener]
-    public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
+    public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent) {
+        MoveForward(enemyPhysicsProcessEvent.Enemy, enemyPhysicsProcessEvent.Delta);
+    }
+    
+    public void MoveForward(Enemy enemy, double delta)
     {
-        var (enemy, delta) = enemyPhysicsProcessEvent;
-        
         Vector2 directionToMove = GetForwardDirection(enemy);
         Vector2 attractionDirection = Vec();
         
@@ -54,12 +57,12 @@ public class EnemyMovementService
         enemy.MoveAndSlide();
     }
     
-    private Vector2 GetForwardDirection(Enemy enemy)
+    public Vector2 GetForwardDirection(Enemy enemy)
     {
         return Vector2.FromAngle(enemy.Rotation - Mathf.Pi / 2);
     }
 
-    private Vector2 GetAttractionDirection(Enemy enemy)
+    public Vector2 GetAttractionDirection(Enemy enemy)
     {
         if (_attractors.Count == 0) return Vec();
             

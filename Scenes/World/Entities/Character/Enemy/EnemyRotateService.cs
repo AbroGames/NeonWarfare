@@ -9,13 +9,17 @@ namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 [GameService]
 public class EnemyRotateService
 {
-    
-    [GameEventListener]
-    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
+    public EnemyRotateService()
     {
-        var (enemy, delta) = enemyProcessEvent;
-        
-        //TODO дублируется с Player. Вынести в Utils?
+        EventBus.Subscribe<EnemyProcessEvent>(OnEnemyProcessEvent);
+    }
+    
+    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent) {
+        RotateToTarget(enemyProcessEvent.Enemy, enemyProcessEvent.Delta);
+    }
+    
+    public void RotateToTarget(Enemy enemy, double delta) //TODO дублируется с Player. Вынести в Utils?
+    {
         //Куда хотим повернуться
         double targetAngle = GetAngleToTarget(enemy);
         //На какой угол надо повернуться (знак указывает направление)
@@ -34,7 +38,7 @@ public class EnemyRotateService
         enemy.Rotation += rotationSpeedRad;
     }
     
-    private double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
+    public double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
     {
         // Получаем текущую позицию мыши
         var targetPos = enemy.Target.GlobalPosition;
