@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.JavaScript;
 using Godot;
+using KludgeBox;
 using Scenes.World.Entities.Character.Player;
 
 public partial class Root : Node2D
