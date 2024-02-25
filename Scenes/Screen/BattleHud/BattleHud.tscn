@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_1iemm"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Cooldown.gdshader" id="4_d8thp"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="4_v5koi"]
-[ext_resource type="PackedScene" uid="uid://dekbo8bdpkepk" path="res://Scenes/Screen/BattleHud/BeamIcon.tscn" id="6_5soax"]
-[ext_resource type="PackedScene" uid="uid://dq5jdxeqtu3w5" path="res://Scenes/Screen/BattleHud/SolarBeamIcon.tscn" id="6_h4654"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/BattleHud/BeamIcon.tscn" id="6_5soax"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/BattleHud/SolarBeamIcon.tscn" id="6_h4654"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cra4"]
 bg_color = Color(0, 0.180392, 0.211765, 1)
