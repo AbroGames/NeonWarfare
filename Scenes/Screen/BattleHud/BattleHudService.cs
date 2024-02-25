@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using AbroDraft.Scenes.World.BattleWorld;
 using AbroDraft.Scenes.World.Entities.Character.Player;
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
 using Godot;
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.Screen.BattleHud;
 
@@ -15,44 +17,12 @@ public class BattleHudService
     private readonly Stopwatch _physicsStopwatch = new();
     private readonly Queue<double> _deltas = new();
     
-    public BattleHudService()
+    [GameEventListener]
+    public void OnBattleHudProcessEvent(BattleHudProcessEvent battleHudProcessEvent)
     {
-        EventBus.Subscribe<BattleHudProcessEvent>(OnBattleHudProcessEvent);
-        EventBus.Subscribe<BattleHudPhysicsProcessEvent>(OnBattleHudPhysicsProcessEvent);
-    }
-    
-    public void OnBattleHudProcessEvent(BattleHudProcessEvent battleHudProcessEvent) 
-    {
-        UpdateBattleHud(battleHudProcessEvent.BattleHud, battleHudProcessEvent.BattleHud.BattleWorld);
-    }
-    
-    public void OnBattleHudPhysicsProcessEvent(BattleHudPhysicsProcessEvent physEvent)
-    {
-        UpdateHudPhysics(physEvent.BattleHud, physEvent.BattleHud.BattleWorld);
-    }
-
-    /// <summary>
-    /// Мы используем настолько альтернативный подход к расчету ТПС потому, что все значения физической дельты в движке - константы.
-    /// Даже если реальный ТПС упадёт до 1, дельта, приходящая в _PhysicsProcess будет 1/60.
-    /// </summary>
-    /// <param name="battleHud"></param>
-    /// <param name="battleWorld"></param>
-    public void UpdateHudPhysics(BattleHud battleHud, World.BattleWorld.BattleWorld battleWorld)
-    {
-        var delta = _physicsStopwatch.Elapsed.TotalSeconds;
-        _deltas.Enqueue(delta);
-        if (_deltas.Count >= 120)
-        {
-            var tps = _deltas.Average();
-            battleHud.Tps.Text = $"TPS: {1/tps:N0}";
-            _deltas.Dequeue();
-        }
-        _physicsStopwatch.Restart();
-    }
-
-    public void UpdateBattleHud(BattleHud battleHud, World.BattleWorld.BattleWorld battleWorld)
-    {
-        World.Entities.Character.Player.Player player = battleWorld.Player;
+        BattleHud battleHud = battleHudProcessEvent.BattleHud;
+        BattleWorld battleWorld = battleHud.BattleWorld;
+        Player player = battleWorld.Player;
         
         //TODO хочу такую запись: int playerRequiredXp = EventBus.PublishQuery<int>(new PlayerGetRequiredXpQuery(player));
         //PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
@@ -81,6 +51,24 @@ public class BattleHudService
 
         battleHud.TimerLabel.Text = battleWorld.EnemyWave.NextWaveTimer.ToString("N0");
     }
-
     
+    /// <summary>
+    /// Мы используем настолько альтернативный подход к расчету ТПС потому, что все значения физической дельты в движке - константы.
+    /// Даже если реальный ТПС упадёт до 1, дельта, приходящая в _PhysicsProcess будет 1/60.
+    /// </summary>
+    [GameEventListener]
+    public void OnBattleHudPhysicsProcessEvent(BattleHudPhysicsProcessEvent battleHudPhysicsProcessEvent)
+    {
+        BattleHud battleHud = battleHudPhysicsProcessEvent.BattleHud;
+        var delta = _physicsStopwatch.Elapsed.TotalSeconds;
+        
+        _deltas.Enqueue(delta);
+        if (_deltas.Count >= 120)
+        {
+            var tps = _deltas.Average();
+            battleHud.Tps.Text = $"TPS: {1/tps:N0}";
+            _deltas.Dequeue();
+        }
+        _physicsStopwatch.Restart();
+    }
 }

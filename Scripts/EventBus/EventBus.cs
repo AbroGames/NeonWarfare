@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using KludgeBox;
 using KludgeBox.Events;
-using ServiceRegistry = AbroDraft.Scripts.Utils.ServiceRegistry;
 
 namespace AbroDraft.Scripts.EventBus;
 

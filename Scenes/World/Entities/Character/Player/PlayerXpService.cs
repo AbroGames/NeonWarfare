@@ -1,7 +1,7 @@
 using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
 using Godot;
+using KludgeBox;
 using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.Entities.Character.Player;
@@ -9,31 +9,43 @@ namespace AbroDraft.Scenes.World.Entities.Character.Player;
 [GameService]
 public class PlayerXpService
 {
-    
-    public double RequiredXpLevelFactor { get; set; } = 1.5;
-    public int BasicRequiredXp { get; set; } = 10;
-    
-    public PlayerXpService()
+
+    [GameEventListener]
+    public void OnPlayerReadeEvent(PlayerReadyEvent playerReadyEvent)
     {
-        EventBus.Subscribe<PlayerGainXpEvent>(OnPlayerGainXpEvent);
+        Player player = playerReadyEvent.Player;
+        player.NextLevelXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
     }
     
-    public void OnPlayerGainXpEvent(PlayerGainXpEvent playerGainXpEvent) {
-        AddXp(playerGainXpEvent.Player, playerGainXpEvent.Xp);
-    }
-    
-    public void AddXp(Player player, int amount)
+    [GameEventListener]
+    public void OnPlayerGainXpEvent(PlayerGainXpEvent playerGainXpEvent)
     {
-        player.Xp += amount;
-        while (player.Xp >= GetRequiredXp(player))
+        var (player, gainXp) = playerGainXpEvent;
+        
+        player.Xp += gainXp;
+        while (player.Xp >= player.NextLevelXp)
         {
-            LevelUp(player);
+            EventBus.Publish(new PlayerLevelUpEvent(player));
         }
     }
-	
-    public void LevelUp(Player player)
+    
+    [GameEventListener]
+    public void GetRequiredXpQuery(PlayerGetRequiredXpQuery playerGetRequiredXpQuery)
     {
-        player.Xp -= GetRequiredXp(player);
+        Player player = playerGetRequiredXpQuery.Player;
+        
+        int result = (int) (player.BasicRequiredXp * Mathf.Pow(player.RequiredXpLevelFactor, player.Level));
+        playerGetRequiredXpQuery.SetResult(result);
+        //TODO вместо SetResult хочу, чтобы это было под капотом. А тут просто return result;
+        //Ответ на TODO это больно и страшно
+    }
+	
+    [GameEventListener]
+    public void OnPlayerLevelUpEvent(PlayerLevelUpEvent playerLevelUpEvent)
+    {
+        Player player = playerLevelUpEvent.Player;
+
+        player.Xp -= player.NextLevelXp;
         player.Level++;
 		
         player.MaxHp *= 1.1;
@@ -54,32 +66,16 @@ public class PlayerXpService
         player.SecondaryDistance *= 1.05;
 
         player.UniversalDamageMultiplier *= 1.05;
-
         
         //var zoomTween = player.GetTree().CreateTween();
         //zoomTween.SetTrans(Tween.TransitionType.Cubic);
         //zoomTween.TweenProperty(player.Camera, "zoom", player.Camera.Zoom / 1.05, 1);
         
-		
         Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f).PitchVariation(0.05f);
         var lvlUpLabel = Root.Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel.FloatingLabel>();
 		
         lvlUpLabel.Configure($"Level up!\n{player.Level-1} -> {player.Level}", Colors.Gold, 1.3);
         lvlUpLabel.Position = player.Position - Vec(0, 100);
         player.GetParent().AddChild(lvlUpLabel);
-    }
-
-    [GameEventListener]
-    public void GetRequiredXpQuery(PlayerGetRequiredXpQuery playerGetRequiredXpQuery)
-    {
-        int result = GetRequiredXp(playerGetRequiredXpQuery.Player);
-        playerGetRequiredXpQuery.SetResult(result);
-        //TODO вместо SetResult хочу, чтобы это было под капотом. А тут просто return result;
-        //Ответ на TODO это больно и страшно
-    }
-
-    private int GetRequiredXp(Player player)
-    {
-        return (int) (BasicRequiredXp * Mathf.Pow(RequiredXpLevelFactor, player.Level));
     }
 }

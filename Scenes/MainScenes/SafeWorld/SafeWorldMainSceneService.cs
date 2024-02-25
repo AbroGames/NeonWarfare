@@ -1,24 +1,18 @@
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.MainScenes.SafeWorld;
 
 [GameService]
 public  class SafeWorldMainSceneService
 {
-
-	public SafeWorldMainSceneService()
-	{
-		EventBus.Subscribe<SafeWorldMainSceneReadyEvent>(OnSafeWorldMainSceneReadyEvent);
-	}
     
+	[GameEventListener]
 	public void OnSafeWorldMainSceneReadyEvent(SafeWorldMainSceneReadyEvent safeWorldMainSceneReadyEvent)
 	{
-		InitSafeWorldMainScene(safeWorldMainSceneReadyEvent.SafeWorldMainScene);
-	}
-
-	public void InitSafeWorldMainScene(SafeWorldMainScene safeWorldMainScene)
-	{
+		SafeWorldMainScene safeWorldMainScene = safeWorldMainSceneReadyEvent.SafeWorldMainScene;
+		
 		Screen.SafeHud.SafeHud safeHud = safeWorldMainScene.HudContainer.GetCurrentStoredNode<Screen.SafeHud.SafeHud>();
 		World.SafeWorld.SafeWorld safeWorld = safeWorldMainScene.WorldContainer.GetCurrentStoredNode<World.SafeWorld.SafeWorld>();
 

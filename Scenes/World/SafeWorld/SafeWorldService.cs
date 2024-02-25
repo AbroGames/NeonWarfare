@@ -1,6 +1,7 @@
 using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.SafeWorld;
 
@@ -8,24 +9,11 @@ namespace AbroDraft.Scenes.World.SafeWorld;
 public class SafeWorldService
 {
     
-    public SafeWorldService()
-    {
-        EventBus.Subscribe<SafeWorldReadyEvent>(OnSafeWorldReadyEvent);
-        EventBus.Subscribe<SafeWorldProcessEvent>(OnSafeWorldProcessEvent);
-    }
-    
+    [GameEventListener]
     public void OnSafeWorldReadyEvent(SafeWorldReadyEvent safeWorldReadyEvent)
     {
-        InitSafeWorld(safeWorldReadyEvent.SafeWorld);
-    }
-    
-    public void OnSafeWorldProcessEvent(SafeWorldProcessEvent safeWorldProcessEvent)
-    {
+        SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
         
-    }
-
-    public void InitSafeWorld(SafeWorld safeWorld)
-    {
         safeWorld.Player = Root.Root.Instance.PackedScenes.World.Player.Instantiate<Entities.Character.Player.Player>();
         safeWorld.Player.Position = Vec(500, 500);
 		
@@ -43,6 +31,9 @@ public class SafeWorldService
         safeWorld.AddChild(safeWorld.Player); // must be here to draw over the floor
         PlaySafeMusic(); //TODO to music service (safe music service)
     }
+    
+    [GameEventListener]
+    public void OnSafeWorldProcessEvent(SafeWorldProcessEvent safeWorldProcessEvent) { }
     
     public void PlaySafeMusic()
     {

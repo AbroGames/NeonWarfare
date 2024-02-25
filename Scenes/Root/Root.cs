@@ -1,7 +1,6 @@
 using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
-using ServiceRegistry = AbroDraft.Scripts.Utils.ServiceRegistry;
 
 namespace AbroDraft.Scenes.Root;
 

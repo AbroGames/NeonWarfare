@@ -1,7 +1,8 @@
 using AbroDraft.Scenes.World.BattleWorld;
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
 using Godot;
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.Screen.BattleHud;
 
@@ -13,29 +14,20 @@ public class BattleHudWaveService
     public double HoldTime { get; set; } = 1;
     public double FadeOutTime { get; set; } = 0.5;
     
-    public BattleHudWaveService()
-    {
-        EventBus.Subscribe<BattleHudReadyEvent>(OnBattleHudReadyEvent);
-        EventBus.Subscribe<BattleWorldNewWaveEvent>(OnBattleWorldNewWaveEvent);
-    }
-    
+    [GameEventListener]
     public void OnBattleHudReadyEvent(BattleHudReadyEvent battleHudReadyEvent)
     {
-        InitBattleHud(battleHudReadyEvent.BattleHud);
-    }
-    
-    public void OnBattleWorldNewWaveEvent(BattleWorldNewWaveEvent battleWorldNewWaveEvent) 
-    {
-        ShowWaveMessage(battleWorldNewWaveEvent.BattleWorld.BattleHud, battleWorldNewWaveEvent.WaveNumber);
-    }
-
-    public void InitBattleHud(BattleHud battleHud)
-    {
+        BattleHud battleHud = battleHudReadyEvent.BattleHud;
+        
         battleHud.WaveMessageInitialPosition = battleHud.WaveMessage.Position;
     }
     
-    public void ShowWaveMessage(BattleHud battleHud, int waveNumber)
+    [GameEventListener]
+    public void OnBattleWorldNewWaveEvent(BattleWorldNewWaveGeneratedEvent battleWorldNewWaveGeneratedEvent)
     {
+        var (battleWorld, waveNumber) = battleWorldNewWaveGeneratedEvent;
+        BattleHud battleHud = battleWorld.BattleHud;
+        
         battleHud.WaveMessage.Text = $"WAVE {waveNumber}";
         Tween colorTween = battleHud.GetTree().CreateTween();
         Tween positionTween = battleHud.GetTree().CreateTween();

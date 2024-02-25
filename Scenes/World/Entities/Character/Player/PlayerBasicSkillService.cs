@@ -1,21 +1,19 @@
 ﻿using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
 using Godot;
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.Entities.Character.Player;
 
 [GameService]
 public class PlayerBasicSkillService
 {
-    public PlayerBasicSkillService()
-    {
-        EventBus.Subscribe<PlayerBasicSkillUseEvent>(UseSkill);
-    }
 
-    public void UseSkill(PlayerBasicSkillUseEvent useEvent)
+    [GameEventListener]
+    public void OnPlayerBasicSkillUseEvent(PlayerBasicSkillUseEvent playerBasicSkillUseEvent)
     {
-        var player = useEvent.Player;
+        var player = playerBasicSkillUseEvent.Player;
         var node = Root.Root.Instance.PackedScenes.World.Beam.Instantiate();
         var beam = node as Beam.Beam;
         var shaker = player.Camera.ShakeManually();

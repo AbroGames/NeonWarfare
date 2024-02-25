@@ -1,32 +1,33 @@
 using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
-using AbroDraft.Scripts.Utils;
 using Godot;
+using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 
 [GameService]
 public class EnemyAttackService
 {
-    public EnemyAttackService()
-    {
-        EventBus.Subscribe<EnemyProcessEvent>(OnEnemyProcessEvent);
-    }
     
-    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent) {
-        TryAttack(enemyProcessEvent.Enemy, enemyProcessEvent.Delta);
-    }
-    
-    public void TryAttack(Enemy enemy, double delta)
+    [GameEventListener]
+    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
     {
+        var (enemy, delta) = enemyProcessEvent;
+        
         enemy.SecToNextAttack -= delta;
         if (enemy.SecToNextAttack > 0) return;
-        
-        if (CanSeePlayer(enemy)) Attack(enemy);
+        if (CanSeePlayer(enemy))
+        {
+            EventBus.Publish(new EnemyAttackEvent(enemy));
+        }
     }
     
-    public void Attack(Enemy enemy)
+    [GameEventListener]
+    public void OnEnemyAttackEvent(EnemyAttackEvent enemyAttackEvent)
     {
+        Enemy enemy = enemyAttackEvent.Enemy;
+        
         enemy.SecToNextAttack = 1.0 / enemy.AttackSpeed;
 		
         // Создание снаряда
@@ -44,10 +45,10 @@ public class EnemyAttackService
         }
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
-        enemy.GetParent().AddChild(bullet); //TODO refactor
+        enemy.GetParent().AddChild(bullet); //TODO refactor (и поискать все другие места, где используется GetParent().AddChild и просто GetParent
     }
     
-    public bool CanSeePlayer(Enemy enemy)
+    private bool CanSeePlayer(Enemy enemy)
     {
         var collider = enemy.RayCast.GetCollider();
         return collider is Player.Player;

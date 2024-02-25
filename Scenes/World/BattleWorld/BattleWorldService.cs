@@ -2,31 +2,19 @@ using AbroDraft.Scripts.Content;
 using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.BattleWorld;
 
-[Scripts.Utils.GameService]
+[GameService]
 public class BattleWorldService
 {
     
-    public BattleWorldService()
-    {
-        EventBus.Subscribe<BattleWorldReadyEvent>(OnBattleWorldReadyEvent);
-        EventBus.Subscribe<BattleWorldProcessEvent>(OnBattleWorldProcessEvent);
-    }
-    
+    [GameEventListener]
     public void OnBattleWorldReadyEvent(BattleWorldReadyEvent battleWorldReadyEvent)
     {
-        InitBattleWorld(battleWorldReadyEvent.BattleWorld);
-    }
-    
-    public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
-    {
+        BattleWorld battleWorld = battleWorldReadyEvent.BattleWorld;
         
-    }
-
-    public void InitBattleWorld(BattleWorld battleWorld)
-    {
         battleWorld.Player = Root.Root.Instance.PackedScenes.World.Player.Instantiate<Entities.Character.Player.Player>();
         battleWorld.Player.Position = Vec(500, 500);
 		
@@ -55,6 +43,9 @@ public class BattleWorldService
             PlayBattleMusic2();
         }
     }
+
+    [GameEventListener]
+    public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent) { }
     
     public void PlayBattleMusic1()
     {

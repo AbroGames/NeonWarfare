@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AbroDraft.Scenes.Root;
-using AbroDraft.Scripts.Utils;
 using Godot;
+using KludgeBox;
 using KludgeBox.Events;
 
 namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
@@ -11,7 +11,6 @@ namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
 public class EnemyMovementService
 {
     private HashSet<Enemy> _attractors = new();
-    
 
     [GameEventListener]
     public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
@@ -32,12 +31,10 @@ public class EnemyMovementService
     }
     
     [GameEventListener]
-    public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent) {
-        MoveForward(enemyPhysicsProcessEvent.Enemy, enemyPhysicsProcessEvent.Delta);
-    }
-    
-    public void MoveForward(Enemy enemy, double delta)
+    public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
     {
+        var (enemy, delta) = enemyPhysicsProcessEvent;
+        
         Vector2 directionToMove = GetForwardDirection(enemy);
         Vector2 attractionDirection = Vec();
         
@@ -57,12 +54,12 @@ public class EnemyMovementService
         enemy.MoveAndSlide();
     }
     
-    public Vector2 GetForwardDirection(Enemy enemy)
+    private Vector2 GetForwardDirection(Enemy enemy)
     {
         return Vector2.FromAngle(enemy.Rotation - Mathf.Pi / 2);
     }
 
-    public Vector2 GetAttractionDirection(Enemy enemy)
+    private Vector2 GetAttractionDirection(Enemy enemy)
     {
         if (_attractors.Count == 0) return Vec();
             
