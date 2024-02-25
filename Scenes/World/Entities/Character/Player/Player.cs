@@ -19,9 +19,6 @@ public partial class Player : Character
 	public int BasicRequiredXp { get; set; } = 10;
 	public int Level { get; set; } = 1;
 	
-	public double FastRegenHpSpeed { get; set; } = 300;
-	public double HpCanBeFastRegen { get; set; } = 0;
-	
 	public double PrimaryDamage { get; set; } = 1000;
 	public double PrimaryDistance { get; set; } = 2000;
 	public double UniversalDamageMultiplier { get; set; } = 1;
@@ -64,13 +61,6 @@ public partial class Player : Character
 
 		Hp += RegenHpSpeed * delta;
 		Hp = Math.Min(Hp, MaxHp);
-
-		if (HpCanBeFastRegen > 0)
-		{
-			double hpForFastRegen = Mathf.Min(FastRegenHpSpeed * delta, HpCanBeFastRegen);
-			HpCanBeFastRegen -= hpForFastRegen;
-			Hp += hpForFastRegen;
-		}
 
 		SecondaryCd.Update(delta);
 		BasicAbilityCd.Update(delta);

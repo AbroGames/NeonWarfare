@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,6 +21,7 @@ public class BattleHudService
     [GameEventListener]
     public void OnBattleHudProcessEvent(BattleHudProcessEvent battleHudProcessEvent)
     {
+        double delta = battleHudProcessEvent.Delta;
         BattleHud battleHud = battleHudProcessEvent.BattleHud;
         BattleWorld battleWorld = battleHud.BattleWorld;
         Player player = battleWorld.Player;
@@ -30,9 +32,13 @@ public class BattleHudService
 		
         battleHud.Waves.Text = $"Wave: {battleWorld.EnemyWave.WaveNumber}";
         battleHud.Enemies.Text = $"Enemies: {battleWorld.Enemies.Count}";
-
+        
         battleHud.HpBar.CurrentUpperValue = player.Hp;
-        battleHud.HpBar.CurrentLowerValue = player.Hp + player.HpCanBeFastRegen;
+        double hpBarValueDelta = Mathf.Clamp(battleHud.HpBar.CurrentLowerValue - battleHud.HpBar.CurrentUpperValue, 
+            0, Math.Max(battleHud.HpBar.MaxValue - battleHud.HpBar.CurrentUpperValue, 0));
+        double hpBarValueDeltaDecrease = battleHud.HpBar.MaxValue * 0.25 * delta;
+        battleHud.HpBar.CurrentLowerValue = player.Hp + hpBarValueDelta - hpBarValueDeltaDecrease;
+        
         battleHud.HpBar.MaxValue = player.MaxHp;
         battleHud.HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
         battleHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";

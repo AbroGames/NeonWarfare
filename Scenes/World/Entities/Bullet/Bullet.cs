@@ -38,7 +38,6 @@ public partial class Bullet : Node2D
 					double damage = RemainingDamage;
 					ApplyDamage(player, new Color(0, 0, 0));
 					player.Camera.Punch(player.Position - Position, 10, 30);
-					player.HpCanBeFastRegen += damage / 2;
 					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f).PitchVariation(0.15f);
 					
 					var hit = Fx.CreateBulletHitFx();

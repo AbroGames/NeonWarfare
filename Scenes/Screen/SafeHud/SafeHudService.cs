@@ -23,7 +23,7 @@ public class SafeHudService
         safeHud.Level.Text = $"Level: {player.Level}";
 
         safeHud.HpBar.CurrentUpperValue = player.Hp;
-        safeHud.HpBar.CurrentLowerValue = player.Hp + player.HpCanBeFastRegen;
+        safeHud.HpBar.CurrentLowerValue = player.Hp; //TODO сделать аналогично с BattleHud, вынести в общий сервис (не дублировать код)
         safeHud.HpBar.MaxValue = player.MaxHp;
         safeHud.HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
         safeHud.Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
