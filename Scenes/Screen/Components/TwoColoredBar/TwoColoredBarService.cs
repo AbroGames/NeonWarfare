@@ -1,18 +1,13 @@
+using KludgeBox.Events;
+
 [GameService]
 public class TwoColoredBarService
 {
-	public TwoColoredBarService()
-	{
-		EventBus.Subscribe<TwoColoredBarProcessEvent>(OnTwoColoredBarProcessEvent);
-	}
-    
+	
+	[GameEventListener]
 	public void OnTwoColoredBarProcessEvent(TwoColoredBarProcessEvent twoColoredBarProcessEvent)
 	{
-		UpdateProgressBar(twoColoredBarProcessEvent.TwoColoredBar);
-	}
-
-	public void UpdateProgressBar(TwoColoredBar twoColoredBar)
-	{
+		TwoColoredBar twoColoredBar = twoColoredBarProcessEvent.TwoColoredBar;
 		twoColoredBar.UpperBar.CustomMinimumSize = Vec(twoColoredBar.Width * twoColoredBar.CurrentUpperValuePercent, 0);
 		twoColoredBar.LowerBar.CustomMinimumSize = Vec(twoColoredBar.Width * twoColoredBar.CurrentLowerValuePercent, 0);
 	}
