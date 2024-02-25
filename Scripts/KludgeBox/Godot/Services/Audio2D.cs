@@ -220,10 +220,17 @@ public partial class Audio2D : Node2D
 			stream.QueueFree();
 	}
 
-	public static void StopMusic()
+	public static Tween StopMusic(double fadeOut = 0)
 	{
-		CurrentMusic.QueueFree();
+		var tween = Utils.SceneTree.CreateTween();
+		var music = CurrentMusic;
+		tween.TweenProperty(music, "volume_db", -30, fadeOut);
+		tween.TweenCallback(Callable.From(() =>
+		{
+			music.QueueFree();
+		}));
 		CurrentMusic = null;
+		return tween;
 	}
 
 	/// <summary>

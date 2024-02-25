@@ -1,4 +1,5 @@
 using Godot;
+using KludgeBox.Events;
 
 [GameService]
 public class PlayerMovementService

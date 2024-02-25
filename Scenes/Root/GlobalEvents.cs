@@ -1,2 +1,4 @@
 ﻿
-public readonly record struct GameResetEvent();
+using KludgeBox.Events;
+
+public readonly record struct GameResetEvent() : IEvent;

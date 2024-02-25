@@ -20,9 +20,7 @@ public class SafeHudService
     {
         Player player = safeWorld.Player;
         
-        PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
-        EventBus.Publish(playerGetRequiredXpQuery);
-        int playerRequiredXp = playerGetRequiredXpQuery.Result;
+        int playerRequiredXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
         
         safeHud.Xp.Value = (double) player.Xp / playerRequiredXp;
         safeHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";

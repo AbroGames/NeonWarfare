@@ -2,87 +2,92 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using KludgeBox;
+using KludgeBox.Events;
 
-public class EventBus
+public static class EventBus
 {
-    // Словарь для хранения событий и их подписчиков
-    private static Dictionary<Type, Delegate> _subscribers = new();
+    private static KludgeEventBus _bus = new();
 
-    public static void Reset()
+    public static ListenerToken Subscribe<T>(Action<T> action, ListenerPriority priority = ListenerPriority.Normal)
+        where T : IEvent
     {
-        _subscribers = new();
-    }
-    // Метод для подписки на событие
-    public static void Subscribe<T>(Action<T> handler)
-    {
-        if (_subscribers.ContainsKey(typeof(T)))
-        {
-            _subscribers[typeof(T)] = Delegate.Combine(_subscribers[typeof(T)], handler);
-        }
-        else
-        {
-            _subscribers.Add(typeof(T), handler);
-        }
+        return _bus.Subscribe(action, priority);
     }
 
-    public static void SubscribeMethod(MethodInfo methodInfo, object invoker)
+    /// <summary>
+    /// Publishes an event to all registered listeners.
+    /// </summary>
+    /// <typeparam name="T">The type of event to publish.</typeparam>
+    /// <param name="event">The event to publish.</param>
+    public static void Publish<T>(T @event) where T : IEvent
     {
-        Type messageType = methodInfo.GetParameters()[0].ParameterType;
-
-        // Create an Action<TArg> delegate from the MethodInfo
-        var delegateType = typeof(Action<>).MakeGenericType(messageType);
-        var actionDelegate = Delegate.CreateDelegate(delegateType, invoker, methodInfo);
-
-        // Subscribe to the message type using the created delegate
-        typeof(EventBus).GetMethod("Subscribe")!.MakeGenericMethod(messageType)
-            .Invoke(null, new object[] { actionDelegate }); // Замени null на this, если класс и метод не статический
+        _bus.Publish(@event);
     }
 
-    // Метод для отписки от события
-    public static void Unsubscribe<T>(Action<T> handler)
+    /// <summary>
+    /// Returns if CancellableEvent was cancelled
+    /// </summary>
+    /// <param name="event"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static bool TryPublish(CancellableEvent @event)
     {
-        if (_subscribers.ContainsKey(typeof(T)))
-        {
-            var currentDel = _subscribers[typeof(T)];
-            _subscribers[typeof(T)] = Delegate.Remove(currentDel, handler);
-
-            if (_subscribers[typeof(T)] == null)
-            {
-                _subscribers.Remove(typeof(T));
-            }
-        }
+        return _bus.TryPublish(@event);
     }
 
-    // Метод для публикации события
-    // TODO: добавить класс Publisher с прямой ссылкой на делегат, чтоб каждый пердёж не начинал поиск в хэшмапе
-    // Publisher целесообразно запихать во все Process и PhysicsProcess
-    public static void Publish<T>(T eventData)
+    public static TResult Require<TResult>(QueryEvent<TResult> @event)
     {
-        if (_subscribers.TryGetValue(typeof(T), out var handler))
-        {
-            (handler as Action<T>)?.Invoke(eventData);
-        }
+        return _bus.Require(@event);
     }
-    
+
+    public static EventPublisher<T> GetPublisher<T>(bool track = false) where T : IEvent
+    {
+        return _bus.GetPublisher<T>(track);
+    }
+
+    public static void SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
+    {
+        _bus.SubscribeMethod(subscriptionInfo);
+        Log.Debug(
+            $"\tRegistered listener {subscriptionInfo.Method.Name} from {subscriptionInfo.Method.DeclaringType.Name}");
+    }
+
     public static void RegisterListeners(ServiceRegistry registry)
     {
-        foreach (var service in registry.Services)
-        {
-            var type = service.GetType();
-            var methods = type.GetMethods();
-            var voidReturns = methods.Where(method => method.ReturnType == typeof(void));
-            var singleParameter = voidReturns.Where(x => x.GetParameters().Length == 1);
-            var listeners = singleParameter
-                .Where(x => x.GetCustomAttributes(typeof(GameEventListenerAttribute), false)
-                    .FirstOrDefault() != null);
+        var listeners = EventScanner.ScanEventListenersInTypesOfType(registry.Services.ToArray(), typeof(IEvent));
 
-            foreach (var listener in listeners)
-            {
-                SubscribeMethod(listener, service);
-            }
+        Log.Info($"Registering {listeners.Count()} listeners from registered services");
+        foreach (var listener in listeners)
+        {
+            SubscribeMethod(listener);
         }
+    }
+
+
+    /// <summary>
+    /// Resets all the EventHubs.
+    /// </summary>
+    public static void Reset()
+    {
+        _bus.Reset();
+    }
+
+    /// <summary>
+    /// Resets the EventHub associated with the specified event type.
+    /// </summary>
+    /// <typeparam name="T">The event type for which to reset the EventHub.</typeparam>
+    public static void ResetEvent<T>() where T : IEvent
+    {
+        _bus.ResetEvent<T>();
+    }
+
+    /// <summary>
+    /// Resets the EventHub associated with the specified event type.
+    /// </summary>
+    public static void ResetEvent(Type type)
+    {
+        _bus.ResetEvent(type);
     }
 }
 
-
-public class GameEventListenerAttribute : Attribute;

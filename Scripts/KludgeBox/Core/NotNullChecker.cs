@@ -16,7 +16,7 @@ public static class NotNullChecker
             bool hasNotNullAttribute = Attribute.IsDefined(property, typeof(NotNullAttribute));
             if (hasNotNullAttribute && isNull)
             {
-                throw new InvalidOperationException($"Property '{property.Name}' is null, but marked with NotNull.");
+                Log.Critical($"Property '{property.Name}' is null, but has NotNull attribute.");
             }
         }
     }

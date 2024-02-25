@@ -51,9 +51,9 @@ public class BattleHudService
         Player player = battleWorld.Player;
         
         //TODO хочу такую запись: int playerRequiredXp = EventBus.PublishQuery<int>(new PlayerGetRequiredXpQuery(player));
-        PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
-        EventBus.Publish(playerGetRequiredXpQuery);
-        int playerRequiredXp = playerGetRequiredXpQuery.Result;
+        //PlayerGetRequiredXpQuery playerGetRequiredXpQuery = new PlayerGetRequiredXpQuery(player);
+        //EventBus.Publish(playerGetRequiredXpQuery);
+        int playerRequiredXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));//playerGetRequiredXpQuery.Response;
         
         battleHud.Xp.Value = (double) player.Xp / playerRequiredXp;
         battleHud.XpLabel.Text = $"Xp: {player.Xp} / {playerRequiredXp}";

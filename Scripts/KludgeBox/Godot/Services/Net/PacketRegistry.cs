@@ -19,6 +19,15 @@ public static class PacketRegistry
         ClearRegistry();
         RegisterPacketType(typeof(RegistrySynchronizationPacket));
     }
+
+    public static void ScanPackets()
+    {
+        var packets = ReflectionExtensions.FindTypesWithAttributes(typeof(GamePacketAttribute));
+        foreach (Type packet in packets)
+        {
+            RegisterPacketType(packet);
+        }
+    }
     
     
     public static int RegisterPacketType(Type type)
@@ -30,7 +39,7 @@ public static class PacketRegistry
         _packets[id] = type;
         _packetIds[type] = id;
         _nextId++;
-
+        Log.Debug($"Registered packet of type {type.FullName} with id {id}");
         return id;
     }
 

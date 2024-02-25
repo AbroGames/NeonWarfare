@@ -8,7 +8,7 @@ public static class VectorExtensions
     /// <summary>
     /// Returns a Vector2 instance with specified x and y values.
     /// </summary>
-    public static Vector2 Vec(real x, real y) { return new Vector2(x, y); }
+    public static Vector2 Vec(double x, double y) { return new Vector2(x, y); }
     
     /// <summary>
     /// Returns a Vector2 instance with specified x and y values.
@@ -18,7 +18,7 @@ public static class VectorExtensions
     /// <summary>
     /// Returns a Vector2 instance with all values set to the specified value.
     /// </summary>
-    public static Vector2 Vec(real xy) { return new Vector2(xy, xy); }
+    public static Vector2 Vec(double xy) { return new Vector2(xy, xy); }
 
     /// <summary>
     /// Returns a Vector2 instance with all values set to zero.
@@ -54,7 +54,7 @@ public static class VectorExtensions
     /// <returns>A new Vector2 instance representing the original vector rotated by a random angle.</returns>
     public static Vector2 Spin(this Vector2 vector)
     {
-        real angle = Rand.Real * Mathf.Tau;
+        double angle = Rand.Double * Mathf.Tau;
         vector = vector.Rotated(angle);
 
         return vector;

@@ -38,10 +38,10 @@ public static class EventScanner
         var voidReturns = staticMethods.Where(method => method.ReturnType == typeof(void)); // method should return void
         var singleParameter = voidReturns.Where(x => x.GetParameters().Length == 1); // method should accept only one parameter
         var rightParamType = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType)); // and that parameter must be assignable to a variable of type
-        var listeners = rightParamType.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
+        var listeners = rightParamType.Where(x => x.GetCustomAttributes(typeof(GameEventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
 
         var subscriptionInfo = listeners.Select(method => 
-            new MethodSubscriptionInfo(method, null, method.GetCustomAttribute<EventListenerAttribute>()!.Priority));
+            new MethodSubscriptionInfo(method, null, method.GetCustomAttribute<GameEventListenerAttribute>()!.Priority));
         
         return subscriptionInfo;
     }
@@ -54,14 +54,14 @@ public static class EventScanner
         {
             var type = source.GetType();
             var rawMethods = type.GetMethods();
-            var withAttribute = rawMethods.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null);
+            var withAttribute = rawMethods.Where(x => x.GetCustomAttributes(typeof(GameEventListenerAttribute), false).FirstOrDefault() != null);
             var singleParameter = withAttribute.Where(x => x.GetParameters().Length == 1);
             var methods = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType));
             
             foreach (MethodInfo method in methods)
             {
                 object invoker = method.IsStatic ? null : source;
-                ListenerPriority priority = method.GetCustomAttribute<EventListenerAttribute>()!.Priority;
+                ListenerPriority priority = method.GetCustomAttribute<GameEventListenerAttribute>()!.Priority;
 
                 subscriptions.Add(new MethodSubscriptionInfo(method, invoker, priority));
             }
@@ -71,15 +71,15 @@ public static class EventScanner
     }
 
     /// <summary>
-    /// Subscribes a collection of event listener methods to the specified <paramref name="targetEventBus"/>.
+    /// Subscribes a collection of event listener methods to the specified <paramref name="targetKludgeEventBus"/>.
     /// </summary>
-    /// <param name="targetEventBus">The event bus to which the methods should be subscribed.</param>
+    /// <param name="targetKludgeEventBus">The event bus to which the methods should be subscribed.</param>
     /// <param name="methods">An enumerable collection of <see cref="MethodInfo"/> representing event listener methods.</param>
-    public static void SubscribeMethods(this EventBus targetEventBus, IEnumerable<MethodSubscriptionInfo> methods)
+    public static void SubscribeMethods(this KludgeEventBus targetKludgeEventBus, IEnumerable<MethodSubscriptionInfo> methods)
     {
         foreach (var method in methods)
         {
-            targetEventBus.SubscribeMethod(method);
+            targetKludgeEventBus.SubscribeMethod(method);
         }
     }
 }

@@ -1,4 +1,4 @@
-public  class MainMenuMainSceneService
+public class MainMenuMainSceneService
 {
 
 	public MainMenuMainSceneService()

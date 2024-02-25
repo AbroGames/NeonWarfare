@@ -90,15 +90,26 @@ public static class NodeExtensions
     /// Drops the Node2D object, creating a Dummy2D object at its position and reparenting the Node2D to the Dummy2D.
     /// </summary>
     /// <param name="node">The Node2D object to be dropped.</param>
-    public static Dummy2D Drop(this Node2D node)
+    public static Dummy2D Drop(this Node2D node, bool directly = false)
     {
         var parent = node.GetParent() as Node2D;
         if(!parent.IsValid()) return null;
 
-        var dummy = parent.DropDummy(); 
-        node.Reparent(dummy);
-        node.Owner = dummy;
-        return dummy;
+        if (!directly)
+        {
+            var dummy = parent.DropDummy(); 
+            node.Reparent(dummy);
+            node.Owner = dummy;
+            return dummy; 
+        }
+
+        parent = parent.GetParent() as Node2D;
+        if(!parent.IsValid()) return null;
+        
+        node.Reparent(parent, true);
+        node.Owner = parent;
+        
+        return null;
     }
 
     /// <summary>

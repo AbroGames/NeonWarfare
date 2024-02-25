@@ -25,7 +25,7 @@ public class Scheduler
 	/// </summary>
 	/// <param name="ticksPerSecond">Number of ticks to be produced per second</param>
 	/// <remarks>
-	/// The internal instance of Clock will not trigger global events in the EventBus.
+	/// The internal instance of Clock will not trigger global events in the KludgeEventBus.
 	/// </remarks>
 	public Scheduler(int ticksPerSecond)
 	{

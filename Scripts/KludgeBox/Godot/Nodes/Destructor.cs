@@ -3,6 +3,7 @@ using KludgeBox.Scheduling;
 
 namespace KludgeBox.Godot;
 
+[GlobalClass]
 public partial class Destructor : Node
 {
     public bool IsPaused { get; set; } = false;
@@ -22,6 +23,7 @@ public partial class Destructor : Node
     public Destructor()
     {
         _cooldown.Ready += Destruct;
+        TimeLeft = 0;
     }
 
     public Destructor(double time)

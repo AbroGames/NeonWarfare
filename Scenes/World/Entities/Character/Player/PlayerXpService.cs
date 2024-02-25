@@ -1,5 +1,6 @@
 using Game.Content;
 using Godot;
+using KludgeBox.Events;
 
 [GameService]
 public class PlayerXpService
@@ -70,6 +71,7 @@ public class PlayerXpService
         int result = GetRequiredXp(playerGetRequiredXpQuery.Player);
         playerGetRequiredXpQuery.SetResult(result);
         //TODO вместо SetResult хочу, чтобы это было под капотом. А тут просто return result;
+        //Ответ на TODO это больно и страшно
     }
 
     private int GetRequiredXp(Player player)

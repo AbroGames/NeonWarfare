@@ -1,19 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Godot;
+using KludgeBox.Events;
 
 [GameService]
 public class EnemyMovementService
 {
     private HashSet<Enemy> _attractors = new();
     
-    public EnemyMovementService()
-    {
-        EventBus.Subscribe<EnemyPhysicsProcessEvent>(OnEnemyPhysicsProcessEvent);
-        //EventBus.Subscribe<EnemyStartAttractionEvent>(OnEnemyStartAttractionEvent);
-        //EventBus.Subscribe<EnemyStopAttractionEvent>(OnEnemyStopAttractionEvent);
-    }
 
     [GameEventListener]
     public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
@@ -33,6 +27,7 @@ public class EnemyMovementService
         _attractors = new();
     }
     
+    [GameEventListener]
     public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent) {
         MoveForward(enemyPhysicsProcessEvent.Enemy, enemyPhysicsProcessEvent.Delta);
     }

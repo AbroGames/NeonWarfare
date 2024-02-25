@@ -38,7 +38,50 @@ public enum RemoteMode : byte
 
 public partial class Network : Node
 {
-    public static Network Instance { get; private set; }
+    private static Network Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                // Check if we were loaded via Autoload
+                _instance = ((SceneTree)Engine.GetMainLoop()).Root.GetNodeOrNull<Network>(typeof(Network).Name);
+                if (_instance == null)
+                {
+                    // Instantiate to root at runtime
+                    _instance = new Network();
+                    _instance.Name = typeof(Network).Name;
+                    _instance.CallDeferred(nameof(InitGlobalInstance));
+                }
+            }
+            return _instance;
+        }
+    }
+
+    static Network()
+    {
+        var instance = Instance;
+    }
+    
+    private void InitGlobalInstance()
+    {
+        ((SceneTree)Engine.GetMainLoop()).Root.AddChild(this);
+        
+        Api = ((SceneTree)Engine.GetMainLoop()).GetMultiplayer();
+        Peer = new ENetMultiplayerPeer();
+        Api.PeerConnected += id =>
+        {
+            if (IsServer)
+            {
+                SendPacketToPeer(id, PacketRegistry.BuildSynchronizationPacket(), reliable: true);
+            }
+        };
+        ReceivedPacket += DefaultPacketProcessor;
+    }
+	
+    private static Network _instance;
+    
+    
     public static MultiplayerApi Api { get; private set; }
     public static ENetMultiplayerPeer Peer { get; private set; }
     
@@ -75,28 +118,23 @@ public partial class Network : Node
 
     public static bool BothLocal => IsLocalServer && IsLocalClient;
 
+    /// <summary>
+    /// Actual network peer ID. Will be 1 if you are hosting server.
+    /// </summary>
     public static long MyPeerId => Api.GetUniqueId();
+    
+    /// <summary>
+    /// Virtual network peer ID. Will be 0 if you are hosting server.
+    /// </summary>
+    public static long MyPlayerId => IsServer ? 0 : MyPeerId;
 
     public static event Action<PacketSender, string> ReceivedRawPacket;
-    public static event Action<PacketSender, AbstractPacket> ReceivedPacket;
+    public static event Action<AbstractPacket> ReceivedPacket;
     
-    public Network()
-    {
-        Instance ??= this;
-    }
     
     public override void _Ready()
     {
-        Api = GetTree().GetMultiplayer();
-        Peer = new ENetMultiplayerPeer();
-        Api.PeerConnected += id =>
-        {
-            if (IsServer)
-            {
-                SendPacketToPeer(id, PacketRegistry.BuildSynchronizationPacket());
-            }
-        };
-        ReceivedPacket += DefaultPacketProcessor;
+        
     }
 
     public static Error CreateServer(int port)
@@ -146,14 +184,36 @@ public partial class Network : Node
         Peer.Close();
     }
 
+    public static void SendPacketsToClients(PacketBuffer buffer)
+    {
+        foreach (AbstractPacket packet in buffer.EnumeratePackets())
+        {
+            SendPacketToClients(packet, packet.IsReliable);
+        }
+    }
 
-    public static void SendPacketToClients(AbstractPacket packet)
+    public static void SendPacketsToServer(PacketBuffer buffer)
+    {
+        foreach (AbstractPacket packet in buffer.EnumeratePackets())
+        {
+            SendPacketToClients(packet, packet.IsReliable);
+        }
+    }
+
+    public static void SendPacketToClients(AbstractPacket packet, bool reliable)
     {
         var packetData = PacketConverter.Serialize(packet);
         
         if (IsServer)
         {
-            Instance.Rpc(nameof(ReceivePacketFromServer), packetData);
+            if (reliable)
+            {
+                Instance.Rpc(nameof(ReceivePacketFromServer), packetData);
+            }
+            else
+            {
+                Instance.Rpc(nameof(ReceivePacketFromServerUnreliable), packetData);
+            }
         }
 
         if (IsClient)
@@ -162,13 +222,20 @@ public partial class Network : Node
         }
     }
 
-    public static void SendPacketToServer(AbstractPacket packet)
+    public static void SendPacketToServer(AbstractPacket packet, bool reliable)
     {
         var packetData = PacketConverter.Serialize(packet);
         
         if (IsClient)
         {
-            Instance.Rpc(nameof(ReceivePacketFromClient), packetData);
+            if (reliable)
+            {
+                Instance.Rpc(nameof(ReceivePacketFromClient), packetData);
+            }
+            else
+            {
+                Instance.Rpc(nameof(ReceivePacketFromClientUnreliable), packetData);
+            }
         }
         
         if (IsServer)
@@ -177,7 +244,7 @@ public partial class Network : Node
         }
     }
 
-    public static void SendPacketToPeer(long id, AbstractPacket packet)
+    public static void SendPacketToPeer(long id, AbstractPacket packet, bool reliable)
     {
         if (!IsServer) throw new InvalidOperationException("Only server can send packets to specified peers");
         if (id == 1) throw new ArgumentException("Can't send packet from server to server");
@@ -193,31 +260,60 @@ public partial class Network : Node
             }
             throw new InvalidOperationException("Can't send packet to local client in dedicated server mode");
         }
-        
-        Instance.RpcId(id,nameof(ReceivePacketFromServer), packetData);
+
+        if (reliable)
+        {
+            Instance.RpcId(id,nameof(ReceivePacketFromServer), packetData);
+        }
+        else
+        {
+            Instance.RpcId(id,nameof(ReceivePacketFromServerUnreliable), packetData);
+        }
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = TransferModeEnum.Reliable, CallLocal = false)]
+    internal void ReceivePacketFromClient(string packet)
+    {
+        if (!IsServer) return;
+        var senderId = Api.GetRemoteSenderId();
+        ReceivedRawPacket?.Invoke(senderId, packet);
+        ReceivedPacket?.Invoke(ConfigurePacket(senderId, PacketConverter.Deserialize(packet)));
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = TransferModeEnum.Reliable, CallLocal = false)]
+    internal void ReceivePacketFromServer(string packet)
+    {
+        if (!IsClient) return;
+        ReceivedRawPacket?.Invoke(1, packet);
+        ReceivedPacket?.Invoke(ConfigurePacket(1, PacketConverter.Deserialize(packet)));
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
-        internal void ReceivePacketFromClient(string packet)
-        {
-            if (!IsServer) return;
-            var senderId = Api.GetRemoteSenderId();
-            ReceivedRawPacket?.Invoke(senderId, packet);
-            ReceivedPacket?.Invoke(senderId, PacketConverter.Deserialize(packet));
-        }
-    
-        [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
-        internal void ReceivePacketFromServer(string packet)
-        {
-            if (!IsClient) return;
-            ReceivedRawPacket?.Invoke(1, packet);
-            ReceivedPacket?.Invoke(1, PacketConverter.Deserialize(packet));
-        }
-    
-    
-    private static void DefaultPacketProcessor(PacketSender sender, AbstractPacket packet)
+    internal void ReceivePacketFromClientUnreliable(string packet)
     {
-        if (sender.IsServer && packet is RegistrySynchronizationPacket syncPacket)
+        if (!IsServer) return;
+        var senderId = Api.GetRemoteSenderId();
+        ReceivedRawPacket?.Invoke(senderId, packet);
+        ReceivedPacket?.Invoke(ConfigurePacket(senderId, PacketConverter.Deserialize(packet)));
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = TransferModeEnum.Unreliable, CallLocal = false)]
+    internal void ReceivePacketFromServerUnreliable(string packet)
+    {
+        if (!IsClient) return;
+        ReceivedRawPacket?.Invoke(1, packet);
+        ReceivedPacket?.Invoke(ConfigurePacket(1, PacketConverter.Deserialize(packet)));
+    }
+
+    private static AbstractPacket ConfigurePacket(int senderId, AbstractPacket packet)
+    {
+        packet.Sender = senderId;
+        return packet;
+    }
+    private static void DefaultPacketProcessor(AbstractPacket packet)
+    {
+        
+        if (packet.Sender.IsServer && packet is RegistrySynchronizationPacket syncPacket)
         {
             Log.Info("Received a sync packet");
             PacketRegistry.SynchronizeRegistry(syncPacket);

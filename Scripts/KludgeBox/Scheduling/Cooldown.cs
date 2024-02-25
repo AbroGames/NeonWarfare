@@ -66,7 +66,7 @@ public class Cooldown
 		}
 	}
 
-	public Cooldown AddAction(Action action)
+	public Cooldown WithCallback(Action action)
 	{
 		Ready += action;
 		return this;

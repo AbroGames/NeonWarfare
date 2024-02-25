@@ -34,10 +34,10 @@ public class CirclesCluster
 				return Circles.First();
 
 			// Find the minimum and maximum coordinates of the cluster's circles
-			real minX = real.MaxValue;
-			real minY = real.MaxValue;
-			real maxX = real.MinValue;
-			real maxY = real.MinValue;
+			double minX = double.MaxValue;
+			double minY = double.MaxValue;
+			double maxX = double.MinValue;
+			double maxY = double.MinValue;
 
 			foreach (Circle circle in Circles)
 			{
@@ -49,7 +49,7 @@ public class CirclesCluster
 
 			// Calculate the center position and radius of the circumcircle
 			Vector2 center = new Vector2((minX + maxX) / 2, (minY + maxY) / 2);
-			real radius = Mathf.Max(maxX - center.X, maxY - center.Y);
+			double radius = Mathf.Max(maxX - center.X, maxY - center.Y);
 
 			return new Circle(center, radius);
 		}

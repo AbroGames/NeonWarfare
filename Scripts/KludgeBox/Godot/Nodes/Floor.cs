@@ -12,13 +12,9 @@ public partial class Floor : Node2D
 	[Export]
 	public Camera2D Camera { get; set; }
 
-	[Export]
-	public string TexturePath { get; set; } = "res://Assets/Textures/floor3.png";
-
-	public Texture2D Texture => _texture;
+	[Export] public Texture2D Texture { get; set; }
 
 	private Cooldown _checksCooldown = new Cooldown(0.25, CooldownMode.Single);
-	private Texture2D _texture;
 
 	// Why TF I'm doing this?
 	private List<Tile> _tiles = new List<Tile>();
@@ -26,9 +22,11 @@ public partial class Floor : Node2D
 
 	public override void _Ready()
 	{
-		_checksCooldown.Ready += CheckTiles;
-		_texture = GD.Load<Texture2D>(TexturePath);
-		CheckTiles();
+		_checksCooldown.Ready += () =>
+		{
+			if(Camera.IsValid())
+				CheckTiles();
+		};
 	}
 
 

@@ -5,12 +5,14 @@ namespace KludgeBox.Events;
 
 internal sealed class EventHub
 {
-    //private List<IListener> _listeners = new();
+    public Type EventHubType { get; private set;}
+    public bool IsActive { get; private set; } = true;
 
     private List<IListener>[] _listenersByPriority;
 
-    public EventHub()
+    public EventHub(Type type)
     {
+        EventHubType = type;
         var prioritiesCount = Enum.GetValues(typeof(ListenerPriority)).Length;
         _listenersByPriority = new List<IListener>[prioritiesCount];
         for (int i = 0; i < prioritiesCount; i++)
@@ -59,5 +61,10 @@ internal sealed class EventHub
     {
         var prioritiesCount = Enum.GetValues(typeof(ListenerPriority)).Length;
         _listenersByPriority = new List<IListener>[prioritiesCount];
+    }
+
+    public void Deactivate()
+    {
+        IsActive = true;
     }
 }

@@ -7,15 +7,17 @@ namespace KludgeBox.Events;
 /// <summary>
 /// Provides a central event bus for publishing and subscribing to events.
 /// </summary>
-public class EventBus
+public class KludgeEventBus
 {
     /// <summary>
-    /// If set to true, EventBus will attempt to publish events to all EventHubs whose types are derived from the event type.
+    /// If set to true, KludgeEventBus will attempt to publish events to all EventHubs whose types are derived from the event type.
     /// This option can significantly impact performance.
     /// </summary>
     public bool IncludeBaseEvents = false;
 
     private Dictionary<Type, EventHub> _hubs = new Dictionary<Type, EventHub>();
+
+    private Dictionary<Type, EventPublisher> _publishers = new();
 
     /// <summary>
     /// Subscribes a listener to the specified event type.
@@ -48,17 +50,80 @@ public class EventBus
         }
     }
 
-    public EventPublisher<T> GetPublisher<T>() where T : IEvent
+    /// <summary>
+    /// Returns if CancellableEvent was cancelled
+    /// </summary>
+    /// <param name="event"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public bool TryPublish(CancellableEvent @event)
     {
-        return new EventPublisher<T>(GetHub(typeof(T)));
+        Publish(@event);
+        return @event.IsCancelled;
     }
+
+    public TResult Require<TResult>(QueryEvent<TResult> @event)
+    {
+        Publish(@event);
+        return @event.Response;
+    }
+
+    public EventPublisher<T> GetPublisher<T>(bool track = false) where T : IEvent
+    {
+        var type = typeof(T);
+        var publisher = GetPublisher(type, track);
+        EventPublisher<T> genericPublisher = publisher.AsGeneric<T>();
+        return genericPublisher;
+    }
+
+    internal EventPublisher GetPublisher(Type type, bool track = false)
+    {
+        EventPublisher publisher;
+
+        if (track)
+        {
+            if (_publishers.TryGetValue(type, out var cachedPublisher))
+            {
+                publisher = cachedPublisher;
+            }
+            else
+            {
+                publisher = new EventPublisher(GetHub(type));
+                _publishers[type] = publisher;
+            }
+        }
+        else
+        {
+            publisher = new EventPublisher(GetHub(type));
+        }
+        
+        return publisher;
+    }
+
 
     /// <summary>
     /// Resets all the EventHubs.
     /// </summary>
-    public void Reset()
+    public void Reset(bool hard = false)
     {
+        foreach ((Type _, EventHub eventHub) in _hubs)
+        {
+            eventHub.Deactivate();
+        }
+        
         _hubs.Clear();
+        
+        if (hard)
+        {
+            _publishers.Clear();
+        }
+        else
+        {
+            foreach ((Type key, EventPublisher value) in _publishers)
+            {
+                value.ReassignHub(GetHub(key));
+            }
+        }
     }
 
     /// <summary>
@@ -86,7 +151,7 @@ public class EventBus
             return hub;
         }
 
-        hub = new EventHub();
+        hub = new EventHub(eventType);
         _hubs[eventType] = hub;
 
         return hub;
@@ -106,7 +171,7 @@ public class EventBus
         var actionDelegate = Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
 
         // Subscribe to the message type using the created delegate
-        return typeof(EventBus).GetMethod("Subscribe")!.MakeGenericMethod(messageType)
+        return typeof(KludgeEventBus).GetMethod("Subscribe")!.MakeGenericMethod(messageType)
             .Invoke(this, new object[] { actionDelegate, subscriptionInfo.Priority }) as ListenerToken;
     }
 

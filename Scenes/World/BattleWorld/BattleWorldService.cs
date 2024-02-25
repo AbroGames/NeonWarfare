@@ -35,9 +35,8 @@ public class BattleWorldService
         battleWorld.AddChild(camera);
         camera.Enabled = true;
 
-        var floor = new Floor();
+        var floor = battleWorld.Floor;
         floor.Camera = camera;
-        battleWorld.AddChild(floor);
 		
         Node2D ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
         ally.Position = Vec(600, 600);

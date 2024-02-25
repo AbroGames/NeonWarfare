@@ -4,12 +4,12 @@ using System;
 namespace KludgeBox.Events;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class EventListenerAttribute : Attribute
+public class GameEventListenerAttribute : Attribute
 {
     public ListenerPriority Priority { get; private init; } = ListenerPriority.Normal;
-    public EventListenerAttribute(){}
+    public GameEventListenerAttribute(){}
 
-    public EventListenerAttribute(ListenerPriority priority)
+    public GameEventListenerAttribute(ListenerPriority priority)
     {
         Priority = priority;
     }

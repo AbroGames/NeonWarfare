@@ -6,6 +6,8 @@ using KludgeBox;
 
 public partial class BattleWorld : Node2D
 {
+	[Export] [NotNull] public Floor Floor { get; set; }
+	
 	public BattleHud BattleHud { get; set; }
 	public Player Player;
 	public EnemyWave EnemyWave { get; set; } = new();
@@ -13,6 +15,7 @@ public partial class BattleWorld : Node2D
 	
 	public override void _Ready()
 	{
+		NotNullChecker.CheckProperties(this);
 		EventBus.Publish(new BattleWorldReadyEvent(this));
 	}
 
