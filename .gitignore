@@ -4,6 +4,7 @@
 *.csproj.old*
 /.idea/*/.idea/sonarlint/
 .idea/
+.vscode/
 
 
 ## Ignore Visual Studio temporary files, build results, and
