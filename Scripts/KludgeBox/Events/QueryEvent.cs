@@ -1,13 +1,20 @@
 ﻿namespace KludgeBox.Events;
 
-public record QueryEvent<T> : IEvent
+
+public abstract record QueryEvent
 {
     public bool HasResult { get; private set; }
-    public T Response { get; private set; }
-
-    public void SetResult(T result)
+    public object Response { get; private set; }
+    internal virtual void SetResult(object result)
     {
         HasResult = true;
         Response = result;
+    }
+}
+public abstract record QueryEvent<T> : QueryEvent, IEvent
+{
+    public void SetResult(T result)
+    {
+        base.SetResult(result);
     }
 }
