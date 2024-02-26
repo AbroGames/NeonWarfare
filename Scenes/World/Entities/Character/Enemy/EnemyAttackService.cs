@@ -8,7 +8,7 @@ namespace NeoVector.World;
 public class EnemyAttackService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
     {
         var (enemy, delta) = enemyProcessEvent;
@@ -21,7 +21,7 @@ public class EnemyAttackService
         }
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnEnemyAttackEvent(EnemyAttackEvent enemyAttackEvent)
     {
         Enemy enemy = enemyAttackEvent.Enemy;

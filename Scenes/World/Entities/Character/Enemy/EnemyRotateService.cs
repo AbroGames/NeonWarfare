@@ -9,7 +9,7 @@ namespace NeoVector.World;
 public class EnemyRotateService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
     {
         var (enemy, delta) = enemyProcessEvent;

@@ -32,6 +32,12 @@ public partial class Destructor : Node
         _cooldown.Ready += Destruct;
     }
 
+    /// <inheritdoc />
+    public override void _Ready()
+    {
+        _cooldown.Update(0);
+    }
+
     public override void _Process(double delta)
     {
         _cooldown.Update(delta);
@@ -42,5 +48,6 @@ public partial class Destructor : Node
         var parent = GetParent();
         if (IsInstanceValid(parent))
             parent.QueueFree();
+        QueueFree();
     }
 }

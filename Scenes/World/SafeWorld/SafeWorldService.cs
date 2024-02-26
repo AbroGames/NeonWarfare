@@ -7,7 +7,7 @@ namespace NeoVector.World;
 public class SafeWorldService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnSafeWorldReadyEvent(SafeWorldReadyEvent safeWorldReadyEvent)
     {
         SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
@@ -30,7 +30,7 @@ public class SafeWorldService
         PlaySafeMusic(); //TODO to music service (safe music service)
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnSafeWorldProcessEvent(SafeWorldProcessEvent safeWorldProcessEvent) { }
     
     public void PlaySafeMusic()

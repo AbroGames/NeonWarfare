@@ -38,10 +38,10 @@ public static class EventScanner
         var voidReturns = staticMethods.Where(method => method.ReturnType == typeof(void)); // method should return void
         var singleParameter = voidReturns.Where(x => x.GetParameters().Length == 1); // method should accept only one parameter
         var rightParamType = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType)); // and that parameter must be assignable to a variable of type
-        var listeners = rightParamType.Where(x => x.GetCustomAttributes(typeof(GameEventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
+        var listeners = rightParamType.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
 
         var subscriptionInfo = listeners.Select(method => 
-            new MethodSubscriptionInfo(method, null, method.GetCustomAttribute<GameEventListenerAttribute>()!.Priority));
+            new MethodSubscriptionInfo(method, null, method.GetCustomAttribute<EventListenerAttribute>()!.Priority));
         
         return subscriptionInfo;
     }
@@ -54,14 +54,14 @@ public static class EventScanner
         {
             var type = source.GetType();
             var rawMethods = type.GetMethods();
-            var withAttribute = rawMethods.Where(x => x.GetCustomAttributes(typeof(GameEventListenerAttribute), false).FirstOrDefault() != null);
+            var withAttribute = rawMethods.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null);
             var singleParameter = withAttribute.Where(x => x.GetParameters().Length == 1);
             var methods = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType));
             
             foreach (MethodInfo method in methods)
             {
                 object invoker = method.IsStatic ? null : source;
-                ListenerPriority priority = method.GetCustomAttribute<GameEventListenerAttribute>()!.Priority;
+                ListenerPriority priority = method.GetCustomAttribute<EventListenerAttribute>()!.Priority;
 
                 subscriptions.Add(new MethodSubscriptionInfo(method, invoker, priority));
             }

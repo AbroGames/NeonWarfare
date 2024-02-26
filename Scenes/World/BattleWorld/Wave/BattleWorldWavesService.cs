@@ -7,7 +7,7 @@ namespace NeoVector.World;
 public class BattleWorldWavesService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
     {
         var (battleWorld, delta) = battleWorldProcessEvent;
@@ -18,7 +18,7 @@ public class BattleWorldWavesService
         EventBus.Publish(new BattleWorldNewWaveRequestEvent(battleWorld));
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldNewWaveRequestEvent(BattleWorldNewWaveRequestEvent battleWorldNewWaveRequestEvent)
     {
         BattleWorld battleWorld = battleWorldNewWaveRequestEvent.BattleWorld;

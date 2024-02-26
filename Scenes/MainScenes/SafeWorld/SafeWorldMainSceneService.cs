@@ -8,7 +8,7 @@ namespace NeoVector;
 public  class SafeWorldMainSceneService
 {
     
-	[GameEventListener]
+	[EventListener]
 	public void OnSafeWorldMainSceneReadyEvent(SafeWorldMainSceneReadyEvent safeWorldMainSceneReadyEvent)
 	{
 		SafeWorldMainScene safeWorldMainScene = safeWorldMainSceneReadyEvent.SafeWorldMainScene;

@@ -8,7 +8,7 @@ namespace NeoVector.World;
 public class BattleWorldService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldReadyEvent(BattleWorldReadyEvent battleWorldReadyEvent)
     {
         BattleWorld battleWorld = battleWorldReadyEvent.BattleWorld;
@@ -42,7 +42,7 @@ public class BattleWorldService
         }
     }
 
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent) { }
     
     public void PlayBattleMusic1()

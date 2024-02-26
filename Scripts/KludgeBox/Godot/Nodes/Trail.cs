@@ -27,19 +27,19 @@ public partial class Trail : Node2D
 	/// Trail width at the start.
 	/// </summary>
 	[Export]
-	public double StartWidth = 0f;
+	public real StartWidth = 0f;
 
 	/// <summary>
 	/// Trail width at the end.
 	/// </summary>
 	[Export]
-	public double EndWidth = 0f;
+	public real EndWidth = 0f;
 
 	/// <summary>
 	/// How many seconds will the trail last.
 	/// </summary>
 	[Export]
-	public double Length = 1;
+	public real Length = 1;
 
 	/// <summary>
 	/// Trail color at the start.
@@ -63,7 +63,7 @@ public partial class Trail : Node2D
 	/// Trail alpha at the end.
 	/// </summary>
 	[Export(PropertyHint.Range, "0, 1, 0.05")]
-	public double EndAlpha = 1f;
+	public float EndAlpha = 1f;
 
 	/// <summary>
 	/// Sets the color of the trail. Setting the color will update both the start and end color values.
@@ -92,7 +92,7 @@ public partial class Trail : Node2D
 	/// <summary>
 	/// Sets the width of the trail. Setting the width will update both the start and end width values.
 	/// </summary>
-	public double Width
+	public real Width
 	{
 		set
 		{
@@ -193,8 +193,8 @@ public partial class Trail : Node2D
 		
 
 		// These properties returns widths at the start and the end of segment
-		public double WidthAtEnd => Mathf.Lerp(endWidth, startWidth, (timeToLive / startingTimeToLive));
-		public double WidthAtStart => previous is null ? WidthAtEnd : previous.WidthAtEnd;
+		public real WidthAtEnd => Mathf.Lerp(endWidth, startWidth, (timeToLive / startingTimeToLive));
+		public real WidthAtStart => previous is null ? WidthAtEnd : previous.WidthAtEnd;
 
 		// Polygon used to draw the segment
 		public Polygon2D polygon = new Polygon2D();
@@ -203,11 +203,11 @@ public partial class Trail : Node2D
 		// Tail instance this segment belongs to
 		public Trail parentTrail;
 
-		public double startWidth;
-		public double endWidth;
+		public real startWidth;
+		public real endWidth;
 
-		public double timeToLive;
-		public double startingTimeToLive;
+		public real timeToLive;
+		public real startingTimeToLive;
 
 		public Vector2 endPos;
 		public Vector2 startPos;
@@ -238,8 +238,8 @@ public partial class Trail : Node2D
 		public void Update(double dt)
 		{
 			// Update time to live of the segment
-			var ttlPart = (float)(timeToLive / startingTimeToLive);
-			timeToLive -= dt;
+			var ttlPart = (real)(timeToLive / startingTimeToLive);
+			timeToLive -= (real)dt;
 
 			// Remove the Polygon2D after finishing
 			if (Finished)

@@ -8,7 +8,7 @@ namespace NeoVector.World;
 public class PlayerAdvancedSkillService
 {
 
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerAdvancedSkillUseEvent(PlayerAdvancedSkillUseEvent playerAdvancedSkillUseEvent)
     {
         var player = playerAdvancedSkillUseEvent.Player;

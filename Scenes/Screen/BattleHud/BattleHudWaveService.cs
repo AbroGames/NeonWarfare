@@ -13,7 +13,7 @@ public class BattleHudWaveService
     public double HoldTime { get; set; } = 1;
     public double FadeOutTime { get; set; } = 0.5;
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleHudReadyEvent(BattleHudReadyEvent battleHudReadyEvent)
     {
         BattleHud battleHud = battleHudReadyEvent.BattleHud;
@@ -21,7 +21,7 @@ public class BattleHudWaveService
         battleHud.WaveMessageInitialPosition = battleHud.WaveMessage.Position;
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldNewWaveEvent(BattleWorldNewWaveGeneratedEvent battleWorldNewWaveGeneratedEvent)
     {
         var (battleWorld, waveNumber) = battleWorldNewWaveGeneratedEvent;

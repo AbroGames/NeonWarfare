@@ -5,6 +5,6 @@ namespace NeoVector;
 public class MainMenuMainSceneService
 {
     
-	[GameEventListener]
+	[EventListener]
 	public void OnMainMenuMainSceneReadyEvent(MainMenuMainSceneReadyEvent mainMenuMainSceneReadyEvent) { }
 }

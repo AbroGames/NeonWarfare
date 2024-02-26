@@ -16,7 +16,7 @@ public class BattleHudService
     private readonly Stopwatch _physicsStopwatch = new();
     private readonly Queue<double> _deltas = new();
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleHudProcessEvent(BattleHudProcessEvent battleHudProcessEvent)
     {
         double delta = battleHudProcessEvent.Delta;
@@ -55,7 +55,7 @@ public class BattleHudService
     /// Мы используем настолько альтернативный подход к расчету ТПС потому, что все значения физической дельты в движке - константы.
     /// Даже если реальный ТПС упадёт до 1, дельта, приходящая в _PhysicsProcess будет 1/60.
     /// </summary>
-    [GameEventListener]
+    [EventListener]
     public void OnBattleHudPhysicsProcessEvent(BattleHudPhysicsProcessEvent battleHudPhysicsProcessEvent)
     {
         BattleHud battleHud = battleHudPhysicsProcessEvent.BattleHud;

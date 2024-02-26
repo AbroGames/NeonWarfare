@@ -6,7 +6,7 @@ namespace NeoVector;
 [GameService]
 public class CreateServerButtonService
 {
-    [GameEventListener]
+    [EventListener]
     public void OnCreateServerButtonClickEvent(CreateServerButtonClickEvent createServerButtonClickEvent)
     {
         Root.Instance.Game.MainSceneContainer.ChangeStoredNode(createServerButtonClickEvent.CreateServerButton.NewWorldMainScene.Instantiate());

@@ -7,7 +7,7 @@ namespace NeoVector;
 public class TwoColoredBarService
 {
 	
-	[GameEventListener]
+	[EventListener]
 	public void OnTwoColoredBarProcessEvent(TwoColoredBarProcessEvent twoColoredBarProcessEvent)
 	{
 		TwoColoredBar twoColoredBar = twoColoredBarProcessEvent.TwoColoredBar;

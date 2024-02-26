@@ -100,7 +100,7 @@ public partial class Smoothing2D : Node2D
     /// <inheritdoc />
     public override void _Process(double delta)
     {
-        var fraction = Engine.GetPhysicsInterpolationFraction();
+        var fraction = (real)Engine.GetPhysicsInterpolationFraction();
         var transform = new Transform2D();
 
         

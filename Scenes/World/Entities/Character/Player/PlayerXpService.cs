@@ -9,14 +9,14 @@ namespace NeoVector.World;
 public class PlayerXpService
 {
 
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerReadeEvent(PlayerReadyEvent playerReadyEvent)
     {
         Player player = playerReadyEvent.Player;
         player.NextLevelXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerGainXpEvent(PlayerGainXpEvent playerGainXpEvent)
     {
         var (player, gainXp) = playerGainXpEvent;
@@ -28,7 +28,7 @@ public class PlayerXpService
         }
     }
     
-    [GameEventListener]
+    [EventListener]
     public long GetRequiredXpQuery(PlayerGetRequiredXpQuery playerGetRequiredXpQuery)
     {
         Player player = playerGetRequiredXpQuery.Player;
@@ -36,7 +36,7 @@ public class PlayerXpService
         return (long) (player.BasicRequiredXp * Mathf.Pow(player.RequiredXpLevelFactor, player.Level));
     }
 	
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerLevelUpEvent(PlayerLevelUpEvent playerLevelUpEvent)
     {
         Player player = playerLevelUpEvent.Player;

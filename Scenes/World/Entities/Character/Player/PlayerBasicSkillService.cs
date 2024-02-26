@@ -8,7 +8,7 @@ namespace NeoVector.World;
 public class PlayerBasicSkillService
 {
 
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerBasicSkillUseEvent(PlayerBasicSkillUseEvent playerBasicSkillUseEvent)
     {
         var player = playerBasicSkillUseEvent.Player;

@@ -126,7 +126,7 @@ public static class CollectionExtensions
 	}
 
 	/// <summary>
-	/// Converts a regular <see cref="DualDictionary{TKey,TValue}"/> into a read-only <see cref="ReadOnlyDictionary{TKey, TValue}"/>.
+	/// Converts a regular <see cref="Dictionary{TKey, TValue}"/> into a read-only <see cref="ReadOnlyDictionary{TKey, TValue}"/>.
 	/// </summary>
 	/// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
 	/// <typeparam name="TValue">The type of values in the dictionary.</typeparam>

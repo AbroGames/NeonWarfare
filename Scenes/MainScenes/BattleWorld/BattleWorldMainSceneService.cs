@@ -8,7 +8,7 @@ namespace NeoVector;
 public  class BattleWorldMainSceneService
 {
     
-	[GameEventListener]
+	[EventListener]
 	public void OnBattleWorldMainSceneReadyEvent(BattleWorldMainSceneReadyEvent battleWorldMainSceneReadyEvent)
 	{
 		BattleWorldMainScene battleWorldMainScene = battleWorldMainSceneReadyEvent.BattleWorldMainScene;

@@ -10,7 +10,7 @@ public class BattleWorldEnemySpawnService
     private int RequiredEnemies = 0;
     private int RequiredBosses = 0;
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldPhysicsProcessEvent(BattleWorldPhysicsProcessEvent battleWorldPhysicsProcessEvent)
     {
         //TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
@@ -29,13 +29,13 @@ public class BattleWorldEnemySpawnService
         }
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldSpawnEnemiesRequestEvent(BattleWorldSpawnEnemiesRequestEvent battleWorldSpawnEnemiesRequestEvent)
     {
         RequiredEnemies += battleWorldSpawnEnemiesRequestEvent.RequiredEnemiesAmount;
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnBattleWorldSpawnBossesRequestEvent(BattleWorldSpawnBossesRequestEvent battleWorldSpawnBossesRequestEvent)
     {
         RequiredBosses += battleWorldSpawnBossesRequestEvent.RequiredBossesAmount;

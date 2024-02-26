@@ -9,7 +9,7 @@ namespace NeoVector.World;
 public class PlayerRotateService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerProcessEvent(PlayerProcessEvent playerProcessEvent)
     {
         var (player, delta) = playerProcessEvent;

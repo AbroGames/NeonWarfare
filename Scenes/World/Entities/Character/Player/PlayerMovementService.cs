@@ -8,7 +8,7 @@ namespace NeoVector.World;
 public class PlayerMovementService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnPlayerPhysicsProcessEvent(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) {
         var (player, delta) = playerPhysicsProcessEvent;
         

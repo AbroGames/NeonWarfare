@@ -6,8 +6,8 @@ namespace MicroSurvivors;
 public partial class SmoothCamera2D : Camera2D
 {
 	[Export] public Node2D TargetNode;
-	[Export] public double SmoothingBase = 0.1;
-	[Export] public double SmoothingPower = 2; // The power to which the SmoothingBase value will be raised
+	[Export] public real SmoothingBase = 0.1f;
+	[Export] public real SmoothingPower = 2f; // The power to which the SmoothingBase value will be raised
 	
 	public Vector2 TargetPosition = Vector2.Zero; // Position where camera wants to be
 	public Vector2 ActualPosition = Vector2.Zero; // Position where camera is currently in

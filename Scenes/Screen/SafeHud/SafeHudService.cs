@@ -9,7 +9,7 @@ namespace NeoVector;
 public class SafeHudService
 {
     
-    [GameEventListener]
+    [EventListener]
     public void OnSafeHudProcessEvent(SafeHudProcessEvent safeHudProcessEvent)
     {
         SafeHud safeHud = safeHudProcessEvent.SafeHud;

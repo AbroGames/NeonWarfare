@@ -11,25 +11,25 @@ public class EnemyMovementService
 {
     private HashSet<Enemy> _attractors = new();
 
-    [GameEventListener]
+    [EventListener]
     public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
         _attractors.Add(attractionEvent.Enemy);
     }
 
-    [GameEventListener]
+    [EventListener]
     public void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
         _attractors.Remove(attractionEvent.Enemy);
     }
 
-    [GameEventListener]
+    [EventListener]
     public void OnReset(GameResetEvent reset)
     {
         _attractors = new();
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
     {
         var (enemy, delta) = enemyPhysicsProcessEvent;

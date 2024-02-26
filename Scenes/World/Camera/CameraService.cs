@@ -8,10 +8,10 @@ namespace NeoVector.World;
 public class CameraService
 {
 
-    [GameEventListener]
+    [EventListener]
     public void OnCameraDeferredProcessEvent(CameraDeferredProcessEvent deferredProcess) { }
 
-    [GameEventListener]
+    [EventListener]
     public void OnMouseWheel(PlayerMouseWheelInputEvent wheelEvent)
     {
         var (player, eventType) = wheelEvent;
@@ -27,7 +27,7 @@ public class CameraService
         }
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnCameraReadyEvent(CameraReadyEvent cameraReadyEvent)
     {
         Camera camera = cameraReadyEvent.Camera;
@@ -36,7 +36,7 @@ public class CameraService
         camera.TargetPosition = camera.Position;
     }
     
-    [GameEventListener]
+    [EventListener]
     public void OnCameraProcessEvent(CameraProcessEvent cameraProcessEvent) 
     {
         MoveCamera(cameraProcessEvent.Camera, cameraProcessEvent.Delta);
