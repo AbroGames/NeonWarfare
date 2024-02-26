@@ -1,8 +1,7 @@
-﻿using AbroDraft.Scripts.EventBus;
-using Godot;
+﻿using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.Screen.Menu.CreateServerButton;
+namespace AbroDraft;
 
 public partial class CreateServerButton : Button
 {

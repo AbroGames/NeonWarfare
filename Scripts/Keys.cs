@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft.Scripts;
+namespace AbroDraft;
 
 public static class Keys
 {

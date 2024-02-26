@@ -1,12 +1,8 @@
-﻿using AbroDraft.Scenes.World.Entities.Character;
-using AbroDraft.Scenes.World.Entities.Character.Enemy;
-using AbroDraft.Scripts.Content;
-using AbroDraft.Scripts.EventBus;
-using Godot;
+﻿using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.BattleWorld.Wave;
+namespace AbroDraft.World;
 
 [GameService]
 public class BattleWorldEnemySpawnService
@@ -45,13 +41,13 @@ public class BattleWorldEnemySpawnService
         RequiredBosses += battleWorldSpawnBossesRequestEvent.RequiredBossesAmount;
     }
     
-    private void CreateEnemyAroundCharacter(BattleWorld battleWorld, Entities.Character.Character character, double angle, double distance)
+    private void CreateEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(battleWorld, Root.Root.Instance.PackedScenes.World.Enemy, character, angle, distance);
+        var enemy = GenEnemyAroundCharacter(battleWorld, Root.Instance.PackedScenes.World.Enemy, character, angle, distance);
         AnimateSpawn(enemy, battleWorld);
     }
 
-    private void AnimateSpawn(Entities.Character.Enemy.Enemy enemy, BattleWorld battleWorld)
+    private void AnimateSpawn(Enemy enemy, BattleWorld battleWorld)
     {
         var fx = Fx.CreateSpawnFx();
         fx.Finished += () =>
@@ -71,7 +67,7 @@ public class BattleWorldEnemySpawnService
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;
 			
-        var enemy = template.Instantiate() as Entities.Character.Enemy.Enemy;
+        var enemy = template.Instantiate() as Enemy;
         enemy.Position = targetPosition;
         enemy.Rotation = angle - Mathf.Pi / 2;
         enemy.Target = character;
@@ -102,9 +98,9 @@ public class BattleWorldEnemySpawnService
         return enemy;
     }
     
-    private void CreateBossEnemyAroundCharacter(BattleWorld battleWorld, Entities.Character.Character character, double angle, double distance)
+    private void CreateBossEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(battleWorld, Root.Root.Instance.PackedScenes.World.Boss, character, angle, distance, true);
+        var enemy = GenEnemyAroundCharacter(battleWorld, Root.Instance.PackedScenes.World.Boss, character, angle, distance, true);
         var scale = 1 + 0.1 * battleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Scale  = Vec(scale);  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.

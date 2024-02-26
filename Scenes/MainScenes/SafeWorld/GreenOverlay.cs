@@ -1,6 +1,6 @@
 using Godot;
 
-namespace AbroDraft.Scenes.MainScenes.SafeWorld;
+namespace AbroDraft;
 
 public partial class GreenOverlay : TextureRect
 {

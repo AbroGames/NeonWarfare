@@ -1,8 +1,8 @@
-using AbroDraft.Scripts.EventBus;
+using AbroDraft.World;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.MainScenes.BattleWorld;
+namespace AbroDraft;
 
 [GameService]
 public  class BattleWorldMainSceneService
@@ -13,8 +13,8 @@ public  class BattleWorldMainSceneService
 	{
 		BattleWorldMainScene battleWorldMainScene = battleWorldMainSceneReadyEvent.BattleWorldMainScene;
 		
-		Screen.BattleHud.BattleHud battleHud = battleWorldMainScene.HudContainer.GetCurrentStoredNode<Screen.BattleHud.BattleHud>();
-		World.BattleWorld.BattleWorld battleWorld = battleWorldMainScene.WorldContainer.GetCurrentStoredNode<World.BattleWorld.BattleWorld>();
+		BattleHud battleHud = battleWorldMainScene.HudContainer.GetCurrentStoredNode<BattleHud>();
+		BattleWorld battleWorld = battleWorldMainScene.WorldContainer.GetCurrentStoredNode<BattleWorld>();
 
 		battleHud.BattleWorld = battleWorld;
 		battleWorld.BattleHud = battleHud;

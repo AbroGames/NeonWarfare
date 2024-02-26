@@ -1,7 +1,6 @@
-using AbroDraft.Scripts.EventBus;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.MainScenes.MainMenu;
+namespace AbroDraft;
 
 public class MainMenuMainSceneService
 {

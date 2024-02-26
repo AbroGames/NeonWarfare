@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.MainScenes.BattleWorld;
+namespace AbroDraft;
 
 public readonly struct BattleWorldMainSceneReadyEvent(BattleWorldMainScene battleWorldMainScene) : IEvent
 {

@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.World.Entities.FloatingLabel;
+namespace AbroDraft.World;
 
 public partial class FloatingLabel : Node2D
 {
@@ -55,7 +55,7 @@ public partial class FloatingLabel : Node2D
 
 	public static FloatingLabel Create()
 	{
-		return Root.Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
+		return Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
 	}
 	public static FloatingLabel Create(string text, Color color, double scale)
 	{

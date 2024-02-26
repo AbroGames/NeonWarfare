@@ -1,10 +1,9 @@
 using System;
-using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.Entities.Character.Player;
+namespace AbroDraft.World;
 
 [GameService]
 public class PlayerRotateService

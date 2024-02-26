@@ -1,19 +1,17 @@
 using System.Collections.Generic;
-using AbroDraft.Scenes.World.BattleWorld.Wave;
-using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.World.BattleWorld;
+namespace AbroDraft.World;
 
 public partial class BattleWorld : Node2D
 {
 	[Export] [NotNull] public Floor Floor { get; set; }
 	
-	public Screen.BattleHud.BattleHud BattleHud { get; set; }
-	public Entities.Character.Player.Player Player;
+	public BattleHud BattleHud { get; set; }
+	public Player Player;
 	public EnemyWave EnemyWave { get; set; } = new();
-	public readonly ISet<Entities.Character.Enemy.Enemy> Enemies = new HashSet<Entities.Character.Enemy.Enemy>();
+	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	
 	public override void _Ready()
 	{

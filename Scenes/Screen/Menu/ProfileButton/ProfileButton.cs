@@ -1,6 +1,6 @@
 using Godot;
 
-namespace AbroDraft.Scenes.Screen.Menu.ProfileButton;
+namespace AbroDraft;
 
 public partial class ProfileButton : Button
 {

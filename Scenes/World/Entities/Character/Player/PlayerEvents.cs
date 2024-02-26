@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.Entities.Character.Player;
+namespace AbroDraft.World;
 
 public readonly record struct PlayerGainXpEvent(Player Player, int Xp) : IEvent;
 public readonly record struct PlayerLevelUpEvent(Player Player) : IEvent;

@@ -1,4 +1,4 @@
-namespace AbroDraft.Scenes.World.Entities.Character.Ally;
+namespace AbroDraft.World;
 
 public partial class Ally : Character
 {

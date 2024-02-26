@@ -1,13 +1,13 @@
 using Godot;
 
-namespace AbroDraft.Scripts.Screen;
+namespace AbroDraft;
 
 public partial class Menu : Control
 {
 	private Control _currentMenu;
 	public override void _Ready()
 	{
-		var mainMenu = Scenes.Root.Root.Instance.PackedScenes.Screen.MainMenu.Instantiate() as Control;
+		var mainMenu = Root.Instance.PackedScenes.Screen.MainMenu.Instantiate() as Control;
 		_currentMenu = mainMenu;
 		AddChild(mainMenu);
 	}

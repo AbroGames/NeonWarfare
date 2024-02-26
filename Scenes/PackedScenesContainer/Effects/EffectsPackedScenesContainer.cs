@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.PackedScenesContainer.Effects;
+namespace AbroDraft;
 
 public partial class EffectsPackedScenesContainer : Node
 {

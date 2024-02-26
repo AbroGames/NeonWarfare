@@ -2,7 +2,7 @@ using System;
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.World.Effects;
+namespace AbroDraft.World;
 
 public partial class GpuParticlesFx : Node2D
 {

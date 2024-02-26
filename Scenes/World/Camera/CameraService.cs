@@ -1,10 +1,8 @@
-using AbroDraft.Scenes.World.Entities.Character.Player;
-using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.Camera;
+namespace AbroDraft.World;
 
 [GameService]
 public class CameraService

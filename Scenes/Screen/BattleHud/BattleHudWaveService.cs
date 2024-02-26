@@ -1,10 +1,9 @@
-using AbroDraft.Scenes.World.BattleWorld;
-using AbroDraft.Scripts.EventBus;
+using AbroDraft.World;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.Screen.BattleHud;
+namespace AbroDraft;
 
 [GameService]
 public class BattleHudWaveService

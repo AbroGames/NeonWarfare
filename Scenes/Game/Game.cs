@@ -1,12 +1,12 @@
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.Game;
+namespace AbroDraft;
 
 public partial class Game : Node2D
 {
 	
-	[Export] [NotNull] public Scripts.Containers.NodeContainer MainSceneContainer { get; private set; }
+	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public PlayerInfo PlayerInfo { get; private set; }
 	
 	public override void _Ready()

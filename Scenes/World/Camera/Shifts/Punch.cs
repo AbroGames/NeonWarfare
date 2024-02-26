@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft.Scenes.World.Camera.Shifts;
+namespace AbroDraft.World;
 
 public class Punch(Vector2 dir, double strength, double movementSpeed = 3000) : IShiftProvider
 {

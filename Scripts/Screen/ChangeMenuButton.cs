@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft.Scripts.Screen;
+namespace AbroDraft;
 
 public partial class ChangeMenuButton : Godot.Button
 {

@@ -1,6 +1,6 @@
 using Godot;
 
-namespace AbroDraft.Scenes.Game;
+namespace AbroDraft;
 
 public partial class PlayerInfo : Node2D
 {

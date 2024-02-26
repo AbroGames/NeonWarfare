@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using AbroDraft.Scripts.Content;
 using Godot;
 
-namespace AbroDraft.Scenes.World.Entities.Bullet;
+namespace AbroDraft.World;
 
 public partial class Bullet : Node2D
 {
@@ -10,7 +9,7 @@ public partial class Bullet : Node2D
 	[Export] public double Speed = 700; //pixels/sec
 	[Export] public double RemainingDistance = 2000; //pixels
 
-	public Character.Character Source { get; set; }
+	public Character Source { get; set; }
 	public AuthorEnum Author;
 	public double RemainingDamage = 1000;
 	
@@ -29,9 +28,9 @@ public partial class Bullet : Node2D
 		
 		GetNode<Area2D>("Area2D").AreaEntered += area =>
 		{
-			if(area.GetParent() is not Character.Character body) return;
+			if(area.GetParent() is not Character body) return;
 			
-			if (body is Character.Player.Player player)
+			if (body is Player player)
 			{
 				if (Author != AuthorEnum.PLAYER)
 				{
@@ -49,7 +48,7 @@ public partial class Bullet : Node2D
 				}
 			}
 			
-			if (body is Character.Enemy.Enemy enemy)
+			if (body is Enemy enemy)
 			{
 				if (Author != AuthorEnum.ENEMY)
 				{
@@ -67,7 +66,7 @@ public partial class Bullet : Node2D
 				}
 			}
 			
-			if (body is Character.Ally.Ally ally)
+			if (body is Ally ally)
 			{
 				if (Author != AuthorEnum.ALLY)
 				{
@@ -77,7 +76,7 @@ public partial class Bullet : Node2D
 		};
 	}
 
-	private void ApplyDamage(Character.Character to, Color color)
+	private void ApplyDamage(Character to, Color color)
 	{
 		if (RemainingDamage <= 0)
 			return;

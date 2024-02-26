@@ -1,4 +1,4 @@
-namespace AbroDraft.Scenes.World.BattleWorld.Wave;
+namespace AbroDraft.World;
 
 public class EnemyWave 
 {

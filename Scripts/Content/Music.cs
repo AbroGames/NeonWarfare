@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Collections;
 
-namespace AbroDraft.Scripts.Content;
+namespace AbroDraft;
 
 public static class Music
 {

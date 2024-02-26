@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.Screen.BattleHud;
+namespace AbroDraft;
 
 public partial class Icon : TextureRect
 {

@@ -1,14 +1,13 @@
-using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.World.SafeWorld;
+namespace AbroDraft.World;
 
 public partial class SafeWorld : Node2D
 {
 	[Export] [NotNull] public Floor Floor { get; set; }
-	public Screen.SafeHud.SafeHud SafeHud { get; set; }
-	public Entities.Character.Player.Player Player;
+	public SafeHud SafeHud { get; set; }
+	public Player Player;
 	
 	public override void _Ready()
 	{

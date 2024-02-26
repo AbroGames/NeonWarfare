@@ -1,9 +1,7 @@
-using AbroDraft.Scripts.Content;
-using AbroDraft.Scripts.EventBus;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.SafeWorld;
+namespace AbroDraft.World;
 
 [GameService]
 public class SafeWorldService
@@ -14,10 +12,10 @@ public class SafeWorldService
     {
         SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
         
-        safeWorld.Player = Root.Root.Instance.PackedScenes.World.Player.Instantiate<Entities.Character.Player.Player>();
+        safeWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         safeWorld.Player.Position = Vec(500, 500);
 		
-        var camera = new Camera.Camera(); //TODO to camera service
+        var camera = new Camera(); //TODO to camera service
         camera.Position = safeWorld.Player.Position;
         camera.TargetNode = safeWorld.Player;
         camera.Zoom = Vec(0.65);

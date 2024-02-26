@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft.Scenes.World.Camera.Shifts;
+namespace AbroDraft.World;
 
 public interface IShiftProvider
 {

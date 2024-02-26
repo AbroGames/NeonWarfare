@@ -1,9 +1,8 @@
-using AbroDraft.Scripts;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.Entities.Character.Player;
+namespace AbroDraft.World;
 
 [GameService]
 public class PlayerMovementService

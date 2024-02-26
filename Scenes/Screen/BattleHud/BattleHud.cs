@@ -1,14 +1,14 @@
-using AbroDraft.Scripts.EventBus;
+using AbroDraft.World;
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.Screen.BattleHud;
+namespace AbroDraft;
 
 public partial class BattleHud : Control
 {
 	[ExportGroup("Bars")]
 	[Export] [NotNull] public ProgressBar Xp { get; private set; }
-	[Export] [NotNull] public Components.TwoColoredBar.TwoColoredBar HpBar { get; private set; }
+	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
 	[Export] [NotNull] public Label XpLabel { get; private set; }
 	
 	
@@ -34,7 +34,7 @@ public partial class BattleHud : Control
 	[Export] [NotNull] public Icon SolarBeamIcon { get; private set; }
 	
 	
-	public World.BattleWorld.BattleWorld BattleWorld { get; set; }
+	public BattleWorld BattleWorld { get; set; }
 	public Vector2 WaveMessageInitialPosition { get; set; }
 	
 	public override void _Ready()

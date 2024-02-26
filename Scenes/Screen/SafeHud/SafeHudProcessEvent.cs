@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.Screen.SafeHud;
+namespace AbroDraft;
 
 public readonly struct SafeHudProcessEvent(SafeHud safeHud, double delta) : IEvent
 {

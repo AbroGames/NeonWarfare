@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using AbroDraft.Scenes.Root;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.Entities.Character.Enemy;
+namespace AbroDraft.World;
 
 [GameService]
 public class EnemyMovementService

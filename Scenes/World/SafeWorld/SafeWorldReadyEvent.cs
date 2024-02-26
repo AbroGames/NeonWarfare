@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.SafeWorld;
+namespace AbroDraft.World;
 
 public readonly struct SafeWorldReadyEvent(SafeWorld safeWorld) : IEvent
 {

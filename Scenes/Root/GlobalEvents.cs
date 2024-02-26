@@ -1,6 +1,6 @@
 ﻿
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.Root;
+namespace AbroDraft;
 
 public readonly record struct GameResetEvent() : IEvent;

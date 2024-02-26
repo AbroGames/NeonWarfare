@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.Scenes.PackedScenesContainer.Main;
+namespace AbroDraft;
 
 public partial class MainPackedScenesContainer : Node
 {

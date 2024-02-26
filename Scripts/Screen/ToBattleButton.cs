@@ -1,6 +1,6 @@
 using Godot;
 
-namespace AbroDraft.Scripts.Screen;
+namespace AbroDraft;
 
 public partial class ToBattleButton : Godot.Button
 {
@@ -13,7 +13,7 @@ public partial class ToBattleButton : Godot.Button
 
     private void OnClick()
     {
-        Scenes.Root.Root.Instance.Game.MainSceneContainer.ChangeStoredNode(_battleMainScene.Instantiate());
+        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(_battleMainScene.Instantiate());
     }
 
 }

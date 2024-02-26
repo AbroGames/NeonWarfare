@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.BattleWorld;
+namespace AbroDraft.World;
 
 public readonly record struct BattleWorldSpawnEnemiesRequestEvent(int RequiredEnemiesAmount) : IEvent;
 public readonly record struct BattleWorldSpawnBossesRequestEvent(int RequiredBossesAmount) : IEvent;

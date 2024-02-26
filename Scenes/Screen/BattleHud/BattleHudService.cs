@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using AbroDraft.Scenes.World.BattleWorld;
-using AbroDraft.Scenes.World.Entities.Character.Player;
-using AbroDraft.Scripts.EventBus;
+using AbroDraft.World;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.Screen.BattleHud;
+namespace AbroDraft;
 
 [GameService]
 public class BattleHudService

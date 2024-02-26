@@ -1,13 +1,9 @@
 using System;
-using AbroDraft.Scenes.Root;
-using AbroDraft.Scripts;
-using AbroDraft.Scripts.Content;
-using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 using KludgeBox.Scheduling;
 
-namespace AbroDraft.Scenes.World.Entities.Character.Player;
+namespace AbroDraft.World;
 
 public partial class Player : Character
 {
@@ -26,7 +22,7 @@ public partial class Player : Character
 	public double SecondaryDamage { get; set; } = 5;
 	public double SecondaryDistance { get; set; } = 1000;
 
-	public Camera.Camera Camera;
+	public Camera Camera;
 
 	public Cooldown SecondaryCd { get; set; } = new(0.1);
 
@@ -38,14 +34,14 @@ public partial class Player : Character
 		base._Ready();
 		EventBus.Publish(new PlayerReadyEvent(this));
 		
-		Camera = GetParent().GetChild<Camera.Camera>();
+		Camera = GetParent().GetChild<Camera>();
 		SecondaryCd.Ready += AttackSecondary;
 
 		AttackSpeed = 3;
 		Died += () =>
 		{
-			var mainMenu = Root.Root.Instance.PackedScenes.Main.MainMenu;
-			Root.Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+			var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
+			Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
 			EventBus.Publish(new GameResetEvent());
 			Audio2D.StopMusic();
 		};
@@ -96,12 +92,12 @@ public partial class Player : Character
 		SecToNextAttack = 1.0 / AttackSpeed;
 		
 		// Создание снаряда
-		Bullet.Bullet bullet = Root.Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet.Bullet;
+		Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
 		// Установка начальной позиции снаряда
 		bullet.GlobalPosition = GlobalPosition;
 		// Установка направления движения снаряда
 		bullet.Rotation = Rotation;
-		bullet.Author = Bullet.Bullet.AuthorEnum.PLAYER;
+		bullet.Author = Bullet.AuthorEnum.PLAYER;
 		bullet.Speed *= 3;
 		bullet.RemainingDamage = PrimaryDamage;
 		bullet.RemainingDistance = PrimaryDistance;
@@ -123,12 +119,12 @@ public partial class Player : Character
 		for (int i = 0; i < bulletsCount; i++)
 		{
 			// Создание снаряда
-			Bullet.Bullet bullet = Root.Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet.Bullet;
+			Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
 			// Установка начальной позиции снаряда
 			bullet.GlobalPosition = GlobalPosition;
 			// Установка направления движения снаряда
 			bullet.Rotation = Rotation + Rand.Range(-spread, spread);
-			bullet.Author = Bullet.Bullet.AuthorEnum.PLAYER;
+			bullet.Author = Bullet.AuthorEnum.PLAYER;
 			bullet.Speed = bullet.Speed * 2 + Rand.Range(-bullet.Speed * speedSpread, bullet.Speed * speedSpread);
 			bullet.RemainingDistance = SecondaryDistance;
 			bullet.RemainingDamage = SecondaryDamage;

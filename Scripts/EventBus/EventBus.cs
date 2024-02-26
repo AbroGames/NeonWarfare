@@ -3,7 +3,7 @@ using System.Linq;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scripts.EventBus;
+namespace AbroDraft;
 
 public static class EventBus
 {

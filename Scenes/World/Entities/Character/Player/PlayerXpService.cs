@@ -1,10 +1,8 @@
-using AbroDraft.Scripts.Content;
-using AbroDraft.Scripts.EventBus;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.Scenes.World.Entities.Character.Player;
+namespace AbroDraft.World;
 
 [GameService]
 public class PlayerXpService
@@ -73,7 +71,7 @@ public class PlayerXpService
         //zoomTween.TweenProperty(player.Camera, "zoom", player.Camera.Zoom / 1.05, 1);
         
         Audio2D.PlaySoundOn(Sfx.LevelUp, player, 1f).PitchVariation(0.05f);
-        var lvlUpLabel = Root.Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel.FloatingLabel>();
+        var lvlUpLabel = Root.Instance.PackedScenes.World.FloatingLabel.Instantiate<FloatingLabel>();
 		
         lvlUpLabel.Configure($"Level up!\n{player.Level-1} -> {player.Level}", Colors.Gold, 1.3);
         lvlUpLabel.Position = player.Position - Vec(0, 100);
