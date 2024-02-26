@@ -165,8 +165,6 @@ public class KludgeEventBus
     public ListenerToken SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
     {
         Delegate actionDelegate;
-        if(subscriptionInfo.Method.DeclaringType.Name == "GetRequiredXpQuery")
-            Utils.DoNothing();
         
         Type eventType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
         var delegateType = typeof(Action<>).MakeGenericType(eventType);
