@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
@@ -28,14 +29,11 @@ public class PlayerXpService
     }
     
     [GameEventListener]
-    public void GetRequiredXpQuery(PlayerGetRequiredXpQuery playerGetRequiredXpQuery)
+    public long GetRequiredXpQuery(PlayerGetRequiredXpQuery playerGetRequiredXpQuery)
     {
         Player player = playerGetRequiredXpQuery.Player;
         
-        long result = (long) (player.BasicRequiredXp * Mathf.Pow(player.RequiredXpLevelFactor, player.Level));
-        playerGetRequiredXpQuery.SetResult(result);
-        //TODO вместо SetResult хочу, чтобы это было под капотом. А тут просто return result;
-        //Ответ на TODO это больно и страшно
+        return (long) (player.BasicRequiredXp * Mathf.Pow(player.RequiredXpLevelFactor, player.Level));
     }
 	
     [GameEventListener]

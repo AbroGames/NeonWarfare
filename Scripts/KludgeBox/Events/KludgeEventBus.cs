@@ -65,7 +65,7 @@ public class KludgeEventBus
     public TResult Require<TResult>(QueryEvent<TResult> @event)
     {
         Publish(@event);
-        return @event.Response;
+        return (TResult)@event.Response;
     }
 
     public EventPublisher<T> GetPublisher<T>(bool track = false) where T : IEvent
@@ -164,14 +164,25 @@ public class KludgeEventBus
     /// <returns>Message subscription token that can be used for unsubscribing.</returns>
     public ListenerToken SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
     {
-        Type messageType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
-
+        Delegate actionDelegate;
+        
+        Type eventType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
+        var delegateType = typeof(Action<>).MakeGenericType(eventType);
+        
         // Create an Action<TArg> delegate from the MethodInfo
-        var delegateType = typeof(Action<>).MakeGenericType(messageType);
-        var actionDelegate = Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
+        if (QueryHelpers.IsQueryEvent(eventType) && QueryHelpers.IsQueryListener(subscriptionInfo.Method))
+        {
+            actionDelegate = QueryHelpers.ToAction(subscriptionInfo.Invoker, subscriptionInfo.Method);
+        }
+        else
+        {
+            actionDelegate = Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
+        }
+        
+        
 
         // Subscribe to the message type using the created delegate
-        return typeof(KludgeEventBus).GetMethod("Subscribe")!.MakeGenericMethod(messageType)
+        return typeof(KludgeEventBus).GetMethod("Subscribe")!.MakeGenericMethod(eventType)
             .Invoke(this, new object[] { actionDelegate, subscriptionInfo.Priority }) as ListenerToken;
     }
 
