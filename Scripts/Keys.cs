@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public static class Keys
 {

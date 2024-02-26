@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Scheduling;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public partial class Beam : Node2D
 {

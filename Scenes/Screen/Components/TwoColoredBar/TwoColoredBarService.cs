@@ -1,7 +1,7 @@
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 [GameService]
 public class TwoColoredBarService

@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Collections;
 
-namespace AbroDraft
+namespace NeoVector
 {
 	public static class Sprites
 	{

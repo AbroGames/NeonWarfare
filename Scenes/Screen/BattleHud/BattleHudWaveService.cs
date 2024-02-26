@@ -1,9 +1,9 @@
-using AbroDraft.World;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
+using NeoVector.World;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 [GameService]
 public class BattleHudWaveService

@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="AbroDraft"
+config/name="NeoVector"
 run/main_scene="res://Scenes/Root/Root.tscn"
 config/features=PackedStringArray("4.2", "C#", "Double Precision", "Forward Plus")
 config/icon="res://game.svg"
@@ -22,7 +22,7 @@ window/stretch/aspect="expand"
 
 [dotnet]
 
-project/assembly_name="AbroDraft"
+project/assembly_name="NeoVector"
 
 [input]
 

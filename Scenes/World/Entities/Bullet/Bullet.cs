@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public partial class Bullet : Node2D
 {

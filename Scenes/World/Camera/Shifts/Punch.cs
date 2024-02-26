@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public class Punch(Vector2 dir, double strength, double movementSpeed = 3000) : IShiftProvider
 {

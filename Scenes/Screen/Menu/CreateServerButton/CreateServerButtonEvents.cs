@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public readonly record struct CreateServerButtonReadyEvent(CreateServerButton CreateServerButton) : IEvent;
 public readonly record struct CreateServerButtonClickEvent(CreateServerButton CreateServerButton) : IEvent;

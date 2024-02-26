@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public readonly struct SafeWorldMainSceneReadyEvent(SafeWorldMainScene safeWorldMainScene) : IEvent
 {

@@ -1,8 +1,8 @@
-using AbroDraft.World;
 using KludgeBox;
 using KludgeBox.Events;
+using NeoVector.World;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 [GameService]
 public  class BattleWorldMainSceneService

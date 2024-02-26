@@ -1,8 +1,8 @@
-using AbroDraft.World;
 using Godot;
 using KludgeBox;
+using NeoVector.World;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public partial class BattleHud : Control
 {

@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public class Shake(double strength, double time, bool deceising = true) : IShiftProvider
 {

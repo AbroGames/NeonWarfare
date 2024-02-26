@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public partial class CreateServerButton : Button
 {

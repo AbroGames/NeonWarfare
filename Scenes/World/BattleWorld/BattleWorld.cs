@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public partial class BattleWorld : Node2D
 {

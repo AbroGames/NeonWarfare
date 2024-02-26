@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public interface IShiftProvider
 {

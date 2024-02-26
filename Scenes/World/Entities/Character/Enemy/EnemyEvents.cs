@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public readonly record struct EnemyStartAttractionEvent(Enemy Enemy) : IEvent;
 public readonly record struct EnemyStopAttractionEvent(Enemy Enemy) : IEvent;

@@ -4,7 +4,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 [GameService]
 public class EnemyMovementService

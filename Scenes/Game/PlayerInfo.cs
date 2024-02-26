@@ -1,6 +1,6 @@
 using Godot;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public partial class PlayerInfo : Node2D
 {

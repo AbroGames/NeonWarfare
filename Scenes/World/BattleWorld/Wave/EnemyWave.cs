@@ -1,4 +1,4 @@
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public class EnemyWave 
 {

@@ -1,6 +1,6 @@
-﻿using AbroDraft.World;
+﻿using NeoVector.World;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public class Fx
 {

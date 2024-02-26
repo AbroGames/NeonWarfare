@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace AbroDraft.World;
+namespace NeoVector.World;
 
 public partial class SolarBeam : Node2D
 {

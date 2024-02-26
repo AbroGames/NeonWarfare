@@ -3,7 +3,7 @@ using System.Linq;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public static class EventBus
 {

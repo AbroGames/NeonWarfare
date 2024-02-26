@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace AbroDraft;
+namespace NeoVector;
 
 public readonly record struct ProfileButtonReadyEvent(ProfileButton ProfileButton) : IEvent;
 public readonly record struct ProfileButtonClickEvent(ProfileButton ProfileButton) : IEvent;
