@@ -40,10 +40,21 @@ public static class EventBus
     {
         return _bus.Require(@event);
     }
-
-    public static EventPublisher<T> GetPublisher<T>(bool track = false) where T : IEvent
+    public static bool TryRequire<TResult>(QueryEvent<TResult> @event, out TResult result)
     {
-        return _bus.GetPublisher<T>(track);
+        result = Require(@event);
+        return @event.HasResult;
+    }
+
+
+    public static EventPublisher<T> GetEventPublisher<T>(bool track = false) where T : IEvent
+    {
+        return _bus.GetEventPublisher<T>(track);
+    }
+    
+    public static QueryPublisher<T> GetQueryPublisher<T>(bool track = false) where T : QueryEvent
+    {
+        return _bus.GetQueryPublisher<T>(track);
     }
 
     public static void SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)

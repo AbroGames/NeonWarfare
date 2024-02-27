@@ -65,15 +65,28 @@ public class KludgeEventBus
     public TResult Require<TResult>(QueryEvent<TResult> @event)
     {
         Publish(@event);
-        return (TResult)@event.Response;
+        return @event.Result;
     }
 
-    public EventPublisher<T> GetPublisher<T>(bool track = false) where T : IEvent
+    public bool TryRequire<TResult>(QueryEvent<TResult> @event, out TResult result)
+    {
+        result = Require(@event);
+        return @event.HasResult;
+    }
+
+    public EventPublisher<T> GetEventPublisher<T>(bool track = false) where T : IEvent
     {
         var type = typeof(T);
         var publisher = GetPublisher(type, track);
         EventPublisher<T> genericPublisher = publisher.AsGeneric<T>();
         return genericPublisher;
+    }
+    
+    public QueryPublisher<T> GetQueryPublisher<T>(bool track = false) where T : QueryEvent
+    {
+        var type = typeof(T);
+        var publisher = GetPublisher(type, track);
+        return new QueryPublisher<T>(publisher);
     }
 
     internal EventPublisher GetPublisher(Type type, bool track = false)

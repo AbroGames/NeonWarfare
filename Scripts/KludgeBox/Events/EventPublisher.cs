@@ -5,8 +5,7 @@ namespace KludgeBox.Events;
 public class EventPublisher
 {
     internal EventHub hub;
-
-
+    
     internal EventPublisher(EventHub hub)
     {
         this.hub = hub;
@@ -30,7 +29,16 @@ public class EventPublisher
         if (typeof(T) != hub.EventHubType)
             throw new ArgumentException($"Attempt to create generic publisher of type {typeof(T)} for {hub.EventHubType} hub.");
         
+        
         return new EventPublisher<T>(this);
+    }
+
+    public QueryPublisher<T> AsQuery<T>() where T : QueryEvent
+    {
+        if (typeof(T) != hub.EventHubType)
+            throw new ArgumentException($"Attempt to create generic publisher of type {typeof(T)} for {hub.EventHubType} hub.");
+        
+        return new QueryPublisher<T>(this);
     }
 }
 
