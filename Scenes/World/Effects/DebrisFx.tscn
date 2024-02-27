@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://3cohjn4xbp2o"]
 
 [ext_resource type="Script" path="res://Scenes/World/Effects/GpuParticlesFx.cs" id="1_j77oh"]
-[ext_resource type="Texture2D" uid="uid://cn2k4cmkg320j" path="res://Assets/Textures/Sprites/HHexagon.png" id="2_upprt"]
+[ext_resource type="Texture2D" uid="uid://cvj1gxq3db2hc" path="res://Assets/Textures/Sprites/Square.png" id="2_d26xt"]
 
 [sub_resource type="Gradient" id="Gradient_0adk4"]
 offsets = PackedFloat32Array(0, 0.057377, 0.688525, 1)
@@ -29,9 +29,8 @@ script = ExtResource("1_j77oh")
 Particles2D = NodePath("GPUParticles2D")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-emitting = false
 process_material = SubResource("ParticleProcessMaterial_2hy4l")
-texture = ExtResource("2_upprt")
+texture = ExtResource("2_d26xt")
 lifetime = 10.0
 one_shot = true
 explosiveness = 0.9
