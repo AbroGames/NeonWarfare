@@ -13,23 +13,29 @@ public partial class FloatingLabel : Node2D
 	private double _rads = Mathf.Pi / 2;
 
 	private Vector2 _startPos;
-
+	private double _scale;
+	
 	/// <inheritdoc />
 	public override void _Ready()
 	{
+		var label = GetNode("Label") as Label;
 		_startPos = Position;
 		double rotation = 10;
 		Rotation += Mathf.DegToRad(Rand.Range(-rotation, rotation));
+		Scale = Vec(2);
+		var tween = GetTree().CreateTween();
+		tween.TweenProperty(this, "scale", Vec(1), _targetTime * 0.2);
 	}
 
 	public void Configure(string text, Color color, double scale)
 	{
 		var label = GetNode("Label") as Label;
 		var settings = label.LabelSettings;
+		_scale = scale;
 		
 		label.Text = text;
 		settings.FontColor = color;
-		settings.FontSize = (int)(settings.FontSize * scale);
+		settings.FontSize = (int)(settings.FontSize * _scale);
 	}
 
 	/// <inheritdoc />
