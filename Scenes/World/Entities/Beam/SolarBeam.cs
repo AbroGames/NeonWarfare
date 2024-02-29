@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Scheduling;
 
 namespace NeoVector.World;
 
@@ -8,6 +9,7 @@ public partial class SolarBeam : Node2D
 	public Player Source { get; set; }
 	public double Dps { get; set; } = 3000;
 	public double RotationSpeedFactor = 0.075;
+	public double PushVel { get; set; } = 500;
 	public double Ttl => _ttl;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
@@ -24,6 +26,7 @@ public partial class SolarBeam : Node2D
 	private double _ang;
 	private float _startGlow;
 	private double _interpolationFactor = (240.0 / 60) * 60;
+	private Cooldown _damageCd = new(duration: 0.1, isReady: true);
 
 	
 	public override void _Ready()
@@ -32,6 +35,10 @@ public partial class SolarBeam : Node2D
 		_outerStartWidth = OuterBeamSprite.Scale.Y;
 		_innerStartWidth = InnerBeamSprite.Scale.Y;
 		Source.RotationSpeed *= RotationSpeedFactor;
+		_damageCd.Ready += () =>
+		{
+			DoDamage(_damageCd.Duration);
+		};
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -56,8 +63,13 @@ public partial class SolarBeam : Node2D
 		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (_outerStartWidth + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor };
 		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (_innerStartWidth + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor };
 		
-		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
-		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
+		_damageCd.Update(delta);
+	}
+	
+	private void DoDamage(double delta)
+	{
+		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5 * Source.UniversalDamageMultiplier, Source);
+		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2 * Source.UniversalDamageMultiplier, Source);
 		
 		var outerOthers = OuterHitArea.GetOverlappingAreas();
 		var innerOthers = InnerHitArea.GetOverlappingAreas();
@@ -66,7 +78,7 @@ public partial class SolarBeam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += Source.Up() * distFactor * 5 * Source.UniversalDamageMultiplier * 0.5 * delta * _interpolationFactor;
+			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta;
 			body.TakeDamage(outerDamage);
 		}
 		
@@ -74,7 +86,7 @@ public partial class SolarBeam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += Source.Up() * distFactor * 5 * Source.UniversalDamageMultiplier * delta * _interpolationFactor;
+			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * delta;
 			body.TakeDamage(innerDamage);
 		}
 	}
