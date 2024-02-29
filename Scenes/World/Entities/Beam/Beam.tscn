@@ -69,6 +69,7 @@ scale = Vector2(1.76195, 0.988236)
 texture = ExtResource("2_m1glf")
 
 [node name="DamageArea" type="Area2D" parent="OuterPart/Beam"]
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="OuterPart/Beam/DamageArea"]
 position = Vector2(215.611, 0)
@@ -98,6 +99,7 @@ scale = Vector2(1.76195, 0.988236)
 texture = ExtResource("2_m1glf")
 
 [node name="DamageArea" type="Area2D" parent="InnerPart/Beam"]
+collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InnerPart/Beam/DamageArea"]
 position = Vector2(215.611, 0)
