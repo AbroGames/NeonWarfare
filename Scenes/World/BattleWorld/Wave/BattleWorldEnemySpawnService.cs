@@ -11,7 +11,7 @@ public class BattleWorldEnemySpawnService
     private int RequiredBosses = 0;
     
     [EventListener]
-    public void OnBattleWorldPhysicsProcessEvent(BattleWorldPhysicsProcessEvent battleWorldPhysicsProcessEvent)
+    public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldPhysicsProcessEvent)
     {
         //TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
         if (RequiredEnemies > 0)
@@ -54,6 +54,7 @@ public class BattleWorldEnemySpawnService
         {
             battleWorld.AddChild(enemy);
             battleWorld.Enemies.Add(enemy);
+            enemy.SkipSmoothing();
         };
         fx.Position = enemy.Position;
         fx.Modulate = enemy.Sprite.Modulate.Darkened(0.33f);
