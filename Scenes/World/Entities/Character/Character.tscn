@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://n0xmwymx5ba5"]
+[gd_scene load_steps=8 format=3 uid="uid://n0xmwymx5ba5"]
 
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Character.cs" id="1_y827s"]
+[ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Smoothing2D.cs" id="2_lo3a5"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_qd6n2"]
 [ext_resource type="Texture2D" uid="uid://d2yh6feky0dp3" path="res://Assets/Textures/Sprites/Player.svg" id="3_qjj7c"]
 
@@ -19,14 +20,17 @@ radius = 18.0
 resource_local_to_scene = true
 radius = 15.0
 
-[node name="Character" type="CharacterBody2D" node_paths=PackedStringArray("Sprite", "CollisionShape")]
+[node name="Character" type="CharacterBody2D" node_paths=PackedStringArray("Sprite", "CollisionShape", "Smoother")]
 motion_mode = 1
 script = ExtResource("1_y827s")
-Sprite = NodePath("Sprite2D")
+Sprite = NodePath("Smoothing2D/Sprite2D")
 CollisionShape = NodePath("CharacterShape")
+Smoother = NodePath("Smoothing2D")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0, 1, 1, 1)
+[node name="Smoothing2D" type="Node2D" parent="."]
+script = ExtResource("2_lo3a5")
+
+[node name="Sprite2D" type="Sprite2D" parent="Smoothing2D"]
 material = SubResource("ShaderMaterial_fxydm")
 scale = Vector2(0.0939335, 0.0939335)
 texture = ExtResource("3_qjj7c")
@@ -35,6 +39,7 @@ texture = ExtResource("3_qjj7c")
 shape = SubResource("CircleShape2D_rfcs5")
 
 [node name="HitBox" type="Area2D" parent="."]
+collision_mask = 0
 
 [node name="HitBoxShape" type="CollisionShape2D" parent="HitBox"]
 shape = SubResource("CircleShape2D_bj4tw")

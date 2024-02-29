@@ -8,6 +8,7 @@ public partial class Character : CharacterBody2D
 {
 	[Export] [NotNull] public Sprite2D Sprite { get; private set; }
 	[Export] [NotNull] public CollisionShape2D CollisionShape { get; private set; }
+	[Export] [NotNull] public Smoothing2D Smoother { get; private set; }
 	
 	public event Action Died;
 	
@@ -26,6 +27,17 @@ public partial class Character : CharacterBody2D
 	{
 		NotNullChecker.CheckProperties(this);
 		EventBus.Publish(new CharacterReadyEvent(this));
+	}
+
+	public void TeleportTo(Vector2 pos)
+	{
+		Position = pos;
+		SkipSmoothing();
+	}
+
+	public void SkipSmoothing()
+	{
+		Smoother.Teleport();
 	}
 
 	public void TakeDamage(Damage damage)

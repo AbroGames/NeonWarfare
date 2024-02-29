@@ -4,7 +4,7 @@
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_y5vl5"]
 [ext_resource type="Texture2D" uid="uid://drvu6fdhwasqc" path="res://Assets/Textures/Sprites/Boss.svg" id="3_rasxh"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_irc74"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g565f"]
 resource_local_to_scene = true
 shader = ExtResource("2_y5vl5")
 shader_parameter/colorMaskFactor = 0.0
@@ -21,15 +21,18 @@ radius = 40.0125
 
 [node name="Boss" instance=ExtResource("1_t65df")]
 
-[node name="Sprite2D" parent="." index="0"]
-modulate = Color(0.886275, 0.360784, 0, 1)
-material = SubResource("ShaderMaterial_irc74")
-position = Vector2(0, 0)
-scale = Vector2(0.09375, 0.0939335)
+[node name="Sprite2D" parent="Smoothing2D" index="0"]
+modulate = Color(1, 0.431373, 0, 1)
+material = SubResource("ShaderMaterial_g565f")
+position = Vector2(0, -1)
+scale = Vector2(0.105469, 0.105469)
 texture = ExtResource("3_rasxh")
 
 [node name="CharacterShape" parent="." index="1"]
 shape = SubResource("CircleShape2D_x02b7")
+
+[node name="HitBox" parent="." index="3"]
+collision_mask = 1
 
 [node name="HitBoxShape" parent="HitBox" index="0"]
 shape = SubResource("CircleShape2D_v0n2k")

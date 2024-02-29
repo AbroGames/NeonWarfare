@@ -5,7 +5,7 @@
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_ebtod"]
 [ext_resource type="Texture2D" uid="uid://b0qm63iqy84j2" path="res://Assets/Textures/Particles/Effects/circle_01.png" id="5_cm7d8"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_p0ws3"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ergwe"]
 resource_local_to_scene = true
 shader = ExtResource("3_ebtod")
 shader_parameter/colorMaskFactor = 0.0
@@ -24,9 +24,9 @@ radius = 15.0
 script = ExtResource("2_1gm72")
 ShieldSprite = NodePath("ShieldSprite")
 
-[node name="Sprite2D" parent="." index="0"]
-modulate = Color(0, 0.839216, 0.839216, 1)
-material = SubResource("ShaderMaterial_p0ws3")
+[node name="Sprite2D" parent="Smoothing2D" index="0"]
+modulate = Color(0, 1, 1, 1)
+material = SubResource("ShaderMaterial_ergwe")
 
 [node name="CharacterShape" parent="." index="1"]
 shape = SubResource("CircleShape2D_p4o54")
