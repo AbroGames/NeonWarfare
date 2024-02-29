@@ -10,7 +10,7 @@ public class PlayerXpService
 {
 
     [EventListener]
-    public void OnPlayerReadeEvent(PlayerReadyEvent playerReadyEvent)
+    public void OnPlayerReadyEvent(PlayerReadyEvent playerReadyEvent)
     {
         Player player = playerReadyEvent.Player;
         player.NextLevelXp = EventBus.Require(new PlayerGetRequiredXpQuery(player));
