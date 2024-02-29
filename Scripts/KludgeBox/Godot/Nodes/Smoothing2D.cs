@@ -51,7 +51,7 @@ public partial class Smoothing2D : Node2D
 
     public void Teleport()
     {
-        RefrestTransform();
+        RefreshTransform();
         _previousTransform = _currentTransform;
         _Process(0);
     }
@@ -73,6 +73,7 @@ public partial class Smoothing2D : Node2D
         ProcessPriority = 100;
         Engine.PhysicsJitterFix = 0;
         TopLevel = TestFlags(SF_TOP_LEVEL);
+        Teleport();
     }
 
     /// <inheritdoc />
@@ -129,10 +130,6 @@ public partial class Smoothing2D : Node2D
 
     #region Private
 
-    private void RefrestTransform()
-    {
-        throw new System.NotImplementedException();
-    }
 
     private void FindTarget()
     {
