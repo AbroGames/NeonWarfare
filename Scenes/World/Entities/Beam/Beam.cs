@@ -73,14 +73,10 @@ public partial class Beam : Node2D
 
 	private void DoDamage(double delta)
 	{
-		double interpolationFactor = (240.0 / 60) * 60;
-
 		Shaker.Strength = 10 * Mathf.Max(0, 1 - Source.DistanceTo(this) / _shakeDist); 
 		
-		
-		
-		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5, Source);
-		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2, Source);
+		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5 * Source.UniversalDamageMultiplier, Source);
+		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2 * Source.UniversalDamageMultiplier, Source);
 		
 		var outerOthers = OuterHitArea.GetOverlappingAreas();
 		var innerOthers = InnerHitArea.GetOverlappingAreas();
