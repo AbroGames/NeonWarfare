@@ -1,20 +1,23 @@
 [gd_scene load_steps=4 format=3 uid="uid://dpq1k8xkcy67o"]
 
 [ext_resource type="Script" path="res://Scenes/World/Entities/Bullet/Bullet.cs" id="1_w368o"]
-[ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="2_6wdla"]
+[ext_resource type="Texture2D" uid="uid://cjnay76gpvl0a" path="res://Assets/Textures/Particles/Effects/rotated/trace_01_rotated.png" id="2_2m1t7"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_gdlum"]
-a = Vector2(0, -12)
-b = Vector2(0, 12)
+a = Vector2(0, -24)
+b = Vector2(0, 20)
 
 [node name="Bullet" type="Node2D"]
 script = ExtResource("1_w368o")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.003, 0.06)
-texture = ExtResource("2_6wdla")
+position = Vector2(2.11758e-21, 12)
+rotation = -1.57079
+scale = Vector2(0.167252, 0.167252)
+texture = ExtResource("2_2m1t7")
 
 [node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
 input_pickable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
