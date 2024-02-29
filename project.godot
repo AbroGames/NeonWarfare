@@ -91,6 +91,14 @@ WheelDown={
 ]
 }
 
+[physics]
+
+2d/run_on_separate_thread=true
+common/physics_ticks_per_second=20
+common/max_physics_steps_per_frame=1
+common/physics_jitter_fix=0.0
+2d/solver/solver_iterations=1
+
 [rendering]
 
 environment/defaults/default_clear_color=Color(0.0313726, 0.0313726, 0.0313726, 1)
