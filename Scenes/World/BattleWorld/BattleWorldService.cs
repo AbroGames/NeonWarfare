@@ -32,6 +32,8 @@ public class BattleWorldService
         battleWorld.AddChild(ally);
         battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor
         
+        //EventBus.Publish(new PlayerLevelUpEvent(battleWorld.Player, 20));
+        
         if (Rand.Chance(0.5))//TODO to music service (battle music service)
         {
             PlayBattleMusic1();
