@@ -20,6 +20,13 @@ public partial class Enemy : Character
 		EventBus.Publish(new EnemyReadyEvent(this));
 	}
 
+	/// <inheritdoc />
+	public override void Die()
+	{
+		base.Die();
+		EventBus.Publish(new EnemyDeathEvent(this));
+	}
+
 	public override void _Process(double delta)
 	{
 		base._Process(delta);

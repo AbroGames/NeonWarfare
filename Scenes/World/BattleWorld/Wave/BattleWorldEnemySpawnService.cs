@@ -82,14 +82,6 @@ public class BattleWorldEnemySpawnService
             enemy.CollisionPriority = 1000;
             EventBus.Publish(new EnemyStartAttractionEvent(enemy));
         }
-        enemy.Died += () =>
-        {
-            battleWorld.Enemies.Remove(enemy);
-            if (enemy.IsAttractor)
-            {
-                EventBus.Publish(new EnemyStopAttractionEvent(enemy));
-            }
-        };
 
         if (!forceAttractor)
         {

@@ -15,3 +15,8 @@ public readonly record struct PlayerBasicSkillUseEvent(Player Player) : IEvent;
 public readonly record struct PlayerAdvancedSkillUseEvent(Player Player) : IEvent;
 
 public record PlayerGetRequiredXpQuery(Player Player) : QueryEvent<long>;
+
+public readonly record struct PlayerDeathEvent(Player Player) : IEvent;
+
+public readonly record struct PlayerAttackPrimaryEvent(Player Player) : IEvent;
+public readonly record struct PlayerAttackSecondaryEvent(Player Player) : IEvent;
