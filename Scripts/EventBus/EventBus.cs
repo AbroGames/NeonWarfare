@@ -25,6 +25,11 @@ public static class EventBus
         _bus.Publish(@event);
     }
 
+    public static void Publish<T>() where T : IEvent, new()
+    {
+        _bus.Publish(new T());
+    }
+
     /// <summary>
     /// Returns if CancellableEvent was cancelled
     /// </summary>
