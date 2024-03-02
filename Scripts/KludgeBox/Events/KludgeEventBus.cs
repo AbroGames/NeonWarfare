@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using NeoVector.KludgeBox.Events;
 
 namespace KludgeBox.Events;
 
@@ -27,7 +29,12 @@ public class KludgeEventBus
     /// <returns>A listener token that can be used to unsubscribe from the event.</returns>
     public ListenerToken Subscribe<T>(Action<T> action, ListenerPriority priority) where T : IEvent
     {
-        return GetHub(typeof(T)).Subscribe(action, priority);
+        return SubscribeByInfo<T>(new(action, false, null), priority);
+    }
+
+    public ListenerToken SubscribeByInfo<T>(ListenerInfo<T> info, ListenerPriority priority) where T : IEvent
+    {
+        return GetHub(typeof(T)).Subscribe(info, priority);
     }
 
     /// <summary>
@@ -192,11 +199,20 @@ public class KludgeEventBus
             actionDelegate = Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
         
+        var infoType = typeof(ListenerInfo<>).MakeGenericType(eventType);
+        var forceDefault = subscriptionInfo.Method.DeclaringType.Assembly == typeof(KludgeEventBus).Assembly;
+        var info = infoType.GetConstructors().First().Invoke([
+            actionDelegate,
+            subscriptionInfo.IsDefault || forceDefault, // define by assembly it located in
+            subscriptionInfo.Method // if this is not null
+        ]);
         
-
+        Log.Debug(
+            $"\tRegistered listener {subscriptionInfo.Method.Name} from {subscriptionInfo.Method.DeclaringType.Name} " +
+            $"{(forceDefault ? "and forced default" : "")}");
         // Subscribe to the message type using the created delegate
-        return typeof(KludgeEventBus).GetMethod("Subscribe")!.MakeGenericMethod(eventType)
-            .Invoke(this, new object[] { actionDelegate, subscriptionInfo.Priority }) as ListenerToken;
+        return typeof(KludgeEventBus).GetMethod("SubscribeByInfo")!.MakeGenericMethod(eventType)
+            .Invoke(this, new object[] { info, subscriptionInfo.Priority }) as ListenerToken;
     }
 
     private List<EventHub> FindApplicableHubs(Type eventType)

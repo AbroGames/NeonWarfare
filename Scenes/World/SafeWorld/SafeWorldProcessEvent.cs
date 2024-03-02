@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public readonly struct SafeWorldProcessEvent(SafeWorld safeWorld, double delta) : IEvent
 {

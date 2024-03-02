@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 [GameService]
 public class EnemyAttackService

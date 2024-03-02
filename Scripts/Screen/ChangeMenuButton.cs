@@ -1,8 +1,8 @@
 ﻿using Godot;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
-public partial class ChangeMenuButton : Godot.Button
+public partial class ChangeMenuButton : Button
 {
 	[Export] private PackedScene _newMenu;
 	

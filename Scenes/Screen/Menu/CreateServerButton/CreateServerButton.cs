@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 public partial class CreateServerButton : Button
 {

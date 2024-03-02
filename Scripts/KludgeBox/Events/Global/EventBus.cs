@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
-using KludgeBox;
-using KludgeBox.Events;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 public static class EventBus
 {
@@ -65,8 +63,6 @@ public static class EventBus
     public static void SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
     {
         _bus.SubscribeMethod(subscriptionInfo);
-        Log.Debug(
-            $"\tRegistered listener {subscriptionInfo.Method.Name} from {subscriptionInfo.Method.DeclaringType.Name}");
     }
 
     public static void RegisterListeners(ServiceRegistry registry)

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public partial class Bullet : Node2D
 {

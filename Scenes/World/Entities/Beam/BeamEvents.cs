@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public readonly record struct BeamSpawnedEvent(Beam Beam) : IEvent;
 public readonly record struct SolarBeamSpawnedEvent(SolarBeam Beam) : IEvent;

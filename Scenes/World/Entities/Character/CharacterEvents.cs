@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public readonly record struct CharacterPhysicsProcessEvent(Character Character, double Delta) : IEvent;
 public readonly record struct CharacterProcessEvent(Character Character, double Delta) : IEvent;
