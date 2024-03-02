@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public partial class FloatingLabel : Node2D
 {
@@ -22,9 +22,17 @@ public partial class FloatingLabel : Node2D
 		_startPos = Position;
 		double rotation = 10;
 		Rotation += Mathf.DegToRad(Rand.Range(-rotation, rotation));
-		Scale = Vec(2);
-		var tween = GetTree().CreateTween();
-		tween.TweenProperty(this, "scale", Vec(1), _targetTime * 0.2);
+		Scale = Vec(4);
+		Modulate = Modulate with { A = 0 };
+		var scaleTween = GetTree().CreateTween();
+		var alphaTween = GetTree().CreateTween();
+		var rotationTween = GetTree().CreateTween()
+			.SetTrans(Tween.TransitionType.Cubic)
+			.SetEase(Tween.EaseType.InOut);
+		scaleTween.TweenProperty(this, "scale", Vec(1), _targetTime * 0.2);
+		alphaTween.TweenProperty(this, "modulate:a", 1, _targetTime);
+		rotationTween.TweenProperty(this, "rotation", 
+				Rotation + Mathf.DegToRad(Rand.Sign * rotation), _targetTime * 0.7);
 	}
 
 	public void Configure(string text, Color color, double scale)

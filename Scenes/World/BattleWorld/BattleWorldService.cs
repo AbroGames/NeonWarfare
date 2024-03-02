@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 [GameService]
 public class BattleWorldService
@@ -26,10 +26,11 @@ public class BattleWorldService
 
         var floor = battleWorld.Floor;
         floor.Camera = camera;
+        floor.ForceCheck();
 		
-        Node2D ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
-        ally.Position = Vec(600, 600);
-        battleWorld.AddChild(ally);
+        //Node2D ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
+        //ally.Position = Vec(600, 600);
+        //battleWorld.AddChild(ally);
         battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor
         
         //EventBus.Publish(new PlayerLevelUpEvent(battleWorld.Player, 20));

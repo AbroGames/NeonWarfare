@@ -1,7 +1,7 @@
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 [GameService]
 public class SafeWorldService
@@ -25,6 +25,7 @@ public class SafeWorldService
 
         var floor = safeWorld.Floor;
         floor.Camera = camera;
+        floor.ForceCheck();
         
         safeWorld.AddChild(safeWorld.Player); // must be here to draw over the floor
         PlaySafeMusic(); //TODO to music service (safe music service)

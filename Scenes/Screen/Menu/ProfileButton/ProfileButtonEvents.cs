@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 public readonly record struct ProfileButtonReadyEvent(ProfileButton ProfileButton) : IEvent;
 public readonly record struct ProfileButtonClickEvent(ProfileButton ProfileButton) : IEvent;

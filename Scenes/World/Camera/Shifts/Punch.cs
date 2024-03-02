@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public class Punch(Vector2 dir, double strength, double movementSpeed = 3000) : IShiftProvider
 {

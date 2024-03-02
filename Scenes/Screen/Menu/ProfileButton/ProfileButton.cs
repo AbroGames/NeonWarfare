@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 public partial class ProfileButton : Button
 {

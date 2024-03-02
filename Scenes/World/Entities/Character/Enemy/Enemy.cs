@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public partial class Enemy : Character
 {
@@ -18,6 +18,13 @@ public partial class Enemy : Character
 	{
 		base._Ready();
 		EventBus.Publish(new EnemyReadyEvent(this));
+	}
+
+	/// <inheritdoc />
+	public override void Die()
+	{
+		base.Die();
+		EventBus.Publish(new EnemyDeathEvent(this));
 	}
 
 	public override void _Process(double delta)

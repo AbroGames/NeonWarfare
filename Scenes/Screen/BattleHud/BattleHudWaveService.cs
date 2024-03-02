@@ -1,9 +1,9 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using NeoVector.World;
+using KludgeBox.Events.Global.World;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 [GameService]
 public class BattleHudWaveService

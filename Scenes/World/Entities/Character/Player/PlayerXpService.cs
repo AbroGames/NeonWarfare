@@ -3,7 +3,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 [GameService]
 public class PlayerXpService
@@ -57,7 +57,7 @@ public class PlayerXpService
 
             player.MovementSpeed *= 1.05;
 		
-            player.AttackSpeed *= 1.1;
+            player.PrimaryCd.Duration /= 1.1;
             player.SecondaryCd.Duration /= 1.05;
 
             player.RotationSpeed *= 1.05;

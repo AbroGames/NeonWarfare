@@ -1,8 +1,8 @@
 using Godot;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
-public partial class ToBattleButton : Godot.Button
+public partial class ToBattleButton : Button
 {
     [Export] private PackedScene _battleMainScene;
 	

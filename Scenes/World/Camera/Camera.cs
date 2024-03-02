@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Godot;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public partial class Camera : Camera2D
 {

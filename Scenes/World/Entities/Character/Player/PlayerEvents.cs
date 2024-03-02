@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 public readonly record struct PlayerGainXpEvent(Player Player, int Xp) : IEvent;
 public readonly record struct PlayerLevelUpEvent(Player Player, int Amount = 1) : IEvent;
@@ -15,3 +15,8 @@ public readonly record struct PlayerBasicSkillUseEvent(Player Player) : IEvent;
 public readonly record struct PlayerAdvancedSkillUseEvent(Player Player) : IEvent;
 
 public record PlayerGetRequiredXpQuery(Player Player) : QueryEvent<long>;
+
+public readonly record struct PlayerDeathEvent(Player Player) : IEvent;
+
+public readonly record struct PlayerAttackPrimaryEvent(Player Player) : IEvent;
+public readonly record struct PlayerAttackSecondaryEvent(Player Player) : IEvent;

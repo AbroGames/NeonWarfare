@@ -29,6 +29,10 @@ public partial class Floor : Node2D
 		};
 	}
 
+	public void ForceCheck()
+	{
+		CheckTiles();
+	}
 
 	public override void _Process(double delta)
 	{

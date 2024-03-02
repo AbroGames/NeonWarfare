@@ -1,7 +1,7 @@
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 [GameService]
 public class TwoColoredBarService

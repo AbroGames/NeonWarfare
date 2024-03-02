@@ -2,7 +2,7 @@
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector.World;
+namespace KludgeBox.Events.Global.World;
 
 [GameService]
 public class BattleWorldEnemySpawnService
@@ -82,14 +82,6 @@ public class BattleWorldEnemySpawnService
             enemy.CollisionPriority = 1000;
             EventBus.Publish(new EnemyStartAttractionEvent(enemy));
         }
-        enemy.Died += () =>
-        {
-            battleWorld.Enemies.Remove(enemy);
-            if (enemy.IsAttractor)
-            {
-                EventBus.Publish(new EnemyStopAttractionEvent(enemy));
-            }
-        };
 
         if (!forceAttractor)
         {

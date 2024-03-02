@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NeoVector.KludgeBox.Events;
 
 namespace KludgeBox.Events;
 
@@ -39,11 +40,11 @@ internal sealed class EventHub
         }
     }
 
-    internal ListenerToken Subscribe<T>(Action<T> action, ListenerPriority priority) where T : IEvent
+    internal ListenerToken Subscribe<T>(ListenerInfo<T> info, ListenerPriority priority) where T : IEvent
     {
         var priorityListeners = _listenersByPriority[(int)priority];
         
-        var subscription = new Listener<T>(action);
+        var subscription = new Listener<T>(info.Action);
         priorityListeners.Add(subscription);
         var token = new ListenerToken(subscription, this);
         return token;

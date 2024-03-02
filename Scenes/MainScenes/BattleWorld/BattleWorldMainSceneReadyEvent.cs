@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace NeoVector;
+namespace KludgeBox.Events.Global;
 
 public readonly struct BattleWorldMainSceneReadyEvent(BattleWorldMainScene battleWorldMainScene) : IEvent
 {
