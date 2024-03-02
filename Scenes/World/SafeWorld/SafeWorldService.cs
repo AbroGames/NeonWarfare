@@ -25,6 +25,7 @@ public class SafeWorldService
 
         var floor = safeWorld.Floor;
         floor.Camera = camera;
+        floor.ForceCheck();
         
         safeWorld.AddChild(safeWorld.Player); // must be here to draw over the floor
         PlaySafeMusic(); //TODO to music service (safe music service)

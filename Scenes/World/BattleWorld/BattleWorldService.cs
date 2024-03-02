@@ -26,6 +26,7 @@ public class BattleWorldService
 
         var floor = battleWorld.Floor;
         floor.Camera = camera;
+        floor.ForceCheck();
 		
         Node2D ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
         ally.Position = Vec(600, 600);
