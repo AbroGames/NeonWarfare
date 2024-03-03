@@ -10,6 +10,18 @@ public class BattleWorldEnemySpawnService
 {
     private int RequiredEnemies = 0;
     private int RequiredBosses = 0;
+    private int MinEnemiesInGroup = 5;
+    private int MaxEnemiesInGroup = 15;
+
+    private int NextEnemiesInGroup
+    {
+        get
+        {
+            var amount = Mathf.Min(Rand.Range(MinEnemiesInGroup, MaxEnemiesInGroup), RequiredEnemies);
+            RequiredEnemies -= amount;
+            return amount;
+        }
+    }
     
     [EventListener]
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldPhysicsProcessEvent)
@@ -18,8 +30,9 @@ public class BattleWorldEnemySpawnService
         if (RequiredEnemies > 0)
         {
             var battleWorld = battleWorldPhysicsProcessEvent.BattleWorld;
-            CreateEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
-            RequiredEnemies--;
+            //CreateEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
+            //RequiredEnemies--;
+            CreateEnemyGroupAroundCharacter(battleWorld, battleWorld.Player, Rand.Range(1000, 1500));
         }
 
         if (RequiredBosses > 0)
@@ -48,6 +61,33 @@ public class BattleWorldEnemySpawnService
         AnimateSpawn(enemy, battleWorld);
     }
 
+    [EventListener]
+    public void OnBattleWorldSpawnEnemy(BattleWorldSpawnEnemyRequest request)
+    {
+        var (world, position) = request;
+        var enemy = CreateEnemy(world, Root.Instance.PackedScenes.World.Enemy);
+        enemy.Position = position;
+        enemy.Target = world.Player;
+        enemy.Rotation = Rand.Range(Mathf.Tau);
+        
+        AnimateSpawn(enemy, world);
+    }
+    private void CreateEnemyGroupAroundCharacter(BattleWorld battleWorld, Character character, double radius)
+    {
+        int amount = NextEnemiesInGroup;
+        var spawner = new GroupSpawner();
+        spawner.Amount = amount;
+        double radiusFactor = ((double)amount - MinEnemiesInGroup) / MaxEnemiesInGroup;
+        spawner.Radius = 100 + 500 * radiusFactor;
+        spawner.World = battleWorld;
+
+        Vector2 position = Rand.UnitVector * radius;
+        spawner.Position = position;
+        battleWorld.AddChild(spawner);
+    }
+
+    
+
     private void AnimateSpawn(Enemy enemy, BattleWorld battleWorld)
     {
         var fx = Fx.CreateSpawnFx();
@@ -68,11 +108,19 @@ public class BattleWorldEnemySpawnService
     {
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;
-			
-        var enemy = template.Instantiate() as Enemy;
+
+        var enemy = CreateEnemy(battleWorld, template, forceAttractor);
+        
         enemy.Position = targetPosition;
         enemy.Rotation = angle - Mathf.Pi / 2;
         enemy.Target = character;
+
+        return enemy;
+    }
+
+    private Enemy CreateEnemy(BattleWorld battleWorld, PackedScene template, bool forceAttractor = false)
+    {
+        var enemy = template.Instantiate() as Enemy;
         enemy.MaxHp = 250;
         enemy.Hp = enemy.MaxHp;
         enemy.BaseXp *= 1 + battleWorld.EnemyWave.WaveNumber / 10;
