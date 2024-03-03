@@ -1,7 +1,7 @@
 ﻿using KludgeBox;
 using KludgeBox.Events;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 [GameService]
 public class CreateServerButtonService

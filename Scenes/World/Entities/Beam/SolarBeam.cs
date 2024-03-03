@@ -1,8 +1,9 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events.Global;
 using KludgeBox.Scheduling;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public partial class SolarBeam : Node2D
 {

@@ -1,7 +1,8 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events.Global;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public partial class XpOrb : Node2D
 {

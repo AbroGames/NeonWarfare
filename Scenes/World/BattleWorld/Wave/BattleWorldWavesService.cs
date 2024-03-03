@@ -1,8 +1,8 @@
 using KludgeBox;
 using KludgeBox.Events;
-using NeoVector;
+using KludgeBox.Events.Global;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 [GameService]
 public class BattleWorldWavesService

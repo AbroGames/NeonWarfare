@@ -1,7 +1,8 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events.Global;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public partial class MainMenuMainScene : Node2D
 {

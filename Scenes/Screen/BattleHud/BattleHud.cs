@@ -1,9 +1,8 @@
 using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global.World;
-using NeoVector;
+using KludgeBox.Events.Global;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public partial class BattleHud : Control
 {

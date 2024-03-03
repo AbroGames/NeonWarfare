@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public readonly struct SafeWorldMainSceneReadyEvent(SafeWorldMainScene safeWorldMainScene) : IEvent
 {

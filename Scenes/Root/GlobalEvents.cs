@@ -1,6 +1,6 @@
 ﻿
 using KludgeBox.Events;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public readonly record struct GameResetEvent() : IEvent;

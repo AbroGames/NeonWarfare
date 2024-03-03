@@ -1,7 +1,6 @@
 ﻿using KludgeBox.Events;
-using NeoVector;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public readonly record struct BattleWorldSpawnEnemiesRequestEvent(int RequiredEnemiesAmount) : IEvent;
 public readonly record struct BattleWorldSpawnBossesRequestEvent(int RequiredBossesAmount) : IEvent;

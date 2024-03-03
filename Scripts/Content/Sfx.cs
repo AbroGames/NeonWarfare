@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Collections;
 
-namespace KludgeBox.Events.Global
+namespace NeoVector
 {
 	public static class Sfx
 	{

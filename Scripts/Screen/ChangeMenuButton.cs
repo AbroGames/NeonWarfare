@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public partial class ChangeMenuButton : Button
 {

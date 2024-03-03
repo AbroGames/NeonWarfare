@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public partial class Game : Node2D
 {

@@ -1,9 +1,8 @@
 using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global.World;
-using SafeWorld = NeoVector.SafeWorld;
+using KludgeBox.Events.Global;
 
-namespace KludgeBox.Events.Global;
+namespace NeoVector;
 
 public partial class SafeHud : Control
 {

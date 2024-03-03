@@ -1,9 +1,7 @@
-using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using NeoVector;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 [GameService]
 public class BattleWorldService

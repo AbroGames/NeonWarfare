@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public class ManualShake : IShiftProvider
 {

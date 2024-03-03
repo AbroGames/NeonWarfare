@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public interface IShiftProvider
 {

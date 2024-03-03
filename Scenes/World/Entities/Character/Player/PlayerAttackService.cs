@@ -2,7 +2,7 @@
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 [GameService]
 public class PlayerAttackService

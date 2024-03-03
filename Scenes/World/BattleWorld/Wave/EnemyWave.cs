@@ -1,4 +1,4 @@
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public class EnemyWave 
 {

@@ -1,6 +1,4 @@
-﻿using KludgeBox.Events.Global.World;
-
-namespace KludgeBox.Events.Global;
+﻿namespace NeoVector;
 
 public class Fx
 {
