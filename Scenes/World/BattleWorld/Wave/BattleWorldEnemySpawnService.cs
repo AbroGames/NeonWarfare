@@ -82,7 +82,7 @@ public class BattleWorldEnemySpawnService
         spawner.World = battleWorld;
 
         Vector2 position = Rand.UnitVector * radius;
-        spawner.Position = position;
+        spawner.Position = character.Position + position;
         battleWorld.AddChild(spawner);
     }
 
