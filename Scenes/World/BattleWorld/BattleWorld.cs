@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
-using KludgeBox.Events.Global.World;
 
 namespace NeoVector;
 
