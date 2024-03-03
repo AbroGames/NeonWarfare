@@ -6,6 +6,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global.World;
+using NeoVector;
 
 namespace KludgeBox.Events.Global;
 

@@ -2,6 +2,7 @@ using System;
 using Godot;
 using KludgeBox;
 using KludgeBox.Scheduling;
+using NeoVector;
 
 namespace KludgeBox.Events.Global.World;
 

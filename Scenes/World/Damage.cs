@@ -1,6 +1,7 @@
 ﻿using Godot;
+using KludgeBox.Events.Global.World;
 
-namespace KludgeBox.Events.Global.World;
+namespace NeoVector;
 
 public sealed class Damage
 {

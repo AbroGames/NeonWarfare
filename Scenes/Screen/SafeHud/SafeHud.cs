@@ -1,6 +1,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global.World;
+using SafeWorld = NeoVector.SafeWorld;
 
 namespace KludgeBox.Events.Global;
 
