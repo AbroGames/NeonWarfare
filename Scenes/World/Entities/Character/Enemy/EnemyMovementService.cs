@@ -28,6 +28,22 @@ public class EnemyMovementService
     {
         _attractors = new();
     }
+
+    [EventListener]
+    public void OnEnemyAboutToTeleport(EnemyAboutToTeleportEvent e)
+    {
+        var enemy = e.Enemy;
+        var target = enemy.Target;
+
+        if (enemy.DistanceTo(target) > 2500)
+        {
+            enemy.Modulate = enemy.Modulate with { A = 0 };
+            var direction = enemy.DirectionTo(target);
+            enemy.Position = target.Position + direction * 1500;
+            var tween = enemy.CreateTween();
+            tween.TweenProperty(enemy, "modulate:a", 1, 1);
+        }
+    }
     
     [EventListener]
     public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)

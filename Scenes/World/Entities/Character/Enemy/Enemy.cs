@@ -1,6 +1,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Scheduling;
 
 namespace NeoVector;
 
@@ -14,6 +15,8 @@ public partial class Enemy : Character
 	public bool IsBoss { get; set; } = false;
 	public Character Target { get; set; }
 	public bool IsAttractor { get; set;}
+
+	internal Cooldown TeleportCd = new Cooldown(3);
 
 	public override void _Ready()
 	{

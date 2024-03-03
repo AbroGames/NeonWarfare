@@ -20,11 +20,23 @@ public class EnemyService
                 EventBus.Publish(new EnemyAttackEvent(enemy));
             }
         };
+        
+        enemy.TeleportCd.Ready += () =>
+        {
+            EventBus.Publish(new EnemyAboutToTeleportEvent(enemy));
+        };
     }
     
     private bool CanSeePlayer(Enemy enemy)
     {
         var collider = enemy.RayCast.GetCollider();
         return collider is Player;
+    }
+
+    [EventListener]
+    public void OnEnemyProcessEvent(EnemyProcessEvent e)
+    {
+        var (enemy, delta) = e;
+        enemy.TeleportCd.Update(delta);
     }
 }
