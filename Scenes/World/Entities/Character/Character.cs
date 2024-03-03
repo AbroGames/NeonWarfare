@@ -45,7 +45,7 @@ public partial class Character : CharacterBody2D
 
 	public virtual void TakeDamage(Damage damage)
 	{
-		EventBus.Publish(new CharacterTakeDamageEvent(this, damage));
+		EventBus.Publish(new CharacterApplyDamageRequest(this, damage));
 	}
 	
 	public override void _Process(double delta)

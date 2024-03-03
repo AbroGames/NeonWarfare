@@ -21,18 +21,14 @@ public class CharacterService
         chara.PrimaryCd.Update(delta);
     }
 
-    [EventListener(priority: ListenerPriority.Low)]
-    public void OnCharacterTakeDamage(CharacterTakeDamageEvent e)
-    {
-        EventBus.Publish(new CharacterApplyDamageRequest(e.Character, e.Damage, e));
-    }
 
     [EventListener]
     public void OnCharacterApplyDamage(CharacterApplyDamageRequest request)
     {
-        var (character, damage, @event) = request;
+        var (character, damage) = request;
 
-        if (@event is not null && @event.IsCancelled) return;
+        // TryPublish returns true if event was cancelled
+        if (EventBus.TryPublish(new CharacterTakeDamageEvent(character, damage))) return;
         
 		TakeDamage(character, damage);
     }

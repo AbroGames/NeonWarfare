@@ -14,4 +14,4 @@ public class CharacterTakeDamageEvent(Character character, Damage damage) : Canc
     public Damage Damage { get; } = damage;
 }
 
-public readonly record struct CharacterApplyDamageRequest(Character Character, Damage Damage, CharacterTakeDamageEvent DamageEvent = null) : IEvent;
+public readonly record struct CharacterApplyDamageRequest(Character Character, Damage Damage) : IEvent;
