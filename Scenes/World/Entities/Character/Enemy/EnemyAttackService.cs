@@ -28,7 +28,7 @@ public class EnemyAttackService
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = enemy.GlobalPosition;
         // Установка направления движения снаряда
-        bullet.Rotation = enemy.Rotation + Mathf.DegToRad(Rand.Range(-20, 20));
+        bullet.Rotation = enemy.Rotation + Mathf.DegToRad(Mathf.Clamp(Rand.Gaussian(0, 5), -20, 20));
         bullet.Author = Bullet.AuthorEnum.ENEMY;
         bullet.Source = enemy;
         bullet.RemainingDamage = enemy.Damage;
