@@ -62,6 +62,11 @@ public partial class Network : Node
     {
         var instance = Instance;
     }
+
+    public static void Init()
+    {
+        Utils.DoNothing();
+    }
     
     private void InitGlobalInstance()
     {

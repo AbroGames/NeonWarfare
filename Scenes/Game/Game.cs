@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -12,7 +13,6 @@ public partial class Game : Node2D
 	public override void _Ready()
 	{
         NotNullChecker.CheckProperties(this);
-        
-		DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
+        Network.Init();
 	}
 }
