@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_8nru5"]
 [ext_resource type="PackedScene" uid="uid://cjqj75fvk34l7" path="res://Scenes/World/Entities/Character/Enemy/Boss.tscn" id="5_7r32w"]
 [ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet/Bullet.tscn" id="5_ntxjo"]
-[ext_resource type="PackedScene" uid="uid://bmgxgxoergfj1" path="res://Scenes/World/Entities/XpOrb/XpOrb.tscn" id="6_0vma3"]
 [ext_resource type="PackedScene" uid="uid://c6f2wg8qd1yec" path="res://Scenes/World/Entities/Beam/Beam.tscn" id="6_f7jbg"]
 [ext_resource type="PackedScene" uid="uid://dfv2jfwdn10pn" path="res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn" id="6_p5pta"]
 [ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/World/Entities/Beam/SolarBeam.tscn" id="6_we05o"]
@@ -20,5 +19,4 @@ Boss = ExtResource("5_7r32w")
 Bullet = ExtResource("5_ntxjo")
 SolarBeam = ExtResource("6_we05o")
 Beam = ExtResource("6_f7jbg")
-XpOrb = ExtResource("6_0vma3")
 FloatingLabel = ExtResource("6_p5pta")
