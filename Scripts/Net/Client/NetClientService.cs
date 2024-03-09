@@ -19,7 +19,7 @@ public class NetClientService
             ServerParams.HeadlessFlag,
             ServerParams.PortParam, createServerRequest.Port.ToString(),
             ServerParams.AdminParam, createServerRequest.AdminNickname,
-            ServerParams.ParentPidParam, System.Environment.ProcessId.ToString()
+            ServerParams.ParentPidParam, OS.GetProcessId().ToString()
         ]);
     }
 

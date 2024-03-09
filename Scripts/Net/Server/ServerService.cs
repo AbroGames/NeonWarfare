@@ -1,4 +1,6 @@
-using Godot;
+using System;
+using System.Diagnostics;
+using System.Linq;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
@@ -46,7 +48,7 @@ public class ServerService
         Server server = serverCheckParentIsDeadEvent.Server;
         int? parentPid = server.ServerParams.ParentPid;
         
-        if (parentPid.HasValue && !OS.IsProcessRunning(parentPid.Value))
+        if (parentPid.HasValue && !Process.GetProcesses().Any(x => x.Id == parentPid.Value))
         {
             Log.Error($"Parent process {parentPid.Value} is dead. Shutdown server.");
             EventBus.Publish(new ShutDownEvent());

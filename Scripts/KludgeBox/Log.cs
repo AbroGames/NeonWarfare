@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Godot;
 using KludgeBox.Loggers;
 
 namespace KludgeBox;
@@ -25,7 +26,7 @@ public static class Log
     
     static Log()
     {
-        PID = Environment.ProcessId;
+        PID = OS.GetProcessId();
         var rawPrefixes = Enum.GetNames<PrefixType>();
         var prefixes = new List<string>();
         
