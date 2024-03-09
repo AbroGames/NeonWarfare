@@ -44,8 +44,10 @@ public class Cooldown
 		get => _elapsedTime;
 		set => _elapsedTime = value;
 	}
-
+	
 	public event Action Ready;
+
+	private bool _isReady = false;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Cooldown"/> class with a default duration of 0 seconds.
@@ -97,9 +99,12 @@ public class Cooldown
 			if (_elapsedTime >= Duration)
 			{
 				ticks = 1;
-				Ready?.Invoke();
+				if (!_isReady)
+				{
+					_isReady = true;
+					Ready?.Invoke();
+				}
 			}
-					
 		}
 		return ticks;
 	}
@@ -110,6 +115,7 @@ public class Cooldown
 	public void Restart()
 	{
 		_elapsedTime = 0;
+		_isReady = false;
 	}
 	
 
