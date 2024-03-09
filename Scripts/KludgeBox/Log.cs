@@ -49,6 +49,7 @@ public static class Log
         _prefixes = prefixes.ToArray();
         
         AddLogger(new DefaultLogger());
+        Log.AddLogger(new FileLogger("/custom-logs"));
     }
 
     public static void AddLogger(ILogger logger)

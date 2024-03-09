@@ -417,6 +417,8 @@ public abstract class FileSystem
         readStream.CopyTo(writeStream);
         writeStream.Write(bytes);
         writeStream.Flush();
+        readStream.Close();
+        writeStream.Close();
     }
     #endregion
 

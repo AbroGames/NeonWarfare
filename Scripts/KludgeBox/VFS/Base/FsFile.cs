@@ -23,6 +23,12 @@ public class FsFile : FsEntry
         FileSystem.WriteAllBytes(Path, data);
     }
 
+    public void AppendText(string text)
+    {
+        FileSystem.DoReadOnlyCheck();
+        FileSystem.AppendText(Path, text);
+    }
+
     public void WriteAllText(string text)
     {
         FileSystem.DoReadOnlyCheck();

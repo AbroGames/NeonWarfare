@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -63,6 +64,7 @@ public class GodotFileSystem : FileSystem, IProxyFileSystem
         return new FsDirectory(this, this.GetRealPath(path));
     }
 
+    
     public override void DeleteDirectory(string path, bool recursive = false)
     {
         DoDirectoryCheck(this.GetRealPath(path));
@@ -84,8 +86,19 @@ public class GodotFileSystem : FileSystem, IProxyFileSystem
 
     public override FsFile CreateFile(string path)
     {
-        FileAccess.Open(this.GetRealPath(path), FileAccess.ModeFlags.WriteRead).Close();
-        return new FsFile(this, this.GetRealPath(path));
+        var fa = FileAccess.Open(
+            this.GetRealPath(path), 
+            FileAccess.ModeFlags.Write
+            );
+        try
+        {
+            fa.Close();
+        }
+        catch
+        {
+            //Log.Warning($"Can't close created file ({this.GetRealPath(path)}): {FileAccess.GetOpenError()}");
+        }
+        return new FsFile(this, path);
     }
 
     public override void DeleteFile(string path)
@@ -102,7 +115,7 @@ public class GodotFileSystem : FileSystem, IProxyFileSystem
 
     public override Stream OpenWrite(string path)
     {
-        return new GodotFileStream(this.GetRealPath(path), FileAccess.ModeFlags.WriteRead);
+        return new GodotFileStream(this.GetRealPath(path), FileAccess.ModeFlags.ReadWrite);
     }
 
     public override FsFile[] GetFiles(string path)
@@ -275,11 +288,15 @@ public class GodotFileSystem : FileSystem, IProxyFileSystem
 
             if (count + offset > buffer.Length)
                 throw new ArgumentException($"count + offset is greater than the given buffer length");
-
-            var data = _file.GetBuffer(count);
+        
+            var actualCount = Position + count < Length ? count : (int)(Length - Position);
+            GD.Print($"Actual count: {actualCount}, offset: {offset}, count: {count}, position: {Position}, length: {Length}");
+            var data = _file.GetBuffer(actualCount);
             if (_file.GetError() != Error.Ok)
+            {
                 throw new IOException($"Error reading file: {_file.GetError()}");
-
+            }
+            
             Array.Copy(data, 0, buffer, offset, data.Length);
             return data.Length;
         }
