@@ -1,7 +1,9 @@
+using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -24,25 +26,10 @@ public partial class Root : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		
-		LogCmdArgs();
 		ServicesInit();
 		
-		
+		EventBus.Publish(new InitRequest());
 	}
-
-	public void LogCmdArgs()
-	{
-		if (!OS.GetCmdlineArgs().IsEmpty())
-		{
-			Log.Info("Cmd args: " + OS.GetCmdlineArgs().Join());
-		}
-		else
-		{
-			Log.Info("Not have cmd args");
-		}
-	}
-
 
 	public void ServicesInit()
 	{

@@ -9,24 +9,17 @@ namespace NeoVector;
 [GameService]
 public class EnemyMovementService
 {
-    private HashSet<Enemy> _attractors = new();
 
     [EventListener]
     public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
-        _attractors.Add(attractionEvent.Enemy);
+        attractionEvent.BattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
     [EventListener]
     public void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
-        _attractors.Remove(attractionEvent.Enemy);
-    }
-
-    [EventListener]
-    public void OnReset(GameResetEvent reset)
-    {
-        _attractors = new();
+        attractionEvent.BattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
     [EventListener]
@@ -76,11 +69,11 @@ public class EnemyMovementService
 
     private Vector2 GetAttractionDirection(Enemy enemy)
     {
-        if (_attractors.Count == 0) return Vec();
+        if ((enemy.GetParent() as BattleWorld).EnemyAttractors.Count == 0) return Vec();
             
-        Enemy closestAttractor = _attractors.FirstOrDefault();
+        Enemy closestAttractor = (enemy.GetParent() as BattleWorld).EnemyAttractors.FirstOrDefault();
         double dist = closestAttractor.Position.DistanceSquaredTo(enemy.Position);
-        foreach (var attractor in _attractors)
+        foreach (var attractor in (enemy.GetParent() as BattleWorld).EnemyAttractors)
         {
             if (attractor == enemy) continue;
             var newDist = enemy.Position.DistanceSquaredTo(attractor.Position);

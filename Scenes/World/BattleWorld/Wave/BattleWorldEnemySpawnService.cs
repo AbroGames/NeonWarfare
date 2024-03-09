@@ -129,7 +129,7 @@ public class BattleWorldEnemySpawnService
         {
             enemy.IsAttractor = true;
             enemy.CollisionPriority = 1000;
-            EventBus.Publish(new EnemyStartAttractionEvent(enemy));
+            EventBus.Publish(new EnemyStartAttractionEvent(battleWorld, enemy));
         }
 
         if (!forceAttractor)

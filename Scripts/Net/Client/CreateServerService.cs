@@ -14,6 +14,5 @@ public class CreateServerService
     public void OnCreateServerRequest(CreateServerRequest createServerRequest)
     {
         OS.CreateInstance(["--server", "--headless", "--port", createServerRequest.Port.ToString(), "--admin", createServerRequest.AdminNickname]);
-        Network.CreateServer(DefaultNetworkSettings.Port);
     }
 }

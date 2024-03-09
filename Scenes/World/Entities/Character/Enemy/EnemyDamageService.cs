@@ -16,7 +16,7 @@ public class EnemyDamageService
         battleWorld.Enemies.Remove(enemy);
         if (enemy.IsAttractor)
         {
-            EventBus.Publish(new EnemyStopAttractionEvent(enemy));
+            EventBus.Publish(new EnemyStopAttractionEvent(battleWorld, enemy));
         }
     }
 }

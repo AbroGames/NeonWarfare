@@ -10,6 +10,7 @@ public partial class BattleWorld : World
 	public BattleHud BattleHud { get; set; }
 	public EnemyWave EnemyWave { get; set; } = new();
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
+	public readonly ISet<Enemy> EnemyAttractors = new HashSet<Enemy>();
 	
 	public override void _Ready()
 	{
