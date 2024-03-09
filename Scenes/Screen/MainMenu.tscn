@@ -1,11 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=7 format=3 uid="uid://br3ns4pa22dor"]
 
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_0ah2t"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/CreateServerButton.cs" id="2_e0ai0"]
-[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="3_diq8x"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/ConnectToServerButton.cs" id="3_gecdp"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsButton.cs" id="5_824va"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/ExitButton.cs" id="6_rbqyc"]
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_qiic2"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/CreateServerButton.cs" id="2_hx1cp"]
+[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="3_hsnee"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/ConnectToServerButton.cs" id="3_nxdgw"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/SettingsButton.cs" id="4_grrip"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/ExitButton.cs" id="5_xlsed"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -32,25 +32,25 @@ grow_vertical = 2
 [node name="CreateServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Создать сервер"
-icon = ExtResource("1_0ah2t")
-script = ExtResource("2_e0ai0")
-NewWorldMainScene = ExtResource("3_diq8x")
+icon = ExtResource("1_qiic2")
+script = ExtResource("2_hx1cp")
+NewWorldMainScene = ExtResource("3_hsnee")
 
 [node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Подключиться к серверу"
-icon = ExtResource("1_0ah2t")
-script = ExtResource("3_gecdp")
-NewWorldMainScene = ExtResource("3_diq8x")
+icon = ExtResource("1_qiic2")
+script = ExtResource("3_nxdgw")
+NewWorldMainScene = ExtResource("3_hsnee")
 
 [node name="SettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Настройки"
-icon = ExtResource("1_0ah2t")
-script = ExtResource("5_824va")
+icon = ExtResource("1_qiic2")
+script = ExtResource("4_grrip")
 
 [node name="ExitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Выход"
-icon = ExtResource("1_0ah2t")
-script = ExtResource("6_rbqyc")
+icon = ExtResource("1_qiic2")
+script = ExtResource("5_xlsed")

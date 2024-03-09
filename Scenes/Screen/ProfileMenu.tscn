@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Screen/NickLineEdit.cs" id="1_8c4kn"]
 [ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="3_ct1yi"]
-[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="4_d4618"]
+[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/SettingsMenu.tscn" id="4_ouknd"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="6_ohljf"]
 
 [node name="ProfileMenu" type="Control"]
@@ -74,4 +74,4 @@ layout_mode = 2
 text = "Сохранить"
 icon = ExtResource("6_ohljf")
 script = ExtResource("3_ct1yi")
-_newMenu = ExtResource("4_d4618")
+_newMenu = ExtResource("4_ouknd")

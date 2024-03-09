@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.cs" id="1_tlyle"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_ugbjc"]
-[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenu.tscn" id="2_ubsiq"]
+[ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenu.tscn" id="2_ubsiq"]
 
 [node name="MainMenuMainScene" type="Node2D" node_paths=PackedStringArray("BackgroundContainer", "MenuContainer", "ForegroundContainer")]
 script = ExtResource("1_tlyle")

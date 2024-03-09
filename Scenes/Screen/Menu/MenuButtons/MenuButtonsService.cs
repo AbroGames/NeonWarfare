@@ -20,14 +20,14 @@ public class MenuButtonsService
     [EventListener]
     public void OnConnectToServerButtonClickEvent(ConnectToServerButtonClickEvent connectToServerButtonClickEvent)
     {
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(connectToServerButtonClickEvent.CreateServerButton.NewWorldMainScene.Instantiate());
+        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(connectToServerButtonClickEvent.ConnectToServerButton.NewWorldMainScene.Instantiate());
         EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port));
     }
     
     [EventListener]
-    public void SettingsButtonClickEvent(SettingsButtonClickEvent settingsButtonClickEvent)
+    public void OnChangeMenuFromButtonClickRequest(ChangeMenuFromButtonClickRequest changeMenuFromButtonClickRequest)
     {
-        
+        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(changeMenuFromButtonClickRequest.MenuChangeTo.Instantiate());
     }
     
     [EventListener]
