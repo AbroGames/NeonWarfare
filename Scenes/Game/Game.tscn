@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgu67x4aam3po"]
+[gd_scene load_steps=4 format=3 uid="uid://dgu67x4aam3po"]
 
 [ext_resource type="Script" path="res://Scenes/Game/Game.cs" id="1_kwdsd"]
 [ext_resource type="Script" path="res://Scenes/Game/PlayerInfo.cs" id="2_4yl4c"]
-[ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.tscn" id="3_balju"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="3_n1bll"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "PlayerInfo")]
@@ -12,8 +11,6 @@ PlayerInfo = NodePath("PlayerInfo")
 
 [node name="MainSceneContainer" type="Node" parent="."]
 script = ExtResource("3_n1bll")
-
-[node name="MainMenu" parent="MainSceneContainer" instance=ExtResource("3_balju")]
 
 [node name="PlayerInfo" type="Node2D" parent="."]
 script = ExtResource("2_4yl4c")

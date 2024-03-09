@@ -9,11 +9,11 @@ using KludgeBox.Net;
 namespace NeoVector;
 
 [GameService]
-public class InitService
+public class RootInitService
 {
 
     [EventListener]
-    public void OnInitRequest(InitRequest initRequest)
+    public void OnRootInitEvent(RootInitEvent rootInitEvent)
     {
         EventBus.Publish(new LogCmdArgsRequest());
 
@@ -27,6 +27,7 @@ public class InitService
         }
     }
     
+    [EventListener]
     public void OnLogCmdArgsRequest(LogCmdArgsRequest logCmdArgsRequest)
     {
         if (!OS.GetCmdlineArgs().IsEmpty())
@@ -37,5 +38,12 @@ public class InitService
         {
             Log.Info("Not have cmd args");
         }
+    }
+
+    [EventListener]
+    public void OnInitClientRequest(InitClientRequest initClientRequest)
+    {
+        var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
+        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
     }
 }

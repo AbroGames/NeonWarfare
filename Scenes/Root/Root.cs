@@ -28,7 +28,7 @@ public partial class Root : Node2D
 		NotNullChecker.CheckProperties(this);
 		ServicesInit();
 		
-		EventBus.Publish(new InitRequest());
+		EventBus.Publish(new RootInitEvent());
 	}
 
 	public void ServicesInit()
