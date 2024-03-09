@@ -13,7 +13,7 @@ public abstract record QueryEvent
 }
 public abstract record QueryEvent<T> : QueryEvent, IEvent
 {
-    public T Result => (T)Value;
+    public T Result => Value is null ? default : (T)Value;
     public void SetResult(T result)
     {
         base.SetResult(result);

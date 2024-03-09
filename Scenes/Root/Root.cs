@@ -31,6 +31,7 @@ public partial class Root : Node2D
 	{
 		NotNullChecker.CheckProperties(this);
 		ServicesInit();
+		PacketRegistry.ScanPackets();
 		
 		Callable.From(() =>
 		{

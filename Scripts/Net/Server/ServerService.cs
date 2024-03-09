@@ -1,29 +1,17 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
-using Newtonsoft.Json.Serialization;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
 [GameService]
 public class ServerService
 {
-
-    [EventListener]
-    public void OnPeerConnectedServerEvent(PeerConnectedServerEvent peerConnectedServerEvent)
-    {
-        Log.Debug($"PeerConnectedServerEvent: {peerConnectedServerEvent.Id}");
-        Root.Instance.Server.PlayerServerInfo.Add(new PlayerServerInfo(peerConnectedServerEvent.Id));
-    }
-    
-    [EventListener]
-    public void OnPeerDisconnectedServerEvent(PeerDisconnectedServerEvent peerDisconnectedServerEvent)
-    {
-        Log.Debug($"PeerDisconnectedServerEvent: {peerDisconnectedServerEvent.Id}");
-    }
     
     [EventListener]
     public void OnServerReadyEvent(ServerReadyEvent serverReadyEvent)

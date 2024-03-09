@@ -81,7 +81,7 @@ public partial class Network : Node
         {
             if (IsServer)
             {
-                SendPacketToPeer(id, PacketRegistry.BuildSynchronizationPacket(), reliable: true);
+                SendPacketToPeer(id, PacketRegistry.BuildSynchronizationPacket());
             }
         };
         ReceivedPacket += DefaultPacketProcessor;
@@ -221,7 +221,7 @@ public partial class Network : Node
     {
         foreach (AbstractPacket packet in buffer.EnumeratePackets())
         {
-            SendPacketToClients(packet, packet.IsReliable);
+            SendPacketToClients(packet);
         }
     }
 
@@ -229,17 +229,17 @@ public partial class Network : Node
     {
         foreach (AbstractPacket packet in buffer.EnumeratePackets())
         {
-            SendPacketToClients(packet, packet.IsReliable);
+            SendPacketToClients(packet);
         }
     }
 
-    public static void SendPacketToClients(AbstractPacket packet, bool reliable)
+    public static void SendPacketToClients(AbstractPacket packet)
     {
         var packetData = PacketConverter.Serialize(packet);
         
         if (IsServer)
         {
-            if (reliable)
+            if (packet.IsReliable)
             {
                 Instance.Rpc(nameof(ReceivePacketFromServer), packetData);
             }
@@ -255,13 +255,13 @@ public partial class Network : Node
         }
     }
 
-    public static void SendPacketToServer(AbstractPacket packet, bool reliable)
+    public static void SendPacketToServer(AbstractPacket packet)
     {
         var packetData = PacketConverter.Serialize(packet);
         
         if (IsClient)
         {
-            if (reliable)
+            if (packet.IsReliable)
             {
                 Instance.Rpc(nameof(ReceivePacketFromClient), packetData);
             }
@@ -277,7 +277,7 @@ public partial class Network : Node
         }
     }
 
-    public static void SendPacketToPeer(long id, AbstractPacket packet, bool reliable)
+    public static void SendPacketToPeer(long id, AbstractPacket packet)
     {
         if (!IsServer) throw new InvalidOperationException("Only server can send packets to specified peers");
         if (id == 1) throw new ArgumentException("Can't send packet from server to server");
@@ -294,7 +294,7 @@ public partial class Network : Node
             throw new InvalidOperationException("Can't send packet to local client in dedicated server mode");
         }
 
-        if (reliable)
+        if (packet.IsReliable)
         {
             Instance.RpcId(id,nameof(ReceivePacketFromServer), packetData);
         }

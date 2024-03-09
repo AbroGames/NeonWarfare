@@ -11,6 +11,7 @@ namespace NeoVector;
 [GameService]
 public class InitServerService
 {
+    
     [EventListener]
     public void OnInitServerRequest(InitServerRequest initServerRequest)
     {

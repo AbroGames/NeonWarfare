@@ -7,10 +7,6 @@ public abstract partial class AbstractPacket : HandleableEvent
 {
     [JsonIgnore]
     public PacketSender Sender { get; set; }
-    
-    [JsonIgnore]
-    public abstract bool IsBufferable { get; }
-    
-    [JsonIgnore]
-    public abstract bool IsReliable { get; }
+
+    [JsonIgnore] public virtual bool IsReliable { get; } = true;
 }

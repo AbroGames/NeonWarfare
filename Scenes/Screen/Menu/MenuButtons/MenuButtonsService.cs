@@ -14,6 +14,7 @@ public class MenuButtonsService
     {
         Root.Instance.Game.MainSceneContainer.ChangeStoredNode(createServerButtonClickEvent.CreateServerButton.NewWorldMainScene.Instantiate());
         EventBus.Publish(new CreateServerRequest(DefaultNetworkSettings.Port, "Player"));
+        EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port));
     }
     
     
