@@ -14,6 +14,10 @@ public partial class FloatingLabel : Node2D
 
 	private Vector2 _startPos;
 	private double _scale;
+
+	private Tween scaleTween;
+	private Tween alphaTween;
+	private Tween rotationTween;
 	
 	/// <inheritdoc />
 	public override void _Ready()
@@ -24,15 +28,17 @@ public partial class FloatingLabel : Node2D
 		Rotation += Mathf.DegToRad(Rand.Range(-rotation, rotation));
 		Scale = Vec(4);
 		Modulate = Modulate with { A = 0 };
-		var scaleTween = GetTree().CreateTween();
-		var alphaTween = GetTree().CreateTween();
-		var rotationTween = GetTree().CreateTween()
+		scaleTween = GetTree().CreateTween();
+		alphaTween = GetTree().CreateTween();
+		rotationTween = GetTree().CreateTween()
 			.SetTrans(Tween.TransitionType.Cubic)
 			.SetEase(Tween.EaseType.InOut);
 		scaleTween.TweenProperty(this, "scale", Vec(1), _targetTime * 0.2);
 		alphaTween.TweenProperty(this, "modulate:a", 1, _targetTime);
 		rotationTween.TweenProperty(this, "rotation", 
 				Rotation + Mathf.DegToRad(Rand.Sign * rotation), _targetTime * 0.7);
+		
+		
 	}
 
 	public void Configure(string text, Color color, double scale)
@@ -64,6 +70,16 @@ public partial class FloatingLabel : Node2D
 		if (_time >= _targetTime + _additionalTime)
 		{
 			QueueFree();
+		}
+	}
+
+	public override void _Notification(int what)
+	{
+		if (what == NotificationPredelete)
+		{
+			scaleTween.Kill();
+			alphaTween.Kill();
+			rotationTween.Kill();
 		}
 	}
 
