@@ -12,7 +12,6 @@ public class MenuButtonsService
     [EventListener]
     public void OnCreateServerButtonClickEvent(CreateServerButtonClickEvent createServerButtonClickEvent)
     {
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(createServerButtonClickEvent.CreateServerButton.NewWorldMainScene.Instantiate());
         EventBus.Publish(new CreateServerRequest(DefaultNetworkSettings.Port, "Player"));
         EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port));
     }
@@ -21,7 +20,6 @@ public class MenuButtonsService
     [EventListener]
     public void OnConnectToServerButtonClickEvent(ConnectToServerButtonClickEvent connectToServerButtonClickEvent)
     {
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(connectToServerButtonClickEvent.ConnectToServerButton.NewWorldMainScene.Instantiate());
         EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port));
     }
     
