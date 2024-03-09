@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_qiic2"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/PlayerSettingsButton.cs" id="2_i1jiy"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="3_fckio"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="3_eej1s"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -46,4 +46,4 @@ icon = ExtResource("1_qiic2")
 layout_mode = 2
 text = "Назад к главному меню"
 icon = ExtResource("1_qiic2")
-script = ExtResource("3_fckio")
+script = ExtResource("3_eej1s")

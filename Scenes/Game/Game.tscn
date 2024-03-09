@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dgu67x4aam3po"]
 
 [ext_resource type="Script" path="res://Scenes/Game/Game.cs" id="1_kwdsd"]
-[ext_resource type="Script" path="res://Scenes/Game/PlayerInfo.cs" id="2_4yl4c"]
+[ext_resource type="Script" path="res://Scenes/Game/Settings/PlayerInfo.cs" id="3_5wst2"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="3_n1bll"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "PlayerInfo")]
@@ -13,4 +13,4 @@ PlayerInfo = NodePath("PlayerInfo")
 script = ExtResource("3_n1bll")
 
 [node name="PlayerInfo" type="Node2D" parent="."]
-script = ExtResource("2_4yl4c")
+script = ExtResource("3_5wst2")

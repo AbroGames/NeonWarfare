@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://3j3wpv6my2si"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_nq6w6"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="2_7abow"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="2_nop7s"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/ConnectToServerButtons/ConnectToServerButton.cs" id="3_57gpj"]
 [ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_ro33w"]
 
@@ -54,7 +54,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Вернуться в меню"
 icon = ExtResource("1_nq6w6")
-script = ExtResource("2_7abow")
+script = ExtResource("2_nop7s")
 
 [node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer"]
 layout_mode = 2

@@ -18,6 +18,7 @@ public class RootInitService
     {
         EventBus.Publish(new LogCmdArgsRequest());
         EventBus.Publish(new NetworkInitRequest());
+        EventBus.Publish(new SettingsInitRequest());
         
         if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
         {

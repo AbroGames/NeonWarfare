@@ -1,15 +1,15 @@
 using Godot;
+using KludgeBox.Events.Global;
 
 namespace NeoVector;
 
 public partial class PlayerInfo : Node2D
 {
-	public string playerName;
-	public Color playerColor;
+	public string PlayerName;
+	public Color PlayerColor;
 	
 	public override void _Ready()
 	{
-		playerName = "Player";
-		playerColor = new Color();
+		
 	}
 }

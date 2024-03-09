@@ -12,7 +12,10 @@ public class BulletService
     {
 	    var bullet = e.Bullet;
 	    
-        bullet.Modulate = Bullet.Colors[bullet.Author];
+	    if(bullet.Author == Bullet.AuthorEnum.PLAYER)
+		    bullet.Modulate = Root.Instance.Game.PlayerInfo.PlayerColor;
+	    else
+			bullet.Modulate = Bullet.Colors[bullet.Author];
         		
         bullet.GetNode<Area2D>("Area2D").AreaEntered += area =>
         {

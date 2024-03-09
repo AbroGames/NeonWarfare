@@ -1,10 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://cjrxgi0aql38u"]
+[gd_scene load_steps=9 format=3 uid="uid://cjrxgi0aql38u"]
 
-[ext_resource type="Script" path="res://Scripts/Screen/NickLineEdit.cs" id="1_8c4kn"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/PlayerSettingsButton/NickLineEdit.cs" id="1_xwnfu"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/PlayerSettingsButton/ColorRectExample.cs" id="2_7bepp"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/PlayerSettingsButton/RedSlider.cs" id="2_31g2u"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/PlayerSettingsButton/GreenSlider.cs" id="3_3ocf7"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/BackToSettingsMenuButton.cs" id="3_7ouqc"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/PlayerSettingsButton/SavePlayerSettingsButton.cs" id="4_crw5h"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/PlayerSettingsButton/BlueSlider.cs" id="4_gieb7"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="6_ohljf"]
 
-[node name="ProfileMenu" type="Control"]
+[node name="PlayerSettingsMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,16 +31,16 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/HSplitContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 text = "Имя игрока:"
 
-[node name="NickLineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer"]
+[node name="NickLineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer3"]
 layout_mode = 2
-script = ExtResource("1_8c4kn")
+script = ExtResource("1_xwnfu")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -44,21 +49,31 @@ layout_mode = 2
 layout_mode = 2
 text = "Цвет игрока:"
 
-[node name="ColorRect" type="ColorRect" parent="VBoxContainer/HBoxContainer"]
+[node name="ColorRectExample" type="ColorRect" parent="VBoxContainer/HBoxContainer" node_paths=PackedStringArray("RedSlider", "GreenSlider", "BlueSlider")]
 layout_mode = 2
 size_flags_horizontal = 3
+script = ExtResource("2_7bepp")
+RedSlider = NodePath("../../RedSlider")
+GreenSlider = NodePath("../../GreenSlider")
+BlueSlider = NodePath("../../BlueSlider")
 
 [node name="RedSlider" type="HSlider" parent="VBoxContainer"]
 modulate = Color(1, 0, 0, 1)
 layout_mode = 2
+max_value = 255.0
+script = ExtResource("2_31g2u")
 
 [node name="GreenSlider" type="HSlider" parent="VBoxContainer"]
 modulate = Color(0, 1, 0, 1)
 layout_mode = 2
+max_value = 255.0
+script = ExtResource("3_3ocf7")
 
 [node name="BlueSlider" type="HSlider" parent="VBoxContainer"]
 modulate = Color(0, 0, 1, 1)
 layout_mode = 2
+max_value = 255.0
+script = ExtResource("4_gieb7")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -69,7 +84,10 @@ text = "Назад"
 icon = ExtResource("6_ohljf")
 script = ExtResource("3_7ouqc")
 
-[node name="SaveButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+[node name="SaveButton" type="Button" parent="VBoxContainer/HBoxContainer2" node_paths=PackedStringArray("NickLineEdit", "ColorRect")]
 layout_mode = 2
 text = "Сохранить"
 icon = ExtResource("6_ohljf")
+script = ExtResource("4_crw5h")
+NickLineEdit = NodePath("../../HBoxContainer3/NickLineEdit")
+ColorRect = NodePath("../../HBoxContainer/ColorRectExample")
