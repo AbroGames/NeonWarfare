@@ -1,11 +1,11 @@
-﻿using KludgeBox.Events;
+﻿using Godot;
+using KludgeBox.Events;
 
 namespace NeoVector;
 
-public readonly record struct PlayerGainXpEvent(Player Player, int Xp) : IEvent;
-public readonly record struct PlayerLevelUpEvent(Player Player, int Amount = 1) : IEvent;
 public readonly record struct PlayerProcessEvent(Player Player, double Delta) : IEvent;
 public readonly record struct PlayerReadyEvent(Player Player) : IEvent;
+public readonly record struct PlayerInputEvent(Player Player, InputEvent Event) : IEvent;
 public readonly record struct PlayerPhysicsProcessEvent(Player Player, double Delta) : IEvent;
 
 public enum WheelEventType { WheelUp, WheelDown }

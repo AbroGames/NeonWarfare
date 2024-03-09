@@ -24,9 +24,9 @@ public class InitServerService
         Error error = Network.CreateDedicatedServer(port);
         if (error == Error.Ok)
         {
+            Log.Info($"Dedicated server successfully created.");
             Server server = new Server(serverParams);
             Root.Instance.AddServer(server);
-            Log.Info($"Dedicated server successfully created.");
         }
         else
         {

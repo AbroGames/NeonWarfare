@@ -16,6 +16,7 @@ public class ServerService
     public void OnPeerConnectedServerEvent(PeerConnectedServerEvent peerConnectedServerEvent)
     {
         Log.Debug($"PeerConnectedServerEvent: {peerConnectedServerEvent.Id}");
+        Root.Instance.Server.PlayerServerInfo.Add(new PlayerServerInfo(peerConnectedServerEvent.Id));
     }
     
     [EventListener]
@@ -30,6 +31,10 @@ public class ServerService
         Server server = serverReadyEvent.Server;
 
         server.CheckParentIsDeadTimer.Ready += () => EventBus.Publish(new ServerCheckParentIsDeadEvent(server));
+        
+        var safeWorld = Root.Instance.PackedScenes.Main.SafeWorld;
+        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(safeWorld.Instantiate());
+        
         Log.Info("Server ready!");
     }
     

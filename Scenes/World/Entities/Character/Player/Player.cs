@@ -50,28 +50,8 @@ public partial class Player : Character
 	}
 
 
-	public override void _Input(InputEvent @event)
+	public override void _Input(InputEvent @event) 
 	{
-		if (@event.IsActionPressed(Keys.AbilityBasic))
-			if (BasicAbilityCd.Use())
-			{
-				EventBus.Publish(new PlayerBasicSkillUseEvent(this));
-			}
-		
-		if (@event.IsActionPressed(Keys.AbilityAdvanced))
-			if (AdvancedAbilityCd.Use())
-			{
-				EventBus.Publish(new PlayerAdvancedSkillUseEvent(this));
-			}
-
-		if (@event.IsActionPressed(Keys.WheelUp))
-		{
-			EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelUp));
-		}
-
-		if (@event.IsActionPressed(Keys.WheelDown))
-		{
-			EventBus.Publish(new PlayerMouseWheelInputEvent(this, WheelEventType.WheelDown));
-		}
+		EventBus.Publish(new PlayerInputEvent(this, @event));
 	}
 }
