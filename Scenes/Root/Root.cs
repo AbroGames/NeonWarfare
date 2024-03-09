@@ -24,18 +24,26 @@ public partial class Root : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		ServicesInit();
-		if (OS.GetCmdlineArgs().Contains("--test"))
-		{
-			Log.Warning("Running separate instance for tests");
-			var projectPath = ProjectSettings.GlobalizePath("res://");
-			OS.CreateInstance(["--untest", "--podtest", "--nadtest"]);
-		}
 		
-		Log.Info(OS.GetCmdlineArgs().Join());
+		LogCmdArgs();
+		ServicesInit();
+		
+		
 	}
 
-	//Todo вынести в другое место (автоматически через аннотации, например. Хранить сервисы тоже в другом месте, наверн)
+	public void LogCmdArgs()
+	{
+		if (!OS.GetCmdlineArgs().IsEmpty())
+		{
+			Log.Info("Cmd args: " + OS.GetCmdlineArgs().Join());
+		}
+		else
+		{
+			Log.Info("Not have cmd args");
+		}
+	}
+
+
 	public void ServicesInit()
 	{
 		ServiceRegistry.RegisterServices();

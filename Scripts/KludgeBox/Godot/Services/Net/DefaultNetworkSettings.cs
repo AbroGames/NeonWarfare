@@ -7,5 +7,5 @@ public static class DefaultNetworkSettings
     public const int LocalPeerId = 0;
     
     public const string Host = "localhost";
-    public const int Port = 25564;
+    public const int Port = 25566;
 }

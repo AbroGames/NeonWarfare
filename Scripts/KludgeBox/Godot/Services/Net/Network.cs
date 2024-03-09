@@ -66,7 +66,6 @@ public partial class Network : Node
 
     public static void Init()
     {
-        Utils.DoNothing();
         ReceivedPacket += EventBus.Publish;
     }
     

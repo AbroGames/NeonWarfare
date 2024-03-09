@@ -14,6 +14,5 @@ public partial class Game : Node2D
 	{
         NotNullChecker.CheckProperties(this);
         Network.Init();
-        //DisplayServer.GetName() == "headless";
 	}
 }
