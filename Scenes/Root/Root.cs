@@ -32,7 +32,10 @@ public partial class Root : Node2D
 		NotNullChecker.CheckProperties(this);
 		ServicesInit();
 		
-		EventBus.Publish(new RootInitEvent());
+		Callable.From(() =>
+		{
+			EventBus.Publish(new RootInitEvent());
+		}).CallDeferred();
 	}
 
 	public void ServicesInit()

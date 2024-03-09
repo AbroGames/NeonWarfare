@@ -19,7 +19,7 @@ public class RootInitService
         EventBus.Publish(new LogCmdArgsRequest());
         EventBus.Publish(new NetworkInitRequest());
         
-        if (OS.GetCmdlineArgs().Contains("--server"))
+        if (OS.GetCmdlineArgs().Contains(InitServerService.ServerFlag))
         {
             EventBus.Publish(new InitServerRequest());
         }

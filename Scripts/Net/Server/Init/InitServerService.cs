@@ -11,16 +11,23 @@ namespace NeoVector;
 [GameService]
 public class InitServerService
 {
+
+    public static readonly string ServerFlag = "--server";
+    public static readonly string HeadlessFlag = "--headless";
+    public static readonly string PortParam = "--port";
+    public static readonly string AdminParam = "--admin";
+    public static readonly string ParentPidParam = "--parent-pid";
     
     [EventListener]
     public void OnInitServerRequest(InitServerRequest initServerRequest)
     {
-        if (!OS.GetCmdlineArgs().Contains("--server")) return;
+        if (!OS.GetCmdlineArgs().Contains(ServerFlag)) return;
         
         int port = EventBus.Require(new GetPortFromCmdArgsQuery());
         string admin = EventBus.Require(new GetAdminFromCmdArgsQuery());
+        int parentPid = EventBus.Require(new GetParentPidFromCmdArgsQuery());
 
-        Root.Instance.Server = new Server(port, admin);
+        Root.Instance.Server = new Server(port, admin, parentPid);
         Network.CreateDedicatedServer(port);
     }
     
@@ -30,7 +37,7 @@ public class InitServerService
         int port = DefaultNetworkSettings.Port;
         try
         {
-            int portPos = OS.GetCmdlineArgs().ToList().IndexOf("--port");
+            int portPos = OS.GetCmdlineArgs().ToList().IndexOf(PortParam);
             if (portPos == -1)
             {
                 Log.Info($"Port not setup. Use default port: {port}");
@@ -55,7 +62,7 @@ public class InitServerService
         string admin = null;
         try
         {
-            int adminPos = OS.GetCmdlineArgs().ToList().IndexOf("--admin");
+            int adminPos = OS.GetCmdlineArgs().ToList().IndexOf(AdminParam);
             if (adminPos == -1)
             {
                 Log.Info($"Admin not setup.");
@@ -66,11 +73,36 @@ public class InitServerService
         }
         catch
         {
-            Log.Warning($"Error while admin setup.");
+            Log.Warning("Error while admin setup.");
             return admin;
         }
         
         Log.Info($"Admin: {admin}");
         return admin;
+    }
+    
+    [EventListener]
+    public int? OnGetParentPidFromCmdArgsQuery(GetParentPidFromCmdArgsQuery getParentPidFromCmdArgsQuery)
+    {
+        int? parentPid = null;
+        try
+        {
+            int parentPidPos = OS.GetCmdlineArgs().ToList().IndexOf(ParentPidParam);
+            if (parentPidPos == -1)
+            {
+                Log.Info("Parent PID not setup.");
+                return null;
+            }
+
+            parentPid = OS.GetCmdlineArgs()[parentPidPos + 1].ToInt();
+        }
+        catch
+        {
+            Log.Warning($"Error while parent PID setup.");
+            return parentPid;
+        }
+        
+        Log.Info($"Parent PID: {parentPid}");
+        return parentPid;
     }
 }

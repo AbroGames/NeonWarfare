@@ -54,7 +54,7 @@ public partial class Network : Node
                     // Instantiate to root at runtime
                     _instance = new Network();
                     _instance.Name = typeof(Network).Name;
-                    _instance.CallDeferred(nameof(InitGlobalInstance));
+                    _instance.InitGlobalInstance();
                 }
             }
             return _instance;

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
@@ -14,10 +15,12 @@ public class NetClientService
     public void OnCreateServerRequest(CreateServerRequest createServerRequest)
     {
         Root.Instance.ServerPid = OS.CreateInstance([
-            "--server",
-            "--headless",
-            "--port", createServerRequest.Port.ToString(),
-            "--admin", createServerRequest.AdminNickname]);
+            InitServerService.ServerFlag,
+            InitServerService.HeadlessFlag,
+            InitServerService.PortParam, createServerRequest.Port.ToString(),
+            InitServerService.AdminParam, createServerRequest.AdminNickname,
+            InitServerService.ParentPidParam, System.Environment.ProcessId.ToString()
+        ]);
     }
 
     [EventListener]
@@ -41,18 +44,18 @@ public class NetClientService
     [EventListener]
     public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
-        Log.Debug($"ConnectedToServerEvent: {connectedToServerEvent}");
+        Log.Debug("ConnectedToServerEvent");
     }
     
     [EventListener]
     public void OnConnectionToServerFailedEvent(ConnectionToServerFailedEvent connectionToServerFailedEvent)
     {
-        Log.Debug($"ConnectionToServerFailedEvent: {connectionToServerFailedEvent}");
+        Log.Debug("ConnectionToServerFailedEvent");
     }
     
     [EventListener]
     public void OnServerDisconnectedEvent(ServerDisconnectedEvent serverDisconnectedEvent)
     {
-        Log.Debug($"ServerDisconnectedEvent: {serverDisconnectedEvent}");
+        Log.Debug("ServerDisconnectedEvent");
     }
 }
