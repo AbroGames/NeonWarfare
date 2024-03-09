@@ -1,3 +1,5 @@
+using System;
+using System.Reflection.Metadata;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
@@ -26,7 +28,7 @@ public class EnemyAttackService
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = enemy.GlobalPosition;
         // Установка направления движения снаряда
-        bullet.Rotation = enemy.Rotation;
+        bullet.Rotation = enemy.Rotation + Mathf.DegToRad(Rand.Range(-20, 20));
         bullet.Author = Bullet.AuthorEnum.ENEMY;
         bullet.Source = enemy;
         bullet.RemainingDamage = enemy.Damage;
