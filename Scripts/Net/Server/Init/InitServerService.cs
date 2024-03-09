@@ -11,24 +11,27 @@ namespace NeoVector;
 [GameService]
 public class InitServerService
 {
-
-    public static readonly string ServerFlag = "--server";
-    public static readonly string HeadlessFlag = "--headless";
-    public static readonly string PortParam = "--port";
-    public static readonly string AdminParam = "--admin";
-    public static readonly string ParentPidParam = "--parent-pid";
-    
     [EventListener]
     public void OnInitServerRequest(InitServerRequest initServerRequest)
     {
-        if (!OS.GetCmdlineArgs().Contains(ServerFlag)) return;
+        if (!OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag)) return;
         
         int port = EventBus.Require(new GetPortFromCmdArgsQuery());
         string admin = EventBus.Require(new GetAdminFromCmdArgsQuery());
-        int parentPid = EventBus.Require(new GetParentPidFromCmdArgsQuery());
-
-        Root.Instance.Server = new Server(port, admin, parentPid);
-        Network.CreateDedicatedServer(port);
+        int? parentPid = EventBus.Require(new GetParentPidFromCmdArgsQuery());
+        ServerParams serverParams = new ServerParams(port, admin, parentPid);
+        
+        Error error = Network.CreateDedicatedServer(port);
+        if (error == Error.Ok)
+        {
+            Server server = new Server(serverParams);
+            Root.Instance.AddServer(server);
+            Log.Info($"Dedicated server successfully created.");
+        }
+        else
+        {
+            Log.Error($"Dedicated server created with result: {error}");
+        }
     }
     
     [EventListener]
@@ -37,7 +40,7 @@ public class InitServerService
         int port = DefaultNetworkSettings.Port;
         try
         {
-            int portPos = OS.GetCmdlineArgs().ToList().IndexOf(PortParam);
+            int portPos = OS.GetCmdlineArgs().ToList().IndexOf(ServerParams.PortParam);
             if (portPos == -1)
             {
                 Log.Info($"Port not setup. Use default port: {port}");
@@ -62,7 +65,7 @@ public class InitServerService
         string admin = null;
         try
         {
-            int adminPos = OS.GetCmdlineArgs().ToList().IndexOf(AdminParam);
+            int adminPos = OS.GetCmdlineArgs().ToList().IndexOf(ServerParams.AdminParam);
             if (adminPos == -1)
             {
                 Log.Info($"Admin not setup.");
@@ -87,7 +90,7 @@ public class InitServerService
         int? parentPid = null;
         try
         {
-            int parentPidPos = OS.GetCmdlineArgs().ToList().IndexOf(ParentPidParam);
+            int parentPidPos = OS.GetCmdlineArgs().ToList().IndexOf(ServerParams.ParentPidParam);
             if (parentPidPos == -1)
             {
                 Log.Info("Parent PID not setup.");

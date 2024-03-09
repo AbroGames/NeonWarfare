@@ -15,11 +15,11 @@ public class NetClientService
     public void OnCreateServerRequest(CreateServerRequest createServerRequest)
     {
         Root.Instance.ServerPid = OS.CreateInstance([
-            InitServerService.ServerFlag,
-            InitServerService.HeadlessFlag,
-            InitServerService.PortParam, createServerRequest.Port.ToString(),
-            InitServerService.AdminParam, createServerRequest.AdminNickname,
-            InitServerService.ParentPidParam, System.Environment.ProcessId.ToString()
+            ServerParams.ServerFlag,
+            ServerParams.HeadlessFlag,
+            ServerParams.PortParam, createServerRequest.Port.ToString(),
+            ServerParams.AdminParam, createServerRequest.AdminNickname,
+            ServerParams.ParentPidParam, System.Environment.ProcessId.ToString()
         ]);
     }
 

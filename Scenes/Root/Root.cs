@@ -16,7 +16,7 @@ public partial class Root : Node2D
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 
-	public Server Server { get; set; }
+	public Server Server { get; private set; }
 	public int? ServerPid { get; set; }
 	public bool IsServer => Server != null;
 	
@@ -38,10 +38,21 @@ public partial class Root : Node2D
 		}).CallDeferred();
 	}
 
+	public override void _Process(double delta)
+	{
+		EventBus.Publish(new RootProcessEvent(this, delta));
+	}
+
 	public void ServicesInit()
 	{
 		ServiceRegistry.RegisterServices();
 		EventBus.RegisterListeners(ServiceRegistry);
+	}
+
+	public void AddServer(Server server)
+	{
+		Server = server;
+		AddChild(server);
 	}
 
 	public override void _Notification(int id)
