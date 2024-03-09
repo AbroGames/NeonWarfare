@@ -13,6 +13,5 @@ public partial class Game : Node2D
 	public override void _Ready()
 	{
         NotNullChecker.CheckProperties(this);
-        Network.Init();
 	}
 }

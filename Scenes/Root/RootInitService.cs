@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using Godot;
 using KludgeBox;
@@ -16,7 +17,8 @@ public class RootInitService
     public void OnRootInitEvent(RootInitEvent rootInitEvent)
     {
         EventBus.Publish(new LogCmdArgsRequest());
-
+        EventBus.Publish(new NetworkInitRequest());
+        
         if (OS.GetCmdlineArgs().Contains("--server"))
         {
             EventBus.Publish(new InitServerRequest());
@@ -38,6 +40,12 @@ public class RootInitService
         {
             Log.Info("Not have cmd args");
         }
+    }
+
+    [EventListener]
+    public void OnNetworkInitRequest(NetworkInitRequest networkInitRequest)
+    {
+        Network.Init();
     }
 
     [EventListener]

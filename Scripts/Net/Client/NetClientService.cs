@@ -13,7 +13,11 @@ public class NetClientService
     [EventListener]
     public void OnCreateServerRequest(CreateServerRequest createServerRequest)
     {
-        OS.CreateInstance(["--server", "--headless", "--port", createServerRequest.Port.ToString(), "--admin", createServerRequest.AdminNickname]);
+        Root.Instance.ServerPid = OS.CreateInstance([
+            "--server",
+            "--headless",
+            "--port", createServerRequest.Port.ToString(),
+            "--admin", createServerRequest.AdminNickname]);
     }
 
     [EventListener]

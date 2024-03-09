@@ -15,8 +15,9 @@ public partial class Root : Node2D
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
-	
+
 	public Server Server { get; set; }
+	public int? ServerPid { get; set; }
 	public bool IsServer => Server != null;
 	
 	public static Root Instance { get; private set; }
@@ -38,5 +39,20 @@ public partial class Root : Node2D
 	{
 		ServiceRegistry.RegisterServices();
 		EventBus.RegisterListeners(ServiceRegistry);
+	}
+
+	public override void _Notification(int id)
+	{
+		long[] serverShutdownNotificationTypes =
+		[
+			NotificationWMCloseRequest, NotificationCrash, NotificationDisabled, NotificationPredelete,
+			NotificationExitTree
+		];
+
+		if (ServerPid != null && serverShutdownNotificationTypes.Contains(id))
+		{
+			Log.Info($"Kill server process. Pid: {ServerPid.Value}");
+			OS.Kill(ServerPid.Value);
+		}
 	}
 }
