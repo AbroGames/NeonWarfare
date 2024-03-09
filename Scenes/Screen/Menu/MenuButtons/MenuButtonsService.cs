@@ -21,4 +21,16 @@ public class MenuButtonsService
         Root.Instance.Game.MainSceneContainer.ChangeStoredNode(connectToServerButtonClickEvent.CreateServerButton.NewWorldMainScene.Instantiate());
         Network.ConnectToRemoteServer(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port);
     }
+    
+    [EventListener]
+    public void SettingsButtonClickEvent(SettingsButtonClickEvent settingsButtonClickEvent)
+    {
+        
+    }
+    
+    [EventListener]
+    public void ShutDownEvent(ShutDownEvent shutDownEvent)
+    {
+        Root.Instance.GetTree().Quit();
+    }
 }
