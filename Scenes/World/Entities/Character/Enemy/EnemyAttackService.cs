@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
+using KludgeBox.Events.Global;
 
 namespace NeoVector;
 
@@ -15,7 +16,10 @@ public class EnemyAttackService
     {
         var (enemy, delta) = enemyProcessEvent;
         enemy.PrimaryCd.Update(delta);
-        enemy.PrimaryCd.Use();
+        if (enemy.PrimaryCd.Use() && CanSeePlayer(enemy))
+        {
+            EventBus.Publish(new EnemyAttackEvent(enemy));
+        }
     }
     
     [EventListener]
@@ -42,5 +46,10 @@ public class EnemyAttackService
     }
     
     
+    private bool CanSeePlayer(Enemy enemy)
+    {
+        var collider = enemy.RayCast.GetCollider();
+        return collider is Player;
+    }
     
 }

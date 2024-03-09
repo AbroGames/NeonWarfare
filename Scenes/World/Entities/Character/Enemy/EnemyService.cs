@@ -15,22 +15,13 @@ public class EnemyService
         enemy.PrimaryCd.Duration = 1;
         enemy.PrimaryCd.Ready += () =>
         {
-            if (CanSeePlayer(enemy))
-            {
-                EventBus.Publish(new EnemyAttackEvent(enemy));
-            }
+            Log.Info("Enemy primary cd ready");
         };
         
         enemy.TeleportCd.Ready += () =>
         {
             EventBus.Publish(new EnemyAboutToTeleportEvent(enemy));
         };
-    }
-    
-    private bool CanSeePlayer(Enemy enemy)
-    {
-        var collider = enemy.RayCast.GetCollider();
-        return collider is Player;
     }
 
     [EventListener]
