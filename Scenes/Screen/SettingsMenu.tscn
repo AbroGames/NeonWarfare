@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=4 format=3 uid="uid://dkmaek7egfvff"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_qiic2"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/BackToMenuButton.cs" id="2_5048t"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/PlayerSettingsButton.cs" id="2_i1jiy"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="3_fckio"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -29,6 +30,7 @@ grow_vertical = 2
 layout_mode = 2
 text = "Настройки игрока"
 icon = ExtResource("1_qiic2")
+script = ExtResource("2_i1jiy")
 
 [node name="SoundSettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
@@ -44,4 +46,4 @@ icon = ExtResource("1_qiic2")
 layout_mode = 2
 text = "Назад к главному меню"
 icon = ExtResource("1_qiic2")
-script = ExtResource("2_5048t")
+script = ExtResource("3_fckio")

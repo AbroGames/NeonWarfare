@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cjrxgi0aql38u"]
+[gd_scene load_steps=4 format=3 uid="uid://cjrxgi0aql38u"]
 
 [ext_resource type="Script" path="res://Scripts/Screen/NickLineEdit.cs" id="1_8c4kn"]
-[ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="3_ct1yi"]
-[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/SettingsMenu.tscn" id="4_ouknd"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/BackToSettingsMenuButton.cs" id="3_7ouqc"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="6_ohljf"]
 
 [node name="ProfileMenu" type="Control"]
@@ -68,10 +67,9 @@ layout_mode = 2
 layout_mode = 2
 text = "Назад"
 icon = ExtResource("6_ohljf")
+script = ExtResource("3_7ouqc")
 
 [node name="SaveButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Сохранить"
 icon = ExtResource("6_ohljf")
-script = ExtResource("3_ct1yi")
-_newMenu = ExtResource("4_ouknd")

@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://br3ns4pa22dor"]
+[gd_scene load_steps=6 format=3 uid="uid://br3ns4pa22dor"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_qiic2"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/CreateServerButton.cs" id="2_hx1cp"]
-[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="3_hsnee"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/ConnectToServerButton.cs" id="3_nxdgw"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/CreateServerMenuButton.cs" id="2_yju47"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/ConnectToServerMenuButton.cs" id="3_tohtc"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/SettingsButton.cs" id="4_grrip"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/MainMenuButtons/ExitButton.cs" id="5_xlsed"]
 
@@ -33,15 +32,13 @@ grow_vertical = 2
 layout_mode = 2
 text = "Создать сервер"
 icon = ExtResource("1_qiic2")
-script = ExtResource("2_hx1cp")
-NewWorldMainScene = ExtResource("3_hsnee")
+script = ExtResource("2_yju47")
 
 [node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Подключиться к серверу"
 icon = ExtResource("1_qiic2")
-script = ExtResource("3_nxdgw")
-NewWorldMainScene = ExtResource("3_hsnee")
+script = ExtResource("3_tohtc")
 
 [node name="SettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2

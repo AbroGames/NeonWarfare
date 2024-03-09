@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://3j3wpv6my2si"]
+[gd_scene load_steps=5 format=3 uid="uid://3j3wpv6my2si"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_nq6w6"]
-[ext_resource type="Script" path="res://Scripts/Screen/ChangeMenuButton.cs" id="2_22wi1"]
-[ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/Screen/ProfileMenu.tscn" id="3_cxd38"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="2_7abow"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/ConnectToServerButtons/ConnectToServerButton.cs" id="3_57gpj"]
+[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_ro33w"]
 
 [node name="ConnectToServerMenu" type="Control"]
 layout_mode = 3
@@ -46,9 +47,18 @@ text = "Порт:"
 [node name="PortLineEdit" type="LineEdit" parent="GridContainer/PortSplit"]
 layout_mode = 2
 
-[node name="CreateServerButton" type="Button" parent="GridContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
+layout_mode = 2
+
+[node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
+layout_mode = 2
+text = "Вернуться в меню"
+icon = ExtResource("1_nq6w6")
+script = ExtResource("2_7abow")
+
+[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer"]
 layout_mode = 2
 text = "Подключится к серверу"
 icon = ExtResource("1_nq6w6")
-script = ExtResource("2_22wi1")
-_newMenu = ExtResource("3_cxd38")
+script = ExtResource("3_57gpj")
+NewWorldMainScene = ExtResource("4_ro33w")

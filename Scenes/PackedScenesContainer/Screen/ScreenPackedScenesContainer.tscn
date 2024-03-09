@@ -1,14 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://3jftjd3egrvl"]
+[gd_scene load_steps=8 format=3 uid="uid://3jftjd3egrvl"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Screen/ScreenPackedScenesContainer.cs" id="1_2raj3"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenu.tscn" id="2_q6uv0"]
-[ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/Screen/ProfileMenu.tscn" id="3_124je"]
+[ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/Screen/PlayerSettingsMenu.tscn" id="3_124je"]
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/SettingsMenu.tscn" id="3_qsdvr"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="4_xvahx"]
+[ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/Screen/ConnectToServerMenu.tscn" id="5_vhrhk"]
+[ext_resource type="PackedScene" uid="uid://cdfkul01f3eck" path="res://Scenes/Screen/CreateServerMenu.tscn" id="6_gyn1e"]
 
 [node name="ScreenPackedScenesContainer" type="Node"]
 script = ExtResource("1_2raj3")
 MainMenu = ExtResource("2_q6uv0")
 SettingsMenu = ExtResource("3_qsdvr")
-ProfileMenu = ExtResource("3_124je")
+PlayerSettingsMenu = ExtResource("3_124je")
+ConnectToServerMenu = ExtResource("5_vhrhk")
+CreateServerMenu = ExtResource("6_gyn1e")
 Hud = ExtResource("4_xvahx")
