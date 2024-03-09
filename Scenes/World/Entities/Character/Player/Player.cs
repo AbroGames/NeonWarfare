@@ -9,12 +9,6 @@ public partial class Player : Character
 {
 	[Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
 	
-	public long Xp { get; set; }
-	public long NextLevelXp { get; set; }
-	public double RequiredXpLevelFactor { get; set; } = 1.5;
-	public int BasicRequiredXp { get; set; } = 10;
-	public int Level { get; set; } = 1;
-	
 	public double PrimaryDamage { get; set; } = 1000;
 	public double PrimaryDistance { get; set; } = 2000;
 	public double UniversalDamageMultiplier { get; set; } = 1;

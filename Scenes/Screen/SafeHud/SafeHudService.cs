@@ -15,9 +15,6 @@ public class SafeHudService
         SafeWorld safeWorld = safeHud.SafeWorld;
         Player player = safeWorld.Player;
         
-        safeHud.Xp.Value = (double) player.Xp / player.NextLevelXp;
-        safeHud.XpLabel.Text = $"Xp: {player.Xp} / {player.NextLevelXp}";
-        safeHud.Level.Text = $"Level: {player.Level}";
 
         safeHud.HpBar.CurrentUpperValue = player.Hp;
         safeHud.HpBar.CurrentLowerValue = player.Hp; //TODO сделать аналогично с BattleHud, вынести в общий сервис (не дублировать код)

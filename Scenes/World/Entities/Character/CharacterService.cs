@@ -44,30 +44,6 @@ public class CharacterService
     		
     		if (character.Hp <= 0)
     		{
-    			if (damage.Source is Player ply && character is Enemy enemy)
-    			{
-    				
-    				if (enemy.IsBoss)
-    				{
-    					int orbs = 10;
-    					int xpPerOrb = enemy.BaseXp / orbs;
-    					for (int i = 0; i < orbs; i++)
-    					{
-    						var orb = XpOrb.Create();
-    						orb.Position = character.Position;
-    						orb.Configure(ply, xpPerOrb);
-						    character.GetParent().AddChild(orb);
-    					}
-    				}
-    				else
-    				{
-    					var orb = XpOrb.Create();
-    					orb.Position = character.Position;
-    					orb.Configure(ply, enemy.BaseXp);
-					    character.GetParent().AddChild(orb);
-    				}
-    			}
-    			
 			    character.Die();
     			
     			var deathDummy = character.DropDummy();

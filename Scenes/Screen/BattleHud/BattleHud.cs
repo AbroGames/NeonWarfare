@@ -7,9 +7,7 @@ namespace NeoVector;
 public partial class BattleHud : Control
 {
 	[ExportGroup("Bars")]
-	[Export] [NotNull] public ProgressBar Xp { get; private set; }
 	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
-	[Export] [NotNull] public Label XpLabel { get; private set; }
 	
 	
 	[ExportGroup("Labels")]

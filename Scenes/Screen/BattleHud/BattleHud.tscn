@@ -1,18 +1,12 @@
-[gd_scene load_steps=15 format=3 uid="uid://dlelsat4bmqw3"]
+[gd_scene load_steps=13 format=3 uid="uid://dlelsat4bmqw3"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/BattleHud/BattleHud.cs" id="1_rjfnb"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_ypiqw"]
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_1iemm"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Cooldown.gdshader" id="4_d8thp"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="4_v5koi"]
-[ext_resource type="PackedScene" path="res://Scenes/Screen/BattleHud/BeamIcon.tscn" id="6_5soax"]
-[ext_resource type="PackedScene" path="res://Scenes/Screen/BattleHud/SolarBeamIcon.tscn" id="6_h4654"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cra4"]
-bg_color = Color(0, 0.180392, 0.211765, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ucm43"]
-bg_color = Color(0, 0.462745, 0.419608, 1)
+[ext_resource type="PackedScene" uid="uid://dekbo8bdpkepk" path="res://Scenes/Screen/BattleHud/BeamIcon.tscn" id="6_5soax"]
+[ext_resource type="PackedScene" uid="uid://dq5jdxeqtu3w5" path="res://Scenes/Screen/BattleHud/SolarBeamIcon.tscn" id="6_h4654"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_chnxn"]
 resource_local_to_scene = true
@@ -45,7 +39,7 @@ font_color = Color(0.592157, 0, 0, 1)
 outline_size = 24
 outline_color = Color(0, 0, 0, 1)
 
-[node name="BattleHud" type="Control" node_paths=PackedStringArray("Xp", "HpBar", "XpLabel", "Waves", "Enemies", "Level", "Fps", "Tps", "WaveMessage", "TimerSprite", "TimerLabel", "BeamIcon", "SolarBeamIcon")]
+[node name="BattleHud" type="Control" node_paths=PackedStringArray("HpBar", "Waves", "Enemies", "Level", "Fps", "Tps", "WaveMessage", "TimerSprite", "TimerLabel", "BeamIcon", "SolarBeamIcon")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,9 +47,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rjfnb")
-Xp = NodePath("Rows/Xp")
 HpBar = NodePath("Rows/HpBar")
-XpLabel = NodePath("Rows/Xp/Label")
 Waves = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Waves")
 Enemies = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Enemies")
 Level = NodePath("Rows/MarginContainer/Columns/LeftUpInfo/Level")
@@ -74,36 +66,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Xp" type="ProgressBar" parent="Rows"]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-size_flags_vertical = 1
-tooltip_text = "Tez sosi"
-mouse_filter = 1
-theme_override_styles/background = SubResource("StyleBoxFlat_4cra4")
-theme_override_styles/fill = SubResource("StyleBoxFlat_ucm43")
-max_value = 1.0
-step = 0.001
-value = 0.5
-show_percentage = false
-
-[node name="Label" type="Label" parent="Rows/Xp"]
-layout_mode = 1
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -11.5
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-tooltip_text = "Sosi Bibu"
-mouse_filter = 1
-text = "Xp"
-label_settings = SubResource("LabelSettings_chnxn")
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="HpBar" parent="Rows" instance=ExtResource("3_1iemm")]
 layout_mode = 2

@@ -14,7 +14,6 @@ public partial class WorldPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene SolarBeam { get; private set; }
     [Export] [NotNull] public PackedScene Beam { get; private set; }
     
-    [Export] [NotNull] public PackedScene XpOrb { get; private set; }
     [Export] [NotNull] public PackedScene FloatingLabel { get; private set; }
     
     public override void _Ready()

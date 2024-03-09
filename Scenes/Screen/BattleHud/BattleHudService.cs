@@ -22,10 +22,6 @@ public class BattleHudService
         BattleHud battleHud = battleHudProcessEvent.BattleHud;
         BattleWorld battleWorld = battleHud.BattleWorld;
         Player player = battleWorld.Player;
-        
-        battleHud.Xp.Value = (double) player.Xp / player.NextLevelXp;
-        battleHud.XpLabel.Text = $"Xp: {player.Xp} / {player.NextLevelXp}";
-        battleHud.Level.Text = $"Level: {player.Level}";
 		
         battleHud.Waves.Text = $"Wave: {battleWorld.EnemyWave.WaveNumber}";
         battleHud.Enemies.Text = $"Enemies: {battleWorld.Enemies.Count}";
