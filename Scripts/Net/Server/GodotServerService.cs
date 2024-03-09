@@ -32,7 +32,7 @@ public class GodotServerService
         } 
         else if (currentMainScene is BattleWorldMainScene)
         {
-            Network.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerWainBattleEndPacket());
+            Network.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerWaitBattleEndPacket());
         }
         else
         {

@@ -5,7 +5,7 @@ using KludgeBox.Net.Packets;
 namespace NeoVector;
 
 [GamePacket]
-public class ServerWainBattleEndPacket : AbstractPacket;
+public class ServerWaitBattleEndPacket : AbstractPacket;
 
 [GamePacket]
 public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : AbstractPacket

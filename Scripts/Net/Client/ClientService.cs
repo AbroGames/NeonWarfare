@@ -14,12 +14,29 @@ public class ClientService
     [EventListener]
     public void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
     {
-        Log.Warning("ServerChangeWorldPacket: " + serverChangeWorldPacket.WorldType);
+        if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
+        {
+            Root.Instance.Game.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.SafeWorld.Instantiate());
+        } 
+        else if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Battle)
+        {
+            Root.Instance.Game.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.BattleWorld.Instantiate());
+        }
+        else
+        {
+            Log.Error($"Received unknown type of MainScene: {serverChangeWorldPacket.WorldType}");
+        }
     }
     
     [EventListener]
     public void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        Log.Warning("ServerSpawnPlayerPacket: " + serverSpawnPlayerPacket.X);
+        
+    }
+    
+    [EventListener]
+    public void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
+    {
+        
     }
 }

@@ -69,6 +69,7 @@ public partial class Network : Node
     public static void Init()
     {
         ReceivedPacket += EventBus.Publish;
+        ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}");
     }
     
     private void InitGlobalInstance()
@@ -236,6 +237,7 @@ public partial class Network : Node
     public static void SendPacketToClients(AbstractPacket packet)
     {
         var packetData = PacketConverter.Serialize(packet);
+        Log.Debug($"SendPacketToClients: {packetData}");
         
         if (IsServer)
         {
@@ -258,6 +260,7 @@ public partial class Network : Node
     public static void SendPacketToServer(AbstractPacket packet)
     {
         var packetData = PacketConverter.Serialize(packet);
+        Log.Debug($"SendPacketToServer: {packetData}");
         
         if (IsClient)
         {
@@ -283,6 +286,7 @@ public partial class Network : Node
         if (id == 1) throw new ArgumentException("Can't send packet from server to server");
         
         var packetData = PacketConverter.Serialize(packet);
+        Log.Debug($"SendPacketToPeer: {packetData}");
 
         if (id == 0)
         {
