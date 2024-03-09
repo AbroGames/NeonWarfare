@@ -1,7 +1,9 @@
 ﻿using System;
 using Godot;
+using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net.Packets;
+using NeoVector;
 using static Godot.MultiplayerPeer;
 
 namespace KludgeBox.Net;
@@ -83,6 +85,12 @@ public partial class Network : Node
             }
         };
         ReceivedPacket += DefaultPacketProcessor;
+
+        Api.PeerConnected += id => EventBus.Publish<IEvent>(IsServer ? new PeerConnectedServerEvent(id) : new PeerConnectedClientEvent(id));
+        Api.PeerDisconnected += id => EventBus.Publish<IEvent>(IsServer ? new PeerDisconnectedServerEvent(id) : new PeerDisconnectedClientEvent(id));
+        Api.ConnectedToServer += () => EventBus.Publish<IEvent>(new ConnectedToServerEvent());
+        Api.ConnectionFailed += () => EventBus.Publish<IEvent>(new ConnectionToServerFailedEvent());
+        Api.ServerDisconnected += () => EventBus.Publish<IEvent>(new ServerDisconnectedEvent());
     }
 	
     private static Network _instance;
@@ -154,6 +162,25 @@ public partial class Network : Node
             IsLocalServer = true;
             IsLocalClient = true;
             IsRemoteClient = true;
+
+            Mode = NetworkMode.MultiplayerServer;
+        }
+
+        Log.Info($"({Mode}) Attempt to run multiplayer game finished with status: {error}");
+        return error;
+    }
+    
+    public static Error CreateDedicatedServer(int port)
+    {
+        Error error = Peer.CreateServer(port);
+        if (error is Error.Ok)
+        {
+            PacketRegistry.IsSynchronized = true;
+            Api.MultiplayerPeer = Peer;
+            
+            IsLocalServer = true;
+            IsLocalClient = false;
+            IsRemoteClient = false;
 
             Mode = NetworkMode.MultiplayerServer;
         }

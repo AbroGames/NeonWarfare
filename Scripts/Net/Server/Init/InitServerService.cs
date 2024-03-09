@@ -19,6 +19,9 @@ public class InitServerService
         
         int port = EventBus.Require(new GetPortFromCmdArgsQuery());
         string admin = EventBus.Require(new GetAdminFromCmdArgsQuery());
+
+        Root.Instance.Server = new Server(port, admin);
+        Network.CreateDedicatedServer(port);
     }
     
     [EventListener]

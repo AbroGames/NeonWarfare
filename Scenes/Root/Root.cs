@@ -16,6 +16,9 @@ public partial class Root : Node2D
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 	
+	public Server Server { get; set; }
+	public bool IsServer => Server != null;
+	
 	public static Root Instance { get; private set; }
 
 	public override void _EnterTree()

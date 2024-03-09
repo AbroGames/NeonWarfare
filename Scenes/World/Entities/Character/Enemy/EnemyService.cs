@@ -13,11 +13,6 @@ public class EnemyService
         var enemy = e.Enemy;
 
         enemy.PrimaryCd.Duration = 1;
-        enemy.PrimaryCd.Ready += () =>
-        {
-            Log.Info("Enemy primary cd ready");
-        };
-        
         enemy.TeleportCd.Ready += () =>
         {
             EventBus.Publish(new EnemyAboutToTeleportEvent(enemy));
