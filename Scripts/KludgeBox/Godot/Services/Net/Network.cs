@@ -1,5 +1,6 @@
 ﻿using System;
 using Godot;
+using KludgeBox.Events.Global;
 using KludgeBox.Net.Packets;
 using static Godot.MultiplayerPeer;
 
@@ -66,6 +67,7 @@ public partial class Network : Node
     public static void Init()
     {
         Utils.DoNothing();
+        ReceivedPacket += EventBus.Publish;
     }
     
     private void InitGlobalInstance()
