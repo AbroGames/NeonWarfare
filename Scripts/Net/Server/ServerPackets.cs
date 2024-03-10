@@ -33,6 +33,11 @@ public class ServerSpawnAllyPacket(long nid, double x, double y, double dir) : A
     public double Dir { get; set; } = dir;
 }
 
-
-
-
+[GamePacket]
+public class ServerPositionEntityPacket(long nid, double x, double y, double dir) : AbstractPacket
+{
+    public long Nid { get; set; } = nid;
+    public double X { get; set; } = x;
+    public double Y { get; set; } = y;
+    public double Dir { get; set; } = dir;
+}

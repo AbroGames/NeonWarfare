@@ -78,4 +78,12 @@ public class ClientService
         Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(
             Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen.Instantiate());
     }
+    
+    [EventListener]
+    public void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
+    {
+        Node2D node = Root.Instance.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
+        node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
+        node.Rotation = serverPositionEntityPacket.Dir;
+    }
 }
