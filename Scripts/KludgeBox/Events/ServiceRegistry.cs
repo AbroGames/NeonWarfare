@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using KludgeBox;
+using KludgeBox.Events;
 
 namespace KludgeBox;
 
@@ -29,9 +30,16 @@ public class ServiceRegistry
             {
                 Log.Error($"Can't instantiate service {type.FullName}:\n{e.Message}");
             }
-            
         }
     }
 }
 
-public class GameServiceAttribute : Attribute;
+public class GameServiceAttribute : Attribute
+{
+    public ListenerSide Side { get; set; }
+    
+    public GameServiceAttribute(ListenerSide side = ListenerSide.Both)
+    {
+        Side = side;
+    }
+}

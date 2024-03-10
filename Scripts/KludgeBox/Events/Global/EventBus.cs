@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace KludgeBox.Events.Global;
 
@@ -79,7 +80,12 @@ public static class EventBus
 
     public static void RegisterListeners(ServiceRegistry registry)
     {
-        var listeners = EventScanner.ScanEventListenersInTypesOfType(registry.Services.ToArray(), typeof(IEvent));
+        var busSide = Side;
+        
+        var services = registry.Services
+            .Where(x => x.GetType().GetCustomAttribute<GameServiceAttribute>()!.Side.HasFlag(busSide));
+        
+        var listeners = EventScanner.ScanEventListenersInTypesOfType(services.ToArray(), typeof(IEvent));
 
         Log.Info($"Registering {listeners.Count()} listeners from registered services");
         foreach (var listener in listeners)
