@@ -11,7 +11,7 @@ public class SettingsService
     public void OnSettingsInitRequest(SettingsInitRequest r)
     {
         var playerInfo = Root.Instance.Game.PlayerInfo;
-        playerInfo.PlayerName = "Vaster";
-        playerInfo.PlayerColor = new Color(1, 1, 1, 1);
+        playerInfo.PlayerName = "Player";
+        playerInfo.PlayerColor = new Color(0, 1, 1, 1);
     }
 }

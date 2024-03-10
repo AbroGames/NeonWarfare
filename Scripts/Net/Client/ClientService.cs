@@ -37,6 +37,12 @@ public class ClientService
     [EventListener]
     public void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
     {
-        
+        if (Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+        {
+            Log.Error(
+                "OnServerWaitBattleEndPacket, MainSceneContainer contains Node that is not MainMenuMainScene");
+            return;
+        }
+        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen.Instantiate());
     }
 }

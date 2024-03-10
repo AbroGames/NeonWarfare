@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://3j3wpv6my2si"]
+[gd_scene load_steps=4 format=3 uid="uid://3j3wpv6my2si"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_nq6w6"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="2_nop7s"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/ConnectToServerButtons/ConnectToServerButton.cs" id="3_57gpj"]
-[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_ro33w"]
 
 [node name="ConnectToServerMenu" type="Control"]
 layout_mode = 3
@@ -30,11 +29,11 @@ grow_vertical = 2
 [node name="IPSplit" type="HSplitContainer" parent="GridContainer"]
 layout_mode = 2
 
-[node name="PortLabel" type="Label" parent="GridContainer/IPSplit"]
+[node name="IpLabel" type="Label" parent="GridContainer/IPSplit"]
 layout_mode = 2
 text = "IP:"
 
-[node name="PortLineEdit" type="LineEdit" parent="GridContainer/IPSplit"]
+[node name="IpLineEdit" type="LineEdit" parent="GridContainer/IPSplit"]
 layout_mode = 2
 
 [node name="PortSplit" type="HSplitContainer" parent="GridContainer"]
@@ -46,6 +45,7 @@ text = "Порт:"
 
 [node name="PortLineEdit" type="LineEdit" parent="GridContainer/PortSplit"]
 layout_mode = 2
+text = "25566"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2
@@ -56,9 +56,10 @@ text = "Вернуться в меню"
 icon = ExtResource("1_nq6w6")
 script = ExtResource("2_nop7s")
 
-[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer"]
+[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit", "IpLineEdit")]
 layout_mode = 2
 text = "Подключится к серверу"
 icon = ExtResource("1_nq6w6")
 script = ExtResource("3_57gpj")
-NewWorldMainScene = ExtResource("4_ro33w")
+PortLineEdit = NodePath("../../PortSplit/PortLineEdit")
+IpLineEdit = NodePath("../../IPSplit/IpLineEdit")

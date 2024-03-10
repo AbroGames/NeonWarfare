@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://cdfkul01f3eck"]
 
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/CreateServerButtons/PortLineEdit.cs" id="1_gptja"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_mqjdd"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="2_hedxw"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/CreateServerButtons/CreateServerButton.cs" id="3_spb4r"]
-[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_lqqgn"]
 
 [node name="CreateServerMenu" type="Control"]
 layout_mode = 3
@@ -36,6 +36,7 @@ text = "Порт:"
 
 [node name="PortLineEdit" type="LineEdit" parent="GridContainer/HSplitContainer"]
 layout_mode = 2
+script = ExtResource("1_gptja")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2
@@ -46,9 +47,9 @@ text = "Вернуться в меню"
 icon = ExtResource("1_mqjdd")
 script = ExtResource("2_hedxw")
 
-[node name="CreateServerButton" type="Button" parent="GridContainer/HBoxContainer"]
+[node name="CreateServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit")]
 layout_mode = 2
 text = "Создать сервер"
 icon = ExtResource("1_mqjdd")
 script = ExtResource("3_spb4r")
-NewWorldMainScene = ExtResource("4_lqqgn")
+PortLineEdit = NodePath("../../HSplitContainer/PortLineEdit")
