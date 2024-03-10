@@ -1,13 +1,14 @@
 ﻿using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
 [GameService]
 public class EnemyDamageService
 {
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyDeath(EnemyDeathEvent e)
     {
         var enemy = e.Enemy;
@@ -18,5 +19,8 @@ public class EnemyDamageService
         {
             EventBus.Publish(new EnemyStopAttractionEvent(battleWorld, enemy));
         }
+        
+        long nid = Root.Instance.NetworkEntityManager.RemoveEntity(enemy);
+        Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
     }
 }

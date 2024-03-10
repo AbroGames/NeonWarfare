@@ -57,7 +57,7 @@ public class PlayerAttackService
             player.GetParent().AddChild(bullet);
             long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
             
-            Network.SendPacketToServer(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
+            Network.SendPacketToClients(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
         }
     }
     
@@ -69,7 +69,7 @@ public class PlayerAttackService
         Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
         bullet.Position = Vec(serverPlayerPrimaryAttackPacket.X, serverPlayerPrimaryAttackPacket.Y);
         bullet.Rotation = serverPlayerPrimaryAttackPacket.Dir;
-        bullet.RemainingDamage = 1000;
+        bullet.Scale *= 2;
         bullet.Speed = serverPlayerPrimaryAttackPacket.MovementSpeed;
         bullet.Author = Bullet.AuthorEnum.PLAYER;
 
@@ -87,7 +87,6 @@ public class PlayerAttackService
         Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
         bullet.Position = Vec(serverPlayerSecondaryAttackPacket.X, serverPlayerSecondaryAttackPacket.Y);
         bullet.Rotation = serverPlayerSecondaryAttackPacket.Dir;
-        bullet.RemainingDamage = 5;
         bullet.Speed = serverPlayerSecondaryAttackPacket.MovementSpeed;
         bullet.Author = Bullet.AuthorEnum.PLAYER;
         
