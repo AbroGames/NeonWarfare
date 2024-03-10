@@ -25,6 +25,7 @@ public class NetInitService
             serverParams.Add(ServerParams.HeadlessFlag);
         }
         
+        serverParams.Add(ServerParams.RenderFlag); //TODO del
         Root.Instance.ServerPid = OS.CreateInstance(serverParams.ToArray());
     }
     

@@ -53,6 +53,18 @@ public class ClientService
         
         world.AddChild(player); // must be here to draw over the floor
     }
+
+    [EventListener]
+    public void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
+    {
+        Ally ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Ally>();
+        ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
+        ally.Rotation = serverSpawnAllyPacket.Dir;
+        Root.Instance.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
+        
+        World world = Root.Instance.CurrentWorld;
+        world.AddChild(ally);
+    }
     
     [EventListener]
     public void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
