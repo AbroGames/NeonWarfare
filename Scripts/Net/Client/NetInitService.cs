@@ -32,6 +32,6 @@ public class NetInitService
     [EventListener]
     public void OnConnectToServerRequest(ConnectToServerRequest connectToServerRequest)
     {
-        Network.ConnectToRemoteServer(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port);
+        Network.ConnectToRemoteServer(connectToServerRequest.Host, connectToServerRequest.Port);
     }
 }

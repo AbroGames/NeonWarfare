@@ -27,16 +27,25 @@ offset_bottom = 99.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HSplitContainer" type="HSplitContainer" parent="GridContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2
 
-[node name="PortLabel" type="Label" parent="GridContainer/HSplitContainer"]
+[node name="PortLabel" type="Label" parent="GridContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Порт:"
 
-[node name="PortLineEdit" type="LineEdit" parent="GridContainer/HSplitContainer"]
+[node name="PortLineEdit" type="LineEdit" parent="GridContainer/HBoxContainer2"]
 layout_mode = 2
 script = ExtResource("1_gptja")
+
+[node name="ShowConsoleLabel" type="Label" parent="GridContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Показывать консоль"
+
+[node name="ShowConsoleCheckBox" type="CheckBox" parent="GridContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2
@@ -47,9 +56,10 @@ text = "Вернуться в меню"
 icon = ExtResource("1_mqjdd")
 script = ExtResource("2_hedxw")
 
-[node name="CreateServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit")]
+[node name="CreateServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit", "ShowConsoleCheckBox")]
 layout_mode = 2
 text = "Создать сервер"
 icon = ExtResource("1_mqjdd")
 script = ExtResource("3_spb4r")
-PortLineEdit = NodePath("../../HSplitContainer/PortLineEdit")
+PortLineEdit = NodePath("../../HBoxContainer2/PortLineEdit")
+ShowConsoleCheckBox = NodePath("../../HBoxContainer2/ShowConsoleCheckBox")

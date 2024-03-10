@@ -2,4 +2,4 @@
 
 namespace NeoVector;
 
-public readonly record struct PlayerInfoReadyEvent(PlayerInfo PlayerInfo) : IEvent;
+public readonly record struct PlayerInfoSaveEvent() : IEvent;
