@@ -13,7 +13,7 @@ public class BattleWorldService
         BattleWorld battleWorld = battleWorldReadyEvent.BattleWorld;
         Root.Instance.CurrentWorld = battleWorld;
         
-        battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+        /*battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         battleWorld.Player.Position = Vec(500, 500);
 		
         var camera = new Camera(); //TODO to camera service
@@ -28,12 +28,8 @@ public class BattleWorldService
         floor.Camera = camera;
         floor.ForceCheck();
 		
-        //Node2D ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Node2D>();
-        //ally.Position = Vec(600, 600);
-        //battleWorld.AddChild(ally);
-        battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor
+        battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor*/
         
-        //EventBus.Publish(new PlayerLevelUpEvent(battleWorld.Player, 20));
         
         if (Rand.Chance(0.5))//TODO to music service (battle music service)
         {

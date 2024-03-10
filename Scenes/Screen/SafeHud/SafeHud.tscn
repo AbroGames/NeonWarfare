@@ -1,10 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cfr65i5i8050m"]
+[gd_scene load_steps=7 format=3 uid="uid://cfr65i5i8050m"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/SafeHud/SafeHud.cs" id="1_lcuda"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_dqjfh"]
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="3_y67ng"]
-[ext_resource type="Script" path="res://Scripts/Screen/ToBattleButton.cs" id="4_xe4em"]
-[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="5_57n0a"]
+[ext_resource type="Script" path="res://Scenes/Screen/SafeHud/ToBattleButton.cs" id="4_byhkj"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_chnxn"]
 resource_local_to_scene = true
@@ -58,8 +57,7 @@ modulate = Color(1, 0, 0, 1)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "To battle!"
-script = ExtResource("4_xe4em")
-_battleMainScene = ExtResource("5_57n0a")
+script = ExtResource("4_byhkj")
 
 [node name="RightUpInfo" type="VBoxContainer" parent="Rows/Columns"]
 layout_mode = 2

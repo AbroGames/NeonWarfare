@@ -77,7 +77,10 @@ public class GodotServerService
         Player player = Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
         Root.Instance.NetworkEntityManager.RemoveEntity(player);
         Root.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
+        long nid = Root.Instance.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
+        
+        Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
     }
     
 }

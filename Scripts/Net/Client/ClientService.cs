@@ -14,6 +14,8 @@ public class ClientService
     [EventListener]
     public void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
     {
+        Root.Instance.NetworkEntityManager.Clear();
+        
         if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
         {
             Root.Instance.Game.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.SafeWorld.Instantiate());
@@ -85,5 +87,12 @@ public class ClientService
         Node2D node = Root.Instance.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
         node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
         node.Rotation = serverPositionEntityPacket.Dir;
+    }
+
+    [EventListener]
+    public void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
+    {
+        Node2D node = Root.Instance.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
+        node.QueueFree();
     }
 }

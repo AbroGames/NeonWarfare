@@ -22,6 +22,7 @@ public class BattleHudService
         BattleHud battleHud = battleHudProcessEvent.BattleHud;
         BattleWorld battleWorld = battleHud.BattleWorld;
         Player player = battleWorld.Player;
+        if (player == null) return;
 		
         battleHud.Waves.Text = $"Wave: {battleWorld.EnemyWave.WaveNumber}";
         battleHud.Enemies.Text = $"Enemies: {battleWorld.Enemies.Count}";

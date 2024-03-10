@@ -39,21 +39,29 @@ public class NetworkEntityManager
         return _nidToNode[nid] as T;
     }
 
-    public void RemoveEntity(Node2D node)
+    public long RemoveEntity(Node2D node)
     {
-        if (!_nodeToNid.ContainsKey(node)) return;
+        if (!_nodeToNid.ContainsKey(node)) return -1;
         
         long nid = _nodeToNid[node];
         _nodeToNid.Remove(node);
         _nidToNode.Remove(nid);
+        return nid;
     }
     
-    public void RemoveEntity(long nid)
+    public Node2D RemoveEntity(long nid)
     {
-        if (!_nidToNode.ContainsKey(nid)) return;
+        if (!_nidToNode.ContainsKey(nid)) return null;
         
         Node2D node = _nidToNode[nid];
         _nidToNode.Remove(nid);
         _nodeToNid.Remove(node);
+        return node;
+    }
+
+    public void Clear()
+    {
+        _nodeToNid.Clear();
+        _nidToNode.Clear();
     }
 }
