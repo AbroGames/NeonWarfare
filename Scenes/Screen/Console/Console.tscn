@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://b2gaknpctobq8"]
+
+[ext_resource type="Script" path="res://Scenes/Screen/Console/Console.cs" id="1_3lnyi"]
+[ext_resource type="FontFile" uid="uid://cwx0l0l0513ma" path="res://Assets/Fonts/ComforterBrush-Regular.ttf" id="2_osyvo"]
+
+[sub_resource type="Gradient" id="Gradient_jnsbo"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_p3uxb"]
+gradient = SubResource("Gradient_jnsbo")
+
+[node name="Console" type="CanvasLayer" node_paths=PackedStringArray("TextLabel")]
+script = ExtResource("1_3lnyi")
+TextLabel = NodePath("Margin/RichTextLabel")
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_p3uxb")
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Margin"]
+layout_mode = 2
+focus_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_osyvo")
+bbcode_enabled = true
+threaded = true
+selection_enabled = true
