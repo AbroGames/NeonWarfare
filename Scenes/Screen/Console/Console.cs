@@ -11,12 +11,6 @@ public partial class Console : CanvasLayer, ILogger
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
-        Log.AddLogger(this);
-        Log.Info("Added builtin logger");
-        Log.Debug("Added builtin logger");
-        Log.Warning("Added builtin logger");
-        Log.Error("Added builtin logger");
-        Log.Critical("Added builtin logger");
     }
 
     public void Debug(object msg = null)

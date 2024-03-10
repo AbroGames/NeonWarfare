@@ -13,7 +13,7 @@ public class NetInitService
     {
         Root.Instance.ServerPid = OS.CreateInstance([
             ServerParams.ServerFlag,
-            ServerParams.HeadlessFlag,
+            //ServerParams.HeadlessFlag,
             ServerParams.PortParam, createServerRequest.Port.ToString(),
             ServerParams.AdminParam, createServerRequest.AdminNickname,
             ServerParams.ParentPidParam, OS.GetProcessId().ToString()
