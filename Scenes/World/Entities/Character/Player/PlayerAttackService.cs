@@ -1,16 +1,18 @@
 ﻿using Godot;
 using KludgeBox;
 using KludgeBox.Events;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
 [GameService]
 public class PlayerAttackService
 {
-    [EventListener]
-    public void OnPlayerAttackPrimary(PlayerAttackPrimaryEvent e)
+    
+    [EventListener(ListenerSide.Server)]
+    public void OnClientPlayerPrimaryAttackPacket(ClientPlayerPrimaryAttackPacket clientPlayerPrimaryAttackPacket)
     {
-        var player = e.Player;
+        var player = Root.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.Sender.Id].Player;
 		
         // Создание снаряда
         Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
@@ -24,17 +26,17 @@ public class PlayerAttackService
         bullet.RemainingDistance = player.PrimaryDistance;
         bullet.Scale *= 2;
         bullet.Source = player;
-        Audio2D.PlaySoundAt(Sfx.SmallLaserShot, player.Position, 1f).PitchVariation(0.05f);
         player.GetParent().AddChild(bullet);
+        long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
+        
+        Network.SendPacketToClients(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
     }
-
-    [EventListener]
-    public void OnPlayerAttackSecondary(PlayerAttackSecondaryEvent e)
+    
+    [EventListener(ListenerSide.Server)]
+    public void OnClientPlayerSecondaryAttackPacket(ClientPlayerSecondaryAttackPacket clientPlayerSecondaryAttackPacket)
     {
-        var player = e.Player;
-        if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
+        var player = Root.Instance.Server.PlayerServerInfo[clientPlayerSecondaryAttackPacket.Sender.Id].Player;
 		
-        Audio2D.PlaySoundAt(Sfx.SmallLaserShot, player.Position, 0.5f);
         var bulletsCount = 5;
         var spread = Mathf.DegToRad(18);
         var speedSpread = 0.1;
@@ -53,6 +55,45 @@ public class PlayerAttackService
             bullet.RemainingDamage = player.SecondaryDamage;
             bullet.Source = player;
             player.GetParent().AddChild(bullet);
+            long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
+            
+            Network.SendPacketToServer(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
         }
+    }
+    
+    [EventListener(ListenerSide.Client)]
+    public void OnServerPlayerPrimaryAttackPacket(ServerPlayerPrimaryAttackPacket serverPlayerPrimaryAttackPacket)
+    {
+        
+        // Создание снаряда
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        bullet.Position = Vec(serverPlayerPrimaryAttackPacket.X, serverPlayerPrimaryAttackPacket.Y);
+        bullet.Rotation = serverPlayerPrimaryAttackPacket.Dir;
+        bullet.RemainingDamage = 1000;
+        bullet.Speed = serverPlayerPrimaryAttackPacket.MovementSpeed;
+        bullet.Author = Bullet.AuthorEnum.PLAYER;
+
+        Root.Instance.CurrentWorld.AddChild(bullet);
+        Root.Instance.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
+        
+        Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 1f).PitchVariation(0.05f);
+    }
+
+    [EventListener(ListenerSide.Client)]
+    public void OnServerPlayerSecondaryAttackPacket(ServerPlayerSecondaryAttackPacket serverPlayerSecondaryAttackPacket)
+    {
+        
+        // Создание снаряда
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        bullet.Position = Vec(serverPlayerSecondaryAttackPacket.X, serverPlayerSecondaryAttackPacket.Y);
+        bullet.Rotation = serverPlayerSecondaryAttackPacket.Dir;
+        bullet.RemainingDamage = 5;
+        bullet.Speed = serverPlayerSecondaryAttackPacket.MovementSpeed;
+        bullet.Author = Bullet.AuthorEnum.PLAYER;
+        
+        Root.Instance.CurrentWorld.AddChild(bullet);
+        Root.Instance.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
+        
+        Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 0.5f);
     }
 }

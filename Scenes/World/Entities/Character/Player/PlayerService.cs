@@ -2,13 +2,14 @@
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
 [GameService]
 public class PlayerService
 {
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerReady(PlayerReadyEvent e)
     {
         var player = e.Player;
@@ -19,11 +20,12 @@ public class PlayerService
         
         player.SecondaryCd.Ready += () =>
         {
-            EventBus.Publish(new PlayerAttackSecondaryEvent(player));
+            if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
+            Network.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
         };
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerProcess(PlayerProcessEvent e)
     {
         var (player, delta) = e;
@@ -60,7 +62,7 @@ public class PlayerService
     {
         if (player.PrimaryCd.Use())
         {
-            EventBus.Publish(new PlayerAttackPrimaryEvent(player));
+            Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
         }
     }
     
