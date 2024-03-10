@@ -64,7 +64,7 @@ public partial class Root : Node2D
 			NotificationExitTree
 		];
 
-		if (ServerPid != null && serverShutdownNotificationTypes.Contains(id))
+		if (ServerPid.HasValue && serverShutdownNotificationTypes.Contains(id) && OS.IsProcessRunning(ServerPid.Value))
 		{
 			Log.Info($"Kill server process. Pid: {ServerPid.Value}");
 			OS.Kill(ServerPid.Value);
