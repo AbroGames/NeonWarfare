@@ -10,7 +10,7 @@ public class SafeWorldService
     [EventListener]
     public void OnSafeWorldReadyEvent(SafeWorldReadyEvent safeWorldReadyEvent)
     {
-        NeoVector.SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
+        SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
         
         safeWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         safeWorld.Player.Position = Vec(500, 500);

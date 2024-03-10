@@ -11,7 +11,7 @@ public partial class Server : Node
     public ServerParams ServerParams { get; private set; }
     public Cooldown CheckParentIsDeadTimer { get; set; } = new(5);
     
-    public IList<PlayerServerInfo> PlayerServerInfo { get; private set; } = new List<PlayerServerInfo>();
+    public IDictionary<long, PlayerServerInfo> PlayerServerInfo { get; private set; } = new Dictionary<long, PlayerServerInfo>();
 
     public Server(ServerParams serverParams)
     {

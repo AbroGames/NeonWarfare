@@ -19,7 +19,7 @@ public class GodotServerService
         Log.Debug($"PeerConnectedServerEvent: {peerConnectedServerEvent.Id}");
         
         PlayerServerInfo playerServerInfo = new PlayerServerInfo(peerConnectedServerEvent.Id);
-        Root.Instance.Server.PlayerServerInfo.Add(playerServerInfo);
+        Root.Instance.Server.PlayerServerInfo.Add(playerServerInfo.Id, playerServerInfo);
         
         Network.SendPacketToPeer(peerConnectedServerEvent.Id,
             new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
@@ -44,6 +44,9 @@ public class GodotServerService
     public void OnPeerDisconnectedServerEvent(PeerDisconnectedServerEvent peerDisconnectedServerEvent)
     {
         Log.Debug($"PeerDisconnectedServerEvent: {peerDisconnectedServerEvent.Id}");
+
+        Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player.QueueFree();
+        Root.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
     }
     
 }

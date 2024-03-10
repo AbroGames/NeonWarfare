@@ -19,9 +19,4 @@ public partial class SafeWorld : World
 		base._Process(delta);
 		EventBus.Publish(new SafeWorldProcessEvent(this, delta));
 	}
-
-	public override void _PhysicsProcess(double delta)
-	{
-		base._PhysicsProcess(delta);
-	}
 }
