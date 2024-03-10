@@ -17,6 +17,9 @@ public class InitServerService
     {
         if (!OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag)) return;
         
+        Root.Instance.GetWindow().Set("position", new Vector2I(
+        DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
+        DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
         int port = EventBus.Require(new GetPortFromCmdArgsQuery());
         string admin = EventBus.Require(new GetAdminFromCmdArgsQuery());
         int? parentPid = EventBus.Require(new GetParentPidFromCmdArgsQuery());

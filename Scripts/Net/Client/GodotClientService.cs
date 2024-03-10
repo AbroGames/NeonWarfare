@@ -27,6 +27,7 @@ public class GodotClientService
     public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
         Log.Debug("ConnectedToServerEvent");
+        Root.Instance.GetWindow().MoveToForeground();
     }
     
     [EventListener]

@@ -5,6 +5,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
+using FileAccess = Godot.FileAccess;
 
 namespace NeoVector;
 
@@ -18,7 +19,9 @@ public class SettingsService
         var playerInfo = Root.Instance.Game.PlayerInfo;
         try
         {
-            string text = File.ReadAllText(PlayerInfo.Filename);
+            FileAccess file = FileAccess.Open($"user://{PlayerInfo.Filename}", FileAccess.ModeFlags.Read);
+            string text = file.GetAsText();
+            file.Close();
             var data = JsonSerializer.Deserialize<PlayerInfo.SerialisationData>(text);
             playerInfo.PlayerName = data.PlayerName;
             playerInfo.PlayerColor = new Color(data.Red/255f, data.Green/255f, data.Blue/255f, 1);
@@ -42,10 +45,10 @@ public class SettingsService
                 playerInfo.PlayerColor = new Color(0, 1, 1, 1);
             }
             var data = new PlayerInfo.SerialisationData(playerInfo);
-            if (!File.Exists(PlayerInfo.Filename))
-                File.Create(PlayerInfo.Filename);
-            File.WriteAllText(PlayerInfo.Filename,
-                JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true }));
+            
+            FileAccess file = FileAccess.Open($"user://{PlayerInfo.Filename}", FileAccess.ModeFlags.WriteRead);
+            file.StoreString(JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true }));
+            file.Close();
         }
         
         catch (Exception e)
