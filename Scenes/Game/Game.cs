@@ -15,7 +15,9 @@ public partial class Game : Node2D
 	public override void _Ready()
 	{
         NotNullChecker.CheckProperties(this);
-        if (!OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
+        
+        if (!OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag) ||
+            OS.GetCmdlineArgs().Contains(ServerParams.RenderFlag))
         {
 	        Console.QueueFree();
         }

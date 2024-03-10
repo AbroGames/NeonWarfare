@@ -14,6 +14,7 @@ public class PlayerMovementService
         
         var movementInput = GetInput();
         player.MoveAndCollide(movementInput * player.MovementSpeed * delta);
+        
     }
     
     private Vector2 GetInput()

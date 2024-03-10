@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
@@ -11,13 +12,20 @@ public class NetInitService
     [EventListener]
     public void OnCreateServerRequest(CreateServerRequest createServerRequest)
     {
-        Root.Instance.ServerPid = OS.CreateInstance([
+        List<string> serverParams =
+        [
             ServerParams.ServerFlag,
-            //ServerParams.HeadlessFlag,
             ServerParams.PortParam, createServerRequest.Port.ToString(),
             ServerParams.AdminParam, createServerRequest.AdminNickname,
             ServerParams.ParentPidParam, OS.GetProcessId().ToString()
-        ]);
+        ];
+
+        if (!createServerRequest.ShowConsole)
+        {
+            serverParams.Add(ServerParams.HeadlessFlag);
+        }
+        
+        Root.Instance.ServerPid = OS.CreateInstance(serverParams.ToArray());
     }
     
     [EventListener]

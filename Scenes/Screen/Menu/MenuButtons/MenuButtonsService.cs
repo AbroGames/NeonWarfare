@@ -26,7 +26,7 @@ public class MenuButtonsService
         if (port <= 0 || port > 65535)
             return;
         
-        EventBus.Publish(new CreateServerRequest(port, Root.Instance.Game.PlayerInfo.PlayerName));
+        EventBus.Publish(new CreateServerRequest(port, Root.Instance.Game.PlayerInfo.PlayerName, true));
         EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, port));
         if (Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
