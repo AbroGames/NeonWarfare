@@ -42,5 +42,6 @@ public partial class Console : CanvasLayer, ILogger
     {
         TextLabel.PushColor(color);
         TextLabel.AppendText($"\n{msg}");
+        TextLabel.ScrollToLine(TextLabel.GetLineCount());
     }
 }
