@@ -30,7 +30,9 @@ public class GodotServerService
             Player player = new Player();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-            
+
+            Root.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
+            currentWorld.AddChild(player);
             long nid = Root.Instance.NetworkEntityManager.AddEntity(player);
             
             Network.SendPacketToClients(new ServerSpawnPlayerPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
