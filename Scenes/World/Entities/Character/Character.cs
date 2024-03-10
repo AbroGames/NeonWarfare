@@ -11,8 +11,8 @@ public partial class Character : CharacterBody2D
 	[Export] [NotNull] public CollisionShape2D CollisionShape { get; private set; }
 	[Export] [NotNull] public Smoothing2D Smoother { get; private set; }
 	
-	public double MaxHp { get; set; } = 10000;
-	public double Hp { get; set; } = 10000;
+	public double MaxHp { get; set; } = 1000000;
+	public double Hp { get; set; } = 1000000;
 	public double RegenHpSpeed { get; set; } = 100; // hp/sec
 	public double MovementSpeed { get; set; } = 250; // in pixels/sec
 	public double RotationSpeed { get; set; } = 300; // in degree/sec

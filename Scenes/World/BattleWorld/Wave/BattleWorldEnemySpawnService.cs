@@ -1,7 +1,9 @@
-﻿using Godot;
+﻿using System.Linq;
+using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -23,7 +25,7 @@ public class BattleWorldEnemySpawnService
         }
     }
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldPhysicsProcessEvent)
     {
         //TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
@@ -40,6 +42,7 @@ public class BattleWorldEnemySpawnService
             var battleWorld = battleWorldPhysicsProcessEvent.BattleWorld;
             CreateBossEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
             RequiredBosses--;
+            
         }
     }
     
@@ -61,17 +64,20 @@ public class BattleWorldEnemySpawnService
         AnimateSpawn(enemy, battleWorld);
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnBattleWorldSpawnEnemy(BattleWorldSpawnEnemyRequest request)
     {
         var (world, position) = request;
         var enemy = CreateEnemy(world, Root.Instance.PackedScenes.World.Enemy);
         enemy.Position = position;
-        enemy.Target = world.Player;
+        enemy.Target = Root.Instance.Server.PlayerServerInfo.Values.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
-        
         AnimateSpawn(enemy, world);
+
+        long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
+        Network.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
+    
     private void CreateEnemyGroupAroundCharacter(BattleWorld battleWorld, Character character, double radius)
     {
         int amount = NextEnemiesInGroup;
@@ -85,9 +91,7 @@ public class BattleWorldEnemySpawnService
         spawner.Position = character.Position + position;
         battleWorld.AddChild(spawner);
     }
-
     
-
     private void AnimateSpawn(Enemy enemy, BattleWorld battleWorld)
     {
         var fx = Fx.CreateSpawnFx();
@@ -152,5 +156,21 @@ public class BattleWorldEnemySpawnService
         enemy.IsBoss = true;
         
         AnimateSpawn(enemy, battleWorld);
+        long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
+        Network.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
+    }
+
+    [EventListener]
+    public void OnServerSpawnEnemyPacket(ServerSpawnEnemyPacket serverSpawnEnemyPacket)
+    {
+        Enemy enemy = (serverSpawnEnemyPacket.IsBoss
+            ? Root.Instance.PackedScenes.World.Boss
+            : Root.Instance.PackedScenes.World.Enemy).Instantiate<Enemy>();
+        enemy.IsBoss = serverSpawnEnemyPacket.IsBoss;
+        enemy.Position = Vec(serverSpawnEnemyPacket.X, serverSpawnEnemyPacket.Y);
+        enemy.Rotation = serverSpawnEnemyPacket.Dir;
+        
+        Root.Instance.CurrentWorld.AddChild(enemy);
+        Root.Instance.NetworkEntityManager.AddEntity(enemy, serverSpawnEnemyPacket.Nid);
     }
 }

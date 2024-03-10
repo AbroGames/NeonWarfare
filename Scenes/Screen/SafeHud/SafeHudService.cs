@@ -36,6 +36,7 @@ public class SafeHudService
         Network.SendPacketToClients(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
         BattleWorldMainScene battleWorldMainScene = Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
         Root.Instance.Game.MainSceneContainer.ChangeStoredNode(battleWorldMainScene);
+        BattleWorld battleWorld = battleWorldMainScene.WorldContainer.GetCurrentStoredNode<BattleWorld>();
         
         Root.Instance.NetworkEntityManager.Clear();
         
@@ -44,9 +45,22 @@ public class SafeHudService
             Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
+            
+            if (battleWorld.GetChild<Camera>() == null)
+            {
+                battleWorld.Player = player;
+                
+                var camera = new Camera(); //TODO del from server!!
+                camera.Position = player.Position;
+                camera.TargetNode = player;
+                camera.Zoom = Vec(0.65);
+                camera.SmoothingPower = 1.5;
+                battleWorld.AddChild(camera);
+                camera.Enabled = true;
+            }
 
             playerServerInfo.Player = player;
-            battleWorldMainScene.WorldContainer.GetCurrentStoredNode<BattleWorld>().AddChild(player);
+            battleWorld.AddChild(player);
             long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
             
             Network.SendPacketToPeer(playerServerInfo.Id, 

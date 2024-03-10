@@ -4,6 +4,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -11,7 +12,7 @@ namespace NeoVector;
 public class EnemyAttackService
 {
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
     {
         var (enemy, delta) = enemyProcessEvent;
@@ -22,7 +23,7 @@ public class EnemyAttackService
         }
     }
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyAttackEvent(EnemyAttackEvent enemyAttackEvent)
     {
         Enemy enemy = enemyAttackEvent.Enemy;
@@ -43,6 +44,26 @@ public class EnemyAttackService
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
         enemy.GetParent().AddChild(bullet); //TODO refactor (и поискать все другие места, где используется GetParent().AddChild и просто GetParent
+        long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
+        
+        Network.SendPacketToClients(new ServerSpawnEnemyBulletPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, enemy.Damage > 1000));
+    }
+
+    [EventListener]
+    public void OnServerSpawnEnemyBulletPacket(ServerSpawnEnemyBulletPacket serverSpawnEnemyBulletPacket)
+    {
+        // Создание снаряда
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        bullet.Author = Bullet.AuthorEnum.ENEMY;
+        bullet.Position = Vec(serverSpawnEnemyBulletPacket.X, serverSpawnEnemyBulletPacket.Y);
+        bullet.Rotation = serverSpawnEnemyBulletPacket.Dir;
+        if (serverSpawnEnemyBulletPacket.IsBoss)
+        {
+            bullet.Transform = bullet.Transform.ScaledLocal(Vec(Mathf.Log(5)));
+        }
+
+        Root.Instance.CurrentWorld.AddChild(bullet);
+        Root.Instance.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
     }
     
     
