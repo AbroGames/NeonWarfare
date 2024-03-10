@@ -43,6 +43,7 @@ public static class EventScanner
         var subscriptionInfo = listeners.Select(method => 
             new MethodSubscriptionInfo(method, null, 
                 method.GetCustomAttribute<EventListenerAttribute>()!.Priority,
+                method.GetCustomAttribute<EventListenerAttribute>()!.Side,
                 method.GetCustomAttribute<EventListenerAttribute>()!.IsDefault));
         
         return subscriptionInfo;
@@ -64,9 +65,10 @@ public static class EventScanner
             {
                 object invoker = method.IsStatic ? null : source;
                 ListenerPriority priority = method.GetCustomAttribute<EventListenerAttribute>()!.Priority;
+                ListenerSide side = method.GetCustomAttribute<EventListenerAttribute>()!.Side;
                 bool isDefault = method.GetCustomAttribute<EventListenerAttribute>()!.IsDefault;
 
-                subscriptions.Add(new MethodSubscriptionInfo(method, invoker, priority, isDefault));
+                subscriptions.Add(new MethodSubscriptionInfo(method, invoker, priority, side, isDefault));
             }
         }
 
@@ -87,4 +89,4 @@ public static class EventScanner
     }
 }
 
-public record MethodSubscriptionInfo(MethodInfo Method, object Invoker, ListenerPriority Priority, bool IsDefault);
+public record MethodSubscriptionInfo(MethodInfo Method, object Invoker, ListenerPriority Priority, ListenerSide Side, bool IsDefault);

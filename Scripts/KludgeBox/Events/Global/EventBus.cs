@@ -7,6 +7,12 @@ public static class EventBus
 {
     private static KludgeEventBus _bus = new();
 
+    public static ListenerSide Side
+    {
+        get => _bus.Side;
+        set => _bus.Side = value;
+    }
+
     public static ListenerToken Subscribe<T>(Action<T> action, ListenerPriority priority = ListenerPriority.Normal)
         where T : IEvent
     {
@@ -62,6 +68,12 @@ public static class EventBus
 
     public static void SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
     {
+        var listenerSide = subscriptionInfo.Side;
+        var busSide = Side;
+        
+        if (!listenerSide.HasFlag(busSide))
+            return;
+        
         _bus.SubscribeMethod(subscriptionInfo);
     }
 

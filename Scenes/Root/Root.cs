@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
 
@@ -50,6 +51,17 @@ public partial class Root : Node2D
 	public void ServicesInit()
 	{
 		ServiceRegistry.RegisterServices();
+
+		if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
+		{
+			EventBus.Side = ListenerSide.Server;
+		}
+		else
+		{
+			EventBus.Side = ListenerSide.Client;
+		}
+		
+		
 		EventBus.RegisterListeners(ServiceRegistry);
 	}
 

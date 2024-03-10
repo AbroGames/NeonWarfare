@@ -17,6 +17,8 @@ public class KludgeEventBus
     /// </summary>
     public bool IncludeBaseEvents = false;
 
+    public ListenerSide Side = ListenerSide.Both;
+
     private Dictionary<Type, EventHub> _hubs = new Dictionary<Type, EventHub>();
 
     private Dictionary<Type, EventPublisher> _publishers = new();
@@ -185,10 +187,10 @@ public class KludgeEventBus
     public ListenerToken SubscribeMethod(MethodSubscriptionInfo subscriptionInfo)
     {
         Delegate actionDelegate;
-        
+
         Type eventType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
         var delegateType = typeof(Action<>).MakeGenericType(eventType);
-        
+
         // Create an Action<TArg> delegate from the MethodInfo
         if (QueryHelpers.IsQueryEvent(eventType) && QueryHelpers.IsQueryListener(subscriptionInfo.Method))
         {
@@ -196,9 +198,10 @@ public class KludgeEventBus
         }
         else
         {
-            actionDelegate = Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
+            actionDelegate =
+                Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
-        
+
         var infoType = typeof(ListenerInfo<>).MakeGenericType(eventType);
         var forceDefault = subscriptionInfo.Method.DeclaringType.Assembly == typeof(KludgeEventBus).Assembly;
         var info = infoType.GetConstructors().First().Invoke([
@@ -206,7 +209,7 @@ public class KludgeEventBus
             subscriptionInfo.IsDefault || forceDefault, // define by assembly it located in
             subscriptionInfo.Method // if this is not null
         ]);
-        
+
         Log.Debug(
             $"\tRegistered listener {subscriptionInfo.Method.Name} from {subscriptionInfo.Method.DeclaringType.Name} " +
             $"{(forceDefault ? "and forced default" : "")}");
