@@ -13,22 +13,6 @@ public class SafeWorldService
         SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
         Root.Instance.CurrentWorld = safeWorld;
         
-        safeWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
-        safeWorld.Player.Position = Vec(0, 0);
-		
-        var camera = new Camera(); //TODO to camera service
-        camera.Position = safeWorld.Player.Position;
-        camera.TargetNode = safeWorld.Player;
-        camera.Zoom = Vec(0.65);
-        camera.SmoothingPower = 1.5;
-        safeWorld.AddChild(camera);
-        camera.Enabled = true;
-
-        var floor = safeWorld.Floor;
-        floor.Camera = camera;
-        floor.ForceCheck();
-        
-        safeWorld.AddChild(safeWorld.Player); // must be here to draw over the floor
         PlaySafeMusic(); //TODO to music service (safe music service)
     }
     

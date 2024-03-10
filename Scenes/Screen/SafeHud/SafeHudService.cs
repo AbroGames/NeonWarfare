@@ -14,7 +14,7 @@ public class SafeHudService
         SafeHud safeHud = safeHudProcessEvent.SafeHud;
         SafeWorld safeWorld = safeHud.SafeWorld;
         Player player = safeWorld.Player;
-        
+        if (player == null) return;
 
         safeHud.HpBar.CurrentUpperValue = player.Hp;
         safeHud.HpBar.CurrentLowerValue = player.Hp; //TODO сделать аналогично с BattleHud, вынести в общий сервис (не дублировать код)

@@ -16,8 +16,9 @@ public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType wor
 }
 
 [GamePacket]
-public class ServerSpawnPlayerPacket(double x, double y, double dir) : AbstractPacket
+public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) : AbstractPacket
 {
+    public long Nid { get; set; } = nid;
     public double X { get; set; } = x;
     public double Y { get; set; } = y;
     public double Dir { get; set; } = dir;

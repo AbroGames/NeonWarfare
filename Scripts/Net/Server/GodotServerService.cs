@@ -27,8 +27,15 @@ public class GodotServerService
         Node currentWorld = Root.Instance.CurrentWorld;
         if (currentWorld is SafeWorld)
         {
-            Network.SendPacketToPeer(peerConnectedServerEvent.Id, 
-                new ServerSpawnPlayerPacket(Rand.Range(-100, 100), Rand.Range(-100, 100), Rand.Range(0, 360)));
+            Player player = new Player();
+            player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
+            player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
+            
+            long nid = Root.Instance.NetworkEntityManager.AddEntity(player);
+            
+            Network.SendPacketToClients(new ServerSpawnPlayerPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+            //TODO спавн союзников и других NetworkEntity?
+            //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
         else if (currentWorld is BattleWorld)
         {
@@ -45,8 +52,10 @@ public class GodotServerService
     {
         Log.Debug($"PeerDisconnectedServerEvent: {peerDisconnectedServerEvent.Id}");
 
-        Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player.QueueFree();
+        Player player = Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
+        Root.Instance.NetworkEntityManager.RemoveEntity(player);
         Root.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
+        player.QueueFree();
     }
     
 }

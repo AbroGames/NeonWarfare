@@ -31,9 +31,27 @@ public class ClientService
     [EventListener]
     public void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        Player player = Root.Instance.CurrentWorld.Player;
+        Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
-        player.Rotation = Mathf.DegToRad(serverSpawnPlayerPacket.Dir);
+        player.Rotation = serverSpawnPlayerPacket.Dir;
+        Root.Instance.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
+
+        World world = Root.Instance.CurrentWorld;
+        world.Player = player;
+		
+        var camera = new Camera(); //TODO to camera service
+        camera.Position = player.Position;
+        camera.TargetNode = player;
+        camera.Zoom = Vec(0.65);
+        camera.SmoothingPower = 1.5;
+        world.AddChild(camera);
+        camera.Enabled = true;
+
+        var floor = world.Floor;
+        floor.Camera = camera;
+        floor.ForceCheck();
+        
+        world.AddChild(player); // must be here to draw over the floor
     }
     
     [EventListener]
@@ -41,10 +59,11 @@ public class ClientService
     {
         if (Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
-            Log.Error(
-                "OnServerWaitBattleEndPacket, MainSceneContainer contains Node that is not MainMenuMainScene");
+            Log.Error("OnServerWaitBattleEndPacket, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
-        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen.Instantiate());
+        
+        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(
+            Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen.Instantiate());
     }
 }
