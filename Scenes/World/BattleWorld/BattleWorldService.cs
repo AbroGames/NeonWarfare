@@ -11,6 +11,7 @@ public class BattleWorldService
     public void OnBattleWorldReadyEvent(BattleWorldReadyEvent battleWorldReadyEvent)
     {
         BattleWorld battleWorld = battleWorldReadyEvent.BattleWorld;
+        Root.Instance.CurrentWorld = battleWorld;
         
         battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         battleWorld.Player.Position = Vec(500, 500);

@@ -20,6 +20,7 @@ public partial class Root : Node2D
 	public int? ServerPid { get; set; }
 	public bool IsServer => Server != null;
 
+	public World CurrentWorld;
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 	
 	public static Root Instance { get; private set; }

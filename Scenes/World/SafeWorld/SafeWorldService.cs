@@ -11,9 +11,10 @@ public class SafeWorldService
     public void OnSafeWorldReadyEvent(SafeWorldReadyEvent safeWorldReadyEvent)
     {
         SafeWorld safeWorld = safeWorldReadyEvent.SafeWorld;
+        Root.Instance.CurrentWorld = safeWorld;
         
         safeWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
-        safeWorld.Player.Position = Vec(500, 500);
+        safeWorld.Player.Position = Vec(0, 0);
 		
         var camera = new Camera(); //TODO to camera service
         camera.Position = safeWorld.Player.Position;

@@ -24,19 +24,19 @@ public class GodotServerService
         Network.SendPacketToPeer(peerConnectedServerEvent.Id,
             new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
-        Node currentMainScene = Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node2D>();
-        if (currentMainScene is SafeWorldMainScene)
+        Node currentWorld = Root.Instance.CurrentWorld;
+        if (currentWorld is SafeWorld)
         {
             Network.SendPacketToPeer(peerConnectedServerEvent.Id, 
-                new ServerSpawnPlayerPacket(Rand.Range(-200, 200), Rand.Range(-200, 200), Rand.Range(0, 360)));
+                new ServerSpawnPlayerPacket(Rand.Range(-100, 100), Rand.Range(-100, 100), Rand.Range(0, 360)));
         } 
-        else if (currentMainScene is BattleWorldMainScene)
+        else if (currentWorld is BattleWorld)
         {
             Network.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerWaitBattleEndPacket());
         }
         else
         {
-            Log.Error($"Unknown MainScene in MainSceneContainer: {currentMainScene}");
+            Log.Error($"Unknown world in Root.CurrentWorld: {currentWorld}");
         }
     }
     

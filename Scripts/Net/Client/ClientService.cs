@@ -31,7 +31,9 @@ public class ClientService
     [EventListener]
     public void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        
+        Player player = Root.Instance.CurrentWorld.Player;
+        player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
+        player.Rotation = Mathf.DegToRad(serverSpawnPlayerPacket.Dir);
     }
     
     [EventListener]
