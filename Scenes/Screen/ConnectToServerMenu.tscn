@@ -56,10 +56,10 @@ text = "Вернуться в меню"
 icon = ExtResource("1_nq6w6")
 script = ExtResource("2_nop7s")
 
-[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit", "IpLineEdit")]
+[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("IpLineEdit", "PortLineEdit")]
 layout_mode = 2
 text = "Подключится к серверу"
 icon = ExtResource("1_nq6w6")
 script = ExtResource("3_57gpj")
-PortLineEdit = NodePath("../../PortSplit/PortLineEdit")
 IpLineEdit = NodePath("../../IPSplit/IpLineEdit")
+PortLineEdit = NodePath("../../PortSplit/PortLineEdit")

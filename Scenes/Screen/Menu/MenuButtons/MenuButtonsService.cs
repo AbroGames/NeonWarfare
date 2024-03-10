@@ -41,7 +41,25 @@ public class MenuButtonsService
     [EventListener]
     public void OnConnectToServerButtonClickEvent(ConnectToServerButtonClickEvent connectToServerButtonClickEvent)
     {
-        EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, DefaultNetworkSettings.Port));
+        int port = 0;
+        string host = connectToServerButtonClickEvent.ConnectToServerButton.IpLineEdit.Text;
+        try
+        {
+            port = connectToServerButtonClickEvent.ConnectToServerButton.PortLineEdit.Text.ToInt();
+        }
+        catch (FormatException e)
+        {
+            Log.Error(e);
+        }
+
+        if (port <= 0 || port > 65535)
+            return;
+
+        if (host.Equals(""))
+            host = DefaultNetworkSettings.Host;
+        
+        
+        EventBus.Publish(new ConnectToServerRequest(host, port));
         if (Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
             Log.Error(
