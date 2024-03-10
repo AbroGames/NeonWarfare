@@ -23,6 +23,11 @@ public partial class Player : Character
 
 	public Cooldown BasicAbilityCd { get; set; } = new(6, CooldownMode.Single, true);
 	public Cooldown AdvancedAbilityCd { get; set; } = new(50, CooldownMode.Single, true);
+	
+	//TODO serverInfo (mb ServerPlayer)?
+	public Vector2 CurrentMovementVector { get; set; }
+	public double CurrentMovementSpeed { get; set; }
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{

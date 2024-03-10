@@ -9,7 +9,7 @@ namespace NeoVector;
 public class PlayerMovementService
 {
     
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerPhysicsProcessEvent(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) {
         var (player, delta) = playerPhysicsProcessEvent;
         
@@ -17,15 +17,45 @@ public class PlayerMovementService
         player.MoveAndCollide(movementInput * player.MovementSpeed * delta);
 
         long nid = Root.Instance.NetworkEntityManager.GetNid(player);
-        Network.SendPacketToServer(new ClientPositionPlayerPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+        Network.SendPacketToServer(new ClientMovementPlayerPacket(nid, player.Position.X, player.Position.Y, player.Rotation,
+            movementInput.X, movementInput.Y, player.MovementSpeed));
     }
 
     [EventListener]
-    public void OnClientPositionPlayerPacket(ClientPositionPlayerPacket clientPositionPlayerPacket)
+    public void OnClientMovementPlayerPacket(ClientMovementPlayerPacket clientMovementPlayerPacket)
     {
-        Player player = Root.Instance.NetworkEntityManager.GetNode<Player>(clientPositionPlayerPacket.Nid);
-        player.Position = Vec(clientPositionPlayerPacket.X, clientPositionPlayerPacket.Y);
-        player.Rotation = clientPositionPlayerPacket.Dir;
+        Player player = Root.Instance.NetworkEntityManager.GetNode<Player>(clientMovementPlayerPacket.Nid);
+        Vector2 newPosition = Vec(clientMovementPlayerPacket.X, clientMovementPlayerPacket.Y);
+        
+        //TODO проверка расхождение и отправка только если рассхождение большое
+        if ((player.Position - newPosition).Length() > 100)
+        {
+            Network.SendPacketToPeer(clientMovementPlayerPacket.Sender.Id,
+                new ServerPositionEntityPacket(clientMovementPlayerPacket.Nid, player.Position.X, player.Position.Y, player.Rotation));
+            return;
+        }
+
+        player.Position = newPosition;
+        player.Rotation = clientMovementPlayerPacket.Dir;
+        player.CurrentMovementVector = Vec(clientMovementPlayerPacket.MovementX, clientMovementPlayerPacket.MovementY);
+        player.CurrentMovementSpeed = clientMovementPlayerPacket.MovementSpeed;
+    }
+
+    [EventListener(ListenerSide.Server)]
+    public void OnPlayerPhysicsProcessEvent2(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) //TODO вынести в другое место
+    {
+        var (player, delta) = playerPhysicsProcessEvent;
+
+        var movementInput = player.CurrentMovementVector;
+        player.MoveAndCollide(movementInput * player.CurrentMovementSpeed * delta);
+        long nid = Root.Instance.NetworkEntityManager.GetNid(player);
+        
+        foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
+        {
+            if (playerServerInfo.Player == playerPhysicsProcessEvent.Player) continue;
+            
+            Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+        }
     }
     
     private Vector2 GetInput()

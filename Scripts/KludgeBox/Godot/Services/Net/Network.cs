@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Godot;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
@@ -69,7 +70,7 @@ public partial class Network : Node
     public static void Init()
     {
         ReceivedPacket += EventBus.Publish;
-        ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}");
+        //TODO ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}");
     }
     
     private void InitGlobalInstance()
@@ -95,7 +96,8 @@ public partial class Network : Node
     }
 	
     private static Network _instance;
-    
+
+    public static List<Type> PacketsNotLogged = [typeof(ServerPositionEntityPacket), typeof(ClientMovementPlayerPacket)];
     
     public static MultiplayerApi Api { get; private set; }
     public static ENetMultiplayerPeer Peer { get; private set; }
@@ -237,8 +239,12 @@ public partial class Network : Node
     public static void SendPacketToClients(AbstractPacket packet)
     {
         var packetData = PacketConverter.Serialize(packet);
-        Log.Debug($"SendPacketToClients: {packetData}");
-        
+
+        if (!PacketsNotLogged.Contains(packet.GetType()))
+        {
+            Log.Debug($"SendPacketToClients: {packetData}");
+        }
+
         if (IsServer)
         {
             if (packet.IsReliable)
@@ -260,7 +266,11 @@ public partial class Network : Node
     public static void SendPacketToServer(AbstractPacket packet)
     {
         var packetData = PacketConverter.Serialize(packet);
-        Log.Debug($"SendPacketToServer: {packetData}");
+
+        if (!PacketsNotLogged.Contains(packet.GetType()))
+        {
+            Log.Debug($"SendPacketToServer: {packetData}");
+        }
         
         if (IsClient)
         {
@@ -286,7 +296,11 @@ public partial class Network : Node
         if (id == 1) throw new ArgumentException("Can't send packet from server to server");
         
         var packetData = PacketConverter.Serialize(packet);
-        Log.Debug($"SendPacketToPeer: {packetData}");
+
+        if (!PacketsNotLogged.Contains(packet.GetType()))
+        {
+            Log.Debug($"SendPacketToPeer: {packetData}");
+        }
 
         if (id == 0)
         {
