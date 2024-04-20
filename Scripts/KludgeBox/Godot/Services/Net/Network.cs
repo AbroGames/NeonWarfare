@@ -70,7 +70,7 @@ public partial class Network : Node
     public static void Init()
     {
         ReceivedPacket += EventBus.Publish;
-        //TODO ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}");
+        //ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}");
     }
     
     private void InitGlobalInstance()
@@ -242,7 +242,7 @@ public partial class Network : Node
 
         if (!PacketsNotLogged.Contains(packet.GetType()))
         {
-            Log.Debug($"SendPacketToClients: {packetData}");
+            //Log.Debug($"SendPacketToClients: {packetData}");
         }
 
         if (IsServer)
@@ -269,7 +269,7 @@ public partial class Network : Node
 
         if (!PacketsNotLogged.Contains(packet.GetType()))
         {
-            Log.Debug($"SendPacketToServer: {packetData}");
+            //Log.Debug($"SendPacketToServer: {packetData}");
         }
         
         if (IsClient)
@@ -299,7 +299,7 @@ public partial class Network : Node
 
         if (!PacketsNotLogged.Contains(packet.GetType()))
         {
-            Log.Debug($"SendPacketToPeer: {packetData}");
+            //Log.Debug($"SendPacketToPeer: {packetData}");
         }
 
         if (id == 0)

@@ -34,15 +34,18 @@ public class GodotServerService
             Root.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
             currentWorld.AddChild(player);
             long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
-            
-            var camera = new Camera(); //TODO del from server!!
-            camera.Position = player.Position;
-            camera.TargetNode = player;
-            camera.Zoom = Vec(0.65);
-            camera.SmoothingPower = 1.5;
-            currentWorld.AddChild(camera);
-            camera.Enabled = true;
-            
+
+            if (currentWorld.GetChild<Camera>() == null)
+            {
+                var camera = new Camera(); //TODO del from server!!
+                camera.Position = player.Position;
+                camera.TargetNode = player;
+                camera.Zoom = Vec(0.65);
+                camera.SmoothingPower = 1.5;
+                currentWorld.AddChild(camera);
+                camera.Enabled = true;
+            }
+
             Network.SendPacketToPeer(peerConnectedServerEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             

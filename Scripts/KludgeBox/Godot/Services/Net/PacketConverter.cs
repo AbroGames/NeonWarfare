@@ -9,7 +9,7 @@ namespace KludgeBox.Net;
 
 public static class PacketConverter
 {
-    private static Regex _packetIdRegex = new Regex(@"^\d?::(?=.*)");
+    private static Regex _packetIdRegex = new Regex(@"^\d+::(?=.*)");
     private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings
     {
         Formatting = Formatting.None
