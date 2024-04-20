@@ -1,21 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://beqibs6gp5l0y"]
+[gd_scene load_steps=3 format=3 uid="uid://beqibs6gp5l0y"]
 
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character/Character.tscn" id="1_hlmfo"]
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Ally/Ally.cs" id="1_mplhw"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_3jmoe"]
-resource_local_to_scene = true
-radius = 18.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_dhf8l"]
-resource_local_to_scene = true
-radius = 15.0
-
 [node name="Character" instance=ExtResource("1_hlmfo")]
 script = ExtResource("1_mplhw")
-
-[node name="CharacterShape" parent="." index="1"]
-shape = SubResource("CircleShape2D_3jmoe")
-
-[node name="HitBoxShape" parent="HitBox" index="0"]
-shape = SubResource("CircleShape2D_dhf8l")
