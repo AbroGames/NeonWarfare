@@ -11,7 +11,7 @@ public partial class ColorRectExample : ColorRect
     [Export] [NotNull] public HSlider BlueSlider { get; private set; }
     public override void _Ready()
     {
-        Color = Root.Instance.Game.PlayerInfo.PlayerColor;
+        Color = Root.Instance.PlayerInfo.PlayerColor;
     }
 
     public override void _Process(double delta)

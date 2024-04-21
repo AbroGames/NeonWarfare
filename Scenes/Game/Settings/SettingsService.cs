@@ -16,7 +16,7 @@ public class SettingsService
     [EventListener]
     public void OnSettingsInitRequest(SettingsInitRequest r)
     {
-        var playerInfo = Root.Instance.Game.PlayerInfo;
+        var playerInfo = Root.Instance.PlayerInfo;
         try
         {
             FileAccess file = FileAccess.Open($"user://{PlayerInfo.Filename}", FileAccess.ModeFlags.Read);
@@ -36,7 +36,7 @@ public class SettingsService
     [EventListener]
     public void OnPlayerInfoSaveEvent(PlayerInfoSaveEvent playerInfoSaveEvent)
     {
-        var playerInfo = Root.Instance.Game.PlayerInfo;
+        var playerInfo = Root.Instance.PlayerInfo;
         try
         {
             if (playerInfo.PlayerName == null || playerInfo.PlayerName.Equals(""))

@@ -26,15 +26,15 @@ public class MenuButtonsService
         if (port <= 0 || port > 65535)
             return;
         
-        EventBus.Publish(new CreateServerRequest(port, Root.Instance.Game.PlayerInfo.PlayerName, createServerButtonClickEvent.CreateServerButton.ShowConsoleCheckBox.ButtonPressed));
+        EventBus.Publish(new CreateServerRequest(port, Root.Instance.PlayerInfo.PlayerName, createServerButtonClickEvent.CreateServerButton.ShowConsoleCheckBox.ButtonPressed));
         EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, port));
-        if (Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+        if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
             Log.Error(
                 "OnCreateServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
-        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen.Instantiate());
     }
     
     
@@ -60,19 +60,19 @@ public class MenuButtonsService
         
         
         EventBus.Publish(new ConnectToServerRequest(host, port));
-        if (Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+        if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
             Log.Error(
                 "OnConnectToServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
-        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen.Instantiate());
     }
     
     [EventListener]
     public void OnChangeMenuFromButtonClickRequest(ChangeMenuFromButtonClickRequest changeMenuFromButtonClickRequest)
     {
-        Root.Instance.Game.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(changeMenuFromButtonClickRequest.MenuChangeTo.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(changeMenuFromButtonClickRequest.MenuChangeTo.Instantiate());
     }
     
     [EventListener]
@@ -86,8 +86,8 @@ public class MenuButtonsService
     {
         string newNickname = savePlayerSettingButtonClickEvent.SavePlayerSettingsButton.NickLineEdit.Text;
         Color newColor = savePlayerSettingButtonClickEvent.SavePlayerSettingsButton.ColorRect.Color;
-        Root.Instance.Game.PlayerInfo.PlayerName = newNickname;
-        Root.Instance.Game.PlayerInfo.PlayerColor = newColor;
+        Root.Instance.PlayerInfo.PlayerName = newNickname;
+        Root.Instance.PlayerInfo.PlayerColor = newColor;
         EventBus.Publish(new PlayerInfoSaveEvent());
     }
 }

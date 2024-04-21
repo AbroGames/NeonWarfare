@@ -13,7 +13,7 @@ public class PlayerDamageService
         var player = e.Player;
         
         var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+        Root.Instance.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
         Audio2D.StopMusic();
     }
 }

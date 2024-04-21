@@ -35,7 +35,7 @@ public class SafeHudService
     {
         Network.SendPacketToClients(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
         BattleWorldMainScene battleWorldMainScene = Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(battleWorldMainScene);
+        Root.Instance.MainSceneContainer.ChangeStoredNode(battleWorldMainScene);
         
         Root.Instance.NetworkEntityManager.Clear();
         

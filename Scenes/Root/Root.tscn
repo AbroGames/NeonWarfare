@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=7 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://Scenes/Root/Root.cs" id="1_lyqs7"]
 [ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.tscn" id="2_642j6"]
-[ext_resource type="PackedScene" uid="uid://dgu67x4aam3po" path="res://Scenes/Game/Game.tscn" id="5_o4my6"]
+[ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="2_n66ta"]
+[ext_resource type="Script" path="res://Scenes/Game/Settings/PlayerInfo.cs" id="3_nc1pm"]
+[ext_resource type="PackedScene" uid="uid://b2gaknpctobq8" path="res://Scenes/Screen/Console/Console.tscn" id="4_tj67n"]
 
 [sub_resource type="Environment" id="Environment_hp6r4"]
 background_mode = 3
@@ -11,15 +13,23 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="Root" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Game", "Environment")]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "Environment", "Console", "PlayerInfo", "PackedScenes")]
 script = ExtResource("1_lyqs7")
-PackedScenes = NodePath("PackedScenesContainer")
-Game = NodePath("Game")
+MainSceneContainer = NodePath("MainSceneContainer")
 Environment = NodePath("WorldEnvironment")
+Console = NodePath("Console")
+PlayerInfo = NodePath("PlayerInfo")
+PackedScenes = NodePath("PackedScenesContainer")
 
-[node name="PackedScenesContainer" parent="." instance=ExtResource("2_642j6")]
-
-[node name="Game" parent="." instance=ExtResource("5_o4my6")]
+[node name="MainSceneContainer" type="Node" parent="."]
+script = ExtResource("2_n66ta")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_hp6r4")
+
+[node name="Console" parent="." instance=ExtResource("4_tj67n")]
+
+[node name="PlayerInfo" type="Node2D" parent="."]
+script = ExtResource("3_nc1pm")
+
+[node name="PackedScenesContainer" parent="." instance=ExtResource("2_642j6")]

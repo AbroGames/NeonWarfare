@@ -10,7 +10,7 @@ public partial class BackButton : Button
 		Pressed += () =>
 		{
 			/*var playerMenu = Root.Instance.PackedScenes.Screen.MainMenu.Instantiate<Control>();
-		var menu = Root.Instance.Game.MenuContainer.GetCurrentStoredNode<Menu>();
+		var menu = Root.Instance.MenuContainer.GetCurrentStoredNode<Menu>();
 		menu.changeMenu(playerMenu);*/ //TODO 
 		};
 	}

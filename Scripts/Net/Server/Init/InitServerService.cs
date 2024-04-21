@@ -16,6 +16,14 @@ public class InitServerService
     public void OnInitServerRequest(InitServerRequest initServerRequest)
     {
         if (!OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag)) return;
+        if (OS.GetCmdlineArgs().Contains(ServerParams.RenderFlag))
+        {
+            Root.Instance.Console.QueueFree();
+        }
+        else
+        {
+            Log.AddLogger(Root.Instance.Console);
+        }
         
         Root.Instance.GetWindow().Set("position", new Vector2I(
         DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,

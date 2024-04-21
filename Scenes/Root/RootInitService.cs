@@ -53,6 +53,7 @@ public class RootInitService
     public void OnInitClientRequest(InitClientRequest initClientRequest)
     {
         var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+        Root.Instance.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+        Root.Instance.Console.QueueFree();
     }
 }

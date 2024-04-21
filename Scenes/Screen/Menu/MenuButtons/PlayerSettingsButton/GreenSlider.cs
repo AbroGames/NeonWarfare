@@ -8,6 +8,6 @@ public partial class GreenSlider : HSlider
 {
     public override void _Ready()
     {
-        Value = Root.Instance.Game.PlayerInfo.PlayerColor.G * 255f;
+        Value = Root.Instance.PlayerInfo.PlayerColor.G * 255f;
     }
 }

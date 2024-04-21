@@ -7,7 +7,7 @@ public class NetworkEntityManager
 {
     private readonly IDictionary<Node2D, long> _nodeToNid = new Dictionary<Node2D, long>(ReferenceEqualityComparer.Instance);
     private readonly IDictionary<long, Node2D> _nidToNode = new Dictionary<long, Node2D>();
-    private long _nextNid = 0;
+    private long _nextNid = 0; //TODO поделить диапазон между игроками. Например, по 1ккк каждому новому игроку (если игрок переподключился, то ему дают новый диапазон).
 
     public long AddEntity(Node2D node)
     {

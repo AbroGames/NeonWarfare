@@ -21,7 +21,7 @@ public class ServerService
         server.CheckParentIsDeadTimer.Ready += () => EventBus.Publish(new ServerCheckParentIsDeadEvent(server));
         
         var safeWorld = Root.Instance.PackedScenes.Main.SafeWorld;
-        Root.Instance.Game.MainSceneContainer.ChangeStoredNode(safeWorld.Instantiate());
+        Root.Instance.MainSceneContainer.ChangeStoredNode(safeWorld.Instantiate());
         
         Log.Info("Server ready!");
     }
