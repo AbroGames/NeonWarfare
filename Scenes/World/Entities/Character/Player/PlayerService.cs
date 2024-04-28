@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
@@ -27,6 +28,9 @@ public class PlayerService
         {
             if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
             Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
+            
+            //TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
+            //TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), player.Position.X, player.Position.Y, player.Rotation, 2000));
         };
     }
 
