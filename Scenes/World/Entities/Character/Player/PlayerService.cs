@@ -23,6 +23,11 @@ public class PlayerService
             if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
             Network.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
         };
+        player.PrimaryCd.Ready += () =>
+        {
+            if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
+            Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
+        };
     }
 
     [EventListener(ListenerSide.Client)]
@@ -51,19 +56,5 @@ public class PlayerService
         {
             player.Camera.PositionShift = Vec();
         }
-
-        if (Input.IsActionPressed(Keys.AttackPrimary))
-        {
-            UpdatePrimaryAttack(player, delta);
-        }
     }
-
-    internal void UpdatePrimaryAttack(Player player, double delta)
-    {
-        if (player.PrimaryCd.Use())
-        {
-            Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
-        }
-    }
-    
 }

@@ -26,6 +26,7 @@ public class PlayerMovementService
     {
         Player player = Root.Instance.NetworkEntityManager.GetNode<Player>(clientMovementPlayerPacket.Nid);
         Vector2 newPosition = Vec(clientMovementPlayerPacket.X, clientMovementPlayerPacket.Y);
+        long nid = Root.Instance.NetworkEntityManager.GetNid(player);
         
         //TODO проверка расхождение и отправка только если рассхождение большое
         /*if ((player.Position - newPosition).Length() > player.CurrentMovementSpeed / 2)
@@ -39,6 +40,12 @@ public class PlayerMovementService
 
         player.Position = newPosition;
         player.Rotation = clientMovementPlayerPacket.Dir;
+        
+        foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
+        {
+            if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
+            Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+        }
     }
 
     [EventListener(ListenerSide.Server)]
@@ -54,7 +61,8 @@ public class PlayerMovementService
         {
             if (playerServerInfo.Player == playerPhysicsProcessEvent.Player) continue; //Отправляем коры игркоа всем кроме самого игрока
             
-            Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+            //TODO для лаг-компенсации временно отправляем коры не из PhysicsProcess, а сразу при получение от игрока
+            //TODO Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
         }
     }
     

@@ -19,7 +19,7 @@ public partial class Player : Character
 	public Camera Camera;
 
 	
-	public Cooldown SecondaryCd { get; set; } = new(0.1);
+	public Cooldown SecondaryCd { get; set; } = new(0.1, CooldownMode.Cyclic, true);
 
 	public Cooldown BasicAbilityCd { get; set; } = new(6, CooldownMode.Single, true);
 	public Cooldown AdvancedAbilityCd { get; set; } = new(50, CooldownMode.Single, true);
