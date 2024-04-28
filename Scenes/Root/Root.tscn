@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/Root/Root.cs" id="1_lyqs7"]
 [ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.tscn" id="2_642j6"]
-[ext_resource type="PackedScene" uid="uid://dgu67x4aam3po" path="res://Scenes/Game/Game.tscn" id="5_o4my6"]
+[ext_resource type="PackedScene" uid="uid://lw7onpveri2n" path="res://Scenes/Game/Game.tscn" id="5_o4my6"]
 
 [sub_resource type="Environment" id="Environment_hp6r4"]
 background_mode = 3

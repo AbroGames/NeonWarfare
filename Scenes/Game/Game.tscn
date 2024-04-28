@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgu67x4aam3po"]
+[gd_scene load_steps=5 format=3 uid="uid://lw7onpveri2n"]
 
 [ext_resource type="Script" path="res://Scenes/Game/Game.cs" id="1_kwdsd"]
 [ext_resource type="Script" path="res://Scenes/Game/Settings/PlayerInfo.cs" id="3_5wst2"]

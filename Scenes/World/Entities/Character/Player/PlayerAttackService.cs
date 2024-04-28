@@ -48,7 +48,7 @@ public class PlayerAttackService
             // Установка начальной позиции снаряда
             bullet.GlobalPosition = player.GlobalPosition;
             // Установка направления движения снаряда
-            bullet.Rotation = player.Rotation + Rand.Range(-spread, spread);
+            bullet.Rotation = player.Rotation;//TODO + Rand.Range(-spread, spread); //TODO всегда скос снаряда влево (если стрелять вверх)
             bullet.Author = Bullet.AuthorEnum.PLAYER;
             bullet.Speed = bullet.Speed * 2 + Rand.Range(-bullet.Speed * speedSpread, bullet.Speed * speedSpread);
             bullet.RemainingDistance = player.SecondaryDistance;

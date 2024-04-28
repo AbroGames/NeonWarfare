@@ -1,19 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://beqibs6gp5l0y"]
+[gd_scene load_steps=3 format=3 uid="uid://beqibs6gp5l0y"]
 
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character/Character.tscn" id="1_hlmfo"]
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Ally/Ally.cs" id="1_mplhw"]
-[ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_mvolj"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8n834"]
-resource_local_to_scene = true
-shader = ExtResource("3_mvolj")
-shader_parameter/colorMaskFactor = 0.0
-shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
-shader_parameter/grayscaleFactor = 0.0
 
 [node name="Character" instance=ExtResource("1_hlmfo")]
 script = ExtResource("1_mplhw")
-
-[node name="Sprite2D" parent="." index="0"]
-modulate = Color(0, 1, 0, 1)
-material = SubResource("ShaderMaterial_8n834")
