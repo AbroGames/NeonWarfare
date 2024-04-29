@@ -88,6 +88,6 @@ public class MenuButtonsService
         Color newColor = savePlayerSettingButtonClickEvent.SavePlayerSettingsButton.ColorRect.Color;
         Root.Instance.PlayerInfo.PlayerName = newNickname;
         Root.Instance.PlayerInfo.PlayerColor = newColor;
-        EventBus.Publish(new PlayerInfoSaveEvent());
+        SettingsService.PlayerInfoSave();
     }
 }

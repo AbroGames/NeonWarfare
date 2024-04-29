@@ -8,29 +8,17 @@ using KludgeBox.Net;
 
 namespace NeoVector;
 
-[GameService]
-public class InitServerService
+public static class InitServerService
 {
     
-    [EventListener]
-    public void OnInitServerRequest(InitServerRequest initServerRequest)
+    public static void InitServer()
     {
-        if (!OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag)) return;
-        if (OS.GetCmdlineArgs().Contains(ServerParams.RenderFlag))
-        {
-            Root.Instance.Console.QueueFree();
-        }
-        else
-        {
-            Log.AddLogger(Root.Instance.Console);
-        }
-        
         Root.Instance.GetWindow().Set("position", new Vector2I(
         DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
         DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
-        int port = EventBus.Require(new GetPortFromCmdArgsQuery());
-        string admin = EventBus.Require(new GetAdminFromCmdArgsQuery());
-        int? parentPid = EventBus.Require(new GetParentPidFromCmdArgsQuery());
+        int port = GetPortFromCmdArgs();
+        string admin = GetAdminFromCmdArgs();
+        int? parentPid = GetParentPidFromCmdArgs();
         ServerParams serverParams = new ServerParams(port, admin, parentPid);
         
         Error error = Network.CreateDedicatedServer(port);
@@ -46,8 +34,7 @@ public class InitServerService
         }
     }
     
-    [EventListener]
-    public int OnGetPortFromCmdArgsQuery(GetPortFromCmdArgsQuery getPortFromCmdArgsQuery)
+    public static int GetPortFromCmdArgs()
     {
         int port = DefaultNetworkSettings.Port;
         try
@@ -71,8 +58,7 @@ public class InitServerService
         return port;
     }
     
-    [EventListener]
-    public string OnGetAdminFromCmdArgsQuery(GetAdminFromCmdArgsQuery getAdminFromCmdArgsQuery)
+    public static string GetAdminFromCmdArgs()
     {
         string admin = null;
         try
@@ -96,8 +82,7 @@ public class InitServerService
         return admin;
     }
     
-    [EventListener]
-    public int? OnGetParentPidFromCmdArgsQuery(GetParentPidFromCmdArgsQuery getParentPidFromCmdArgsQuery)
+    public static int? GetParentPidFromCmdArgs()
     {
         int? parentPid = null;
         try

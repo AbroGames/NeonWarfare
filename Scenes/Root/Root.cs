@@ -39,15 +39,57 @@ public partial class Root : Node2D
 		ServicesInit();
 		PacketRegistry.ScanPackets();
 		
-		Callable.From(() =>
-		{
-			EventBus.Publish(new RootInitEvent());
-		}).CallDeferred();
+		Callable.From(Init).CallDeferred();
 	}
 
-	public override void _Process(double delta)
+	private void Init()
 	{
-		EventBus.Publish(new RootProcessEvent(this, delta));
+		LogCmdArgs();
+		Network.Init();
+		SettingsService.Init();
+        
+		if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
+		{
+			InitGameAsServer();
+		}
+		else
+		{
+			InitGameAsClient();
+		}
+	}
+
+	private void LogCmdArgs()
+	{
+		if (!OS.GetCmdlineArgs().IsEmpty())
+		{
+			Log.Info("Cmd args: " + OS.GetCmdlineArgs().Join());
+		}
+		else
+		{
+			Log.Info("Not have cmd args");
+		}
+	}
+
+	private void InitGameAsClient()
+	{
+		Console.QueueFree();
+		
+		var mainMenu = PackedScenes.Main.MainMenu;
+		MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+	}
+
+	private void InitGameAsServer()
+	{
+		if (OS.GetCmdlineArgs().Contains(ServerParams.RenderFlag))
+		{
+			Console.QueueFree();
+		}
+		else
+		{
+			Log.AddLogger(Console);
+		}
+		
+		InitServerService.InitServer();
 	}
 
 	public void ServicesInit()

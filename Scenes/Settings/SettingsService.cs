@@ -9,12 +9,10 @@ using FileAccess = Godot.FileAccess;
 
 namespace NeoVector;
 
-[GameService]
-public class SettingsService
+public static class SettingsService
 {
     
-    [EventListener]
-    public void OnSettingsInitRequest(SettingsInitRequest r)
+    public static void Init()
     {
         var playerInfo = Root.Instance.PlayerInfo;
         try
@@ -30,11 +28,10 @@ public class SettingsService
         {
             Log.Error(e);
         }
-        EventBus.Publish(new PlayerInfoSaveEvent());
+        PlayerInfoSave();
     }
 
-    [EventListener]
-    public void OnPlayerInfoSaveEvent(PlayerInfoSaveEvent playerInfoSaveEvent)
+    public static void PlayerInfoSave()
     {
         var playerInfo = Root.Instance.PlayerInfo;
         try
