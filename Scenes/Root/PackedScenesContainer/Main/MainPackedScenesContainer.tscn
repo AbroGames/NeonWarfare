@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b86vwuwqs6kgc"]
 
-[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Main/MainPackedScenesContainer.cs" id="1_c7nwn"]
+[ext_resource type="Script" path="res://Scenes/Root/PackedScenesContainer/Main/MainPackedScenesContainer.cs" id="1_c7nwn"]
 [ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.tscn" id="2_jmrfy"]
 [ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="3_hdb1l"]
 [ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_2rjom"]

@@ -26,7 +26,7 @@ public class MenuButtonsService
         if (port <= 0 || port > 65535)
             return;
         
-        EventBus.Publish(new CreateServerRequest(port, Root.Instance.PlayerInfo.PlayerName, createServerButtonClickEvent.CreateServerButton.ShowConsoleCheckBox.ButtonPressed));
+        EventBus.Publish(new CreateServerRequest(port, Root.Instance.PlayerSettings.PlayerName, createServerButtonClickEvent.CreateServerButton.ShowConsoleCheckBox.ButtonPressed));
         EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, port));
         if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
@@ -86,8 +86,8 @@ public class MenuButtonsService
     {
         string newNickname = savePlayerSettingButtonClickEvent.SavePlayerSettingsButton.NickLineEdit.Text;
         Color newColor = savePlayerSettingButtonClickEvent.SavePlayerSettingsButton.ColorRect.Color;
-        Root.Instance.PlayerInfo.PlayerName = newNickname;
-        Root.Instance.PlayerInfo.PlayerColor = newColor;
-        SettingsService.PlayerInfoSave();
+        Root.Instance.PlayerSettings.PlayerName = newNickname;
+        Root.Instance.PlayerSettings.PlayerColor = newColor;
+        SettingsService.PlayerSettingsSave();
     }
 }

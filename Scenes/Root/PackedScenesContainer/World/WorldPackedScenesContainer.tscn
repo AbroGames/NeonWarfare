@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://cx42uux5b88nw"]
 
-[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/World/WorldPackedScenesContainer.cs" id="1_6ysvl"]
+[ext_resource type="Script" path="res://Scenes/Root/PackedScenesContainer/World/WorldPackedScenesContainer.cs" id="1_6ysvl"]
 [ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/World/Entities/Character/Player/Player.tscn" id="2_mnaw1"]
 [ext_resource type="PackedScene" uid="uid://beqibs6gp5l0y" path="res://Scenes/World/Entities/Character/Ally/Ally.tscn" id="3_7qhw5"]
 [ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_8nru5"]

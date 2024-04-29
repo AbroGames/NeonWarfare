@@ -5,7 +5,7 @@ using KludgeBox.Events.Global;
 
 namespace NeoVector;
 
-public partial class PlayerInfo : Node2D
+public partial class PlayerSettings : Node2D
 {
 	public static readonly string Filename = "PlayerSettings.json";
 	public string PlayerName;
@@ -14,7 +14,7 @@ public partial class PlayerInfo : Node2D
 	[method: JsonConstructor]
 	public class SerialisationData(string playerName, int red, int green, int blue)
 	{
-		public SerialisationData(PlayerInfo playerInfo) : this(playerInfo.PlayerName, (int) (playerInfo.PlayerColor.R * 255f), (int) (playerInfo.PlayerColor.G * 255f), (int) (playerInfo.PlayerColor.B * 255f))
+		public SerialisationData(PlayerSettings playerSettings) : this(playerSettings.PlayerName, (int) (playerSettings.PlayerColor.R * 255f), (int) (playerSettings.PlayerColor.G * 255f), (int) (playerSettings.PlayerColor.B * 255f))
 		{
 		}
 

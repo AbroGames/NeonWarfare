@@ -17,7 +17,7 @@ public class PlayerService
         
         player.Camera = player.GetParent().GetChild<Camera>();
 
-        player.Sprite.Modulate = Root.Instance.PlayerInfo.PlayerColor;
+        player.Sprite.Modulate = Root.Instance.PlayerSettings.PlayerColor;
         
         player.SecondaryCd.Ready += () =>
         {
