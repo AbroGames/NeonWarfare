@@ -1,13 +1,14 @@
 ﻿using Godot;
 using KludgeBox;
 using KludgeBox.Events;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
 [GameService]
 public class BulletService
 {
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnBulletReady(BulletReadyEvent e)
     {
 	    var bullet = e.Bullet;
@@ -22,8 +23,6 @@ public class BulletService
         	{
         		if (bullet.Author != Bullet.AuthorEnum.PLAYER)
         		{
-        			double damage = bullet.RemainingDamage;
-			        ApplyDamage(bullet, player, new Color(0, 0, 0));
         			player.Camera.Punch(player.Position - bullet.Position, 10, 30);
         			Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f).PitchVariation(0.15f);
         			
@@ -40,10 +39,7 @@ public class BulletService
         	{
         		if (bullet.Author != Bullet.AuthorEnum.ENEMY)
         		{
-			        ApplyDamage(bullet, enemy,new Color(1, 0, 0));
         			Audio2D.PlaySoundAt(Sfx.Hit, body.Position, 0.5f).PitchVariation(0.25f);
-        			double K = enemy.IsBoss ? 0.0025 : 0.025;
-        			enemy.Position += Vector2.FromAngle(bullet.Rotation - Mathf.Pi / 2) * bullet.Speed * K;
         			
         			var hit = Fx.CreateBulletHitFx();
         			hit.Modulate = bullet.Modulate;
@@ -53,12 +49,35 @@ public class BulletService
 			        bullet.GetParent().AddChild(hit);
         		}
         	}
+        };
+    }
+    
+    [EventListener(ListenerSide.Server)]
+    public void OnBulletReady2(BulletReadyEvent e) //TODO rename and move
+    {
+        var bullet = e.Bullet;
+        
+    	bullet.Modulate = Bullet.Colors[bullet.Author];
+        		
+        bullet.GetNode<Area2D>("Area2D").AreaEntered += area =>
+        {
+        	if(area.GetParent() is not Character body) return;
         	
-        	if (body is Ally ally)
+        	if (body is Player player)
         	{
-        		if (bullet.Author != Bullet.AuthorEnum.ALLY)
+        		if (bullet.Author != Bullet.AuthorEnum.PLAYER)
         		{
-        			Utils.DoNothing();
+    		        ApplyDamage(bullet, player, new Color(0, 0, 0));
+        		}
+        	}
+        	
+        	if (body is Enemy enemy)
+        	{
+        		if (bullet.Author != Bullet.AuthorEnum.ENEMY)
+        		{
+    		        ApplyDamage(bullet, enemy,new Color(1, 0, 0));
+        			double K = enemy.IsBoss ? 0.0025 : 0.025;
+        			enemy.Position += Vector2.FromAngle(bullet.Rotation - Mathf.Pi / 2) * bullet.Speed * K;
         		}
         	}
         };
@@ -69,10 +88,18 @@ public class BulletService
     {
 	    var(bullet, delta) = e;
 	    bullet.Position += Vector2.FromAngle(bullet.Rotation - Mathf.Pi / 2) * bullet.Speed * delta;
+    }
+    
+    [EventListener(ListenerSide.Server)]
+    public void OnBulletProcess2(BulletProcessEvent e) //TODO rename and move
+    {
+	    var(bullet, delta) = e;
 	    bullet.RemainingDistance -= bullet.Speed * delta;
 	    if (bullet.RemainingDistance <= 0)
 	    {
 		    bullet.QueueFree();
+		    long nid = Root.Instance.NetworkEntityManager.RemoveEntity(bullet);
+		    Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
 	    }
     }
     
@@ -89,6 +116,8 @@ public class BulletService
 	    if (bullet.RemainingDamage <= 0)
 	    {
 		    bullet.QueueFree();
+		    long nid = Root.Instance.NetworkEntityManager.RemoveEntity(bullet);
+		    Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
 	    }
     }
 }

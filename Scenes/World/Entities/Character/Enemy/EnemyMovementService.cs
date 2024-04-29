@@ -3,6 +3,7 @@ using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -10,19 +11,19 @@ namespace NeoVector;
 public class EnemyMovementService
 {
 
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
         attractionEvent.BattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
         attractionEvent.BattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyAboutToTeleport(EnemyAboutToTeleportEvent e)
     {
         var enemy = e.Enemy;
@@ -38,7 +39,7 @@ public class EnemyMovementService
         }
     }
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
     {
         var (enemy, delta) = enemyPhysicsProcessEvent;
@@ -60,6 +61,9 @@ public class EnemyMovementService
         // Переместить и првоерить физику
         enemy.Velocity = velDir * enemy.MovementSpeed;
         enemy.MoveAndSlide();
+
+        long nid = Root.Instance.NetworkEntityManager.GetNid(enemy);
+        Network.SendPacketToClients(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
     }
     
     private Vector2 GetForwardDirection(Enemy enemy)

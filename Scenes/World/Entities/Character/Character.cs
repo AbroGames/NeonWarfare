@@ -17,7 +17,7 @@ public partial class Character : CharacterBody2D
 	public double MovementSpeed { get; set; } = 250; // in pixels/sec
 	public double RotationSpeed { get; set; } = 300; // in degree/sec
 	
-	public Cooldown PrimaryCd { get; set; } = new(1/3d, CooldownMode.Single);
+	public Cooldown PrimaryCd { get; set; } = new(1/3d, CooldownMode.Cyclic, true);
 	
 	internal double HitFlash = 0;
 

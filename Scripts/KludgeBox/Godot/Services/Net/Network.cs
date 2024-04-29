@@ -70,7 +70,7 @@ public partial class Network : Node
     public static void Init()
     {
         ReceivedPacket += EventBus.Publish;
-        //ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}");
+        //ReceivedRawPacket += (sender, packet) => Log.Debug($"Received packet from {sender.Id}: {packet}"); //TODO Log only packets not in PacketsNotLogged
     }
     
     private void InitGlobalInstance()

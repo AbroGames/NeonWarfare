@@ -10,7 +10,7 @@ namespace NeoVector;
 public class PlayerInputService
 {
     
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerInputEvent(PlayerInputEvent playerInputEvent)
     {
         Player player = playerInputEvent.Player;

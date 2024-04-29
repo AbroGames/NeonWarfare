@@ -8,7 +8,7 @@ namespace NeoVector;
 public class BattleWorldWavesService
 {
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
     {
         var (battleWorld, delta) = battleWorldProcessEvent;

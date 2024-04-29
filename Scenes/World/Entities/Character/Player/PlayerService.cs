@@ -1,14 +1,16 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
 [GameService]
 public class PlayerService
 {
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerReady(PlayerReadyEvent e)
     {
         var player = e.Player;
@@ -19,11 +21,20 @@ public class PlayerService
         
         player.SecondaryCd.Ready += () =>
         {
-            EventBus.Publish(new PlayerAttackSecondaryEvent(player));
+            if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
+            Network.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
+        };
+        player.PrimaryCd.Ready += () =>
+        {
+            if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
+            Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(player.Position.X, player.Position.Y, player.Rotation));
+            
+            //TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
+            //TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), player.Position.X, player.Position.Y, player.Rotation, 2000));
         };
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerProcess(PlayerProcessEvent e)
     {
         var (player, delta) = e;
@@ -49,19 +60,5 @@ public class PlayerService
         {
             player.Camera.PositionShift = Vec();
         }
-
-        if (Input.IsActionPressed(Keys.AttackPrimary))
-        {
-            UpdatePrimaryAttack(player, delta);
-        }
     }
-
-    internal void UpdatePrimaryAttack(Player player, double delta)
-    {
-        if (player.PrimaryCd.Use())
-        {
-            EventBus.Publish(new PlayerAttackPrimaryEvent(player));
-        }
-    }
-    
 }
