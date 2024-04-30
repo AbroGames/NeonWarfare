@@ -7,6 +7,7 @@ using KludgeBox.Net;
 
 namespace NeoVector;
 
+//TODO Vaster, распили этот класс. Повыноси логику в ноды или сделать static сервис без Event-records
 [GameService]
 public class MenuButtonsService
 {

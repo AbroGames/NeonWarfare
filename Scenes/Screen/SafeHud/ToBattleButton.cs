@@ -1,6 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -11,7 +12,7 @@ public partial class ToBattleButton : Button
     {
         Pressed += () =>
         {
-            EventBus.Publish(new ToBattleButtonClickEvent(this));
+            Network.SendPacketToServer(new ClientWantToBattlePacket());
         };
     }
 

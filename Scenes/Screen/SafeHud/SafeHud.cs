@@ -15,11 +15,17 @@ public partial class SafeHud : Control
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		EventBus.Publish(new SafeHudReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		EventBus.Publish(new SafeHudProcessEvent(this, delta));
+		Player player = SafeWorld.Player;
+		if (player == null) return;
+
+		HpBar.CurrentUpperValue = player.Hp;
+		HpBar.CurrentLowerValue = player.Hp; //TODO сделать аналогично с BattleHud, вынести в общий родительский класс (не дублировать код)
+		HpBar.MaxValue = player.MaxHp;
+		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
+		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
 	}
 }

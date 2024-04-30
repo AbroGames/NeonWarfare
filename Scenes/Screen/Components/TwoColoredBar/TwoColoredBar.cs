@@ -22,11 +22,11 @@ public partial class TwoColoredBar : ColorRect
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		EventBus.Publish(new TwoColoredBarReadyEvent(this));
 	}
 
 	public override void _Process(double delta)
 	{
-		EventBus.Publish(new TwoColoredBarProcessEvent(this, delta));
+		UpperBar.CustomMinimumSize = Vec(Width * CurrentUpperValuePercent, 0);
+		LowerBar.CustomMinimumSize = Vec(Width * CurrentLowerValuePercent, 0);
 	}
 }

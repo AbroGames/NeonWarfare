@@ -31,14 +31,12 @@ public partial class Icon : TextureRect
 		get => KeyLabel.Text[0];
 		set => KeyLabel.Text = value.ToString();
 	}
-
-
+	
 	private double _process;
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
 	}
-
 	
 	public override void _Process(double delta)
 	{

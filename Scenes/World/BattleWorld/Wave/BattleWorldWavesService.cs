@@ -8,6 +8,10 @@ namespace NeoVector;
 public class BattleWorldWavesService
 {
     
+    public double FadeInTime { get; set; } = 0.5;
+    public double HoldTime { get; set; } = 1;
+    public double FadeOutTime { get; set; } = 0.5;
+    
     [EventListener(ListenerSide.Server)]
     public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
     {
@@ -38,6 +42,6 @@ public class BattleWorldWavesService
         }
 
         Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
-        EventBus.Publish(new BattleWorldNewWaveGeneratedEvent(battleWorld, enemyWave.WaveNumber));
+        battleWorld.BattleHud.PlayNewWaveEffect(enemyWave.WaveNumber);
     }
 }
