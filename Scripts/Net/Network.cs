@@ -2,7 +2,7 @@ using Godot;
 
 namespace NeoVector;
 
-public partial class Network2 : Node
+public partial class Network : Node
 {
     
     public MultiplayerApi Api { get; private set; }

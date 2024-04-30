@@ -16,7 +16,7 @@ public partial class Root : Node2D
 	[Export] [NotNull] public Console Console { get; private set; }
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-	[Export] [NotNull] public Network2 Network { get; private set; }
+	[Export] [NotNull] public Network Network { get; private set; }
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 
