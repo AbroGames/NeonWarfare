@@ -14,6 +14,10 @@ public partial class MainMenuMainScene : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		EventBus.Publish(new MainMenuMainSceneReadyEvent(this));
+	}
+
+	public void ChangeMenu(PackedScene newMenu)
+	{
+		MenuContainer.ChangeStoredNode(newMenu.Instantiate());
 	}
 }

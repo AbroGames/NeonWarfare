@@ -6,16 +6,15 @@ namespace NeoVector;
 
 public partial class BattleWorldMainScene : Node2D
 {
-
-	[Export] [NotNull] public NodeContainer WorldContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer BackgroundContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer HudContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer MenuContainer { get; private set; }
-	[Export] [NotNull] public NodeContainer ForegroundContainer { get; private set; }
+	
+	[Export] [NotNull] public BattleWorld World { get; private set; }
+	[Export] [NotNull] public BattleHud Hud { get; private set; }
 	
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		EventBus.Publish(new BattleWorldMainSceneReadyEvent(this));
+
+		Hud.BattleWorld = World; //TODO BattleWorld и BattleHud линковать через BattleWorldMainScene?
+		World.BattleHud = Hud; //TODO BattleWorld и SafeWorld наследовать от общего класс, BattleHud и SafeHud аналогично, мб BattleWorldMainScene и SafeWorldMainScene
 	}
 }

@@ -34,6 +34,7 @@ public static class InitServerService
         }
     }
     
+    //TODO Эту и функции ниже в отдельный CmdArgsService (туда же связанные с CmdArgs вещи из Root)
     public static int GetPortFromCmdArgs()
     {
         int port = DefaultNetworkSettings.Port;

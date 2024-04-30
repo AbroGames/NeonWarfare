@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://ckusgv6yysi45"]
+[gd_scene load_steps=7 format=3 uid="uid://ckusgv6yysi45"]
 
 [ext_resource type="Script" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.cs" id="1_qjvtp"]
-[ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="2_4trxm"]
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/SafeWorld.tscn" id="3_q7sd6"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="4_3nxq5"]
 [ext_resource type="Script" path="res://Scenes/MainScenes/SafeWorld/GreenOverlay.cs" id="5_po6od"]
@@ -17,74 +16,25 @@ height = 256
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("WorldContainer", "BackgroundContainer", "HudContainer", "MenuContainer", "ForegroundContainer")]
+[node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("World", "Hud")]
 script = ExtResource("1_qjvtp")
-WorldContainer = NodePath("WorldContainer")
-BackgroundContainer = NodePath("Screen/BackgroundContainer")
-HudContainer = NodePath("Screen/HudContainer")
-MenuContainer = NodePath("Screen/MenuContainer")
-ForegroundContainer = NodePath("Screen/ForegroundContainer")
+World = NodePath("SafeWorld")
+Hud = NodePath("Screen/SafeHud")
 
-[node name="WorldContainer" type="Node2D" parent="."]
-script = ExtResource("2_4trxm")
-
-[node name="SafeWorld" parent="WorldContainer" instance=ExtResource("3_q7sd6")]
+[node name="SafeWorld" parent="." instance=ExtResource("3_q7sd6")]
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
-[node name="BackgroundContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2_4trxm")
-metadata/_edit_use_anchors_ = true
+[node name="SafeHud" parent="Screen" instance=ExtResource("4_3nxq5")]
 
-[node name="HudContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2_4trxm")
-metadata/_edit_use_anchors_ = true
-
-[node name="SafeHud" parent="Screen/HudContainer" instance=ExtResource("4_3nxq5")]
-layout_mode = 1
-
-[node name="MenuContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("2_4trxm")
-metadata/_edit_use_anchors_ = true
-
-[node name="ForegroundContainer" type="Control" parent="Screen"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("2_4trxm")
-metadata/_edit_use_anchors_ = true
-
-[node name="GreenOverlay" type="TextureRect" parent="Screen/ForegroundContainer"]
+[node name="GreenOverlay" type="TextureRect" parent="Screen"]
 modulate = Color(1, 1, 1, 0.231373)
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_vertical = 4
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_72irp")
 script = ExtResource("5_po6od")

@@ -77,8 +77,8 @@ public class ClientService
             return;
         }
         
-        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(
-            Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(
+            Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
     }
     
     [EventListener]

@@ -34,7 +34,7 @@ public class MenuButtonsService
                 "OnCreateServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
-        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
     }
     
     
@@ -66,13 +66,13 @@ public class MenuButtonsService
                 "OnConnectToServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
-        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
     }
     
     [EventListener]
     public void OnChangeMenuFromButtonClickRequest(ChangeMenuFromButtonClickRequest changeMenuFromButtonClickRequest)
     {
-        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().MenuContainer.ChangeStoredNode(changeMenuFromButtonClickRequest.MenuChangeTo.Instantiate());
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(changeMenuFromButtonClickRequest.MenuChangeTo);
     }
     
     [EventListener]
