@@ -32,7 +32,7 @@ public class PlayerMovementService
         foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
         {
             if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
-            Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+            NetworkOld.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
         }
     }
 }

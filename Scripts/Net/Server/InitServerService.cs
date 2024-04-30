@@ -21,7 +21,7 @@ public static class InitServerService
         int? parentPid = GetParentPidFromCmdArgs();
         ServerParams serverParams = new ServerParams(port, admin, parentPid);
         
-        Error error = Network.CreateDedicatedServer(port);
+        Error error = NetworkOld.CreateDedicatedServer(port);
         if (error == Error.Ok)
         {
             Log.Info($"Dedicated server successfully created.");

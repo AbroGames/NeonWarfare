@@ -12,7 +12,7 @@ public partial class ToBattleButton : Button
     {
         Pressed += () =>
         {
-            Network.SendPacketToServer(new ClientWantToBattlePacket());
+            NetworkOld.SendPacketToServer(new ClientWantToBattlePacket());
         };
     }
 

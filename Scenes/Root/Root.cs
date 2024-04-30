@@ -16,6 +16,7 @@ public partial class Root : Node2D
 	[Export] [NotNull] public Console Console { get; private set; }
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
+	[Export] [NotNull] public Network2 Network { get; private set; }
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 
@@ -45,7 +46,7 @@ public partial class Root : Node2D
 	private void Init()
 	{
 		LogCmdArgs();
-		Network.Init();
+		NetworkOld.Init();
 		SettingsService.Init();
         
 		if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
@@ -72,7 +73,7 @@ public partial class Root : Node2D
 
 	private void InitGameAsClient()
 	{
-		Console.QueueFree();
+		Console.QueueFree(); //TODO просто не создавать консоль по дефолту! Только в случае, если это сервер и нужна консоль. Можно упаковать в ConsoleContainer
 		
 		var mainMenu = PackedScenes.Main.MainMenu;
 		MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());

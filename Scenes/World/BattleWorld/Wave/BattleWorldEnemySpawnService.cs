@@ -75,7 +75,7 @@ public class BattleWorldEnemySpawnService
         AnimateSpawn(enemy, world);
 
         long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
-        Network.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
+        NetworkOld.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
     
     private void CreateEnemyGroupAroundCharacter(BattleWorld battleWorld, Character character, double radius)
@@ -157,7 +157,7 @@ public class BattleWorldEnemySpawnService
         
         AnimateSpawn(enemy, battleWorld);
         long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
-        Network.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
+        NetworkOld.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
     }
 
     [EventListener]

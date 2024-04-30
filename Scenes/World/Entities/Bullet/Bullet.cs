@@ -32,7 +32,7 @@ public partial class Bullet : Node2D
 	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
-		if (Network.IsClient)
+		if (NetworkOld.IsClient)
 		{
 			ReadyOnClient();
 		}
@@ -46,14 +46,14 @@ public partial class Bullet : Node2D
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
 
-		if (Network.IsServer)
+		if (NetworkOld.IsServer)
 		{
 			RemainingDistance -= Speed * delta;
 			if (RemainingDistance <= 0)
 			{
 				QueueFree();
 				long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
-				Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+				NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
 			}
 		}
 	}
@@ -140,7 +140,7 @@ public partial class Bullet : Node2D
 		{
 			QueueFree();
 			long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
-			Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+			NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
 		}
 	}
 }

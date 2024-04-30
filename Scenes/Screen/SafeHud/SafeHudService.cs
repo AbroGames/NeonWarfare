@@ -16,7 +16,7 @@ public class SafeHudService
     [EventListener(ListenerSide.Server)]
     public void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
-        Network.SendPacketToClients(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
+        NetworkOld.SendPacketToClients(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
         BattleWorldMainScene battleWorldMainScene = Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
         Root.Instance.MainSceneContainer.ChangeStoredNode(battleWorldMainScene);
         BattleWorld battleWorld = battleWorldMainScene.World;
@@ -46,13 +46,13 @@ public class SafeHudService
             battleWorld.AddChild(player);
             long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
             
-            Network.SendPacketToPeer(playerServerInfo.Id, 
+            NetworkOld.SendPacketToPeer(playerServerInfo.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
             foreach (PlayerServerInfo allyServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
             {
                 if (allyServerInfo.Id == playerServerInfo.Id) continue;
-                Network.SendPacketToPeer(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+                NetworkOld.SendPacketToPeer(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         }
     }

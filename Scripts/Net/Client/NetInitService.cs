@@ -25,13 +25,13 @@ public class NetInitService
             serverParams.Add(ServerParams.HeadlessFlag);
         }
         
-        //serverParams.Add(ServerParams.RenderFlag); //TODO del
+        //serverParams.Add(ServerParams.RenderFlag); //TODO del or to Config node in Root
         Root.Instance.ServerPid = OS.CreateInstance(serverParams.ToArray());
     }
     
     [EventListener]
     public void OnConnectToServerRequest(ConnectToServerRequest connectToServerRequest)
     {
-        Network.ConnectToRemoteServer(connectToServerRequest.Host, connectToServerRequest.Port);
+        NetworkOld.ConnectToRemoteServer(connectToServerRequest.Host, connectToServerRequest.Port);
     }
 }

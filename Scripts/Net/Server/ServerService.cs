@@ -18,7 +18,7 @@ public class ServerService
     {
         Server server = serverReadyEvent.Server;
 
-        server.CheckParentIsDeadTimer.Ready += () => EventBus.Publish(new ServerCheckParentIsDeadEvent(server));
+        server.IsParentDeadChecker.Ready += () => EventBus.Publish(new ServerCheckParentIsDeadEvent(server));
         
         var safeWorld = Root.Instance.PackedScenes.Main.SafeWorld;
         Root.Instance.MainSceneContainer.ChangeStoredNode(safeWorld.Instantiate());
@@ -32,7 +32,7 @@ public class ServerService
         Server server = serverProcessEvent.Server;
         double delta = serverProcessEvent.Delta;
 
-        server.CheckParentIsDeadTimer.Update(delta);
+        server.IsParentDeadChecker.Update(delta);
     }
     
     [EventListener]

@@ -21,6 +21,6 @@ public class EnemyDamageService
         }
         
         long nid = Root.Instance.NetworkEntityManager.RemoveEntity(enemy);
-        Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+        NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
     }
 }

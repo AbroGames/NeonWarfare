@@ -40,21 +40,21 @@ public enum RemoteMode : byte
     LocalServer = 0b100
 }
 
-public partial class Network : Node
+public partial class NetworkOld : Node
 {
-    private static Network Instance
+    private static NetworkOld Instance
     {
         get
         {
             if (_instance == null)
             {
                 // Check if we were loaded via Autoload
-                _instance = ((SceneTree)Engine.GetMainLoop()).Root.GetNodeOrNull<Network>(typeof(Network).Name);
+                _instance = ((SceneTree)Engine.GetMainLoop()).Root.GetNodeOrNull<NetworkOld>(typeof(NetworkOld).Name);
                 if (_instance == null)
                 {
                     // Instantiate to root at runtime
-                    _instance = new Network();
-                    _instance.Name = typeof(Network).Name;
+                    _instance = new NetworkOld();
+                    _instance.Name = typeof(NetworkOld).Name;
                     _instance.InitGlobalInstance();
                 }
             }
@@ -62,7 +62,7 @@ public partial class Network : Node
         }
     }
 
-    static Network()
+    static NetworkOld()
     {
         var instance = Instance;
     }
@@ -95,7 +95,7 @@ public partial class Network : Node
         Api.ServerDisconnected += () => EventBus.Publish<IEvent>(new ServerDisconnectedEvent());
     }
 	
-    private static Network _instance;
+    private static NetworkOld _instance;
 
     public static List<Type> PacketsNotLogged = [typeof(ServerPositionEntityPacket), typeof(ClientMovementPlayerPacket)];
     

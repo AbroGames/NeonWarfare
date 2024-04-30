@@ -31,7 +31,7 @@ public partial class Player : Character
 	public override void _Ready()
 	{
 		base._Ready();
-		if (Network.IsServer) return;
+		if (NetworkOld.IsServer) return;
 		
 		Camera = GetParent().GetChild<Camera>();
 		Sprite.Modulate = Root.Instance.PlayerSettings.PlayerColor;
@@ -39,12 +39,12 @@ public partial class Player : Character
 		SecondaryCd.Ready += () =>
 		{
 			if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
-			Network.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(Position.X, Position.Y, Rotation));
+			NetworkOld.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(Position.X, Position.Y, Rotation));
 		};
 		PrimaryCd.Ready += () =>
 		{
 			if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
-			Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
+			NetworkOld.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
 			//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
 			//TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 		};
