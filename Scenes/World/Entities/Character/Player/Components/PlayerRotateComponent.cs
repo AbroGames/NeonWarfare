@@ -1,27 +1,28 @@
 using System;
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
-[GameService]
-public class PlayerRotateService
+public partial class PlayerRotateComponent : Node
 {
+    public Player Player { get; private set; } 
     
-    [EventListener(ListenerSide.Client)]
-    public void OnPlayerProcessEvent(PlayerProcessEvent playerProcessEvent)
+    public override void _Ready()
     {
-        var (player, delta) = playerProcessEvent;
-        
+        Player = GetParent<Player>();
+    }
+
+    public override void _Process(double delta)
+    {
         //Куда хотим повернуться
-        double targetAngle = GetAngleToMouse(player);
+        double targetAngle = GetAngleToMouse();
         //На какой угол надо повернуться (знак указывает направление)
-        double deltaAngleToTargetAngel = Mathf.AngleDifference(player.Rotation - Mathf.Pi / 2, targetAngle);
+        double deltaAngleToTargetAngel = Mathf.AngleDifference(Player.Rotation - Mathf.Pi / 2, targetAngle);
         //Только направление (-1, 0, 1)
         double directionToTargetAngel = Mathf.Sign(deltaAngleToTargetAngel);
         //Максимальная скорость поворота (за секунду)
-        double rotationSpeedRad = Mathf.DegToRad(player.RotationSpeed);
+        double rotationSpeedRad = Mathf.DegToRad(Player.RotationSpeed);
         //Максимальная скорость поворота (за прошедшее время)
         rotationSpeedRad *= delta;
         //Если надо повернуться на угол меньший максимальной скорости, то обрезаем скорость, чтобы повернуться ровно в цель
@@ -29,15 +30,15 @@ public class PlayerRotateService
         //Добавляем к скорости поворота направление, чтобы поворачивать в сторону цели
         rotationSpeedRad *= directionToTargetAngel;
         //Поворачиваемся на угол
-        player.Rotation += rotationSpeedRad;
+        Player.Rotation += rotationSpeedRad;
     }
-    
-    private double GetAngleToMouse(Player player)
+
+    private double GetAngleToMouse()
     {
         // Получаем текущую позицию мыши
-        var mousePos = player.GetGlobalMousePosition();
+        var mousePos = Player.GetGlobalMousePosition();
         // Вычисляем вектор направления от объекта к мыши
-        var mouseDir = player.GlobalPosition.DirectionTo(mousePos);
+        var mouseDir = Player.GlobalPosition.DirectionTo(mousePos);
         // Вычисляем направление от объекта к мыши
         return mouseDir.Angle();
     }

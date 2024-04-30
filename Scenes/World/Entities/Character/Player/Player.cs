@@ -1,6 +1,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 using KludgeBox.Scheduling;
 
 namespace NeoVector;
@@ -17,7 +18,6 @@ public partial class Player : Character
 	public double SecondaryDistance { get; set; } = 1000;
 
 	public Camera Camera;
-
 	
 	public Cooldown SecondaryCd { get; set; } = new(0.1, CooldownMode.Cyclic, true);
 
@@ -28,35 +28,116 @@ public partial class Player : Character
 	public Vector2 CurrentMovementVector { get; set; }
 	public double CurrentMovementSpeed { get; set; }
 	
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		base._Ready();
-		EventBus.Publish(new PlayerReadyEvent(this));
+		if (Network.IsServer) return;
+		
+		Camera = GetParent().GetChild<Camera>();
+		Sprite.Modulate = Root.Instance.PlayerSettings.PlayerColor;
+        
+		SecondaryCd.Ready += () =>
+		{
+			if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
+			Network.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(Position.X, Position.Y, Rotation));
+		};
+		PrimaryCd.Ready += () =>
+		{
+			if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
+			Network.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
+			//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
+			//TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
+		};
 	}
 
-	/// <inheritdoc />
 	public override void Die()
 	{
 		base.Die();
-		EventBus.Publish(new PlayerDeathEvent(this));
+		
+		var mainMenu = Root.Instance.PackedScenes.Main.MainMenu;
+		Root.Instance.MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+		Audio2D.StopMusic();
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
-		EventBus.Publish(new PlayerProcessEvent(this, delta));
+		
+		Hp += RegenHpSpeed * delta;
+		Hp = Mathf.Min(Hp, MaxHp);
+
+		PrimaryCd.Update(delta);
+		SecondaryCd.Update(delta);
+		BasicAbilityCd.Update(delta);
+		AdvancedAbilityCd.Update(delta);
+
+		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
+		
+		// Camera shift processing
+		if (Input.IsActionPressed(Keys.CameraShift))
+		{
+			var maxShift = GetGlobalMousePosition() - GlobalPosition;
+			var zoomFactor = (Camera.Zoom.X + Camera.Zoom.Y) / 2;
+			Camera.PositionShift = maxShift * 0.7 * zoomFactor;
+		}
+		else
+		{
+			Camera.PositionShift = Vec();
+		}
 	}
 
-	public override void _PhysicsProcess(double delta)
-	{
-		EventBus.Publish(new PlayerPhysicsProcessEvent(this, delta));
-	}
-
-
+	//TODO вынести в отдельные компоненты (и вообще отдельный абстрактный класс для оружия, для визуала и т.п.)
 	public override void _Input(InputEvent @event) 
 	{
-		EventBus.Publish(new PlayerInputEvent(this, @event));
+		if (@event.IsActionPressed(Keys.AbilityBasic))
+		{
+			if (BasicAbilityCd.Use())
+			{
+				UseBasicSkill();
+			}
+		}
+
+		if (@event.IsActionPressed(Keys.AbilityAdvanced))
+		{
+			if (AdvancedAbilityCd.Use())
+			{
+				UseAdvancedSkill();
+			}
+		}
+	}
+
+	private void UseBasicSkill()
+	{
+		var node = Root.Instance.PackedScenes.World.Beam.Instantiate();
+		var beam = node as Beam;
+		var shaker = Camera.ShakeManually();
+		beam.Shaker = shaker;
+        
+		beam.Rotation = Rotation - Mathf.Pi / 2;
+		GetParent().AddChild(beam);
+		beam.Position = Position;
+		beam.Source = this;
+		//beam.Modulate = Sprite.Modulate;
+		beam.Dps *= UniversalDamageMultiplier;
+		Position -= this.Up() * 250;
+        
+		Audio2D.PlaySoundOn(Sfx.HornImpact3, this);
+		Audio2D.PlaySoundOn(Sfx.DeepImpact, this);
+	}
+	
+	private void UseAdvancedSkill()
+	{
+		var node = Root.Instance.PackedScenes.World.SolarBeam.Instantiate();
+		var beam = node as SolarBeam;
+		beam.Rotation = -Mathf.Pi / 2;
+		beam.Source = this;
+		//beam.Modulate = Sprite.Modulate;
+		beam.Dps *= UniversalDamageMultiplier;
+		Camera.Shake(10, beam.Ttl, false);
+		AddChild(beam);
+        
+		Audio2D.PlaySoundOn(Sfx.LaserBeam, this);
+		Audio2D.PlaySoundOn(Sfx.LaserBig, this);
+		Audio2D.PlaySoundOn(Sfx.Beam, this);
 	}
 }

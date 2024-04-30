@@ -35,13 +35,22 @@ public partial class Camera : Camera2D
 
 	public override void _Ready()
 	{
-		EventBus.Publish(new CameraReadyEvent(this));
+		ActualPosition = Position;
+		TargetPosition = Position;
 	}
 
 	public override void _Process(double delta)
 	{
-		EventBus.Publish(new CameraProcessEvent(this, delta));
-		EventBus.Publish(new CameraDeferredProcessEvent(this, delta));
+		MoveCamera(delta);
+		UpdateShifts(delta);
+	}
+	
+	public override void _Input(InputEvent @event) 
+	{
+		if (@event.IsActionPressed(Keys.WheelUp) || @event.IsActionPressed(Keys.WheelDown))
+		{
+			OnMouseWheel(@event);
+		}
 	}
 
 	public Punch Punch(Vector2 dir, double strength, double movementSpeed = 3000)
@@ -63,5 +72,39 @@ public partial class Camera : Camera2D
 		var shake = new ManualShake();
 		Shifts.Add(shake);
 		return shake;
+	}
+	
+	private void MoveCamera(double delta)
+	{
+		if (TargetNode is null) return;
+        
+		TargetPosition = TargetNode.Position;
+		var availableMovement = (TargetPosition + PositionShift) - ActualPosition;
+		var actualMovement = availableMovement * Mathf.Pow(SmoothingBase, SmoothingPower);
+		
+		ActualPosition += actualMovement;
+		Position = ActualPosition + HardPositionShift + AdditionalShift;
+	}
+
+	private void UpdateShifts(double delta)
+	{
+		foreach (var punch in Shifts)
+		{
+			punch.Update(delta);
+		}
+
+		Shifts.RemoveAll(s => !s.IsAlive);
+	}
+	
+	private void OnMouseWheel(InputEvent @event)
+	{
+		if (@event.IsActionPressed(Keys.WheelUp))
+		{
+			Zoom *= 1.1;
+		}
+		if (@event.IsActionPressed(Keys.WheelDown))
+		{
+			Zoom *= 1 / 1.1;
+		}
 	}
 }

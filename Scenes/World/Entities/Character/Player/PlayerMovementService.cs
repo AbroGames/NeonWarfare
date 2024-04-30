@@ -8,18 +8,6 @@ namespace NeoVector;
 [GameService]
 public class PlayerMovementService
 {
-    
-    [EventListener(ListenerSide.Client)]
-    public void OnPlayerPhysicsProcessEvent(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) {
-        var (player, delta) = playerPhysicsProcessEvent;
-        
-        var movementInput = GetInput();
-        player.MoveAndCollide(movementInput * player.MovementSpeed * delta);
-
-        long nid = Root.Instance.NetworkEntityManager.GetNid(player);
-        Network.SendPacketToServer(new ClientMovementPlayerPacket(nid, player.Position.X, player.Position.Y, player.Rotation,
-            movementInput.X, movementInput.Y, player.MovementSpeed));
-    }
 
     [EventListener(ListenerSide.Server)]
     public void OnClientMovementPlayerPacket(ClientMovementPlayerPacket clientMovementPlayerPacket)
@@ -47,28 +35,4 @@ public class PlayerMovementService
             Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
         }
     }
-
-    [EventListener(ListenerSide.Server)]
-    public void OnPlayerPhysicsProcessEvent2(PlayerPhysicsProcessEvent playerPhysicsProcessEvent) //TODO вынести в другое место
-    {
-        var (player, delta) = playerPhysicsProcessEvent;
-
-        //TODO временно отключаем предсказание движения var movementInput = player.CurrentMovementVector;
-        //TODO player.MoveAndCollide(movementInput * player.CurrentMovementSpeed * delta);
-        long nid = Root.Instance.NetworkEntityManager.GetNid(player);
-        
-        foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
-        {
-            if (playerServerInfo.Player == playerPhysicsProcessEvent.Player) continue; //Отправляем коры игркоа всем кроме самого игрока
-            
-            //TODO для лаг-компенсации временно отправляем коры не из PhysicsProcess, а сразу при получение от игрока
-            //TODO Network.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
-        }
-    }
-    
-    private Vector2 GetInput()
-    {
-        return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
-    }
-    
 }

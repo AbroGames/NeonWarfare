@@ -8,27 +8,59 @@ namespace NeoVector;
 public partial class BattleWorld : World
 {
 	public BattleHud BattleHud { get; set; }
-	public EnemyWave EnemyWave { get; set; } = new();
+	public EnemyWave EnemyWave { get; set; } = new(); //TODO it is component, rename it
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public readonly ISet<Enemy> EnemyAttractors = new HashSet<Enemy>();
 	
 	public override void _Ready()
 	{
 		base._Ready();
-		EventBus.Publish(new BattleWorldReadyEvent(this));
+		
+		Root.Instance.CurrentWorld = this;
+        
+		/*battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+		battleWorld.Player.Position = Vec(500, 500);
+
+		var camera = new Camera(); //TODO to camera service/component
+		camera.Position = battleWorld.Player.Position;
+		camera.TargetNode = battleWorld.Player;
+		camera.Zoom = Vec(0.3);
+		camera.SmoothingPower = 1.5;
+		battleWorld.AddChild(camera);
+		camera.Enabled = true;
+
+		var floor = battleWorld.Floor;
+		floor.Camera = camera;
+		floor.ForceCheck();
+
+		battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor*/
+        
+        
+		if (Rand.Chance(0.5))//TODO to music service (battle music service)
+		{
+			PlayBattleMusic1();
+		}
+		else
+		{
+			PlayBattleMusic2();
+		}
 	}
 
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
 		EventBus.Publish(new BattleWorldProcessEvent(this, delta));
-		EventBus.Publish(new BattleWorldDeferredProcessEvent(this, delta));
 	}
-
-	public override void _PhysicsProcess(double delta)
+	
+	private void PlayBattleMusic1()
 	{
-		base._PhysicsProcess(delta);
-		EventBus.Publish(new BattleWorldPhysicsProcessEvent(this, delta));
-		EventBus.Publish(new BattleWorldDeferredPhysicsProcessEvent(this, delta));
+		var music = Audio2D.PlayMusic(Music.WorldBgm1, 0.5f);
+		music.Finished += PlayBattleMusic2;
+	}
+    
+	private void PlayBattleMusic2()
+	{
+		var music = Audio2D.PlayMusic(Music.WorldBgm2, 0.5f);
+		music.Finished += PlayBattleMusic1;
 	}
 }

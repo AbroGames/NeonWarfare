@@ -11,12 +11,14 @@ public partial class SafeWorld : World
 	public override void _Ready()
 	{
 		base._Ready();
-		EventBus.Publish(new SafeWorldReadyEvent(this));
+		
+		Root.Instance.CurrentWorld = this;
+		PlaySafeMusic(); //TODO to music service (safe music service)
 	}
-
-	public override void _Process(double delta)
+	
+	private void PlaySafeMusic()
 	{
-		base._Process(delta);
-		EventBus.Publish(new SafeWorldProcessEvent(this, delta));
+		var music = Audio2D.PlayMusic(Music.MainBgm, 0.75f);
+		music.Finished += PlaySafeMusic;
 	}
 }

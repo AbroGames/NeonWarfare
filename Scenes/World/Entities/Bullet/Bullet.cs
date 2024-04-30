@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -27,19 +28,119 @@ public partial class Bullet : Node2D
 			
 	}.AsReadOnly();
 	
-	// Called when the node enters the scene tree for the first time.
+	//TODO Сделать общий Bullet и двух наследников: ClientBullet и Server (AbstractBullet + Bullet и ServerBullet)
+	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
-		EventBus.Publish(new BulletReadyEvent(this));
+		if (Network.IsClient)
+		{
+			ReadyOnClient();
+		}
+		else
+		{
+			ReadyOnServer();
+		}
 	}
-
 	
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		EventBus.Publish(new BulletProcessEvent(this, delta));
+		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
+
+		if (Network.IsServer)
+		{
+			RemainingDistance -= Speed * delta;
+			if (RemainingDistance <= 0)
+			{
+				QueueFree();
+				long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
+				Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+			}
+		}
+	}
+
+	private void ReadyOnClient()
+	{
+		Modulate = Colors[Author];
+        		
+		GetNode<Area2D>("Area2D").AreaEntered += area =>
+		{
+			if(area.GetParent() is not Character body) return;
+        	
+			if (body is Player player)
+			{
+				if (Author != AuthorEnum.PLAYER)
+				{
+					player.Camera.Punch(player.Position - Position, 10, 30);
+					Audio2D.PlaySoundAt(Sfx.FuturisticHit, body.Position, 0.5f).PitchVariation(0.15f);
+        			
+					var hit = Fx.CreateBulletHitFx();
+					hit.Modulate = Modulate;
+					hit.Rotation = Rotation - Mathf.Pi / 2;
+					hit.Scale =Scale;
+					hit.Position = Position;
+					GetParent().AddChild(hit);
+				}
+			}
+        	
+			if (body is Enemy enemy)
+			{
+				if (Author != AuthorEnum.ENEMY)
+				{
+					Audio2D.PlaySoundAt(Sfx.Hit, body.Position, 0.5f).PitchVariation(0.25f);
+        			
+					var hit = Fx.CreateBulletHitFx();
+					hit.Modulate = Modulate;
+					hit.Rotation = Rotation - Mathf.Pi / 2;
+					hit.Scale = Scale;
+					hit.Position = Position;
+					GetParent().AddChild(hit);
+				}
+			}
+		};
+	}
+
+	private void ReadyOnServer()
+	{
+		Modulate = Colors[Author];
+        		
+		GetNode<Area2D>("Area2D").AreaEntered += area =>
+		{
+			if(area.GetParent() is not Character body) return;
+        	
+			if (body is Player player)
+			{
+				if (Author != AuthorEnum.PLAYER)
+				{
+					ApplyDamage(player, new Color(0, 0, 0));
+				}
+			}
+        	
+			if (body is Enemy enemy)
+			{
+				if (Author != AuthorEnum.ENEMY)
+				{
+					ApplyDamage(enemy,new Color(1, 0, 0));
+					double K = enemy.IsBoss ? 0.0025 : 0.025;
+					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * K;
+				}
+			}
+		};
 	}
 	
-	
+	private void ApplyDamage(Character to, Color color)
+	{
+		if (RemainingDamage <= 0)
+			return;
+		
+		var hp = to.Hp;
+		to.TakeDamage(new Damage(Author, color, RemainingDamage, Source));
+		RemainingDamage -= hp;
+
+		if (RemainingDamage <= 0)
+		{
+			QueueFree();
+			long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
+			Network.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+		}
+	}
 }
