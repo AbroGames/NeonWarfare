@@ -22,7 +22,6 @@ public static class NotNullChecker
         if (obj == null) throw new ArgumentNullException(nameof(obj));
 
         Type type = obj.GetType();
-        Log.Info("Type: " + type);
         foreach (PropertyInfo property in type.GetProperties())
         {
             bool isNull = property.GetValue(obj) == null;
