@@ -8,9 +8,6 @@ public partial class ExitButton : Button
 {
     public override void _Ready()
     {
-        Pressed += () =>
-        {
-            EventBus.Publish(new ShutDownEvent());
-        };
+        Pressed += MenuButtonsService.ShutDown;
     }
 }

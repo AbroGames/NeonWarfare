@@ -44,7 +44,7 @@ public class ServerService
         if (parentPid.HasValue && !Process.GetProcesses().Any(x => x.Id == parentPid.Value))
         {
             Log.Error($"Parent process {parentPid.Value} is dead. Shutdown server.");
-            EventBus.Publish(new ShutDownEvent());
+            MenuButtonsService.ShutDown();
             server.GetTree().Quit();
         }
     }

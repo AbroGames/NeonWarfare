@@ -11,7 +11,7 @@ public partial class PlayerSettingsButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            EventBus.Publish(new ChangeMenuFromButtonClickRequest(Root.Instance.PackedScenes.Screen.PlayerSettingsMenu));
+            MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.PlayerSettingsMenu);
         };
     }
 }

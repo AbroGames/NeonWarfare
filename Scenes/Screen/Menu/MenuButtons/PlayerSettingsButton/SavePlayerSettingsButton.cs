@@ -13,7 +13,11 @@ public partial class SavePlayerSettingsButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            EventBus.Publish(new SavePlayerSettingButtonClickEvent(this));
+            string newNickname = NickLineEdit.Text;
+            Color newColor = ColorRect.Color;
+            Root.Instance.PlayerSettings.PlayerName = newNickname;
+            Root.Instance.PlayerSettings.PlayerColor = newColor;
+            SettingsService.PlayerSettingsSave();
         };
     }
 }

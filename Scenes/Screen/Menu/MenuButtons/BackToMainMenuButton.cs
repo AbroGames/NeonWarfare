@@ -11,7 +11,7 @@ public partial class BackToMainMenuButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            EventBus.Publish(new ChangeMenuFromButtonClickRequest(Root.Instance.PackedScenes.Screen.MainMenu));
+            MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.MainMenu);
         };
     }
 }

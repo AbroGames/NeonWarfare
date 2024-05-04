@@ -11,7 +11,7 @@ public partial class SettingsButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            EventBus.Publish(new ChangeMenuFromButtonClickRequest(Root.Instance.PackedScenes.Screen.SettingsMenu));
+            MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.SettingsMenu);
         };
     }
 }

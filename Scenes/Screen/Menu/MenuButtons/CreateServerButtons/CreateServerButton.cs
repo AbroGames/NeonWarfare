@@ -1,6 +1,8 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Net;
 
 namespace NeoVector;
 
@@ -12,10 +14,30 @@ public partial class CreateServerButton : Button
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
-        EventBus.Publish(new CreateServerButtonReadyEvent(this));
         Pressed += () =>
         {
-            EventBus.Publish(new CreateServerButtonClickEvent(this));
+            int port = 0;
+            try
+            {
+                port = PortLineEdit.Text.ToInt();
+            }
+            catch (FormatException e)
+            {
+                Log.Error(e);
+            }
+
+            if (port <= 0 || port > 65535)
+                return;
+        
+            EventBus.Publish(new CreateServerRequest(port, Root.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed));
+            EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, port));
+            if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+            {
+                Log.Error(
+                    "OnCreateServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
+                return;
+            }
+            Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
         };
     }
 

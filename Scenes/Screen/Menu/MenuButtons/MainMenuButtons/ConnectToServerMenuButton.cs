@@ -11,7 +11,7 @@ public partial class ConnectToServerMenuButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            EventBus.Publish(new ChangeMenuFromButtonClickRequest(Root.Instance.PackedScenes.Screen.ConnectToServerMenu));
+            MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.ConnectToServerMenu);
         };
     }
 }
