@@ -13,7 +13,6 @@ public partial class Root : Node2D
 	
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
-	[Export] [NotNull] public Console Console { get; private set; }
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
 
@@ -40,22 +39,13 @@ public partial class Root : Node2D
 		Callable.From(Init).CallDeferred();
 	}
 
-	private void Init()
+	protected virtual void Init()
 	{
 		ServicesInit();
 		PacketRegistry.ScanPackets();
 		LogCmdArgs();
 		NetworkOld.Init();
 		SettingsService.Init();
-        
-		if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
-		{
-			InitGameAsServer();
-		}
-		else
-		{
-			InitGameAsClient();
-		}
 	}
 
 	private void LogCmdArgs()
@@ -69,37 +59,7 @@ public partial class Root : Node2D
 			Log.Info("Not have cmd args");
 		}
 	}
-
-	private void InitGameAsClient()
-	{
-		Console.QueueFree(); //TODO просто не создавать консоль по дефолту! Только в случае, если это сервер и нужна консоль. Можно упаковать в ConsoleContainer
-		//TODO new network
-		//AbstractNetwork = new NetworkClient(); //TODO new network
-		//AddChild(AbstractNetwork);
-		//AbstractNetwork.Init();
-		
-		var mainMenu = PackedScenes.Main.MainMenu;
-		MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
-	}
-
-	private void InitGameAsServer()
-	{
-		if (OS.GetCmdlineArgs().Contains(ServerParams.RenderFlag))
-		{
-			Console.QueueFree();
-		}
-		else
-		{
-			Log.AddLogger(Console);
-		}
-		
-		//TODO new network
-		//AbstractNetwork = new NetworkServer();
-		//AddChild(AbstractNetwork);
-		//AbstractNetwork.Init();
-		InitServerService.InitServer();
-	}
-
+	
 	public void ServicesInit()
 	{
 		ServiceRegistry.RegisterServices();

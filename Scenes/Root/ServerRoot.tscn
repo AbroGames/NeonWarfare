@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://djmd5jlw7t5nc"]
+[gd_scene load_steps=4 format=3 uid="uid://djmd5jlw7t5nc"]
 
 [ext_resource type="PackedScene" uid="uid://b63edjeq18obm" path="res://Scenes/Root/Root.tscn" id="1_1571h"]
 [ext_resource type="Script" path="res://Scenes/Root/ServerRoot.cs" id="2_getdi"]
+[ext_resource type="PackedScene" uid="uid://b2gaknpctobq8" path="res://Scenes/Screen/Console/Console.tscn" id="3_dgb0x"]
 
-[node name="ServerRoot" instance=ExtResource("1_1571h")]
+[node name="ServerRoot" node_paths=PackedStringArray("Console") instance=ExtResource("1_1571h")]
 script = ExtResource("2_getdi")
+Console = NodePath("Console")
+
+[node name="Console" parent="." index="4" instance=ExtResource("3_dgb0x")]
