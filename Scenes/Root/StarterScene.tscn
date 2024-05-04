@@ -5,4 +5,5 @@
 
 [node name="StarterScene" type="Node2D"]
 script = ExtResource("1_ma2l8")
-Scene = ExtResource("2_761s2")
+ClientRoot = ExtResource("2_761s2")
+ServerRoot = ExtResource("2_761s2")
