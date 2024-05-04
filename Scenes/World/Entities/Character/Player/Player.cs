@@ -34,7 +34,7 @@ public partial class Player : Character
 		if (NetworkOld.IsServer) return;
 		
 		Camera = GetParent().GetChild<Camera>();
-		Sprite.Modulate = Root.Instance.PlayerSettings.PlayerColor;
+		Sprite.Modulate = ClientRoot.Instance.PlayerSettings.PlayerColor;
         
 		SecondaryCd.Ready += () =>
 		{

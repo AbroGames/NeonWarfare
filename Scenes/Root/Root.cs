@@ -12,15 +12,12 @@ public partial class Root : Node2D
 {
 	
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
-	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
-	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
 
 	public AbstractNetwork AbstractNetwork;
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 
 	public Server Server { get; private set; }
-	public int? ServerPid { get; set; }
 	public bool IsServer => Server != null;
 
 	public World CurrentWorld;
@@ -45,7 +42,6 @@ public partial class Root : Node2D
 		PacketRegistry.ScanPackets();
 		LogCmdArgs();
 		NetworkOld.Init();
-		SettingsService.Init();
 	}
 
 	private void LogCmdArgs()
@@ -81,20 +77,5 @@ public partial class Root : Node2D
 	{
 		Server = server;
 		AddChild(server);
-	}
-
-	public override void _Notification(int id)
-	{
-		long[] serverShutdownNotificationTypes =
-		[
-			NotificationWMCloseRequest, NotificationCrash, NotificationDisabled, NotificationPredelete,
-			NotificationExitTree
-		];
-
-		if (ServerPid.HasValue && serverShutdownNotificationTypes.Contains(id) && OS.IsProcessRunning(ServerPid.Value))
-		{
-			Log.Info($"Kill server process. Pid: {ServerPid.Value}");
-			OS.Kill(ServerPid.Value);
-		}
 	}
 }

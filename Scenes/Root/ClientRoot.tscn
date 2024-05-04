@@ -1,7 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://c1i0ysr1hdmt1"]
+[gd_scene load_steps=6 format=3 uid="uid://c1i0ysr1hdmt1"]
 
 [ext_resource type="PackedScene" uid="uid://b63edjeq18obm" path="res://Scenes/Root/Root.tscn" id="1_a1nt5"]
 [ext_resource type="Script" path="res://Scenes/Root/ClientRoot.cs" id="2_qkmgc"]
+[ext_resource type="Script" path="res://Scenes/Root/ServerShutdowner.cs" id="3_g5f2q"]
+[ext_resource type="Script" path="res://Scenes/Root/PlayerSettings/PlayerSettings.cs" id="4_3jh54"]
 
-[node name="ClientRoot" instance=ExtResource("1_a1nt5")]
+[sub_resource type="Environment" id="Environment_hp6r4"]
+background_mode = 3
+glow_enabled = true
+glow_bloom = 0.72
+glow_blend_mode = 0
+glow_hdr_threshold = 0.0
+
+[node name="ClientRoot" node_paths=PackedStringArray("Environment", "PlayerSettings", "ServerShutdowner") instance=ExtResource("1_a1nt5")]
 script = ExtResource("2_qkmgc")
+Environment = NodePath("WorldEnvironment")
+PlayerSettings = NodePath("PlayerSettings")
+ServerShutdowner = NodePath("ServerShutdowner")
+
+[node name="ServerShutdowner" type="Node" parent="." index="2"]
+script = ExtResource("3_g5f2q")
+
+[node name="PlayerSettings" type="Node2D" parent="." index="3"]
+script = ExtResource("4_3jh54")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="4"]
+environment = SubResource("Environment_hp6r4")

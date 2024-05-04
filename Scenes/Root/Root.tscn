@@ -1,31 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://b63edjeq18obm"]
+[gd_scene load_steps=4 format=3 uid="uid://b63edjeq18obm"]
 
 [ext_resource type="Script" path="res://Scenes/Root/Root.cs" id="1_lyqs7"]
 [ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/Root/PackedScenesContainer/PackedScenesContainer.tscn" id="2_642j6"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="2_n66ta"]
-[ext_resource type="Script" path="res://Scenes/Root/PlayerSettings/PlayerSettings.cs" id="4_1irsq"]
 
-[sub_resource type="Environment" id="Environment_hp6r4"]
-background_mode = 3
-glow_enabled = true
-glow_bloom = 0.72
-glow_blend_mode = 0
-glow_hdr_threshold = 0.0
-
-[node name="Root" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "Environment", "PlayerSettings", "PackedScenes")]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "PackedScenes")]
 script = ExtResource("1_lyqs7")
 MainSceneContainer = NodePath("MainSceneContainer")
-Environment = NodePath("WorldEnvironment")
-PlayerSettings = NodePath("PlayerSettings")
 PackedScenes = NodePath("PackedScenesContainer")
 
 [node name="MainSceneContainer" type="Node" parent="."]
 script = ExtResource("2_n66ta")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_hp6r4")
-
-[node name="PlayerSettings" type="Node2D" parent="."]
-script = ExtResource("4_1irsq")
 
 [node name="PackedScenesContainer" parent="." instance=ExtResource("2_642j6")]

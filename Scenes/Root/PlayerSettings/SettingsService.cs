@@ -11,7 +11,7 @@ public static class SettingsService
     
     public static void Init()
     {
-        var playerSettings = Root.Instance.PlayerSettings;
+        var playerSettings = ClientRoot.Instance.PlayerSettings;
         try
         {
             FileAccess file = FileAccess.Open($"user://{PlayerSettings.Filename}", FileAccess.ModeFlags.Read);
@@ -30,7 +30,7 @@ public static class SettingsService
 
     public static void PlayerSettingsSave()
     {
-        var playerSettings = Root.Instance.PlayerSettings;
+        var playerSettings = ClientRoot.Instance.PlayerSettings;
         try
         {
             if (playerSettings.PlayerName == null || playerSettings.PlayerName.Equals(""))

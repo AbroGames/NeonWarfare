@@ -11,13 +11,11 @@ namespace NeonWarfare;
 public partial class ClientRoot : Root
 {
 	
-	/*
-	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
-	[Export] [NotNull] public Console Console { get; private set; }
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
-	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-
+	[Export] [NotNull] public ServerShutdowner ServerShutdowner { get; private set; }
+	
+	/*
 	public AbstractNetwork AbstractNetwork;
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 
@@ -46,6 +44,7 @@ public partial class ClientRoot : Root
 	protected override void Init()
 	{
 		base.Init();
+		SettingsService.Init();
 		//TODO new network
 		//AbstractNetwork = new NetworkClient(); //TODO new network
 		//AddChild(AbstractNetwork);

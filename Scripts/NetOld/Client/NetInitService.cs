@@ -26,7 +26,7 @@ public class NetInitService
         }
         
         //serverParams.Add(ServerParams.RenderFlag); //TODO del or to Config node in Root
-        NeonWarfare.Root.Instance.ServerPid = OS.CreateInstance(serverParams.ToArray());
+        NeonWarfare.ClientRoot.Instance.ServerShutdowner.ServerPid = OS.CreateInstance(serverParams.ToArray());
     }
     
     [EventListener]

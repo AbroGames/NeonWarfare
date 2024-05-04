@@ -8,4 +8,4 @@
 script = ExtResource("2_getdi")
 Console = NodePath("Console")
 
-[node name="Console" parent="." index="4" instance=ExtResource("3_dgb0x")]
+[node name="Console" parent="." index="2" instance=ExtResource("3_dgb0x")]
