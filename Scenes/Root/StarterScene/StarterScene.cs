@@ -5,7 +5,7 @@ using NeoVector;
 
 namespace NeonWarfare;
 
-public partial class StarterScene : Node2D
+public partial class StarterScene : Node
 {
 	
 	[Export] [NotNull] public PackedScene ClientRoot { get; private set; }

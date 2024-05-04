@@ -15,18 +15,6 @@ public partial class ClientRoot : Root
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 	[Export] [NotNull] public ServerShutdowner ServerShutdowner { get; private set; }
 	
-	/*
-	public AbstractNetwork AbstractNetwork;
-	public ServiceRegistry ServiceRegistry { get; private set; } = new();
-
-	public Server Server { get; private set; }
-	public int? ServerPid { get; set; }
-	public bool IsServer => Server != null;
-
-	public World CurrentWorld;
-	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
-	*/
-	
 	public new static ClientRoot Instance { get; private set; }
 
 	public override void _EnterTree()

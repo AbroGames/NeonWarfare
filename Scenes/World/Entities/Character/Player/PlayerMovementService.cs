@@ -30,7 +30,7 @@ public class PlayerMovementService
         player.Position = newPosition;
         player.Rotation = clientMovementPlayerPacket.Dir;
         
-        foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
+        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
         {
             if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
             NetworkOld.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));

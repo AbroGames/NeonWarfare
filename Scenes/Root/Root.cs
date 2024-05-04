@@ -17,9 +17,6 @@ public partial class Root : Node2D
 	public AbstractNetwork AbstractNetwork;
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 
-	public Server Server { get; private set; }
-	public bool IsServer => Server != null;
-
 	public World CurrentWorld;
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 	
@@ -38,12 +35,12 @@ public partial class Root : Node2D
 
 	protected virtual void Init()
 	{
+		LogCmdArgs();
 		ServicesInit();
 		PacketRegistry.ScanPackets();
-		LogCmdArgs();
 		NetworkOld.Init();
 	}
-
+	
 	private void LogCmdArgs()
 	{
 		if (!OS.GetCmdlineArgs().IsEmpty())
@@ -69,13 +66,6 @@ public partial class Root : Node2D
 			EventBus.Side = ListenerSide.Client;
 		}
 		
-		
 		EventBus.RegisterListeners(ServiceRegistry);
-	}
-
-	public void AddServer(Server server)
-	{
-		Server = server;
-		AddChild(server);
 	}
 }

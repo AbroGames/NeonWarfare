@@ -26,7 +26,7 @@ public static class InitServerService
         {
             Log.Info($"Dedicated server successfully created.");
             Server server = new Server(serverParams);
-            NeonWarfare.Root.Instance.AddServer(server);
+            NeonWarfare.ServerRoot.Instance.AddServer(server);
         }
         else
         {

@@ -19,7 +19,7 @@ public class GodotServerService
         Log.Debug($"PeerConnectedServerEvent: {peerConnectedServerEvent.Id}");
         
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedServerEvent.Id);
-        NeonWarfare.Root.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
+        NeonWarfare.ServerRoot.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
         NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id,
             new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
@@ -31,7 +31,7 @@ public class GodotServerService
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
-            NeonWarfare.Root.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
+            NeonWarfare.ServerRoot.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
             currentWorld.AddChild(player);
             long newPlayerNid = NeonWarfare.Root.Instance.NetworkEntityManager.AddEntity(player);
 
@@ -50,7 +50,7 @@ public class GodotServerService
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
             //TODO спавн союзников и других NetworkEntity?
-            foreach (PlayerServerInfo playerServerInfo in NeonWarfare.Root.Instance.Server.PlayerServerInfo.Values)
+            foreach (PlayerServerInfo playerServerInfo in NeonWarfare.ServerRoot.Instance.Server.PlayerServerInfo.Values)
             {
                 if (playerServerInfo.Id == newPlayerServerInfo.Id) continue;
                 
@@ -77,9 +77,9 @@ public class GodotServerService
     {
         Log.Debug($"PeerDisconnectedServerEvent: {peerDisconnectedServerEvent.Id}");
 
-        NeonWarfare.Player player = NeonWarfare.Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
+        NeonWarfare.Player player = NeonWarfare.ServerRoot.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
         NeonWarfare.Root.Instance.NetworkEntityManager.RemoveEntity(player);
-        NeonWarfare.Root.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
+        NeonWarfare.ServerRoot.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
         long nid = NeonWarfare.Root.Instance.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         

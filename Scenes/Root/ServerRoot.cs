@@ -14,22 +14,7 @@ public partial class ServerRoot : Root
 	
 	[Export] [NotNull] public Console Console { get; private set; }
 	
-	/*
-	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
-	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
-	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
-	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-
-	public AbstractNetwork AbstractNetwork;
-	public ServiceRegistry ServiceRegistry { get; private set; } = new();
-
 	public Server Server { get; private set; }
-	public int? ServerPid { get; set; }
-	public bool IsServer => Server != null;
-
-	public World CurrentWorld;
-	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
-	*/
 	
 	public new static ServerRoot Instance { get; private set; }
 
@@ -63,5 +48,11 @@ public partial class ServerRoot : Root
 		//AddChild(AbstractNetwork);
 		//AbstractNetwork.Init();
 		InitServerService.InitServer();
+	}
+	
+	public void AddServer(Server server)
+	{
+		Server = server;
+		AddChild(server);
 	}
 }

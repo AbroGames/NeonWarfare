@@ -71,7 +71,7 @@ public class BattleWorldEnemySpawnService
         var (world, position) = request;
         var enemy = CreateEnemy(world, Root.Instance.PackedScenes.World.Enemy);
         enemy.Position = position;
-        enemy.Target = Root.Instance.Server.PlayerServerInfo.Values.First().Player;
+        enemy.Target = ServerRoot.Instance.Server.PlayerServerInfo.Values.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
         AnimateSpawn(enemy, world);
 

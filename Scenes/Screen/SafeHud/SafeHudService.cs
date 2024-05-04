@@ -24,7 +24,7 @@ public class SafeHudService
         
         Root.Instance.NetworkEntityManager.Clear();
         
-        foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
+        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
         {
             Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
@@ -50,7 +50,7 @@ public class SafeHudService
             NetworkOld.SendPacketToPeer(playerServerInfo.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
-            foreach (PlayerServerInfo allyServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
+            foreach (PlayerServerInfo allyServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
             {
                 if (allyServerInfo.Id == playerServerInfo.Id) continue;
                 NetworkOld.SendPacketToPeer(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
