@@ -3,8 +3,9 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Net;
 using KludgeBox.Net.Packets;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 [GamePacket]
 public class ClientWantToBattlePacket : AbstractPacket;

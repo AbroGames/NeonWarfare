@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public class ManualShake : IShiftProvider
 {

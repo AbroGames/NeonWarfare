@@ -1,8 +1,7 @@
-using KludgeBox.Events;
 using KludgeBox.Net;
 using KludgeBox.Net.Packets;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 [GamePacket]
 public class ClientMovementPlayerPacket(long nid, double x, double y, double dir,

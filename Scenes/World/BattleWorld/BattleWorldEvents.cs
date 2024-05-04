@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox.Events;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public readonly record struct BattleWorldSpawnEnemiesRequestEvent(int RequiredEnemiesAmount) : IEvent;
 public readonly record struct BattleWorldSpawnEnemyRequest(BattleWorld BattleWorld, Vector2 Position) : IEvent;

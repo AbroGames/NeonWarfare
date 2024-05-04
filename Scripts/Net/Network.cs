@@ -10,7 +10,7 @@ public partial class Network : Node
     
     public override void _Ready()
     {
-        Api = Root.Instance.GetTree().GetMultiplayer();
+        Api = NeonWarfare.Root.Instance.GetTree().GetMultiplayer();
         Peer = new ENetMultiplayerPeer();
     }
 }

@@ -1,8 +1,7 @@
 using System;
 using Godot;
-using KludgeBox.Net;
 
-namespace NeoVector;
+namespace NeonWarfare.Components;
 
 public partial class PlayerRotateComponent : Node
 {

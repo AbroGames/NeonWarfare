@@ -3,7 +3,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 [GameService]
 public class EnemyRotateService

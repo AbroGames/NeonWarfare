@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Events;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public readonly record struct EnemyStartAttractionEvent(BattleWorld BattleWorld, Enemy Enemy) : IEvent;
 public readonly record struct EnemyStopAttractionEvent(BattleWorld BattleWorld, Enemy Enemy) : IEvent;

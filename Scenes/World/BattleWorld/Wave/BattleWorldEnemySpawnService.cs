@@ -4,8 +4,9 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 [GameService]
 public class BattleWorldEnemySpawnService

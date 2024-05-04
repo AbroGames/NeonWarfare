@@ -19,25 +19,25 @@ public class GodotServerService
         Log.Debug($"PeerConnectedServerEvent: {peerConnectedServerEvent.Id}");
         
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedServerEvent.Id);
-        Root.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
+        NeonWarfare.Root.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
         NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id,
             new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
-        Node currentWorld = Root.Instance.CurrentWorld;
-        if (currentWorld is SafeWorld)
+        Node currentWorld = NeonWarfare.Root.Instance.CurrentWorld;
+        if (currentWorld is NeonWarfare.SafeWorld)
         {
-            Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+            NeonWarfare.Player player = NeonWarfare.Root.Instance.PackedScenes.World.Player.Instantiate<NeonWarfare.Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
-            Root.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
+            NeonWarfare.Root.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
             currentWorld.AddChild(player);
-            long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = NeonWarfare.Root.Instance.NetworkEntityManager.AddEntity(player);
 
-            if (currentWorld.GetChild<Camera>() == null)
+            if (currentWorld.GetChild<NeonWarfare.Camera>() == null)
             {
-                var camera = new Camera(); //TODO del from server!!
+                var camera = new NeonWarfare.Camera(); //TODO del from server!!
                 camera.Position = player.Position;
                 camera.TargetNode = player;
                 camera.Zoom = Vec(0.65);
@@ -50,19 +50,19 @@ public class GodotServerService
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
             //TODO спавн союзников и других NetworkEntity?
-            foreach (PlayerServerInfo playerServerInfo in Root.Instance.Server.PlayerServerInfo.Values)
+            foreach (PlayerServerInfo playerServerInfo in NeonWarfare.Root.Instance.Server.PlayerServerInfo.Values)
             {
                 if (playerServerInfo.Id == newPlayerServerInfo.Id) continue;
                 
-                Player ally = playerServerInfo.Player;
-                long allyNid = Root.Instance.NetworkEntityManager.GetNid(ally);
+                NeonWarfare.Player ally = playerServerInfo.Player;
+                long allyNid = NeonWarfare.Root.Instance.NetworkEntityManager.GetNid(ally);
                 NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
                 NetworkOld.SendPacketToPeer(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
             
             //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
-        else if (currentWorld is BattleWorld)
+        else if (currentWorld is NeonWarfare.BattleWorld)
         {
             NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerWaitBattleEndPacket());
         }
@@ -77,10 +77,10 @@ public class GodotServerService
     {
         Log.Debug($"PeerDisconnectedServerEvent: {peerDisconnectedServerEvent.Id}");
 
-        Player player = Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
-        Root.Instance.NetworkEntityManager.RemoveEntity(player);
-        Root.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
-        long nid = Root.Instance.NetworkEntityManager.RemoveEntity(player);
+        NeonWarfare.Player player = NeonWarfare.Root.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
+        NeonWarfare.Root.Instance.NetworkEntityManager.RemoveEntity(player);
+        NeonWarfare.Root.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
+        long nid = NeonWarfare.Root.Instance.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
         NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));

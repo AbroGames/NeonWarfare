@@ -1,4 +1,4 @@
-namespace NeoVector;
+namespace NeonWarfare;
 
 public class EnemyWave 
 {

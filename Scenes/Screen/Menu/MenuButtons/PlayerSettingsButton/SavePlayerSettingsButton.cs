@@ -1,8 +1,8 @@
 ﻿using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global;
+using NeonWarfare.PlayerSettings;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class SavePlayerSettingsButton : Button
 {

@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class StarterScene : Node2D
 {

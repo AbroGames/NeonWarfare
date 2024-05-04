@@ -1,9 +1,7 @@
-using System;
 using System.Text.Json.Serialization;
 using Godot;
-using KludgeBox.Events.Global;
 
-namespace NeoVector;
+namespace NeonWarfare.PlayerSettings;
 
 public partial class PlayerSettings : Node2D
 {

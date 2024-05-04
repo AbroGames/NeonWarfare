@@ -1,9 +1,8 @@
 using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global;
 using KludgeBox.Scheduling;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 //TODO в общего родителя с обычным Beam
 public partial class SolarBeam : Node2D

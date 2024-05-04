@@ -13,9 +13,9 @@ public static class InitServerService
     
     public static void InitServer()
     {
-        Root.Instance.GetWindow().Set("position", new Vector2I(
-        DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
-        DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
+        NeonWarfare.Root.Instance.GetWindow().Set("position", new Vector2I(
+        DisplayServer.ScreenGetSize().X - (int)NeonWarfare.Root.Instance.GetViewport().GetVisibleRect().Size.X,
+        DisplayServer.ScreenGetSize().Y - (int)NeonWarfare.Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
         int port = GetPortFromCmdArgs();
         string admin = GetAdminFromCmdArgs();
         int? parentPid = GetParentPidFromCmdArgs();
@@ -26,7 +26,7 @@ public static class InitServerService
         {
             Log.Info($"Dedicated server successfully created.");
             Server server = new Server(serverParams);
-            Root.Instance.AddServer(server);
+            NeonWarfare.Root.Instance.AddServer(server);
         }
         else
         {

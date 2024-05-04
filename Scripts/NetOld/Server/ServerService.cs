@@ -6,6 +6,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
+using NeonWarfare;
 
 namespace NeoVector;
 
@@ -20,8 +21,8 @@ public class ServerService
 
         server.IsParentDeadChecker.Ready += () => EventBus.Publish(new ServerCheckParentIsDeadEvent(server));
         
-        var safeWorld = Root.Instance.PackedScenes.Main.SafeWorld;
-        Root.Instance.MainSceneContainer.ChangeStoredNode(safeWorld.Instantiate());
+        var safeWorld = NeonWarfare.Root.Instance.PackedScenes.Main.SafeWorld;
+        NeonWarfare.Root.Instance.MainSceneContainer.ChangeStoredNode(safeWorld.Instantiate());
         
         Log.Info("Server ready!");
     }

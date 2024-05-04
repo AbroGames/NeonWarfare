@@ -1,11 +1,11 @@
-using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Net;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 [GameService]
 public class EnemyMovementService

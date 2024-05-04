@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Godot;
-using KludgeBox.Events.Global;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class Camera : Camera2D
 {

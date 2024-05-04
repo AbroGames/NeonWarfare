@@ -1,6 +1,5 @@
-﻿using Godot;
-using KludgeBox.Events;
+﻿using KludgeBox.Events;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public readonly record struct ShutDownEvent(int ExitCode = 0) : IEvent;

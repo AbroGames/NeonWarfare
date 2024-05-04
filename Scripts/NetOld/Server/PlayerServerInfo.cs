@@ -6,7 +6,7 @@ public class PlayerServerInfo
     public string Nickname { get; private set; } = "";
     public bool IsAdmin { get; set; } = false;
 
-    public Player Player;
+    public NeonWarfare.Player Player;
 
     public PlayerServerInfo(long id)
     {

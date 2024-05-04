@@ -3,8 +3,9 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class CreateServerButton : Button
 {

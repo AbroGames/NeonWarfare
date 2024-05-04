@@ -2,7 +2,7 @@ using System;
 using Godot;
 using KludgeBox;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class GpuParticlesFx : Node2D
 {

@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeoVector;
+namespace NeonWarfare.PackedScenesContainer.World;
 
 public partial class WorldPackedScenesContainer : Node
 {

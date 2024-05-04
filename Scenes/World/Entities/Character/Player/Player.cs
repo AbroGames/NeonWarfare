@@ -1,10 +1,10 @@
 using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global;
 using KludgeBox.Net;
 using KludgeBox.Scheduling;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class Player : Character
 {

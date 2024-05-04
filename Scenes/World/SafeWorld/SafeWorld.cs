@@ -1,8 +1,6 @@
-using Godot;
-using KludgeBox;
-using KludgeBox.Events.Global;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class SafeWorld : World
 {

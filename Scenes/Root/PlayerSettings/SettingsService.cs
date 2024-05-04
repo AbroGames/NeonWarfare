@@ -1,13 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Text.Json;
 using Godot;
 using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Events.Global;
 using FileAccess = Godot.FileAccess;
 
-namespace NeoVector;
+namespace NeonWarfare.PlayerSettings;
 
 public static class SettingsService
 {

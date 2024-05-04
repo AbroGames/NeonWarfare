@@ -1,9 +1,7 @@
 ﻿using Godot;
-using KludgeBox;
-using KludgeBox.Events.Global;
 using KludgeBox.Net;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class ToBattleButton : Button
 {

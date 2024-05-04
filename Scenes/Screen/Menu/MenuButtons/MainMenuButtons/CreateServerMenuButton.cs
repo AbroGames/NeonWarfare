@@ -1,8 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class CreateServerMenuButton : Button
 {

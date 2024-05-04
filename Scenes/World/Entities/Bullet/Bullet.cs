@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
-using KludgeBox.Events.Global;
 using KludgeBox.Net;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class Bullet : Node2D
 {

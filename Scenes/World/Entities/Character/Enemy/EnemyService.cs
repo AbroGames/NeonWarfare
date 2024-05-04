@@ -2,7 +2,7 @@
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 [GameService]
 public class EnemyService

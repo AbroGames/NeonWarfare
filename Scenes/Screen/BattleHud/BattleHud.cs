@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 using KludgeBox;
-using KludgeBox.Events.Global;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class BattleHud : Control
 {

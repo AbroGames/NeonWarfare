@@ -3,7 +3,7 @@ using KludgeBox;
 using KludgeBox.Events.Global;
 using KludgeBox.Structs;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class GroupSpawner : Node2D
 {

@@ -1,11 +1,6 @@
-﻿using System;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Events.Global;
-using KludgeBox.Net;
+﻿using Godot;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public static class MenuButtonsService
 {

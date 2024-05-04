@@ -3,7 +3,7 @@ using KludgeBox;
 using KludgeBox.Events.Global;
 using KludgeBox.Scheduling;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class Enemy : Character
 {

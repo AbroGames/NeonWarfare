@@ -1,7 +1,8 @@
 using Godot;
 using KludgeBox.Net;
+using NeoVector;
 
-namespace NeoVector;
+namespace NeonWarfare.Components;
 
 public partial class PlayerMovementComponent : Node
 {

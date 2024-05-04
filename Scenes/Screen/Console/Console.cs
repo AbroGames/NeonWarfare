@@ -1,8 +1,7 @@
 using Godot;
-using System;
 using KludgeBox;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class Console : CanvasLayer, ILogger
 {
