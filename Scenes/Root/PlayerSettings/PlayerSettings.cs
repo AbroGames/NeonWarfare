@@ -3,7 +3,7 @@ using Godot;
 
 namespace NeonWarfare;
 
-public partial class PlayerSettings : Node2D
+public partial class PlayerSettings : Node
 {
 	public static readonly string Filename = "PlayerSettings.json";
 	public string PlayerName;
@@ -20,9 +20,5 @@ public partial class PlayerSettings : Node2D
 		public int Red { get; set; } = red;
 		public int Green { get; set; } = green;
 		public int Blue { get; set; } = blue;
-	}
-	public override void _Ready()
-	{
-		
 	}
 }

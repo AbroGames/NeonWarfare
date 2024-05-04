@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=5 format=3 uid="uid://dkmaek7egfvff"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_qiic2"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/PlayerSettingsButton.cs" id="2_i1jiy"]
 [ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="3_eej1s"]
+[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/GraphicSettingsButton.cs" id="3_l358w"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -37,10 +38,11 @@ layout_mode = 2
 text = "Настройки звука"
 icon = ExtResource("1_qiic2")
 
-[node name="VideoSettingsButton" type="Button" parent="VBoxContainer"]
+[node name="GraphicSettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Настройки изображения"
 icon = ExtResource("1_qiic2")
+script = ExtResource("3_l358w")
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
