@@ -1,6 +1,5 @@
 ﻿using Godot;
 using KludgeBox;
-using NeonWarfare.PlayerSettings;
 
 namespace NeonWarfare;
 

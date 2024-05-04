@@ -4,7 +4,7 @@ using Godot;
 using KludgeBox;
 using FileAccess = Godot.FileAccess;
 
-namespace NeonWarfare.PlayerSettings;
+namespace NeonWarfare;
 
 public static class SettingsService
 {

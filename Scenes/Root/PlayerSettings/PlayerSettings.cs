@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Godot;
 
-namespace NeonWarfare.PlayerSettings;
+namespace NeonWarfare;
 
 public partial class PlayerSettings : Node2D
 {

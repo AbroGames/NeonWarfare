@@ -4,7 +4,6 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
-using NeonWarfare.PlayerSettings;
 using NeoVector;
 
 namespace NeonWarfare;
@@ -15,8 +14,8 @@ public partial class Root : Node2D
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	[Export] [NotNull] public Console Console { get; private set; }
-	[Export] [NotNull] public PlayerSettings.PlayerSettings PlayerSettings { get; private set; }
-	[Export] [NotNull] public PackedScenesContainer.PackedScenesContainer PackedScenes { get; private set; }
+	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
+	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
 	[Export] [NotNull] public Network Network { get; private set; }
 	
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
