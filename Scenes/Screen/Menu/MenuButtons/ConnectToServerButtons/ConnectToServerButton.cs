@@ -10,25 +10,28 @@ namespace NeonWarfare;
 public partial class ConnectToServerButton : Button
 {
     [Export] [NotNull] public LineEdit IpLineEdit { get; private set; }
-    [Export] [NotNull] public LineEdit PortLineEdit { get; private set; }
 	
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            int port = 0;
+            int port = 25566;
             string host = IpLineEdit.Text;
-            try
+            int pos = host.Find(":");
+            if (pos != -1)
             {
-                port = PortLineEdit.Text.ToInt();
+                try
+                {
+                    port = host.Substring(pos + 1).ToInt();
+                    host = host.Remove(pos);
+                }
+                catch (FormatException e)
+                {
+                    Log.Error(e);
+                }
             }
-            catch (FormatException e)
-            {
-                Log.Error(e);
-            }
-
-            if (port <= 0 || port > 65535)
+            if (port is <= 0 or > 65535)
                 return;
 
             if (host.Equals(""))

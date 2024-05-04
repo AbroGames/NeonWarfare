@@ -46,7 +46,6 @@ text = "Показывать консоль"
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-button_pressed = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2

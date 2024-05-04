@@ -36,17 +36,6 @@ text = "IP:"
 [node name="IpLineEdit" type="LineEdit" parent="GridContainer/IPSplit"]
 layout_mode = 2
 
-[node name="PortSplit" type="HSplitContainer" parent="GridContainer"]
-layout_mode = 2
-
-[node name="PortLabel" type="Label" parent="GridContainer/PortSplit"]
-layout_mode = 2
-text = "Порт:"
-
-[node name="PortLineEdit" type="LineEdit" parent="GridContainer/PortSplit"]
-layout_mode = 2
-text = "25566"
-
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2
 
@@ -62,4 +51,4 @@ text = "Подключится к серверу"
 icon = ExtResource("1_nq6w6")
 script = ExtResource("3_57gpj")
 IpLineEdit = NodePath("../../IPSplit/IpLineEdit")
-PortLineEdit = NodePath("../../PortSplit/PortLineEdit")
+PortLineEdit = NodePath("")
