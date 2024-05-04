@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://djmd5jlw7t5nc"]
+
+[ext_resource type="PackedScene" uid="uid://b63edjeq18obm" path="res://Scenes/Root/Root.tscn" id="1_1571h"]
+[ext_resource type="Script" path="res://Scenes/Root/ServerRoot.cs" id="2_getdi"]
+
+[node name="ServerRoot" instance=ExtResource("1_1571h")]
+script = ExtResource("2_getdi")

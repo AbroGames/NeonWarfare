@@ -2,13 +2,13 @@ using Godot;
 
 namespace NeoVector;
 
-public partial class Network : Node
+public partial class AbstractNetwork : Node
 {
     
     public MultiplayerApi Api { get; private set; }
     public ENetMultiplayerPeer Peer { get; private set; }
     
-    public override void _Ready()
+    public void Init()
     {
         Api = NeonWarfare.Root.Instance.GetTree().GetMultiplayer();
         Peer = new ENetMultiplayerPeer();

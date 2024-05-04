@@ -1,16 +1,16 @@
+using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
-using NeoVector;
 
 namespace NeonWarfare;
 
-public partial class Root : Node2D
+public partial class ServerRoot : Root
 {
-	
+	/*
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	[Export] [NotNull] public Console Console { get; private set; }
@@ -26,24 +26,25 @@ public partial class Root : Node2D
 
 	public World CurrentWorld;
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
+	*/
 	
-	public static Root Instance { get; private set; }
+	public new static ServerRoot Instance { get; private set; }
 
 	public override void _EnterTree()
 	{
+		base._EnterTree();
 		Instance = this;
 	}
 
 	public override void _Ready()
 	{
+		base._Ready();
 		NotNullChecker.CheckProperties(this);
-		Callable.From(Init).CallDeferred();
 	}
-
+	
+	/*
 	private void Init()
 	{
-		ServicesInit();
-		PacketRegistry.ScanPackets();
 		LogCmdArgs();
 		NetworkOld.Init();
 		SettingsService.Init();
@@ -73,10 +74,9 @@ public partial class Root : Node2D
 	private void InitGameAsClient()
 	{
 		Console.QueueFree(); //TODO просто не создавать консоль по дефолту! Только в случае, если это сервер и нужна консоль. Можно упаковать в ConsoleContainer
-		//TODO new network
-		//AbstractNetwork = new NetworkClient(); //TODO new network
-		//AddChild(AbstractNetwork);
-		//AbstractNetwork.Init();
+		AbstractNetwork = new NetworkClient();
+		AddChild(AbstractNetwork);
+		AbstractNetwork.Init();
 		
 		var mainMenu = PackedScenes.Main.MainMenu;
 		MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
@@ -93,10 +93,9 @@ public partial class Root : Node2D
 			Log.AddLogger(Console);
 		}
 		
-		//TODO new network
-		//AbstractNetwork = new NetworkServer();
-		//AddChild(AbstractNetwork);
-		//AbstractNetwork.Init();
+		AbstractNetwork = new NetworkServer();
+		AddChild(AbstractNetwork);
+		AbstractNetwork.Init();
 		InitServerService.InitServer();
 	}
 
@@ -136,5 +135,5 @@ public partial class Root : Node2D
 			Log.Info($"Kill server process. Pid: {ServerPid.Value}");
 			OS.Kill(ServerPid.Value);
 		}
-	}
+	}*/
 }
