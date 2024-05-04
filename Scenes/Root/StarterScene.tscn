@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://b62wyt2mmou07"]
+
+[ext_resource type="Script" path="res://Scenes/Root/StarterScene.cs" id="1_ma2l8"]
+[ext_resource type="PackedScene" uid="uid://b63edjeq18obm" path="res://Scenes/Root/Root.tscn" id="2_761s2"]
+
+[node name="StarterScene" type="Node2D"]
+script = ExtResource("1_ma2l8")
+Scene = ExtResource("2_761s2")
