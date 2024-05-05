@@ -4,7 +4,9 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
-using NeoVector;
+using NeonWarfare.NetOld;
+using NeonWarfare.NetOld.Server;
+using AbstractNetwork = NeonWarfare.Net.AbstractNetwork;
 
 namespace NeonWarfare;
 

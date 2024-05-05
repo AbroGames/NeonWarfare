@@ -3,8 +3,9 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Net;
+using NeonWarfare.NetOld.Server;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Client;
 
 [GameService]
 public class NetInitService
@@ -26,7 +27,7 @@ public class NetInitService
         }
         
         //serverParams.Add(ServerParams.RenderFlag); //TODO del or to Config node in Root
-        NeonWarfare.ClientRoot.Instance.ServerShutdowner.ServerPid = OS.CreateInstance(serverParams.ToArray());
+        ClientRoot.Instance.ServerShutdowner.ServerPid = OS.CreateInstance(serverParams.ToArray());
     }
     
     [EventListener]

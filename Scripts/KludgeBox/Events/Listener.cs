@@ -1,5 +1,4 @@
 ﻿using System;
-using NeoVector.KludgeBox.Events;
 
 namespace KludgeBox.Events;
 

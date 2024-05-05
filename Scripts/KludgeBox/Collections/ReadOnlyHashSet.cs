@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace KludgeBox.Collections;
@@ -19,7 +20,7 @@ public class ReadOnlyHashSet<T> : IReadOnlyCollection<T>
 		return _hashSet.GetEnumerator();
 	}
 
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+	IEnumerator IEnumerable.GetEnumerator()
 	{
 		return _hashSet.GetEnumerator();
 	}

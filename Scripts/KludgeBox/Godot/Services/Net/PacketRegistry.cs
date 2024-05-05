@@ -56,7 +56,7 @@ public static class PacketRegistry
 
     public static RegistrySynchronizationPacket BuildSynchronizationPacket()
     {
-        if (!KludgeBox.Net.NetworkOld.IsServer) throw new InvalidOperationException("Only server can send synchronization packets");
+        if (!NetworkOld.IsServer) throw new InvalidOperationException("Only server can send synchronization packets");
 
         var packet = new RegistrySynchronizationPacket();
         var types = packet.PacketTypeOrder;
@@ -71,8 +71,8 @@ public static class PacketRegistry
 
     public static void SynchronizeRegistry(RegistrySynchronizationPacket packet)
     {
-        if (KludgeBox.Net.NetworkOld.BothLocal) return; // Already synchronized
-        if (KludgeBox.Net.NetworkOld.IsServer) throw new InvalidOperationException("Only client can synchronize registry from packet");
+        if (NetworkOld.BothLocal) return; // Already synchronized
+        if (NetworkOld.IsServer) throw new InvalidOperationException("Only client can synchronize registry from packet");
         
         ClearRegistry();
         for (var i = 0; i < packet.PacketTypeOrder.Count; i++)

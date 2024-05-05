@@ -1,6 +1,4 @@
-using Godot;
-
-namespace NeoVector;
+namespace NeonWarfare.Net;
 
 public partial class ServerNetwork : AbstractNetwork
 {

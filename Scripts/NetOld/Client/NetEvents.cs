@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Client;
 
 public readonly record struct CreateServerRequest(int Port, string AdminNickname, bool ShowConsole) : IEvent;
 public readonly record struct ConnectToServerRequest(string Host, int Port) : IEvent;

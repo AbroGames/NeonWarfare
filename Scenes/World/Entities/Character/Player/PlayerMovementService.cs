@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Net;
-using NeoVector;
+using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 

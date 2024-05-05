@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public static class Keys
 {

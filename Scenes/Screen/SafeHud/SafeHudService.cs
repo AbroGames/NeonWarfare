@@ -3,7 +3,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Net;
 using KludgeBox.Net.Packets;
-using NeoVector;
+using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 

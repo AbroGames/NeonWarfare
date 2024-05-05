@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Timers;
 using static KludgeBox.Scheduling.ClockEvents;
 
 namespace KludgeBox.Scheduling;
@@ -33,7 +34,7 @@ public class Clock
 	private Action<double> TickAction;
 	private bool _first = true;
 	private DateTime _lastTickTime;
-	private System.Timers.Timer _timer;
+	private Timer _timer;
 	private List<Scheduler> _attachedSchedulers = new List<Scheduler>();
 
 	/// <summary>
@@ -70,7 +71,7 @@ public class Clock
 			ticksPerSecond = DefaultTps;
 
 		// Start timer
-		_timer = new System.Timers.Timer(1000.0 / ticksPerSecond);
+		_timer = new Timer(1000.0 / ticksPerSecond);
 		_timer.Elapsed += (sender, args) => DoTick();
 		_timer.Start();
 	}

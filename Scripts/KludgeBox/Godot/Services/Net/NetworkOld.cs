@@ -5,7 +5,8 @@ using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net.Packets;
 using NeonWarfare;
-using NeoVector;
+using NeonWarfare.NetOld.Client;
+using NeonWarfare.NetOld.Server;
 using static Godot.MultiplayerPeer;
 
 namespace KludgeBox.Net;

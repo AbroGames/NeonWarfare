@@ -2,7 +2,7 @@
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Net;
-using NeoVector;
+using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 

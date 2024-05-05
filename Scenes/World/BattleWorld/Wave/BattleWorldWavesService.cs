@@ -1,7 +1,6 @@
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
-using NeoVector;
 
 namespace NeonWarfare;
 

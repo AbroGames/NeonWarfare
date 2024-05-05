@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace NeoVector;
+namespace NeonWarfare;
 
 public partial class NodeContainer : Node
 {

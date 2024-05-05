@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using KludgeBox;
 using KludgeBox.Events;
 
 namespace KludgeBox;

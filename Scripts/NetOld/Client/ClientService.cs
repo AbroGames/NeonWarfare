@@ -1,11 +1,9 @@
-using System;
-using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using KludgeBox.Net;
+using NeonWarfare.NetOld.Server;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Client;
 
 [GameService]
 public class ClientService
@@ -14,15 +12,15 @@ public class ClientService
     [EventListener]
     public void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
     {
-        NeonWarfare.Root.Instance.NetworkEntityManager.Clear();
+        Root.Instance.NetworkEntityManager.Clear();
         
         if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
         {
-            NeonWarfare.Root.Instance.MainSceneContainer.ChangeStoredNode(NeonWarfare.Root.Instance.PackedScenes.Main.SafeWorld.Instantiate());
+            Root.Instance.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.SafeWorld.Instantiate());
         } 
         else if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Battle)
         {
-            NeonWarfare.Root.Instance.MainSceneContainer.ChangeStoredNode(NeonWarfare.Root.Instance.PackedScenes.Main.BattleWorld.Instantiate());
+            Root.Instance.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.BattleWorld.Instantiate());
         }
         else
         {
@@ -33,15 +31,15 @@ public class ClientService
     [EventListener]
     public void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        NeonWarfare.Player player = NeonWarfare.Root.Instance.PackedScenes.World.Player.Instantiate<NeonWarfare.Player>();
+        Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
         player.Rotation = serverSpawnPlayerPacket.Dir;
-        NeonWarfare.Root.Instance.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
+        Root.Instance.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 
-        NeonWarfare.World world = NeonWarfare.Root.Instance.CurrentWorld;
+        World world = Root.Instance.CurrentWorld;
         world.Player = player;
 		
-        var camera = new NeonWarfare.Camera(); //TODO to camera service
+        var camera = new Camera(); //TODO to camera service
         camera.Position = player.Position;
         camera.TargetNode = player;
         camera.Zoom = Vec(0.65);
@@ -59,32 +57,32 @@ public class ClientService
     [EventListener]
     public void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
     {
-        NeonWarfare.Ally ally = NeonWarfare.Root.Instance.PackedScenes.World.Ally.Instantiate<NeonWarfare.Ally>();
+        Ally ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Ally>();
         ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
         ally.Rotation = serverSpawnAllyPacket.Dir;
-        NeonWarfare.Root.Instance.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
+        Root.Instance.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
         
-        NeonWarfare.World world = NeonWarfare.Root.Instance.CurrentWorld;
+        World world = Root.Instance.CurrentWorld;
         world.AddChild(ally);
     }
     
     [EventListener]
     public void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
     {
-        if (NeonWarfare.Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not NeonWarfare.MainMenuMainScene)
+        if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
             Log.Error("OnServerWaitBattleEndPacket, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
         
-        NeonWarfare.Root.Instance.MainSceneContainer.GetCurrentStoredNode<NeonWarfare.MainMenuMainScene>().ChangeMenu(
-            NeonWarfare.Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(
+            Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
     }
     
     [EventListener]
     public void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
     {
-        Node2D node = NeonWarfare.Root.Instance.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
+        Node2D node = Root.Instance.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
         node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
         node.Rotation = serverPositionEntityPacket.Dir;
     }
@@ -92,7 +90,7 @@ public class ClientService
     [EventListener]
     public void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
     {
-        Node2D node = NeonWarfare.Root.Instance.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
+        Node2D node = Root.Instance.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
         node.QueueFree();
     }
 }

@@ -1,4 +1,4 @@
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Server;
 
 public readonly record struct ServerParams(int Port, string AdminNickname, int? ParentPid)
 {

@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeoVector;
+namespace NeonWarfare.Net;
 
 public partial class AbstractNetwork : Node
 {
@@ -10,7 +10,7 @@ public partial class AbstractNetwork : Node
     
     public void Init()
     {
-        Api = NeonWarfare.Root.Instance.GetTree().GetMultiplayer();
+        Api = Root.Instance.GetTree().GetMultiplayer();
         Peer = new ENetMultiplayerPeer();
     }
 }

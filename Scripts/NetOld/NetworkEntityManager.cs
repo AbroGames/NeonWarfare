@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld;
 
 public class NetworkEntityManager
 {

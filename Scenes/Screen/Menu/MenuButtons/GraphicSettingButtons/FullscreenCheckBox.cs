@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace NeonWarfare;
 public partial class FullscreenCheckBox : CheckBox

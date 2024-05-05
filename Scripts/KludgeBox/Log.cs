@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Godot;
@@ -49,7 +48,7 @@ public static class Log
         _prefixes = prefixes.ToArray();
         
         AddLogger(new DefaultLogger());
-        Log.AddLogger(new FileLogger("/custom-logs"));
+        AddLogger(new FileLogger("/custom-logs"));
     }
 
     public static void AddLogger(ILogger logger)

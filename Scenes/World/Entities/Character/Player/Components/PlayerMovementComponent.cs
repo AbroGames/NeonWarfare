@@ -1,6 +1,5 @@
 using Godot;
 using KludgeBox.Net;
-using NeoVector;
 
 namespace NeonWarfare.Components;
 

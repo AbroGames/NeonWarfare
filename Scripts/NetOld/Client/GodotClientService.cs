@@ -1,11 +1,7 @@
-using System;
-using System.Linq;
-using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using KludgeBox.Net;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Client;
 
 [GameService]
 public class GodotClientService
@@ -27,7 +23,7 @@ public class GodotClientService
     public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
         Log.Debug("ConnectedToServerEvent");
-        NeonWarfare.Root.Instance.GetWindow().MoveToForeground();
+        Root.Instance.GetWindow().MoveToForeground();
     }
     
     [EventListener]

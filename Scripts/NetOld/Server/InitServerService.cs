@@ -1,21 +1,18 @@
-using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Events.Global;
 using KludgeBox.Net;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Server;
 
 public static class InitServerService
 {
     
     public static void InitServer()
     {
-        NeonWarfare.Root.Instance.GetWindow().Set("position", new Vector2I(
-        DisplayServer.ScreenGetSize().X - (int)NeonWarfare.Root.Instance.GetViewport().GetVisibleRect().Size.X,
-        DisplayServer.ScreenGetSize().Y - (int)NeonWarfare.Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
+        Root.Instance.GetWindow().Set("position", new Vector2I(
+        DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
+        DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
         int port = GetPortFromCmdArgs();
         string admin = GetAdminFromCmdArgs();
         int? parentPid = GetParentPidFromCmdArgs();
@@ -26,7 +23,7 @@ public static class InitServerService
         {
             Log.Info($"Dedicated server successfully created.");
             Server server = new Server(serverParams);
-            NeonWarfare.ServerRoot.Instance.AddServer(server);
+            ServerRoot.Instance.AddServer(server);
         }
         else
         {

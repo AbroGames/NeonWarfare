@@ -1,5 +1,3 @@
-using NeoVector;
-
 namespace NeonWarfare;
 
 public partial class SafeWorld : World

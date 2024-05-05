@@ -1,11 +1,8 @@
-using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Events.Global;
-using KludgeBox.Net;
-using NeoVector;
+using NeonWarfare.NetOld.Server;
+using Server = NeonWarfare.NetOld.Server.Server;
 
 namespace NeonWarfare;
 

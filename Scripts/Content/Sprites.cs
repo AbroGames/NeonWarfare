@@ -1,6 +1,6 @@
 ﻿using KludgeBox.Collections;
 
-namespace NeoVector
+namespace NeonWarfare
 {
 	public static class Sprites
 	{

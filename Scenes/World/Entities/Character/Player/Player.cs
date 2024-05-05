@@ -2,7 +2,6 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Net;
 using KludgeBox.Scheduling;
-using NeoVector;
 
 namespace NeonWarfare;
 

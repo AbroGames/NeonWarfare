@@ -1,8 +1,7 @@
-using KludgeBox.Events;
 using KludgeBox.Net;
 using KludgeBox.Net.Packets;
 
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Server;
 
 [GamePacket]
 public class ServerWaitBattleEndPacket : AbstractPacket;

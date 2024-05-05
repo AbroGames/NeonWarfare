@@ -1,4 +1,4 @@
-namespace NeoVector;
+namespace NeonWarfare.NetOld.Server;
 
 public class PlayerServerInfo
 {
@@ -6,7 +6,7 @@ public class PlayerServerInfo
     public string Nickname { get; private set; } = "";
     public bool IsAdmin { get; set; } = false;
 
-    public NeonWarfare.Player Player;
+    public Player Player;
 
     public PlayerServerInfo(long id)
     {
