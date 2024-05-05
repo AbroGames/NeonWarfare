@@ -16,9 +16,9 @@ public partial class Root : Node2D
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
 
-	public AbstractNetwork AbstractNetwork;
+	public AbstractNetwork AbstractNetwork { get; private set; }
+    
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
-
 	public World CurrentWorld;
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 	

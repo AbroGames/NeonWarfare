@@ -27,7 +27,8 @@ public class NetInitService
         }
         
         //serverParams.Add(ServerParams.RenderFlag); //TODO del or to Config node in Root
-        ClientRoot.Instance.ServerShutdowner.ServerPid = OS.CreateInstance(serverParams.ToArray());
+        int serverPid = OS.CreateInstance(serverParams.ToArray());
+        ClientRoot.Instance.AddServerShutdowner(serverPid);
     }
     
     [EventListener]
