@@ -21,13 +21,6 @@ public partial class Root : Node2D
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 	public World CurrentWorld;
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
-	
-	public static Root Instance { get; private set; }
-
-	public override void _EnterTree()
-	{
-		Instance = this;
-	}
 
 	public override void _Ready()
 	{

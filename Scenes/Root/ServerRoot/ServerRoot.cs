@@ -12,14 +12,6 @@ public partial class ServerRoot : Root
 	[Export] [NotNull] public Console Console { get; private set; }
 	
 	public Server Server { get; private set; }
-	
-	public new static ServerRoot Instance { get; private set; }
-
-	public override void _EnterTree()
-	{
-		base._EnterTree();
-		Instance = this;
-	}
 
 	public override void _Ready()
 	{

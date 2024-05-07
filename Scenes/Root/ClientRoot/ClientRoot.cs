@@ -12,15 +12,8 @@ public partial class ClientRoot : Root
 	//TODO можно создать сервер несколько раз за игру. Лучше привязать ServerShutdowner куда-то в Network и при каждом запуске сервра или подключение по сети пересоздавать объект Network
 	//TODO таким образом можно по дефолту вообще Network не инициализировать, а делать это только при подключение
 	//TODO в идеале всю эту логику поместить в финалайзер (метод Free) ноды Game или подобной, которая общая для BattleWorld и SafeWorld, но не используется в MainMenu
-	public ServerShutdowner ServerShutdowner { get; private set; } //TODO ServerShutdowner в отдельный файл (partial class)
-	
-	public new static ClientRoot Instance { get; private set; } //TODO синглтон в отдельный файл (partial class)
-
-	public override void _EnterTree()
-	{
-		base._EnterTree();
-		Instance = this;
-	}
+	//TODO и переместить в другое место сам файл ServerSutdowner
+    public ServerShutdowner ServerShutdowner { get; private set; } //TODO ServerShutdowner в отдельный файл (partial class)
 
 	public override void _Ready()
 	{
