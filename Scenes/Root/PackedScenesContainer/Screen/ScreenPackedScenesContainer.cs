@@ -9,6 +9,7 @@ public partial class ScreenPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene SettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene PlayerSettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene GraphicSettingsMenu { get; private set; }
+    [Export] [NotNull] public PackedScene SoundSettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene ConnectToServerMenu { get; private set; }
     [Export] [NotNull] public PackedScene CreateServerMenu { get; private set; }
     [Export] [NotNull] public PackedScene WaitingConnectionScreen { get; private set; }

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dkmaek7egfvff"]
+[gd_scene load_steps=6 format=3 uid="uid://dkmaek7egfvff"]
 
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_qiic2"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/PlayerSettingsButton.cs" id="2_i1jiy"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="3_eej1s"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/GraphicSettingsButton.cs" id="3_l358w"]
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_mlk3r"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/PlayerSettingsButton.cs" id="2_uvvgx"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/SoundSettingsButton.cs" id="3_63kpx"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/GraphicSettingsButton.cs" id="4_lxsys"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/CommonInterface/BackToMainMenuButton.cs" id="4_yru60"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -30,22 +31,23 @@ grow_vertical = 2
 [node name="ProfileButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Настройки игрока"
-icon = ExtResource("1_qiic2")
-script = ExtResource("2_i1jiy")
+icon = ExtResource("1_mlk3r")
+script = ExtResource("2_uvvgx")
 
 [node name="SoundSettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Настройки звука"
-icon = ExtResource("1_qiic2")
+icon = ExtResource("1_mlk3r")
+script = ExtResource("3_63kpx")
 
 [node name="GraphicSettingsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Настройки изображения"
-icon = ExtResource("1_qiic2")
-script = ExtResource("3_l358w")
+icon = ExtResource("1_mlk3r")
+script = ExtResource("4_lxsys")
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Назад к главному меню"
-icon = ExtResource("1_qiic2")
-script = ExtResource("3_eej1s")
+icon = ExtResource("1_mlk3r")
+script = ExtResource("4_yru60")

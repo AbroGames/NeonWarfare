@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://cdfkul01f3eck"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/CreateServerButtons/PortLineEdit.cs" id="1_gptja"]
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_mqjdd"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/BackToMainMenuButton.cs" id="2_hedxw"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/CreateServerButtons/CreateServerButton.cs" id="3_spb4r"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/CreateServerInterface/PortLineEdit.cs" id="1_35p31"]
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="2_282sj"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/CommonInterface/BackToMainMenuButton.cs" id="3_pb2kk"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/CreateServerInterface/CreateServerButton.cs" id="4_14b0i"]
 
 [node name="CreateServerMenu" type="Control"]
 layout_mode = 3
@@ -36,7 +36,7 @@ text = "Порт:"
 
 [node name="PortLineEdit" type="LineEdit" parent="GridContainer/HBoxContainer2"]
 layout_mode = 2
-script = ExtResource("1_gptja")
+script = ExtResource("1_35p31")
 
 [node name="ShowConsoleLabel" type="Label" parent="GridContainer/HBoxContainer2"]
 layout_mode = 2
@@ -53,13 +53,13 @@ layout_mode = 2
 [node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
 layout_mode = 2
 text = "Вернуться в меню"
-icon = ExtResource("1_mqjdd")
-script = ExtResource("2_hedxw")
+icon = ExtResource("2_282sj")
+script = ExtResource("3_pb2kk")
 
 [node name="CreateServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit", "ShowConsoleCheckBox")]
 layout_mode = 2
 text = "Создать сервер"
-icon = ExtResource("1_mqjdd")
-script = ExtResource("3_spb4r")
+icon = ExtResource("2_282sj")
+script = ExtResource("4_14b0i")
 PortLineEdit = NodePath("../../HBoxContainer2/PortLineEdit")
 ShowConsoleCheckBox = NodePath("../../HBoxContainer2/ShowConsoleCheckBox")

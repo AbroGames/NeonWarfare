@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bo4752bgus85w"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/GraphicSettingButtons/FullscreenCheckBox.cs" id="2_4tcwj"]
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="6_uaqan"]
-[ext_resource type="Script" path="res://Scenes/Screen/Menu/MenuButtons/SettingsMenuButtons/BackToSettingsMenuButton.cs" id="7_tj4mm"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/GraphicSettingInterface/FullscreenCheckBox.cs" id="1_3ojmr"]
+[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="2_uv7mv"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/BackToSettingsMenuButton.cs" id="3_m1hnl"]
 
 [node name="GraphicSettingsMenu" type="Control"]
 layout_mode = 3
@@ -35,7 +35,7 @@ text = "Полный экран:"
 
 [node name="FullscreenCheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer3"]
 layout_mode = 2
-script = ExtResource("2_4tcwj")
+script = ExtResource("1_3ojmr")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -50,10 +50,10 @@ layout_mode = 2
 [node name="BackButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Назад"
-icon = ExtResource("6_uaqan")
-script = ExtResource("7_tj4mm")
+icon = ExtResource("2_uv7mv")
+script = ExtResource("3_m1hnl")
 
 [node name="SaveButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Сохранить"
-icon = ExtResource("6_uaqan")
+icon = ExtResource("2_uv7mv")

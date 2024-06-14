@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.cs" id="1_tlyle"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_ugbjc"]
-[ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenu.tscn" id="2_ubsiq"]
+[ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenu/MainMenuInterface/MainMenu.tscn" id="3_fgxhg"]
 
 [node name="MainMenuMainScene" type="Node2D" node_paths=PackedStringArray("BackgroundContainer", "MenuContainer", "ForegroundContainer")]
 script = ExtResource("1_tlyle")
@@ -30,7 +30,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ugbjc")
 
-[node name="MainMenu" parent="Screen/MenuContainer" instance=ExtResource("2_ubsiq")]
+[node name="MainMenu" parent="Screen/MenuContainer" instance=ExtResource("3_fgxhg")]
 layout_mode = 1
 
 [node name="ForegroundContainer" type="Control" parent="Screen"]
