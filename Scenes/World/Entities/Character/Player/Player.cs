@@ -18,7 +18,7 @@ public partial class Player : Character
 
 	public Camera Camera;
 	
-	public Cooldown SecondaryCd { get; set; } = new(0.1, CooldownMode.Cyclic, true);
+	public Cooldown SecondaryCd { get; set; } = new(0.1, CooldownMode.Single, true);
 
 	public Cooldown BasicAbilityCd { get; set; } = new(6, CooldownMode.Single, true);
 	public Cooldown AdvancedAbilityCd { get; set; } = new(50, CooldownMode.Single, true);
@@ -42,11 +42,16 @@ public partial class Player : Character
 		};
 		PrimaryCd.Ready += () =>
 		{
-			if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
-			NetworkOld.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
-			//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
-			//TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
+			
 		};
+	}
+
+	public override void Shoot()
+	{
+		if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
+		NetworkOld.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
+		//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
+		//TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 	}
 
 	public override void Die()

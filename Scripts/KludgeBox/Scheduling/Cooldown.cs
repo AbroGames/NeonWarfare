@@ -79,26 +79,22 @@ public class Cooldown
 	/// </summary>
 	/// <param name="deltaTime">The time elapsed since the last update in seconds.</param>
 	/// <returns>The number of ticks that occurred during the update.</returns>
-	public int Update(double deltaTime)
+	public void Update(double deltaTime)
 	{
-		int ticks = 0;
 		if(Mode is CooldownMode.Cyclic)
 		{
 			_elapsedTime += deltaTime;
-			ticks = (int)(_elapsedTime / Duration);
-			_elapsedTime -= ticks * Duration;
-			if(ticks>0)
-				for (int i = 0; i < ticks; i++)
-				{
-					Ready?.Invoke();
-				}
+			if (_elapsedTime > Duration)
+			{
+				_elapsedTime -= Duration;
+				Ready?.Invoke();
+			}
 		}
 		else
 		{
 			_elapsedTime = Maths.Clamp(_elapsedTime + deltaTime, 0, Duration);
 			if (_elapsedTime >= Duration)
 			{
-				ticks = 1;
 				if (!_isReady)
 				{
 					_isReady = true;
@@ -106,7 +102,6 @@ public class Cooldown
 				}
 			}
 		}
-		return ticks;
 	}
 
 	/// <summary>
@@ -114,7 +109,7 @@ public class Cooldown
 	/// </summary>
 	public void Restart()
 	{
-		_elapsedTime = 0;
+		_elapsedTime -= Duration;
 		_isReady = false;
 	}
 	
