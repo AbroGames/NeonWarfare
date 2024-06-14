@@ -83,11 +83,23 @@ public partial class Character : CharacterBody2D
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 		PrimaryCd.Update(delta);
-		if (PrimaryCd.Use())
+		if (PrimaryCd.Use() && Input.IsActionPressed(Keys.AttackPrimary))
 		{
 			Shoot();
 		}
 	}
-	
+
+	/// <inheritdoc />
+	public override void _Input(InputEvent @event)
+	{
+		if (Input.IsActionJustPressed(Keys.AttackPrimary))
+		{
+			if (PrimaryCd.Use())
+			{
+				Shoot();
+			}
+		}
+	}
+
 	public virtual void Shoot(){}
 }
