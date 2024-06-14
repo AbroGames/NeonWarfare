@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Godot;
 using KludgeBox.Loggers;
+using Environment = System.Environment;
 
 namespace KludgeBox;
 
@@ -66,25 +67,25 @@ public static class Log
         foreach (var logger in _loggers) logger.Info(Format(msg, PrefixType.Info));
     }
 
-    public static void Warning(object msg = null)
+    public static void Warning(object msg = null, bool printStackTrace = false)
     {
-        foreach (var logger in _loggers) logger.Warning(Format(msg, PrefixType.Warning));
+        foreach (var logger in _loggers) logger.Warning(Format(msg, PrefixType.Warning, printStackTrace));
     }
 
-    public static void Error(object msg = null)
+    public static void Error(object msg = null, bool printStackTrace = true)
     {
-        foreach (var logger in _loggers) logger.Error(Format(msg, PrefixType.Error));
+        foreach (var logger in _loggers) logger.Error(Format(msg, PrefixType.Error, printStackTrace));
     }
 
-    public static void Critical(object msg = null)
+    public static void Critical(object msg = null, bool printStackTrace = true)
     {
-        foreach (var logger in _loggers) logger.Critical(Format(msg, PrefixType.Critical));
+        foreach (var logger in _loggers) logger.Critical(Format(msg, PrefixType.Critical, printStackTrace));
     }
 
-    private static string Format(object msg = null, PrefixType prefix = PrefixType.Info)
+    private static string Format(object msg = null, PrefixType prefix = PrefixType.Info, bool printStackTrace = false)
     {
-        if (msg is null) return null;
-        string text = msg.ToString();
+        if (msg is null && !printStackTrace) return null;
+        string text = msg.ToString() + (printStackTrace ? "\n" + Environment.StackTrace : "");
         
         var now = DateTime.Now;
         return $"[{PID:D6}] {now:dd.MM.yyyy HH:mm:ss.fff} {_prefixes[(int)prefix]} {text}";
@@ -97,7 +98,7 @@ public interface ILogger
 {
     void Debug(object msg = null);
     void Info(object msg = null);
-    void Warning(object msg = null);
-    void Error(object msg = null);
-    void Critical(object msg = null);
+    void Warning(object msg = null, Exception exception = null);
+    void Error(object msg = null, Exception exception = null);
+    void Critical(object msg = null, Exception exception = null);
 }

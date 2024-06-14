@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System;
+using System.Text;
+using Godot;
 
 namespace KludgeBox.Loggers;
 
@@ -14,35 +16,42 @@ internal class DefaultLogger : ILogger
         Print(msg);
     }
 
-    public void Warning(object msg = null)
+    public void Warning(object msg = null, Exception exception = null)
     {
-        Print(msg, "yellow");
+        Print(msg, "yellow", exception, pushWarning: true);
     }
 
-    public void Error(object msg = null)
+    public void Error(object msg = null, Exception exception = null)
     {
-        Print(msg, "orange");
+        Print(msg, "orange", exception, pushError: true);
     }
 
-    public void Critical(object msg = null)
+    public void Critical(object msg = null, Exception exception = null)
     {
-        Print(msg, "red");
+        Print(msg, "red", exception, pushError: true);
     }
 
-    private void Print(object msg = null, string color = null)
+    private void Print(object msg = null, string color = null, Exception exception = null, bool pushWarning = false, bool pushError = false)
     {
-        if (msg is null)
+        if (msg is null && exception is null)
         {
             GD.Print();
             return;
         }
+        
+        var sb = new StringBuilder();
+        sb.Append(msg ?? "");
+        sb.Append(msg is null || exception is null ? "" : "\n");
+        sb.Append(exception?.ToString() ?? "");
 
         if (color == "" || color == "white" || color is null)
         {
-            GD.PrintRich($"{msg}");
+            GD.PrintRich($"{sb}");
             return;
         }
         
-        GD.PrintRich($"[color={color}]{msg}[/color]");
+        GD.PrintRich($"[color={color}]{sb}[/color]");
+        if(pushWarning) GD.PushWarning(sb.ToString());
+        if(pushError) GD.PushError(sb.ToString());
     }
 }

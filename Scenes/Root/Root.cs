@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
@@ -7,6 +8,7 @@ using KludgeBox.Net;
 using NeonWarfare.NetOld;
 using NeonWarfare.NetOld.Server;
 using AbstractNetwork = NeonWarfare.Net.AbstractNetwork;
+using Environment = System.Environment;
 
 namespace NeonWarfare;
 
@@ -25,6 +27,7 @@ public partial class Root : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
+		
 		Callable.From(Init).CallDeferred();
 	}
 

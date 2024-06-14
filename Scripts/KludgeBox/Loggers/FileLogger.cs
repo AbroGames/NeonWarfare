@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Godot;
 using KludgeBox.VFS;
 using Environment = System.Environment;
@@ -36,30 +37,34 @@ public class FileLogger : ILogger
         Print(msg);
     }
 
-    public void Warning(object msg = null)
+    public void Warning(object msg = null, Exception exception = null)
     {
-        Print(msg);
+        Print(msg, exception);
     }
 
-    public void Error(object msg = null)
+    public void Error(object msg = null, Exception exception = null)
     {
-        Print(msg);
+        Print(msg, exception);
     }
 
-    public void Critical(object msg = null)
+    public void Critical(object msg = null, Exception exception = null)
     {
-        Print(msg);
+        Print(msg, exception);
     }
 
-    private void Print(object msg)
+    private void Print(object msg, Exception exception = null)
     {
-        if(msg is null)
+        if(msg is null && exception is null)
         {
             _file.StoreString("\n");
-            //_logFile.AppendText("\n");
             return;
         }
-        _file.StoreString($"{msg}\n");
-        //_logFile.AppendText($"{msg}\n");
+        
+        var sb = new StringBuilder();
+        sb.Append(msg ?? "");
+        sb.Append(msg is null || exception is null ? "" : "\n");
+        sb.Append(exception?.ToString() ?? "");
+        
+        _file.StoreString($"{sb}\n");
     }
 }
