@@ -197,7 +197,7 @@ public partial class NetworkOld : Node
     //TODO это работает при коннекте по локальной сети, но без доступа в интернет???
     public static Error ConnectToRemoteServer(string host, int port)
     {
-        Error error = Peer.CreateClient(host, port);
+        Error error = Peer.CreateClient(host.Replace("localhost", "127.0.0.1"), port);
         if (error is Error.Ok)
         {
             PacketRegistry.IsSynchronized = false;
