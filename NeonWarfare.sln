@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoVector", "NeoVector.csproj", "{9D3B82F5-4E27-407D-A334-9B847EFC295F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeonWarfare", "NeonWarfare.csproj", "{9D3B82F5-4E27-407D-A334-9B847EFC295F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

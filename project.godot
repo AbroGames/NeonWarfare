@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="NeoVector"
+config/name="Neon Warfare"
 run/main_scene="res://Scenes/Root/StarterScene/StarterScene.tscn"
 config/features=PackedStringArray("4.2", "C#", "Double Precision", "Forward Plus")
 config/icon="res://game.svg"
