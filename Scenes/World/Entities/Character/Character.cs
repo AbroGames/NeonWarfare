@@ -16,8 +16,10 @@ public partial class Character : CharacterBody2D
 	public double RegenHpSpeed { get; set; } = 100; // hp/sec
 	public double MovementSpeed { get; set; } = 250; // in pixels/sec
 	public double RotationSpeed { get; set; } = 300; // in degree/sec
+
+	private const double cdBase = 1/3d;
+	public Cooldown PrimaryCd { get; set; } = new(cdBase/2, CooldownMode.Single, true);
 	
-	public Cooldown PrimaryCd { get; set; } = new(1/3d, CooldownMode.Single, true);
 	
 	internal double HitFlash = 0;
 
@@ -83,7 +85,9 @@ public partial class Character : CharacterBody2D
 		var shader = Sprite.Material as ShaderMaterial;
 		shader.SetShaderParameter("colorMaskFactor", HitFlash);
 		PrimaryCd.Update(delta);
-		if (PrimaryCd.Use() && Input.IsActionPressed(Keys.AttackPrimary))
+		
+		
+		if (Input.IsActionPressed(Keys.AttackPrimary) && PrimaryCd.Use())
 		{
 			Shoot();
 		}
@@ -101,5 +105,8 @@ public partial class Character : CharacterBody2D
 		}
 	}
 
-	public virtual void Shoot(){}
+	public virtual void Shoot()
+	{
+		
+	}
 }

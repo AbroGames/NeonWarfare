@@ -92,7 +92,6 @@ public class Cooldown
 		}
 		else
 		{
-			_elapsedTime = Maths.Clamp(_elapsedTime + deltaTime, 0, Duration);
 			if (_elapsedTime >= Duration)
 			{
 				if (!_isReady)
@@ -100,6 +99,10 @@ public class Cooldown
 					_isReady = true;
 					Ready?.Invoke();
 				}
+			}
+			else
+			{
+				_elapsedTime += deltaTime;
 			}
 		}
 	}

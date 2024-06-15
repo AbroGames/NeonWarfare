@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Player/Components/PlayerMovementComponent.cs" id="5_vjw5e"]
 [ext_resource type="Script" path="res://Scenes/World/Entities/Character/Player/Components/PlayerRotateComponent.cs" id="6_0yeeo"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_81syd"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jfo6x"]
 resource_local_to_scene = true
 shader = ExtResource("3_s3nvb")
 shader_parameter/colorMaskFactor = 0.0
@@ -27,7 +27,7 @@ script = ExtResource("2_1gm72")
 ShieldSprite = NodePath("ShieldSprite")
 
 [node name="Sprite2D" parent="Smoothing2D" index="0"]
-material = SubResource("ShaderMaterial_81syd")
+material = SubResource("ShaderMaterial_jfo6x")
 
 [node name="CharacterShape" parent="." index="1"]
 shape = SubResource("CircleShape2D_p4o54")

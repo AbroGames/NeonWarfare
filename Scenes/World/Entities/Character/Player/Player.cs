@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using KludgeBox;
 using KludgeBox.Net;
@@ -18,7 +19,7 @@ public partial class Player : Character
 
 	public Camera Camera;
 	
-	public Cooldown SecondaryCd { get; set; } = new(0.1, CooldownMode.Single, true);
+	public Cooldown SecondaryCd { get; set; } = new(0.1, CooldownMode.Cyclic, true);
 
 	public Cooldown BasicAbilityCd { get; set; } = new(6, CooldownMode.Single, true);
 	public Cooldown AdvancedAbilityCd { get; set; } = new(50, CooldownMode.Single, true);
@@ -39,20 +40,18 @@ public partial class Player : Character
 		{
 			if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
 			NetworkOld.SendPacketToServer(new ClientPlayerSecondaryAttackPacket(Position.X, Position.Y, Rotation));
-		};
-		PrimaryCd.Ready += () =>
-		{
-			
+			//new PlayerAttackService().OnServerPlayerSecondaryAttackPacket(new ServerPlayerSecondaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 		};
 	}
 
 	public override void Shoot()
 	{
+		base.Shoot();
 		//if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
 		
 		NetworkOld.SendPacketToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
 		//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
-		//TODO new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
+		//new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 	}
 
 	public override void Die()
@@ -71,7 +70,7 @@ public partial class Player : Character
 		Hp += RegenHpSpeed * delta;
 		Hp = Mathf.Min(Hp, MaxHp);
 
-		PrimaryCd.Update(delta);
+		//PrimaryCd.Update(delta);
 		SecondaryCd.Update(delta);
 		BasicAbilityCd.Update(delta);
 		AdvancedAbilityCd.Update(delta);
