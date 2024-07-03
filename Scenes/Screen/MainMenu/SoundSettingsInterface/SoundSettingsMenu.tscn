@@ -11,7 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -25,13 +25,52 @@ offset_bottom = 68.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BackButton" type="Button" parent="HBoxContainer2"]
+[node name="HBoxContainerAllVolume" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainerAllVolume"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Общий звук"
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxContainerAllVolume"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainerMusic" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainerMusic"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Музыка"
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxContainerMusic"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainerSounds" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainerSounds"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Звуки игры"
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer/HBoxContainerSounds"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainerButtons" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="VBoxContainer/HBoxContainerButtons"]
 layout_mode = 2
 text = "Назад"
 icon = ExtResource("1_mgmoq")
 script = ExtResource("2_06aah")
 
-[node name="SaveButton" type="Button" parent="HBoxContainer2"]
+[node name="SaveButton" type="Button" parent="VBoxContainer/HBoxContainerButtons"]
 layout_mode = 2
 text = "Сохранить"
 icon = ExtResource("1_mgmoq")
