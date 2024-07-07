@@ -79,8 +79,9 @@ public partial class PingChecker : Node
             currentElement = currentElement.Next;
         }
     }
-
-    private void ReceivePingPacket(ServerPingPacket serverPingPacket)
+    
+    [EventListener(ListenerSide.Client)]
+    public void ReceivePingPacket(ServerPingPacket serverPingPacket)
     {
         if (!_pingIdToSentTime.ContainsKey(serverPingPacket.PingId)) //Сообщение уже было посчитано как потерянное
         {
@@ -92,11 +93,5 @@ public partial class PingChecker : Node
 
         CheckAndDeleteOldAttempts();
         PingAnalyzer.Analyze(pingTime, _numberOfSuccessPackets, _numberOfLossesPackets);
-    }
-    
-    [EventListener(ListenerSide.Client)]
-    public static void StaticReceivePingPacket(ServerPingPacket serverPingPacket) 
-    {
-        ClientRoot.Instance.Game.PingChecker.ReceivePingPacket(serverPingPacket);
     }
 }
