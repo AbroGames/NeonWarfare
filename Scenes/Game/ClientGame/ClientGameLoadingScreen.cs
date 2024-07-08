@@ -1,17 +1,16 @@
 using Godot;
 using KludgeBox;
 using NeonWarfare;
+using NeonWarfare.LoadingScreen;
 using NeonWarfare.NetOld;
 
 public partial class ClientGame
 {
-	private static readonly PackedScene DefaultLoadingScreen = ClientRoot.Instance.PackedScenes.Client.Screens.WaitingConnectionCanvas;
-
 	public CanvasLayer LoadingCanvas { get; private set; }
 
 	public void SetDefaultLoadingScreen()
 	{
-		SetLoadingScreen(DefaultLoadingScreen.Instantiate<CanvasLayer>());
+		SetLoadingScreen(LoadingScreen.Create("Connecting to server"));
 	}
 	
 	public void SetLoadingScreen(CanvasLayer loadingScreen)

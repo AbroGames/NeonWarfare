@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://3jftjd3egrvl"]
+[gd_scene load_steps=13 format=3 uid="uid://3jftjd3egrvl"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Client/Screen/ClientScreensPackedScenesContainer.cs" id="1_0mpcb"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="2_h6v77"]
@@ -9,10 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://be1870tomtt30" path="res://Scenes/Screen/MainMenuInterfaces/SoundSettingsInterface/SoundSettingsMenu.tscn" id="6_8g1cq"]
 [ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/Screen/MainMenuInterfaces/ConnectToServerInterface/ConnectToServerMenu.tscn" id="7_ttlru"]
 [ext_resource type="PackedScene" uid="uid://cdfkul01f3eck" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/CreateServerMenu.tscn" id="8_7upbq"]
-[ext_resource type="PackedScene" uid="uid://cywvd0egyh8cl" path="res://Scenes/Screen/WaitingForBattleEndCanvas.tscn" id="10_ojsl4"]
-[ext_resource type="PackedScene" uid="uid://7t67cblp66iw" path="res://Scenes/Screen/WaitingConnectionCanvas.tscn" id="10_uuv5v"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="11_6etjq"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="12_2ssbs"]
+[ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="12_mf0jk"]
 
 [node name="ClientScreensPackedScenesContainer" type="Node"]
 script = ExtResource("1_0mpcb")
@@ -24,7 +23,6 @@ GraphicSettingsMenu = ExtResource("5_d74p3")
 SoundSettingsMenu = ExtResource("6_8g1cq")
 ConnectToServerMenu = ExtResource("7_ttlru")
 CreateServerMenu = ExtResource("8_7upbq")
-WaitingConnectionCanvas = ExtResource("10_uuv5v")
-WaitingForBattleEndCanvas = ExtResource("10_ojsl4")
+LoadingScreenCanvas = ExtResource("12_mf0jk")
 SafeHud = ExtResource("12_2ssbs")
 BattleHud = ExtResource("11_6etjq")

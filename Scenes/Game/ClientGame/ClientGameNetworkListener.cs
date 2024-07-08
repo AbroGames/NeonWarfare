@@ -3,6 +3,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
+using NeonWarfare.LoadingScreen;
 using NeonWarfare.NetOld.Server;
 
 public partial class ClientGame
@@ -37,6 +38,6 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public static void OnWaitBattleEndPacket(WaitBattleEndPacket emptyPacket)
 	{
-		Instance.SetLoadingScreen(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndCanvas.Instantiate<CanvasLayer>());
+		Instance.SetLoadingScreen(LoadingScreen.Create("Wait for the end of the battle"));
 	}
 }
