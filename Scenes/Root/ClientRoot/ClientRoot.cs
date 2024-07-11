@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using NeonWarfare.Net;
 
 namespace NeonWarfare;
 
@@ -25,10 +26,11 @@ public partial class ClientRoot : Root
 	{
 		base.Init();
 		SettingsService.Init();
+		
 		//TODO new network
-		//AbstractNetwork = new NetworkClient(); //TODO new network
-		//AddChild(AbstractNetwork);
-		//AbstractNetwork.Init();
+		AbstractNetwork = new ClientNetwork();
+		AddChild(AbstractNetwork);
+		AbstractNetwork.Init();
 		
 		var mainMenu = PackedScenes.Main.MainMenu;
 		MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());

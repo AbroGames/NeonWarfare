@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using KludgeBox;
+using NeonWarfare.Net;
 using NeonWarfare.NetOld.Server;
 using Server = NeonWarfare.NetOld.Server.Server;
 
@@ -33,10 +34,11 @@ public partial class ServerRoot : Root
 		}
 		
 		//TODO new network
-		//AbstractNetwork = new NetworkServer();
-		//AddChild(AbstractNetwork);
-		//AbstractNetwork.Init();
-		InitServerService.InitServer();
+		AbstractNetwork = new ServerNetwork();
+		AddChild(AbstractNetwork);
+		AbstractNetwork.Init();
+		
+		//InitServerService.InitServer(); //TODO old network
 	}
 	
 	public void AddServer(Server server)
