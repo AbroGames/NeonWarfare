@@ -14,16 +14,11 @@ namespace NeonWarfare;
 public partial class Root : Node2D
 {
 	
-	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-    
-	public World CurrentWorld;
-	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		
 		Callable.From(() => { Init(); Start(); }).CallDeferred();
 	}
 

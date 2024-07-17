@@ -4,9 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/Root/PackedScenesContainer/PackedScenesContainer.tscn" id="2_642j6"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="2_n66ta"]
 
-[node name="Root" type="Node2D" node_paths=PackedStringArray("MainSceneContainer", "PackedScenes")]
+[node name="Root" type="Node2D" node_paths=PackedStringArray("PackedScenes")]
 script = ExtResource("1_lyqs7")
-MainSceneContainer = NodePath("MainSceneContainer")
 PackedScenes = NodePath("PackedScenesContainer")
 
 [node name="MainSceneContainer" type="Node" parent="."]
