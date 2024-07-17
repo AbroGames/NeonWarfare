@@ -25,6 +25,6 @@ public partial class ClientRoot : Root
 	protected override void Start()
 	{
 		var mainMenu = PackedScenes.Main.MainMenu;
-		MainSceneContainer.ChangeStoredNode(mainMenu.Instantiate());
+		SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
 	}
 }
