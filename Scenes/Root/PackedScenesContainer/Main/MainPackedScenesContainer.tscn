@@ -1,12 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://b86vwuwqs6kgc"]
+[gd_scene load_steps=7 format=3 uid="uid://b86vwuwqs6kgc"]
 
 [ext_resource type="Script" path="res://Scenes/Root/PackedScenesContainer/Main/MainPackedScenesContainer.cs" id="1_c7nwn"]
-[ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/MainScenes/MainMenu/MainMenuMainScene.tscn" id="2_jmrfy"]
-[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="3_hdb1l"]
-[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_2rjom"]
+[ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/Screen/MainMenu/MainScene/MainMenuMainScene.tscn" id="2_4bbhg"]
+[ext_resource type="PackedScene" uid="uid://lrtckpod2hr7" path="res://Scenes/Game/ClientGame/ClientGame.tscn" id="3_cjg4l"]
+[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/WorldMainScenes/BattleWorld/BattleWorldMainScene.tscn" id="3_reoiv"]
+[ext_resource type="PackedScene" uid="uid://bvqb5v233oc5o" path="res://Scenes/Game/ServerGame/ServerGame.tscn" id="4_0os8k"]
+[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/Game/WorldMainScenes/SafeWorld/SafeWorldMainScene.tscn" id="4_pp4hd"]
 
 [node name="MainPackedScenesContainer" type="Node"]
 script = ExtResource("1_c7nwn")
-MainMenu = ExtResource("2_jmrfy")
-BattleWorld = ExtResource("3_hdb1l")
-SafeWorld = ExtResource("4_2rjom")
+MainMenu = ExtResource("2_4bbhg")
+ClientGame = ExtResource("3_cjg4l")
+ServerGame = ExtResource("4_0os8k")
+BattleWorld = ExtResource("3_reoiv")
+SafeWorld = ExtResource("4_pp4hd")
