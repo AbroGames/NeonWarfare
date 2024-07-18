@@ -18,7 +18,7 @@ public static class PlayerAttackService
         var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.SenderId].Player;
 		
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = Vec(clientPlayerPrimaryAttackPacket.X, clientPlayerPrimaryAttackPacket.Y);
         // Установка направления движения снаряда
@@ -30,7 +30,7 @@ public static class PlayerAttackService
         bullet.Scale *= 2;
         bullet.Source = player;
         player.GetParent().AddChild(bullet);
-        long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
+        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet);
         
         Netplay.SendToAll(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
     }
@@ -40,15 +40,15 @@ public static class PlayerAttackService
     {
         
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         bullet.Position = Vec(serverPlayerPrimaryAttackPacket.X, serverPlayerPrimaryAttackPacket.Y);
         bullet.Rotation = serverPlayerPrimaryAttackPacket.Dir;
         bullet.Scale *= 2;
         bullet.Speed = serverPlayerPrimaryAttackPacket.MovementSpeed;
         bullet.Author = Bullet.AuthorEnum.PLAYER;
 
-        Root.Instance.CurrentWorld.AddChild(bullet);
-        Root.Instance.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
+        //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World.AddChild(bullet);
+        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 1f).PitchVariation(0.05f);
     }
@@ -68,7 +68,7 @@ public static class PlayerAttackService
         for (int i = 0; i < bulletsCount; i++)
         {
             // Создание снаряда
-            Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+            Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
             // Установка начальной позиции снаряда
             bullet.GlobalPosition = Vec(clientPlayerSecondaryAttackPacket.X, clientPlayerSecondaryAttackPacket.Y);
             // Установка направления движения снаряда
@@ -79,7 +79,7 @@ public static class PlayerAttackService
             bullet.RemainingDamage = player.SecondaryDamage;
             bullet.Source = player;
             player.GetParent().AddChild(bullet);
-            long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
+            long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet);
             
             Netplay.SendToAll(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
         }
@@ -90,14 +90,14 @@ public static class PlayerAttackService
     {
         
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         bullet.Position = Vec(serverPlayerSecondaryAttackPacket.X, serverPlayerSecondaryAttackPacket.Y);
         bullet.Rotation = serverPlayerSecondaryAttackPacket.Dir;
         bullet.Speed = serverPlayerSecondaryAttackPacket.MovementSpeed;
         bullet.Author = Bullet.AuthorEnum.PLAYER;
         
-        Root.Instance.CurrentWorld.AddChild(bullet);
-        Root.Instance.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
+        //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World.AddChild(bullet);
+        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 0.5f);
     }
