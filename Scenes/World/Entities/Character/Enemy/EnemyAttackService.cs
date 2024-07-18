@@ -26,7 +26,7 @@ public static class EnemyAttackService
         Enemy enemy = enemyAttackEvent.Enemy;
 		
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = enemy.GlobalPosition;
         // Установка направления движения снаряда
@@ -41,16 +41,16 @@ public static class EnemyAttackService
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
         enemy.GetParent().AddChild(bullet); //TODO refactor (и поискать все другие места, где используется GetParent().AddChild и просто GetParent
-        long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
+        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet);
         
         Netplay.SendToAll(new ServerSpawnEnemyBulletPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, enemy.Damage > 1000));
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnEnemyBulletPacket(ServerSpawnEnemyBulletPacket serverSpawnEnemyBulletPacket)
     {
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
+        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         bullet.Author = Bullet.AuthorEnum.ENEMY;
         bullet.Position = Vec(serverSpawnEnemyBulletPacket.X, serverSpawnEnemyBulletPacket.Y);
         bullet.Rotation = serverSpawnEnemyBulletPacket.Dir;
@@ -59,8 +59,8 @@ public static class EnemyAttackService
             bullet.Transform = bullet.Transform.ScaledLocal(Vec(Mathf.Log(5)));
         }
 
-        Root.Instance.CurrentWorld.AddChild(bullet);
-        Root.Instance.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
+        //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World.AddChild(bullet);
+        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
     }
     
     

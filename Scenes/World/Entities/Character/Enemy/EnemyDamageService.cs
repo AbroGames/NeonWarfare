@@ -20,7 +20,7 @@ public static class EnemyDamageService
             EventBus.Publish(new EnemyStopAttractionEvent(battleWorld, enemy));
         }
         
-        long nid = Root.Instance.NetworkEntityManager.RemoveEntity(enemy);
+        long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(enemy);
         Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
     }
 }
