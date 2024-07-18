@@ -14,8 +14,6 @@ public partial class BattleWorld : World
 	public override void _Ready()
 	{
 		base._Ready();
-		
-		Root.Instance.CurrentWorld = this;
         
 		/*battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
 		battleWorld.Player.Position = Vec(500, 500);

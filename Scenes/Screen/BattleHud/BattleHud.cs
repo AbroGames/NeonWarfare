@@ -7,7 +7,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class BattleHud : Control
+public partial class BattleHud : Hud
 {
 	[ExportGroup("Bars")]
 	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }

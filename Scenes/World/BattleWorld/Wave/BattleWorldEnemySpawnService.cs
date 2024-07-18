@@ -73,7 +73,7 @@ public static class BattleWorldEnemySpawnService
         enemy.Rotation = Rand.Range(Mathf.Tau);
         AnimateSpawn(enemy, world);
 
-        long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
+        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy);
         Netplay.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
     
@@ -123,7 +123,7 @@ public static class BattleWorldEnemySpawnService
 
     private static Enemy CreateEnemy(BattleWorld battleWorld, PackedScene template, bool forceAttractor = false)
     {
-        var enemy = template.Instantiate() as Enemy;
+        var enemy = template.Instantiate<Enemy>();
         enemy.MaxHp = 250;
         enemy.Hp = enemy.MaxHp;
         enemy.BaseXp *= 1 + battleWorld.EnemyWave.WaveNumber / 10;
@@ -155,11 +155,11 @@ public static class BattleWorldEnemySpawnService
         enemy.IsBoss = true;
         
         AnimateSpawn(enemy, battleWorld);
-        long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
+        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy);
         Netplay.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
     }
 
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnEnemyPacket(ServerSpawnEnemyPacket serverSpawnEnemyPacket)
     {
         Enemy enemy = (serverSpawnEnemyPacket.IsBoss
@@ -169,7 +169,7 @@ public static class BattleWorldEnemySpawnService
         enemy.Position = Vec(serverSpawnEnemyPacket.X, serverSpawnEnemyPacket.Y);
         enemy.Rotation = serverSpawnEnemyPacket.Dir;
         
-        Root.Instance.CurrentWorld.AddChild(enemy);
-        Root.Instance.NetworkEntityManager.AddEntity(enemy, serverSpawnEnemyPacket.Nid);
+        //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World.AddChild(enemy);
+        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy, serverSpawnEnemyPacket.Nid);
     }
 }
