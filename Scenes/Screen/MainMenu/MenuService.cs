@@ -6,6 +6,6 @@ public static class MenuButtonsService
 {
     public static void ChangeMenuFromButtonClick(PackedScene menuChangeTo)
     {
-        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(menuChangeTo);
+        ClientRoot.Instance.MainMenu.ChangeMenu(menuChangeTo);
     }
 }
