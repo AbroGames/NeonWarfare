@@ -17,10 +17,10 @@ public static class SafeHudService
     {
         Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
         BattleWorldMainScene battleWorldMainScene = Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
-        Root.Instance.MainSceneContainer.ChangeStoredNode(battleWorldMainScene);
-        BattleWorld battleWorld = battleWorldMainScene.World;
+        ServerRoot.Instance.Game.ChangeMainScene(battleWorldMainScene);
+        BattleWorld battleWorld = battleWorldMainScene.BattleWorld;
         
-        Root.Instance.NetworkEntityManager.Clear();
+        ServerRoot.Instance.Game.NetworkEntityManager.Clear();
         
         foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
         {
@@ -43,7 +43,7 @@ public static class SafeHudService
 
             playerServerInfo.Player = player;
             battleWorld.AddChild(player);
-            long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(player);
             
             Netplay.Send(playerServerInfo.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));

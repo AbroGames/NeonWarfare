@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class SafeHud : Control
+public partial class SafeHud : Hud
 {
 	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
 	[Export] [NotNull] public Label Level { get; private set; }

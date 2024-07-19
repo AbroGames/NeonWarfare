@@ -7,8 +7,6 @@ public partial class SafeWorld : World
 	public override void _Ready()
 	{
 		base._Ready();
-		
-		Root.Instance.CurrentWorld = this;
 		PlaySafeMusic(); //TODO to music service (safe music service)
 	}
 	
