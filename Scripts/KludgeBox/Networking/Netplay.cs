@@ -12,6 +12,9 @@ public static partial class Netplay
 {
     public const long BroadcastId = 0;
     public const long ServerId = 1;
+
+    public static bool IsServer => Mode is Netmode.Server;
+    public static bool IsClient => Mode is Netmode.Client;
     
     public static Netmode Mode { get; set; }
     public static PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();

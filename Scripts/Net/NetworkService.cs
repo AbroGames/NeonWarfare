@@ -18,11 +18,11 @@ public static class NetworkService
         Error error = Netplay.SetServer(serverParams.Port);
         if (error == Error.Ok)
         {
-            Log.Info($"Dedicated server successfully created.");
+            Log.Info($"Network successfully created.");
         }
         else
         {
-            Log.Error($"Dedicated server created with result: {error}");
+            Log.Error($"Create network with result: {error}");
         }
         
         return serverParams;
@@ -33,11 +33,11 @@ public static class NetworkService
         Error error = Netplay.SetClient(host, port);
         if (error == Error.Ok)
         {
-            Log.Info($"Connect to server is successfully.");
+            Log.Info($"Network successfully created.");
         }
         else
         {
-            Log.Error($"Connect to server with result: {error}");
+            Log.Error($"Create network with result: {error}");
         }
     }
     

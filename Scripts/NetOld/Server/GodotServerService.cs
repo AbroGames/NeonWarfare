@@ -17,7 +17,7 @@ public static class GodotServerService
         
         Netplay.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
-        Node currentWorld = Root.Instance.CurrentWorld;
+        Node currentWorld = null; //TODO ret after compile: ServerRoot.Instance.Game.MainScene.World;
         if (currentWorld is SafeWorld)
         {
             Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
@@ -26,7 +26,7 @@ public static class GodotServerService
 
             ServerRoot.Instance.Server.PlayerServerInfo[peerConnectedEvent.Id].Player = player;
             currentWorld.AddChild(player);
-            long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(player);
 
             if (currentWorld.GetChild<Camera>() == null)
             {
@@ -48,7 +48,7 @@ public static class GodotServerService
                 if (playerServerInfo.Id == newPlayerServerInfo.Id) continue;
                 
                 Player ally = playerServerInfo.Player;
-                long allyNid = Root.Instance.NetworkEntityManager.GetNid(ally);
+                long allyNid = ServerRoot.Instance.Game.NetworkEntityManager.GetNid(ally);
                 Netplay.Send(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
                 Netplay.Send(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
@@ -69,9 +69,9 @@ public static class GodotServerService
     public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Player player = ServerRoot.Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
-        Root.Instance.NetworkEntityManager.RemoveEntity(player);
+        ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(player);
         ServerRoot.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedEvent.Id);
-        long nid = Root.Instance.NetworkEntityManager.RemoveEntity(player);
+        long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
         Netplay.SendToAll(new ServerDestroyEntityPacket(nid));

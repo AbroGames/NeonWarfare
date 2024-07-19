@@ -11,15 +11,15 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
     {
-        Root.Instance.NetworkEntityManager.Clear();
+        ClientRoot.Instance.Game.NetworkEntityManager.Clear();
         
         if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
         {
-            Root.Instance.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.SafeWorld.Instantiate());
+            ClientRoot.Instance.Game.ChangeMainScene(Root.Instance.PackedScenes.Main.SafeWorld.Instantiate<SafeWorldMainScene>());
         } 
         else if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Battle)
         {
-            Root.Instance.MainSceneContainer.ChangeStoredNode(Root.Instance.PackedScenes.Main.BattleWorld.Instantiate());
+            ClientRoot.Instance.Game.ChangeMainScene(Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>());
         }
         else
         {
@@ -33,9 +33,9 @@ public static class ClientService
         Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
         player.Rotation = serverSpawnPlayerPacket.Dir;
-        Root.Instance.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
+        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 
-        World world = Root.Instance.CurrentWorld;
+        World world = null; //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World;
         world.Player = player;
 		
         var camera = new Camera(); //TODO to camera service
@@ -59,29 +59,28 @@ public static class ClientService
         Ally ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Ally>();
         ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
         ally.Rotation = serverSpawnAllyPacket.Dir;
-        Root.Instance.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
+        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
         
-        World world = Root.Instance.CurrentWorld;
+        World world = null; //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World;
         world.AddChild(ally);
     }
     
     [EventListener(ListenerSide.Client)]
     public static void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
     {
-        if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+        if (ClientRoot.Instance.MainMenu is null)
         {
             Log.Error("OnServerWaitBattleEndPacket, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
         
-        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(
-            Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
+        ClientRoot.Instance.MainMenu.ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
     }
     
     [EventListener(ListenerSide.Client)]
     public static void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
     {
-        Node2D node = Root.Instance.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
+        Node2D node = ClientRoot.Instance.Game.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
         node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
         node.Rotation = serverPositionEntityPacket.Dir;
     }
@@ -89,7 +88,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
     {
-        Node2D node = Root.Instance.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
+        Node2D node = ClientRoot.Instance.Game.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
         node.QueueFree();
     }
 }
