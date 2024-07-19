@@ -52,7 +52,7 @@ public partial class Bullet : Node2D
 			if (RemainingDistance <= 0)
 			{
 				QueueFree();
-				long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
+				long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(this);
 				Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
 			}
 		}
@@ -139,7 +139,7 @@ public partial class Bullet : Node2D
 		if (RemainingDamage <= 0)
 		{
 			QueueFree();
-			long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
+			long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(this);
 			Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
 		}
 	}
