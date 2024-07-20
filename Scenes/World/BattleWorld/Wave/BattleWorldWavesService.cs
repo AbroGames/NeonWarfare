@@ -4,15 +4,16 @@ using KludgeBox.Events.Global;
 
 namespace NeonWarfare;
 
-public static class BattleWorldWavesService
+[GameService]
+public class BattleWorldWavesService
 {
     
-    public static double FadeInTime { get; set; } = 0.5;
-    public static double HoldTime { get; set; } = 1;
-    public static double FadeOutTime { get; set; } = 0.5;
+    public double FadeInTime { get; set; } = 0.5;
+    public double HoldTime { get; set; } = 1;
+    public double FadeOutTime { get; set; } = 0.5;
     
     [EventListener(ListenerSide.Server)]
-    public static void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
+    public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldProcessEvent)
     {
         var (battleWorld, delta) = battleWorldProcessEvent;
         
@@ -23,7 +24,7 @@ public static class BattleWorldWavesService
     }
     
     [EventListener]
-    public static void OnBattleWorldNewWaveRequestEvent(BattleWorldNewWaveRequestEvent battleWorldNewWaveRequestEvent)
+    public void OnBattleWorldNewWaveRequestEvent(BattleWorldNewWaveRequestEvent battleWorldNewWaveRequestEvent)
     {
         BattleWorld battleWorld = battleWorldNewWaveRequestEvent.BattleWorld;
         EnemyWave enemyWave = battleWorld.EnemyWave;

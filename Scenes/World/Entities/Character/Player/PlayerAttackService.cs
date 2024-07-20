@@ -5,7 +5,8 @@ using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
-public static class PlayerAttackService
+[GameService]
+public class PlayerAttackService
 {
     
     /*
@@ -13,7 +14,7 @@ public static class PlayerAttackService
      */
     
     [EventListener(ListenerSide.Server)]
-    public static void OnClientPlayerPrimaryAttackPacket(ClientPlayerPrimaryAttackPacket clientPlayerPrimaryAttackPacket)
+    public void OnClientPlayerPrimaryAttackPacket(ClientPlayerPrimaryAttackPacket clientPlayerPrimaryAttackPacket)
     {
         var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.SenderId].Player;
 		
@@ -36,7 +37,7 @@ public static class PlayerAttackService
     }
     
     [EventListener(ListenerSide.Client)]
-    public static void OnServerPlayerPrimaryAttackPacket(ServerPlayerPrimaryAttackPacket serverPlayerPrimaryAttackPacket)
+    public void OnServerPlayerPrimaryAttackPacket(ServerPlayerPrimaryAttackPacket serverPlayerPrimaryAttackPacket)
     {
         
         // Создание снаряда
@@ -57,7 +58,7 @@ public static class PlayerAttackService
      * ДОПОЛНИТЕЛЬНАЯ АТАКА
      */
     [EventListener(ListenerSide.Server)]
-    public static void OnClientPlayerSecondaryAttackPacket(ClientPlayerSecondaryAttackPacket clientPlayerSecondaryAttackPacket)
+    public void OnClientPlayerSecondaryAttackPacket(ClientPlayerSecondaryAttackPacket clientPlayerSecondaryAttackPacket)
     {
         var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerSecondaryAttackPacket.SenderId].Player;
 		
@@ -86,7 +87,7 @@ public static class PlayerAttackService
     }
 
     [EventListener(ListenerSide.Client)]
-    public static void OnServerPlayerSecondaryAttackPacket(ServerPlayerSecondaryAttackPacket serverPlayerSecondaryAttackPacket)
+    public void OnServerPlayerSecondaryAttackPacket(ServerPlayerSecondaryAttackPacket serverPlayerSecondaryAttackPacket)
     {
         
         // Создание снаряда

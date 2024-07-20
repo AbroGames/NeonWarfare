@@ -7,23 +7,24 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 
-public static class EnemyMovementService
+[GameService]
+public class EnemyMovementService
 {
 
     [EventListener(ListenerSide.Server)]
-    public static void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
+    public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
         attractionEvent.BattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
-    public static void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
+    public void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
         attractionEvent.BattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
-    public static void OnEnemyAboutToTeleport(EnemyAboutToTeleportEvent e)
+    public void OnEnemyAboutToTeleport(EnemyAboutToTeleportEvent e)
     {
         var enemy = e.Enemy;
         var target = enemy.Target;
@@ -39,7 +40,7 @@ public static class EnemyMovementService
     }
     
     [EventListener(ListenerSide.Server)]
-    public static void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
+    public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
     {
         var (enemy, delta) = enemyPhysicsProcessEvent;
         
@@ -65,12 +66,12 @@ public static class EnemyMovementService
         Netplay.SendToAll(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
     }
     
-    private static Vector2 GetForwardDirection(Enemy enemy)
+    private Vector2 GetForwardDirection(Enemy enemy)
     {
         return Vector2.FromAngle(enemy.Rotation - Mathf.Pi / 2);
     }
 
-    private static Vector2 GetAttractionDirection(Enemy enemy)
+    private Vector2 GetAttractionDirection(Enemy enemy)
     {
         if ((enemy.GetParent() as BattleWorld).EnemyAttractors.Count == 0) return Vec();
             

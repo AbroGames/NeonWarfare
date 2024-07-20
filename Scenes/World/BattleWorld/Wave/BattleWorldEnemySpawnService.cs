@@ -7,14 +7,15 @@ using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
-public static class BattleWorldEnemySpawnService
+[GameService]
+public class BattleWorldEnemySpawnService
 {
-    private static int RequiredEnemies = 0;
-    private static int RequiredBosses = 0;
-    private static int MinEnemiesInGroup = 5;
-    private static int MaxEnemiesInGroup = 15;
+    private int RequiredEnemies = 0;
+    private int RequiredBosses = 0;
+    private int MinEnemiesInGroup = 5;
+    private int MaxEnemiesInGroup = 15;
 
-    private static int NextEnemiesInGroup
+    private int NextEnemiesInGroup
     {
         get
         {
@@ -25,7 +26,7 @@ public static class BattleWorldEnemySpawnService
     }
     
     [EventListener(ListenerSide.Server)]
-    public static void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldPhysicsProcessEvent)
+    public void OnBattleWorldProcessEvent(BattleWorldProcessEvent battleWorldPhysicsProcessEvent)
     {
         //TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
         if (RequiredEnemies > 0)
@@ -46,25 +47,25 @@ public static class BattleWorldEnemySpawnService
     }
     
     [EventListener]
-    public static void OnBattleWorldSpawnEnemiesRequestEvent(BattleWorldSpawnEnemiesRequestEvent battleWorldSpawnEnemiesRequestEvent)
+    public void OnBattleWorldSpawnEnemiesRequestEvent(BattleWorldSpawnEnemiesRequestEvent battleWorldSpawnEnemiesRequestEvent)
     {
         RequiredEnemies += battleWorldSpawnEnemiesRequestEvent.RequiredEnemiesAmount;
     }
     
     [EventListener]
-    public static void OnBattleWorldSpawnBossesRequestEvent(BattleWorldSpawnBossesRequestEvent battleWorldSpawnBossesRequestEvent)
+    public void OnBattleWorldSpawnBossesRequestEvent(BattleWorldSpawnBossesRequestEvent battleWorldSpawnBossesRequestEvent)
     {
         RequiredBosses += battleWorldSpawnBossesRequestEvent.RequiredBossesAmount;
     }
     
-    private static void CreateEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
+    private void CreateEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
         var enemy = GenEnemyAroundCharacter(battleWorld, Root.Instance.PackedScenes.World.Enemy, character, angle, distance);
         AnimateSpawn(enemy, battleWorld);
     }
 
     [EventListener(ListenerSide.Server)]
-    public static void OnBattleWorldSpawnEnemy(BattleWorldSpawnEnemyRequest request)
+    public void OnBattleWorldSpawnEnemy(BattleWorldSpawnEnemyRequest request)
     {
         var (world, position) = request;
         var enemy = CreateEnemy(world, Root.Instance.PackedScenes.World.Enemy);
@@ -77,7 +78,7 @@ public static class BattleWorldEnemySpawnService
         Netplay.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
     
-    private static void CreateEnemyGroupAroundCharacter(BattleWorld battleWorld, Character character, double radius)
+    private void CreateEnemyGroupAroundCharacter(BattleWorld battleWorld, Character character, double radius)
     {
         int amount = NextEnemiesInGroup;
         var spawner = new GroupSpawner();
@@ -91,7 +92,7 @@ public static class BattleWorldEnemySpawnService
         battleWorld.AddChild(spawner);
     }
     
-    private static void AnimateSpawn(Enemy enemy, BattleWorld battleWorld)
+    private void AnimateSpawn(Enemy enemy, BattleWorld battleWorld)
     {
         var fx = Fx.CreateSpawnFx();
         fx.Finished += () =>
@@ -106,8 +107,8 @@ public static class BattleWorldEnemySpawnService
         battleWorld.AddChild(fx);
     }
 
-    private static int _attractorCounter;
-    private static Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, PackedScene template, Character character, double angle, double distance, bool forceAttractor = false)
+    private int _attractorCounter;
+    private Enemy GenEnemyAroundCharacter(BattleWorld battleWorld, PackedScene template, Character character, double angle, double distance, bool forceAttractor = false)
     {
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;
@@ -121,7 +122,7 @@ public static class BattleWorldEnemySpawnService
         return enemy;
     }
 
-    private static Enemy CreateEnemy(BattleWorld battleWorld, PackedScene template, bool forceAttractor = false)
+    private Enemy CreateEnemy(BattleWorld battleWorld, PackedScene template, bool forceAttractor = false)
     {
         var enemy = template.Instantiate() as Enemy;
         enemy.MaxHp = 250;
@@ -143,7 +144,7 @@ public static class BattleWorldEnemySpawnService
         return enemy;
     }
     
-    private static void CreateBossEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
+    private void CreateBossEnemyAroundCharacter(BattleWorld battleWorld, Character character, double angle, double distance)
     {
         var enemy = GenEnemyAroundCharacter(battleWorld, Root.Instance.PackedScenes.World.Boss, character, angle, distance, true);
         var scale = 1 + 0.1 * battleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
@@ -160,7 +161,7 @@ public static class BattleWorldEnemySpawnService
     }
 
     [EventListener]
-    public static void OnServerSpawnEnemyPacket(ServerSpawnEnemyPacket serverSpawnEnemyPacket)
+    public void OnServerSpawnEnemyPacket(ServerSpawnEnemyPacket serverSpawnEnemyPacket)
     {
         Enemy enemy = (serverSpawnEnemyPacket.IsBoss
             ? Root.Instance.PackedScenes.World.Boss

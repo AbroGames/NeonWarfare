@@ -4,10 +4,11 @@ using KludgeBox.Events.Global;
 
 namespace NeonWarfare;
 
-public static class EnemyService
+[GameService]
+public class EnemyService
 {
     [EventListener]
-    public static void OnEnemyReady(EnemyReadyEvent e)
+    public void OnEnemyReady(EnemyReadyEvent e)
     {
         var enemy = e.Enemy;
 
@@ -19,7 +20,7 @@ public static class EnemyService
     }
 
     [EventListener]
-    public static void OnEnemyProcessEvent(EnemyProcessEvent e)
+    public void OnEnemyProcessEvent(EnemyProcessEvent e)
     {
         var (enemy, delta) = e;
         enemy.TeleportCd.Update(delta);
