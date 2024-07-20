@@ -97,6 +97,11 @@ public static partial class BinarySerializers
                 throw new Exception($"Could not create list serializer for {type}", e);
             }
         }
+
+        if (type.IsEnum)
+        {
+            return GetSerializer(Enum.GetUnderlyingType(type));
+        }
         
         throw new KeyNotFoundException($"Could not find serializer for {type}");
     }
