@@ -2,7 +2,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
-using KludgeBox.Net;
+using NeonWarfare.Net;
 using NeonWarfare.NetOld.Client;
 
 namespace NeonWarfare;
@@ -14,39 +14,44 @@ public partial class ConnectToServerButton : Button
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
-        Pressed += () =>
+        Pressed += OnClick;
+    }
+
+    private void OnClick()
+    {
+        int port = NetworkService.DefaultPort;
+        string host = IpLineEdit.Text;
+        int pos = host.Find(":");
+        if (pos != -1)
         {
-            int port = 25566;
-            string host = IpLineEdit.Text;
-            int pos = host.Find(":");
-            if (pos != -1)
+            try
             {
-                try
-                {
-                    port = host.Substring(pos + 1).ToInt();
-                    host = host.Remove(pos);
-                }
-                catch (FormatException e)
-                {
-                    Log.Error(e);
-                }
+                port = host.Substring(pos + 1).ToInt();
+                host = host.Remove(pos);
             }
-            if (port is <= 0 or > 65535)
-                return;
-
-            if (host.Equals(""))
-                host = DefaultNetworkSettings.Host;
-        
-        
-            EventBus.Publish(new ConnectToServerRequest(host, port));
-            if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+            catch (FormatException e)
             {
-                Log.Error(
-                    "OnConnectToServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
-                return;
+                Log.Error(e);
             }
-            Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
+        }
 
-        };
+        if (port is <= 0 or > 65535)
+        {
+            return;
+        }
+
+        if (host.Equals(""))
+        {
+            host = NetworkService.DefaultHost;
+        }
+        
+        NetworkService.ConnectToServer(host, port); //TODO Эта строка и всё ниже дублируется с подключением CreateServerButton (мб вынести куда-то? в какой-то сервис связанный с меню?) 
+        
+        if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+        {
+            Log.Error("OnConnectToServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
+            return;
+        }
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
     }
 }

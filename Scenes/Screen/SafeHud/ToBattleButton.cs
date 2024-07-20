@@ -1,5 +1,5 @@
 ﻿using Godot;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
@@ -10,7 +10,7 @@ public partial class ToBattleButton : Button
     {
         Pressed += () =>
         {
-            NetworkOld.SendPacketToServer(new ClientWantToBattlePacket());
+            Netplay.SendToServer(new ClientWantToBattlePacket());
         };
     }
 

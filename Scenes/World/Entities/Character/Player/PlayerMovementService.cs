@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
@@ -33,7 +33,7 @@ public class PlayerMovementService
         foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
         {
             if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
-            NetworkOld.SendPacketToPeer(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+            Netplay.Send(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
         }
     }
 }

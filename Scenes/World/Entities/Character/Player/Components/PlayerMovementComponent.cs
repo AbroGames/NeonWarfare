@@ -1,5 +1,5 @@
 using Godot;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 
 namespace NeonWarfare.Components;
 
@@ -18,7 +18,7 @@ public partial class PlayerMovementComponent : Node
         Player.MoveAndCollide(movementInput * Player.MovementSpeed * delta);
 
         long nid = Root.Instance.NetworkEntityManager.GetNid(Player);
-        NetworkOld.SendPacketToServer(new ClientMovementPlayerPacket(nid, Player.Position.X, Player.Position.Y, Player.Rotation,
+        Netplay.SendToServer(new ClientMovementPlayerPacket(nid, Player.Position.X, Player.Position.Y, Player.Rotation,
             movementInput.X, movementInput.Y, Player.MovementSpeed));
     }
 

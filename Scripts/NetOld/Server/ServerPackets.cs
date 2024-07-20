@@ -1,13 +1,13 @@
-using KludgeBox.Net;
-using KludgeBox.Net.Packets;
+
+using KludgeBox.Networking;
 
 namespace NeonWarfare.NetOld.Server;
 
 [GamePacket]
-public class ServerWaitBattleEndPacket : AbstractPacket;
+public class ServerWaitBattleEndPacket : BinaryPacket;
 
 [GamePacket]
-public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : AbstractPacket
+public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : NetPacket
 {
     
     public enum ServerWorldType { Unknown, Safe, Battle };
@@ -15,7 +15,7 @@ public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType wor
 }
 
 [GamePacket]
-public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) : AbstractPacket
+public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
     public double X { get; set; } = x;
@@ -24,7 +24,7 @@ public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) :
 }
 
 [GamePacket]
-public class ServerSpawnAllyPacket(long nid, double x, double y, double dir) : AbstractPacket
+public class ServerSpawnAllyPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
     public double X { get; set; } = x;
@@ -33,7 +33,7 @@ public class ServerSpawnAllyPacket(long nid, double x, double y, double dir) : A
 }
 
 [GamePacket]
-public class ServerPositionEntityPacket(long nid, double x, double y, double dir) : AbstractPacket
+public class ServerPositionEntityPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
     public double X { get; set; } = x;
@@ -43,7 +43,7 @@ public class ServerPositionEntityPacket(long nid, double x, double y, double dir
 
 [GamePacket]
 public class ServerMovementEntityPacket(long nid, double x, double y, double dir,
-    double movementX, double movementY, double movementSpeed) : AbstractPacket
+    double movementX, double movementY, double movementSpeed) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
     public double X { get; set; } = x;
@@ -55,7 +55,7 @@ public class ServerMovementEntityPacket(long nid, double x, double y, double dir
 }
 
 [GamePacket]
-public class ServerDestroyEntityPacket(long nid) : AbstractPacket
+public class ServerDestroyEntityPacket(long nid) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
 }

@@ -1,7 +1,7 @@
 ﻿using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
@@ -22,6 +22,6 @@ public class EnemyDamageService
         }
         
         long nid = Root.Instance.NetworkEntityManager.RemoveEntity(enemy);
-        NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+        Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
     }
 }

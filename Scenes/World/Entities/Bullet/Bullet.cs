@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
@@ -32,7 +32,7 @@ public partial class Bullet : Node2D
 	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
-		if (NetworkOld.IsClient)
+		if (Netplay.Mode == Netplay.Netmode.Client)
 		{
 			ReadyOnClient();
 		}
@@ -46,14 +46,14 @@ public partial class Bullet : Node2D
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
 
-		if (NetworkOld.IsServer)
+		if (Netplay.Mode == Netplay.Netmode.Server)
 		{
 			RemainingDistance -= Speed * delta;
 			if (RemainingDistance <= 0)
 			{
 				QueueFree();
 				long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
-				NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+				Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
 			}
 		}
 	}
@@ -140,7 +140,7 @@ public partial class Bullet : Node2D
 		{
 			QueueFree();
 			long nid = Root.Instance.NetworkEntityManager.RemoveEntity(this);
-			NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+			Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
 		}
 	}
 }

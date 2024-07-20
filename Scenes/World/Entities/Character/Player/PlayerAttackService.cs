@@ -1,7 +1,7 @@
 ﻿using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
@@ -16,7 +16,7 @@ public class PlayerAttackService
     [EventListener(ListenerSide.Server)]
     public void OnClientPlayerPrimaryAttackPacket(ClientPlayerPrimaryAttackPacket clientPlayerPrimaryAttackPacket)
     {
-        var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.Sender.Id].Player;
+        var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.SenderId].Player;
 		
         // Создание снаряда
         Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
@@ -33,7 +33,7 @@ public class PlayerAttackService
         player.GetParent().AddChild(bullet);
         long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
         
-        NetworkOld.SendPacketToClients(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
+        Netplay.SendToAll(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
     }
     
     [EventListener(ListenerSide.Client)]
@@ -60,7 +60,7 @@ public class PlayerAttackService
     [EventListener(ListenerSide.Server)]
     public void OnClientPlayerSecondaryAttackPacket(ClientPlayerSecondaryAttackPacket clientPlayerSecondaryAttackPacket)
     {
-        var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerSecondaryAttackPacket.Sender.Id].Player;
+        var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerSecondaryAttackPacket.SenderId].Player;
 		
         var bulletsCount = 5;
         var spread = Mathf.DegToRad(18);
@@ -82,7 +82,7 @@ public class PlayerAttackService
             player.GetParent().AddChild(bullet);
             long nid = Root.Instance.NetworkEntityManager.AddEntity(bullet);
             
-            NetworkOld.SendPacketToClients(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
+            Netplay.SendToAll(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
         }
     }
 

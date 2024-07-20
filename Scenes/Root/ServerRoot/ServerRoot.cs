@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using KludgeBox;
+using KludgeBox.Networking;
 using NeonWarfare.Net;
 using NeonWarfare.NetOld.Server;
 using Server = NeonWarfare.NetOld.Server.Server;
@@ -32,18 +33,25 @@ public partial class ServerRoot : Root
 		{
 			Log.AddLogger(Console);
 		}
-		
-		//TODO new network
-		AbstractNetwork = new ServerNetwork();
-		AddChild(AbstractNetwork);
-		AbstractNetwork.Init();
-		
-		//InitServerService.InitServer(); //TODO old network
 	}
-	
-	public void AddServer(Server server)
+
+	protected override void Start()
 	{
-		Server = server;
-		AddChild(server);
+		GetWindow().Set("position", new Vector2I(
+			DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
+			DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
+
+		ServerParams serverParams = ServerCmdService.GetServerParams();
+		Error error = Netplay.SetServer(serverParams.Port);
+		if (error == Error.Ok)
+		{
+			Log.Info($"Dedicated server successfully created.");
+			Server = new Server(serverParams);
+			AddChild(Server);
+		}
+		else
+		{
+			Log.Error($"Dedicated server created with result: {error}");
+		}
 	}
 }

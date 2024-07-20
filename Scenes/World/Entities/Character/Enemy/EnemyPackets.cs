@@ -1,10 +1,10 @@
-﻿using KludgeBox.Net;
-using KludgeBox.Net.Packets;
+﻿
+using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
 [GamePacket]
-public class ServerSpawnEnemyPacket(long nid, double x, double y, double dir, bool isBoss) : AbstractPacket
+public class ServerSpawnEnemyPacket(long nid, double x, double y, double dir, bool isBoss) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
     public double X { get; set; } = x;
@@ -14,7 +14,7 @@ public class ServerSpawnEnemyPacket(long nid, double x, double y, double dir, bo
 }
 
 [GamePacket]
-public class ServerSpawnEnemyBulletPacket(long nid, double x, double y, double dir, bool isBoss) : AbstractPacket
+public class ServerSpawnEnemyBulletPacket(long nid, double x, double y, double dir, bool isBoss) : BinaryPacket
 {
     public long Nid { get; set; } = nid;
     public double X { get; set; } = x;

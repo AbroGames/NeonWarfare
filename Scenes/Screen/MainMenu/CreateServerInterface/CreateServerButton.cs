@@ -2,7 +2,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
-using KludgeBox.Net;
+using NeonWarfare.Net;
 using NeonWarfare.NetOld.Client;
 
 namespace NeonWarfare;
@@ -15,31 +15,35 @@ public partial class CreateServerButton : Button
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
-        Pressed += () =>
-        {
-            int port = 0;
-            try
-            {
-                port = PortLineEdit.Text.ToInt();
-            }
-            catch (FormatException e)
-            {
-                Log.Error(e);
-            }
+        Pressed += OnClick;
+    }
 
-            if (port <= 0 || port > 65535)
-                return;
+    private void OnClick()
+    {
+        int port = 0;
+        try
+        {
+            port = PortLineEdit.Text.ToInt();
+        }
+        catch (FormatException e)
+        {
+            Log.Error(e);
+        }
+
+        if (port <= 0 || port > 65535)
+        {
+            return;
+        }
         
-            EventBus.Publish(new CreateServerRequest(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed));
-            EventBus.Publish(new ConnectToServerRequest(DefaultNetworkSettings.Host, port));
-            if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
-            {
-                Log.Error(
-                    "OnCreateServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
-                return;
-            }
-            Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
-        };
+        NetworkService.CreateServer(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
+        NetworkService.ConnectToServer(NetworkService.DefaultHost, port);
+            
+        if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
+        {
+            Log.Error("OnCreateServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
+            return;
+        }
+        Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
     }
 
 }

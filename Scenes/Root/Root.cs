@@ -4,11 +4,9 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 using NeonWarfare.NetOld;
 using NeonWarfare.NetOld.Server;
-using AbstractNetwork = NeonWarfare.Net.AbstractNetwork;
-using Environment = System.Environment;
 
 namespace NeonWarfare;
 
@@ -17,8 +15,6 @@ public partial class Root : Node2D
 	
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-
-	public AbstractNetwork AbstractNetwork { get; protected set; }
     
 	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 	public World CurrentWorld;
@@ -28,16 +24,17 @@ public partial class Root : Node2D
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		Callable.From(Init).CallDeferred();
+		Callable.From(() => { Init(); Start(); }).CallDeferred();
 	}
 
 	protected virtual void Init()
 	{
 		LogCmdArgs();
 		ServicesInit();
-		PacketRegistry.ScanPackets();
-		NetworkOld.Init();
+		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	}
+
+	protected virtual void Start() {}
 	
 	private void LogCmdArgs()
 	{

@@ -3,7 +3,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
@@ -75,7 +75,7 @@ public class BattleWorldEnemySpawnService
         AnimateSpawn(enemy, world);
 
         long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
-        NetworkOld.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
+        Netplay.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
     
     private void CreateEnemyGroupAroundCharacter(BattleWorld battleWorld, Character character, double radius)
@@ -157,7 +157,7 @@ public class BattleWorldEnemySpawnService
         
         AnimateSpawn(enemy, battleWorld);
         long nid = Root.Instance.NetworkEntityManager.AddEntity(enemy);
-        NetworkOld.SendPacketToClients(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
+        Netplay.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
     }
 
     [EventListener]

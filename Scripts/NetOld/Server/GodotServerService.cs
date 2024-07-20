@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 using NeonWarfare.NetOld.Client;
 
 namespace NeonWarfare.NetOld.Server;
@@ -18,7 +18,7 @@ public class GodotServerService
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedServerEvent.Id);
         ServerRoot.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
-        NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id,
+        Netplay.Send(peerConnectedServerEvent.Id,
             new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = Root.Instance.CurrentWorld;
@@ -43,7 +43,7 @@ public class GodotServerService
                 camera.Enabled = true;
             }
 
-            NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id, 
+            Netplay.Send(peerConnectedServerEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
             //TODO спавн союзников и других NetworkEntity?
@@ -53,15 +53,15 @@ public class GodotServerService
                 
                 Player ally = playerServerInfo.Player;
                 long allyNid = Root.Instance.NetworkEntityManager.GetNid(ally);
-                NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
-                NetworkOld.SendPacketToPeer(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+                Netplay.Send(peerConnectedServerEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
+                Netplay.Send(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
             
             //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
         else if (currentWorld is BattleWorld)
         {
-            NetworkOld.SendPacketToPeer(peerConnectedServerEvent.Id, new ServerWaitBattleEndPacket());
+            Netplay.Send(peerConnectedServerEvent.Id, new ServerWaitBattleEndPacket());
         }
         else
         {
@@ -80,7 +80,7 @@ public class GodotServerService
         long nid = Root.Instance.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
-        NetworkOld.SendPacketToClients(new ServerDestroyEntityPacket(nid));
+        Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
     }
     
 }

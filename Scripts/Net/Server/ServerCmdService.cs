@@ -1,40 +1,26 @@
 using System.Linq;
 using Godot;
 using KludgeBox;
-using KludgeBox.Net;
+using KludgeBox.Networking;
+using NeonWarfare.NetOld.Server;
 
-namespace NeonWarfare.NetOld.Server;
+namespace NeonWarfare.Net;
 
-public static class InitServerService
+public static class ServerCmdService
 {
     
-    public static void InitServer()
+    public static ServerParams GetServerParams()
     {
-        Root.Instance.GetWindow().Set("position", new Vector2I(
-        DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
-        DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
         int port = GetPortFromCmdArgs();
         string admin = GetAdminFromCmdArgs();
         int? parentPid = GetParentPidFromCmdArgs();
-        ServerParams serverParams = new ServerParams(port, admin, parentPid);
-        
-        Error error = NetworkOld.CreateDedicatedServer(port);
-        if (error == Error.Ok)
-        {
-            Log.Info($"Dedicated server successfully created.");
-            Server server = new Server(serverParams);
-            ServerRoot.Instance.AddServer(server);
-        }
-        else
-        {
-            Log.Error($"Dedicated server created with result: {error}");
-        }
+        return new ServerParams(port, admin, parentPid);
     }
     
     //TODO Эту и функции ниже в отдельный CmdArgsService (туда же связанные с CmdArgs вещи из Root)
     public static int GetPortFromCmdArgs()
     {
-        int port = DefaultNetworkSettings.Port;
+        int port = NetworkService.DefaultPort;
         try
         {
             int portPos = OS.GetCmdlineArgs().ToList().IndexOf(ServerParams.PortParam);

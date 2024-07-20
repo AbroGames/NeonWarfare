@@ -2,7 +2,7 @@ using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using KludgeBox.Net;
+using KludgeBox.Networking;
 using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
@@ -63,7 +63,7 @@ public class EnemyMovementService
         enemy.MoveAndSlide();
 
         long nid = Root.Instance.NetworkEntityManager.GetNid(enemy);
-        NetworkOld.SendPacketToClients(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
+        Netplay.SendToAll(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
     }
     
     private Vector2 GetForwardDirection(Enemy enemy)
