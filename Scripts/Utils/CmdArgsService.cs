@@ -35,7 +35,7 @@ public class CmdArgsService
             if (argPos == -1)
             {
                 Log.Info($"Arg {paramName} not setup.");
-                return null;
+                return arg;
             }
 
             arg = OS.GetCmdlineArgs()[argPos + 1];
