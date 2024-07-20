@@ -148,4 +148,64 @@ public static class ReflectionExtensions
 	{
 		return assembly.GetTypes().Where(type => type.IsSubclassOf(typeof(TBase)));
 	}
+	
+	public static object GetValue(this object instance, MemberInfo member)
+	{
+		if (member is FieldInfo fieldInfo)
+			return fieldInfo.GetValue(instance);
+        
+		if (member is PropertyInfo propertyInfo)
+			if (propertyInfo.CanRead && propertyInfo.CanWrite)
+				return propertyInfo.GetValue(instance);
+			else 
+				throw new Exception($"PropertyInfo {propertyInfo} has no getter or setter.");
+        
+		var type = member.GetType();
+		throw new Exception($"MemberInfo {member} is {type} and neither a FieldInfo nor a PropertyInfo.");
+	}
+
+	public static void SetValue(this object instance, MemberInfo member, object value)
+	{
+		if (member is FieldInfo fieldInfo)
+		{
+			fieldInfo.SetValue(instance, value);
+			return;
+		}
+        
+		if (member is PropertyInfo propertyInfo)
+		{
+			if (propertyInfo.CanRead && propertyInfo.CanWrite)
+			{
+				propertyInfo.SetValue(instance, value);
+				return;
+			}
+			else
+			{
+				throw new Exception($"PropertyInfo {propertyInfo} has no getter or setter.");
+			}
+		}
+
+		var type = member.GetType();
+		throw new Exception($"MemberInfo {member} is {type} and neither a FieldInfo nor a PropertyInfo.");
+	}
+
+	public static Type GetMemberType(this MemberInfo member)
+	{
+		if (member is FieldInfo fieldInfo)
+			return fieldInfo.FieldType;
+        
+		if (member is PropertyInfo propertyInfo)
+			if (propertyInfo.CanRead && propertyInfo.CanWrite)
+				return propertyInfo.PropertyType;
+			else 
+				throw new Exception($"PropertyInfo {propertyInfo} has no getter or setter.");
+        
+		throw new Exception($"MemberInfo {member} is neither a FieldInfo nor a PropertyInfo.");
+	}
+	
+	
+	public static bool HasParameterlessConstructor(this Type type)
+	{
+		return type.GetConstructor(Type.EmptyTypes) != null;
+	}
 }
