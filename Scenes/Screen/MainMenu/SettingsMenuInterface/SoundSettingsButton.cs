@@ -10,7 +10,7 @@ public partial class SoundSettingsButton : Button
 		NotNullChecker.CheckProperties(this);
 		Pressed += () =>
 		{
-			MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.SoundSettingsMenu);
+			MenuButtonsService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.SoundSettingsMenu);
 		};
 	}
 }

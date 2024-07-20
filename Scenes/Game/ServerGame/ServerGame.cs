@@ -9,7 +9,7 @@ public partial class ServerGame : Game
 	public override void _Ready()
 	{
 		base._Ready();
-		var safeWorld = Root.Instance.PackedScenes.Main.SafeWorld;
+		var safeWorld = ServerRoot.Instance.PackedScenes.Main.SafeWorld;
 		ChangeMainScene(safeWorld.Instantiate<SafeWorldMainScene>());
 	}
 

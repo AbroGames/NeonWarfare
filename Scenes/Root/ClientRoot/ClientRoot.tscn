@@ -12,10 +12,13 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="ClientRoot" type="Node2D"]
+[node name="ClientRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Environment", "PlayerSettings")]
 script = ExtResource("1_7bmax")
+PackedScenes = NodePath("ClientPackedScenesContainer")
+Environment = NodePath("WorldEnvironment")
+PlayerSettings = NodePath("PlayerSettings")
 
-[node name="ServerPackedScenesContainer" parent="." instance=ExtResource("1_olsjj")]
+[node name="ClientPackedScenesContainer" parent="." instance=ExtResource("1_olsjj")]
 
 [node name="ServerShutdowner" type="Node" parent="."]
 script = ExtResource("2_yn1t4")

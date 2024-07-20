@@ -10,7 +10,7 @@ public partial class PlayerSettingsButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.PlayerSettingsMenu);
+            MenuButtonsService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.PlayerSettingsMenu);
         };
     }
 }

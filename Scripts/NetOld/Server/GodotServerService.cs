@@ -20,7 +20,7 @@ public static class GodotServerService
         Node currentWorld = ServerRoot.Instance.Game.MainScene.World;
         if (currentWorld is SafeWorld)
         {
-            Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+            Player player = ServerRoot.Instance.PackedScenes.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 

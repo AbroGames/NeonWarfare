@@ -13,11 +13,11 @@ namespace NeonWarfare.Net;
 public static class ClientInitService
 {
     
-    [EventListener]
+    [EventListener(ListenerSide.Client)]
     public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
-        Root.Instance.GetWindow().MoveToForeground();
-        var gameScene = Root.Instance.PackedScenes.Main.ClientGame;
+        ClientRoot.Instance.GetWindow().MoveToForeground();
+        var gameScene = ClientRoot.Instance.PackedScenes.Main.ClientGame;
         ClientRoot.Instance.SetMainScene(gameScene.Instantiate<ClientGame>());
     }
 }

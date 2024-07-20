@@ -52,6 +52,6 @@ public partial class ConnectToServerButton : Button
             Log.Error("OnConnectToServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
             return;
         }
-        ClientRoot.Instance.MainMenu.ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingConnectionScreen);
+        ClientRoot.Instance.MainMenu.ChangeMenu(ClientRoot.Instance.PackedScenes.Screen.WaitingConnectionScreen);
     }
 }

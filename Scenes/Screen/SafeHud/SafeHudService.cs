@@ -16,7 +16,7 @@ public static class SafeHudService
     public static void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
         Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
-        BattleWorldMainScene battleWorldMainScene = Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
+        BattleWorldMainScene battleWorldMainScene = ServerRoot.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
         ServerRoot.Instance.Game.ChangeMainScene(battleWorldMainScene);
         BattleWorld battleWorld = battleWorldMainScene.BattleWorld;
         
@@ -24,7 +24,7 @@ public static class SafeHudService
         
         foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
         {
-            Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+            Player player = ServerRoot.Instance.PackedScenes.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
             

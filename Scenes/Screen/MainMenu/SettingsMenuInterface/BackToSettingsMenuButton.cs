@@ -10,7 +10,7 @@ public partial class BackToSettingsMenuButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            MenuButtonsService.ChangeMenuFromButtonClick(Root.Instance.PackedScenes.Screen.SettingsMenu);
+            MenuButtonsService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.SettingsMenu);
         };
     }
 }

@@ -26,7 +26,7 @@ public static class EnemyAttackService
         Enemy enemy = enemyAttackEvent.Enemy;
 		
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
+        Bullet bullet = ServerRoot.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = enemy.GlobalPosition;
         // Установка направления движения снаряда
@@ -50,7 +50,7 @@ public static class EnemyAttackService
     public static void OnServerSpawnEnemyBulletPacket(ServerSpawnEnemyBulletPacket serverSpawnEnemyBulletPacket)
     {
         // Создание снаряда
-        Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
+        Bullet bullet = ClientRoot.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
         bullet.Author = Bullet.AuthorEnum.ENEMY;
         bullet.Position = Vec(serverSpawnEnemyBulletPacket.X, serverSpawnEnemyBulletPacket.Y);
         bullet.Rotation = serverSpawnEnemyBulletPacket.Dir;

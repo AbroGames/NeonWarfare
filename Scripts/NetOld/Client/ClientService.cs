@@ -15,11 +15,11 @@ public static class ClientService
         
         if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
         {
-            ClientRoot.Instance.Game.ChangeMainScene(Root.Instance.PackedScenes.Main.SafeWorld.Instantiate<SafeWorldMainScene>());
+            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Main.SafeWorld.Instantiate<SafeWorldMainScene>());
         } 
         else if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Battle)
         {
-            ClientRoot.Instance.Game.ChangeMainScene(Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>());
+            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>());
         }
         else
         {
@@ -30,7 +30,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
+        Player player = ClientRoot.Instance.PackedScenes.World.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
         player.Rotation = serverSpawnPlayerPacket.Dir;
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
@@ -56,7 +56,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
     {
-        Ally ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Ally>();
+        Ally ally = ClientRoot.Instance.PackedScenes.World.Ally.Instantiate<Ally>();
         ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
         ally.Rotation = serverSpawnAllyPacket.Dir;
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
@@ -74,7 +74,7 @@ public static class ClientService
             return;
         }
         
-        ClientRoot.Instance.MainMenu.ChangeMenu(Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
+        ClientRoot.Instance.MainMenu.ChangeMenu(ClientRoot.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
     }
     
     [EventListener(ListenerSide.Client)]

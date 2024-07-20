@@ -25,7 +25,7 @@ public partial class Server : Node
     {
         IsParentDeadChecker.Ready += CheckParentIsDead;
 
-        var serverGame = Root.Instance.PackedScenes.Main.ServerGame;
+        var serverGame = ServerRoot.Instance.PackedScenes.Main.ServerGame;
         ServerRoot.Instance.SetMainScene(serverGame.Instantiate<ServerGame>());
         
         Log.Info("Server ready!");
@@ -43,7 +43,7 @@ public partial class Server : Node
         if (parentPid.HasValue && !Process.GetProcesses().Any(x => x.Id == parentPid.Value))
         {
             Log.Error($"Parent process {parentPid.Value} is dead. Shutdown server.");
-            Root.Instance.Shutdown();
+            ServerRoot.Instance.Shutdown();
         }
     }
 }
