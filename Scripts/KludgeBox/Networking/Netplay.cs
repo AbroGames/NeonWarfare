@@ -33,11 +33,6 @@ public static class Netplay
     public static bool IsClient => Mode is Netmode.Client;
     public static bool IsSingleplayer => Mode is Netmode.Singleplayer;
     public static PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
-    
-    /// <summary>
-    /// Socket to send and receive packets from server. Active only in Client mode.
-    /// </summary>
-    public static ISocket ServerSocket { get; internal set; }
 
     public static ENetMultiplayerPeer Peer
     {
@@ -45,7 +40,7 @@ public static class Netplay
         set => Api.MultiplayerPeer = value;
     }
     public static SceneMultiplayer Api { get; internal set; }
-    public static void SetServer(int port, int maxClients = 5)
+    public static void SetServer(int port, int maxClients = 8)
     {
         Mode = Netmode.Server;
         ResetConnection();
@@ -109,8 +104,6 @@ public static class Netplay
         ResetConnection();
     }
     
-    
-
     internal static void OnPacketReceived(long id, byte[] packet)
     {
         var packetObj = PacketHelper.DecodePacket(packet);
