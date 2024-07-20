@@ -9,13 +9,14 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare.Net;
 
+[GameService]
 public static class ClientInitService
 {
     
     [EventListener]
     public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
-        Log.Debug("ConnectedToServerEvent");
+        Log.Debug("MoveToForeground!!!"); //TODO
         Root.Instance.GetWindow().MoveToForeground();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Godot;
@@ -11,11 +12,6 @@ public static partial class Netplay
 {
     public const long BroadcastId = 0;
     public const long ServerId = 1;
-    
-    public static event Action ConnectedToServer;
-    public static event Action ConnectionFailed;
-    public static event Action<long> PeerConnected;
-    public static event Action<long> PeerDisconnected;
     
     public static Netmode Mode { get; set; }
     public static PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
@@ -39,13 +35,17 @@ public static partial class Netplay
     {
         // Avoid multiple event subscriptions.
         if (Api == api) return;
-        
+     
+        Log.Debug("Init network connection");
         Api = api;
-        Api.ConnectedToServer += () => ConnectedToServer?.Invoke();
-        Api.ConnectionFailed += () => ConnectionFailed?.Invoke();
-        Api.PeerConnected += id => PeerConnected?.Invoke(id);
-        Api.PeerDisconnected += id => PeerDisconnected?.Invoke(id);
+        Api.ServerDisconnected += CloseConnection;
         Api.PeerPacket += OnPacketReceived;
+        
+        Api.ConnectedToServer += () => EventBus.Publish(new ConnectedToServerEvent());
+        Api.ConnectionFailed += () => EventBus.Publish(new ConnectionToServerFailedEvent());
+        Api.PeerConnected += id => EventBus.Publish(new PeerConnectedEvent(id));
+        Api.PeerDisconnected += id => EventBus.Publish(new PeerDisconnectedEvent(id));
+        Api.ServerDisconnected += () => EventBus.Publish(new ServerDisconnectedEvent());
     }
     
     public static Error SetServer(int port, int maxClients = 8)
@@ -74,6 +74,7 @@ public static partial class Netplay
 
     public static void CloseConnection()
     {
+        Log.Debug("Close network connection");
         Peer?.Close();
         PacketRegistry = new PacketRegistry();
     }

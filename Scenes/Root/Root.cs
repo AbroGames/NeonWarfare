@@ -16,7 +16,6 @@ public partial class Root : Node2D
 	[Export] [NotNull] public NodeContainer MainSceneContainer { get; private set; }
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
     
-	public ServiceRegistry ServiceRegistry { get; private set; } = new();
 	public World CurrentWorld;
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 
@@ -30,7 +29,7 @@ public partial class Root : Node2D
 	protected virtual void Init()
 	{
 		LogCmdArgs();
-		ServicesInit();
+		EventBusInit();
 		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	}
 
@@ -46,21 +45,5 @@ public partial class Root : Node2D
 		{
 			Log.Info("Not have cmd args");
 		}
-	}
-	
-	public void ServicesInit()
-	{
-		ServiceRegistry.RegisterServices();
-
-		if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))
-		{
-			EventBus.Side = ListenerSide.Server;
-		}
-		else
-		{
-			EventBus.Side = ListenerSide.Client;
-		}
-		
-		EventBus.RegisterListeners(ServiceRegistry);
 	}
 }

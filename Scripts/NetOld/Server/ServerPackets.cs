@@ -7,9 +7,8 @@ namespace NeonWarfare.NetOld.Server;
 public class ServerWaitBattleEndPacket : BinaryPacket;
 
 [GamePacket]
-public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : NetPacket
+public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : BinaryPacket
 {
-    
     public enum ServerWorldType { Unknown, Safe, Battle };
     public ServerWorldType WorldType { get; set; } = worldType;
 }
@@ -17,10 +16,10 @@ public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType wor
 [GamePacket]
 public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
-    public double X { get; set; } = x;
-    public double Y { get; set; } = y;
-    public double Dir { get; set; } = dir;
+    public readonly long Nid = nid;
+    public readonly double X = x;
+    public readonly double Y = y;
+    public readonly double Dir = dir;
 }
 
 [GamePacket]

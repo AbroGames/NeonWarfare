@@ -10,15 +10,15 @@ namespace NeonWarfare.NetOld.Server;
 public class GodotServerService
 {
 
-    [EventListener]
-    public void OnPeerConnectedServerEvent(PeerConnectedServerEvent peerConnectedServerEvent)
+    [EventListener(ListenerSide.Server)]
+    public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
-        Log.Debug($"PeerConnectedServerEvent: {peerConnectedServerEvent.Id}");
+        Log.Debug($"PeerConnectedEvent: {peerConnectedEvent.Id}");
         
-        PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedServerEvent.Id);
+        PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         ServerRoot.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
-        Netplay.Send(peerConnectedServerEvent.Id,
+        Netplay.Send(peerConnectedEvent.Id,
             new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = Root.Instance.CurrentWorld;
@@ -28,7 +28,7 @@ public class GodotServerService
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
-            ServerRoot.Instance.Server.PlayerServerInfo[peerConnectedServerEvent.Id].Player = player;
+            ServerRoot.Instance.Server.PlayerServerInfo[peerConnectedEvent.Id].Player = player;
             currentWorld.AddChild(player);
             long newPlayerNid = Root.Instance.NetworkEntityManager.AddEntity(player);
 
@@ -43,7 +43,7 @@ public class GodotServerService
                 camera.Enabled = true;
             }
 
-            Netplay.Send(peerConnectedServerEvent.Id, 
+            Netplay.Send(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
             //TODO спавн союзников и других NetworkEntity?
@@ -53,7 +53,7 @@ public class GodotServerService
                 
                 Player ally = playerServerInfo.Player;
                 long allyNid = Root.Instance.NetworkEntityManager.GetNid(ally);
-                Netplay.Send(peerConnectedServerEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
+                Netplay.Send(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
                 Netplay.Send(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
             
@@ -61,7 +61,7 @@ public class GodotServerService
         } 
         else if (currentWorld is BattleWorld)
         {
-            Netplay.Send(peerConnectedServerEvent.Id, new ServerWaitBattleEndPacket());
+            Netplay.Send(peerConnectedEvent.Id, new ServerWaitBattleEndPacket());
         }
         else
         {
@@ -69,14 +69,14 @@ public class GodotServerService
         }
     }
     
-    [EventListener]
-    public void OnPeerDisconnectedServerEvent(PeerDisconnectedServerEvent peerDisconnectedServerEvent)
+    [EventListener(ListenerSide.Server)]
+    public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        Log.Debug($"PeerDisconnectedServerEvent: {peerDisconnectedServerEvent.Id}");
+        Log.Debug($"PeerDisconnectedEvent: {peerDisconnectedEvent.Id}");
 
-        Player player = ServerRoot.Instance.Server.PlayerServerInfo[peerDisconnectedServerEvent.Id].Player;
+        Player player = ServerRoot.Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
         Root.Instance.NetworkEntityManager.RemoveEntity(player);
-        ServerRoot.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedServerEvent.Id);
+        ServerRoot.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedEvent.Id);
         long nid = Root.Instance.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
