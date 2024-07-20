@@ -35,7 +35,7 @@ public static class ClientService
         player.Rotation = serverSpawnPlayerPacket.Dir;
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 
-        World world = null; //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World;
+        World world = ClientRoot.Instance.Game.MainScene.World;
         world.Player = player;
 		
         var camera = new Camera(); //TODO to camera service
@@ -61,7 +61,7 @@ public static class ClientService
         ally.Rotation = serverSpawnAllyPacket.Dir;
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
         
-        World world = null; //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World;
+        World world = ClientRoot.Instance.Game.MainScene.World;
         world.AddChild(ally);
     }
     

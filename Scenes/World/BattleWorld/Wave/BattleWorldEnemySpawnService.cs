@@ -169,7 +169,7 @@ public static class BattleWorldEnemySpawnService
         enemy.Position = Vec(serverSpawnEnemyPacket.X, serverSpawnEnemyPacket.Y);
         enemy.Rotation = serverSpawnEnemyPacket.Dir;
         
-        //TODO ret after compile: ClientRoot.Instance.Game.MainScene.World.AddChild(enemy);
+        ClientRoot.Instance.Game.MainScene.World.AddChild(enemy);
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy, serverSpawnEnemyPacket.Nid);
     }
 }
