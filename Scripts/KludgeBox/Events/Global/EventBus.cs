@@ -75,8 +75,8 @@ public static class EventBus
     {
         var listenerSide = subscriptionInfo.Side;
         var busSide = Side;
-        
-        if (busSide!.HasFlag(listenerSide))
+
+        if ((busSide & listenerSide) == 0)
             return;
         
         _bus.SubscribeMethod(subscriptionInfo);
