@@ -15,7 +15,6 @@ public enum Netmode
 
 public static class Netplay
 {
-    public const long ServerId = 1;
     public const long BroadcastId = 0;
     
     public static event Action ConnectedToServer;
@@ -23,56 +22,51 @@ public static class Netplay
     public static event Action<long> PeerConnected;
     public static event Action<long> PeerDisconnected;
     
-    static Netplay()
-    {
-        
-    }
-    
-    public static Netmode Mode { get; set; } = Netmode.Singleplayer;
-
-    public static bool IsServer => Mode is Netmode.Server;
-    public static bool IsClient => Mode is Netmode.Client;
-    public static bool IsSingleplayer => Mode is Netmode.Singleplayer;
-    public static PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
+    public static Netmode Mode { get; set; }
+    public static PacketRegistry PacketRegistry { get; set; }
+    public static SceneMultiplayer Api { get; internal set; }
 
     public static ENetMultiplayerPeer Peer
     {
         get => Api.MultiplayerPeer as ENetMultiplayerPeer;
         set => Api.MultiplayerPeer = value;
     }
-    public static SceneMultiplayer Api { get; internal set; }
+    
     public static void SetServer(int port, int maxClients = 8)
     {
         Mode = Netmode.Server;
-        ResetConnection();
 
         var peer = new ENetMultiplayerPeer();
         peer.CreateServer(port, maxClients);
-        
         Peer = peer;
+        
+        PacketRegistry.ScanPackets();
     }
 
     public static void SetClient(string host, int port)
     {
         Mode = Netmode.Client;
-        ResetConnection();
         
         var peer = new ENetMultiplayerPeer();
         peer.CreateClient(host, port);
-        
         Peer = peer;
+        
+        PacketRegistry.ScanPackets();
     }
 
-    public static void SetSingleplayer()
-    {
-        Mode = Netmode.Singleplayer;
-        ResetConnection();
-    }
-
-    public static void ResetConnection()
+    public static void CloseConnection()
     {
         Peer?.Close();
-        PacketRegistry.ScanPackets();
+        PacketRegistry = new PacketRegistry();
+    }
+    
+    /// <summary>
+    /// Broadcasts packet to all available peers.
+    /// </summary>
+    /// <param name="packet">Packet to send</param>
+    public static void Send(NetPacket packet)
+    {
+        Send(BroadcastId, packet, packet.Mode, packet.PreferredChannel);
     }
     
     /// <summary>
@@ -81,9 +75,19 @@ public static class Netplay
     /// <param name="packet">Packet to send</param>
     /// <param name="mode">Reliability mode (Reliable, Unreliable or UnreliableOrdered)</param>
     /// <param name="channel">Channel to send on. -1 means use packet's preferred channel</param>
-    public static void Send(NetPacket packet, MultiplayerPeer.TransferModeEnum mode = MultiplayerPeer.TransferModeEnum.Reliable, int channel = -1)
+    public static void Send(NetPacket packet, MultiplayerPeer.TransferModeEnum mode, int channel)
     {
-        Send(BroadcastId, packet, mode, channel);
+        Send(BroadcastId, packet, packet.Mode, packet.PreferredChannel);
+    }
+    
+    /// <summary>
+    /// Sends packet to specified peer.
+    /// </summary>
+    /// <param name="id">Peer id to send to. 0 for broadcast, 1 for server.</param>
+    /// <param name="packet">Packet to send</param>
+    public static void Send(long id, NetPacket packet)
+    {
+        Send(id, packet, packet.Mode, packet.PreferredChannel);
     }
     
     /// <summary>
@@ -93,11 +97,9 @@ public static class Netplay
     /// <param name="packet">Packet to send</param>
     /// <param name="mode">Reliability mode (Reliable, Unreliable or UnreliableOrdered)</param>
     /// <param name="channel">Channel to send on. -1 means use packet's preferred channel</param>
-    public static void Send(long id, NetPacket packet, MultiplayerPeer.TransferModeEnum mode = MultiplayerPeer.TransferModeEnum.Reliable, int channel = -1)
+    public static void Send(long id, NetPacket packet, MultiplayerPeer.TransferModeEnum mode, int channel)
     {
         var bytes = PacketHelper.EncodePacket(packet);
-        channel = channel < 0 ? packet.PreferredChannel : channel;
-
         SendRaw(id, bytes, mode, channel);
     }
 
@@ -113,7 +115,7 @@ public static class Netplay
     /// </remarks>
     public static void SendRaw(long id, byte[] encodedPacketBuffer, MultiplayerPeer.TransferModeEnum mode = MultiplayerPeer.TransferModeEnum.Reliable, int channel = 0)
     {
-        Api.SendBytes(encodedPacketBuffer, (int)id, mode, channel);
+        Api.SendBytes(encodedPacketBuffer, (int) id, mode, channel);
     }
 
     // Called from Root._Ready()
@@ -121,8 +123,7 @@ public static class Netplay
     internal static void Initialize(SceneMultiplayer api)
     {
         // Avoid multiple event subscriptions.
-        if(Api == api)
-            return;
+        if (Api == api) return;
         
         Api = api;
         Api.ConnectedToServer += () => ConnectedToServer?.Invoke();
@@ -130,8 +131,6 @@ public static class Netplay
         Api.PeerConnected += id => PeerConnected?.Invoke(id);
         Api.PeerDisconnected += id => PeerDisconnected?.Invoke(id);
         Api.PeerPacket += OnPacketReceived;
-
-        ResetConnection();
     }
     
     internal static void OnPacketReceived(long id, byte[] packet)

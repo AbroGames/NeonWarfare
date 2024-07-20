@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Godot;
 using KludgeBox.Events;
 using Newtonsoft.Json;
 
@@ -13,6 +14,9 @@ public abstract class NetPacket : HandleableEvent
     
     [JsonIgnore]
     public virtual int PreferredChannel => 0;
+    
+    [JsonIgnore]
+    public virtual MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Reliable;
     
     
     public static NetPacket FromBuffer<TPacket>(byte[] buffer) where TPacket : NetPacket, new()
