@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Godot;
@@ -27,7 +28,24 @@ public abstract class NetPacket : HandleableEvent
 
     public static NetPacket FromBuffer(Type type, byte[] buffer)
     {
-        var packet = Activator.CreateInstance(type) as NetPacket;
+        NetPacket packet;
+        if (type.HasParameterlessConstructor())
+        {
+            packet = Activator.CreateInstance(type) as NetPacket;
+        }
+        else
+        {
+            var firstAvailableConstructor = type.GetConstructors()[0];
+            var neededParams = firstAvailableConstructor.GetParameters();
+            List<object> args = new();
+            
+            foreach (var param in neededParams)
+            {
+                args.Add(Activator.CreateInstance(param.ParameterType));
+            }
+            
+            packet = Activator.CreateInstance(type, args.ToArray()) as NetPacket;
+        }
         return packet.FromBuffer(buffer);
     }
     
