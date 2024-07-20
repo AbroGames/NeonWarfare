@@ -29,7 +29,6 @@ public partial class ServerRoot
 
 	public override void _EnterTree()
 	{
-		base._EnterTree();
 		Instance = this;
 	}
 }

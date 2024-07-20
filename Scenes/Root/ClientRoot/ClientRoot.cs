@@ -1,30 +1,42 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events.Global;
+using KludgeBox.Networking;
 using NeonWarfare.Net;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
-public partial class ClientRoot : Root
+public partial class ClientRoot : Node2D
 {
+	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
 	
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 
 	public override void _Ready()
 	{
-		base._Ready();
 		NotNullChecker.CheckProperties(this);
+		Callable.From(() => { Init(); Start(); }).CallDeferred();
 	}
 	
-	protected override void Init()
+	protected void Init()
 	{
-		base.Init();
+		CmdArgsService.LogCmdArgs();
+		EventBus.Init();
+		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
+		
 		SettingsService.Init();
 	}
 	
-	protected override void Start()
+	protected void Start()
 	{
 		var mainMenu = PackedScenes.Main.MainMenu;
 		SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
+	}
+	
+	public void Shutdown()
+	{
+		GetTree().Quit();
 	}
 }

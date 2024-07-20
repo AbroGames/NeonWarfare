@@ -28,7 +28,6 @@ public partial class ClientRoot
 
 	public override void _EnterTree()
 	{
-		base._EnterTree();
 		Instance = this;
 	}
 }

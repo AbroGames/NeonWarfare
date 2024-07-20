@@ -1,27 +1,27 @@
-[gd_scene load_steps=6 format=3 uid="uid://c1i0ysr1hdmt1"]
+[gd_scene load_steps=6 format=3 uid="uid://6v3fu0vexvah"]
 
-[ext_resource type="PackedScene" uid="uid://b63edjeq18obm" path="res://Scenes/Root/Root.tscn" id="1_a1nt5"]
-[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="2_qkmgc"]
-[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ServerShutdowner.cs" id="3_g5f2q"]
-[ext_resource type="Script" path="res://Scenes/Root/PlayerSettings/PlayerSettings.cs" id="4_3jh54"]
+[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
+[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/Root/PackedScenesContainer/PackedScenesContainer.tscn" id="1_olsjj"]
+[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ServerShutdowner.cs" id="2_yn1t4"]
+[ext_resource type="Script" path="res://Scenes/Root/PlayerSettings/PlayerSettings.cs" id="3_1ch3h"]
 
-[sub_resource type="Environment" id="Environment_hp6r4"]
+[sub_resource type="Environment" id="Environment_fkaty"]
 background_mode = 3
 glow_enabled = true
 glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="ClientRoot" node_paths=PackedStringArray("Environment", "PlayerSettings") instance=ExtResource("1_a1nt5")]
-script = ExtResource("2_qkmgc")
-Environment = NodePath("WorldEnvironment")
-PlayerSettings = NodePath("PlayerSettings")
+[node name="ClientRoot" type="Node2D"]
+script = ExtResource("1_7bmax")
 
-[node name="ServerShutdowner" type="Node" parent="." index="2"]
-script = ExtResource("3_g5f2q")
+[node name="ServerPackedScenesContainer" parent="." instance=ExtResource("1_olsjj")]
 
-[node name="PlayerSettings" type="Node2D" parent="." index="3"]
-script = ExtResource("4_3jh54")
+[node name="ServerShutdowner" type="Node" parent="."]
+script = ExtResource("2_yn1t4")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="4"]
-environment = SubResource("Environment_hp6r4")
+[node name="PlayerSettings" type="Node2D" parent="."]
+script = ExtResource("3_1ch3h")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fkaty")
