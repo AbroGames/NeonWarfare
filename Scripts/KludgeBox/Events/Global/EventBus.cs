@@ -93,6 +93,19 @@ public static class EventBus
             SubscribeMethod(listener);
         }
     }
+    
+    public static void RegisterListeners()
+    {
+        var busSide = Side;
+        
+        var listeners = EventScanner.ScanStaticEventListenersOfType(typeof(IEvent));
+
+        Log.Info($"Registering {listeners.Count()} static listeners from all found classes");
+        foreach (var listener in listeners)
+        {
+            SubscribeMethod(listener);
+        }
+    }
 
 
     /// <summary>

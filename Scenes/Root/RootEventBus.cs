@@ -16,6 +16,7 @@ public partial class Root
 	
 	public void EventBusInit()
 	{
+		EventBus.RegisterListeners();
 		ServiceRegistry.RegisterServices();
 
 		if (OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag))

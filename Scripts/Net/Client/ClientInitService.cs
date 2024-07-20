@@ -9,7 +9,7 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare.Net;
 
-[GameService]
+
 public static class ClientInitService
 {
     
