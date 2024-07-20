@@ -35,4 +35,9 @@ public partial class Root : Node2D
 	}
 
 	protected virtual void Start() {}
+
+	public void Shutdown()
+	{
+		GetTree().Quit();
+	}
 }

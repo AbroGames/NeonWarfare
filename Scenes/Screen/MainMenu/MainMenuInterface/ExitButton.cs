@@ -6,6 +6,6 @@ public partial class ExitButton : Button
 {
     public override void _Ready()
     {
-        Pressed += MenuButtonsService.ShutDown;
+        Pressed += () => Root.Instance.Shutdown();
     }
 }

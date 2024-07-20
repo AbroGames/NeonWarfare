@@ -43,8 +43,7 @@ public partial class Server : Node
         if (parentPid.HasValue && !Process.GetProcesses().Any(x => x.Id == parentPid.Value))
         {
             Log.Error($"Parent process {parentPid.Value} is dead. Shutdown server.");
-            MenuButtonsService.ShutDown(); //TODO wtf? It is server
-            GetTree().Quit();
+            Root.Instance.Shutdown();
         }
     }
 }

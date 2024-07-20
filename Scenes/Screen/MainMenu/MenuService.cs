@@ -8,8 +8,4 @@ public static class MenuButtonsService
     {
         Root.Instance.MainSceneContainer.GetCurrentStoredNode<MainMenuMainScene>().ChangeMenu(menuChangeTo);
     }
-    public static void ShutDown()
-    {
-        Root.Instance.GetTree().Quit();
-    }
 }
