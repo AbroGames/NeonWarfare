@@ -5,12 +5,11 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare.NetOld.Client;
 
-[GameService]
-public class ClientService
+public static class ClientService
 {
 
-    [EventListener]
-    public void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
+    [EventListener(ListenerSide.Client)]
+    public static void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
     {
         Root.Instance.NetworkEntityManager.Clear();
         
@@ -28,8 +27,8 @@ public class ClientService
         }
     }
     
-    [EventListener]
-    public void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
+    [EventListener(ListenerSide.Client)]
+    public static void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
         Player player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
@@ -54,8 +53,8 @@ public class ClientService
         world.AddChild(player); // must be here to draw over the floor
     }
 
-    [EventListener]
-    public void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
+    [EventListener(ListenerSide.Client)]
+    public static void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
     {
         Ally ally = Root.Instance.PackedScenes.World.Ally.Instantiate<Ally>();
         ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
@@ -66,8 +65,8 @@ public class ClientService
         world.AddChild(ally);
     }
     
-    [EventListener]
-    public void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
+    [EventListener(ListenerSide.Client)]
+    public static void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
     {
         if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)
         {
@@ -79,16 +78,16 @@ public class ClientService
             Root.Instance.PackedScenes.Screen.WaitingForBattleEndScreen);
     }
     
-    [EventListener]
-    public void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
+    [EventListener(ListenerSide.Client)]
+    public static void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
     {
         Node2D node = Root.Instance.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
         node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
         node.Rotation = serverPositionEntityPacket.Dir;
     }
 
-    [EventListener]
-    public void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
+    [EventListener(ListenerSide.Client)]
+    public static void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
     {
         Node2D node = Root.Instance.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
         node.QueueFree();

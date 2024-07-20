@@ -6,11 +6,10 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 
-[GameService]
-public class EnemyDamageService
+public static class EnemyDamageService
 {
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyDeath(EnemyDeathEvent e)
+    public static void OnEnemyDeath(EnemyDeathEvent e)
     {
         var enemy = e.Enemy;
         var battleWorld = enemy.GetParent() as BattleWorld;

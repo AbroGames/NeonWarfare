@@ -6,12 +6,11 @@ using KludgeBox.Networking;
 
 namespace NeonWarfare;
 
-[GameService]
-public class EnemyAttackService
+public static class EnemyAttackService
 {
     
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
+    public static void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
     {
         var (enemy, delta) = enemyProcessEvent;
         enemy.PrimaryCd.Update(delta);
@@ -22,7 +21,7 @@ public class EnemyAttackService
     }
     
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyAttackEvent(EnemyAttackEvent enemyAttackEvent)
+    public static void OnEnemyAttackEvent(EnemyAttackEvent enemyAttackEvent)
     {
         Enemy enemy = enemyAttackEvent.Enemy;
 		
@@ -48,7 +47,7 @@ public class EnemyAttackService
     }
 
     [EventListener]
-    public void OnServerSpawnEnemyBulletPacket(ServerSpawnEnemyBulletPacket serverSpawnEnemyBulletPacket)
+    public static void OnServerSpawnEnemyBulletPacket(ServerSpawnEnemyBulletPacket serverSpawnEnemyBulletPacket)
     {
         // Создание снаряда
         Bullet bullet = Root.Instance.PackedScenes.World.Bullet.Instantiate() as Bullet;
@@ -65,7 +64,7 @@ public class EnemyAttackService
     }
     
     
-    private bool CanSeePlayer(Enemy enemy)
+    private static bool CanSeePlayer(Enemy enemy)
     {
         var collider = enemy.RayCast.GetCollider();
         return collider is Player;
