@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using KludgeBox;
 using KludgeBox.Networking;
 using NeonWarfare.NetOld.Server;
 
@@ -11,7 +12,36 @@ public static class NetworkService
     public const string DefaultHost = "127.0.0.1";
     public const int DefaultPort = 25566;
     
-    public static void CreateServer(int port, string adminNickname, bool showConsole)
+    public static ServerParams CreateServer()
+    {
+        ServerParams serverParams = ServerCmdService.GetServerParams();
+        Error error = Netplay.SetServer(serverParams.Port);
+        if (error == Error.Ok)
+        {
+            Log.Info($"Dedicated server successfully created.");
+        }
+        else
+        {
+            Log.Error($"Dedicated server created with result: {error}");
+        }
+        
+        return serverParams;
+    }
+    
+    public static void ConnectToServer(string host, int port)
+    {
+        Error error = Netplay.SetClient(host, port);
+        if (error == Error.Ok)
+        {
+            Log.Info($"Connect to server is successfully.");
+        }
+        else
+        {
+            Log.Error($"Connect to server with result: {error}");
+        }
+    }
+    
+    public static void CreateDedicatedServerApplication(int port, string adminNickname, bool showConsole)
     {
         List<string> serverParams =
         [
@@ -29,10 +59,5 @@ public static class NetworkService
         //serverParams.Add(ServerParams.RenderFlag); //TODO del or to Config node in Root
         int serverPid = OS.CreateInstance(serverParams.ToArray());
         ClientRoot.Instance.AddServerShutdowner(serverPid);
-    }
-    
-    public static void ConnectToServer(string host, int port)
-    {
-        Netplay.SetClient(host, port);
     }
 }

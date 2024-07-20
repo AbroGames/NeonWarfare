@@ -35,7 +35,7 @@ public partial class CreateServerButton : Button
             return;
         }
         
-        NetworkService.CreateServer(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
+        NetworkService.CreateDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
         NetworkService.ConnectToServer(NetworkService.DefaultHost, port);
             
         if (Root.Instance.MainSceneContainer.GetCurrentStoredNode<Node>() is not MainMenuMainScene)

@@ -41,17 +41,8 @@ public partial class ServerRoot : Root
 			DisplayServer.ScreenGetSize().X - (int)Root.Instance.GetViewport().GetVisibleRect().Size.X,
 			DisplayServer.ScreenGetSize().Y - (int)Root.Instance.GetViewport().GetVisibleRect().Size.Y - 40));
 
-		ServerParams serverParams = ServerCmdService.GetServerParams();
-		Error error = Netplay.SetServer(serverParams.Port);
-		if (error == Error.Ok)
-		{
-			Log.Info($"Dedicated server successfully created.");
-			Server = new Server(serverParams);
-			AddChild(Server);
-		}
-		else
-		{
-			Log.Error($"Dedicated server created with result: {error}");
-		}
+		ServerParams serverParams = NetworkService.CreateServer();
+		Server = new Server(serverParams);
+		AddChild(Server);
 	}
 }
