@@ -6,19 +6,19 @@ namespace NeonWarfare;
 [GamePacket]
 public class ServerSpawnEnemyPacket(long nid, double x, double y, double dir, bool isBoss) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
-    public double X { get; set; } = x;
-    public double Y { get; set; } = y;
-    public double Dir { get; set; } = dir;
-    public bool IsBoss { get; set; } = isBoss;
+    public long Nid = nid;
+    public double X = x;
+    public double Y = y;
+    public double Dir = dir;
+    public bool IsBoss = isBoss;
 }
 
 [GamePacket]
 public class ServerSpawnEnemyBulletPacket(long nid, double x, double y, double dir, bool isBoss) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
-    public double X { get; set; } = x;
-    public double Y { get; set; } = y;
-    public double Dir { get; set; } = dir;
-    public bool IsBoss { get; set; } = isBoss;
+    public long Nid = nid;
+    public double X = x;
+    public double Y = y;
+    public double Dir = dir;
+    public bool IsBoss = isBoss;
 }

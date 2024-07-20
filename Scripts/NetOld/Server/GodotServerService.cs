@@ -12,13 +12,10 @@ public static class GodotServerService
     [EventListener(ListenerSide.Server)]
     public static void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
-        Log.Debug($"ALARM: {peerConnectedEvent.Id}"); //TODO
-        
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         ServerRoot.Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
-        Netplay.Send(peerConnectedEvent.Id,
-            new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
+        Netplay.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = Root.Instance.CurrentWorld;
         if (currentWorld is SafeWorld)
@@ -71,8 +68,6 @@ public static class GodotServerService
     [EventListener(ListenerSide.Server)]
     public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        Log.Debug($"ALARM: {peerDisconnectedEvent.Id}"); //TODO
-
         Player player = ServerRoot.Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
         Root.Instance.NetworkEntityManager.RemoveEntity(player);
         ServerRoot.Instance.Server.PlayerServerInfo.Remove(peerDisconnectedEvent.Id);

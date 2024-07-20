@@ -10,51 +10,51 @@ public class ServerWaitBattleEndPacket : BinaryPacket;
 public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : BinaryPacket
 {
     public enum ServerWorldType { Unknown, Safe, Battle };
-    public ServerWorldType WorldType { get; set; } = worldType;
+    public ServerWorldType WorldType = worldType;
 }
 
 [GamePacket]
 public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
-    public readonly long Nid = nid;
-    public readonly double X = x;
-    public readonly double Y = y;
-    public readonly double Dir = dir;
+    public long Nid = nid;
+    public double X = x;
+    public double Y = y;
+    public double Dir = dir;
 }
 
 [GamePacket]
 public class ServerSpawnAllyPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
-    public double X { get; set; } = x;
-    public double Y { get; set; } = y;
-    public double Dir { get; set; } = dir;
+    public long Nid = nid;
+    public double X = x;
+    public double Y = y;
+    public double Dir = dir;
 }
 
 [GamePacket]
 public class ServerPositionEntityPacket(long nid, double x, double y, double dir) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
-    public double X { get; set; } = x;
-    public double Y { get; set; } = y;
-    public double Dir { get; set; } = dir;
+    public long Nid = nid;
+    public double X = x;
+    public double Y = y;
+    public double Dir = dir;
 }
 
 [GamePacket]
 public class ServerMovementEntityPacket(long nid, double x, double y, double dir,
     double movementX, double movementY, double movementSpeed) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
-    public double X { get; set; } = x;
-    public double Y { get; set; } = y;
-    public double Dir { get; set; } = dir;
-    public double MovementX { get; set; } = movementX;
-    public double MovementY { get; set; } = movementY;
-    public double MovementSpeed { get; set; } = movementSpeed;
+    public long Nid = nid;
+    public double X = x;
+    public double Y = y;
+    public double Dir = dir;
+    public double MovementX = movementX;
+    public double MovementY = movementY;
+    public double MovementSpeed = movementSpeed;
 }
 
 [GamePacket]
 public class ServerDestroyEntityPacket(long nid) : BinaryPacket
 {
-    public long Nid { get; set; } = nid;
+    public long Nid = nid;
 }
