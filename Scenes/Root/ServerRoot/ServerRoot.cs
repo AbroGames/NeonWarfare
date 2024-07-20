@@ -4,6 +4,7 @@ using KludgeBox;
 using KludgeBox.Networking;
 using NeonWarfare.Net;
 using NeonWarfare.NetOld.Server;
+using NeonWarfare.Utils;
 using Server = NeonWarfare.NetOld.Server.Server;
 
 namespace NeonWarfare;
@@ -25,7 +26,7 @@ public partial class ServerRoot : Root
 	{
 		base.Init();
 		
-		if (OS.GetCmdlineArgs().Contains(ServerParams.RenderFlag))
+		if (CmdArgsService.ContainsInCmdArgs(ServerParams.RenderFlag))
 		{
 			Console.QueueFree();
 		}

@@ -1,7 +1,7 @@
-using System.Linq;
 using Godot;
 using KludgeBox;
-using NeonWarfare.NetOld.Server;
+using NeonWarfare.Net;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
@@ -19,7 +19,7 @@ public partial class StarterScene : Node
 
 	private void StartGame()
 	{
-		PackedScene rootScene = OS.GetCmdlineArgs().Contains(ServerParams.ServerFlag) ? ServerRoot : ClientRoot;
+		PackedScene rootScene = CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag) ? ServerRoot : ClientRoot;
 		GetTree().ChangeSceneToPacked(rootScene);
 	}
 }

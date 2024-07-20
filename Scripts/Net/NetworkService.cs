@@ -14,7 +14,7 @@ public static class NetworkService
     
     public static ServerParams CreateServer()
     {
-        ServerParams serverParams = ServerCmdService.GetServerParams();
+        ServerParams serverParams = ServerParams.GetFromCmd();
         Error error = Netplay.SetServer(serverParams.Port);
         if (error == Error.Ok)
         {

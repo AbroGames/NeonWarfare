@@ -1,6 +1,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Godot;
+using NeonWarfare.Net;
+using NeonWarfare.NetOld.Server;
+using NeonWarfare.Utils;
 
 namespace KludgeBox.Events.Global;
 
@@ -104,6 +108,19 @@ public static class EventBus
         foreach (var listener in listeners)
         {
             SubscribeMethod(listener);
+        }
+    }
+
+    public static void Init()
+    {
+        RegisterListeners();
+        if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag))
+        {
+            Side = ListenerSide.Server;
+        }
+        else
+        {
+            Side = ListenerSide.Client;
         }
     }
 

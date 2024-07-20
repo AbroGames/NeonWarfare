@@ -16,7 +16,6 @@ public static class ClientInitService
     [EventListener]
     public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
-        Log.Debug("MoveToForeground!!!"); //TODO
         Root.Instance.GetWindow().MoveToForeground();
     }
 }

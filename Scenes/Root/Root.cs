@@ -7,6 +7,7 @@ using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 using NeonWarfare.NetOld;
 using NeonWarfare.NetOld.Server;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
@@ -28,22 +29,10 @@ public partial class Root : Node2D
 
 	protected virtual void Init()
 	{
-		LogCmdArgs();
-		EventBusInit();
+		CmdArgsService.LogCmdArgs();
+		EventBus.Init();
 		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	}
 
 	protected virtual void Start() {}
-	
-	private void LogCmdArgs()
-	{
-		if (!OS.GetCmdlineArgs().IsEmpty())
-		{
-			Log.Info("Cmd args: " + OS.GetCmdlineArgs().Join());
-		}
-		else
-		{
-			Log.Info("Not have cmd args");
-		}
-	}
 }

@@ -5,6 +5,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
 using KludgeBox.Scheduling;
+using NeonWarfare.Net;
 
 namespace NeonWarfare.NetOld.Server;
 
