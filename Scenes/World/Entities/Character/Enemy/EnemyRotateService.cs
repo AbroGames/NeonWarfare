@@ -5,12 +5,11 @@ using KludgeBox.Events;
 
 namespace NeonWarfare;
 
-[GameService]
-public class EnemyRotateService
+public static class EnemyRotateService
 {
     
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
+    public static void OnEnemyProcessEvent(EnemyProcessEvent enemyProcessEvent)
     {
         var (enemy, delta) = enemyProcessEvent;
         
@@ -33,7 +32,7 @@ public class EnemyRotateService
         enemy.Rotation += rotationSpeedRad;
     }
     
-    private double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
+    private static double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
     {
         // Получаем текущую позицию мыши
         var targetPos = enemy.Target.GlobalPosition;

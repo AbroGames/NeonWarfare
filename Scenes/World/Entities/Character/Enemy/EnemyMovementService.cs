@@ -7,24 +7,23 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 
-[GameService]
-public class EnemyMovementService
+public static class EnemyMovementService
 {
 
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
+    public static void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
         attractionEvent.BattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
+    public static void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
         attractionEvent.BattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyAboutToTeleport(EnemyAboutToTeleportEvent e)
+    public static void OnEnemyAboutToTeleport(EnemyAboutToTeleportEvent e)
     {
         var enemy = e.Enemy;
         var target = enemy.Target;
@@ -40,7 +39,7 @@ public class EnemyMovementService
     }
     
     [EventListener(ListenerSide.Server)]
-    public void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
+    public static void OnEnemyPhysicsProcessEvent(EnemyPhysicsProcessEvent enemyPhysicsProcessEvent)
     {
         var (enemy, delta) = enemyPhysicsProcessEvent;
         
@@ -66,12 +65,12 @@ public class EnemyMovementService
         Netplay.SendToAll(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
     }
     
-    private Vector2 GetForwardDirection(Enemy enemy)
+    private static Vector2 GetForwardDirection(Enemy enemy)
     {
         return Vector2.FromAngle(enemy.Rotation - Mathf.Pi / 2);
     }
 
-    private Vector2 GetAttractionDirection(Enemy enemy)
+    private static Vector2 GetAttractionDirection(Enemy enemy)
     {
         if ((enemy.GetParent() as BattleWorld).EnemyAttractors.Count == 0) return Vec();
             

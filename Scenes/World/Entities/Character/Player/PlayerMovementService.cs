@@ -6,12 +6,11 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 
-[GameService]
-public class PlayerMovementService
+public static class PlayerMovementService
 {
 
     [EventListener(ListenerSide.Server)]
-    public void OnClientMovementPlayerPacket(ClientMovementPlayerPacket clientMovementPlayerPacket)
+    public static void OnClientMovementPlayerPacket(ClientMovementPlayerPacket clientMovementPlayerPacket)
     {
         Player player = Root.Instance.NetworkEntityManager.GetNode<Player>(clientMovementPlayerPacket.Nid);
         Vector2 newPosition = Vec(clientMovementPlayerPacket.X, clientMovementPlayerPacket.Y);

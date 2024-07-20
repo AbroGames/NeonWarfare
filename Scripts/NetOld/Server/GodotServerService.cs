@@ -6,12 +6,11 @@ using NeonWarfare.NetOld.Client;
 
 namespace NeonWarfare.NetOld.Server;
 
-[GameService]
-public class GodotServerService
+public static class GodotServerService
 {
 
     [EventListener(ListenerSide.Server)]
-    public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
+    public static void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         Log.Debug($"PeerConnectedEvent: {peerConnectedEvent.Id}");
         
@@ -70,7 +69,7 @@ public class GodotServerService
     }
     
     [EventListener(ListenerSide.Server)]
-    public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
+    public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Log.Debug($"PeerDisconnectedEvent: {peerDisconnectedEvent.Id}");
 

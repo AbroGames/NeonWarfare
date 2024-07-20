@@ -9,12 +9,11 @@ namespace NeonWarfare;
 [GamePacket]
 public class ClientWantToBattlePacket : BinaryPacket;
 
-[GameService]
-public class SafeHudService
+public static class SafeHudService
 {
 
     [EventListener(ListenerSide.Server)]
-    public void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
+    public static void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
         Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
         BattleWorldMainScene battleWorldMainScene = Root.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
