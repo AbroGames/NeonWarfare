@@ -76,7 +76,7 @@ public static class EventBus
         var listenerSide = subscriptionInfo.Side;
         var busSide = Side;
         
-        if (!listenerSide.HasFlag(busSide))
+        if (busSide!.HasFlag(listenerSide))
             return;
         
         _bus.SubscribeMethod(subscriptionInfo);
@@ -100,8 +100,6 @@ public static class EventBus
     
     public static void RegisterListeners()
     {
-        var busSide = Side;
-        
         var listeners = EventScanner.ScanStaticEventListenersOfType(typeof(IEvent));
 
         Log.Info($"Registering {listeners.Count()} static listeners from all found classes");
@@ -113,7 +111,6 @@ public static class EventBus
 
     public static void Init()
     {
-        RegisterListeners();
         if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag))
         {
             Side = ListenerSide.Server;
@@ -122,6 +119,7 @@ public static class EventBus
         {
             Side = ListenerSide.Client;
         }
+        RegisterListeners();
     }
 
 
