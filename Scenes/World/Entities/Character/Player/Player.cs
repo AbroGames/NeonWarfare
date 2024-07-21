@@ -76,17 +76,20 @@ public partial class Player : Character
 		AdvancedAbilityCd.Update(delta);
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
-		
-		// Camera shift processing
-		if (Input.IsActionPressed(Keys.CameraShift))
+
+		if (Netplay.IsClient)
 		{
-			var maxShift = GetGlobalMousePosition() - GlobalPosition;
-			var zoomFactor = (Camera.Zoom.X + Camera.Zoom.Y) / 2;
-			Camera.PositionShift = maxShift * 0.7 * zoomFactor;
-		}
-		else
-		{
-			Camera.PositionShift = Vec();
+			// Camera shift processing
+			if (Input.IsActionPressed(Keys.CameraShift))
+			{
+				var maxShift = GetGlobalMousePosition() - GlobalPosition;
+				var zoomFactor = (Camera.Zoom.X + Camera.Zoom.Y) / 2;
+				Camera.PositionShift = maxShift * 0.7 * zoomFactor;
+			}
+			else
+			{
+				Camera.PositionShift = Vec();
+			}
 		}
 	}
 
