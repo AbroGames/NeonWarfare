@@ -93,6 +93,8 @@ public static class BattleWorldEnemySpawnService
     
     private static void AnimateSpawn(Enemy enemy, BattleWorld battleWorld)
     {
+        if (Netplay.IsServer) return;
+        
         var fx = Fx.CreateSpawnFx();
         fx.Finished += () =>
         {

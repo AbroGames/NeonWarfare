@@ -25,7 +25,7 @@ public partial class Server : Node
     {
         IsParentDeadChecker.Ready += CheckParentIsDead;
 
-        var serverGame = ServerRoot.Instance.PackedScenes.Main.ServerGame;
+        var serverGame = ServerRoot.Instance.PackedScenes.Main.Game;
         ServerRoot.Instance.SetMainScene(serverGame.Instantiate<ServerGame>());
         
         Log.Info("Server ready!");

@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using KludgeBox;
+using KludgeBox.Networking;
 using KludgeBox.Scheduling;
 
 namespace NeonWarfare;
@@ -52,18 +53,21 @@ public partial class Character : CharacterBody2D
 		if (Hp <= 0)
 		{
 			Die();
-    			
-			var deathDummy = this.DropDummy();
-			var derbisDummy = this.DropDummy();
-			var death = Fx.CreateDeathFx();
-			var derbis = Fx.CreateDebrisFx();
-			derbis.Modulate = Sprite.Modulate;
-			deathDummy.AddChild(death);
-			derbisDummy.AddChild(derbis);
-			//GetParent().MoveChild(derbisDummy, GetIndex() - 1);
-			derbisDummy.ToBackground();
-    			
-			Audio2D.PlaySoundAt(Sfx.FuturisticCrack, GlobalPosition).PitchVariation(0.25f);
+			
+			if (Netplay.IsClient)
+			{			
+				var deathDummy = this.DropDummy();
+				var derbisDummy = this.DropDummy();
+				var death = Fx.CreateDeathFx();
+				var derbis = Fx.CreateDebrisFx();
+				derbis.Modulate = Sprite.Modulate;
+				deathDummy.AddChild(death);
+				derbisDummy.AddChild(derbis);
+				//GetParent().MoveChild(derbisDummy, GetIndex() - 1);
+				derbisDummy.ToBackground();
+    				
+				Audio2D.PlaySoundAt(Sfx.FuturisticCrack, GlobalPosition).PitchVariation(0.25f);
+			}
 			QueueFree();
 		}
     		
