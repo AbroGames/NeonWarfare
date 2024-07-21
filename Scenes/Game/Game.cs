@@ -4,7 +4,7 @@ using KludgeBox;
 using NeonWarfare;
 using NeonWarfare.NetOld;
 
-public abstract partial class Game : Node2D
+public partial class Game : Node2D
 {
 
 	public WorldMainScene MainScene { get; private set; }
