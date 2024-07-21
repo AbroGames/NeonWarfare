@@ -8,9 +8,10 @@ colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_p3uxb"]
 gradient = SubResource("Gradient_jnsbo")
 
-[node name="Console" type="CanvasLayer" node_paths=PackedStringArray("TextLabel")]
+[node name="Console" type="CanvasLayer" node_paths=PackedStringArray("MessagesContainer", "ScrollContainer")]
 script = ExtResource("1_3lnyi")
-TextLabel = NodePath("Margin/RichTextLabel")
+MessagesContainer = NodePath("Margin/ScrollContainer/VBoxContainer")
+ScrollContainer = NodePath("Margin/ScrollContainer")
 
 [node name="Background" type="TextureRect" parent="."]
 anchors_preset = 15
@@ -32,7 +33,19 @@ theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Margin"]
+visible = false
 layout_mode = 2
 focus_mode = 2
 bbcode_enabled = true
 selection_enabled = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Margin"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Margin/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Margin/ScrollContainer/VBoxContainer"]
+layout_mode = 2
