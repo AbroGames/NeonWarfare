@@ -1,0 +1,22 @@
+[gd_scene load_steps=6 format=3 uid="uid://cvbhf7b1x5t01"]
+
+[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.cs" id="1_05ot4"]
+[ext_resource type="PackedScene" uid="uid://b86vwuwqs6kgc" path="res://Scenes/PackedScenesContainer/Main/ClientMainPackedScenesContainer.tscn" id="2_1ablk"]
+[ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainer/Screen/ScreenPackedScenesContainer.tscn" id="3_dqccp"]
+[ext_resource type="PackedScene" uid="uid://dv6r0egkftrur" path="res://Scenes/PackedScenesContainer/World/ClientWorldPackedScenesContainer.tscn" id="4_y087j"]
+[ext_resource type="PackedScene" uid="uid://ddqrhjro85880" path="res://Scenes/PackedScenesContainer/Effects/EffectsPackedScenesContainer.tscn" id="5_vcmge"]
+
+[node name="ClientPackedScenesContainer" type="Node" node_paths=PackedStringArray("Main", "World", "Screen", "Effects")]
+script = ExtResource("1_05ot4")
+Main = NodePath("Main")
+World = NodePath("World")
+Screen = NodePath("Screen")
+Effects = NodePath("Effects")
+
+[node name="Main" parent="." instance=ExtResource("2_1ablk")]
+
+[node name="Screen" parent="." instance=ExtResource("3_dqccp")]
+
+[node name="World" parent="." instance=ExtResource("4_y087j")]
+
+[node name="Effects" parent="." instance=ExtResource("5_vcmge")]

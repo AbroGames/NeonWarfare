@@ -1,0 +1,22 @@
+[gd_scene load_steps=10 format=3 uid="uid://cx42uux5b88nw"]
+
+[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/World/WorldPackedScenesContainer.cs" id="1_wyxsy"]
+[ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/World/Entities/Character/Player/Player.tscn" id="2_wfknn"]
+[ext_resource type="PackedScene" uid="uid://beqibs6gp5l0y" path="res://Scenes/World/Entities/Character/Ally/Ally.tscn" id="3_0oe7j"]
+[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_tondy"]
+[ext_resource type="PackedScene" uid="uid://cjqj75fvk34l7" path="res://Scenes/World/Entities/Character/Enemy/Boss.tscn" id="5_kqaut"]
+[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet/Bullet.tscn" id="6_y0k3p"]
+[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/World/Entities/Beam/SolarBeam.tscn" id="7_tf8pe"]
+[ext_resource type="PackedScene" uid="uid://c6f2wg8qd1yec" path="res://Scenes/World/Entities/Beam/Beam.tscn" id="8_1e2qr"]
+[ext_resource type="PackedScene" uid="uid://dfv2jfwdn10pn" path="res://Scenes/World/Entities/FloatingLabel/FloatingLabel.tscn" id="9_cdjka"]
+
+[node name="ServerWorldPackedScenesContainer" type="Node"]
+script = ExtResource("1_wyxsy")
+Player = ExtResource("2_wfknn")
+Ally = ExtResource("3_0oe7j")
+Enemy = ExtResource("4_tondy")
+Boss = ExtResource("5_kqaut")
+Bullet = ExtResource("6_y0k3p")
+SolarBeam = ExtResource("7_tf8pe")
+Beam = ExtResource("8_1e2qr")
+FloatingLabel = ExtResource("9_cdjka")

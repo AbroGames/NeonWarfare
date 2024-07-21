@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://6v3fu0vexvah"]
 
 [ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
-[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/Root/PackedScenesContainer/PackedScenesContainer.tscn" id="1_olsjj"]
+[ext_resource type="PackedScene" uid="uid://cvbhf7b1x5t01" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer.tscn" id="2_6lwjn"]
 [ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ServerShutdowner.cs" id="2_yn1t4"]
 [ext_resource type="Script" path="res://Scenes/Root/PlayerSettings/PlayerSettings.cs" id="3_1ch3h"]
 
@@ -18,7 +18,7 @@ PackedScenes = NodePath("ClientPackedScenesContainer")
 Environment = NodePath("WorldEnvironment")
 PlayerSettings = NodePath("PlayerSettings")
 
-[node name="ClientPackedScenesContainer" parent="." instance=ExtResource("1_olsjj")]
+[node name="ClientPackedScenesContainer" parent="." instance=ExtResource("2_6lwjn")]
 
 [node name="ServerShutdowner" type="Node" parent="."]
 script = ExtResource("2_yn1t4")
