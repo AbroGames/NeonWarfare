@@ -59,7 +59,7 @@ public static class EnemyAttackService
             bullet.Transform = bullet.Transform.ScaledLocal(Vec(Mathf.Log(5)));
         }
 
-        ClientRoot.Instance.Game.MainScene.World.AddChild(bullet);
+        ClientRoot.Instance.Game.World.AddChild(bullet);
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
     }
     

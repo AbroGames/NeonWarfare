@@ -17,7 +17,7 @@ public static class GodotServerService
         
         Netplay.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
-        Node currentWorld = ServerRoot.Instance.Game.MainScene.World;
+        Node currentWorld = ServerRoot.Instance.Game.World;
         if (currentWorld is SafeWorld)
         {
             Player player = ServerRoot.Instance.PackedScenes.World.Player.Instantiate<Player>();

@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class BattleWorldMainScene : WorldMainScene
+public partial class BattleWorldMainScene : Node2D, IWorldMainScene
 {
 	
 	[Export] [NotNull] public BattleWorld BattleWorld { get; private set; }
@@ -13,10 +13,22 @@ public partial class BattleWorldMainScene : WorldMainScene
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		World = BattleWorld;
-		Hud = BattleHud;
-		
 		BattleHud.BattleWorld = BattleWorld;
-		BattleWorld.BattleHud = BattleHud; //TODO BattleWorld и SafeWorld наследовать от общего класс, BattleHud и SafeHud аналогично, мб BattleWorldMainScene и SafeWorldMainScene
+		BattleWorld.BattleHud = BattleHud;
+	}
+	
+	public World GetWorld()
+	{
+		return BattleWorld;
+	}
+
+	public Hud GetHud()
+	{
+		return BattleHud;
+	}
+
+	public Node2D GetAsNode2D()
+	{
+		return this;
 	}
 }

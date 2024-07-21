@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class SafeWorldMainScene : WorldMainScene
+public partial class SafeWorldMainScene : Node2D, IWorldMainScene
 {
 
 	[Export] [NotNull] public SafeWorld SafeWorld { get; private set; }
@@ -12,11 +12,23 @@ public partial class SafeWorldMainScene : WorldMainScene
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-
-		World = SafeWorld;
-		Hud = SafeHud;
 		
 		SafeHud.SafeWorld = SafeWorld;
 		SafeWorld.SafeHud = SafeHud;
+	}
+
+	public World GetWorld()
+	{
+		return SafeWorld;
+	}
+
+	public Hud GetHud()
+	{
+		return SafeHud;
+	}
+	
+	public Node2D GetAsNode2D()
+	{
+		return this;
 	}
 }

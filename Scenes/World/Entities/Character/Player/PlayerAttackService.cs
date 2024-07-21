@@ -47,7 +47,7 @@ public static class PlayerAttackService
         bullet.Speed = serverPlayerPrimaryAttackPacket.MovementSpeed;
         bullet.Author = Bullet.AuthorEnum.PLAYER;
 
-        ClientRoot.Instance.Game.MainScene.World.AddChild(bullet);
+        ClientRoot.Instance.Game.World.AddChild(bullet);
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 1f).PitchVariation(0.05f);
@@ -96,7 +96,7 @@ public static class PlayerAttackService
         bullet.Speed = serverPlayerSecondaryAttackPacket.MovementSpeed;
         bullet.Author = Bullet.AuthorEnum.PLAYER;
         
-        ClientRoot.Instance.Game.MainScene.World.AddChild(bullet);
+        ClientRoot.Instance.Game.World.AddChild(bullet);
         ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 0.5f);
