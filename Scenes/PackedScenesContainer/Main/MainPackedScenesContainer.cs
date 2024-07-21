@@ -5,9 +5,8 @@ namespace NeonWarfare;
 
 public partial class MainPackedScenesContainer : Node
 {
+    [Export] [NotNull] public PackedScene Game { get; private set; }
     [Export] [NotNull] public PackedScene MainMenu { get; private set; }
-    [Export] [NotNull] public PackedScene ClientGame { get; private set; }
-    [Export] [NotNull] public PackedScene ServerGame { get; private set; }
     [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
     [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
     
