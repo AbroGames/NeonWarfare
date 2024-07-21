@@ -6,8 +6,8 @@ using NeonWarfare.NetOld;
 public partial class ServerGame : Node2D
 {
 	
-	public WorldMainScene MainScene { get; private set; }
-	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
+	public World World { get; private set; }
+	private Node2D _mainScene;
 	
 	public override void _Ready()
 	{
@@ -17,10 +17,12 @@ public partial class ServerGame : Node2D
 		ChangeMainScene(safeWorld.Instantiate<SafeWorldMainScene>());
 	}
 	
-	public void ChangeMainScene(WorldMainScene worldMainScene)
+	public void ChangeMainScene(IWorldMainScene worldMainScene)
 	{
-		MainScene?.QueueFree();
-		MainScene = worldMainScene;
-		AddChild(MainScene);
+		_mainScene?.QueueFree();
+		_mainScene = worldMainScene.GetAsNode2D();
+		AddChild(_mainScene);
+		
+		World = worldMainScene.GetWorld();
 	}
 }
