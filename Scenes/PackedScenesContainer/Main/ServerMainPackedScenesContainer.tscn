@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Main/MainPackedScenesContainer.cs" id="1_iyxu7"]
 [ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/Screen/MainMenu/MainScene/MainMenuMainScene.tscn" id="2_202tm"]
-[ext_resource type="PackedScene" uid="uid://bvqb5v233oc5o" path="res://Scenes/Game/ServerGame/ServerGame.tscn" id="4_vxxsh"]
+[ext_resource type="PackedScene" uid="uid://cpqxifro7hdqh" path="res://Scenes/Game/ServerGame/ServerGame.tscn" id="4_vxxsh"]
 [ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/WorldMainScenes/BattleWorld/BattleWorldMainScene.tscn" id="5_ipm0l"]
 [ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/Game/WorldMainScenes/SafeWorld/SafeWorldMainScene.tscn" id="6_jptaj"]
 
