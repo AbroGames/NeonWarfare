@@ -51,7 +51,7 @@ internal class DefaultLogger : ILogger
         }
         
         GD.PrintRich($"[color={color}]{sb}[/color]");
-        if(pushWarning) GD.PushWarning(sb.ToString());
+        //if(pushWarning) GD.PushWarning(sb.ToString());
         if(pushError) GD.PushError(sb.ToString());
     }
 }
