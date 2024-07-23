@@ -16,14 +16,14 @@ public partial class ClientGame : Node2D
 		InitNetwork();
 	}
 	
-	[EventListener]
+	[EventListener(ListenerSide.Client)]
 	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
 		ClientRoot.Instance.GetWindow().MoveToForeground();
 		Game.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
 	}
 	
-	[EventListener]
+	[EventListener(ListenerSide.Client)]
 	public static void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
 	{
 		Game.NetworkEntityManager.Clear(); //TODO подумать над тем, чтобы перенести его в ClientWorld, чтобы он очищался гарантировано и вовремя
@@ -44,7 +44,7 @@ public partial class ClientGame : Node2D
 		Game.ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
 	}
 	
-	[EventListener]
+	[EventListener(ListenerSide.Client)]
 	public static void OnWaitBattleEndPacket(WaitBattleEndPacket emptyPacket)
 	{
 		Game.SetLoadingScreen(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndCanvas.Instantiate<CanvasLayer>());

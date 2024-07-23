@@ -17,7 +17,7 @@ public partial class ServerGame : Node2D
 		ChangeMainScene(new ServerSafeWorld());
 	}
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public static void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent) //TODO refactor this method
     {
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
@@ -62,7 +62,7 @@ public partial class ServerGame : Node2D
         }
     }
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent) //TODO refactor this method
     {
         Player player = Game.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
@@ -74,7 +74,7 @@ public partial class ServerGame : Node2D
         Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public static void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) //TODO refactor this method
     {
         Network.SendToAll(new ChangeWorldPacket(ChangeWorldPacket.ServerWorldType.Battle));
