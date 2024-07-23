@@ -8,7 +8,7 @@ using NeonWarfare.NetOld.Server;
 public partial class ClientGame : Node2D
 {
 	
-	private static ClientGame Game => ClientRoot.Instance.Game;
+	private static ClientGame Instance => ClientRoot.Instance.Game;
 	
 	public override void _Ready()
 	{
@@ -20,13 +20,13 @@ public partial class ClientGame : Node2D
 	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
 		ClientRoot.Instance.GetWindow().MoveToForeground();
-		Game.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
+		Instance.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
 	}
 	
 	[EventListener(ListenerSide.Client)]
 	public static void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
 	{
-		Game.NetworkEntityManager.Clear(); //TODO подумать над тем, чтобы перенести его в ClientWorld, чтобы он очищался гарантировано и вовремя
+		Instance.NetworkEntityManager.Clear(); //TODO подумать над тем, чтобы перенести его в ClientWorld, чтобы он очищался гарантировано и вовремя
 
 		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch //TODO in enum map in packet?
 		{
@@ -41,12 +41,12 @@ public partial class ClientGame : Node2D
 			return;
 		}
 
-		Game.ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
+		Instance.ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
 	}
 	
 	[EventListener(ListenerSide.Client)]
 	public static void OnWaitBattleEndPacket(WaitBattleEndPacket emptyPacket)
 	{
-		Game.SetLoadingScreen(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndCanvas.Instantiate<CanvasLayer>());
+		Instance.SetLoadingScreen(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndCanvas.Instantiate<CanvasLayer>());
 	}
 }
