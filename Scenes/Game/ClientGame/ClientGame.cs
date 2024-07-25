@@ -15,13 +15,13 @@ public partial class ClientGame : Node2D
 		NotNullChecker.CheckProperties(this);
 	}
 	
-	public void ChangeMainScene(IWorldMainScene worldMainScene)
+	public void ChangeMainScene(IGameMainScene gameMainScene)
 	{
 		_mainScene?.QueueFree();
-		_mainScene = worldMainScene.GetAsNode2D();
+		_mainScene = gameMainScene.GetAsNode2D();
 		AddChild(_mainScene);
 		
-		World = worldMainScene.GetWorld();
-		Hud = worldMainScene.GetHud();
+		World = gameMainScene.GetWorld();
+		Hud = gameMainScene.GetHud();
 	}
 }

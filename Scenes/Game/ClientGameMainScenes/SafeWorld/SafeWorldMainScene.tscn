@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://ckusgv6yysi45"]
 
-[ext_resource type="Script" path="res://Scenes/Game/WorldMainScenes/SafeWorld/SafeWorldMainScene.cs" id="1_kaw5m"]
-[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/SafeWorld.tscn" id="2_w18l4"]
-[ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="3_qnxhh"]
-[ext_resource type="Script" path="res://Scenes/Game/WorldMainScenes/SafeWorld/GreenOverlay.cs" id="4_1hllb"]
+[ext_resource type="Script" path="res://Scenes/Game/ClientGameMainScenes/SafeWorld/SafeGameMainScene.cs" id="1_v35jn"]
+[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/SafeWorld.tscn" id="2_0omu6"]
+[ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="3_jh3ok"]
+[ext_resource type="Script" path="res://Scenes/Game/ClientGameMainScenes/SafeWorld/GreenOverlay.cs" id="4_p5u4r"]
 
 [sub_resource type="Gradient" id="Gradient_bdc6g"]
 offsets = PackedFloat32Array(0.935065, 1)
@@ -17,15 +17,15 @@ fill = 2
 fill_from = Vector2(0.5, 0.5)
 
 [node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("SafeWorld", "SafeHud")]
-script = ExtResource("1_kaw5m")
+script = ExtResource("1_v35jn")
 SafeWorld = NodePath("SafeWorld")
 SafeHud = NodePath("Screen/SafeHud")
 
-[node name="SafeWorld" parent="." instance=ExtResource("2_w18l4")]
+[node name="SafeWorld" parent="." instance=ExtResource("2_0omu6")]
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
-[node name="SafeHud" parent="Screen" instance=ExtResource("3_qnxhh")]
+[node name="SafeHud" parent="Screen" instance=ExtResource("3_jh3ok")]
 
 [node name="GreenOverlay" type="TextureRect" parent="Screen"]
 modulate = Color(1, 1, 1, 0.231373)
@@ -37,4 +37,4 @@ grow_vertical = 2
 size_flags_vertical = 4
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_72irp")
-script = ExtResource("4_1hllb")
+script = ExtResource("4_p5u4r")

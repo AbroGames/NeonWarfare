@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class BattleWorldMainScene : Node2D, IWorldMainScene
+public partial class BattleGameMainScene : Node2D, IGameMainScene //TODO split to server and client battleworld and safeworld. Or we don't need MainScene for server, we can use ServerBattleWorld only! 
 {
 	
 	[Export] [NotNull] public BattleWorld BattleWorld { get; private set; }

@@ -14,15 +14,15 @@ public partial class ServerGame : Node2D
 		NotNullChecker.CheckProperties(this);
 		
 		var safeWorld = ServerRoot.Instance.PackedScenes.Main.SafeWorld;
-		ChangeMainScene(safeWorld.Instantiate<SafeWorldMainScene>());
+		ChangeMainScene(safeWorld.Instantiate<SafeGameMainScene>());
 	}
 	
-	public void ChangeMainScene(IWorldMainScene worldMainScene)
+	public void ChangeMainScene(IGameMainScene gameMainScene)
 	{
 		_mainScene?.QueueFree();
-		_mainScene = worldMainScene.GetAsNode2D();
+		_mainScene = gameMainScene.GetAsNode2D();
 		AddChild(_mainScene);
 		
-		World = worldMainScene.GetWorld();
+		World = gameMainScene.GetWorld();
 	}
 }

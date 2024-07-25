@@ -16,9 +16,9 @@ public static class SafeHudService
     public static void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
         Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
-        BattleWorldMainScene battleWorldMainScene = ServerRoot.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleWorldMainScene>();
-        ServerRoot.Instance.Game.ChangeMainScene(battleWorldMainScene);
-        BattleWorld battleWorld = battleWorldMainScene.BattleWorld;
+        BattleGameMainScene battleGameMainScene = ServerRoot.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleGameMainScene>();
+        ServerRoot.Instance.Game.ChangeMainScene(battleGameMainScene);
+        BattleWorld battleWorld = battleGameMainScene.BattleWorld;
         
         ServerRoot.Instance.Game.NetworkEntityManager.Clear();
         

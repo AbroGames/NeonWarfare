@@ -2,7 +2,7 @@ using Godot;
 using System;
 using NeonWarfare;
 
-public interface IWorldMainScene
+public interface IGameMainScene
 {
 	public World GetWorld();
 	public Hud GetHud();
