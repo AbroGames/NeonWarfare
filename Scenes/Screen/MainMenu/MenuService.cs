@@ -2,10 +2,16 @@
 
 namespace NeonWarfare;
 
-public static class MenuButtonsService
+public static class MenuService
 {
     public static void ChangeMenuFromButtonClick(PackedScene menuChangeTo)
     {
         ClientRoot.Instance.MainMenu.ChangeMenu(menuChangeTo);
+    }
+
+    public static void ActivateMainMenu()
+    {
+        var mainMenu = ClientRoot.Instance.PackedScenes.Screen.MainMenuPackedScene;
+        ClientRoot.Instance.SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
     }
 }
