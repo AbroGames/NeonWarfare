@@ -18,7 +18,7 @@ public static class ClientInitService
     {
         ClientRoot.Instance.GetWindow().MoveToForeground();
         
-        var gameScene = ClientRoot.Instance.PackedScenes.Main.Game;
+        var gameScene = ClientRoot.Instance.PackedScenes.GameMainScenes.Game;
         ClientRoot.Instance.SetMainScene(gameScene.Instantiate<ClientGame>());
     }
 }

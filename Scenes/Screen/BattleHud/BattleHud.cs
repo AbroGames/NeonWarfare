@@ -34,7 +34,7 @@ public partial class BattleHud : Hud
 	[Export] [NotNull] public Icon SolarBeamIcon { get; private set; }
 	
 	
-	public BattleWorld BattleWorld { get; set; }
+	public ClientBattleWorld ClientBattleWorld { get; set; }
 	public Vector2 WaveMessageInitialPosition { get; set; }
 	
 	private readonly Stopwatch _physicsStopwatch = new();
@@ -54,11 +54,11 @@ public partial class BattleHud : Hud
 
 	public override void _Process(double delta)
 	{
-		Player player = BattleWorld.Player;
+		Player player = ClientBattleWorld.Player;
 		if (player == null) return;
 		
-		Waves.Text = $"Wave: {BattleWorld.EnemyWave.WaveNumber}";
-		Enemies.Text = $"Enemies: {BattleWorld.Enemies.Count}";
+		Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";
+		Enemies.Text = $"Enemies: {ClientBattleWorld.Enemies.Count}";
         
 		HpBar.CurrentUpperValue = player.Hp;
 		double hpBarValueDelta = Mathf.Clamp(HpBar.CurrentLowerValue - HpBar.CurrentUpperValue, 
@@ -74,8 +74,8 @@ public partial class BattleHud : Hud
 		SolarBeamIcon.Progress = player.AdvancedAbilityCd.FractionElapsed;
 		
 		var shader = TimerSprite.Material as ShaderMaterial;
-		shader.SetShaderParameter("Progress", 1-BattleWorld.EnemyWave.NextWaveTimer / BattleWorld.EnemyWave.WaveTimeout);
-		TimerLabel.Text = BattleWorld.EnemyWave.NextWaveTimer.ToString("N0");
+		shader.SetShaderParameter("Progress", 1-ClientBattleWorld.EnemyWave.NextWaveTimer / ClientBattleWorld.EnemyWave.WaveTimeout);
+		TimerLabel.Text = ClientBattleWorld.EnemyWave.NextWaveTimer.ToString("N0");
 	}
 
 	/// <summary>

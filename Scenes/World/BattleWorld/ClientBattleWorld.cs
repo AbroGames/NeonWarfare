@@ -4,7 +4,7 @@ using KludgeBox.Events.Global;
 
 namespace NeonWarfare;
 
-public partial class BattleWorld : World
+public partial class ClientBattleWorld : World
 {
 	public BattleHud BattleHud { get; set; }
 	public EnemyWave EnemyWave { get; set; } = new(); //TODO it is component, rename it

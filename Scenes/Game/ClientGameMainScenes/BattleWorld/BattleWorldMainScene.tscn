@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://851poce6mggu"]
 
 [ext_resource type="Script" path="res://Scenes/Game/ClientGameMainScenes/BattleWorld/BattleGameMainScene.cs" id="1_ddpms"]
-[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/BattleWorld.tscn" id="2_1wr57"]
+[ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld.tscn" id="2_1wr57"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="3_v22hi"]
 
 [node name="BattleWorldMainScene" type="Node2D" node_paths=PackedStringArray("BattleWorld", "BattleHud")]

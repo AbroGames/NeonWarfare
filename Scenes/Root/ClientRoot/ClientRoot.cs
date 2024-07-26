@@ -31,8 +31,7 @@ public partial class ClientRoot : Node2D
 	
 	protected void Start()
 	{
-		var mainMenu = PackedScenes.Main.MainMenu;
-		SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
+		MenuService.ActivateMainMenu();
 	}
 	
 	public void Shutdown()

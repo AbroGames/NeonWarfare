@@ -9,7 +9,7 @@ public partial class SafeHud : Hud
 	[Export] [NotNull] public Label Level { get; private set; }
 	[Export] [NotNull] public Label Fps { get; private set; }
 	
-	public SafeWorld SafeWorld { get; set; }
+	public ClientSafeWorld ClientSafeWorld { get; set; }
 	
 	public override void _Ready()
 	{
@@ -18,7 +18,7 @@ public partial class SafeHud : Hud
 
 	public override void _Process(double delta)
 	{
-		Player player = SafeWorld.Player;
+		Player player = ClientSafeWorld.Player;
 		if (player == null) return;
 
 		HpBar.CurrentUpperValue = player.Hp;

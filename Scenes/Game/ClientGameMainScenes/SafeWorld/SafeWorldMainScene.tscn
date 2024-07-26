@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://ckusgv6yysi45"]
 
 [ext_resource type="Script" path="res://Scenes/Game/ClientGameMainScenes/SafeWorld/SafeGameMainScene.cs" id="1_v35jn"]
-[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/SafeWorld.tscn" id="2_0omu6"]
+[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld.tscn" id="2_0omu6"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="3_jh3ok"]
 [ext_resource type="Script" path="res://Scenes/Game/ClientGameMainScenes/SafeWorld/GreenOverlay.cs" id="4_p5u4r"]
 

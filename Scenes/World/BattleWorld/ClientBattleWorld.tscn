@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bsof5i3qpnyv0"]
 
-[ext_resource type="Script" path="res://Scenes/World/BattleWorld/BattleWorld.cs" id="1_175qr"]
+[ext_resource type="Script" path="res://Scenes/World/BattleWorld/ClientBattleWorld.cs" id="1_175qr"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Floor.cs" id="2_s00f6"]
 [ext_resource type="Texture2D" uid="uid://2sy6uyv2haxf" path="res://Assets/Textures/floor3.png" id="3_ncvcw"]
 

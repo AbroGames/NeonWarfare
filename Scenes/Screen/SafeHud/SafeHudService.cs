@@ -16,9 +16,9 @@ public static class SafeHudService
     public static void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
         Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
-        BattleGameMainScene battleGameMainScene = ServerRoot.Instance.PackedScenes.Main.BattleWorld.Instantiate<BattleGameMainScene>();
+        BattleGameMainScene battleGameMainScene = ServerRoot.Instance.PackedScenes.GameMainScenes.BattleWorld.Instantiate<BattleGameMainScene>();
         ServerRoot.Instance.Game.ChangeMainScene(battleGameMainScene);
-        BattleWorld battleWorld = battleGameMainScene.BattleWorld;
+        ClientBattleWorld clientBattleWorld = battleGameMainScene.ClientBattleWorld;
         
         ServerRoot.Instance.Game.NetworkEntityManager.Clear();
         
@@ -28,21 +28,21 @@ public static class SafeHudService
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
             
-            if (battleWorld.GetChild<Camera>() == null)
+            if (clientBattleWorld.GetChild<Camera>() == null)
             {
-                battleWorld.Player = player;
+                clientBattleWorld.Player = player;
                 
                 var camera = new Camera(); //TODO del from server!!
                 camera.Position = player.Position;
                 camera.TargetNode = player;
                 camera.Zoom = Vec(0.65);
                 camera.SmoothingPower = 1.5;
-                battleWorld.AddChild(camera);
+                clientBattleWorld.AddChild(camera);
                 camera.Enabled = true;
             }
 
             playerServerInfo.Player = player;
-            battleWorld.AddChild(player);
+            clientBattleWorld.AddChild(player);
             long newPlayerNid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(player);
             
             Netplay.Send(playerServerInfo.Id, 

@@ -25,8 +25,8 @@ public static class BattleWorldWavesService
     [EventListener]
     public static void OnBattleWorldNewWaveRequestEvent(BattleWorldNewWaveRequestEvent battleWorldNewWaveRequestEvent)
     {
-        BattleWorld battleWorld = battleWorldNewWaveRequestEvent.BattleWorld;
-        EnemyWave enemyWave = battleWorld.EnemyWave;
+        ClientBattleWorld clientBattleWorld = battleWorldNewWaveRequestEvent.ClientBattleWorld;
+        EnemyWave enemyWave = clientBattleWorld.EnemyWave;
         
         enemyWave.NextWaveTimer = enemyWave.WaveTimeout;
         enemyWave.WaveNumber++;
@@ -41,6 +41,6 @@ public static class BattleWorldWavesService
         }
 
         Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
-        battleWorld.BattleHud.PlayNewWaveEffect(enemyWave.WaveNumber);
+        clientBattleWorld.BattleHud.PlayNewWaveEffect(enemyWave.WaveNumber);
     }
 }
