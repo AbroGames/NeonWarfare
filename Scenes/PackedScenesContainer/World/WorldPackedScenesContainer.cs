@@ -5,6 +5,10 @@ namespace NeonWarfare;
 
 public partial class WorldPackedScenesContainer : Node
 {
+    
+    [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
+    [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
+    
     [Export] [NotNull] public PackedScene Player { get; private set; }
     [Export] [NotNull] public PackedScene Ally { get; private set; }
     [Export] [NotNull] public PackedScene Enemy { get; private set; }

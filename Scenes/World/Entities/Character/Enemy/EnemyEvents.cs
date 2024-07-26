@@ -2,8 +2,8 @@
 
 namespace NeonWarfare;
 
-public readonly record struct EnemyStartAttractionEvent(BattleWorld BattleWorld, Enemy Enemy) : IEvent;
-public readonly record struct EnemyStopAttractionEvent(BattleWorld BattleWorld, Enemy Enemy) : IEvent;
+public readonly record struct EnemyStartAttractionEvent(ClientBattleWorld ClientBattleWorld, Enemy Enemy) : IEvent;
+public readonly record struct EnemyStopAttractionEvent(ClientBattleWorld ClientBattleWorld, Enemy Enemy) : IEvent;
 public readonly record struct EnemyPhysicsProcessEvent(Enemy Enemy, double Delta) : IEvent;
 public readonly record struct EnemyProcessEvent(Enemy Enemy, double Delta) : IEvent;
 public readonly record struct EnemyReadyEvent(Enemy Enemy) : IEvent;

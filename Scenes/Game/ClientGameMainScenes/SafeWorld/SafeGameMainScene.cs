@@ -6,20 +6,20 @@ namespace NeonWarfare;
 public partial class SafeGameMainScene : Node2D, IGameMainScene
 {
 
-	[Export] [NotNull] public SafeWorld SafeWorld { get; private set; }
+	[Export] [NotNull] public ClientSafeWorld ClientSafeWorld { get; private set; }
 	[Export] [NotNull] public SafeHud SafeHud { get; private set; }
 	
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		SafeHud.SafeWorld = SafeWorld;
-		SafeWorld.SafeHud = SafeHud;
+		SafeHud.ClientSafeWorld = ClientSafeWorld;
+		ClientSafeWorld.SafeHud = SafeHud;
 	}
 
 	public World GetWorld()
 	{
-		return SafeWorld;
+		return ClientSafeWorld;
 	}
 
 	public Hud GetHud()

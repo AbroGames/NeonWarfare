@@ -10,7 +10,7 @@ public partial class GraphicSettingsButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            MenuButtonsService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.GraphicSettingsMenu);
+            MenuService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.GraphicSettingsMenu);
         };
     }
 }

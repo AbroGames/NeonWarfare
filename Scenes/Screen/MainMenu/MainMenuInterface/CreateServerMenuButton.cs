@@ -10,7 +10,7 @@ public partial class CreateServerMenuButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            MenuButtonsService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.CreateServerMenu);
+            MenuService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Screen.CreateServerMenu);
         };
     }
 }

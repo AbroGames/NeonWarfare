@@ -13,13 +13,13 @@ public static class EnemyMovementService
     [EventListener(ListenerSide.Server)]
     public static void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
-        attractionEvent.BattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
+        attractionEvent.ClientBattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
     public static void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
-        attractionEvent.BattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
+        attractionEvent.ClientBattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
@@ -72,11 +72,11 @@ public static class EnemyMovementService
 
     private static Vector2 GetAttractionDirection(Enemy enemy)
     {
-        if ((enemy.GetParent() as BattleWorld).EnemyAttractors.Count == 0) return Vec();
+        if ((enemy.GetParent() as ClientBattleWorld).EnemyAttractors.Count == 0) return Vec();
             
-        Enemy closestAttractor = (enemy.GetParent() as BattleWorld).EnemyAttractors.FirstOrDefault();
+        Enemy closestAttractor = (enemy.GetParent() as ClientBattleWorld).EnemyAttractors.FirstOrDefault();
         double dist = closestAttractor.Position.DistanceSquaredTo(enemy.Position);
-        foreach (var attractor in (enemy.GetParent() as BattleWorld).EnemyAttractors)
+        foreach (var attractor in (enemy.GetParent() as ClientBattleWorld).EnemyAttractors)
         {
             if (attractor == enemy) continue;
             var newDist = enemy.Position.DistanceSquaredTo(attractor.Position);

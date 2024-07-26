@@ -18,7 +18,7 @@ public static class GodotServerService
         Netplay.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = ServerRoot.Instance.Game.World;
-        if (currentWorld is SafeWorld)
+        if (currentWorld is ClientSafeWorld)
         {
             Player player = ServerRoot.Instance.PackedScenes.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
@@ -55,7 +55,7 @@ public static class GodotServerService
             
             //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
-        else if (currentWorld is BattleWorld)
+        else if (currentWorld is ClientBattleWorld)
         {
             Netplay.Send(peerConnectedEvent.Id, new ServerWaitBattleEndPacket());
         }

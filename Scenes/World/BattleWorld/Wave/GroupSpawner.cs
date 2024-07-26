@@ -9,7 +9,7 @@ public partial class GroupSpawner : Node2D
 {
     public double Radius { get; set; }
     public double Amount { get; set; }
-    public BattleWorld World { get; set; }
+    public ClientBattleWorld World { get; set; }
 
     public override void _Process(double delta)
     {

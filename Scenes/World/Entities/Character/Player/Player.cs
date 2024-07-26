@@ -58,8 +58,7 @@ public partial class Player : Character
 	{
 		base.Die();
 		
-		var mainMenu = ClientRoot.Instance.PackedScenes.Main.MainMenu;
-		ClientRoot.Instance.SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
+		MenuService.ActivateMainMenu();
 		Audio2D.StopMusic();
 	}
 
