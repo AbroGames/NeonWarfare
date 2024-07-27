@@ -57,7 +57,10 @@ public class CmdArgsService
 
         try
         {
-            arg = Convert.ToInt32(argAsString);
+            if (argAsString != null)
+            {
+                arg = Convert.ToInt32(argAsString);
+            }
         }
         catch (Exception ex) when (ex is FormatException || ex is OverflowException)
         {
@@ -75,7 +78,10 @@ public class CmdArgsService
 
         try
         {
-            arg = Convert.ToInt32(argAsString);
+            if (argAsString != null)
+            {
+                arg = Convert.ToInt32(argAsString);
+            }
         }
         catch (Exception ex) when (ex is FormatException || ex is OverflowException)
         {
