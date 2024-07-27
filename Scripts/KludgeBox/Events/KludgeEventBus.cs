@@ -188,18 +188,18 @@ public class KludgeEventBus
 
         Type eventType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
         var delegateType = typeof(Action<>).MakeGenericType(eventType);
-        var isInstanceEvent = eventType.IsAssignableTo(typeof(IInstanceEvent));
+        var mustBeResolved = subscriptionInfo.MustBeResolved;//eventType.IsAssignableTo(typeof(IInstanceEvent));
 
         // Create an Action<TArg> delegate from the MethodInfo
         if (DelegateHelpers.IsQueryEvent(eventType) && DelegateHelpers.IsQueryListener(subscriptionInfo.Method))
         {
-            actionDelegate = isInstanceEvent
+            actionDelegate = mustBeResolved
             ? DelegateHelpers.FuncToResolvingAction(subscriptionInfo.Method)
             : DelegateHelpers.FuncToAction(subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
         else
         {
-            actionDelegate = isInstanceEvent 
+            actionDelegate = mustBeResolved 
                 ? DelegateHelpers.InstanceResolvingAction(subscriptionInfo.Method)
                 : Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
