@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://dkmaek7egfvff"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_mlk3r"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/PlayerSettingsButton.cs" id="2_uvvgx"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/SoundSettingsButton.cs" id="3_63kpx"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/GraphicSettingsButton.cs" id="4_lxsys"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/CommonInterface/BackToMainMenuButton.cs" id="4_yru60"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/PlayerSettingsButton.cs" id="2_uvvgx"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/SoundSettingsButton.cs" id="3_63kpx"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/GraphicSettingsButton.cs" id="4_lxsys"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CommonInterface/BackToMainMenuButton.cs" id="4_yru60"]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3

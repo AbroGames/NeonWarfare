@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://dw24k3p4lhskq"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/MainScene/MainMenuMainScene.cs" id="1_tlyle"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainScene/MainMenuMainScene.cs" id="1_tlyle"]
 [ext_resource type="Script" path="res://Scripts/Containers/NodeContainer.cs" id="1_ugbjc"]
-[ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenu/MainMenuInterface/MainMenu.tscn" id="3_fgxhg"]
+[ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="3_fgxhg"]
 
 [node name="MainMenuMainScene" type="Node2D" node_paths=PackedStringArray("BackgroundContainer", "MenuContainer", "ForegroundContainer")]
 script = ExtResource("1_tlyle")

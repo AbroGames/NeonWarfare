@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bo4752bgus85w"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/GraphicSettingInterface/FullscreenCheckBox.cs" id="1_3ojmr"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/GraphicSettingInterface/FullscreenCheckBox.cs" id="1_3ojmr"]
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="2_uv7mv"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenu/SettingsMenuInterface/BackToSettingsMenuButton.cs" id="3_m1hnl"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/BackToSettingsMenuButton.cs" id="3_m1hnl"]
 
 [node name="GraphicSettingsMenu" type="Control"]
 layout_mode = 3
