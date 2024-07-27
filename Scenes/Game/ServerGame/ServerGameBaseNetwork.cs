@@ -19,6 +19,7 @@ public partial class ServerGame
 		Network = new();
 		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
+		Network.SetDefaultResolver(nid => NetworkEntityManager.GetNode((long) nid));
 	}
 
 	public void CreateServer(int port)
