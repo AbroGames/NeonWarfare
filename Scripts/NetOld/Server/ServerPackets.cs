@@ -1,4 +1,5 @@
 
+using KludgeBox.Events;
 using KludgeBox.Networking;
 
 namespace NeonWarfare.NetOld.Server;
@@ -32,8 +33,10 @@ public class ServerSpawnAllyPacket(long nid, double x, double y, double dir) : B
 }
 
 [GamePacket]
-public class ServerPositionEntityPacket(long nid, double x, double y, double dir) : BinaryPacket
+public class ServerPositionEntityPacket(long nid, double x, double y, double dir) : BinaryPacket, IInstanceEvent
 {
+    public object NetworkId => Nid;
+    
     public long Nid = nid;
     public double X = x;
     public double Y = y;

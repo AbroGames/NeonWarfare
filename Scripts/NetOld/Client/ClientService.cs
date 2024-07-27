@@ -46,13 +46,13 @@ public static class ClientService
         world.AddChild(ally);
     }
     
-    [EventListener(ListenerSide.Client)]
+    /*[EventListener(ListenerSide.Client)]
     public static void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
     {
         Node2D node = ClientRoot.Instance.Game.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
         node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
         node.Rotation = serverPositionEntityPacket.Dir;
-    }
+    }*/
 
     [EventListener(ListenerSide.Client)]
     public static void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
