@@ -17,6 +17,10 @@ public partial class ClientGame
 		Network = new();
 		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
+		Network.SetDefaultResolver(identifier =>
+		{
+			return NetworkEntityManager.GetNode((long)identifier);
+		});
 	} 
 
 	public void ConnectToServer(string host, int port)

@@ -24,6 +24,7 @@ public partial class Network : Node
     public const long ServerId = 1;
     
     private Dictionary<Type, InstanceResolver> _packetTargetResolvers = new();
+    private InstanceResolver _defaultResolver;
     
     public Netmode Mode { get; set; }
     public PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
@@ -52,12 +53,22 @@ public partial class Network : Node
         
         _packetTargetResolvers.Add(targetInstanceType, resolver);
     }
+    
+    public void SetDefaultResolver(InstanceResolver resolver)
+    {
+        _defaultResolver = resolver;
+    }
 
     public object ResolveInstance(Type targetInstanceType, object instanceIdentifier)
     {
         if (_packetTargetResolvers.TryGetValue(targetInstanceType, out var resolver))
         {
             return resolver(instanceIdentifier);
+        }
+
+        if (_defaultResolver != null)
+        {
+            return _defaultResolver(instanceIdentifier);
         }
 
         throw new KeyNotFoundException($"Unable to find resolver for type '{targetInstanceType.FullName}'");
@@ -139,4 +150,5 @@ public partial class Network : Node
         
         EventBus.Publish(packetObj);
     }
+    
 }

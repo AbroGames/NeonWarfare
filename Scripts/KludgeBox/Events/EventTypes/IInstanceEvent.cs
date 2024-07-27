@@ -2,5 +2,5 @@
 
 public interface IInstanceEvent : IEvent
 {
-    object InstanceId { get; }
+    object NetworkId { get; }
 }
