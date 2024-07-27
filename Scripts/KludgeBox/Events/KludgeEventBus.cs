@@ -29,7 +29,7 @@ public class KludgeEventBus
     /// <returns>A listener token that can be used to unsubscribe from the event.</returns>
     public ListenerToken Subscribe<T>(Action<T> action, ListenerPriority priority) where T : IEvent
     {
-        return SubscribeByInfo<T>(new(action, false, null), priority);
+        return SubscribeByInfo<T>(new(action, false, null, false), priority);
     }
 
     public ListenerToken SubscribeByInfo<T>(ListenerInfo<T> info, ListenerPriority priority) where T : IEvent
@@ -188,16 +188,20 @@ public class KludgeEventBus
 
         Type eventType = subscriptionInfo.Method.GetParameters()[0].ParameterType;
         var delegateType = typeof(Action<>).MakeGenericType(eventType);
+        var isInstanceEvent = eventType.IsAssignableTo(typeof(IInstanceEvent));
 
         // Create an Action<TArg> delegate from the MethodInfo
-        if (QueryHelpers.IsQueryEvent(eventType) && QueryHelpers.IsQueryListener(subscriptionInfo.Method))
+        if (DelegateHelpers.IsQueryEvent(eventType) && DelegateHelpers.IsQueryListener(subscriptionInfo.Method))
         {
-            actionDelegate = QueryHelpers.ToAction(subscriptionInfo.Invoker, subscriptionInfo.Method);
+            actionDelegate = isInstanceEvent
+            ? DelegateHelpers.FuncToResolvingAction(subscriptionInfo.Method)
+            : DelegateHelpers.FuncToAction(subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
         else
         {
-            actionDelegate =
-                Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
+            actionDelegate = isInstanceEvent 
+                ? DelegateHelpers.InstanceResolvingAction(subscriptionInfo.Method)
+                : Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
 
         var infoType = typeof(ListenerInfo<>).MakeGenericType(eventType);
@@ -205,7 +209,8 @@ public class KludgeEventBus
         var info = infoType.GetConstructors().First().Invoke([
             actionDelegate,
             subscriptionInfo.IsDefault || forceDefault, // define by assembly it located in
-            subscriptionInfo.Method // if this is not null
+            subscriptionInfo.Method, // if this is not null
+            subscriptionInfo.MustBeResolved
         ]);
 
         Log.Debug(

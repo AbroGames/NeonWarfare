@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,14 +8,22 @@ using KludgeBox.Events.Global;
 
 namespace KludgeBox.Networking;
 
-
+/// <summary>
+/// Describes logic for obtaining instance by its identifier.
+/// </summary>
+public delegate object InstanceResolver(object instanceIdentifier);
 public partial class Network : Node
 {
+    // TODO Need this to access resolvers from DelegateHelpers.
+    public static Network Instance { get; private set; }
+    
     public const string DefaultHost = "127.0.0.1";
     public const int DefaultPort = 25566;
     
     public const long BroadcastId = 0;
     public const long ServerId = 1;
+    
+    private Dictionary<Type, InstanceResolver> _packetTargetResolvers = new();
     
     public Netmode Mode { get; set; }
     public PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
@@ -31,6 +40,30 @@ public partial class Network : Node
         Client,
         Server
     }
+
+    public bool HasResolver(Type targetInstanceType) => _packetTargetResolvers.ContainsKey(targetInstanceType);
+    
+    public void AddInstanceResolver(Type targetInstanceType, InstanceResolver resolver)
+    {
+        if(resolver is null)
+        {
+            throw new ArgumentNullException(nameof(resolver));
+        }
+        
+        _packetTargetResolvers.Add(targetInstanceType, resolver);
+    }
+
+    public object ResolveInstance(Type targetInstanceType, object instanceIdentifier)
+    {
+        if (_packetTargetResolvers.TryGetValue(targetInstanceType, out var resolver))
+        {
+            return resolver(instanceIdentifier);
+        }
+
+        throw new KeyNotFoundException($"Unable to find resolver for type '{targetInstanceType.FullName}'");
+    }
+    
+    
     
     // Called from Root._Ready()
     // Seems like some sort of potential memory leak.
@@ -38,7 +71,9 @@ public partial class Network : Node
     {
         // Avoid multiple event subscriptions.
         if (Api == api) return;
-     
+        
+        Instance = this;
+        
         Log.Debug("Init network");
         Api = api;
         Api.ServerDisconnected += CloseConnection;

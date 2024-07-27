@@ -90,7 +90,7 @@ public static class EventBus
         var services = registry.Services
             .Where(x => x.GetType().GetCustomAttribute<GameServiceAttribute>()!.Side.HasFlag(busSide));
         
-        var listeners = EventScanner.ScanEventListenersInTypesOfType(services.ToArray(), typeof(IEvent));
+        var listeners = EventScanner.ScanEventListenersInInstancesOfType(services.ToArray(), typeof(IEvent));
 
         Log.Info($"Registering {listeners.Count()} listeners from registered services");
         foreach (var listener in listeners)
@@ -102,6 +102,7 @@ public static class EventBus
     public static void RegisterListeners()
     {
         var listeners = EventScanner.ScanStaticEventListenersOfType(typeof(IEvent));
+        listeners.Concat(EventScanner.ScanInstanceEventListenersOfType(typeof(IEvent)));
 
         Log.Info($"Registering {listeners.Count()} static listeners from all found classes");
         foreach (var listener in listeners)
