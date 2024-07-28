@@ -101,8 +101,10 @@ public static class EventBus
     
     public static void RegisterListeners()
     {
-        var listeners = EventScanner.ScanStaticEventListenersOfType(typeof(IEvent));
-        listeners.Concat(EventScanner.ScanInstanceEventListenersOfType(typeof(IEvent)));
+        var staticListeners = EventScanner.ScanStaticEventListenersOfType(typeof(IEvent));
+        var instanceListeners = EventScanner.ScanInstanceEventListenersOfType(typeof(IEvent));
+
+        var listeners = staticListeners.Concat(instanceListeners);
 
         Log.Info($"Registering {listeners.Count()} static listeners from all found classes");
         foreach (var listener in listeners)
