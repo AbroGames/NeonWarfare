@@ -3,9 +3,8 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class GameMainScenesPackedScenesContainer : Node
+public partial class ClientGameMainScenesPackedScenesContainer : Node
 {
-    [Export] [NotNull] public PackedScene Game { get; private set; }
     [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
     [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
     

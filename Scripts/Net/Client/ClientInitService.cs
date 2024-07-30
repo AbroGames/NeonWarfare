@@ -17,8 +17,6 @@ public static class ClientInitService
     public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
         ClientRoot.Instance.GetWindow().MoveToForeground();
-        
-        var gameScene = ClientRoot.Instance.PackedScenes.GameMainScenes.Game;
-        ClientRoot.Instance.SetMainScene(gameScene.Instantiate<ClientGame>());
+        ClientRoot.Instance.SetMainScene(new ClientGame());
     }
 }

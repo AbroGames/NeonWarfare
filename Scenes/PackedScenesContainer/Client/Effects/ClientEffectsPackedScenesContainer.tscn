@@ -1,0 +1,14 @@
+[gd_scene load_steps=6 format=3 uid="uid://ddqrhjro85880"]
+
+[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Client/Effects/ClientEffectsPackedScenesContainer.cs" id="1_vmaa7"]
+[ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/DeathFx.tscn" id="2_r1j1m"]
+[ext_resource type="PackedScene" uid="uid://3cohjn4xbp2o" path="res://Scenes/World/Effects/DebrisFx.tscn" id="3_psknn"]
+[ext_resource type="PackedScene" uid="uid://5nblerr5d58t" path="res://Scenes/World/Effects/BulletHitFx.tscn" id="4_g0ibb"]
+[ext_resource type="PackedScene" uid="uid://dsktb63djjnqc" path="res://Scenes/World/Effects/SpawnFx.tscn" id="5_vpqw3"]
+
+[node name="ClientEffectsPackedScenesContainer" type="Node"]
+script = ExtResource("1_vmaa7")
+DeathFx = ExtResource("2_r1j1m")
+DebrisFx = ExtResource("3_psknn")
+BulletHitFx = ExtResource("4_g0ibb")
+SpawnFx = ExtResource("5_vpqw3")
