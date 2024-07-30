@@ -4,9 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld.tscn" id="2_1wr57"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="3_v22hi"]
 
-[node name="BattleWorldMainScene" type="Node2D" node_paths=PackedStringArray("BattleWorld", "BattleHud")]
+[node name="BattleWorldMainScene" type="Node2D" node_paths=PackedStringArray("ClientBattleWorld", "BattleHud")]
 script = ExtResource("1_ddpms")
-BattleWorld = NodePath("BattleWorld")
+ClientBattleWorld = NodePath("BattleWorld")
 BattleHud = NodePath("Screen/BattleHud")
 
 [node name="BattleWorld" parent="." instance=ExtResource("2_1wr57")]

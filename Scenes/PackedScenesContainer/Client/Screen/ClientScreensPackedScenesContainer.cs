@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class ScreenPackedScenesContainer : Node
+public partial class ClientScreensPackedScenesContainer : Node
 {
     [Export] [NotNull] public PackedScene MainMenuPackedScene { get; private set; }
     
