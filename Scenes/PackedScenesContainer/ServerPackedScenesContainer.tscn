@@ -1,22 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://5vh8drujl1s5"]
+[gd_scene load_steps=4 format=3 uid="uid://5vh8drujl1s5"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/PackedScenesContainer.cs" id="1_i5nuu"]
-[ext_resource type="PackedScene" uid="uid://c7kxnv5qmoare" path="res://Scenes/PackedScenesContainer/Main/ServerMainPackedScenesContainer.tscn" id="2_2olmt"]
-[ext_resource type="PackedScene" uid="uid://3jftjd3egrvl" path="res://Scenes/PackedScenesContainer/Screen/ScreenPackedScenesContainer.tscn" id="3_fq4ol"]
-[ext_resource type="PackedScene" uid="uid://cx42uux5b88nw" path="res://Scenes/PackedScenesContainer/World/ServerWorldPackedScenesContainer.tscn" id="5_3vkmv"]
-[ext_resource type="PackedScene" uid="uid://ddqrhjro85880" path="res://Scenes/PackedScenesContainer/Effects/EffectsPackedScenesContainer.tscn" id="6_dqhpt"]
+[ext_resource type="PackedScene" uid="uid://cp2wnvqoax2lo" path="res://Scenes/PackedScenesContainer/Client/ClientPackedScenesContainer.tscn" id="2_4fkxx"]
+[ext_resource type="PackedScene" uid="uid://bt7k43hm3tabt" path="res://Scenes/PackedScenesContainer/Common/ServerCommonPackedScenesContainer.tscn" id="3_6r0v2"]
 
-[node name="ServerPackedScenesContainer" type="Node" node_paths=PackedStringArray("Main", "World", "Screen", "Effects")]
+[node name="ServerPackedScenesContainer" type="Node" node_paths=PackedStringArray("Client", "Common")]
 script = ExtResource("1_i5nuu")
-Main = NodePath("Main")
-World = NodePath("World")
-Screen = NodePath("Screen")
-Effects = NodePath("Effects")
+Client = NodePath("ClientPackedScenesContainer")
+Common = NodePath("ServerCommonPackedScenesContainer")
 
-[node name="Main" parent="." instance=ExtResource("2_2olmt")]
+[node name="ClientPackedScenesContainer" parent="." instance=ExtResource("2_4fkxx")]
 
-[node name="Screen" parent="." instance=ExtResource("3_fq4ol")]
-
-[node name="World" parent="." instance=ExtResource("5_3vkmv")]
-
-[node name="Effects" parent="." instance=ExtResource("6_dqhpt")]
+[node name="ServerCommonPackedScenesContainer" parent="." instance=ExtResource("3_6r0v2")]
