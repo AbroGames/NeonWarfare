@@ -16,33 +16,32 @@ public static class SafeHudService
     public static void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
         Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
-        BattleGameMainScene battleGameMainScene = ServerRoot.Instance.PackedScenes.GameMainScenes.BattleWorld.Instantiate<BattleGameMainScene>();
-        ServerRoot.Instance.Game.ChangeMainScene(battleGameMainScene);
-        ClientBattleWorld clientBattleWorld = battleGameMainScene.ClientBattleWorld;
+        ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
+        ServerRoot.Instance.Game.ChangeMainScene(serverBattleWorld);
         
         ServerRoot.Instance.Game.NetworkEntityManager.Clear();
         
         foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
         {
-            Player player = ServerRoot.Instance.PackedScenes.World.Player.Instantiate<Player>();
+            Player player = ServerRoot.Instance.PackedScenes.Common.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
             
-            if (clientBattleWorld.GetChild<Camera>() == null)
+            if (serverBattleWorld.GetChild<Camera>() == null)
             {
-                clientBattleWorld.Player = player;
+                serverBattleWorld.Player = player;
                 
                 var camera = new Camera(); //TODO del from server!!
                 camera.Position = player.Position;
                 camera.TargetNode = player;
                 camera.Zoom = Vec(0.65);
                 camera.SmoothingPower = 1.5;
-                clientBattleWorld.AddChild(camera);
+                serverBattleWorld.AddChild(camera);
                 camera.Enabled = true;
             }
 
             playerServerInfo.Player = player;
-            clientBattleWorld.AddChild(player);
+            serverBattleWorld.AddChild(player);
             long newPlayerNid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(player);
             
             Netplay.Send(playerServerInfo.Id, 

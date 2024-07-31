@@ -24,9 +24,7 @@ public partial class Server : Node
     public override void _Ready()
     {
         IsParentDeadChecker.Ready += CheckParentIsDead;
-
-        var serverGame = ServerRoot.Instance.PackedScenes.GameMainScenes.Game;
-        ServerRoot.Instance.SetMainScene(serverGame.Instantiate<ServerGame>());
+        ServerRoot.Instance.SetMainScene(new ServerGame());
         
         Log.Info("Server ready!");
     }    

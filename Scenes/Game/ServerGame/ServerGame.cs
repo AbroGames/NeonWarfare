@@ -12,13 +12,7 @@ public partial class ServerGame : Node2D
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		var safeWorld = ServerRoot.Instance.PackedScenes.GameMainScenes.SafeWorld;
-		ChangeMainScene(safeWorld.Instantiate<SafeGameMainScene>());
-	}
-
-	public void ChangeMainScene(IGameMainScene a) //TODO del
-	{
-		
+		ChangeMainScene(new ServerSafeWorld());
 	}
 	
 	public void ChangeMainScene(World serverWorld)

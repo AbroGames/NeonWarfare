@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bt7k43hm3tabt"]
+
+[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Common/CommonPackedScenesContainer.cs" id="1_1ijiq"]
+[ext_resource type="PackedScene" uid="uid://rrldwblbm2at" path="res://Scenes/PackedScenesContainer/Common/World/ServerWorldPackedScenesContainer.tscn" id="2_oajrr"]
+
+[node name="ServerCommonPackedScenesContainer" type="Node" node_paths=PackedStringArray("World")]
+script = ExtResource("1_1ijiq")
+World = NodePath("ServerCommonWorldPackedScenesContainer")
+
+[node name="ServerCommonWorldPackedScenesContainer" parent="." instance=ExtResource("2_oajrr")]
