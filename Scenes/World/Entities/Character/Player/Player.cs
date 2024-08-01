@@ -116,7 +116,7 @@ public partial class Player : Character
 
 	private void UseBasicSkill()
 	{
-		var node = ClientRoot.Instance.PackedScenes.World.Beam.Instantiate();
+		var node = ClientRoot.Instance.PackedScenes.Common.World.Beam.Instantiate();
 		var beam = node as Beam;
 		var shaker = Camera.ShakeManually();
 		beam.Shaker = shaker;
@@ -135,7 +135,7 @@ public partial class Player : Character
 	
 	private void UseAdvancedSkill()
 	{
-		var node = ClientRoot.Instance.PackedScenes.World.SolarBeam.Instantiate();
+		var node = ClientRoot.Instance.PackedScenes.Common.World.SolarBeam.Instantiate();
 		var beam = node as SolarBeam;
 		beam.Rotation = -Mathf.Pi / 2;
 		beam.Source = this;

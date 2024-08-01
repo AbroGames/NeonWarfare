@@ -18,7 +18,7 @@ public static class PlayerAttackService
         var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.SenderId].Player;
 		
         // Создание снаряда
-        Bullet bullet = ServerRoot.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
+        Bullet bullet = ServerRoot.Instance.PackedScenes.Common.World.Bullet.Instantiate<Bullet>();
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = Vec(clientPlayerPrimaryAttackPacket.X, clientPlayerPrimaryAttackPacket.Y);
         // Установка направления движения снаряда
@@ -40,7 +40,7 @@ public static class PlayerAttackService
     {
         
         // Создание снаряда
-        Bullet bullet = ClientRoot.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
+        Bullet bullet = ClientRoot.Instance.PackedScenes.Common.World.Bullet.Instantiate<Bullet>();
         bullet.Position = Vec(serverPlayerPrimaryAttackPacket.X, serverPlayerPrimaryAttackPacket.Y);
         bullet.Rotation = serverPlayerPrimaryAttackPacket.Dir;
         bullet.Scale *= 2;
@@ -68,7 +68,7 @@ public static class PlayerAttackService
         for (int i = 0; i < bulletsCount; i++)
         {
             // Создание снаряда
-            Bullet bullet = ServerRoot.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
+            Bullet bullet = ServerRoot.Instance.PackedScenes.Common.World.Bullet.Instantiate<Bullet>();
             // Установка начальной позиции снаряда
             bullet.GlobalPosition = Vec(clientPlayerSecondaryAttackPacket.X, clientPlayerSecondaryAttackPacket.Y);
             // Установка направления движения снаряда
@@ -90,7 +90,7 @@ public static class PlayerAttackService
     {
         
         // Создание снаряда
-        Bullet bullet = ClientRoot.Instance.PackedScenes.World.Bullet.Instantiate<Bullet>();
+        Bullet bullet = ClientRoot.Instance.PackedScenes.Common.World.Bullet.Instantiate<Bullet>();
         bullet.Position = Vec(serverPlayerSecondaryAttackPacket.X, serverPlayerSecondaryAttackPacket.Y);
         bullet.Rotation = serverPlayerSecondaryAttackPacket.Dir;
         bullet.Speed = serverPlayerSecondaryAttackPacket.MovementSpeed;

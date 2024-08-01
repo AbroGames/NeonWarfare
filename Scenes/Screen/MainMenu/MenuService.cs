@@ -11,7 +11,7 @@ public static class MenuService
 
     public static void ActivateMainMenu()
     {
-        var mainMenu = ClientRoot.Instance.PackedScenes.Screen.MainMenuPackedScene;
+        var mainMenu = ClientRoot.Instance.PackedScenes.Client.Screens.MainMenuPackedScene;
         ClientRoot.Instance.SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
     }
 }
