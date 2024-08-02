@@ -7,7 +7,7 @@ namespace NeonWarfare;
 
 public partial class Console : CanvasLayer, ILogger
 {
-    //[Export] [NotNull] public RichTextLabel TextLabel { get; private set; }
+
     [Export] [NotNull] public VBoxContainer MessagesContainer { get; private set; }
     [Export] [NotNull] public ScrollContainer ScrollContainer { get; private set; }
     [Export] public int MessagesCount { get; set; } = 1000;
@@ -88,23 +88,4 @@ public partial class Console : CanvasLayer, ILogger
             MessagesContainer.GetChild(0).QueueFree();
         }
     }
-    
-    /*private void Print(object msg, Color color, Exception exception = null)
-    {
-        if(msg is null && exception is null)
-        {
-            TextLabel.AppendText($"\n");
-            return;
-        }
-        
-        var sb = new StringBuilder();
-        sb.Append(msg ?? "");
-        sb.Append(msg is null || exception is null ? "" : "\n");
-        sb.Append(exception?.StackTrace ?? "");
-        
-        TextLabel.PushColor(color);
-        TextLabel.AppendText($"\n{sb}");
-        TextLabel.ScrollToLine(TextLabel.GetLineCount());
-        
-    }*/
 }
