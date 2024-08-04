@@ -26,10 +26,7 @@ public partial class ServerRoot : Node2D
 	
 	protected void Init()
 	{
-		ExceptionHandlerService.AddExceptionHandlerForUnhandledException();
-		CmdArgsService.LogCmdArgs();
-		EventBus.Init();
-		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
+		RootService.CommonInit(GetTree().GetMultiplayer() as SceneMultiplayer);
 		
 		if (CmdArgsService.ContainsInCmdArgs(ServerParams.RenderFlag))
 		{
