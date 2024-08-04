@@ -35,7 +35,7 @@ public partial class CreateServerButton : Button
             return;
         }
         
-        NetworkService.CreateDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
+        NetworkService.StartNewDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
         NetworkService.ConnectToServer(NetworkService.DefaultHost, port);
             
         if (ClientRoot.Instance.MainMenu is null)

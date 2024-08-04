@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Godot;
+using NeonWarfare;
 using NeonWarfare.Net;
 using NeonWarfare.NetOld.Server;
 using NeonWarfare.Utils;
@@ -109,16 +110,9 @@ public static class EventBus
         }
     }
 
-    public static void Init()
+    public static void Init(ListenerSide listenerSide)
     {
-        if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag))
-        {
-            Side = ListenerSide.Server;
-        }
-        else
-        {
-            Side = ListenerSide.Client;
-        }
+        Side = listenerSide;
         RegisterListeners();
     }
 

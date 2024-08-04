@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 using NeonWarfare.Net;
@@ -10,9 +11,10 @@ namespace NeonWarfare;
 public partial class ClientRoot : Node2D
 {
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-	
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
+	
+	public ClientParams CmdParams { get; private set; }
 
 	public override void _Ready()
 	{
@@ -22,13 +24,23 @@ public partial class ClientRoot : Node2D
 	
 	protected void Init()
 	{
-		RootService.CommonInit(GetTree().GetMultiplayer() as SceneMultiplayer);
+		RootService.CommonInit(GetTree().GetMultiplayer(), ListenerSide.Client);
+		CmdParams = ClientParams.GetFromCmd();
+		
 		SettingsService.Init();
 	}
 	
 	protected void Start()
 	{
-		MenuService.ActivateMainMenu();
+		if (CmdParams.AutoTest)
+		{
+			NetworkService.StartNewDedicatedServerApplication(NetworkService.DefaultPort, PlayerSettings.PlayerName, true);
+			NetworkService.ConnectToServer(NetworkService.DefaultHost, NetworkService.DefaultPort);
+		}
+		else
+		{
+			MenuService.ActivateMainMenu();
+		}
 	}
 	
 	public void Shutdown()

@@ -12,10 +12,9 @@ public static class NetworkService
     public const string DefaultHost = "127.0.0.1";
     public const int DefaultPort = 25566;
     
-    public static ServerParams CreateServer()
+    public static void CreateServer(int port)
     {
-        ServerParams serverParams = ServerParams.GetFromCmd();
-        Error error = Netplay.SetServer(serverParams.Port);
+        Error error = Netplay.SetServer(port);
         if (error == Error.Ok)
         {
             Log.Info($"Network successfully created.");
@@ -24,8 +23,6 @@ public static class NetworkService
         {
             Log.Error($"Create network with result: {error}");
         }
-        
-        return serverParams;
     }
     
     public static void ConnectToServer(string host, int port)
@@ -41,23 +38,11 @@ public static class NetworkService
         }
     }
     
-    public static void CreateDedicatedServerApplication(int port, string adminNickname, bool showConsole)
+    public static void StartNewDedicatedServerApplication(int port, string adminNickname, bool showConsole)
     {
-        List<string> serverParams =
-        [
-            ServerParams.ServerFlag,
-            ServerParams.PortParam, port.ToString(),
-            ServerParams.AdminParam, adminNickname,
-            ServerParams.ParentPidParam, OS.GetProcessId().ToString()
-        ];
-
-        if (!showConsole)
-        {
-            serverParams.Add(ServerParams.HeadlessFlag);
-        }
+        ServerParams serverParams = new ServerParams(!showConsole, false, port, adminNickname, OS.GetProcessId());
         
-        //serverParams.Add(ServerParams.RenderFlag); //TODO del or to Config node in Root
-        int serverPid = OS.CreateInstance(serverParams.ToArray());
+        int serverPid = OS.CreateInstance(serverParams.GetArrayToStartServer());
         ClientRoot.Instance.AddServerShutdowner(serverPid);
     }
 }

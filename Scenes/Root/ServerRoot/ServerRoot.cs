@@ -1,6 +1,7 @@
 using System.Linq;
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 using NeonWarfare.Net;
@@ -13,10 +14,11 @@ namespace NeonWarfare;
 public partial class ServerRoot : Node2D
 {
 	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
-	
 	[Export] [NotNull] public Console Console { get; private set; }
 	
-	public Server Server { get; private set; }
+	public ServerParams CmdParams { get; private set; }
+	
+	public Server Server { get; private set; } //TODO в game? Или куда-то ещё? Или удалить, т.к. ServerGame = Server? Но лучше не удалять, т.к. ServerGame и ClientGame должны быть схожи
 
 	public override void _Ready()
 	{
@@ -26,9 +28,10 @@ public partial class ServerRoot : Node2D
 	
 	protected void Init()
 	{
-		RootService.CommonInit(GetTree().GetMultiplayer() as SceneMultiplayer);
+		RootService.CommonInit(GetTree().GetMultiplayer(), ListenerSide.Server);
+		CmdParams = ServerParams.GetFromCmd();
 		
-		if (CmdArgsService.ContainsInCmdArgs(ServerParams.RenderFlag))
+		if (CmdParams.IsRender)
 		{
 			Console.QueueFree();
 		}
@@ -44,8 +47,8 @@ public partial class ServerRoot : Node2D
 			DisplayServer.ScreenGetSize().X - (int) GetViewport().GetVisibleRect().Size.X,
 			DisplayServer.ScreenGetSize().Y - (int) GetViewport().GetVisibleRect().Size.Y - 40));
 
-		ServerParams serverParams = NetworkService.CreateServer();
-		Server = new Server(serverParams);
+		NetworkService.CreateServer(CmdParams.Port);
+		Server = new Server();
 		AddChild(Server);
 	}
 	

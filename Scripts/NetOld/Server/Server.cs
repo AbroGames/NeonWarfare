@@ -11,16 +11,10 @@ namespace NeonWarfare.NetOld.Server;
 
 public partial class Server : Node
 {
-    public ServerParams ServerParams { get; private set; }
     public Cooldown IsParentDeadChecker { get; set; } = new(5);
     
     public IDictionary<long, PlayerServerInfo> PlayerServerInfo { get; private set; } = new Dictionary<long, PlayerServerInfo>();
-
-    public Server(ServerParams serverParams)
-    {
-        ServerParams = serverParams;
-    }
-
+    
     public override void _Ready()
     {
         IsParentDeadChecker.Ready += CheckParentIsDead;
@@ -36,7 +30,7 @@ public partial class Server : Node
     
     public void CheckParentIsDead()
     {
-        int? parentPid = ServerParams.ParentPid;
+        int? parentPid = ServerRoot.Instance.CmdParams.ParentPid;
         
         if (parentPid.HasValue && !Process.GetProcesses().Any(x => x.Id == parentPid.Value))
         {
