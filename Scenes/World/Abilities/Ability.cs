@@ -2,31 +2,6 @@ using System.Numerics;
 
 namespace NeonWarfare;
 
-/// <summary>
-/// Сособ активации способности
-/// </summary>
-public enum AbilityType
-{
-    /// <summary>
-    /// Основное оружие. По умолчанию на ЛКМ.
-    /// </summary>
-    PrimaryWeapon,
-    
-    /// <summary>
-    /// Дополнительное оружие. По умолчанию на ПКМ.
-    /// </summary>
-    SecondaryWeapon,
-    
-    /// <summary>
-    /// Базовая способность (Ешка).
-    /// </summary>
-    BasicSpecial,
-    
-    /// <summary>
-    /// Усиленная способность, ульта (Кушка).
-    /// </summary>
-    AdvancedSpecial
-}
 
 public abstract class Ability
 {
@@ -35,11 +10,6 @@ public abstract class Ability
     /// TODO: реализовать универсальный механизм регистрации и синхронизации ID по сети
     /// </summary>
     public int AbilityId { get; set; }
-    
-    /// <summary>
-    /// Способ активации способности.
-    /// </summary>
-    public AbilityType AbilityType { get; set; }
     
     /// <summary>
     /// Должно быть вызвано при получении способности.
