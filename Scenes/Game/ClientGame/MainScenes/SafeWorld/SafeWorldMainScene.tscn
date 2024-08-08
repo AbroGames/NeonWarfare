@@ -16,8 +16,10 @@ height = 256
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="SafeWorldMainScene" type="Node2D"]
+[node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("ClientSafeWorld", "SafeHud")]
 script = ExtResource("1_v35jn")
+ClientSafeWorld = NodePath("SafeWorld")
+SafeHud = NodePath("Screen/SafeHud")
 
 [node name="SafeWorld" parent="." instance=ExtResource("2_0omu6")]
 
