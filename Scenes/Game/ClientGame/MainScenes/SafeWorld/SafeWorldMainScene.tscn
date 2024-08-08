@@ -1,9 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://ckusgv6yysi45"]
+[gd_scene load_steps=4 format=3 uid="uid://ckusgv6yysi45"]
 
 [ext_resource type="Script" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeWorldMainScene.cs" id="1_v35jn"]
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld.tscn" id="2_0omu6"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="3_jh3ok"]
-[ext_resource type="PackedScene" uid="uid://d2qm2kk0flcrl" path="res://Scenes/Screen/Components/Overlay/Overlay.tscn" id="4_vvgie"]
 
 [node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("ClientSafeWorld", "SafeHud")]
 script = ExtResource("1_v35jn")
@@ -15,6 +14,3 @@ SafeHud = NodePath("Screen/SafeHud")
 [node name="Screen" type="CanvasLayer" parent="."]
 
 [node name="SafeHud" parent="Screen" instance=ExtResource("3_jh3ok")]
-
-[node name="GreenOverlay" parent="Screen" instance=ExtResource("4_vvgie")]
-modulate = Color(1, 1, 1, 0.211764)
