@@ -194,19 +194,21 @@ public class KludgeEventBus
         if (DelegateHelpers.IsQueryEvent(eventType) && DelegateHelpers.IsQueryListener(subscriptionInfo.Method))
         {
             actionDelegate = mustBeResolved
-            ? DelegateHelpers.FuncToResolvingAction(subscriptionInfo.Method)
+            ? DelegateHelpers.FuncToResolvingAction(subscriptionInfo.Method, eventType)
             : DelegateHelpers.FuncToAction(subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
         else
         {
             actionDelegate = mustBeResolved 
-                ? DelegateHelpers.InstanceResolvingAction(subscriptionInfo.Method)
+                ? DelegateHelpers.InstanceResolvingAction(subscriptionInfo.Method, eventType)
                 : Delegate.CreateDelegate(delegateType, subscriptionInfo.Invoker, subscriptionInfo.Method);
         }
 
         var infoType = typeof(ListenerInfo<>).MakeGenericType(eventType);
         var forceDefault = subscriptionInfo.Method.DeclaringType.Assembly == typeof(KludgeEventBus).Assembly;
-        var info = infoType.GetConstructors().First().Invoke([
+        var info = infoType.GetConstructors()
+            .First()
+            .Invoke([
             actionDelegate,
             subscriptionInfo.IsDefault || forceDefault, // define by assembly it located in
             subscriptionInfo.Method, // if this is not null

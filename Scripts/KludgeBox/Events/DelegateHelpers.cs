@@ -22,9 +22,9 @@ public static class DelegateHelpers
     }
     
     private static Network NetworkInstance => Network.Instance;
-    public static Action<QueryEvent> FuncToResolvingAction(MethodInfo info)
+    public static Action<QueryEvent> FuncToResolvingAction(MethodInfo info, Type eventType)
     {
-        return (query) =>
+        var queryResolver = (QueryEvent query) =>
         {
             if (query is IInstanceEvent evt)
             {
@@ -35,11 +35,13 @@ public static class DelegateHelpers
                 query.SetResult(info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, query), [query]));
             }
         };
+
+        return queryResolver;
     }
 
-    public static Action<IEvent> InstanceResolvingAction(MethodInfo info)
+    public static Delegate InstanceResolvingAction(MethodInfo info, Type eventType)
     {
-        return evt =>
+        var resolver = (IEvent evt) =>
         {
             if (evt is IInstanceEvent iEvt)
             {
@@ -50,5 +52,31 @@ public static class DelegateHelpers
                 info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, evt), [evt]);
             }
         };
+
+        return DoCastingMagic(resolver, eventType);
+    }
+    
+    private static Delegate DoCastingMagic(Action<IEvent> action, Type eventType)
+    {
+        if(!eventType.IsAssignableTo(typeof(IEvent)))
+            throw new ArgumentException("Provided type does not implement IEvent");
+
+        var generalizer = typeof(DelegateHelpers)
+            .GetMethod(nameof(GeneralizedAction), BindingFlags.Static | BindingFlags.NonPublic)!
+            .MakeGenericMethod([eventType]);
+            
+        var method = generalizer.Invoke(null, [action]) as Delegate;
+        
+        return method;
+    }
+    
+    private static Action<T> GeneralizedAction<T>(Action<IEvent> action) where T : IEvent
+    {
+        var newAction = (T evt) =>
+        {
+            action?.Invoke(evt);
+        };
+
+        return newAction;
     }
 }

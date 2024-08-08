@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using KludgeBox.Networking;
+using NeonWarfare.KludgeBox.Events;
 
 namespace KludgeBox.Events;
 
@@ -25,6 +27,7 @@ internal sealed class EventHub
     {
         if (@event is not null)
         {
+            var tracker = new DeliveryTracker(@event);
             var handleableEvent = @event as HandleableEvent;
             var isHandleable = handleableEvent is not null;
             foreach (var priority in _listenersByPriority)
@@ -32,10 +35,14 @@ internal sealed class EventHub
                 foreach (var listener in priority)
                 {
                     if (isHandleable && handleableEvent.IsHandled) break;
-                    listener?.Deliver(@event);
+                    listener?.Deliver(tracker);
                 }
             }
-            
+
+            if (@event is NetPacket && !tracker.WasDelivered)
+            {
+                Log.Warning($"packet of type {@event.GetType()} was published but not delivered to any listener");
+            }
         }
     }
 
