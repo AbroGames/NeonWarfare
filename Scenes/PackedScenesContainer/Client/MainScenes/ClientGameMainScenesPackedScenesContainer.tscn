@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://b86vwuwqs6kgc"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Client/MainScenes/ClientGameMainScenesPackedScenesContainer.cs" id="1_3n0js"]
-[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/ClientGameMainScenes/BattleWorld/BattleWorldMainScene.tscn" id="4_js7dj"]
-[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/Game/ClientGameMainScenes/SafeWorld/SafeWorldMainScene.tscn" id="5_kdl5e"]
+[ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/ClientGame/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="4_js7dj"]
+[ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="5_kdl5e"]
 
 [node name="ClientGameMainScenesPackedScenesContainer" type="Node"]
 script = ExtResource("1_3n0js")
