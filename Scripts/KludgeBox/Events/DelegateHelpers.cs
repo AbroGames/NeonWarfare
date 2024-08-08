@@ -32,7 +32,7 @@ public static class DelegateHelpers
             }
             else
             {
-                query.SetResult(info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, null), [query]));
+                query.SetResult(info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, query), [query]));
             }
         };
     }
@@ -47,7 +47,7 @@ public static class DelegateHelpers
             }
             else
             {
-                info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, null), [evt]);
+                info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, evt), [evt]);
             }
         };
     }
