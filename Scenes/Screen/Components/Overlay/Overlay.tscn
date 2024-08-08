@@ -2,19 +2,19 @@
 
 [ext_resource type="Script" path="res://Scenes/Screen/Components/Overlay/Overlay.cs" id="1_5a436"]
 
-[sub_resource type="Gradient" id="Gradient_t6rm5"]
+[sub_resource type="Gradient" id="Gradient_rlgcw"]
 offsets = PackedFloat32Array(0.9, 1)
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_72irp"]
-gradient = SubResource("Gradient_t6rm5")
+gradient = SubResource("Gradient_rlgcw")
 width = 256
 height = 256
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="GreenOverlay" type="TextureRect"]
-modulate = Color(1, 1, 1, 0.248178)
+[node name="Overlay" type="TextureRect"]
+modulate = Color(1, 1, 1, 0.14165)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
