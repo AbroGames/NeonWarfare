@@ -11,7 +11,7 @@ namespace KludgeBox.Networking;
 /// <summary>
 /// Describes logic for obtaining instance by its identifier.
 /// </summary>
-public delegate object InstanceResolver(object instanceIdentifier);
+public delegate object InstanceResolverDelegate(object instanceIdentifier);
 public partial class Network : Node
 {
     public static Network Instance { get; private set; }
@@ -22,8 +22,8 @@ public partial class Network : Node
     public const long BroadcastId = 0;
     public const long ServerId = 1;
     
-    private Dictionary<Type, InstanceResolver> _packetTargetResolvers = new();
-    private InstanceResolver _defaultResolver;
+    private Dictionary<Type, InstanceResolverDelegate> _packetTargetResolvers = new();
+    private InstanceResolverDelegate _defaultResolver;
     
     public Netmode Mode { get; set; }
     public PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
@@ -43,7 +43,7 @@ public partial class Network : Node
 
     public bool HasResolver(Type targetInstanceType) => _packetTargetResolvers.ContainsKey(targetInstanceType);
     
-    public void AddInstanceResolver(Type targetInstanceType, InstanceResolver resolver)
+    public void AddInstanceResolver(Type targetInstanceType, InstanceResolverDelegate resolver)
     {
         if(resolver is null)
         {
@@ -53,7 +53,7 @@ public partial class Network : Node
         _packetTargetResolvers.Add(targetInstanceType, resolver);
     }
     
-    public void SetDefaultResolver(InstanceResolver resolver)
+    public void SetDefaultResolver(InstanceResolverDelegate resolver)
     {
         _defaultResolver = resolver;
     }

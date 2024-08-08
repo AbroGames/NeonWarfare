@@ -86,7 +86,7 @@ public static class EventScanner
         var voidReturns = staticMethods.Where(method => method.ReturnType == typeof(void)); // method should return void
         var singleParameter = voidReturns.Where(x => x.GetParameters().Length == 1); // method should accept only one parameter
         var rightParamType = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType)); // and that parameter must be assignable to a variable of type
-        var alsoRightParamType = rightParamType.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(typeof(IInstanceEvent))); // that parameter must also contain InstanceId property
+        var alsoRightParamType = rightParamType.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(typeof(IEvent))); // that parameter must also contain InstanceId property
         var listeners = alsoRightParamType.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
 
         var subscriptionInfo = listeners.Select(method => 

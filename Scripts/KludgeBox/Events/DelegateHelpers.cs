@@ -26,16 +26,29 @@ public static class DelegateHelpers
     {
         return (query) =>
         {
-            if(query is IInstanceEvent evt)
+            if (query is IInstanceEvent evt)
+            {
                 query.SetResult(info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, evt.NetworkId), [query]));
+            }
+            else
+            {
+                query.SetResult(info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, null), [query]));
+            }
         };
     }
 
-    public static Action<IInstanceEvent> InstanceResolvingAction(MethodInfo info)
+    public static Action<IEvent> InstanceResolvingAction(MethodInfo info)
     {
         return evt =>
         {
-            info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, evt.NetworkId), [evt]);
+            if (evt is IInstanceEvent iEvt)
+            {
+                info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, iEvt.NetworkId), [iEvt]);
+            }
+            else
+            {
+                info.Invoke(NetworkInstance.ResolveInstance(info.DeclaringType, null), [evt]);
+            }
         };
     }
 }
