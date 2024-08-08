@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2qm2kk0flcrl"]
+
+[ext_resource type="Script" path="res://Scenes/Screen/Components/Overlay/Overlay.cs" id="1_5a436"]
+
+[sub_resource type="Gradient" id="Gradient_t6rm5"]
+offsets = PackedFloat32Array(0.9, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_72irp"]
+gradient = SubResource("Gradient_t6rm5")
+width = 256
+height = 256
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+
+[node name="GreenOverlay" type="TextureRect"]
+modulate = Color(1, 1, 1, 0.248178)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_72irp")
+script = ExtResource("1_5a436")

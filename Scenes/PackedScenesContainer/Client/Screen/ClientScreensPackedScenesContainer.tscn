@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://3jftjd3egrvl"]
+[gd_scene load_steps=15 format=3 uid="uid://3jftjd3egrvl"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/Client/Screen/ClientScreensPackedScenesContainer.cs" id="1_0mpcb"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="2_h6v77"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="11_6etjq"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="12_2ssbs"]
 [ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="12_mf0jk"]
+[ext_resource type="PackedScene" uid="uid://d2qm2kk0flcrl" path="res://Scenes/Screen/Components/Overlay/Overlay.tscn" id="13_sn8qy"]
+[ext_resource type="PackedScene" uid="uid://cra1y5dubl2eb" path="res://Scenes/Screen/Components/Overlay/HitOverlay.tscn" id="14_dwgmg"]
 
 [node name="ClientScreensPackedScenesContainer" type="Node"]
 script = ExtResource("1_0mpcb")
@@ -26,3 +28,5 @@ CreateServerMenu = ExtResource("8_7upbq")
 LoadingScreenCanvas = ExtResource("12_mf0jk")
 SafeHud = ExtResource("12_2ssbs")
 BattleHud = ExtResource("11_6etjq")
+Overlay = ExtResource("13_sn8qy")
+hitOverlay = ExtResource("14_dwgmg")
