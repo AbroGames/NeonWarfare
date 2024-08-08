@@ -17,4 +17,4 @@ SafeHud = NodePath("Screen/SafeHud")
 [node name="SafeHud" parent="Screen" instance=ExtResource("3_jh3ok")]
 
 [node name="GreenOverlay" parent="Screen" instance=ExtResource("4_vvgie")]
-modulate = Color(1, 1, 1, 0.240996)
+modulate = Color(1, 1, 1, 0.211764)
