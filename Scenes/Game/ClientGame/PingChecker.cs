@@ -87,7 +87,6 @@ public partial class PingChecker : Node
         {
             return;
         }
-        Log.Debug("Ping take");
         
         long pingTime = _pingIdToSentTime[serverPingPacket.PingId].ElapsedMilliseconds;
         _successPingIdInCollections.Add(serverPingPacket.PingId);
