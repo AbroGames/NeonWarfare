@@ -15,11 +15,11 @@ public static class ClientService
         
         if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
         {
-            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Client.GameMainScenes.SafeWorld.Instantiate<SafeGameMainScene>());
+            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Client.GameMainScenes.SafeWorld.Instantiate<SafeWorldMainScene>());
         } 
         else if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Battle)
         {
-            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Client.GameMainScenes.BattleWorld.Instantiate<BattleGameMainScene>());
+            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Client.GameMainScenes.BattleWorld.Instantiate<BattleWorldMainScene>());
         }
         else
         {

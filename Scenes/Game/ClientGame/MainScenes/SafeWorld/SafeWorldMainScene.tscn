@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://ckusgv6yysi45"]
 
-[ext_resource type="Script" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeGameMainScene.cs" id="1_v35jn"]
+[ext_resource type="Script" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeWorldMainScene.cs" id="1_v35jn"]
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld.tscn" id="2_0omu6"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="3_jh3ok"]
 [ext_resource type="Script" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/GreenOverlay.cs" id="4_p5u4r"]
@@ -16,10 +16,8 @@ height = 256
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("ClientSafeWorld", "SafeHud")]
+[node name="SafeWorldMainScene" type="Node2D"]
 script = ExtResource("1_v35jn")
-ClientSafeWorld = NodePath("SafeWorld")
-SafeHud = NodePath("Screen/SafeHud")
 
 [node name="SafeWorld" parent="." instance=ExtResource("2_0omu6")]
 

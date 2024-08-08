@@ -10,7 +10,8 @@ public partial class ToBattleButton : Button
     {
         Pressed += () =>
         {
-            Netplay.SendToServer(new ClientWantToBattlePacket());
+            MenuService.ActivateMainMenu(); //TODO change
+            //Netplay.SendToServer(new ClientWantToBattlePacket());
         };
     }
 

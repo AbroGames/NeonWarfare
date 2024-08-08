@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class SafeGameMainScene : Node2D, IGameMainScene
+public partial class SafeWorldMainScene : Node2D, IGameMainScene
 {
 
 	[Export] [NotNull] public ClientSafeWorld ClientSafeWorld { get; private set; }
