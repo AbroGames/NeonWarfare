@@ -21,7 +21,7 @@ public partial class ClientScreensPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene BattleHud { get; private set; }
     
     [Export] [NotNull] public PackedScene Overlay { get; private set; }
-    [Export] [NotNull] public PackedScene hitOverlay { get; private set; }
+    [Export] [NotNull] public PackedScene HitOverlay { get; private set; }
     
     public override void _Ready()
     {
