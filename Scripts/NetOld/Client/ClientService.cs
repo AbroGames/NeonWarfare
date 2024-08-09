@@ -74,7 +74,7 @@ public static class ClientService
             return;
         }
         
-        ClientRoot.Instance.MainMenu.ChangeMenu(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndScreen);
+        ClientRoot.Instance.Game.SetLoadingScreen(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndCanvas.Instantiate<CanvasLayer>());
     }
     
     [EventListener(ListenerSide.Client)]

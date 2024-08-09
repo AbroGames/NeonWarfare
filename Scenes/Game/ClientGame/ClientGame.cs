@@ -10,11 +10,6 @@ public partial class ClientGame : Node2D
 	public Hud Hud { get; private set; }
 	private Node2D _mainScene;
 	
-	public override void _Ready()
-	{
-		NotNullChecker.CheckProperties(this);
-	}
-	
 	public void ChangeMainScene(IGameMainScene gameMainScene)
 	{
 		_mainScene?.QueueFree();

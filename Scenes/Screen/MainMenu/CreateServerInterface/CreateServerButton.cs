@@ -36,14 +36,10 @@ public partial class CreateServerButton : Button
         }
         
         NetworkService.StartNewDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
-        NetworkService.ConnectToServer(NetworkService.DefaultHost, port);
-            
-        if (ClientRoot.Instance.MainMenu is null)
-        {
-            Log.Error("OnCreateServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
-            return;
-        }
-        ClientRoot.Instance.MainMenu.ChangeMenu(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingConnectionScreen);
+
+        ClientGame clientGame = new ClientGame();
+        ClientRoot.Instance.SetMainScene(clientGame);
+        clientGame.ConnectToServer(NetworkService.DefaultHost, port);
     }
 
 }

@@ -45,13 +45,8 @@ public partial class ConnectToServerButton : Button
             host = NetworkService.DefaultHost;
         }
         
-        NetworkService.ConnectToServer(host, port); //TODO Эта строка и всё ниже дублируется с подключением CreateServerButton (мб вынести куда-то? в какой-то сервис связанный с меню?) 
-        
-        if (ClientRoot.Instance.MainMenu is null)
-        {
-            Log.Error("OnConnectToServerButtonClickEvent, MainSceneContainer contains Node that is not MainMenuMainScene");
-            return;
-        }
-        ClientRoot.Instance.MainMenu.ChangeMenu(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingConnectionScreen);
+        ClientGame clientGame = new ClientGame();
+        ClientRoot.Instance.SetMainScene(clientGame);
+        clientGame.ConnectToServer(host, port);
     }
 }

@@ -17,6 +17,6 @@ public static class ClientInitService
     public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
     {
         ClientRoot.Instance.GetWindow().MoveToForeground();
-        ClientRoot.Instance.SetMainScene(new ClientGame());
+        ClientRoot.Instance.Game.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
     }
 }
