@@ -14,8 +14,9 @@ public partial class ClientScreensPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene SoundSettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene ConnectToServerMenu { get; private set; }
     [Export] [NotNull] public PackedScene CreateServerMenu { get; private set; }
-    [Export] [NotNull] public PackedScene WaitingConnectionScreen { get; private set; }
-    [Export] [NotNull] public PackedScene WaitingForBattleEndScreen { get; private set; }
+    
+    [Export] [NotNull] public PackedScene WaitingConnectionCanvas { get; private set; }
+    [Export] [NotNull] public PackedScene WaitingForBattleEndCanvas { get; private set; }
     
     [Export] [NotNull] public PackedScene SafeHud { get; private set; }
     [Export] [NotNull] public PackedScene BattleHud { get; private set; }

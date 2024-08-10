@@ -9,8 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://be1870tomtt30" path="res://Scenes/Screen/MainMenu/SoundSettingsInterface/SoundSettingsMenu.tscn" id="6_8g1cq"]
 [ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/Screen/MainMenu/ConnectToServerInterface/ConnectToServerMenu.tscn" id="7_ttlru"]
 [ext_resource type="PackedScene" uid="uid://cdfkul01f3eck" path="res://Scenes/Screen/MainMenu/CreateServerInterface/CreateServerMenu.tscn" id="8_7upbq"]
-[ext_resource type="PackedScene" uid="uid://7t67cblp66iw" path="res://Scenes/Screen/MainMenu/WaitingConnectionScreen.tscn" id="9_f8gjl"]
-[ext_resource type="PackedScene" uid="uid://cywvd0egyh8cl" path="res://Scenes/Screen/MainMenu/WaitingForBattleEndScreen.tscn" id="10_ojsl4"]
+[ext_resource type="PackedScene" uid="uid://cywvd0egyh8cl" path="res://Scenes/Screen/WaitingForBattleEndCanvas.tscn" id="10_ojsl4"]
+[ext_resource type="PackedScene" uid="uid://7t67cblp66iw" path="res://Scenes/Screen/WaitingConnectionCanvas.tscn" id="10_uuv5v"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="11_6etjq"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="12_2ssbs"]
 
@@ -24,7 +24,7 @@ GraphicSettingsMenu = ExtResource("5_d74p3")
 SoundSettingsMenu = ExtResource("6_8g1cq")
 ConnectToServerMenu = ExtResource("7_ttlru")
 CreateServerMenu = ExtResource("8_7upbq")
-WaitingConnectionScreen = ExtResource("9_f8gjl")
-WaitingForBattleEndScreen = ExtResource("10_ojsl4")
+WaitingConnectionCanvas = ExtResource("10_uuv5v")
+WaitingForBattleEndCanvas = ExtResource("10_ojsl4")
 SafeHud = ExtResource("12_2ssbs")
 BattleHud = ExtResource("11_6etjq")
