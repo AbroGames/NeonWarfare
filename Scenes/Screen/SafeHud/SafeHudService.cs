@@ -21,7 +21,7 @@ public static class SafeHudService
         
         ServerRoot.Instance.Game.NetworkEntityManager.Clear();
         
-        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
+        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
         {
             Player player = ServerRoot.Instance.PackedScenes.Common.World.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
@@ -47,7 +47,7 @@ public static class SafeHudService
             Netplay.Send(playerServerInfo.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
-            foreach (PlayerServerInfo allyServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
+            foreach (PlayerServerInfo allyServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
             {
                 if (allyServerInfo.Id == playerServerInfo.Id) continue;
                 Netplay.Send(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));

@@ -15,7 +15,7 @@ public static class PlayerAttackService
     [EventListener(ListenerSide.Server)]
     public static void OnClientPlayerPrimaryAttackPacket(ClientPlayerPrimaryAttackPacket clientPlayerPrimaryAttackPacket)
     {
-        var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.SenderId].Player;
+        var player = ServerRoot.Instance.Game.Server.PlayerServerInfo[clientPlayerPrimaryAttackPacket.SenderId].Player;
 		
         // Создание снаряда
         Bullet bullet = ServerRoot.Instance.PackedScenes.Common.World.Bullet.Instantiate<Bullet>();
@@ -59,7 +59,7 @@ public static class PlayerAttackService
     [EventListener(ListenerSide.Server)]
     public static void OnClientPlayerSecondaryAttackPacket(ClientPlayerSecondaryAttackPacket clientPlayerSecondaryAttackPacket)
     {
-        var player = ServerRoot.Instance.Server.PlayerServerInfo[clientPlayerSecondaryAttackPacket.SenderId].Player;
+        var player = ServerRoot.Instance.Game.Server.PlayerServerInfo[clientPlayerSecondaryAttackPacket.SenderId].Player;
 		
         var bulletsCount = 5;
         var spread = Mathf.DegToRad(18);

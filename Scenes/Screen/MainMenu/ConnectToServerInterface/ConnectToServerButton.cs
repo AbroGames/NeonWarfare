@@ -45,8 +45,6 @@ public partial class ConnectToServerButton : Button
             host = NetworkService.DefaultHost;
         }
         
-        ClientGame clientGame = new ClientGame();
-        ClientRoot.Instance.SetMainScene(clientGame);
-        clientGame.ConnectToServer(host, port);
+        ClientRoot.Instance.CreateClientGame(host, port);
     }
 }

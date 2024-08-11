@@ -29,7 +29,7 @@ public static class PlayerMovementService
         player.Position = newPosition;
         player.Rotation = clientMovementPlayerPacket.Dir;
         
-        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Server.PlayerServerInfo.Values)
+        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
         {
             if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
             Netplay.Send(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));

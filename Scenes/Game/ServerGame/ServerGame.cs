@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.NetOld;
 
@@ -10,7 +11,7 @@ public partial class ServerGame : Node2D
 	
 	public override void _Ready()
 	{
-		NotNullChecker.CheckProperties(this);
+		InitNetwork();
 		
 		ChangeMainScene(new ServerSafeWorld());
 	}

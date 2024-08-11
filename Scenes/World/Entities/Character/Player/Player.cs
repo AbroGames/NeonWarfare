@@ -58,7 +58,7 @@ public partial class Player : Character
 	{
 		base.Die();
 		
-		MenuService.ActivateMainMenu();
+		ClientRoot.Instance.CreateMainMenu();
 		Audio2D.StopMusic();
 	}
 

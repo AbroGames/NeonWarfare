@@ -24,7 +24,7 @@ public partial class ClientRoot : Node2D
 	
 	protected void Init()
 	{
-		RootService.CommonInit(GetTree().GetMultiplayer(), ListenerSide.Client);
+		RootService.CommonInit(ListenerSide.Client);
 		CmdParams = ClientParams.GetFromCmd();
 		
 		SettingsService.Init();
@@ -35,11 +35,12 @@ public partial class ClientRoot : Node2D
 		if (CmdParams.AutoTest)
 		{
 			NetworkService.StartNewDedicatedServerApplication(NetworkService.DefaultPort, PlayerSettings.PlayerName, true);
-			NetworkService.ConnectToServer(NetworkService.DefaultHost, NetworkService.DefaultPort);
+			
+			CreateClientGame(NetworkService.DefaultHost, NetworkService.DefaultPort);
 		}
 		else
 		{
-			MenuService.ActivateMainMenu();
+			CreateMainMenu();
 		}
 	}
 	

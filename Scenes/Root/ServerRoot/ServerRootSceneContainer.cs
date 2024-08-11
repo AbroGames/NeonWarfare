@@ -9,16 +9,23 @@ public partial class ServerRoot
 	
 	public ServerGame Game { get; private set; }
 
-	public void SetMainScene(ServerGame game)
+	private void SetMainScene(ServerGame game)
 	{
 		ClearStoredNode();
 		Game = game;
 		AddChild(game);
 	}
 
-	public void ClearStoredNode()
+	private void ClearStoredNode()
 	{
 		Game?.QueueFree();
 		Game = null;
+	}
+	
+	public void CreateServerGame(int port)
+	{
+		ServerGame serverGame = new ServerGame();
+		SetMainScene(serverGame);
+		serverGame.CreateServer(port);
 	}
 }

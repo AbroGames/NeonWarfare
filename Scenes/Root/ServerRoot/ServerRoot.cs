@@ -17,8 +17,6 @@ public partial class ServerRoot : Node2D
 	[Export] [NotNull] public Console Console { get; private set; }
 	
 	public ServerParams CmdParams { get; private set; }
-	
-	public Server Server { get; private set; } //TODO в game? Или куда-то ещё? Или удалить, т.к. ServerGame = Server? Но лучше не удалять, т.к. ServerGame и ClientGame должны быть схожи
 
 	public override void _Ready()
 	{
@@ -28,7 +26,7 @@ public partial class ServerRoot : Node2D
 	
 	protected void Init()
 	{
-		RootService.CommonInit(GetTree().GetMultiplayer(), ListenerSide.Server);
+		RootService.CommonInit(ListenerSide.Server);
 		CmdParams = ServerParams.GetFromCmd();
 		
 		if (CmdParams.IsRender)
@@ -47,9 +45,7 @@ public partial class ServerRoot : Node2D
 			DisplayServer.ScreenGetSize().X - (int) GetViewport().GetVisibleRect().Size.X,
 			DisplayServer.ScreenGetSize().Y - (int) GetViewport().GetVisibleRect().Size.Y - 40));
 
-		NetworkService.CreateServer(CmdParams.Port);
-		Server = new Server();
-		AddChild(Server);
+		CreateServerGame(CmdParams.Port);
 	}
 	
 	public void Shutdown()

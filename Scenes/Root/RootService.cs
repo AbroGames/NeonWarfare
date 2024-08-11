@@ -8,11 +8,10 @@ namespace NeonWarfare;
 
 public static class RootService
 {
-    public static void CommonInit(MultiplayerApi multiplayerApi, ListenerSide listenerSide)
+    public static void CommonInit(ListenerSide listenerSide)
     {
         ExceptionHandlerService.AddExceptionHandlerForUnhandledException();
         CmdArgsService.LogCmdArgs();
         EventBus.Init(listenerSide);
-        Netplay.Initialize(multiplayerApi as SceneMultiplayer);
     }
 }

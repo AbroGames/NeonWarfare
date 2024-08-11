@@ -9,12 +9,11 @@ public partial class ClientGame
 
 	public CanvasLayer LoadingCanvas { get; private set; }
 
-	public override void _Ready()
+	public void SetDefaultLoadingScreen()
 	{
 		SetLoadingScreen(DefaultLoadingScreen.Instantiate<CanvasLayer>());
 	}
 	
-	//TODO перенести сюда Network, а так же ServerShutdowner
 	public void SetLoadingScreen(CanvasLayer loadingScreen)
 	{
 		LoadingCanvas?.QueueFree();
