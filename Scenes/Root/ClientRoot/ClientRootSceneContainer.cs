@@ -33,9 +33,14 @@ public partial class ClientRoot
 		MainMenu = null;
 	}
 	
-	public void CreateClientGame(string host, int port)
+	public void CreateClientGame(string host, int port, int? serverPid = null)
 	{
 		ClientGame clientGame = new ClientGame();
+		if (serverPid.HasValue)
+		{
+			clientGame.AddServerShutdowner(serverPid.Value);
+		}
+        
 		SetMainScene(clientGame);
 		clientGame.ConnectToServer(host, port);
 	}

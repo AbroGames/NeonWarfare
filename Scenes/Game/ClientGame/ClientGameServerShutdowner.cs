@@ -6,9 +6,13 @@ using NeonWarfare.NetOld;
 public partial class ClientGame
 {
 	
-	//Дублируем обработку нотификаций дополнительно к ClientRoot, чтобы можно было вырубать процесс сервера при закрытии игры и выходе в главное меню 
-	public override void _Notification(int id)
+	public ServerShutdowner ServerShutdowner { get; private set; }
+
+	public void AddServerShutdowner(int serverPid)
 	{
-		ClientRoot.Instance.ServerShutdowner._Notification(id);
+		ServerShutdowner?.QueueFree(); //Удаление ноды вызовет, в том числе удаление сервера
+		ServerShutdowner = new ServerShutdowner();
+		ServerShutdowner.ServerPid = serverPid;
+		AddChild(ServerShutdowner);
 	}
 }

@@ -38,11 +38,11 @@ public static class NetworkService
         }
     }
     
-    public static void StartNewDedicatedServerApplication(int port, string adminNickname, bool showConsole)
+    public static int StartNewDedicatedServerApplication(int port, string adminNickname, bool showConsole)
     {
         ServerParams serverParams = new ServerParams(!showConsole, false, port, adminNickname, OS.GetProcessId());
         
         int serverPid = OS.CreateInstance(serverParams.GetArrayToStartServer());
-        ClientRoot.Instance.AddServerShutdowner(serverPid);
+        return serverPid;
     }
 }
