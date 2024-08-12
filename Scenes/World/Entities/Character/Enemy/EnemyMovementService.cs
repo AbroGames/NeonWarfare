@@ -62,7 +62,7 @@ public static class EnemyMovementService
         enemy.MoveAndSlide();
 
         long nid = ServerRoot.Instance.Game.NetworkEntityManager.GetNid(enemy);
-        Netplay.SendToAll(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
+        Network.SendToAll(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
     }
     
     private static Vector2 GetForwardDirection(Enemy enemy)

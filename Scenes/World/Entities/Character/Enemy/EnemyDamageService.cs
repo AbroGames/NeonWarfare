@@ -21,6 +21,6 @@ public static class EnemyDamageService
         }
         
         long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(enemy);
-        Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
+        Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }
 }

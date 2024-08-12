@@ -14,7 +14,7 @@ public static class NetworkService
     
     public static void CreateServer(int port)
     {
-        Error error = Netplay.SetServer(port);
+        Error error = Network.SetServer(port);
         if (error == Error.Ok)
         {
             Log.Info($"Network successfully created.");
@@ -27,7 +27,7 @@ public static class NetworkService
     
     public static void ConnectToServer(string host, int port)
     {
-        Error error = Netplay.SetClient(host, port);
+        Error error = Network.SetClient(host, port);
         if (error == Error.Ok)
         {
             Log.Info($"Network successfully created.");

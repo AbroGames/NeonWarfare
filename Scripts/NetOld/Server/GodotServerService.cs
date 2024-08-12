@@ -15,7 +15,7 @@ public static class GodotServerService
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         ServerRoot.Instance.Game.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
-        Netplay.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
+        Network.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = ServerRoot.Instance.Game.World;
         if (currentWorld is ServerSafeWorld)
@@ -39,7 +39,7 @@ public static class GodotServerService
                 camera.Enabled = true;
             }
 
-            Netplay.Send(peerConnectedEvent.Id, 
+            Network.Send(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
             //TODO спавн союзников и других NetworkEntity?
@@ -49,15 +49,15 @@ public static class GodotServerService
                 
                 Player ally = playerServerInfo.Player;
                 long allyNid = ServerRoot.Instance.Game.NetworkEntityManager.GetNid(ally);
-                Netplay.Send(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
-                Netplay.Send(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+                Network.Send(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
+                Network.Send(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
             
             //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
         else if (currentWorld is ServerBattleWorld)
         {
-            Netplay.Send(peerConnectedEvent.Id, new ServerWaitBattleEndPacket());
+            Network.Send(peerConnectedEvent.Id, new ServerWaitBattleEndPacket());
         }
         else
         {
@@ -74,7 +74,7 @@ public static class GodotServerService
         long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
-        Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
+        Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }
     
 }

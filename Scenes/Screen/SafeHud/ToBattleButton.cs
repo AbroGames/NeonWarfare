@@ -11,7 +11,7 @@ public partial class ToBattleButton : Button
     {
         Pressed += () =>
         {
-            Netplay.SendToServer(new ClientWantToBattlePacket());
+            Network.SendToServer(new ClientWantToBattlePacket());
         };
     }
 

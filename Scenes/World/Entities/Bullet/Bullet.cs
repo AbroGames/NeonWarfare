@@ -32,7 +32,7 @@ public partial class Bullet : Node2D
 	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
-		if (Netplay.Mode == Netplay.Netmode.Client)
+		if (Network.Mode == Network.Netmode.Client)
 		{
 			ReadyOnClient();
 		}
@@ -46,14 +46,14 @@ public partial class Bullet : Node2D
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
 
-		if (Netplay.Mode == Netplay.Netmode.Server)
+		if (Network.Mode == Network.Netmode.Server)
 		{
 			RemainingDistance -= Speed * delta;
 			if (RemainingDistance <= 0)
 			{
 				QueueFree();
 				long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(this);
-				Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
+				Network.SendToAll(new ServerDestroyEntityPacket(nid));
 			}
 		}
 	}
@@ -140,7 +140,7 @@ public partial class Bullet : Node2D
 		{
 			QueueFree();
 			long nid = ServerRoot.Instance.Game.NetworkEntityManager.RemoveEntity(this);
-			Netplay.SendToAll(new ServerDestroyEntityPacket(nid));
+			Network.SendToAll(new ServerDestroyEntityPacket(nid));
 		}
 	}
 }

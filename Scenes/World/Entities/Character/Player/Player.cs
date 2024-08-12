@@ -31,7 +31,7 @@ public partial class Player : Character
 	public override void _Ready()
 	{
 		base._Ready();
-		if (Netplay.Mode == Netplay.Netmode.Server) return;
+		if (Network.Mode == Network.Netmode.Server) return;
 		
 		Camera = GetParent().GetChild<Camera>();
 		Sprite.Modulate = ClientRoot.Instance.PlayerSettings.PlayerColor;
@@ -39,7 +39,7 @@ public partial class Player : Character
 		SecondaryCd.Ready += () =>
 		{
 			if (!Input.IsActionPressed(Keys.AttackSecondary)) return;
-			Netplay.SendToServer(new ClientPlayerSecondaryAttackPacket(Position.X, Position.Y, Rotation));
+			Network.SendToServer(new ClientPlayerSecondaryAttackPacket(Position.X, Position.Y, Rotation));
 			//new PlayerAttackService().OnServerPlayerSecondaryAttackPacket(new ServerPlayerSecondaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 		};
 	}
@@ -49,7 +49,7 @@ public partial class Player : Character
 		base.Shoot();
 		//if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
 		
-		Netplay.SendToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
+		Network.SendToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
 		//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
 		//new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 	}
@@ -76,7 +76,7 @@ public partial class Player : Character
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 
-		if (Netplay.IsClient)
+		if (Network.IsClient)
 		{
 			// Camera shift processing
 			if (Input.IsActionPressed(Keys.CameraShift))

@@ -54,7 +54,7 @@ public partial class Character : CharacterBody2D
 		{
 			Die();
 			
-			if (Netplay.IsClient)
+			if (Network.IsClient)
 			{			
 				var deathDummy = this.DropDummy();
 				var derbisDummy = this.DropDummy();

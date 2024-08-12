@@ -12,7 +12,7 @@ public partial class ClientGame
 	
 	public void InitNetwork()
 	{
-		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
+		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	} 
 
 	public void ConnectToServer(string host, int port)

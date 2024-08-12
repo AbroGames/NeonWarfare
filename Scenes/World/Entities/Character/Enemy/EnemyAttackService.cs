@@ -43,7 +43,7 @@ public static class EnemyAttackService
         enemy.GetParent().AddChild(bullet); //TODO refactor (и поискать все другие места, где используется GetParent().AddChild и просто GetParent
         long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet);
         
-        Netplay.SendToAll(new ServerSpawnEnemyBulletPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, enemy.Damage > 1000));
+        Network.SendToAll(new ServerSpawnEnemyBulletPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, enemy.Damage > 1000));
     }
 
     [EventListener(ListenerSide.Client)]

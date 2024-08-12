@@ -6,7 +6,7 @@ using KludgeBox.Events.Global;
 
 namespace KludgeBox.Networking;
 
-public static partial class Netplay
+public static partial class Network
 {
     
     /// <summary>

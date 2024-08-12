@@ -17,10 +17,10 @@ public partial class PlayerMovementComponent : Node
         var movementInput = GetInput();
         Player.MoveAndCollide(movementInput * Player.MovementSpeed * delta);
 
-        if (Netplay.IsClient)
+        if (Network.IsClient)
         {
             long nid = ClientRoot.Instance.Game.NetworkEntityManager.GetNid(Player);
-            Netplay.SendToServer(new ClientMovementPlayerPacket(nid, Player.Position.X, Player.Position.Y,
+            Network.SendToServer(new ClientMovementPlayerPacket(nid, Player.Position.X, Player.Position.Y,
                 Player.Rotation,
                 movementInput.X, movementInput.Y, Player.MovementSpeed));
         }

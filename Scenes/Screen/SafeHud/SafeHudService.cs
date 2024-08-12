@@ -15,7 +15,7 @@ public static class SafeHudService
     [EventListener(ListenerSide.Server)]
     public static void OnClientWantToBattlePacket(ClientWantToBattlePacket clientWantToBattlePacket)
     {
-        Netplay.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
+        Network.SendToAll(new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         ServerRoot.Instance.Game.ChangeMainScene(serverBattleWorld);
         
@@ -44,13 +44,13 @@ public static class SafeHudService
             serverBattleWorld.AddChild(player);
             long newPlayerNid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(player);
             
-            Netplay.Send(playerServerInfo.Id, 
+            Network.Send(playerServerInfo.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
             foreach (PlayerServerInfo allyServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
             {
                 if (allyServerInfo.Id == playerServerInfo.Id) continue;
-                Netplay.Send(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+                Network.Send(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         }
     }

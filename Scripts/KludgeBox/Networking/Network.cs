@@ -8,7 +8,7 @@ using KludgeBox.Events.Global;
 namespace KludgeBox.Networking;
 
 
-public static partial class Netplay
+public static partial class Network
 {
     public const long BroadcastId = 0;
     public const long ServerId = 1;

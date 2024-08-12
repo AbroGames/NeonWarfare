@@ -14,7 +14,7 @@ public partial class ServerGame
 
 	public void InitNetwork()
 	{
-		Netplay.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
+		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	}
 
 	public void CreateServer(int port)
