@@ -12,9 +12,6 @@ public partial class Network
 {
     public const long BroadcastId = 0;
     public const long ServerId = 1;
-
-    public bool IsServer => Mode is Netmode.Server;
-    public bool IsClient => Mode is Netmode.Client;
     
     public Netmode Mode { get; set; }
     public PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();

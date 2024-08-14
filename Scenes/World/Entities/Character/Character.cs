@@ -3,6 +3,8 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Networking;
 using KludgeBox.Scheduling;
+using NeonWarfare.Net;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
@@ -54,7 +56,7 @@ public partial class Character : CharacterBody2D
 		{
 			Die();
 			
-			if (ClientRoot.Instance is not null) //If is client
+			if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
 			{			
 				var deathDummy = this.DropDummy();
 				var derbisDummy = this.DropDummy();

@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
 using KludgeBox.Networking;
+using NeonWarfare.Net;
 using NeonWarfare.NetOld.Server;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
@@ -32,7 +34,7 @@ public partial class Bullet : Node2D
 	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
-		if (ClientRoot.Instance is not null) //if is client
+		if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //if is client
 		{
 			ReadyOnClient();
 		}
@@ -46,7 +48,7 @@ public partial class Bullet : Node2D
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
 
-		if (ServerRoot.Instance is not null) //If is server
+		if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is server
 		{
 			RemainingDistance -= Speed * delta;
 			if (RemainingDistance <= 0)

@@ -3,6 +3,8 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Networking;
 using KludgeBox.Scheduling;
+using NeonWarfare.Net;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
@@ -31,7 +33,7 @@ public partial class Player : Character
 	public override void _Ready()
 	{
 		base._Ready();
-		if (ServerRoot.Instance is not null) return; //If is server - return
+		if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) return; //If is server - return
 		
 		Camera = GetParent().GetChild<Camera>();
 		Sprite.Modulate = ClientRoot.Instance.PlayerSettings.PlayerColor;
@@ -76,7 +78,7 @@ public partial class Player : Character
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 
-		if (ClientRoot.Instance is not null) //IsClient
+		if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //IsClient
 		{
 			// Camera shift processing
 			if (Input.IsActionPressed(Keys.CameraShift))

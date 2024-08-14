@@ -4,6 +4,8 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
+using NeonWarfare.Net;
+using NeonWarfare.Utils;
 
 namespace NeonWarfare;
 
@@ -93,7 +95,7 @@ public static class BattleWorldEnemySpawnService
     
     private static void AnimateSpawn(Enemy enemy, ClientBattleWorld clientBattleWorld)
     {
-        if (ServerRoot.Instance is not null) return; //If is server - return
+        if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) return; //If is server - return
         
         var fx = Fx.CreateSpawnFx();
         fx.Finished += () =>
