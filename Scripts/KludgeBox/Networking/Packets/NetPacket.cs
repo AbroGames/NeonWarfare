@@ -20,13 +20,13 @@ public abstract class NetPacket : HandleableEvent
     public virtual MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Reliable;
     
     
-    public static NetPacket FromBuffer<TPacket>(byte[] buffer) where TPacket : NetPacket, new()
+    public static NetPacket FromBuffer<TPacket>(byte[] buffer, PacketRegistry packetRegistry) where TPacket : NetPacket, new()
     {
         var packet = new TPacket();
-        return packet.FromBuffer(buffer);
+        return packet.FromBuffer(buffer, packetRegistry);
     }
 
-    public static NetPacket FromBuffer(Type type, byte[] buffer)
+    public static NetPacket FromBuffer(Type type, byte[] buffer, PacketRegistry packetRegistry)
     {
         NetPacket packet;
         if (type.HasParameterlessConstructor())
@@ -46,7 +46,7 @@ public abstract class NetPacket : HandleableEvent
             
             packet = Activator.CreateInstance(type, args.ToArray()) as NetPacket;
         }
-        return packet.FromBuffer(buffer);
+        return packet.FromBuffer(buffer, packetRegistry);
     }
     
     /// <summary>
@@ -57,7 +57,7 @@ public abstract class NetPacket : HandleableEvent
     /// </remarks>
     /// <param name="buffer"></param>
     /// <returns>Filled packet. It's not always the same instance as the one invoked.</returns>
-    public virtual NetPacket FromBuffer(byte[] buffer)
+    public virtual NetPacket FromBuffer(byte[] buffer, PacketRegistry packetRegistry)
     {
         var json = Encoding.Default.GetString(buffer);
         return JsonConvert.DeserializeObject(json, GetType()) as NetPacket;
@@ -70,7 +70,7 @@ public abstract class NetPacket : HandleableEvent
     /// It's highly recommended to write a more optimized implementation of this method. Default implementation is very inefficient.
     /// </remarks>
     /// <returns></returns>
-    public virtual byte[] ToBuffer()
+    public virtual byte[] ToBuffer(PacketRegistry packetRegistry)
     {
         var json = JsonConvert.SerializeObject(this);
         return Encoding.Default.GetBytes(json);
@@ -80,9 +80,9 @@ public abstract class NetPacket : HandleableEvent
     /// Seems to work fine as is.
     /// </summary>
     /// <returns></returns>
-    public virtual BinaryReader GetBinaryReader()
+    public virtual BinaryReader GetBinaryReader(PacketRegistry packetRegistry)
     {
-        var stream = new MemoryStream(ToBuffer());
+        var stream = new MemoryStream(ToBuffer(packetRegistry));
         var reader = new BinaryReader(stream);
         return reader;
     }

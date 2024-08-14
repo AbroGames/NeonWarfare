@@ -93,7 +93,7 @@ public static class BattleWorldEnemySpawnService
     
     private static void AnimateSpawn(Enemy enemy, ClientBattleWorld clientBattleWorld)
     {
-        if (Network.IsServer) return;
+        if (ServerRoot.Instance is not null) return; //If is server - return
         
         var fx = Fx.CreateSpawnFx();
         fx.Finished += () =>

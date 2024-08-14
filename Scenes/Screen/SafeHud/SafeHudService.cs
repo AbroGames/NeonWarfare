@@ -44,13 +44,13 @@ public static class SafeHudService
             serverBattleWorld.AddChild(player);
             long newPlayerNid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(player);
             
-            Network.Send(playerServerInfo.Id, 
+            Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
             foreach (PlayerServerInfo allyServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
             {
                 if (allyServerInfo.Id == playerServerInfo.Id) continue;
-                Network.Send(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+                Network.SendToClient(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         }
     }

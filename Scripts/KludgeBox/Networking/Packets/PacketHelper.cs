@@ -9,7 +9,7 @@ public static class PacketHelper
     /// </summary>
     /// <param name="packet">Full packet with type ID prefix</param>
     /// <returns></returns>
-    public static NetPacket DecodePacket(byte[] packet)
+    public static NetPacket DecodePacket(byte[] packet, PacketRegistry packetRegistry)
     {
         // transform byte array to stream and prepare reader for it
         using var stream = new MemoryStream(packet);
@@ -20,9 +20,9 @@ public static class PacketHelper
         // the rest is packet data
         var packetData = reader.ReadBytes(packet.Length - 4);
         // get type from read ID
-        var packetType = Network.PacketRegistry.GetType(typeId);
+        var packetType = packetRegistry.GetType(typeId);
         // deserialize packet
-        var packetObj = NetPacket.FromBuffer(packetType, packetData);
+        var packetObj = NetPacket.FromBuffer(packetType, packetData, packetRegistry);
         
         return packetObj;
     }
@@ -32,15 +32,15 @@ public static class PacketHelper
     /// </summary>
     /// <param name="packet"></param>
     /// <returns></returns>
-    public static byte[] EncodePacket(NetPacket packet)
+    public static byte[] EncodePacket(NetPacket packet, PacketRegistry packetRegistry)
     {
         // get serialized packet data
-        var packetData = packet.ToBuffer();
+        var packetData = packet.ToBuffer(packetRegistry);
         // prepare stream and writer
         var stream = new MemoryStream();
         var writer = new BinaryWriter(stream);
         // write 4 byte type ID prefix
-        writer.Write(Network.PacketRegistry.GetTypeId(packet.GetType()));
+        writer.Write(packetRegistry.GetTypeId(packet.GetType()));
         // write actual packet data
         writer.Write(packetData);
         // transform stream to byte array

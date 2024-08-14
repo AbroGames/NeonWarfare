@@ -23,7 +23,7 @@ public abstract class BinaryPacket : NetPacket
     /// <remarks>
     /// Note, that you need to override both <see cref="ToBuffer"/> and <see cref="FromBuffer"/> methods if you decided so.
     /// </remarks>
-    public override BinaryPacket FromBuffer(byte[] buffer)
+    public override BinaryPacket FromBuffer(byte[] buffer, PacketRegistry packetRegistry)
     {
         // prepare reading tools
         var stream = new MemoryStream(buffer);
@@ -53,7 +53,7 @@ public abstract class BinaryPacket : NetPacket
     /// </remarks>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public override byte[] ToBuffer()
+    public override byte[] ToBuffer(PacketRegistry packetRegistry)
     {
         // prepare writing tools
         var stream = new MemoryStream();

@@ -8,19 +8,19 @@ using KludgeBox.Events.Global;
 namespace KludgeBox.Networking;
 
 
-public static partial class Network
+public partial class Network
 {
     public const long BroadcastId = 0;
     public const long ServerId = 1;
 
-    public static bool IsServer => Mode is Netmode.Server;
-    public static bool IsClient => Mode is Netmode.Client;
+    public bool IsServer => Mode is Netmode.Server;
+    public bool IsClient => Mode is Netmode.Client;
     
-    public static Netmode Mode { get; set; }
-    public static PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
-    public static SceneMultiplayer Api { get; internal set; }
+    public Netmode Mode { get; set; }
+    public PacketRegistry PacketRegistry { get; set; } = new PacketRegistry();
+    public SceneMultiplayer Api { get; internal set; }
 
-    public static ENetMultiplayerPeer Peer
+    public ENetMultiplayerPeer Peer
     {
         get => Api.MultiplayerPeer as ENetMultiplayerPeer;
         set => Api.MultiplayerPeer = value;
@@ -34,12 +34,12 @@ public static partial class Network
     
     // Called from Root._Ready()
     // Seems like some sort of potential memory leak.
-    internal static void Initialize(SceneMultiplayer api)
+    internal void Initialize(SceneMultiplayer api)
     {
         // Avoid multiple event subscriptions.
         if (Api == api) return;
      
-        Log.Debug("Init network connection");
+        Log.Debug("Init network");
         Api = api;
         Api.ServerDisconnected += CloseConnection;
         Api.PeerPacket += OnPacketReceived;
@@ -51,34 +51,49 @@ public static partial class Network
         Api.ServerDisconnected += () => EventBus.Publish(new ServerDisconnectedEvent());
     }
     
-    public static Error SetServer(int port, int maxClients = 8)
+    public Error SetServer(int port, int maxClients = 8)
     {
+        Log.Debug("Create server network");
         Mode = Netmode.Server;
+        PacketRegistry.ScanPackets();
 
         var peer = new ENetMultiplayerPeer();
         var error = peer.CreateServer(port, maxClients);
         Peer = peer;
         
-        PacketRegistry.ScanPackets();
         return error;
     }
 
-    public static Error SetClient(string host, int port)
+    public Error SetClient(string host, int port)
     {
+        Log.Debug("Create client network");
         Mode = Netmode.Client;
+        PacketRegistry.ScanPackets();
         
         var peer = new ENetMultiplayerPeer();
         var error = peer.CreateClient(host, port);
         Peer = peer;
         
-        PacketRegistry.ScanPackets();
         return error;
     }
 
-    public static void CloseConnection()
+    public void CloseConnection()
     {
         Log.Debug("Close network connection");
         Peer?.Close();
-        PacketRegistry = new PacketRegistry();
+    }
+    
+    public void SendRaw(long id, byte[] encodedPacketBuffer, MultiplayerPeer.TransferModeEnum mode = MultiplayerPeer.TransferModeEnum.Reliable, int channel = 0)
+    {
+        Api.SendBytes(encodedPacketBuffer, (int) id, mode, channel);
+    }
+    
+    private void OnPacketReceived(long id, byte[] packet)
+    {
+        var packetObj = PacketHelper.DecodePacket(packet, PacketRegistry);
+        packetObj.SenderId = id;
+        //Log.Info($"Received packet from {id} with {packet.Length} - 4 bytes. Received type is {packetObj.GetType().FullName}");
+        
+        EventBus.Publish(packetObj);
     }
 }

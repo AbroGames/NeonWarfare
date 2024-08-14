@@ -29,12 +29,12 @@ public sealed class AggregatedPacket : NetPacket
     }
 
     /// <inheritdoc />
-    public override byte[] ToBuffer()
+    public override byte[] ToBuffer(PacketRegistry packetRegistry)
     {
         using MemoryStream stream = new MemoryStream();
         foreach (var packet in _packets)
         {
-            byte[] buffer = PacketHelper.EncodePacket(packet);
+            byte[] buffer = PacketHelper.EncodePacket(packet, packetRegistry);
             int length = buffer.Length;
             byte[] lengthBytes = BitConverter.GetBytes(length);
 
@@ -46,13 +46,13 @@ public sealed class AggregatedPacket : NetPacket
     }
     
     /// <inheritdoc />
-    public override AggregatedPacket FromBuffer(byte[] compoundBuffer)
+    public override AggregatedPacket FromBuffer(byte[] compoundBuffer, PacketRegistry packetRegistry)
     {
         byte[][] buffers = SplitToBuffers(compoundBuffer);
 
         foreach (byte[] buffer in buffers)
         {
-            var packet = PacketHelper.DecodePacket(buffer);
+            var packet = PacketHelper.DecodePacket(buffer, packetRegistry);
             AddPacket(packet);
         }
 

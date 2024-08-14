@@ -32,7 +32,7 @@ public partial class Bullet : Node2D
 	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
-		if (Network.Mode == Network.Netmode.Client)
+		if (ClientRoot.Instance is not null) //if is client
 		{
 			ReadyOnClient();
 		}
@@ -46,7 +46,7 @@ public partial class Bullet : Node2D
 	{
 		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
 
-		if (Network.Mode == Network.Netmode.Server)
+		if (ServerRoot.Instance is not null) //If is server
 		{
 			RemainingDistance -= Speed * delta;
 			if (RemainingDistance <= 0)

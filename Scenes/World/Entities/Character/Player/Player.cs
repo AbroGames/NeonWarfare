@@ -31,7 +31,7 @@ public partial class Player : Character
 	public override void _Ready()
 	{
 		base._Ready();
-		if (Network.Mode == Network.Netmode.Server) return;
+		if (ServerRoot.Instance is not null) return; //If is server - return
 		
 		Camera = GetParent().GetChild<Camera>();
 		Sprite.Modulate = ClientRoot.Instance.PlayerSettings.PlayerColor;
@@ -76,7 +76,7 @@ public partial class Player : Character
 
 		ShieldSprite.Modulate = Modulate with { A = (float)HitFlash };
 
-		if (Network.IsClient)
+		if (ClientRoot.Instance is not null) //IsClient
 		{
 			// Camera shift processing
 			if (Input.IsActionPressed(Keys.CameraShift))

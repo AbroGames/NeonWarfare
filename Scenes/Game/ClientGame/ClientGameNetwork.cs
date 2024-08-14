@@ -8,6 +8,7 @@ using NeonWarfare.NetOld;
 public partial class ClientGame
 {
 	
+	public Network Network { get; private set; }
 	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 	
 	public void InitNetwork()
@@ -17,8 +18,16 @@ public partial class ClientGame
 
 	public void ConnectToServer(string host, int port)
 	{
-		NetworkService.ConnectToServer(host, port);
+		Error error = Network.SetClient(host, port);
+		if (error == Error.Ok)
+		{
+			Log.Info($"Network successfully created.");
+		}
+		else
+		{
+			Log.Error($"Create network with result: {error}");
+		}
 	}
 	
-	//TODO перенести сюда Network, а так же ServerShutdowner
+	//TODO Вызывать здесь CloseConnection
 }

@@ -32,7 +32,7 @@ public static class PlayerMovementService
         foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
         {
             if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
-            Network.Send(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+            Network.SendToClient(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
         }
     }
 }

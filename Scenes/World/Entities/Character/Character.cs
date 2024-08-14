@@ -54,7 +54,7 @@ public partial class Character : CharacterBody2D
 		{
 			Die();
 			
-			if (Network.IsClient)
+			if (ClientRoot.Instance is not null) //If is client
 			{			
 				var deathDummy = this.DropDummy();
 				var derbisDummy = this.DropDummy();

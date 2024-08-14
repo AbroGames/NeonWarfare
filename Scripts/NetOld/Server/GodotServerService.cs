@@ -15,7 +15,7 @@ public static class GodotServerService
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         ServerRoot.Instance.Game.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
-        Network.Send(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
+        Network.SendToClient(peerConnectedEvent.Id, new ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = ServerRoot.Instance.Game.World;
         if (currentWorld is ServerSafeWorld)
@@ -39,7 +39,7 @@ public static class GodotServerService
                 camera.Enabled = true;
             }
 
-            Network.Send(peerConnectedEvent.Id, 
+            Network.SendToClient(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
             //TODO спавн союзников и других NetworkEntity?
@@ -49,15 +49,15 @@ public static class GodotServerService
                 
                 Player ally = playerServerInfo.Player;
                 long allyNid = ServerRoot.Instance.Game.NetworkEntityManager.GetNid(ally);
-                Network.Send(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
-                Network.Send(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+                Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
+                Network.SendToClient(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
             
             //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
         else if (currentWorld is ServerBattleWorld)
         {
-            Network.Send(peerConnectedEvent.Id, new ServerWaitBattleEndPacket());
+            Network.SendToClient(peerConnectedEvent.Id, new ServerWaitBattleEndPacket());
         }
         else
         {
