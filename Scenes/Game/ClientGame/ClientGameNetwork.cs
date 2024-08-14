@@ -13,6 +13,7 @@ public partial class ClientGame
 	
 	public void InitNetwork()
 	{
+		Network = new();
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	} 
 
