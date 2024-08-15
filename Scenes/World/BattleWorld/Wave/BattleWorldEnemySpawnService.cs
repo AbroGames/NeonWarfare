@@ -32,7 +32,7 @@ public static class BattleWorldEnemySpawnService
         //TrySpawnWave(battleWorldProcessEvent.BattleWorld, battleWorldProcessEvent.Delta);
         if (RequiredEnemies > 0)
         {
-            var battleWorld = battleWorldPhysicsProcessEvent.ClientBattleWorld;
+            var battleWorld = battleWorldPhysicsProcessEvent.ServerBattleWorld;
             //CreateEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
             //RequiredEnemies--;
             CreateEnemyGroupAroundCharacter(battleWorld, battleWorld.Player, Rand.Range(1000, 1500));
@@ -40,7 +40,7 @@ public static class BattleWorldEnemySpawnService
 
         if (RequiredBosses > 0)
         {
-            var battleWorld = battleWorldPhysicsProcessEvent.ClientBattleWorld;
+            var battleWorld = battleWorldPhysicsProcessEvent.ServerBattleWorld;
             CreateBossEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
             RequiredBosses--;
             
@@ -59,10 +59,9 @@ public static class BattleWorldEnemySpawnService
         RequiredBosses += battleWorldSpawnBossesRequestEvent.RequiredBossesAmount;
     }
     
-    private static void CreateEnemyAroundCharacter(ClientBattleWorld clientBattleWorld, Character character, double angle, double distance)
+    private static void CreateEnemyAroundCharacter(ServerBattleWorld serverBattleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(clientBattleWorld, ServerRoot.Instance.PackedScenes.Common.World.Enemy, character, angle, distance);
-        AnimateSpawn(enemy, clientBattleWorld);
+        var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Common.World.Enemy, character, angle, distance);
     }
 
     [EventListener(ListenerSide.Server)]
@@ -73,28 +72,28 @@ public static class BattleWorldEnemySpawnService
         enemy.Position = position;
         enemy.Target = ServerRoot.Instance.Game.Server.PlayerServerInfo.Values.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
-        AnimateSpawn(enemy, world);
 
         long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy);
         Network.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
     
-    private static void CreateEnemyGroupAroundCharacter(ClientBattleWorld clientBattleWorld, Character character, double radius)
+    private static void CreateEnemyGroupAroundCharacter(ServerBattleWorld serverBattleWorld, Character character, double radius)
     {
         int amount = NextEnemiesInGroup;
         var spawner = new GroupSpawner();
         spawner.Amount = amount;
         double radiusFactor = ((double)amount - MinEnemiesInGroup) / MaxEnemiesInGroup;
         spawner.Radius = 100 + 500 * radiusFactor;
-        spawner.World = clientBattleWorld;
+        spawner.World = serverBattleWorld;
 
         Vector2 position = Rand.UnitVector * radius;
         spawner.Position = character.Position + position;
-        clientBattleWorld.AddChild(spawner);
+        serverBattleWorld.AddChild(spawner);
     }
     
     private static void AnimateSpawn(Enemy enemy, ClientBattleWorld clientBattleWorld)
     {
+        //TODO выполнять на клиенте
         if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) return; //If is server - return
         
         var fx = Fx.CreateSpawnFx();
@@ -111,12 +110,12 @@ public static class BattleWorldEnemySpawnService
     }
 
     private static int _attractorCounter;
-    private static Enemy GenEnemyAroundCharacter(ClientBattleWorld clientBattleWorld, PackedScene template, Character character, double angle, double distance, bool forceAttractor = false)
+    private static Enemy GenEnemyAroundCharacter(ServerBattleWorld serverBattleWorld, PackedScene template, Character character, double angle, double distance, bool forceAttractor = false)
     {
         var targetPositionDelta = Vector2.FromAngle(angle) * distance;
         var targetPosition = character.Position + targetPositionDelta;
 
-        var enemy = CreateEnemy(clientBattleWorld, template, forceAttractor);
+        var enemy = CreateEnemy(serverBattleWorld, template, forceAttractor);
         
         enemy.Position = targetPosition;
         enemy.Rotation = angle - Mathf.Pi / 2;
@@ -125,18 +124,18 @@ public static class BattleWorldEnemySpawnService
         return enemy;
     }
 
-    private static Enemy CreateEnemy(ClientBattleWorld clientBattleWorld, PackedScene template, bool forceAttractor = false)
+    private static Enemy CreateEnemy(ServerBattleWorld serverBattleWorld, PackedScene template, bool forceAttractor = false)
     {
         var enemy = template.Instantiate<Enemy>();
         enemy.MaxHp = 250;
         enemy.Hp = enemy.MaxHp;
-        enemy.BaseXp *= 1 + clientBattleWorld.EnemyWave.WaveNumber / 10;
+        enemy.BaseXp *= 1 + serverBattleWorld.EnemyWave.WaveNumber / 10;
         enemy.MovementSpeed = 200; // in pixels/secRegenHpSpeed = 0;
         if (_attractorCounter == 0 || forceAttractor)
         {
             enemy.IsAttractor = true;
             enemy.CollisionPriority = 1000;
-            EventBus.Publish(new EnemyStartAttractionEvent(clientBattleWorld, enemy));
+            EventBus.Publish(new EnemyStartAttractionEvent(serverBattleWorld, enemy));
         }
 
         if (!forceAttractor)
@@ -147,10 +146,10 @@ public static class BattleWorldEnemySpawnService
         return enemy;
     }
     
-    private static void CreateBossEnemyAroundCharacter(ClientBattleWorld clientBattleWorld, Character character, double angle, double distance)
+    private static void CreateBossEnemyAroundCharacter(ServerBattleWorld serverBattleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(clientBattleWorld, ServerRoot.Instance.PackedScenes.Common.World.Boss, character, angle, distance, true);
-        var scale = 1 + 0.1 * clientBattleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
+        var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Common.World.Boss, character, angle, distance, true);
+        var scale = 1 + 0.1 * serverBattleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Scale  = Vec(scale);  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.
         enemy.Damage *= 5 * scale; //5 волна = *5, 10 волна = *10, 20 волна = *15 ... и т.д.
@@ -158,7 +157,6 @@ public static class BattleWorldEnemySpawnService
         enemy.BaseXp += (int) (100 * scale); //5 волна = 150, 10 волна = 200, 20 волна = 300 ... и т.д.
         enemy.IsBoss = true;
         
-        AnimateSpawn(enemy, clientBattleWorld);
         long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy);
         Network.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
     }

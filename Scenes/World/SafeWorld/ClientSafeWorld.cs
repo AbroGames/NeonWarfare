@@ -1,6 +1,6 @@
 namespace NeonWarfare;
 
-public partial class ClientSafeWorld : World
+public partial class ClientSafeWorld : ClientWorld
 {
 	public SafeHud SafeHud { get; set; }
 	

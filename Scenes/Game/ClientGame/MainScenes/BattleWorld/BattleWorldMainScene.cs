@@ -17,7 +17,7 @@ public partial class BattleWorldMainScene : Node2D, IGameMainScene
 		ClientBattleWorld.BattleHud = BattleHud;
 	}
 	
-	public World GetWorld()
+	public ClientWorld GetWorld()
 	{
 		return ClientBattleWorld;
 	}

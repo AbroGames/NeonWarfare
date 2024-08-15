@@ -22,11 +22,11 @@ public static class BattleWorldWavesService
         EventBus.Publish(new BattleWorldNewWaveRequestEvent(battleWorld));
     }
     
-    [EventListener]
+    [EventListener(ListenerSide.Server)]
     public static void OnBattleWorldNewWaveRequestEvent(BattleWorldNewWaveRequestEvent battleWorldNewWaveRequestEvent)
     {
-        ClientBattleWorld clientBattleWorld = battleWorldNewWaveRequestEvent.ClientBattleWorld;
-        EnemyWave enemyWave = clientBattleWorld.EnemyWave;
+        ServerBattleWorld serverBattleWorld = battleWorldNewWaveRequestEvent.ServerBattleWorld;
+        EnemyWave enemyWave = serverBattleWorld.EnemyWave;
         
         enemyWave.NextWaveTimer = enemyWave.WaveTimeout;
         enemyWave.WaveNumber++;
@@ -36,11 +36,11 @@ public static class BattleWorldWavesService
         if (enemyWave.WaveNumber % 2 == 0)
         {
             EventBus.Publish(new BattleWorldSpawnBossesRequestEvent(enemyWave.WaveNumber / 2));
-            Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss
-            // Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss again to make it  L O U D E R
+            //TODO to client Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss
         }
 
-        Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
-        clientBattleWorld.BattleHud.PlayNewWaveEffect(enemyWave.WaveNumber);
+        //TODO to client 
+        //Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
+        //serverBattleWorld.BattleHud.PlayNewWaveEffect(enemyWave.WaveNumber);
     }
 }

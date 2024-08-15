@@ -7,7 +7,7 @@ using NeonWarfare.NetOld;
 public partial class ClientGame : Node2D
 {
 	
-	public World World { get; private set; }
+	public ClientWorld World { get; private set; }
 	public Hud Hud { get; private set; }
 	private Node2D _mainScene;
 	

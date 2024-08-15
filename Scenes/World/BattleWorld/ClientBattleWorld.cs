@@ -4,7 +4,7 @@ using KludgeBox.Events.Global;
 
 namespace NeonWarfare;
 
-public partial class ClientBattleWorld : World
+public partial class ClientBattleWorld : ClientWorld
 {
 	public BattleHud BattleHud { get; set; }
 	public EnemyWave EnemyWave { get; set; } = new(); //TODO it is component, rename it
@@ -41,12 +41,6 @@ public partial class ClientBattleWorld : World
 		{
 			PlayBattleMusic2();
 		}
-	}
-
-	public override void _Process(double delta)
-	{
-		base._Process(delta);
-		EventBus.Publish(new BattleWorldProcessEvent(this, delta));
 	}
 	
 	private void PlayBattleMusic1()

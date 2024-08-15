@@ -12,7 +12,7 @@ public static class EnemyDamageService
     public static void OnEnemyDeath(EnemyDeathEvent e)
     {
         var enemy = e.Enemy;
-        var battleWorld = enemy.GetParent() as ClientBattleWorld;
+        var battleWorld = enemy.GetParent() as ServerBattleWorld;
         
         battleWorld.Enemies.Remove(enemy);
         if (enemy.IsAttractor)
