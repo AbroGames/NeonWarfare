@@ -17,6 +17,7 @@ public partial class ServerGame
 	public void InitNetwork()
 	{
 		Network = new();
+		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	}
 
@@ -35,6 +36,4 @@ public partial class ServerGame
 		Server = new Server();
 		AddChild(Server);
 	}
-	
-	//TODO Вызывать здесь CloseConnection
 }

@@ -8,7 +8,7 @@ using KludgeBox.Events.Global;
 namespace KludgeBox.Networking;
 
 
-public partial class Network
+public partial class Network : Node
 {
     public const long BroadcastId = 0;
     public const long ServerId = 1;
@@ -78,6 +78,14 @@ public partial class Network
     {
         Log.Debug("Close network connection");
         Peer?.Close();
+    }
+    
+    public override void _Notification(int id)
+    {
+        if (id == NotificationPredelete)
+        {
+            CloseConnection();
+        }
     }
     
     public void SendRaw(long id, byte[] encodedPacketBuffer, MultiplayerPeer.TransferModeEnum mode = MultiplayerPeer.TransferModeEnum.Reliable, int channel = 0)

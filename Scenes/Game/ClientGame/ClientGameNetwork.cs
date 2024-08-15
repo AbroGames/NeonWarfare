@@ -14,6 +14,7 @@ public partial class ClientGame
 	public void InitNetwork()
 	{
 		Network = new();
+		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 	} 
 
@@ -29,6 +30,4 @@ public partial class ClientGame
 			Log.Error($"Create network with result: {error}");
 		}
 	}
-	
-	//TODO Вызывать здесь CloseConnection
 }
