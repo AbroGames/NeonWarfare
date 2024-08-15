@@ -17,7 +17,7 @@ public partial class SafeWorldMainScene : Node2D, IGameMainScene
 		ClientSafeWorld.SafeHud = SafeHud;
 	}
 
-	public World GetWorld()
+	public ClientWorld GetWorld()
 	{
 		return ClientSafeWorld;
 	}

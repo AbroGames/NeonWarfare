@@ -4,7 +4,7 @@ using NeonWarfare;
 
 public interface IGameMainScene
 {
-	public World GetWorld();
+	public ClientWorld GetWorld();
 	public Hud GetHud();
 	public Node2D GetAsNode2D();
 }

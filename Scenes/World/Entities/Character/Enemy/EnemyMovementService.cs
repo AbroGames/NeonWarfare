@@ -13,13 +13,13 @@ public static class EnemyMovementService
     [EventListener(ListenerSide.Server)]
     public static void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
-        attractionEvent.ClientBattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
+        attractionEvent.serverBattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
     public static void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
-        attractionEvent.ClientBattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
+        attractionEvent.serverBattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]

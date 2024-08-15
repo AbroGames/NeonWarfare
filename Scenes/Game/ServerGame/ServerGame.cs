@@ -7,7 +7,7 @@ using NeonWarfare.NetOld;
 public partial class ServerGame : Node2D
 {
 	
-	public World World { get; private set; }
+	public ServerWorld World { get; private set; }
 	
 	public override void _Ready()
 	{
@@ -16,7 +16,7 @@ public partial class ServerGame : Node2D
 		ChangeMainScene(new ServerSafeWorld());
 	}
 	
-	public void ChangeMainScene(World serverWorld)
+	public void ChangeMainScene(ServerWorld serverWorld)
 	{
 		World?.QueueFree();
 		World = serverWorld;
