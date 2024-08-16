@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
 
@@ -6,7 +7,6 @@ namespace NeonWarfare;
 
 public partial class ClientBattleWorld : ClientWorld
 {
-	public BattleHud BattleHud { get; set; }
 	public EnemyWave EnemyWave { get; set; } = new(); //TODO it is component, rename it
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public readonly ISet<Enemy> EnemyAttractors = new HashSet<Enemy>();

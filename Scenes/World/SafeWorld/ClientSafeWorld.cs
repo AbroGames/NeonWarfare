@@ -2,7 +2,6 @@ namespace NeonWarfare;
 
 public partial class ClientSafeWorld : ClientWorld
 {
-	public SafeHud SafeHud { get; set; }
 	
 	public override void _Ready()
 	{

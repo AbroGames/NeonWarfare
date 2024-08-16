@@ -17,22 +17,18 @@ public partial class BattleHud : Hud
 	[Export] [NotNull] public Label Enemies { get; private set; }
 	[Export] [NotNull] public Label Level { get; private set; }
 	
-	
 	[ExportGroup("FPS & TPS")]
 	[Export] [NotNull] public Label Fps { get; private set; }
 	[Export] [NotNull] public Label Tps { get; private set; }
-	
 	
 	[ExportGroup("Other")]
 	[Export] [NotNull] public Label WaveMessage { get; private set; }
 	[Export] [NotNull] public Sprite2D TimerSprite { get; private set; }
 	[Export] [NotNull] public Label TimerLabel { get; private set; }
 	
-	
 	[ExportGroup("Abilities")]
 	[Export] [NotNull] public Icon BeamIcon { get; private set; }
 	[Export] [NotNull] public Icon SolarBeamIcon { get; private set; }
-	
 	
 	public ClientBattleWorld ClientBattleWorld { get; set; }
 	public Vector2 WaveMessageInitialPosition { get; set; }
