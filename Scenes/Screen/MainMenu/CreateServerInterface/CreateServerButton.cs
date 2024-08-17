@@ -2,6 +2,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Networking;
 using NeonWarfare.Net;
 using NeonWarfare.NetOld.Client;
 
@@ -36,7 +37,7 @@ public partial class CreateServerButton : Button
         }
         
         int serverPid = NetworkService.StartNewDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
-        ClientRoot.Instance.CreateClientGame(NetworkService.DefaultHost, port, serverPid);
+        ClientRoot.Instance.CreateClientGame(Network.DefaultHost, port, serverPid);
     }
 
 }

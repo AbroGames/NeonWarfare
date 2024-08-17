@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using KludgeBox.Networking;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare.Net;
@@ -19,7 +20,7 @@ public readonly record struct ServerParams(bool IsHeadless, bool IsRender, int P
         return new ServerParams(
             CmdArgsService.ContainsInCmdArgs(HeadlessFlag),
             CmdArgsService.ContainsInCmdArgs(RenderFlag),
-            CmdArgsService.GetIntFromCmdArgs(PortParam, NetworkService.DefaultPort),
+            CmdArgsService.GetIntFromCmdArgs(PortParam, Network.DefaultPort),
             CmdArgsService.GetStringFromCmdArgs(AdminParam),
             CmdArgsService.GetIntFromCmdArgs(ParentPidParam)
         );

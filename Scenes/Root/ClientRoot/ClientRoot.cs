@@ -34,8 +34,8 @@ public partial class ClientRoot : Node2D
 	{
 		if (CmdParams.AutoTest)
 		{
-			int serverPid = NetworkService.StartNewDedicatedServerApplication(NetworkService.DefaultPort, PlayerSettings.PlayerName, true);
-			CreateClientGame(NetworkService.DefaultHost, NetworkService.DefaultPort, serverPid);
+			int serverPid = NetworkService.StartNewDedicatedServerApplication(Network.DefaultPort, PlayerSettings.PlayerName, true);
+			CreateClientGame(Network.DefaultHost, Network.DefaultPort, serverPid);
 		}
 		else
 		{

@@ -2,6 +2,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
+using KludgeBox.Networking;
 using NeonWarfare.Net;
 using NeonWarfare.NetOld.Client;
 
@@ -19,7 +20,7 @@ public partial class ConnectToServerButton : Button
 
     private void OnClick()
     {
-        int port = NetworkService.DefaultPort;
+        int port = Network.DefaultPort;
         string host = IpLineEdit.Text;
         int pos = host.Find(":");
         if (pos != -1)
@@ -42,7 +43,7 @@ public partial class ConnectToServerButton : Button
 
         if (host.Equals(""))
         {
-            host = NetworkService.DefaultHost;
+            host = Network.DefaultHost;
         }
         
         ClientRoot.Instance.CreateClientGame(host, port);

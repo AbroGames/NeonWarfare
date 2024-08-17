@@ -2,7 +2,7 @@ using Godot;
 
 namespace NeonWarfare;
 
-public partial class GreenOverlay : TextureRect
+public partial class GreenOverlay : TextureRect //TODO позволить выбирать цвета, переделать в красный как реакция на попадание, убарть класс отсюда или в BattleHud, или в Components. Удалить и ноду внутри сцены SafeWorldMainScene
 {
 	private double _ang = 0;
 	private double _rot = 90;

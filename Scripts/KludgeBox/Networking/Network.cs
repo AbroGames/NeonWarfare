@@ -10,6 +10,9 @@ namespace KludgeBox.Networking;
 
 public partial class Network : Node
 {
+    public const string DefaultHost = "127.0.0.1";
+    public const int DefaultPort = 25566;
+    
     public const long BroadcastId = 0;
     public const long ServerId = 1;
     
