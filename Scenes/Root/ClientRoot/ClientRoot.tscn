@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
 [ext_resource type="PackedScene" uid="uid://44j85mgk842l" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer.tscn" id="2_6lwjn"]
-[ext_resource type="Script" path="res://Scenes/Root/PlayerSettings/PlayerSettings.cs" id="3_1ch3h"]
+[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/PlayerSettings.cs" id="3_1ch3h"]
 
 [sub_resource type="Environment" id="Environment_fkaty"]
 background_mode = 3

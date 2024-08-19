@@ -7,6 +7,7 @@ public partial class SavePlayerSettingsButton : Button
 {
     [Export] [NotNull] public LineEdit NickLineEdit { get; private set; }
     [Export] [NotNull] public ColorRect ColorRect { get; private set; }
+    
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
@@ -16,7 +17,7 @@ public partial class SavePlayerSettingsButton : Button
             Color newColor = ColorRect.Color;
             ClientRoot.Instance.PlayerSettings.PlayerName = newNickname;
             ClientRoot.Instance.PlayerSettings.PlayerColor = newColor;
-            SettingsService.PlayerSettingsSave();
+            ClientRoot.Instance.PlayerSettings.Save();
         };
     }
 }

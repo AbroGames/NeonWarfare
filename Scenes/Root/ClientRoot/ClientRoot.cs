@@ -27,7 +27,7 @@ public partial class ClientRoot : Node2D
 		RootService.CommonInit(ListenerSide.Client);
 		CmdParams = ClientParams.GetFromCmd();
 		
-		SettingsService.Init();
+		PlayerSettings.Init();
 	}
 	
 	protected void Start()
