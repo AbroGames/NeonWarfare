@@ -4,12 +4,12 @@ using KludgeBox.Networking;
 namespace NeonWarfare.NetOld.Server;
 
 [GamePacket]
-public class ServerWaitBattleEndPacket : BinaryPacket;
+public class WaitBattleEndPacket : BinaryPacket;
 
 [GamePacket]
-public class ServerChangeWorldPacket(ServerChangeWorldPacket.ServerWorldType worldType) : BinaryPacket
+public class ChangeWorldPacket(ChangeWorldPacket.ServerWorldType worldType) : BinaryPacket
 {
-    public enum ServerWorldType { Unknown, Safe, Battle };
+    public enum ServerWorldType { Safe, Battle };
     public ServerWorldType WorldType = worldType;
 }
 

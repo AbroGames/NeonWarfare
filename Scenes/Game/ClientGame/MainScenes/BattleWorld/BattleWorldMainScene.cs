@@ -3,7 +3,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class BattleWorldMainScene : Node2D, IGameMainScene 
+public partial class BattleWorldMainScene : Node2D, IWorldMainScene 
 {
 	
 	[Export] [NotNull] public ClientBattleWorld ClientBattleWorld { get; private set; }

@@ -7,25 +7,6 @@ namespace NeonWarfare.NetOld.Client;
 
 public static class ClientService
 {
-
-    [EventListener(ListenerSide.Client)]
-    public static void OnServerChangeWorldPacket(ServerChangeWorldPacket serverChangeWorldPacket)
-    {
-        ClientRoot.Instance.Game.NetworkEntityManager.Clear();
-        
-        if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Safe)
-        {
-            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Client.GameMainScenes.SafeWorld.Instantiate<SafeWorldMainScene>());
-        } 
-        else if (serverChangeWorldPacket.WorldType == ServerChangeWorldPacket.ServerWorldType.Battle)
-        {
-            ClientRoot.Instance.Game.ChangeMainScene(ClientRoot.Instance.PackedScenes.Client.GameMainScenes.BattleWorld.Instantiate<BattleWorldMainScene>());
-        }
-        else
-        {
-            Log.Error($"Received unknown type of MainScene: {serverChangeWorldPacket.WorldType}");
-        }
-    }
     
     [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
@@ -63,18 +44,6 @@ public static class ClientService
         
         ClientWorld world = ClientRoot.Instance.Game.World;
         world.AddChild(ally);
-    }
-    
-    [EventListener(ListenerSide.Client)]
-    public static void OnServerWaitBattleEndPacket(ServerWaitBattleEndPacket serverWaitBattleEndPacket)
-    {
-        if (ClientRoot.Instance.MainMenu is null)
-        {
-            Log.Error("OnServerWaitBattleEndPacket, MainSceneContainer contains Node that is not MainMenuMainScene");
-            return;
-        }
-        
-        ClientRoot.Instance.Game.SetLoadingScreen(ClientRoot.Instance.PackedScenes.Client.Screens.WaitingForBattleEndCanvas.Instantiate<CanvasLayer>());
     }
     
     [EventListener(ListenerSide.Client)]

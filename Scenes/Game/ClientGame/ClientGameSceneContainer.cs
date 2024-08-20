@@ -11,13 +11,13 @@ public partial class ClientGame
 	public Hud Hud { get; private set; }
 	private Node2D _mainScene;
 	
-	public void ChangeMainScene(IGameMainScene gameMainScene)
+	public void ChangeMainScene(IWorldMainScene worldMainScene)
 	{
 		_mainScene?.QueueFree();
-		_mainScene = gameMainScene.GetAsNode2D();
+		_mainScene = worldMainScene.GetAsNode2D();
 		AddChild(_mainScene);
 		
-		World = gameMainScene.GetWorld();
-		Hud = gameMainScene.GetHud();
+		World = worldMainScene.GetWorld();
+		Hud = worldMainScene.GetHud();
 	}
 }
