@@ -31,11 +31,4 @@ public partial class ClientGame
 			Log.Error($"Create network with result: {error}");
 		}
 	}
-	
-	[EventListener(ListenerSide.Client)]
-	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
-	{
-		ClientRoot.Instance.GetWindow().MoveToForeground();
-		ClientRoot.Instance.Game.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
-	}
 }

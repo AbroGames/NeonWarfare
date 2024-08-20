@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.NetOld;
@@ -7,23 +8,16 @@ using NeonWarfare.NetOld;
 public partial class ClientGame : Node2D
 {
 	
-	public ClientWorld World { get; private set; }
-	public Hud Hud { get; private set; }
-	private Node2D _mainScene;
-	
 	public override void _Ready()
 	{
 		SetDefaultLoadingScreen();
 		InitNetwork();
 	}
 	
-	public void ChangeMainScene(IGameMainScene gameMainScene)
+	[EventListener]
+	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
-		_mainScene?.QueueFree();
-		_mainScene = gameMainScene.GetAsNode2D();
-		AddChild(_mainScene);
-		
-		World = gameMainScene.GetWorld();
-		Hud = gameMainScene.GetHud();
+		ClientRoot.Instance.GetWindow().MoveToForeground();
+		ClientRoot.Instance.Game.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
 	}
 }
