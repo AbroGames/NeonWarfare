@@ -10,14 +10,13 @@ public partial class ClientGame
 {
 	
 	public Network Network { get; private set; }
-	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 	
 	public void InitNetwork()
 	{
 		Network = new();
 		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
-		Network.SetDefaultResolver(nid => NetworkEntityManager.GetNode((long) nid));
+		Network.SetDefaultResolver(nid => World.NetworkEntityManager.GetNode((long) nid));
 	} 
 
 	public void ConnectToServer(string host, int port)

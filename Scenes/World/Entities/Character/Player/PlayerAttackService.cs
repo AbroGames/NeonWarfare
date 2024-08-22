@@ -48,7 +48,7 @@ public static class PlayerAttackService
         bullet.Author = Bullet.AuthorEnum.PLAYER;
 
         ClientRoot.Instance.Game.World.AddChild(bullet);
-        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
+        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 1f).PitchVariation(0.05f);
     }
@@ -97,7 +97,7 @@ public static class PlayerAttackService
         bullet.Author = Bullet.AuthorEnum.PLAYER;
         
         ClientRoot.Instance.Game.World.AddChild(bullet);
-        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
+        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 0.5f);
     }

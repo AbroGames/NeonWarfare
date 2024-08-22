@@ -17,7 +17,7 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public static void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
 	{
-		Instance.NetworkEntityManager.Clear(); //TODO подумать над тем, чтобы перенести его в ClientWorld, чтобы он очищался гарантировано и вовремя
+		//Instance.NetworkEntityManager.Clear(); //TODO подумать над тем, чтобы перенести его в ClientWorld, чтобы он очищался гарантировано и вовремя
 
 		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch //TODO in enum map in packet?
 		{

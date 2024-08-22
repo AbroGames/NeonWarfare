@@ -14,7 +14,7 @@ public static class ClientService
         Player player = ClientRoot.Instance.PackedScenes.Common.World.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
         player.Rotation = serverSpawnPlayerPacket.Dir;
-        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
+        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 
         ClientWorld world = ClientRoot.Instance.Game.World;
         world.Player = player;
@@ -40,7 +40,7 @@ public static class ClientService
         Ally ally = ClientRoot.Instance.PackedScenes.Common.World.Ally.Instantiate<Ally>();
         ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
         ally.Rotation = serverSpawnAllyPacket.Dir;
-        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
+        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
         
         ClientWorld world = ClientRoot.Instance.Game.World;
         world.AddChild(ally);
@@ -49,7 +49,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerPositionEntityPacket(ServerPositionEntityPacket serverPositionEntityPacket)
     {
-        Node2D node = ClientRoot.Instance.Game.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
+        Node2D node = ClientRoot.Instance.Game.World.NetworkEntityManager.GetNode<Node2D>(serverPositionEntityPacket.Nid);
         node.Position = Vec(serverPositionEntityPacket.X, serverPositionEntityPacket.Y);
         node.Rotation = serverPositionEntityPacket.Dir;
     }
@@ -57,7 +57,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
     {
-        Node2D node = ClientRoot.Instance.Game.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
+        Node2D node = ClientRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
         node.QueueFree();
     }
 }

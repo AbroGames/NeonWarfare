@@ -172,6 +172,6 @@ public static class BattleWorldEnemySpawnService
         enemy.Rotation = serverSpawnEnemyPacket.Dir;
         
         ClientRoot.Instance.Game.World.AddChild(enemy);
-        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy, serverSpawnEnemyPacket.Nid);
+        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(enemy, serverSpawnEnemyPacket.Nid);
     }
 }

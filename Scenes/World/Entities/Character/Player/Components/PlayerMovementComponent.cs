@@ -21,7 +21,7 @@ public partial class PlayerMovementComponent : Node
 
         if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
         {
-            long nid = ClientRoot.Instance.Game.NetworkEntityManager.GetNid(Player);
+            long nid = ClientRoot.Instance.Game.World.NetworkEntityManager.GetNid(Player);
             Network.SendToServer(new ClientMovementPlayerPacket(nid, Player.Position.X, Player.Position.Y,
                 Player.Rotation,
                 movementInput.X, movementInput.Y, Player.MovementSpeed));

@@ -60,7 +60,7 @@ public static class EnemyAttackService
         }
 
         ClientRoot.Instance.Game.World.AddChild(bullet);
-        ClientRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
+        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
     }
     
     
