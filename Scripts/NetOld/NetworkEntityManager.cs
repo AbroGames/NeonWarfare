@@ -56,12 +56,17 @@ public class NetworkEntityManager
     
     public Node2D RemoveEntity(long nid)
     {
+        return RemoveEntity<Node2D>(nid);
+    }
+    
+    public T RemoveEntity<T>(long nid) where T : Node2D
+    {
         if (!_nidToNode.ContainsKey(nid)) return null;
         
         Node2D node = _nidToNode[nid];
         _nidToNode.Remove(nid);
         _nodeToNid.Remove(node);
-        return node;
+        return node as T;
     }
 
     public void Clear()
