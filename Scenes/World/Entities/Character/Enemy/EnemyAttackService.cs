@@ -41,7 +41,7 @@ public static class EnemyAttackService
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
         enemy.GetParent().AddChild(bullet); //TODO refactor (и поискать все другие места, где используется GetParent().AddChild и просто GetParent
-        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(bullet);
+        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet);
         
         Network.SendToAll(new ServerSpawnEnemyBulletPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, enemy.Damage > 1000));
     }

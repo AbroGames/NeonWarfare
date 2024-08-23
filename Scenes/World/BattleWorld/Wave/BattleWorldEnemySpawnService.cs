@@ -73,7 +73,7 @@ public static class BattleWorldEnemySpawnService
         enemy.Target = ServerRoot.Instance.Game.Server.PlayerServerInfo.Values.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
 
-        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy);
+        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(enemy);
         Network.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, false));
     }
     
@@ -157,7 +157,7 @@ public static class BattleWorldEnemySpawnService
         enemy.BaseXp += (int) (100 * scale); //5 волна = 150, 10 волна = 200, 20 волна = 300 ... и т.д.
         enemy.IsBoss = true;
         
-        long nid = ServerRoot.Instance.Game.NetworkEntityManager.AddEntity(enemy);
+        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(enemy);
         Network.SendToAll(new ServerSpawnEnemyPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, true));
     }
 
