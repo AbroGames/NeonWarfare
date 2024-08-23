@@ -26,7 +26,7 @@ public partial class ServerGame
 
             Instance.Server.PlayerServerInfo[peerConnectedEvent.Id].Player = player;
             currentWorld.AddChild(player);
-            long newPlayerNid = Instance.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = Instance.World.NetworkEntityManager.AddEntity(player);
 
             Network.SendToClient(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
@@ -37,7 +37,7 @@ public partial class ServerGame
                 if (playerServerInfo.Id == newPlayerServerInfo.Id) continue;
                 
                 Player ally = playerServerInfo.Player;
-                long allyNid = Instance.NetworkEntityManager.GetNid(ally);
+                long allyNid = Instance.World.NetworkEntityManager.GetNid(ally);
                 Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
                 Network.SendToClient(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
@@ -58,9 +58,9 @@ public partial class ServerGame
     public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent) //TODO refactor this method
     {
         Player player = Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
-        Instance.NetworkEntityManager.RemoveEntity(player);
+        Instance.World.NetworkEntityManager.RemoveEntity(player);
         Instance.Server.PlayerServerInfo.Remove(peerDisconnectedEvent.Id);
-        long nid = Instance.NetworkEntityManager.RemoveEntity(player);
+        long nid = Instance.World.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
         Network.SendToAll(new ServerDestroyEntityPacket(nid));
@@ -73,7 +73,7 @@ public partial class ServerGame
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         
         Instance.ChangeMainScene(serverBattleWorld);
-        Instance.NetworkEntityManager.Clear();
+        //TODO Instance.NetworkEntityManager.Clear(); в этом нет смысла, т.к. менеджер перенесен в World. Удалить.
         
         foreach (PlayerServerInfo playerServerInfo in Instance.Server.PlayerServerInfo.Values)
         {
@@ -83,7 +83,7 @@ public partial class ServerGame
 
             playerServerInfo.Player = player;
             serverBattleWorld.AddChild(player);
-            long newPlayerNid = Instance.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = Instance.World.NetworkEntityManager.AddEntity(player);
             
             Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));

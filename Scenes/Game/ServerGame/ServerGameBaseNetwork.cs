@@ -10,7 +10,6 @@ public partial class ServerGame
 {
 	
 	public Network Network { get; private set; }
-	public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
 	
 	public Server Server { get; private set; } //TODO в game? Или куда-то ещё? Или удалить, т.к. ServerGame = Server? Но лучше не удалять, т.к. ServerGame и ClientGame должны быть схожи
 
@@ -19,7 +18,7 @@ public partial class ServerGame
 		Network = new();
 		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
-		Network.SetDefaultResolver(nid => NetworkEntityManager.GetNode((long) nid));
+		Network.SetDefaultResolver(nid => World.NetworkEntityManager.GetNode((long) nid));
 	}
 
 	public void CreateServer(int port)
