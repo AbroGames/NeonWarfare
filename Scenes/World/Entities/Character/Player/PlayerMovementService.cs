@@ -12,9 +12,9 @@ public static class PlayerMovementService
     [EventListener(ListenerSide.Server)]
     public static void OnClientMovementPlayerPacket(ClientMovementPlayerPacket clientMovementPlayerPacket)
     {
-        Player player = ServerRoot.Instance.Game.NetworkEntityManager.GetNode<Player>(clientMovementPlayerPacket.Nid);
+        Player player = ServerRoot.Instance.Game.World.NetworkEntityManager.GetNode<Player>(clientMovementPlayerPacket.Nid);
         Vector2 newPosition = Vec(clientMovementPlayerPacket.X, clientMovementPlayerPacket.Y);
-        long nid = ServerRoot.Instance.Game.NetworkEntityManager.GetNid(player);
+        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.GetNid(player);
         
         //TODO проверка расхождение и отправка только если рассхождение большое
         /*if ((player.Position - newPosition).Length() > player.CurrentMovementSpeed / 2)
