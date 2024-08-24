@@ -6,6 +6,14 @@ using NeonWarfare;
 using NeonWarfare.NetOld;
 using NeonWarfare.NetOld.Server;
 
+[GamePacket]
+public class ServerPingPacket(long pingId) : BinaryPacket
+{
+    public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
+
+    public long PingId = pingId;
+}
+
 public partial class ServerGame
 {
     
@@ -94,5 +102,11 @@ public partial class ServerGame
                 Network.SendToClient(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         }
+    }
+
+    [EventListener(ListenerSide.Server)]
+    public static void OnClientPingPacket(ClientPingPacket clientPingPacket) 
+    {
+        Network.SendToClient(clientPingPacket.SenderId, new ServerPingPacket(clientPingPacket.PingId));
     }
 }

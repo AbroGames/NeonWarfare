@@ -58,7 +58,7 @@ public class Cooldown
 	/// Initializes a new instance of the <see cref="Cooldown"/> class with the specified duration.
 	/// </summary>
 	/// <param name="duration">The duration of the cooldown in seconds.</param>
-	public Cooldown(double duration, CooldownMode mode = CooldownMode.Cyclic, bool isReady = false) 
+	public Cooldown(double duration, CooldownMode mode = CooldownMode.Cyclic, bool isReady = true) 
 	{
 		Duration = duration; 
 		Mode = mode;

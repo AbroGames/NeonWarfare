@@ -10,6 +10,7 @@ public partial class ClientGame
 {
 	
 	public Network Network { get; private set; }
+	public PingChecker PingChecker { get; private set; }
 	
 	public void InitNetwork()
 	{
@@ -17,6 +18,9 @@ public partial class ClientGame
 		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 		Network.SetDefaultResolver(nid => World.NetworkEntityManager.GetNode((long) nid));
+
+		PingChecker = new();
+		AddChild(PingChecker);
 	} 
 
 	public void ConnectToServer(string host, int port)

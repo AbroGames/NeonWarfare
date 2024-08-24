@@ -5,7 +5,7 @@ using NeonWarfare.Net;
 namespace NeonWarfare;
 
 [GamePacket]
-public class ToBattleButtonClickPacket : BinaryPacket;
+public class ToBattleButtonClickPacket : BinaryPacket; //TODO правила нейминга для пакетов? Это должен быть Client?
 
 public partial class ToBattleButton : Button
 {
