@@ -13,7 +13,6 @@ public static class EnemyRotateService
     {
         var (enemy, delta) = enemyProcessEvent;
         
-        //TODO дублируется с Player. Вынести в Utils?
         //Куда хотим повернуться
         double targetAngle = GetAngleToTarget(enemy);
         //На какой угол надо повернуться (знак указывает направление)
@@ -32,7 +31,7 @@ public static class EnemyRotateService
         enemy.Rotation += rotationSpeedRad;
     }
     
-    private static double GetAngleToTarget(Enemy enemy) //TODO почти дублируется с Player. Вынести в Utils?
+    private static double GetAngleToTarget(Enemy enemy)
     {
         // Получаем текущую позицию мыши
         var targetPos = enemy.Target.GlobalPosition;

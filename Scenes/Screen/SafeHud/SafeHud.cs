@@ -22,7 +22,7 @@ public partial class SafeHud : Hud
 		if (player == null) return;
 
 		HpBar.CurrentUpperValue = player.Hp;
-		HpBar.CurrentLowerValue = player.Hp; //TODO сделать аналогично с BattleHud, вынести в общий родительский класс (не дублировать код)
+		HpBar.CurrentLowerValue = player.Hp;
 		HpBar.MaxValue = player.MaxHp;
 		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
 		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";

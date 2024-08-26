@@ -26,7 +26,6 @@ public partial class Player : Character
 	public Cooldown BasicAbilityCd { get; set; } = new(6, CooldownMode.Single, true);
 	public Cooldown AdvancedAbilityCd { get; set; } = new(50, CooldownMode.Single, true);
 	
-	//TODO serverInfo (mb ServerPlayer)?
 	public Vector2 CurrentMovementVector { get; set; }
 	public double CurrentMovementSpeed { get; set; }
 	
@@ -52,8 +51,6 @@ public partial class Player : Character
 		//if (!Input.IsActionPressed(Keys.AttackPrimary)) return;
 		
 		Network.SendToServer(new ClientPlayerPrimaryAttackPacket(Position.X, Position.Y, Rotation));
-		//TODO костыль для теста снаряда локально. Закомментить передачу по сети, раскомментить строку ниже.
-		//new PlayerAttackService().OnServerPlayerPrimaryAttackPacket(new ServerPlayerPrimaryAttackPacket(new Random().NextInt64(), Position.X, Position.Y, Rotation, 2000));
 	}
 
 	public override void Die()
@@ -94,7 +91,6 @@ public partial class Player : Character
 		}
 	}
 
-	//TODO вынести в отдельные компоненты (и вообще отдельный абстрактный класс для оружия, для визуала и т.п.)
 	public override void _Input(InputEvent @event) 
 	{
 		base._Input(@event);

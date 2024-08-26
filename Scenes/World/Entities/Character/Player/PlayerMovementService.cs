@@ -16,15 +16,6 @@ public static class PlayerMovementService
         Vector2 newPosition = Vec(clientMovementPlayerPacket.X, clientMovementPlayerPacket.Y);
         long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.GetNid(player);
         
-        //TODO проверка расхождение и отправка только если рассхождение большое
-        /*if ((player.Position - newPosition).Length() > player.CurrentMovementSpeed / 2)
-        {
-            Network.SendPacketToPeer(clientMovementPlayerPacket.Sender.Id,
-                new ServerPositionEntityPacket(clientMovementPlayerPacket.Nid, player.Position.X, player.Position.Y, player.Rotation));
-            player.CurrentMovementVector = Vec(clientMovementPlayerPacket.MovementX, clientMovementPlayerPacket.MovementY);
-            player.CurrentMovementSpeed = clientMovementPlayerPacket.MovementSpeed;
-            return;
-        }*/
 
         player.Position = newPosition;
         player.Rotation = clientMovementPlayerPacket.Dir;
