@@ -11,15 +11,13 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
-		Instance.ClearLoadingScreen(); //TODO в идеале вызывать только после синхронизации всех стартовых объектов (сервер должен отправить специальный пакет о том, что синхронизация закончена)
+		Instance.ClearLoadingScreen();
 	}
 	
 	[EventListener(ListenerSide.Client)]
 	public static void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
 	{
-		//Instance.NetworkEntityManager.Clear(); //TODO подумать над тем, чтобы перенести его в ClientWorld, чтобы он очищался гарантировано и вовремя
-
-		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch //TODO in enum map in packet?
+		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch
 		{
 			ChangeWorldPacket.ServerWorldType.Safe => ClientRoot.Instance.PackedScenes.Client.GameMainScenes.SafeWorld,
 			ChangeWorldPacket.ServerWorldType.Battle => ClientRoot.Instance.PackedScenes.Client.GameMainScenes.BattleWorld,

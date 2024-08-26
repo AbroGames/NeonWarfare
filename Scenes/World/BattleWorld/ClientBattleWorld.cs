@@ -7,7 +7,7 @@ namespace NeonWarfare;
 
 public partial class ClientBattleWorld : ClientWorld
 {
-	public EnemyWave EnemyWave { get; set; } = new(); //TODO it is component, rename it
+	public EnemyWave EnemyWave { get; set; } = new();
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public readonly ISet<Enemy> EnemyAttractors = new HashSet<Enemy>();
 	
@@ -18,7 +18,7 @@ public partial class ClientBattleWorld : ClientWorld
 		/*battleWorld.Player = Root.Instance.PackedScenes.World.Player.Instantiate<Player>();
 		battleWorld.Player.Position = Vec(500, 500);
 
-		var camera = new Camera(); //TODO to camera service/component
+		var camera = new Camera();
 		camera.Position = battleWorld.Player.Position;
 		camera.TargetNode = battleWorld.Player;
 		camera.Zoom = Vec(0.3);
@@ -33,7 +33,7 @@ public partial class ClientBattleWorld : ClientWorld
 		battleWorld.AddChild(battleWorld.Player); // must be here to draw over the floor*/
         
         
-		if (Rand.Chance(0.5))//TODO to music service (battle music service)
+		if (Rand.Chance(0.5))
 		{
 			PlayBattleMusic1();
 		}

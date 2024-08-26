@@ -19,7 +19,7 @@ public static class ClientService
         ClientWorld world = ClientRoot.Instance.Game.World;
         world.Player = player;
 		
-        var camera = new Camera(); //TODO to camera service
+        var camera = new Camera();
         camera.Position = player.Position;
         camera.TargetNode = player;
         camera.Zoom = Vec(0.65);

@@ -20,8 +20,7 @@ public static class DelegateHelpers
     {
         return (query) => { query.SetResult(info.Invoke(invoker, [query])); };
     }
-
-    // TODO замени Network.Instance на любой другой удобный способ получения ссылки на сеть
+    
     private static Network NetworkInstance => Network.Instance;
     public static Action<QueryEvent> FuncToResolvingAction(MethodInfo info)
     {
