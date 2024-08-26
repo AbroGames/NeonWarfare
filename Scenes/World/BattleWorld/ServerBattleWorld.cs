@@ -6,7 +6,7 @@ namespace NeonWarfare;
 
 public partial class ServerBattleWorld : ServerWorld
 {
-	public EnemyWave EnemyWave { get; set; } = new(); //TODO it is component, rename it
+	public EnemyWave EnemyWave { get; set; } = new();
 	public readonly ISet<Enemy> Enemies = new HashSet<Enemy>();
 	public readonly ISet<Enemy> EnemyAttractors = new HashSet<Enemy>();
 

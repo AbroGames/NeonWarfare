@@ -7,7 +7,6 @@ public abstract class Ability
 {
     /// <summary>
     /// ID способности для передачи по сети.
-    /// TODO: реализовать универсальный механизм регистрации и синхронизации ID по сети
     /// </summary>
     public int AbilityId { get; set; }
     

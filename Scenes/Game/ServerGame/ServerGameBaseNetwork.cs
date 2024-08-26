@@ -11,7 +11,7 @@ public partial class ServerGame
 	
 	public Network Network { get; private set; }
 	
-	public Server Server { get; private set; } //TODO в game? Или куда-то ещё? Или удалить, т.к. ServerGame = Server? Но лучше не удалять, т.к. ServerGame и ClientGame должны быть схожи
+	public Server Server { get; private set; }
 
 	public void InitNetwork()
 	{

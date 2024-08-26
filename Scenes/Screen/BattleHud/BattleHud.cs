@@ -36,7 +36,6 @@ public partial class BattleHud : Hud
 	private readonly Stopwatch _physicsStopwatch = new();
 	private readonly Queue<double> _deltas = new();
 	
-	//TODO вместе с методом в отдельный компонент этого класса
 	public double FadeInTime { get; set; } = 0.5;
 	public double HoldTime { get; set; } = 1;
 	public double FadeOutTime { get; set; } = 0.5;

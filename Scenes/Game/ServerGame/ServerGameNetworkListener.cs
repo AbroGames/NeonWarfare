@@ -18,7 +18,7 @@ public partial class ServerGame
 {
     
     [EventListener(ListenerSide.Server)]
-    public static void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent) //TODO refactor this method
+    public static void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
@@ -39,7 +39,6 @@ public partial class ServerGame
             Network.SendToClient(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
-            //TODO спавн союзников и других NetworkEntity?
             foreach (PlayerServerInfo playerServerInfo in Instance.Server.PlayerServerInfo.Values)
             {
                 if (playerServerInfo.Id == newPlayerServerInfo.Id) continue;
@@ -49,8 +48,6 @@ public partial class ServerGame
                 Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
                 Network.SendToClient(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
-            
-            //TODO после спавна все включаем отображение (убираем экран о подключение). Мб спавн всех одним пакетом синхронизации.
         } 
         else if (currentWorld is ServerBattleWorld)
         {
@@ -63,7 +60,7 @@ public partial class ServerGame
     }
     
     [EventListener(ListenerSide.Server)]
-    public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent) //TODO refactor this method
+    public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Player player = Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
         Instance.World.NetworkEntityManager.RemoveEntity(player);
@@ -75,13 +72,12 @@ public partial class ServerGame
     }
     
     [EventListener(ListenerSide.Server)]
-    public static void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) //TODO refactor this method
+    public static void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) 
     {
         Network.SendToAll(new ChangeWorldPacket(ChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         
         Instance.ChangeMainScene(serverBattleWorld);
-        //TODO Instance.NetworkEntityManager.Clear(); в этом нет смысла, т.к. менеджер перенесен в World. Удалить.
         
         foreach (PlayerServerInfo playerServerInfo in Instance.Server.PlayerServerInfo.Values)
         {
