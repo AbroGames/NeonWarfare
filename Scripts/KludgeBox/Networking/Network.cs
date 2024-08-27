@@ -14,7 +14,6 @@ namespace KludgeBox.Networking;
 public delegate object InstanceResolver(object instanceIdentifier);
 public partial class Network : Node
 {
-    // TODO Need this to access resolvers from DelegateHelpers.
     public static Network Instance { get; private set; }
     
     public const string DefaultHost = "127.0.0.1";

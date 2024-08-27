@@ -11,7 +11,6 @@ public partial class ToMenuButton : Button
     {
         Pressed += () =>
         {
-            //TODO по хорошему провести подготовительные действия, отправить на сервер сигнал, закрыть нормально подключение и т.п. Все это в отдельном методе, предположительно в ClientGameNetwork.cs
             ClientRoot.Instance.CreateMainMenu();
         };
     }

@@ -4,7 +4,6 @@ using KludgeBox.Scheduling;
 
 namespace NeonWarfare;
 
-//TODO в общего родителя с обычным Beam
 public partial class SolarBeam : Node2D
 {
 	public Player Source { get; set; }
