@@ -36,11 +36,6 @@ public static class BattleWorldWavesService
         if (enemyWave.WaveNumber % 2 == 0)
         {
             EventBus.Publish(new BattleWorldSpawnBossesRequestEvent(enemyWave.WaveNumber / 2));
-            //TODO to client Audio2D.PlayUiSound(Sfx.DeepImpact, 1f); // dat bass on boss
         }
-
-        //TODO to client 
-        //Audio2D.PlayUiSound(Sfx.Bass, 0.8f); // dat bass on start
-        //serverBattleWorld.BattleHud.PlayNewWaveEffect(enemyWave.WaveNumber);
     }
 }

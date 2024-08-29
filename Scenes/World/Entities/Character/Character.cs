@@ -84,7 +84,6 @@ public partial class Character : CharacterBody2D
 	
 	public override void _Process(double delta)
 	{
-		//TODO в отдельный класс/компонент про визуал
 		// flash effect on hit processing
 		HitFlash -= 100 * delta;
 		HitFlash = Mathf.Max(HitFlash, 0);

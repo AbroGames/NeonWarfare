@@ -6,7 +6,7 @@ public partial class ClientSafeWorld : ClientWorld
 	public override void _Ready()
 	{
 		base._Ready();
-		PlaySafeMusic(); //TODO to music service (safe music service)
+		PlaySafeMusic();
 	}
 	
 	private void PlaySafeMusic()

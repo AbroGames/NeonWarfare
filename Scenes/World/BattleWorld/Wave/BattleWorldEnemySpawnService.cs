@@ -93,7 +93,6 @@ public static class BattleWorldEnemySpawnService
     
     private static void AnimateSpawn(Enemy enemy, ClientBattleWorld clientBattleWorld)
     {
-        //TODO выполнять на клиенте
         if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) return; //If is server - return
         
         var fx = Fx.CreateSpawnFx();

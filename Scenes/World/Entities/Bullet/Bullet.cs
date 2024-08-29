@@ -30,8 +30,6 @@ public partial class Bullet : Node2D
 			
 	}.AsReadOnly();
 	
-	//TODO Сделать общий Bullet и двух наследников: ClientBullet и Server (AbstractBullet + Bullet и ServerBullet)
-	//TODO Также сделать общую логику управлегния и синхронизации всех объектов между клиентов и сервером
 	public override void _Ready()
 	{
 		if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //if is client
