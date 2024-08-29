@@ -11,6 +11,7 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
+		Instance.PingChecker.Start();
 		Instance.ClearLoadingScreen();
 	}
 	

@@ -15,16 +15,27 @@ public class ClientPingPacket(long pingId) : BinaryPacket
 {
     public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
     
-    public long PingId = pingId; //TODO Возможно, передавать в пакете резы предыдущего пинга. Чтобы у сервера тоже была инфа. Считать PacketLoss по пакетам пинга?
+    public long PingId = pingId;
 }
 
 public partial class PingChecker : Node
 {
-    private Cooldown _pingSendCooldown = new(0.05); //TODO поменять на 0.5-1
-    private IDictionary<long, Stopwatch> _pingIdToSentTime = new Dictionary<long, Stopwatch>(); //TODO очищать периодически
-    private long _nextPingId = 0;
+    public record PingInfo(long PingId, Stopwatch SentTimer);
     
-    public override void _Ready()
+    private const double PingCooldown = 0.5;
+    private const int MaxPingTimeout = 1000;
+
+    public PingAnalyzer PingAnalyzer { get; private set; } = new();
+    
+    private Cooldown _pingSendCooldown = new(PingCooldown);
+    private IDictionary<long, Stopwatch> _pingIdToSentTime = new Dictionary<long, Stopwatch>(); //Мапа для быстрого доступа к Stopwatch (хранит ссылку на таймер из _orderedPingInfo.SentTimer)
+    private LinkedList<PingInfo> _orderedPingInfo = new(); //Список информации о пакетах пинга, отсортированы по PingId (т.е. в порядке отправки)
+    private ISet<long> _successPingIdInCollections = new HashSet<long>(); //Список успешных ответов на пинги (содержит PingId). Отдельно от _orderedPingInfo, чтобы не делать каждый раз поиск элемента в LinkedList.
+    private long _nextPingId = 0; //Следующее уникальное значение для пакета пинга
+    private long _numberOfSuccessPackets = 0; //Количество полученных ответных пакетов пинга (отправлены более чем MaxPingTimeout миллисекунд назад)
+    private long _numberOfLossesPackets = 0; //Количество потерянных пакетов пинга (отправлены более чем MaxPingTimeout миллисекунд назад)
+    
+    public void Start()
     {
         _pingSendCooldown.Ready += SendPingPacket;
     }    
@@ -39,19 +50,52 @@ public partial class PingChecker : Node
         long pingId = _nextPingId++;
         Stopwatch stopwatch = new();
         _pingIdToSentTime.Add(pingId, stopwatch);
+        _orderedPingInfo.AddLast(new PingInfo(pingId, stopwatch));
         
         stopwatch.Start();
         Network.SendToServer(new ClientPingPacket(pingId));
+        
+        CheckAndDeleteOldAttempts();
+    }
+
+    private void CheckAndDeleteOldAttempts()
+    {
+        var currentElement = _orderedPingInfo.First;
+        while (currentElement != null && currentElement.Value.SentTimer.ElapsedMilliseconds > MaxPingTimeout)
+        {
+            long pingId = currentElement.Value.PingId;
+            if (_successPingIdInCollections.Contains(pingId))
+            {
+                _numberOfSuccessPackets++;
+            }
+            else
+            {
+                _numberOfLossesPackets++;
+            }
+            
+            _pingIdToSentTime.Remove(pingId);
+            _orderedPingInfo.Remove(currentElement);
+            _successPingIdInCollections.Remove(pingId);
+            currentElement = currentElement.Next;
+        }
     }
 
     private void ReceivePingPacket(ServerPingPacket serverPingPacket)
     {
-        long pingTime = _pingIdToSentTime[serverPingPacket.PingId].ElapsedMilliseconds;  //TODO сохранить куда-то? Передать в класс аналитики и сохранить инфу там? Считать среднее и перцентили
-        Log.Debug("Ping: " + pingTime);
+        if (!_pingIdToSentTime.ContainsKey(serverPingPacket.PingId)) //Сообщение уже было посчитано как потерянное
+        {
+            return;
+        }
+        
+        long pingTime = _pingIdToSentTime[serverPingPacket.PingId].ElapsedMilliseconds;
+        _successPingIdInCollections.Add(serverPingPacket.PingId);
+
+        CheckAndDeleteOldAttempts();
+        PingAnalyzer.Analyze(pingTime, _numberOfSuccessPackets, _numberOfLossesPackets);
     }
     
     [EventListener(ListenerSide.Client)]
-    public static void StaticReceivePingPacket(ServerPingPacket serverPingPacket)
+    public static void StaticReceivePingPacket(ServerPingPacket serverPingPacket) 
     {
         ClientRoot.Instance.Game.PingChecker.ReceivePingPacket(serverPingPacket);
     }
