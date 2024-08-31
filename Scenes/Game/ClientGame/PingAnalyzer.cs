@@ -44,7 +44,6 @@ public class PingAnalyzer
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         _pingInfos.Add(new PingInfo(currentTime, pingTime));
         _packetLossInfos.Add(new PacketLossInfo(currentTime, numberOfSuccessPackets, numberOfLossesPackets));
-        Log.Debug("Add: " + numberOfLossesPackets + "/" + (numberOfSuccessPackets+numberOfLossesPackets));
     }
 
     private void DeleteOldAttempts()
