@@ -10,14 +10,14 @@ public partial class ClientGame
 {
 	
 	[EventListener(ListenerSide.Client)]
-	public static void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
+	public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
-		Instance.PingChecker.Start();
-		Instance.ClearLoadingScreen();
+		PingChecker.Start();
+		ClearLoadingScreen();
 	}
 	
 	[EventListener(ListenerSide.Client)]
-	public static void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
+	public void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
 	{
 		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch
 		{
@@ -32,12 +32,12 @@ public partial class ClientGame
 			return;
 		}
 
-		Instance.ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
+		ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
 	}
 	
 	[EventListener(ListenerSide.Client)]
-	public static void OnWaitBattleEndPacket(WaitBattleEndPacket emptyPacket)
+	public void OnWaitBattleEndPacket(WaitBattleEndPacket emptyPacket)
 	{
-		Instance.SetLoadingScreen(LoadingScreen.Create("Wait for the end of the battle"));
+		SetLoadingScreen(LoadingScreen.Create("Wait for the end of the battle"));
 	}
 }
