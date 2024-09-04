@@ -18,7 +18,7 @@ public partial class ServerGame
 {
     
     [EventListener(ListenerSide.Server)]
-    public static void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
+    public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
@@ -60,7 +60,7 @@ public partial class ServerGame
     }
     
     [EventListener(ListenerSide.Server)]
-    public static void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
+    public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Player player = Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
         Instance.World.NetworkEntityManager.RemoveEntity(player);
@@ -72,7 +72,7 @@ public partial class ServerGame
     }
     
     [EventListener(ListenerSide.Server)]
-    public static void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) 
+    public void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) 
     {
         Network.SendToAll(new ChangeWorldPacket(ChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
@@ -101,7 +101,7 @@ public partial class ServerGame
     }
 
     [EventListener(ListenerSide.Server)]
-    public static void OnClientPingPacket(ClientPingPacket clientPingPacket) 
+    public void OnClientPingPacket(ClientPingPacket clientPingPacket) 
     {
         Network.SendToClient(clientPingPacket.SenderId, new ServerPingPacket(clientPingPacket.PingId));
     }
