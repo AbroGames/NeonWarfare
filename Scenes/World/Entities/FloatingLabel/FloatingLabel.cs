@@ -85,7 +85,7 @@ public partial class FloatingLabel : Node2D
 
 	public static FloatingLabel Create()
 	{
-		return ClientRoot.Instance.PackedScenes.Client.Effects.FloatingLabel.Instantiate<FloatingLabel>();
+		return ClientRoot.Instance.PackedScenes.FloatingLabel.Instantiate<FloatingLabel>();
 	}
 	
 	public static FloatingLabel Create(string text, Color color, double scale)
