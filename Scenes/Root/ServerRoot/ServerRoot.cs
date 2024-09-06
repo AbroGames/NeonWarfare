@@ -13,7 +13,7 @@ namespace NeonWarfare;
 
 public partial class ServerRoot : Node2D
 {
-	[Export] [NotNull] public PackedScenesContainer PackedScenes { get; private set; }
+	[Export] [NotNull] public ServerPackedScenesContainer PackedScenes { get; private set; }
 	[Export] [NotNull] public Console Console { get; private set; }
 	
 	public ServerParams CmdParams { get; private set; }

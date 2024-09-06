@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cbhrq1l5457xc"]
 
 [ext_resource type="Script" path="res://Scenes/Root/ServerRoot/ServerRoot.cs" id="1_mqlya"]
-[ext_resource type="PackedScene" uid="uid://5vh8drujl1s5" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer.tscn" id="2_qobvx"]
+[ext_resource type="PackedScene" uid="uid://bkft5taaifavw" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer.tscn" id="2_qobvx"]
 [ext_resource type="PackedScene" uid="uid://b2gaknpctobq8" path="res://Scenes/Screen/Console/Console.tscn" id="3_dgb0x"]
 
 [node name="ServerRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Console")]
