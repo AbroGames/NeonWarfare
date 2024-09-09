@@ -15,7 +15,7 @@ public partial class LoadingScreen : CanvasLayer
 
     public static LoadingScreen Create(string text = null)
     {
-        LoadingScreen loadingScreen = ClientRoot.Instance.PackedScenes.Client.Screens.LoadingScreenCanvas.Instantiate<LoadingScreen>();
+        LoadingScreen loadingScreen = ClientRoot.Instance.PackedScenes.LoadingScreenCanvas.Instantiate<LoadingScreen>();
         if (text != null)
         {
             loadingScreen.SetUpperText(text);
