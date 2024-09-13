@@ -47,7 +47,7 @@ public partial class ClientRoot
 	
 	public void CreateMainMenu()
 	{
-		var mainMenu = PackedScenes.Client.Screens.MainMenuPackedScene;
+		var mainMenu = PackedScenes.MainMenuPackedScene;
 		SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
 	}
 }
