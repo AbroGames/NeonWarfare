@@ -61,14 +61,14 @@ public static class BattleWorldEnemySpawnService
     
     private static void CreateEnemyAroundCharacter(ServerBattleWorld serverBattleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Common.World.Enemy, character, angle, distance);
+        var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Enemy, character, angle, distance);
     }
 
     [EventListener(ListenerSide.Server)]
     public static void OnBattleWorldSpawnEnemy(BattleWorldSpawnEnemyRequest request)
     {
         var (world, position) = request;
-        var enemy = CreateEnemy(world, ServerRoot.Instance.PackedScenes.Common.World.Enemy);
+        var enemy = CreateEnemy(world, ServerRoot.Instance.PackedScenes.Enemy);
         enemy.Position = position;
         enemy.Target = ServerRoot.Instance.Game.Server.PlayerServerInfo.Values.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
@@ -147,7 +147,7 @@ public static class BattleWorldEnemySpawnService
     
     private static void CreateBossEnemyAroundCharacter(ServerBattleWorld serverBattleWorld, Character character, double angle, double distance)
     {
-        var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Common.World.Boss, character, angle, distance, true);
+        var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Boss, character, angle, distance, true);
         var scale = 1 + 0.1 * serverBattleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Scale  = Vec(scale);  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.
@@ -164,8 +164,8 @@ public static class BattleWorldEnemySpawnService
     public static void OnServerSpawnEnemyPacket(ServerSpawnEnemyPacket serverSpawnEnemyPacket)
     {
         Enemy enemy = (serverSpawnEnemyPacket.IsBoss
-            ? ClientRoot.Instance.PackedScenes.Common.World.Boss
-            : ClientRoot.Instance.PackedScenes.Common.World.Enemy).Instantiate<Enemy>();
+            ? ClientRoot.Instance.PackedScenes.Boss
+            : ClientRoot.Instance.PackedScenes.Enemy).Instantiate<Enemy>();
         enemy.IsBoss = serverSpawnEnemyPacket.IsBoss;
         enemy.Position = Vec(serverSpawnEnemyPacket.X, serverSpawnEnemyPacket.Y);
         enemy.Rotation = serverSpawnEnemyPacket.Dir;
