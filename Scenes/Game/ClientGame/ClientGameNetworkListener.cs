@@ -21,8 +21,8 @@ public partial class ClientGame
 	{
 		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch
 		{
-			ChangeWorldPacket.ServerWorldType.Safe => ClientRoot.Instance.PackedScenes.Client.GameMainScenes.SafeWorld,
-			ChangeWorldPacket.ServerWorldType.Battle => ClientRoot.Instance.PackedScenes.Client.GameMainScenes.BattleWorld,
+			ChangeWorldPacket.ServerWorldType.Safe => ClientRoot.Instance.PackedScenes.SafeWorldMainScene,
+			ChangeWorldPacket.ServerWorldType.Battle => ClientRoot.Instance.PackedScenes.BattleWorldMainScene,
 			_ => null
 		};
 
