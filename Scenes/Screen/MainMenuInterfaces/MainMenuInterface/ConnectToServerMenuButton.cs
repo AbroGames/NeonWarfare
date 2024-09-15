@@ -10,7 +10,7 @@ public partial class ConnectToServerMenuButton : Button
         NotNullChecker.CheckProperties(this);
         Pressed += () =>
         {
-            MenuService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.Client.Screens.ConnectToServerMenu);
+            MenuService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.ConnectToServerMenu);
         };
     }
 }
