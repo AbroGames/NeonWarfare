@@ -28,7 +28,7 @@ public partial class ServerGame
         Node currentWorld = Instance.World;
         if (currentWorld is ServerSafeWorld)
         {
-            Player player = ServerRoot.Instance.PackedScenes.Common.World.Player.Instantiate<Player>();
+            Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
@@ -81,7 +81,7 @@ public partial class ServerGame
         
         foreach (PlayerServerInfo playerServerInfo in Instance.Server.PlayerServerInfo.Values)
         {
-            Player player = ServerRoot.Instance.PackedScenes.Common.World.Player.Instantiate<Player>();
+            Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
