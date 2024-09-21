@@ -11,7 +11,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        Player player = ClientRoot.Instance.PackedScenes.Common.World.Player.Instantiate<Player>();
+        Player player = ClientRoot.Instance.PackedScenes.Player.Instantiate<Player>();
         player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
         player.Rotation = serverSpawnPlayerPacket.Dir;
         ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
@@ -37,7 +37,7 @@ public static class ClientService
     [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
     {
-        Ally ally = ClientRoot.Instance.PackedScenes.Common.World.Ally.Instantiate<Ally>();
+        Ally ally = ClientRoot.Instance.PackedScenes.Ally.Instantiate<Ally>();
         ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
         ally.Rotation = serverSpawnAllyPacket.Dir;
         ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
