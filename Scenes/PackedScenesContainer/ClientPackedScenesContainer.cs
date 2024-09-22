@@ -8,6 +8,7 @@ public partial class ClientPackedScenesContainer : Node
     /*
      * EFFECTS
      */
+    [ExportGroup("Effects")]
     [Export] [NotNull] public PackedScene DeathFx { get; private set; }
     [Export] [NotNull] public PackedScene DebrisFx { get; private set; }
     [Export] [NotNull] public PackedScene BulletHitFx { get; private set; }
@@ -18,12 +19,14 @@ public partial class ClientPackedScenesContainer : Node
     /*
      * MAIN SCENES
      */
+    [ExportGroup("Main Scenes")]
     [Export] [NotNull] public PackedScene BattleWorldMainScene { get; private set; }
     [Export] [NotNull] public PackedScene SafeWorldMainScene { get; private set; }
     
     /*
      * SCREEN
      */
+    [ExportGroup("Screen")]
     [Export] [NotNull] public PackedScene MainMenuPackedScene { get; private set; }
     
     [Export] [NotNull] public PackedScene MainMenu { get; private set; }
@@ -45,6 +48,7 @@ public partial class ClientPackedScenesContainer : Node
     /*
      * WORLD
      */
+    [ExportGroup("World")]
     [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
     [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
     
