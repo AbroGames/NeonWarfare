@@ -3,7 +3,7 @@ using Godot;
 
 namespace NeonWarfare;
 
-public partial class NodeContainer : Node
+public partial class NodeContainer : Node //TODO del class
 {
 	private Node _currentStoredNode;
 
