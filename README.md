@@ -34,18 +34,18 @@
 
 ### Разделение на клиент и сервер
 Сцены и обработчики для клиента и сервера хранятся в соседних папках. Например:
-- **Root** (общая папка со всеми файлами связанными со сценой Root)
-  - **ClientRoot** (папка с файлами сцены Root для клиента)
+- **Root**: Общая папка со всеми файлами связанными со сценой Root
+  - **ClientRoot**: Папка с файлами сцены Root для клиента.
     - `ClientRoot.tscn`
     - `ClientRoot.cs`
     - `ClientRootSceneContainer.cs`
     - `ClientRootSingleton.cs`
-  - **ServerRoot** (папка с файлами сцены Root для сервера)
+  - **ServerRoot**: Папка с файлами сцены Root для сервера.
     - `ServerRoot.tscn`
     - `ServerRoot.cs`
     - `ServerRootSceneContainer.cs`
     - `ServerRootSingleton.cs`
-  - `RootService.cs` (статичный класс с общими функциями, которые используются и на клиенте и на сервере)
+  - `RootService.cs`: Статичный класс с общими функциями, которые используются и на клиенте и на сервере.
 
 ### Поток инициализации
 1. `Root/StarterScene`
