@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 
 namespace NeonWarfare;
-
+//TODO split to 2 different folder (client and server)
 public partial class ClientPackedScenesContainer : Node 
 {
     /*
