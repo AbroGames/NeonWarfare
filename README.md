@@ -82,3 +82,28 @@
         - `StarterScene.cs`: Имеет ссылки на прототипы сцен `ClientRoot` и `ServerRoot`. В зависимости от параметров командной строки заменяет загруженную `StarterScene.tscn` на `ClientRoot.tscn` или `ServerRoot.tscn`.
     - `RootService.cs`: Статичный класс с общими функциями, которые используются и на клиенте и на сервере. Отвечает за инициализацию сервисов использующихся и на клиенте и на сервере.
 
+### Game
+- **Game**: Общая папка со всеми файлами связанными со сценой `Game`
+    - **ClientGame**: Папка с файлами сцены `Game` для клиента.
+        - `ClientGame.cs`: Запускает функции инициализации из других `partial` классов `ClientGame`.
+        - `ClientGameSceneContainer.cs`: Отвечает за переключение между `BattleWorldMainScene` и `SafeWorldMainScene`.
+        - `ClientGameBaseNetwork.cs`: Отвечает за инициализацию сети и подключение к серверу.
+        - `ClientGameNetworkListener.cs`: Отвечает за обработку сетевых пакетов с сообщениями верхнего уровня (начало игры, смена мира и т.п.).
+        - `ClientGameLoadingScreen.cs`: Предоставляет возможность отображения загрузочного экрана.
+        - `ClientGameServerShutdowner.cs`: Отвечает за добавление к сцене `ClientGame` сцены `ServerShutdowner`.
+        - `ServerShutdowner.cs`: Обработчик сцены отвечающий за автоматическое завершение работы сервера в случае уничтожения сцены `ClientGame`.
+        - `PingChecker.cs`: Обработчик сцены отвечающий за отправку Ping-пакетов.
+        - `PingAnalyzer.cs`: Класс, который анализирует результаты Ping-а и считает скользящее среднее, перцентили и т.п.
+        - **MainScenes**: Папка с файлами сцен типа `WorldMainScene` для клиента. Такая сцена объединяет в себе сцены `World` и `Hud`.
+            - `IWorldMainScene.cs`: Общий интерфейс для всех сцен типа `WorldMainScene`
+            - **BattleWorld**: Папка с файлами сцены типа `WorldMainScene` для боевого мира.
+                - `BattleWorldMainScene.tscn`: Техническая сцена без игровых объектов. Содержит сцены `BattleWorld` и `BattleHud`.
+                - `BattleWorldMainScene.cs`: Просто контейнер со ссылками на `BattleWorld` и `BattleHud`.
+            - **SafeWorld**: Папка с файлами сцены типа `WorldMainScene` для безопасного мира.
+                - `SafeWorldMainScene.tscn`: Техническая сцена без игровых объектов. Содержит сцены `SafeWorld` и `SafeHud`.
+                - `SafeWorldMainScene.cs`: Просто контейнер со ссылками на `SafeWorld` и `SafeHud`.
+    - **ServerGame**: Папка с файлами сцены `Game` для сервера.
+        - `ServerGame.cs`: Запускает функции инициализации из других `partial` классов `ServerGame`.
+        - `ServerGameSceneContainer.cs`: Отвечает за переключение между `ServerBattleWorld` и `ServerSafeWorld`.
+        - `ServerGameBaseNetwork.cs`: Отвечает за инициализацию сети.
+        - `ServerGameNetworkListener.cs`: Отвечает за обработку сетевых пакетов с сообщениями верхнего уровня (игрок подключен, игрок отключен, игрок хочет сменить мир и т.п.).
