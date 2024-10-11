@@ -107,3 +107,12 @@
         - `ServerGameSceneContainer.cs`: Отвечает за переключение между `ServerBattleWorld` и `ServerSafeWorld`.
         - `ServerGameBaseNetwork.cs`: Отвечает за инициализацию сети.
         - `ServerGameNetworkListener.cs`: Отвечает за обработку сетевых пакетов с сообщениями верхнего уровня (игрок подключен, игрок отключен, игрок хочет сменить мир и т.п.).
+
+### PackedScenesContainer
+- **PackedScenesContainer**:
+    - **ClientPackedScenesContainer**:
+        - `ClientPackedScenesContainer.tscn`: Техническая сцена без игровых объектов. Необходима, чтобы в редакторе Godot настраивать ссылки на прототипы других сцен клиента.
+        - `ClientPackedScenesContainer.cs`: Содержит ссылки на прототипы других сцен клиента. Получение прототипа любой сцены (для последующего создания сцены), должно начинаться отсюда.
+    - **ServerPackedScenesContainer**:
+        - `ServerPackedScenesContainer.tscn`: Техническая сцена без игровых объектов. Необходима, чтобы в редакторе Godot настраивать ссылки на прототипы других сцен сервера.
+        - `ServerPackedScenesContainer.cs`: Содержит ссылки на прототипы других сцен сервера. Получение прототипа любой сцены (для последующего создания сцены), должно начинаться отсюда.
