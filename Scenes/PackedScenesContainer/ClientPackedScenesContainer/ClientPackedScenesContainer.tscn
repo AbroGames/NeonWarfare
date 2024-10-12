@@ -1,6 +1,6 @@
 [gd_scene load_steps=31 format=3 uid="uid://bdvsb2vvfjdil"]
 
-[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
+[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/DeathFx.tscn" id="2_bm6dq"]
 [ext_resource type="PackedScene" uid="uid://3cohjn4xbp2o" path="res://Scenes/World/Effects/DebrisFx.tscn" id="3_7erab"]
 [ext_resource type="PackedScene" uid="uid://5nblerr5d58t" path="res://Scenes/World/Effects/BulletHitFx.tscn" id="4_fxdr8"]
