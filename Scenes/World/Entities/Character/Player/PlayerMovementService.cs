@@ -22,8 +22,16 @@ public static class PlayerMovementService
         
         foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
         {
-            if (playerServerInfo.Player == player) continue; //Отправляем коры игркоа всем кроме самого игрока
-            Network.SendToClient(playerServerInfo.Id, new ServerPositionEntityPacket(nid, player.Position.X, player.Position.Y, player.Rotation));
+            if (playerServerInfo.Player == player) continue; //Отправляем коры игрока всем кроме самого игрока
+
+            ServerMovementEntityPacket packet = new ServerMovementEntityPacket(
+                nid,
+                player.Position.X,
+                player.Position.Y,
+                player.Rotation,
+                clientMovementPlayerPacket.MovementDir,
+                clientMovementPlayerPacket.MovementSpeed);
+            Network.SendToClient(playerServerInfo.Id, packet);
         }
     }
 }

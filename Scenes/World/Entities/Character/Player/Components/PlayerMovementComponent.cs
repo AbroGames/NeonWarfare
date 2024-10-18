@@ -17,14 +17,15 @@ public partial class PlayerMovementComponent : Node
     public override void _PhysicsProcess(double delta)
     {
         var movementInput = GetInput();
-        Player.MoveAndCollide(movementInput * Player.MovementSpeed * delta);
+        var movementInSecond = movementInput * Player.MovementSpeed;
+        Player.MoveAndCollide(movementInSecond * delta);
 
         if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
         {
             long nid = ClientRoot.Instance.Game.World.NetworkEntityManager.GetNid(Player);
             Network.SendToServer(new ClientMovementPlayerPacket(nid, Player.Position.X, Player.Position.Y,
                 Player.Rotation,
-                movementInput.X, movementInput.Y, Player.MovementSpeed));
+                movementInSecond.Angle(), movementInSecond.Length()));
         }
     }
 
