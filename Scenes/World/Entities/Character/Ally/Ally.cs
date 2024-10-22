@@ -17,12 +17,12 @@ public partial class Ally : Character
 
     private double _movementSpeed;
     private double _movementDir;
-    private SingleCooldown _inertiaCooldown = new(InertiaCooldown, false, false);
+    private SingleCooldown _inertiaCooldown = new(InertiaCooldown);
 
     public override void _Ready()
     {
         base._Ready();
-        _inertiaCooldown.ActionsWhenReady += () => { _movementSpeed = 0; Log.Warning("COOLDOWN WORKED");};
+        _inertiaCooldown.ActionWhenReady += () => { _movementSpeed = 0; };
     }
 
     [EventListener(ListenerSide.Client)]
@@ -36,12 +36,10 @@ public partial class Ally : Character
 
         if (serverMovementEntityPacket.MovementSpeed != 0)
         {
-            //Log.Warning("SET SPEED = " + serverMovementEntityPacket.MovementSpeed + "; DIR = " + serverMovementEntityPacket.MovementDir);
-            _inertiaCooldown.Restart(); 
+            _inertiaCooldown.Restart();
         }
         else
         {
-            //Log.Warning("SET SPEED = 0");
             _inertiaCooldown.Reset();
         }
     }
@@ -53,8 +51,7 @@ public partial class Ally : Character
         if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
         {
             _inertiaCooldown.Update(delta);
-            Position += (Vector2.FromAngle(_movementDir) * _movementSpeed * delta);
-            //Log.Warning("MOVE SPEED = " + (Vector2.FromAngle(_movementDir) * _movementSpeed * delta).Length() + "; DIR = " + (Vector2.FromAngle(_movementDir) * _movementSpeed * delta).Angle());
+            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * delta;
         }
     }
 }
