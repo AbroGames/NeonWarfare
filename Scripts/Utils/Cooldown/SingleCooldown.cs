@@ -20,14 +20,13 @@ public class SingleCooldown
 	
 	private double _timeLeft = 0;
 	private bool _isActivated = false;
-	private bool _isReady = true;
 	
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Cooldown"/> class with the specified duration.
 	/// </summary>
 	/// <param name="duration">The duration of the cooldown in seconds.</param>
-	public SingleCooldown(double duration, bool isActivated = false, bool isReady = false, Action actionWhenReady = null) 
+	public SingleCooldown(double duration, bool isActivated = false, Action actionWhenReady = null) 
 	{
 		if (duration == 0)
 		{
@@ -37,11 +36,6 @@ public class SingleCooldown
 		Duration = duration;
 		_timeLeft = duration;
 		_isActivated = isActivated;
-		_isReady = isReady;
-		if (isReady)
-		{
-			_timeLeft = 0;
-		}
 
 		if (actionWhenReady != null)
 		{
@@ -65,7 +59,6 @@ public class SingleCooldown
 	    
 	    if (_timeLeft == 0)
 	    {
-		    _isReady = true;
 		    ActionsWhenReady?.Invoke();
 		    _isActivated = false;
 	    }
@@ -77,7 +70,6 @@ public class SingleCooldown
 	public void Reset()
 	{
 		_timeLeft = Duration;
-		_isReady = false;
 		_isActivated = false;
 	}
 
@@ -88,17 +80,5 @@ public class SingleCooldown
 	{
 		Reset();
 		_isActivated = true;
-	}
-	
-	public bool TryUse()
-	{
-		bool canUse = _isActivated && _isReady;
-		if (canUse)
-		{
-			ActionsWhenReady?.Invoke();
-			_isActivated = false;
-		}
-		
-		return canUse;
 	}
 }
