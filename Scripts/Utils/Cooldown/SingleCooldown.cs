@@ -8,7 +8,7 @@ public class SingleCooldown
 {
 	
 	//Duration of the cooldown in seconds.
-	public double Duration { get; set; } = 0;
+	public double Duration { get; } = 0;
 	
 	//Gets elapsed time in seconds
 	public double ElapsedTime => Duration - _timeLeft;
@@ -16,17 +16,21 @@ public class SingleCooldown
 	//Gets the fraction of the cooldown completed, ranging from 0 to 1.
 	public double FractionElapsedTime => ElapsedTime / Duration;
 	
-	public event Action ActionsWhenReady;
+	//Cooldown ended, time left and actions executed
+	public bool IsCompleted => _isCompleted;
+	
+	public event Action ActionWhenReady;
 	
 	private double _timeLeft = 0;
 	private bool _isActivated = false;
+	private bool _isCompleted = false;
 	
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Cooldown"/> class with the specified duration.
 	/// </summary>
 	/// <param name="duration">The duration of the cooldown in seconds.</param>
-	public SingleCooldown(double duration, bool isActivated = false, Action actionWhenReady = null) 
+	public SingleCooldown(double duration, bool isActivated = false, bool isCompleted = false, Action actionWhenReady = null) 
 	{
 		if (duration == 0)
 		{
@@ -36,10 +40,12 @@ public class SingleCooldown
 		Duration = duration;
 		_timeLeft = duration;
 		_isActivated = isActivated;
-
-		if (actionWhenReady != null)
+		_isCompleted = isCompleted;
+		ActionWhenReady = actionWhenReady;
+		
+		if (isCompleted)
 		{
-			ActionsWhenReady += actionWhenReady;
+			_timeLeft = 0;
 		}
 	}
 
@@ -52,15 +58,12 @@ public class SingleCooldown
 		if (!_isActivated) return;
 		
 		_timeLeft -= deltaTime;
-	    if (_timeLeft < 0)
+	    if (_timeLeft <= 0)
 	    {
 		    _timeLeft = 0;
-	    }
-	    
-	    if (_timeLeft == 0)
-	    {
-		    ActionsWhenReady?.Invoke();
+		    _isCompleted = true;
 		    _isActivated = false;
+		    ActionWhenReady?.Invoke();
 	    }
 	}
 	
@@ -70,6 +73,7 @@ public class SingleCooldown
 	public void Reset()
 	{
 		_timeLeft = Duration;
+		_isCompleted = false;
 		_isActivated = false;
 	}
 
