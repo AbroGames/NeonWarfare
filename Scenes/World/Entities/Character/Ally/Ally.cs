@@ -24,6 +24,17 @@ public partial class Ally : Character
         base._Ready();
         _inertiaCooldown.ActionWhenReady += () => { _movementSpeed = 0; };
     }
+    
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        
+        if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
+        {
+            _inertiaCooldown.Update(delta);
+            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * delta;
+        }
+    }
 
     [EventListener(ListenerSide.Client)]
     public void OnServerMovementEntityPacket(ServerMovementEntityPacket serverMovementEntityPacket)
@@ -41,17 +52,6 @@ public partial class Ally : Character
         else
         {
             _inertiaCooldown.Reset();
-        }
-    }
-    
-    public override void _Process(double delta)
-    {
-        base._Process(delta);
-        
-        if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
-        {
-            _inertiaCooldown.Update(delta);
-            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * delta;
         }
     }
 }
