@@ -80,16 +80,15 @@ public partial class PingChecker : Node
         }
     }
     
-    [EventListener(ListenerSide.Client)]
-    public void ReceivePingPacket(ServerPingPacket serverPingPacket)
+    public void ReceivePingPacket(long pingId)
     {
-        if (!_pingIdToSentTime.ContainsKey(serverPingPacket.PingId)) //Сообщение уже было посчитано как потерянное
+        if (!_pingIdToSentTime.ContainsKey(pingId)) //Сообщение уже было посчитано как потерянное
         {
             return;
         }
         
-        long pingTime = _pingIdToSentTime[serverPingPacket.PingId].ElapsedMilliseconds;
-        _successPingIdInCollections.Add(serverPingPacket.PingId);
+        long pingTime = _pingIdToSentTime[pingId].ElapsedMilliseconds;
+        _successPingIdInCollections.Add(pingId);
 
         CheckAndDeleteOldAttempts();
         PingAnalyzer.Analyze(pingTime, _numberOfSuccessPackets, _numberOfLossesPackets);

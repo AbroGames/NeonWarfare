@@ -12,7 +12,7 @@ public class PingAnalyzer
     
     private const int MaxTimeOfAnalyticalSlidingWindowForPing = 60 * 1000;
     private const int MaxTimeOfAnalyticalSlidingWindowForPacketLoss = 60 * 1000;
-    private const int MidTimeOfAnalyticalSlidingWindowForPacketLos = 30 * 1000;
+    private const int MidTimeOfAnalyticalSlidingWindowForPacketLoss = 30 * 1000;
     private const int ShortTimeOfAnalyticalSlidingWindowForPacketLoss = 5 * 1000;
     
     //Финальные результаты аналитики
@@ -68,7 +68,7 @@ public class PingAnalyzer
         P99PingTime = CalculatePercentile(pingTimesSorted, 0.99);
         
         AveragePacketLossInPercentForLongTime = CalculatePacketLossPercent(_packetLossInfos, MaxTimeOfAnalyticalSlidingWindowForPacketLoss);
-        AveragePacketLossInPercentForMidTime = CalculatePacketLossPercent(_packetLossInfos, MidTimeOfAnalyticalSlidingWindowForPacketLos);
+        AveragePacketLossInPercentForMidTime = CalculatePacketLossPercent(_packetLossInfos, MidTimeOfAnalyticalSlidingWindowForPacketLoss);
         AveragePacketLossInPercentForShortTime = CalculatePacketLossPercent(_packetLossInfos, ShortTimeOfAnalyticalSlidingWindowForPacketLoss);
     }
     
