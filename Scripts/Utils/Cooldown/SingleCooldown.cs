@@ -4,44 +4,22 @@ using CooldownMode = KludgeBox.Scheduling.CooldownMode;
 
 namespace NeonWarfare.Utils.Cooldown;
 
-public class SingleCooldown
+public class SingleCooldown : Cooldown
 {
-	
-	//Duration of the cooldown in seconds.
-	public double Duration { get; } = 0;
-	
-	//Gets elapsed time in seconds
-	public double ElapsedTime => Duration - _timeLeft;
-
-	//Gets the fraction of the cooldown completed, ranging from 0 to 1.
-	public double FractionElapsedTime => ElapsedTime / Duration;
 	
 	//Cooldown ended, time left and actions executed
 	public bool IsCompleted => _isCompleted;
 	
-	public event Action ActionWhenReady;
-	
-	private double _timeLeft = 0;
-	private bool _isActivated = false;
 	private bool _isCompleted = false;
-	
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Cooldown"/> class with the specified duration.
+	/// Initializes a new instance of the <see cref="SingleCooldown"/> class with the specified duration.
 	/// </summary>
 	/// <param name="duration">The duration of the cooldown in seconds.</param>
-	public SingleCooldown(double duration, bool isActivated = false, bool isCompleted = false, Action actionWhenReady = null) 
+	public SingleCooldown(double duration, bool isCompleted = false, bool isActivated = true, Action actionWhenReady = null) :
+		base(duration, isActivated, actionWhenReady)
 	{
-		if (duration == 0)
-		{
-			throw new ArgumentException("Duration can't be equal zero.");
-		}
-		
-		Duration = duration;
-		_timeLeft = duration;
-		_isActivated = isActivated;
 		_isCompleted = isCompleted;
-		ActionWhenReady = actionWhenReady;
 		
 		if (isCompleted)
 		{
@@ -63,7 +41,7 @@ public class SingleCooldown
 		    _timeLeft = 0;
 		    _isCompleted = true;
 		    _isActivated = false;
-		    ActionWhenReady?.Invoke();
+		    ActivateAction();
 	    }
 	}
 	
@@ -84,5 +62,17 @@ public class SingleCooldown
 	{
 		Reset();
 		_isActivated = true;
+	}
+    
+	public void Start()
+	{
+		if (_isCompleted) return;
+		_isActivated = true;
+	}
+
+	public void Pause()
+	{
+		if (_isCompleted) return;
+		_isActivated = false;
 	}
 }
