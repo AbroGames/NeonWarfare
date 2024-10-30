@@ -2,14 +2,14 @@
 
 namespace NeonWarfare.Utils.Cooldown;
 
-public class CycleCooldown : Cooldown
+public class AutoCooldown : Cooldown
 {
     
     /// <summary>
-    /// Initializes a new instance of the <see cref="CycleCooldown"/> class with the specified duration.
+    /// Initializes a new instance of the <see cref="AutoCooldown"/> class with the specified duration.
     /// </summary>
     /// <param name="duration">The duration of the cooldown in seconds.</param>
-    public CycleCooldown(double duration, bool isActivated = true, Action actionWhenReady = null) : 
+    public AutoCooldown(double duration, bool isActivated = true, Action actionWhenReady = null) : 
         base(duration, isActivated, actionWhenReady) { }
 
     /// <summary>

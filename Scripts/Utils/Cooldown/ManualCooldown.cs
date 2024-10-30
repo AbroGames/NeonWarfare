@@ -4,7 +4,7 @@ using CooldownMode = KludgeBox.Scheduling.CooldownMode;
 
 namespace NeonWarfare.Utils.Cooldown;
 
-public class SingleCooldown : Cooldown
+public class ManualCooldown : Cooldown
 {
 	
 	//Cooldown ended, time left and actions executed
@@ -13,10 +13,10 @@ public class SingleCooldown : Cooldown
 	private bool _isCompleted = false;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="SingleCooldown"/> class with the specified duration.
+	/// Initializes a new instance of the <see cref="ManualCooldown"/> class with the specified duration.
 	/// </summary>
 	/// <param name="duration">The duration of the cooldown in seconds.</param>
-	public SingleCooldown(double duration, bool isCompleted = false, bool isActivated = true, Action actionWhenReady = null) :
+	public ManualCooldown(double duration, bool isCompleted = false, bool isActivated = true, Action actionWhenReady = null) :
 		base(duration, isActivated, actionWhenReady)
 	{
 		_isCompleted = isCompleted;
