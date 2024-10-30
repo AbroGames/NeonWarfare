@@ -17,7 +17,7 @@ public partial class Ally : Character
 
     private double _movementSpeed;
     private double _movementDir;
-    private SingleCooldown _inertiaCooldown = new(InertiaCooldown, false, false);
+    private ManualCooldown _inertiaCooldown = new(InertiaCooldown, false, false);
 
     public override void _Ready()
     {
