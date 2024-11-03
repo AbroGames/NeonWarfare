@@ -86,8 +86,6 @@
         - `ClientGameLoadingScreen.cs`: Предоставляет возможность отображения загрузочного экрана.
         - `ClientGameServerShutdowner.cs`: Отвечает за добавление к сцене `ClientGame` сцены `ServerShutdowner`.
         - `ServerShutdowner.cs`: Обработчик сцены отвечающий за автоматическое завершение работы сервера в случае уничтожения сцены `ClientGame`.
-        - `PingChecker.cs`: Обработчик сцены отвечающий за отправку Ping-пакетов.
-        - `PingAnalyzer.cs`: Класс, который анализирует результаты Ping-а и считает скользящее среднее, перцентили и т.п.
         - **MainScenes**: Папка с файлами сцен типа `WorldMainScene` для клиента. Такая сцена объединяет в себе сцены `World` и `Hud`.
             - `IWorldMainScene.cs`: Общий интерфейс для всех сцен типа `WorldMainScene`
             - **BattleWorld**: Папка с файлами сцены типа `WorldMainScene` для боевого мира.
