@@ -22,7 +22,7 @@ public partial class PingChecker : Node
 {
     public record PingInfo(long PingId, Stopwatch SentTimer);
     
-    private const double PingCooldown = 0.5;
+    private const double PingCooldown = 1;
     private const int MaxPingTimeout = 1000;
 
     public PingAnalyzer PingAnalyzer { get; private set; } = new();

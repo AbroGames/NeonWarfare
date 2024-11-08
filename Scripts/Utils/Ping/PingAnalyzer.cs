@@ -10,10 +10,10 @@ public class PingAnalyzer
     public record PingInfo(long AnalyzeTime, long PingTime);
     public record PacketLossInfo(long AnalyzeTime, long NumberOfSuccessPackets, long NumberOfLossesPackets);
     
-    private const int MaxTimeOfAnalyticalSlidingWindowForPing = 60 * 1000;
-    private const int MaxTimeOfAnalyticalSlidingWindowForPacketLoss = 60 * 1000;
-    private const int MidTimeOfAnalyticalSlidingWindowForPacketLoss = 30 * 1000;
-    private const int ShortTimeOfAnalyticalSlidingWindowForPacketLoss = 5 * 1000;
+    public const int MaxTimeOfAnalyticalSlidingWindowForPing = 60 * 1000;
+    public const int MaxTimeOfAnalyticalSlidingWindowForPacketLoss = 60 * 1000;
+    public const int MidTimeOfAnalyticalSlidingWindowForPacketLoss = 30 * 1000;
+    public const int ShortTimeOfAnalyticalSlidingWindowForPacketLoss = 5 * 1000;
     
     //Финальные результаты аналитики
     public long CurrentPingTime { get; private set; }
