@@ -7,6 +7,7 @@ using KludgeBox.Events;
 using KludgeBox.Networking;
 using KludgeBox.Scheduling;
 using NeonWarfare.NetOld.Server;
+using NeonWarfare.Utils.Cooldown;
 
 namespace NeonWarfare;
 
@@ -27,7 +28,7 @@ public partial class PingChecker : Node
 
     public PingAnalyzer PingAnalyzer { get; private set; } = new();
     
-    private Cooldown _pingSendCooldown = new(PingCooldown);
+    private AutoCooldown _pingSendCooldown = new(PingCooldown);
     private IDictionary<long, Stopwatch> _pingIdToSentTime = new Dictionary<long, Stopwatch>(); //Мапа для быстрого доступа к Stopwatch (хранит ссылку на таймер из _orderedPingInfo.SentTimer)
     private LinkedList<PingInfo> _orderedPingInfo = new(); //Список информации о пакетах пинга, отсортированы по PingId (т.е. в порядке отправки)
     private ISet<long> _successPingIdInCollections = new HashSet<long>(); //Список успешных ответов на пинги (содержит PingId). Отдельно от _orderedPingInfo, чтобы не делать каждый раз поиск элемента в LinkedList.
@@ -37,7 +38,7 @@ public partial class PingChecker : Node
     
     public void Start()
     {
-        _pingSendCooldown.Ready += SendPingPacket;
+        _pingSendCooldown.ActionWhenReady += SendPingPacket;
     }    
     
     public override void _Process(double delta)
