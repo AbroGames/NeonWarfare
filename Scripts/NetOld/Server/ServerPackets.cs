@@ -44,17 +44,17 @@ public class ServerPositionEntityPacket(long nid, double x, double y, double dir
 }
 
 [GamePacket]
-public class ServerMovementEntityPacket(long nid, double x, double y, double dir,
-    double movementDir, double movementSpeed) : BinaryPacket, IInstanceEvent
+public class ServerMovementEntityPacket(long nid, float x, float y, float dir,
+    float movementDir, float movementSpeed) : BinaryPacket, IInstanceEvent
 {
     public object NetworkId => Nid;
     
     public long Nid = nid;
-    public double X = x;
-    public double Y = y;
-    public double Dir = dir;
-    public double MovementDir = movementDir;
-    public double MovementSpeed = movementSpeed;
+    public float X = x;
+    public float Y = y;
+    public float Dir = dir;
+    public float MovementDir = movementDir;
+    public float MovementSpeed = movementSpeed;
 }
 
 [GamePacket]

@@ -11,7 +11,7 @@ public class Shake(double strength, double time, bool deceising = true) : IShift
     public double Strength => InitialStrength * (Time / InitialTime);
     public double InitialStrength { get; private set; } = strength;
 
-    public Vector2 Shift => Rand.InsideUnitCircle * (deceising ? Strength : InitialStrength);
+    public Vector2 Shift => Rand.InsideUnitCircle * (deceising ? (float) Strength : (float) InitialStrength);
     public bool IsAlive => Time > Mathf.Epsilon;
 		
     public void Update(double delta)

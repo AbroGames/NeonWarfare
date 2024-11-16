@@ -29,7 +29,7 @@ public partial class PlayerRotateComponent : Node
         //Добавляем к скорости поворота направление, чтобы поворачивать в сторону цели
         rotationSpeedRad *= directionToTargetAngel;
         //Поворачиваемся на угол
-        Player.Rotation += rotationSpeedRad;
+        Player.Rotation += (float) rotationSpeedRad;
     }
 
     private double GetAngleToMouse()

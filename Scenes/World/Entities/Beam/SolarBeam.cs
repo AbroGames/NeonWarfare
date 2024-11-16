@@ -58,10 +58,10 @@ public partial class SolarBeam : Node2D
 		Ang %= 360;
 		var shrinkFactor = Mathf.Min(1, Ttl * 4);
 
-		InnerSpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
-		OuterSpawnSprite.Rotation -= Mathf.DegToRad(360 * delta);
-		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (OuterStartWidth + OuterStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) * shrinkFactor };
-		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (InnerStartWidth + InnerStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) * shrinkFactor };
+		InnerSpawnSprite.Rotation += (float) Mathf.DegToRad(360 * delta);
+		OuterSpawnSprite.Rotation -= (float) Mathf.DegToRad(360 * delta);
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (float) ((OuterStartWidth + OuterStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) * shrinkFactor) };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (float) ((InnerStartWidth + InnerStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) * shrinkFactor) };
 		
 		DamageCd.Update(delta);
 	}
@@ -78,7 +78,7 @@ public partial class SolarBeam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta;
+			body.Position += this.Right() * (float) (distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta);
 			body.TakeDamage(outerDamage);
 		}
 		
@@ -86,7 +86,7 @@ public partial class SolarBeam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * delta;
+			body.Position += this.Right() * (float) (distFactor * PushVel * Source.UniversalDamageMultiplier * delta);
 			body.TakeDamage(innerDamage);
 		}
 	}
