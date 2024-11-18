@@ -25,7 +25,7 @@ public partial class FloatingLabel : Node2D
 		var label = GetNode("Label") as Label;
 		_startPos = Position;
 		double rotation = 10;
-		Rotation += Mathf.DegToRad(Rand.Range(-rotation, rotation));
+		Rotation += (float) Mathf.DegToRad(Rand.Range(-rotation, rotation));
 		Scale = Vec(4);
 		Modulate = Modulate with { A = 0 };
 		scaleTween = GetTree().CreateTween();
@@ -59,7 +59,7 @@ public partial class FloatingLabel : Node2D
 		var clampedTime = Mathf.Min(_time, _targetTime);
 		var fraction = clampedTime / _targetTime;
 		
-		Position = _startPos - Vec(0, _riseDist * Mathf.Sin(_rads * fraction));
+		Position = _startPos - Vec(0, (float) _riseDist * (float) Mathf.Sin(_rads * fraction));
 		
 		var label = GetNode("Label") as Label;
 

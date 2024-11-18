@@ -28,7 +28,7 @@ public static class EnemyRotateService
         //Добавляем к скорости поворота направление, чтобы поворачивать в сторону цели
         rotationSpeedRad *= directionToTargetAngel;
         //Поворачиваемся на угол
-        enemy.Rotation += rotationSpeedRad;
+        enemy.Rotation += (float) rotationSpeedRad;
     }
     
     private static double GetAngleToTarget(Enemy enemy)

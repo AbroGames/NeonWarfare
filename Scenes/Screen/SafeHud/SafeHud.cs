@@ -22,9 +22,9 @@ public partial class SafeHud : Hud
 		Player player = ClientSafeWorld.Player;
 		if (player == null) return;
 
-		HpBar.CurrentUpperValue = player.Hp;
-		HpBar.CurrentLowerValue = player.Hp;
-		HpBar.MaxValue = player.MaxHp;
+		HpBar.CurrentUpperValue = (float) player.Hp;
+		HpBar.CurrentLowerValue = (float) player.Hp;
+		HpBar.MaxValue = (float) player.MaxHp;
 		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
 		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
 

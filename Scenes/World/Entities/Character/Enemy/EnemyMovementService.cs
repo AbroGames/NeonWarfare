@@ -49,8 +49,8 @@ public static class EnemyMovementService
         var velDir = directionToMove;
         if (!enemy.IsBoss)
         {
-            var minSpeedFactor = 0.9;
-            attractionDirection = GetAttractionDirection(enemy) * 0.35;
+            var minSpeedFactor = 0.9f;
+            attractionDirection = GetAttractionDirection(enemy) * 0.35f;
             velDir += attractionDirection;
             if (velDir.LengthSquared() < 1)
             {
@@ -58,7 +58,7 @@ public static class EnemyMovementService
             }
         }
         // Переместить и првоерить физику
-        enemy.Velocity = velDir * enemy.MovementSpeed;
+        enemy.Velocity = velDir * (float) enemy.MovementSpeed;
         enemy.MoveAndSlide();
 
         long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.GetNid(enemy);
