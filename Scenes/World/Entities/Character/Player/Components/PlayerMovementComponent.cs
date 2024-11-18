@@ -17,8 +17,8 @@ public partial class PlayerMovementComponent : Node
     public override void _PhysicsProcess(double delta)
     {
         var movementInput = GetInput();
-        var movementInSecond = movementInput * Player.MovementSpeed;
-        Player.MoveAndCollide(movementInSecond * delta);
+        var movementInSecond = movementInput * (float) Player.MovementSpeed;
+        Player.MoveAndCollide(movementInSecond * (float) delta);
 
         if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
         {

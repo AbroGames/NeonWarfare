@@ -82,7 +82,7 @@ public partial class Player : Character
 			{
 				var maxShift = GetGlobalMousePosition() - GlobalPosition;
 				var zoomFactor = (Camera.Zoom.X + Camera.Zoom.Y) / 2;
-				Camera.PositionShift = maxShift * 0.7 * zoomFactor;
+				Camera.PositionShift = maxShift * 0.7f * zoomFactor;
 			}
 			else
 			{

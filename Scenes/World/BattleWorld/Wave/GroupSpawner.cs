@@ -7,8 +7,8 @@ namespace NeonWarfare;
 
 public partial class GroupSpawner : Node2D
 {
-    public double Radius { get; set; }
-    public double Amount { get; set; }
+    public float Radius { get; set; }
+    public float Amount { get; set; }
     public ServerBattleWorld World { get; set; }
 
     public override void _Process(double delta)
