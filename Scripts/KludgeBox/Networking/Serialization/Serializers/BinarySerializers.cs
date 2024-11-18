@@ -209,7 +209,7 @@ public static partial class BinarySerializers
             },
             reader =>
             {
-                return new Vector2(reader.ReadDouble(), reader.ReadDouble());
+                return new Vector2((float) reader.ReadDouble(), (float) reader.ReadDouble());
             }));
         
         RegisterTypedSerializer<Vector3>(new ConfigurableBinarySerializer<Vector3>(
@@ -221,7 +221,7 @@ public static partial class BinarySerializers
             },
             reader =>
             {
-                return new Vector3(reader.ReadDouble(), reader.ReadDouble(), reader.ReadDouble());
+                return new Vector3((float) reader.ReadDouble(), (float) reader.ReadDouble(), (float) reader.ReadDouble());
             }));
         
         RegisterTypedSerializer<Vector2I>(new ConfigurableBinarySerializer<Vector2I>(
@@ -261,7 +261,7 @@ public static partial class BinarySerializers
             },
             reader =>
             {
-                return new Rect2(reader.ReadDouble(),reader.ReadDouble(),reader.ReadDouble(),reader.ReadDouble());
+                return new Rect2((float) reader.ReadDouble(),(float) reader.ReadDouble(),(float) reader.ReadDouble(),(float) reader.ReadDouble());
             }));
         
         RegisterTypedSerializer<Rect2I>(new ConfigurableBinarySerializer<Rect2I>(

@@ -30,13 +30,13 @@ public static class EnemyAttackService
         // Установка начальной позиции снаряда
         bullet.GlobalPosition = enemy.GlobalPosition;
         // Установка направления движения снаряда
-        bullet.Rotation = enemy.Rotation + Mathf.DegToRad(Mathf.Clamp(Rand.Gaussian(0, 5), -20, 20));
+        bullet.Rotation = enemy.Rotation + (float) Mathf.DegToRad(Mathf.Clamp(Rand.Gaussian(0, 5), -20, 20));
         bullet.Author = Bullet.AuthorEnum.ENEMY;
         bullet.Source = enemy;
         bullet.RemainingDamage = enemy.Damage;
         if (enemy.Damage > 1000)
         {
-            bullet.Transform = bullet.Transform.ScaledLocal(Vec(Mathf.Log(enemy.Damage/1000)));
+            bullet.Transform = bullet.Transform.ScaledLocal(Vec((float) Mathf.Log(enemy.Damage/1000)));
         }
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
@@ -52,8 +52,8 @@ public static class EnemyAttackService
         // Создание снаряда
         Bullet bullet = ClientRoot.Instance.PackedScenes.Bullet.Instantiate<Bullet>();
         bullet.Author = Bullet.AuthorEnum.ENEMY;
-        bullet.Position = Vec(serverSpawnEnemyBulletPacket.X, serverSpawnEnemyBulletPacket.Y);
-        bullet.Rotation = serverSpawnEnemyBulletPacket.Dir;
+        bullet.Position = Vec((float) serverSpawnEnemyBulletPacket.X, (float) serverSpawnEnemyBulletPacket.Y);
+        bullet.Rotation = (float) serverSpawnEnemyBulletPacket.Dir;
         if (serverSpawnEnemyBulletPacket.IsBoss)
         {
             bullet.Transform = bullet.Transform.ScaledLocal(Vec(Mathf.Log(5)));

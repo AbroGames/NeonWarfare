@@ -9,19 +9,19 @@ public partial class LoadingAnimHandle : Node2D
 	[Export] public Curve ThickRotationSpeedCurve;
 	[Export] public Curve ThinRotationSpeedCurve;
 
-	[Export] public double AnimationProgress = 0;
-	[Export] public double AnimationSpeed = 0.1;
+	[Export] public float AnimationProgress = 0;
+	[Export] public float AnimationSpeed = 0.1f;
 	
-	[Export] public double RotationSpeed = Mathf.Pi;
+	[Export] public float RotationSpeed = Mathf.Pi;
 
 
 	/// <inheritdoc />
 	public override void _Process(double delta)
 	{
-		AnimationProgress += AnimationSpeed * delta;
+		AnimationProgress += AnimationSpeed * (float) delta;
 		AnimationProgress %= 1;
 
-		ThickPart.Rotation += RotationSpeed * ThickRotationSpeedCurve.Sample(AnimationProgress) * delta;
-		ThinPart.Rotation += RotationSpeed * ThinRotationSpeedCurve.Sample(AnimationProgress) * delta;
+		ThickPart.Rotation += RotationSpeed * ThickRotationSpeedCurve.Sample(AnimationProgress) * (float) delta;
+		ThinPart.Rotation += RotationSpeed * ThinRotationSpeedCurve.Sample(AnimationProgress) * (float) delta;
 	}
 }

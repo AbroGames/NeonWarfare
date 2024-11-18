@@ -44,7 +44,7 @@ public partial class Bullet : Node2D
 	
 	public override void _Process(double delta)
 	{
-		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * delta;
+		Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * (float) Speed * (float) delta;
 
 		if (CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is server
 		{
@@ -120,8 +120,8 @@ public partial class Bullet : Node2D
 				if (Author != AuthorEnum.ENEMY)
 				{
 					ApplyDamage(enemy,new Color(1, 0, 0));
-					double K = enemy.IsBoss ? 0.0025 : 0.025;
-					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2) * Speed * K;
+					float K = enemy.IsBoss ? 0.0025f : 0.025f;
+					enemy.Position += Vector2.FromAngle(Rotation - Mathf.Pi / 2f) * (float) Speed * K;
 				}
 			}
 		};
