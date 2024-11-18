@@ -79,7 +79,7 @@ public partial class Camera : Camera2D
         
 		TargetPosition = TargetNode.Position;
 		var availableMovement = (TargetPosition + PositionShift) - ActualPosition;
-		var actualMovement = availableMovement * Mathf.Pow(SmoothingBase, SmoothingPower);
+		var actualMovement = availableMovement * (float) Mathf.Pow(SmoothingBase, SmoothingPower);
 		
 		ActualPosition += actualMovement;
 		Position = ActualPosition + HardPositionShift + AdditionalShift;
@@ -99,11 +99,11 @@ public partial class Camera : Camera2D
 	{
 		if (@event.IsActionPressed(Keys.WheelUp))
 		{
-			Zoom *= 1.1;
+			Zoom *= 1.1f;
 		}
 		if (@event.IsActionPressed(Keys.WheelDown))
 		{
-			Zoom *= 1 / 1.1;
+			Zoom *= 1f / 1.1f;
 		}
 	}
 }

@@ -55,13 +55,13 @@ public partial class BattleHud : Hud
 		Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";
 		Enemies.Text = $"Enemies: {ClientBattleWorld.Enemies.Count}";
         
-		HpBar.CurrentUpperValue = player.Hp;
+		HpBar.CurrentUpperValue = (float) player.Hp;
 		double hpBarValueDelta = Mathf.Clamp(HpBar.CurrentLowerValue - HpBar.CurrentUpperValue, 
 			0, Math.Max(HpBar.MaxValue - HpBar.CurrentUpperValue, 0));
 		double hpBarValueDeltaDecrease = HpBar.MaxValue * 0.25 * delta;
-		HpBar.CurrentLowerValue = player.Hp + hpBarValueDelta - hpBarValueDeltaDecrease;
+		HpBar.CurrentLowerValue = (float) (player.Hp + hpBarValueDelta - hpBarValueDeltaDecrease);
         
-		HpBar.MaxValue = player.MaxHp;
+		HpBar.MaxValue = (float) player.MaxHp;
 		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
 		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
 

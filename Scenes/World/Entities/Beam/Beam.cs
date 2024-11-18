@@ -58,23 +58,23 @@ public partial class Beam : Node2D
 		}
 		
 		var ttlFactor = Ttl / StartTtl;
-		var sizeFactor = SizeCurve.Sample(ttlFactor);
+		var sizeFactor = SizeCurve.Sample((float) ttlFactor);
 		
 		Ttl -= delta;
 		Ang += 1800 * delta;
 		Ang %= 360;
 
-		InnerSpawnSprite.Rotation += Mathf.DegToRad(360 * delta);
-		OuterSpawnSprite.Rotation -= Mathf.DegToRad(360 * delta);
-		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = OuterStartWidth * sizeFactor + OuterStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07 };
-		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = InnerStartWidth * sizeFactor + InnerStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07 };
+		InnerSpawnSprite.Rotation += (float) Mathf.DegToRad(360 * delta);
+		OuterSpawnSprite.Rotation -= (float) Mathf.DegToRad(360 * delta);
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (float) (OuterStartWidth * sizeFactor + OuterStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (float) (InnerStartWidth * sizeFactor + InnerStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) };
 
 		DamageCd.Update(delta);
 	}
 	
 	private void DoDamage(double delta)
 	{
-		Shaker.Strength = 10 * Mathf.Max(0, 1 - Source.DistanceTo(this) / ShakeDist); 
+		Shaker.Strength = 10 * (float) Mathf.Max(0, 1 - Source.DistanceTo(this) / ShakeDist); 
 		
 		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5 * Source.UniversalDamageMultiplier, Source);
 		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2 * Source.UniversalDamageMultiplier, Source);
@@ -86,7 +86,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta;
+			body.Position += this.Right() * (float) (distFactor * PushVel * Source.UniversalDamageMultiplier * 0.5 * delta);
 			body.TakeDamage(outerDamage);
 		}
 		
@@ -94,7 +94,7 @@ public partial class Beam : Node2D
 		{
 			if(area.GetParent() is not Enemy body) continue;
 			var distFactor = Mathf.Max(0, 1 - (body.Position - Source.Position).Length() / 2000);
-			body.Position += this.Right() * distFactor * PushVel * Source.UniversalDamageMultiplier * delta;
+			body.Position += this.Right() * (float) (distFactor * PushVel * Source.UniversalDamageMultiplier * delta);
 			body.TakeDamage(innerDamage);
 		}
 	}

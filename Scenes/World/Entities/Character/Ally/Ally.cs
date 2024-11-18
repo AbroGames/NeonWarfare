@@ -15,8 +15,8 @@ public partial class Ally : Character
 {
     private const double InertiaCooldown = 0.1;
 
-    private double _movementSpeed;
-    private double _movementDir;
+    private float _movementSpeed;
+    private float _movementDir;
     private ManualCooldown _inertiaCooldown = new(InertiaCooldown, false, false);
 
     public override void _Ready()
@@ -32,7 +32,7 @@ public partial class Ally : Character
         if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
         {
             _inertiaCooldown.Update(delta);
-            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * delta;
+            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * (float) delta;
         }
     }
 
