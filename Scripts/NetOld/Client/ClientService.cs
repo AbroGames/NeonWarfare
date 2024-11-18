@@ -12,8 +12,8 @@ public static class ClientService
     public static void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
         Player player = ClientRoot.Instance.PackedScenes.Player.Instantiate<Player>();
-        player.Position = Vec(serverSpawnPlayerPacket.X, serverSpawnPlayerPacket.Y);
-        player.Rotation = serverSpawnPlayerPacket.Dir;
+        player.Position = Vec((float) serverSpawnPlayerPacket.X, (float) serverSpawnPlayerPacket.Y);
+        player.Rotation = (float) serverSpawnPlayerPacket.Dir;
         ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 
         ClientWorld world = ClientRoot.Instance.Game.World;
@@ -22,7 +22,7 @@ public static class ClientService
         var camera = new Camera();
         camera.Position = player.Position;
         camera.TargetNode = player;
-        camera.Zoom = Vec(0.65);
+        camera.Zoom = Vec(0.65f);
         camera.SmoothingPower = 1.5;
         world.AddChild(camera);
         camera.Enabled = true;
@@ -38,8 +38,8 @@ public static class ClientService
     public static void OnServerSpawnAllyPacket(ServerSpawnAllyPacket serverSpawnAllyPacket)
     {
         Ally ally = ClientRoot.Instance.PackedScenes.Ally.Instantiate<Ally>();
-        ally.Position = Vec(serverSpawnAllyPacket.X, serverSpawnAllyPacket.Y);
-        ally.Rotation = serverSpawnAllyPacket.Dir;
+        ally.Position = Vec((float) serverSpawnAllyPacket.X, (float) serverSpawnAllyPacket.Y);
+        ally.Rotation = (float) serverSpawnAllyPacket.Dir;
         ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
         
         ClientWorld world = ClientRoot.Instance.Game.World;

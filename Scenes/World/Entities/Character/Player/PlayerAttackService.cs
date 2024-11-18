@@ -32,7 +32,7 @@ public static class PlayerAttackService
         player.GetParent().AddChild(bullet);
         long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet);
         
-        Network.SendToAll(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
+        Network.SendToAll(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, (float) bullet.Speed));
     }
     
     [EventListener(ListenerSide.Client)]
@@ -81,7 +81,7 @@ public static class PlayerAttackService
             player.GetParent().AddChild(bullet);
             long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet);
             
-            Network.SendToAll(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, bullet.Speed));
+            Network.SendToAll(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, (float) bullet.Speed));
         }
     }
 

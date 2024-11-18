@@ -3,51 +3,51 @@ using KludgeBox.Networking;
 namespace NeonWarfare;
 
 [GamePacket]
-public class ClientMovementPlayerPacket(long nid, double x, double y, double dir,
-    double movementDir, double movementSpeed) : BinaryPacket
+public class ClientMovementPlayerPacket(long nid, float x, float y, float dir,
+    float movementDir, float movementSpeed) : BinaryPacket
 {
     public long Nid = nid;
-    public double X = x;
-    public double Y = y;
-    public double Dir = dir;
-    public double MovementDir = movementDir;
-    public double MovementSpeed = movementSpeed;
+    public float X = x;
+    public float Y = y;
+    public float Dir = dir;
+    public float MovementDir = movementDir;
+    public float MovementSpeed = movementSpeed;
 }
 
 [GamePacket]
-public class ClientPlayerPrimaryAttackPacket(double x, double y, double dir) : BinaryPacket
+public class ClientPlayerPrimaryAttackPacket(float x, float y, float dir) : BinaryPacket
 {
-    public double X = x;
-    public double Y = y;
-    public double Dir = dir;
+    public float X = x;
+    public float Y = y;
+    public float Dir = dir;
 }
 
 [GamePacket]
-public class ClientPlayerSecondaryAttackPacket(double x, double y, double dir) : BinaryPacket
+public class ClientPlayerSecondaryAttackPacket(float x, float y, float dir) : BinaryPacket
 {
-    public double X = x;
-    public double Y = y;
-    public double Dir = dir;
+    public float X = x;
+    public float Y = y;
+    public float Dir = dir;
 }
 
 [GamePacket]
-public class ServerPlayerPrimaryAttackPacket(long nid, double x, double y, double dir, double movementSpeed) : BinaryPacket
-{
-    public long Nid = nid;
-    public double X = x;
-    public double Y = y;
-    public double Dir = dir;
-    public double MovementSpeed = movementSpeed;
-}
-
-[GamePacket]
-public class ServerPlayerSecondaryAttackPacket(long nid, double x, double y, double dir, double movementSpeed) : BinaryPacket
+public class ServerPlayerPrimaryAttackPacket(long nid, float x, float y, float dir, float movementSpeed) : BinaryPacket
 {
     public long Nid = nid;
-    public double X = x;
-    public double Y = y;
-    public double Dir = dir;
-    public double MovementSpeed = movementSpeed;
+    public float X = x;
+    public float Y = y;
+    public float Dir = dir;
+    public float MovementSpeed = movementSpeed;
+}
+
+[GamePacket]
+public class ServerPlayerSecondaryAttackPacket(long nid, float x, float y, float dir, float movementSpeed) : BinaryPacket
+{
+    public long Nid = nid;
+    public float X = x;
+    public float Y = y;
+    public float Dir = dir;
+    public float MovementSpeed = movementSpeed;
 }
 
 
