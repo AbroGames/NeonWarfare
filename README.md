@@ -1,9 +1,10 @@
 > [!IMPORTANT]
-> Для разработки проекта используется [кастомная сборка движка (Только для Windows)](https://cloud.abro.cc/s/ctYQn7TRaLngYa6). Она отличается названием, цветом иконки и тем, что при работе с векторами и матрицами вместо **float** используется **double**.  
 > В проекте используется **.NET 8**.
+> Перед тем как начать разработку, ознакомься с [Wiki](https://github.com/AbroGames/NeonWarfare/wiki).
 
 > [!NOTE]
-> Перед тем как начать разработку, ознакомься с [Wiki](https://github.com/AbroGames/NeonWarfare/wiki).
+> Чтобы в Godot настроить интеграцию с Rider, необходимо зайти в Editor -> Editor Settings -> Dotnet -> Editor.
+> В списке External Editor выбрать JetBrains Rider и очистить значение Custom Exec Path Args.
 
 ## Структура проекта
 ### Основные модули
