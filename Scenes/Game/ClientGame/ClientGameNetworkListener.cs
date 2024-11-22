@@ -17,12 +17,12 @@ public partial class ClientGame
 	}
 	
 	[EventListener(ListenerSide.Client)]
-	public void OnChangeWorldPacket(ChangeWorldPacket changeWorldPacket)
+	public void OnChangeWorldPacket(SC_ChangeWorldPacket changeWorldPacket)
 	{
 		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch
 		{
-			ChangeWorldPacket.ServerWorldType.Safe => ClientRoot.Instance.PackedScenes.SafeWorldMainScene,
-			ChangeWorldPacket.ServerWorldType.Battle => ClientRoot.Instance.PackedScenes.BattleWorldMainScene,
+			SC_ChangeWorldPacket.ServerWorldType.Safe => ClientRoot.Instance.PackedScenes.SafeWorldMainScene,
+			SC_ChangeWorldPacket.ServerWorldType.Battle => ClientRoot.Instance.PackedScenes.BattleWorldMainScene,
 			_ => null
 		};
 
@@ -36,7 +36,7 @@ public partial class ClientGame
 	}
 	
 	[EventListener(ListenerSide.Client)]
-	public void OnWaitBattleEndPacket(WaitBattleEndPacket emptyPacket)
+	public void OnWaitBattleEndPacket(SC_WaitBattleEndPacket emptyPacket)
 	{
 		SetLoadingScreen(LoadingScreen.Create("Wait for the end of the battle"));
 	}

@@ -23,7 +23,7 @@ public partial class ServerGame
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
         Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
-        Network.SendToClient(peerConnectedEvent.Id, new ChangeWorldPacket(ChangeWorldPacket.ServerWorldType.Safe));
+        Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
         Node currentWorld = Instance.World;
         if (currentWorld is ServerSafeWorld)
@@ -51,7 +51,7 @@ public partial class ServerGame
         } 
         else if (currentWorld is ServerBattleWorld)
         {
-            Network.SendToClient(peerConnectedEvent.Id, new WaitBattleEndPacket());
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_WaitBattleEndPacket());
         }
         else
         {
@@ -74,7 +74,7 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) 
     {
-        Network.SendToAll(new ChangeWorldPacket(ChangeWorldPacket.ServerWorldType.Battle));
+        Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         
         Instance.ChangeMainScene(serverBattleWorld);
