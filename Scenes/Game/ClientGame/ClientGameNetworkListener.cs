@@ -19,19 +19,12 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnChangeWorldPacket(SC_ChangeWorldPacket changeWorldPacket)
 	{
-		PackedScene newWorldMainScene = changeWorldPacket.WorldType switch
-		{
-			SC_ChangeWorldPacket.ServerWorldType.Safe => ClientRoot.Instance.PackedScenes.SafeWorldMainScene,
-			SC_ChangeWorldPacket.ServerWorldType.Battle => ClientRoot.Instance.PackedScenes.BattleWorldMainScene,
-			_ => null
-		};
-
-		if (newWorldMainScene == null)
+		if (!SC_ChangeWorldPacket.WorldScenesMap.TryGetValue(changeWorldPacket.WorldType, out var newWorldMainScene))
 		{
 			Log.Error($"Received unknown type of WorldMainScene: {changeWorldPacket.WorldType}");
 			return;
 		}
-
+		
 		ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
 	}
 	
