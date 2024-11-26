@@ -1,23 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Godot;
-using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
-using KludgeBox.Scheduling;
-using NeonWarfare.NetOld.Server;
+using NeonWarfare;
 using NeonWarfare.Utils.Cooldown;
-
-namespace NeonWarfare;
-
-[GamePacket]
-public class ClientPingPacket(long pingId) : BinaryPacket
-{
-    public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
-    
-    public long PingId = pingId;
-}
 
 public partial class PingChecker : Node
 {
@@ -54,7 +41,7 @@ public partial class PingChecker : Node
         _orderedPingInfo.AddLast(new PingInfo(pingId, stopwatch));
         
         stopwatch.Start();
-        Network.SendToServer(new ClientPingPacket(pingId));
+        Network.SendToServer(new ServerGame.CS_PingPacket(pingId));
         
         CheckAndDeleteOldAttempts();
     }
@@ -81,8 +68,10 @@ public partial class PingChecker : Node
         }
     }
     
-    public void ReceivePingPacket(long pingId)
+    [EventListener(ListenerSide.Client)]
+    public void OnPingPacket(SC_PingPacket pingPacket)
     {
+        long pingId = pingPacket.PingId;
         if (!_pingIdToSentTime.ContainsKey(pingId)) //Сообщение уже было посчитано как потерянное
         {
             return;
