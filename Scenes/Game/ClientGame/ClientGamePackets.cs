@@ -18,13 +18,6 @@ public partial class ClientGame
             Safe, Battle
         }
         
-        public static readonly Dictionary<ServerWorldType, PackedScene> WorldScenesMap = new() 
-        {
-            { ServerWorldType.Safe, ClientRoot.Instance.PackedScenes.SafeWorldMainScene },
-            { ServerWorldType.Battle, ClientRoot.Instance.PackedScenes.BattleWorldMainScene }
-        };
-        
-        
         public ServerWorldType WorldType = worldType;
     }
 }

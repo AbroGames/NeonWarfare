@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
@@ -19,7 +20,13 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnChangeWorldPacket(SC_ChangeWorldPacket changeWorldPacket)
 	{
-		if (!SC_ChangeWorldPacket.WorldScenesMap.TryGetValue(changeWorldPacket.WorldType, out var newWorldMainScene))
+		Dictionary<SC_ChangeWorldPacket.ServerWorldType, PackedScene> worldScenesMap = new() 
+		{
+			{ SC_ChangeWorldPacket.ServerWorldType.Safe, ClientRoot.Instance.PackedScenes.SafeWorldMainScene },
+			{ SC_ChangeWorldPacket.ServerWorldType.Battle, ClientRoot.Instance.PackedScenes.BattleWorldMainScene }
+		};
+		
+		if (!worldScenesMap.TryGetValue(changeWorldPacket.WorldType, out var newWorldMainScene))
 		{
 			Log.Error($"Received unknown type of WorldMainScene: {changeWorldPacket.WorldType}");
 			return;
