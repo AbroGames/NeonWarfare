@@ -10,7 +10,6 @@ public partial class ServerGame
 {
 	
 	public Network Network { get; private set; }
-	
 	public Server Server { get; private set; }
 
 	public void InitNetwork()
