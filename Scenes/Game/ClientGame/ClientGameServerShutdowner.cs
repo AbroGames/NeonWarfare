@@ -11,9 +11,11 @@ public partial class ClientGame
 	public void AddServerShutdowner(int serverPid)
 	{
 		ServerShutdowner?.QueueFree(); //Удаление ноды вызовет, в том числе удаление сервера
+		
 		ServerShutdowner = new ProcessShutdowner();
 		ServerShutdowner.ProcessPid = serverPid;
-		ServerShutdowner.LogMessage = "Kill server process.";
+		ServerShutdowner.LogMessageGenerator = pid => $"Kill server process: {pid}.";
+		
 		AddChild(ServerShutdowner);
 	}
 }

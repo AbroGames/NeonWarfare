@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
@@ -16,7 +17,7 @@ public partial class ProcessShutdowner : Node
     ];
     
     public int? ProcessPid { get; set; }
-    public string LogMessage { get; set; } = "Kill process.";
+    public Func<int, string> LogMessageGenerator { get; set; } = pid => $"Kill process {pid}.";
     
     public override void _Notification(int id)
     {
@@ -28,7 +29,7 @@ public partial class ProcessShutdowner : Node
 
     public void Shutdown()
     {
-        Log.Info($"{LogMessage} Pid: {ProcessPid.Value}");
+        Log.Info(LogMessageGenerator(ProcessPid.Value));
         OS.Kill(ProcessPid.Value);
     }
 }
