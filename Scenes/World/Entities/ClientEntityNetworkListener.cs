@@ -5,7 +5,7 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare.NetOld.Client;
 
-public static class ClientService
+public static class ClientEntityNetworkListener
 {
     
     [EventListener(ListenerSide.Client)]
