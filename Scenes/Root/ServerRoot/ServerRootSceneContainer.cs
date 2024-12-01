@@ -22,9 +22,14 @@ public partial class ServerRoot
 		Game = null;
 	}
 	
-	public void CreateServerGame(int port)
+	public void CreateServerGame(int port, int? clientPid)
 	{
 		ServerGame serverGame = new ServerGame();
+		if (clientPid.HasValue)
+		{
+			serverGame.AddClientDeadChecker(clientPid.Value);
+		}
+		
 		SetMainScene(serverGame);
 		serverGame.CreateServer(port);
 	}

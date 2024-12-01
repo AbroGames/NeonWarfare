@@ -45,7 +45,7 @@ public partial class ServerRoot : Node2D
 			DisplayServer.ScreenGetSize().X - (int) GetViewport().GetVisibleRect().Size.X,
 			DisplayServer.ScreenGetSize().Y - (int) GetViewport().GetVisibleRect().Size.Y - 40));
 
-		CreateServerGame(CmdParams.Port);
+		CreateServerGame(CmdParams.Port, CmdParams.ParentPid);
 	}
 	
 	public void Shutdown()
