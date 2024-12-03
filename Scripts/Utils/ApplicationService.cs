@@ -4,7 +4,7 @@ using KludgeBox.Networking;
 
 namespace NeonWarfare.Net;
 
-public static class NetworkService
+public static class ApplicationService
 {
     
     public static int StartNewDedicatedServerApplication(int port, string adminNickname, bool showConsole)
