@@ -4,7 +4,7 @@ using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 
-public partial class NetworkEntity : Node2D
+public interface INetworkEntity
 {
 
 }
