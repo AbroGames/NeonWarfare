@@ -15,7 +15,7 @@ public partial class ServerGame
     public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         PlayerServerInfo newPlayerServerInfo = new PlayerServerInfo(peerConnectedEvent.Id);
-        Instance.Server.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
+        Instance.PlayerServerInfo.Add(newPlayerServerInfo.Id, newPlayerServerInfo);
         
         Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
@@ -26,14 +26,14 @@ public partial class ServerGame
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
-            Instance.Server.PlayerServerInfo[peerConnectedEvent.Id].Player = player;
+            Instance.PlayerServerInfo[peerConnectedEvent.Id].Player = player;
             currentWorld.AddChild(player);
             long newPlayerNid = Instance.World.NetworkEntityManager.AddEntity(player);
 
             Network.SendToClient(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
-            foreach (PlayerServerInfo playerServerInfo in Instance.Server.PlayerServerInfo.Values)
+            foreach (PlayerServerInfo playerServerInfo in Instance.PlayerServerInfo.Values)
             {
                 if (playerServerInfo.Id == newPlayerServerInfo.Id) continue;
                 
@@ -56,9 +56,9 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        Player player = Instance.Server.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
+        Player player = Instance.PlayerServerInfo[peerDisconnectedEvent.Id].Player;
         Instance.World.NetworkEntityManager.RemoveEntity(player);
-        Instance.Server.PlayerServerInfo.Remove(peerDisconnectedEvent.Id);
+        Instance.PlayerServerInfo.Remove(peerDisconnectedEvent.Id);
         long nid = Instance.World.NetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
@@ -73,7 +73,7 @@ public partial class ServerGame
         
         Instance.ChangeMainScene(serverBattleWorld);
         
-        foreach (PlayerServerInfo playerServerInfo in Instance.Server.PlayerServerInfo.Values)
+        foreach (PlayerServerInfo playerServerInfo in Instance.PlayerServerInfo.Values)
         {
             Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
@@ -86,7 +86,7 @@ public partial class ServerGame
             Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
-            foreach (PlayerServerInfo allyServerInfo in Instance.Server.PlayerServerInfo.Values)
+            foreach (PlayerServerInfo allyServerInfo in Instance.PlayerServerInfo.Values)
             {
                 if (allyServerInfo.Id == playerServerInfo.Id) continue;
                 Network.SendToClient(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));

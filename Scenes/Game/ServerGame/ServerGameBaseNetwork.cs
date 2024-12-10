@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 using KludgeBox.Networking;
@@ -10,7 +11,7 @@ public partial class ServerGame
 {
 	
 	public Network Network { get; private set; }
-	public Server Server { get; private set; }
+	public IDictionary<long, PlayerServerInfo> PlayerServerInfo { get; private set; } = new Dictionary<long, PlayerServerInfo>();
 
 	public void InitNetwork()
 	{
@@ -32,8 +33,5 @@ public partial class ServerGame
 		{
 			Log.Error($"Create network with result: {error}");
 		}
-		
-		Server = new Server();
-		AddChild(Server);
 	}
 }

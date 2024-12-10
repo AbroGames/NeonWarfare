@@ -20,7 +20,7 @@ public static class PlayerMovementService
         player.Position = newPosition;
         player.Rotation = clientMovementPlayerPacket.Dir;
         
-        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Game.Server.PlayerServerInfo.Values)
+        foreach (PlayerServerInfo playerServerInfo in ServerRoot.Instance.Game.PlayerServerInfo.Values)
         {
             if (playerServerInfo.Player == player) continue; //Отправляем коры игрока всем кроме самого игрока
 

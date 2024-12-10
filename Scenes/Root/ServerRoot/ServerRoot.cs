@@ -7,7 +7,6 @@ using KludgeBox.Networking;
 using NeonWarfare.Net;
 using NeonWarfare.NetOld.Server;
 using NeonWarfare.Utils;
-using Server = NeonWarfare.NetOld.Server.Server;
 
 namespace NeonWarfare;
 
