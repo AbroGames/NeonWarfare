@@ -66,7 +66,7 @@ public partial class ServerGame
     }
     
     [EventListener(ListenerSide.Server)]
-    public void OnToBattleButtonClickPacket(ToBattleButtonClickPacket emptyPacket) 
+    public void OnWantToBattlePacket(CS_WantToBattlePacket emptyPacket) 
     {
         Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
