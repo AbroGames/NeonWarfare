@@ -36,7 +36,7 @@ public partial class CreateServerButton : Button
             return;
         }
         
-        int serverPid = ApplicationService.StartNewDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
+        int serverPid = ProcessesService.StartNewDedicatedServerApplication(port, ClientRoot.Instance.PlayerSettings.PlayerName, ShowConsoleCheckBox.ButtonPressed);
         ClientRoot.Instance.CreateClientGame(Network.DefaultHost, port, serverPid);
     }
 
