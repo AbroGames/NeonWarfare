@@ -90,8 +90,9 @@
         - `ClientGameSceneContainer.cs`: Отвечает за переключение между `BattleWorldMainScene` и `SafeWorldMainScene`.
         - `ClientGameBaseNetwork.cs`: Отвечает за инициализацию сети и подключение к серверу.
         - `ClientGameNetworkListener.cs`: Отвечает за обработку сетевых пакетов с сообщениями верхнего уровня (начало игры, смена мира и т.п.).
+        - `ClientGamePackets.cs`: Место хранения всех сетевых пакетов, которые обрабатываются в классе `ClientGame`.
         - `ClientGameLoadingScreen.cs`: Предоставляет возможность отображения загрузочного экрана.
-        - `ClientGameServerShutdowner.cs`: Отвечает за добавление к сцене `ClientGame` сцены `ServerShutdowner`, которая завершает работу сервера при уничтожении сцены `ClientGame`.
+        - `ClientGameServerShutdowner.cs`: Отвечает за добавление к сцене `ClientGame` сцены `ProcessShutdowner`, которая завершает работу сервера при уничтожении сцены `ClientGame`.
         - **MainScenes**: Папка с файлами сцен типа `WorldMainScene` для клиента. Такая сцена объединяет в себе сцены `World` и `Hud`.
             - `IWorldMainScene.cs`: Общий интерфейс для всех сцен типа `WorldMainScene`
             - **BattleWorld**: Папка с файлами сцены типа `WorldMainScene` для боевого мира.
@@ -105,6 +106,8 @@
         - `ServerGameSceneContainer.cs`: Отвечает за переключение между `ServerBattleWorld` и `ServerSafeWorld`.
         - `ServerGameBaseNetwork.cs`: Отвечает за инициализацию сети.
         - `ServerGameNetworkListener.cs`: Отвечает за обработку сетевых пакетов с сообщениями верхнего уровня (игрок подключен, игрок отключен, игрок хочет сменить мир и т.п.).
+        - `ServerGamePackets.cs`: Место хранения всех сетевых пакетов, которые обрабатываются в классе `ServerGame`.
+        - `ServerGameServerShutdowner.cs`: Отвечает за добавление к сцене `ServerGame` сцены `ProcessDeadChecker`, которая завершает работу сервера, если в ОС будет отсутствовать запущенный игровой клиент.
 
 ### PackedScenesContainer
 - **PackedScenesContainer**:
