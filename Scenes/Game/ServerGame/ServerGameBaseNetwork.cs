@@ -27,7 +27,7 @@ public partial class ServerGame
 		Error error = Network.SetServer(port);
 		if (error == Error.Ok)
 		{
-			Log.Info($"Network successfully created.");
+			Log.Info("Server ready!");
 		}
 		else
 		{
