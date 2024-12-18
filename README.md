@@ -1,10 +1,9 @@
 > [!IMPORTANT]
-> В проекте используется **.NET 8**.
+> В проекте используется **.NET 8**.  
 > Перед тем как начать разработку, ознакомься с [Wiki](https://github.com/AbroGames/NeonWarfare/wiki).
 
 > [!NOTE]
-> Чтобы в Godot настроить интеграцию с Rider, необходимо зайти в Editor -> Editor Settings -> Dotnet -> Editor.  
-> В списке External Editor выбрать JetBrains Rider и очистить значение Custom Exec Path Args. 
+> Чтобы в Godot настроить интеграцию с Rider, необходимо зайти в Editor -> Editor Settings -> Dotnet -> Editor. В списке External Editor выбрать JetBrains Rider и очистить значение Custom Exec Path Args. 
 
 > [!NOTE]
 > Для более быстрого дебага игру можно запускать с различными параметрами командной строки.  
