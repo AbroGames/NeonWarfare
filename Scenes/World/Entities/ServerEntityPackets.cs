@@ -2,9 +2,6 @@
 using KludgeBox.Events;
 using KludgeBox.Networking;
 
-namespace NeonWarfare.NetOld.Server;
-
-
 [GamePacket]
 public class ServerSpawnPlayerPacket(long nid, double x, double y, double dir) : BinaryPacket
 {

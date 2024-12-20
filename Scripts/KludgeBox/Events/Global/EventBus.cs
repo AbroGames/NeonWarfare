@@ -4,7 +4,6 @@ using System.Reflection;
 using Godot;
 using NeonWarfare;
 using NeonWarfare.Net;
-using NeonWarfare.NetOld.Server;
 using NeonWarfare.Utils;
 
 namespace KludgeBox.Events.Global;

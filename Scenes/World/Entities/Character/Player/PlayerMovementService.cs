@@ -2,7 +2,6 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
-using NeonWarfare.NetOld.Server;
 
 namespace NeonWarfare;
 

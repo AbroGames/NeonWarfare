@@ -4,8 +4,6 @@ using KludgeBox;
 using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.Net;
-using NeonWarfare.NetOld;
-using NeonWarfare.NetOld.Server;
 
 public partial class ServerGame
 {

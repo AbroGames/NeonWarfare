@@ -1,4 +1,4 @@
-namespace NeonWarfare.NetOld.Server;
+using NeonWarfare;
 
 public class PlayerServerInfo
 {

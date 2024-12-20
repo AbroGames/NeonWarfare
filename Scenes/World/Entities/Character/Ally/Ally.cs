@@ -5,7 +5,6 @@ using KludgeBox.Events;
 using KludgeBox.Networking;
 using KludgeBox.Scheduling;
 using NeonWarfare.Net;
-using NeonWarfare.NetOld.Server;
 using NeonWarfare.Utils;
 using NeonWarfare.Utils.Cooldown;
 

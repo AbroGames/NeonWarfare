@@ -1,9 +1,7 @@
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
-using NeonWarfare.NetOld.Server;
-
-namespace NeonWarfare.NetOld.Client;
+using NeonWarfare;
 
 public static class ClientEntityNetworkListener
 {

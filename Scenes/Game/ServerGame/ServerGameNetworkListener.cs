@@ -3,8 +3,6 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
-using NeonWarfare.NetOld;
-using NeonWarfare.NetOld.Server;
 
 
 

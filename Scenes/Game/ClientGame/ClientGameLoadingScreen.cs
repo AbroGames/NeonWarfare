@@ -2,7 +2,6 @@ using Godot;
 using KludgeBox;
 using NeonWarfare;
 using NeonWarfare.LoadingScreen;
-using NeonWarfare.NetOld;
 
 public partial class ClientGame
 {

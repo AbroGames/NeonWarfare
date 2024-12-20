@@ -5,7 +5,6 @@ using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 using NeonWarfare.Net;
-using NeonWarfare.NetOld.Server;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare;

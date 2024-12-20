@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using Godot;
 using KludgeBox.Networking;
 using NeonWarfare.Net;
-using NeonWarfare.NetOld.Server;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare;

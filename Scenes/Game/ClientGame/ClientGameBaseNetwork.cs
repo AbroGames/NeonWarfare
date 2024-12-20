@@ -4,7 +4,6 @@ using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.Net;
-using NeonWarfare.NetOld;
 
 public partial class ClientGame
 {

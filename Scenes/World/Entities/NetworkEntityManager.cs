@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace NeonWarfare.NetOld;
-
 public class NetworkEntityManager
 {
     private readonly IDictionary<Node2D, long> _nodeToNid = new Dictionary<Node2D, long>(ReferenceEqualityComparer.Instance);
