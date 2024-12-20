@@ -9,7 +9,6 @@ public partial class ServerGame
 {
 	
 	public Network Network { get; private set; }
-	public IDictionary<long, PlayerServerInfo> PlayerServerInfo { get; private set; } = new Dictionary<long, PlayerServerInfo>();
 
 	public void InitNetwork()
 	{
@@ -25,7 +24,7 @@ public partial class ServerGame
 		Error error = Network.SetServer(port);
 		if (error == Error.Ok)
 		{
-			Log.Info("Server ready!");
+			Log.Info("Create network successfully.");
 		}
 		else
 		{

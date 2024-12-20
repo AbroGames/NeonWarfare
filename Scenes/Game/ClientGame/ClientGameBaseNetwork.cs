@@ -29,7 +29,7 @@ public partial class ClientGame
 		Error error = Network.SetClient(host, port);
 		if (error == Error.Ok)
 		{
-			Log.Info("Connected to server successfully!");
+			Log.Info("Create network successfully.");
 		}
 		else
 		{

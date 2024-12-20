@@ -70,7 +70,7 @@ public static class BattleWorldEnemySpawnService
         var (world, position) = request;
         var enemy = CreateEnemy(world, ServerRoot.Instance.PackedScenes.Enemy);
         enemy.Position = position;
-        enemy.Target = ServerRoot.Instance.Game.PlayerServerInfo.Values.First().Player;
+        enemy.Target = ServerRoot.Instance.Game.PlayerProfiles.Values.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
 
         long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(enemy);

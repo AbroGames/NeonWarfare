@@ -28,8 +28,8 @@ public class PingAnalyzer
     public double AveragePacketLossInPercentForShortTime { get; private set; }
 
     //История промежуточной информации о пинге
-    private List<PingInfo> _pingInfos = new();
-    private List<PacketLossInfo> _packetLossInfos = new();
+    private List<PingInfo> _pingsInfo = new();
+    private List<PacketLossInfo> _packetsLossInfo = new();
     
     //numberOfSuccessPackets и numberOfLossesPackets указываются не на текущий момент, а от начала игры и до (CurrentTime - MaxPingTimeout), т.е. тут нет самых свежих данных за последнюю секунду
     public void Analyze(long pingTime, long numberOfSuccessPackets, long numberOfLossesPackets)
@@ -42,34 +42,34 @@ public class PingAnalyzer
     private void AddAttempt(long pingTime, long numberOfSuccessPackets, long numberOfLossesPackets)
     {
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        _pingInfos.Add(new PingInfo(currentTime, pingTime));
-        _packetLossInfos.Add(new PacketLossInfo(currentTime, numberOfSuccessPackets, numberOfLossesPackets));
+        _pingsInfo.Add(new PingInfo(currentTime, pingTime));
+        _packetsLossInfo.Add(new PacketLossInfo(currentTime, numberOfSuccessPackets, numberOfLossesPackets));
     }
 
     private void DeleteOldAttempts()
     {
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        _pingInfos.RemoveAll(pingInfo => pingInfo.AnalyzeTime < currentTime - MaxTimeOfAnalyticalSlidingWindowForPing);
-        _packetLossInfos.RemoveAll(packetLossInfo => packetLossInfo.AnalyzeTime < currentTime - MaxTimeOfAnalyticalSlidingWindowForPacketLoss);
+        _pingsInfo.RemoveAll(pingInfo => pingInfo.AnalyzeTime < currentTime - MaxTimeOfAnalyticalSlidingWindowForPing);
+        _packetsLossInfo.RemoveAll(packetLossInfo => packetLossInfo.AnalyzeTime < currentTime - MaxTimeOfAnalyticalSlidingWindowForPacketLoss);
     }
 
     private void RecalculateStatistics()
     {
-        List<long> pingTimesSorted = _pingInfos.ConvertAll(pingInfo => pingInfo.PingTime);
+        List<long> pingTimesSorted = _pingsInfo.ConvertAll(pingInfo => pingInfo.PingTime);
         pingTimesSorted.Sort();
 
-        CurrentPingTime = _pingInfos.Last().PingTime;
+        CurrentPingTime = _pingsInfo.Last().PingTime;
         MinimumPingTime = pingTimesSorted.First();
-        AveragePingTime = (double) pingTimesSorted.Sum() / _pingInfos.Count;
+        AveragePingTime = (double) pingTimesSorted.Sum() / _pingsInfo.Count;
         MaximumPingTime = pingTimesSorted.Last();
 
         P50PingTime = CalculatePercentile(pingTimesSorted, 0.5);
         P90PingTime = CalculatePercentile(pingTimesSorted, 0.9);
         P99PingTime = CalculatePercentile(pingTimesSorted, 0.99);
         
-        AveragePacketLossInPercentForLongTime = CalculatePacketLossPercent(_packetLossInfos, MaxTimeOfAnalyticalSlidingWindowForPacketLoss);
-        AveragePacketLossInPercentForMidTime = CalculatePacketLossPercent(_packetLossInfos, MidTimeOfAnalyticalSlidingWindowForPacketLoss);
-        AveragePacketLossInPercentForShortTime = CalculatePacketLossPercent(_packetLossInfos, ShortTimeOfAnalyticalSlidingWindowForPacketLoss);
+        AveragePacketLossInPercentForLongTime = CalculatePacketLossPercent(_packetsLossInfo, MaxTimeOfAnalyticalSlidingWindowForPacketLoss);
+        AveragePacketLossInPercentForMidTime = CalculatePacketLossPercent(_packetsLossInfo, MidTimeOfAnalyticalSlidingWindowForPacketLoss);
+        AveragePacketLossInPercentForShortTime = CalculatePacketLossPercent(_packetsLossInfo, ShortTimeOfAnalyticalSlidingWindowForPacketLoss);
     }
     
     //Считает перцентили, percentile задается от 0 до 1
@@ -87,14 +87,14 @@ public class PingAnalyzer
     }
 
     //Считает PacketLoss за определенный диапазон времени [slidingWindowTime; CurrentTime - PingChecker.MaxPingTimeout]
-    private double CalculatePacketLossPercent(List<PacketLossInfo> packetLossInfos, int slidingWindowTime)
+    private double CalculatePacketLossPercent(List<PacketLossInfo> packetsLossInfo, int slidingWindowTime)
     {
-        if (packetLossInfos.Count == 0) return 0;
+        if (packetsLossInfo.Count == 0) return 0;
 
         long currentTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         
-        PacketLossInfo fromInfo = packetLossInfos.First(); //Информация о потерянных пакетах, полученная slidingWindowTime миллисекунд назад
-        foreach (var packetLossInfo in packetLossInfos)
+        PacketLossInfo fromInfo = packetsLossInfo.First(); //Информация о потерянных пакетах, полученная slidingWindowTime миллисекунд назад
+        foreach (var packetLossInfo in packetsLossInfo)
         {
             if (packetLossInfo.AnalyzeTime >= currentTime - slidingWindowTime)
             {
@@ -102,7 +102,7 @@ public class PingAnalyzer
                 break;
             }
         }
-        PacketLossInfo toInfo = packetLossInfos.Last(); //Последняя полученная информация о потерянных пакетах
+        PacketLossInfo toInfo = packetsLossInfo.Last(); //Последняя полученная информация о потерянных пакетах
         
         long numberOfSuccessPacketsInSlidingWindow = toInfo.NumberOfSuccessPackets - fromInfo.NumberOfSuccessPackets;
         long numberOfLossesPacketsInSlidingWindow = toInfo.NumberOfLossesPackets - fromInfo.NumberOfLossesPackets;
