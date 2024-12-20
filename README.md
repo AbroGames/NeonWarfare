@@ -110,6 +110,9 @@
         - `ServerGameNetworkListener.cs`: Отвечает за обработку сетевых пакетов с сообщениями верхнего уровня (игрок подключен, игрок отключен, игрок хочет сменить мир и т.п.).
         - `ServerGamePackets.cs`: Место хранения всех сетевых пакетов, которые обрабатываются в классе `ServerGame`.
         - `ServerGameServerShutdowner.cs`: Отвечает за добавление к сцене `ServerGame` сцены `ProcessDeadChecker`, которая завершает работу сервера, если в ОС будет отсутствовать запущенный игровой клиент.
+        - `ServerGamePlayerProfiles.cs`: Контейнер с информацией об игроках. Содержит мапу с классами `ServerPlayerProfile`.
+        - **PlayerProfiles**: Папка с информацией об игроках. В отличие от `ServerPlayer` не является сценой и не удаляется вместе с `ServerWorld` при переключении миров.
+            - `ServerPlayerProfile.cs`: Класс с информацией об игроке (id, ник, уровень, характеристики и т.п.).
 
 ### PackedScenesContainer
 - **PackedScenesContainer**:
