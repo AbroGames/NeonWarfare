@@ -17,7 +17,7 @@ public partial class SavePlayerSettingsButton : Button
             Color newColor = ColorRect.Color;
             ClientRoot.Instance.PlayerSettings.PlayerName = newNickname;
             ClientRoot.Instance.PlayerSettings.PlayerColor = newColor;
-            ClientRoot.Instance.PlayerSettings.Save();
+            PlayerSettingsService.SaveSettings(ClientRoot.Instance.PlayerSettings);
         };
     }
 }

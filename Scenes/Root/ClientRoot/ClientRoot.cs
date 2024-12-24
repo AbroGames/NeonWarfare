@@ -12,9 +12,9 @@ public partial class ClientRoot : Node2D
 {
 	[Export] [NotNull] public ClientPackedScenesContainer PackedScenes { get; private set; }
 	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
-	[Export] [NotNull] public PlayerSettings PlayerSettings { get; private set; }
 	
 	public ClientParams CmdParams { get; private set; }
+	public PlayerSettings PlayerSettings { get; private set; }
 
 	public override void _Ready()
 	{
@@ -26,8 +26,8 @@ public partial class ClientRoot : Node2D
 	{
 		RootService.CommonInit(ListenerSide.Client);
 		CmdParams = ClientParams.GetFromCmd();
-		
-		PlayerSettings.Init();
+
+		PlayerSettings = PlayerSettingsService.LoadSettings();
 	}
 	
 	protected void Start()
