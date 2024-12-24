@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://6v3fu0vexvah"]
+[gd_scene load_steps=4 format=3 uid="uid://6v3fu0vexvah"]
 
 [ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
 [ext_resource type="PackedScene" uid="uid://bdvsb2vvfjdil" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.tscn" id="2_6lwjn"]
-[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/PlayerSettings.cs" id="3_1ch3h"]
 
 [sub_resource type="Environment" id="Environment_fkaty"]
 background_mode = 3
@@ -11,16 +10,12 @@ glow_bloom = 0.72
 glow_blend_mode = 0
 glow_hdr_threshold = 0.0
 
-[node name="ClientRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Environment", "PlayerSettings")]
+[node name="ClientRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Environment")]
 script = ExtResource("1_7bmax")
 PackedScenes = NodePath("ClientPackedScenesContainer")
 Environment = NodePath("WorldEnvironment")
-PlayerSettings = NodePath("PlayerSettings")
 
 [node name="ClientPackedScenesContainer" parent="." instance=ExtResource("2_6lwjn")]
-
-[node name="PlayerSettings" type="Node2D" parent="."]
-script = ExtResource("3_1ch3h")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_fkaty")
