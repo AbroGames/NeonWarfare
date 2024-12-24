@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System.Collections.Generic;
+using Godot;
 using KludgeBox;
 
 namespace NeonWarfare.LoadingScreen;
@@ -11,16 +12,5 @@ public partial class LoadingScreen : CanvasLayer
     public void SetUpperText(string loadingText)
     {
         LoadingLabel.Text = loadingText.ToUpper();
-    }
-
-    public static LoadingScreen Create(string text = null)
-    {
-        LoadingScreen loadingScreen = ClientRoot.Instance.PackedScenes.LoadingScreenCanvas.Instantiate<LoadingScreen>();
-        if (text != null)
-        {
-            loadingScreen.SetUpperText(text);
-        }
-
-        return loadingScreen;
     }
 }

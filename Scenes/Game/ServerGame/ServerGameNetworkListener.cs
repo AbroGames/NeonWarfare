@@ -3,8 +3,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
-
-
+using NeonWarfare.LoadingScreen;
 
 public partial class ServerGame
 {
@@ -42,7 +41,7 @@ public partial class ServerGame
         } 
         else if (currentWorld is ServerBattleWorld)
         {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_WaitBattleEndPacket());
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
         }
         else
         {
@@ -65,6 +64,7 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnWantToBattlePacket(CS_WantToBattlePacket emptyPacket) 
     {
+        Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
         Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         
@@ -89,6 +89,7 @@ public partial class ServerGame
                 Network.SendToClient(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         }
+        Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
     }
 
     [EventListener(ListenerSide.Server)]

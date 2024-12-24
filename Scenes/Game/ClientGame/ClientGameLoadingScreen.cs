@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 using NeonWarfare;
@@ -6,23 +7,23 @@ using NeonWarfare.LoadingScreen;
 public partial class ClientGame
 {
 	public CanvasLayer LoadingCanvas { get; private set; }
-
-	public void SetDefaultLoadingScreen()
+	
+	public void SetLoadingScreen(LoadingScreenBuilder.LoadingScreenType loadingScreenType)
 	{
-		SetLoadingScreen(LoadingScreen.Create("Connecting to server"));
+		SetLoadingScreen(LoadingScreenBuilder.Create(loadingScreenType));
 	}
 	
-	public void SetLoadingScreen(CanvasLayer loadingScreen)
+	public void ClearLoadingScreen()
+	{
+		LoadingCanvas?.QueueFree();
+		LoadingCanvas = null;
+	}
+	
+	private void SetLoadingScreen(CanvasLayer loadingScreen)
 	{
 		LoadingCanvas?.QueueFree();
 		LoadingCanvas = loadingScreen;
 		AddChild(loadingScreen);
 		MoveChild(loadingScreen, 0);
 	}
-	
-	public void ClearLoadingScreen()
-	{
-		LoadingCanvas?.QueueFree();
-	}
-	
 }

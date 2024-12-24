@@ -35,8 +35,14 @@ public partial class ClientGame
 	}
 	
 	[EventListener(ListenerSide.Client)]
-	public void OnWaitBattleEndPacket(SC_WaitBattleEndPacket emptyPacket)
+	public void OnChangeLoadingScreenPacket(SC_ChangeLoadingScreenPacket changeLoadingScreenPacket)
 	{
-		SetLoadingScreen(LoadingScreen.Create("Wait for the end of the battle"));
+		SetLoadingScreen(changeLoadingScreenPacket.LoadingScreenType);
+	}
+	
+	[EventListener(ListenerSide.Client)]
+	public void OnClearLoadingScreenPacket(SC_ClearLoadingScreenPacket clearLoadingScreenPacket)
+	{
+		ClearLoadingScreen();
 	}
 }

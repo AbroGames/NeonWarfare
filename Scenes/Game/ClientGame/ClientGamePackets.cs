@@ -2,12 +2,19 @@
 using Godot;
 using KludgeBox.Networking;
 using NeonWarfare;
+using NeonWarfare.LoadingScreen;
 
 public partial class ClientGame
 {
-    
+
     [GamePacket]
-    public class SC_WaitBattleEndPacket : BinaryPacket;
+    public class SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType loadingScreenType) : BinaryPacket
+    {
+        public LoadingScreenBuilder.LoadingScreenType LoadingScreenType = loadingScreenType;
+    }
+
+    [GamePacket]
+    public class SC_ClearLoadingScreenPacket : BinaryPacket;
     
     [GamePacket]
     public class SC_ChangeWorldPacket(SC_ChangeWorldPacket.ServerWorldType worldType) : BinaryPacket
