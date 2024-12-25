@@ -12,47 +12,45 @@ public partial class ServerGame
     public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         AddPlayerProfile(peerConnectedEvent.Id);
-        
-        Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
-        Node currentWorld = World;
-        if (currentWorld is ServerSafeWorld)
+        if (World is ServerSafeWorld)
         {
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
+            
             Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
 
-            PlayerProfiles[peerConnectedEvent.Id].Player = player;
-            currentWorld.AddChild(player);
+            PlayerProfilesById[peerConnectedEvent.Id].Player = player;
+            World.AddChild(player);
             long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
 
             Network.SendToClient(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
-            foreach (ServerPlayerProfile playerServerInfo in PlayerProfiles.Values)
+            var allyProfiles = GetPlayerProfilesExcluding(peerConnectedEvent.Id);
+            foreach (ServerPlayerProfile playerServerInfo in allyProfiles)
             {
-                if (playerServerInfo.Id == peerConnectedEvent.Id) continue;
-                
                 Player ally = playerServerInfo.Player;
                 long allyNid = World.NetworkEntityManager.GetNid(ally);
                 Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
                 Network.SendToClient(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         } 
-        else if (currentWorld is ServerBattleWorld)
+        else if (World is ServerBattleWorld)
         {
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
         }
         else
         {
-            Log.Error($"Unknown world in Root.CurrentWorld: {currentWorld}");
+            Log.Error($"Unknown world in ServerGame.World: {World}");
         }
     }
     
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        Player player = PlayerProfiles[peerDisconnectedEvent.Id].Player;
+        Player player = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
         World.NetworkEntityManager.RemoveEntity(player);
         RemovePlayerProfile(peerDisconnectedEvent.Id);
         long nid = World.NetworkEntityManager.RemoveEntity(player);
@@ -70,7 +68,7 @@ public partial class ServerGame
         
         ChangeMainScene(serverBattleWorld);
         
-        foreach (ServerPlayerProfile playerServerInfo in PlayerProfiles.Values)
+        foreach (ServerPlayerProfile playerServerInfo in PlayerProfiles)
         {
             Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
@@ -83,9 +81,9 @@ public partial class ServerGame
             Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
 
-            foreach (ServerPlayerProfile allyServerInfo in PlayerProfiles.Values)
+            var allyProfiles = GetPlayerProfilesExcluding(playerServerInfo.Id);
+            foreach (ServerPlayerProfile allyServerInfo in allyProfiles)
             {
-                if (allyServerInfo.Id == playerServerInfo.Id) continue;
                 Network.SendToClient(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         }
