@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using Godot;
 using KludgeBox;
-using NeonWarfare.Net;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare;

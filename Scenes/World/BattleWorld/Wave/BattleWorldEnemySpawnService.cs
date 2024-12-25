@@ -4,7 +4,6 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
-using NeonWarfare.Net;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare;
@@ -70,7 +69,7 @@ public static class BattleWorldEnemySpawnService
         var (world, position) = request;
         var enemy = CreateEnemy(world, ServerRoot.Instance.PackedScenes.Enemy);
         enemy.Position = position;
-        enemy.Target = ServerRoot.Instance.Game.PlayerProfiles.Values.First().Player;
+        enemy.Target = ServerRoot.Instance.Game.PlayerProfiles.First().Player;
         enemy.Rotation = Rand.Range(Mathf.Tau);
 
         long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(enemy);

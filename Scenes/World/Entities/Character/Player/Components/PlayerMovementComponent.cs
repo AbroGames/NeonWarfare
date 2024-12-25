@@ -1,6 +1,5 @@
 using Godot;
 using KludgeBox.Networking;
-using NeonWarfare.Net;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare.Components;

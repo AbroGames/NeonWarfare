@@ -3,7 +3,6 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
-using NeonWarfare.Net;
 
 namespace NeonWarfare;
 

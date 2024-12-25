@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
 using KludgeBox.Networking;
-using NeonWarfare.Net;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare;

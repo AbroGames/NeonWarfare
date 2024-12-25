@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using Godot;
 using NeonWarfare;
-using NeonWarfare.Net;
 using NeonWarfare.Utils;
 
 namespace KludgeBox.Events.Global;
