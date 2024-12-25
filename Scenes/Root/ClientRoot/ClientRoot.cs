@@ -3,7 +3,6 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
-using NeonWarfare.Net;
 using NeonWarfare.Utils;
 
 namespace NeonWarfare;
@@ -32,9 +31,14 @@ public partial class ClientRoot : Node2D
 	
 	protected void Start()
 	{
-		if (CmdParams.AutoTest)
+		if (CmdParams.FastTest.HasValue)
 		{
 			int serverPid = ProcessesService.StartNewDedicatedServerApplication(Network.DefaultPort, PlayerSettings.PlayerName, true);
+			for (int i = 0; i < CmdParams.FastTest-1; i++)
+			{
+				ProcessesService.StartNewClientApplicationAndAutoConnect(Network.DefaultHost, Network.DefaultPort);
+			}
+			
 			CreateClientGame(Network.DefaultHost, Network.DefaultPort, serverPid);
 		} 
 		else if (CmdParams.AutoConnectIp != null)
