@@ -25,16 +25,20 @@ public partial class ServerGame
             World.AddChild(player);
             long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
 
+            //У нового игрока спауним его самого
             Network.SendToClient(peerConnectedEvent.Id, 
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             
+            //У всех остальных игроков спауним нового игрока
+            Network.SendToAllExclude(peerConnectedEvent.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+            
+            //У нового игрока спауним всех остальных игроков
             var allyProfiles = GetPlayerProfilesExcluding(peerConnectedEvent.Id);
             foreach (ServerPlayerProfile playerServerInfo in allyProfiles)
             {
                 Player ally = playerServerInfo.Player;
                 long allyNid = World.NetworkEntityManager.GetNid(ally);
                 Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
-                Network.SendToClient(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             }
         } 
         else if (World is ServerBattleWorld)
@@ -80,12 +84,7 @@ public partial class ServerGame
             
             Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
-
-            var allyProfiles = GetPlayerProfilesExcluding(playerServerInfo.Id);
-            foreach (ServerPlayerProfile allyServerInfo in allyProfiles)
-            {
-                Network.SendToClient(allyServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
-            }
+            Network.SendToAllExclude(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
         }
         Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
     }
