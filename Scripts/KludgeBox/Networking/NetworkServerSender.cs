@@ -12,7 +12,7 @@ public partial class Network
     
     public static void SendToAll(NetPacket packet)
     {
-        SendAsServer(BroadcastId, packet, packet.Mode, packet.PreferredChannel);
+        SendToAll(packet, packet.Mode, packet.PreferredChannel);
     }
     
     public static void SendToAll(NetPacket packet, MultiplayerPeer.TransferModeEnum mode, int channel)
@@ -20,9 +20,24 @@ public partial class Network
         SendAsServer(BroadcastId, packet, mode, channel);
     }
     
+    public static void SendToAllExclude(long excludeId, NetPacket packet)
+    {
+        SendToAllExclude(excludeId, packet, packet.Mode, packet.PreferredChannel);
+    }
+    
+    public static void SendToAllExclude(long excludeId, NetPacket packet, MultiplayerPeer.TransferModeEnum mode, int channel)
+    {
+        int[] peers = ServerRoot.Instance.Game.Network.Api.GetPeers();
+        foreach (var peerId in peers)
+        {
+            if (peerId == excludeId) continue;
+            SendAsServer(peerId, packet, mode, channel);
+        }
+    }
+    
     public static void SendToClient(long id, NetPacket packet)
     {
-        SendAsServer(id, packet, packet.Mode, packet.PreferredChannel);
+        SendToClient(id, packet, packet.Mode, packet.PreferredChannel);
     }
     
     public static void SendToClient(long id, NetPacket packet, MultiplayerPeer.TransferModeEnum mode, int channel)
