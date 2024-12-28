@@ -8,6 +8,11 @@ using NeonWarfare.LoadingScreen;
 public partial class ServerGame
 {
     
+    /*
+     * При подключении нового игрока создаем/активируем его PlayerProfile.
+     * Если сейчас BattleWorld, то отправляемему заглушку и ждем окончания боя.
+     * Если сейчас SafeWorld, то синхронизируем мир, загружая союзников и окружающие объекты. Союзникам передаем инфу о новом игроке.
+     */
     [EventListener(ListenerSide.Server)]
     public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
@@ -15,6 +20,7 @@ public partial class ServerGame
 
         if (World is ServerSafeWorld)
         {
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
             
             Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
@@ -40,6 +46,7 @@ public partial class ServerGame
                 long allyNid = World.NetworkEntityManager.GetNid(ally);
                 Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
             }
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ClearLoadingScreenPacket());
         } 
         else if (World is ServerBattleWorld)
         {
@@ -51,6 +58,10 @@ public partial class ServerGame
         }
     }
     
+    /*
+     * При отключении игрока удаляем/деактивируем его PlayerProfile.
+     * Удаляем игрока из мира и сообщаем об этом всем.
+     */
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
@@ -63,6 +74,10 @@ public partial class ServerGame
         Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }
     
+    /*
+     * Игрок желает начать бой.
+     * Ставим загрузочный экран, меняем текущий мир, создаем все объекты и сообщаем о них, убираем загрузочный экран. 
+     */
     [EventListener(ListenerSide.Server)]
     public void OnWantToBattlePacket(CS_WantToBattlePacket emptyPacket) 
     {
@@ -89,6 +104,9 @@ public partial class ServerGame
         Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
     }
 
+    /*
+     * Просто отвечаем на пакет пинга
+     */
     [EventListener(ListenerSide.Server)]
     public void OnPingPacket(CS_PingPacket pingPacket) 
     {

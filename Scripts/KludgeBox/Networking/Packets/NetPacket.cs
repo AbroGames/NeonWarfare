@@ -13,6 +13,10 @@ public abstract class NetPacket : HandleableEvent
     [JsonIgnore]
     public long SenderId { get; internal set; }
     
+    /*
+     * The default channel with index 0 is actually work as three separated channels - one for each transfer mode. (c) Godot Docs
+     * Так что этот параметр важен только для TransferModeEnum.Reliable каналов
+     */
     [JsonIgnore]
     public virtual int PreferredChannel => 0;
     

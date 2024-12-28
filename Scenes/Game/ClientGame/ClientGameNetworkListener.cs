@@ -9,13 +9,19 @@ using NeonWarfare.LoadingScreen;
 public partial class ClientGame
 {
 	
+	/*
+	 * Сразу после подключения к серверу запускаем систему пинга.
+	 * Все остальные действия (например, убрать загрузочный экран) проинициирует сервер через соответствующие пакеты.
+	 */
 	[EventListener(ListenerSide.Client)]
 	public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
 		PingChecker.Start();
-		ClearLoadingScreen();
 	}
 	
+	/*
+	 * Создаем новый экземпляр WorldMainScene и делаем его активным, текущий удаляем.
+	 */
 	[EventListener(ListenerSide.Client)]
 	public void OnChangeWorldPacket(SC_ChangeWorldPacket changeWorldPacket)
 	{
@@ -34,12 +40,18 @@ public partial class ClientGame
 		ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());
 	}
 	
+	/*
+	 * Устанавливаем/меняем загрузочный экран
+	 */
 	[EventListener(ListenerSide.Client)]
 	public void OnChangeLoadingScreenPacket(SC_ChangeLoadingScreenPacket changeLoadingScreenPacket)
 	{
 		SetLoadingScreen(changeLoadingScreenPacket.LoadingScreenType);
 	}
 	
+	/*
+	 * Отключаем загрузочный экран
+	 */
 	[EventListener(ListenerSide.Client)]
 	public void OnClearLoadingScreenPacket(SC_ClearLoadingScreenPacket clearLoadingScreenPacket)
 	{
