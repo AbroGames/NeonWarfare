@@ -16,6 +16,7 @@ public partial class Ally : Character
     private float _movementSpeed;
     private float _movementDir;
     private ManualCooldown _inertiaCooldown = new(InertiaCooldown, false, false);
+    private Stopwatch _timeFromLastMovement = new();
 
     public override void _Ready()
     {
@@ -30,7 +31,15 @@ public partial class Ally : Character
         if (!CmdArgsService.ContainsInCmdArgs(ServerParams.ServerFlag)) //If is client
         {
             _inertiaCooldown.Update(delta);
-            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * (float) delta;
+            
+            float realDelta = (float) delta;
+            if (_timeFromLastMovement.IsRunning) 
+            {
+                realDelta = (float) _timeFromLastMovement.Elapsed.TotalSeconds;
+                _timeFromLastMovement.Reset();
+            }
+            
+            Position += Vector2.FromAngle(_movementDir) * _movementSpeed * realDelta;
         }
     }
 
@@ -46,10 +55,12 @@ public partial class Ally : Character
         if (serverMovementEntityPacket.MovementSpeed != 0)
         {
             _inertiaCooldown.Restart();
+            _timeFromLastMovement.Restart();
         }
         else
         {
             _inertiaCooldown.Reset();
+            _timeFromLastMovement.Reset();
         }
     }
 }
