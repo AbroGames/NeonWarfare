@@ -22,13 +22,10 @@ public partial class ServerGame
         {
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
-            
-            Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
+
+            Player player = World.CreateAndAddPlayer(PlayerProfilesById[peerConnectedEvent.Id]);
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-
-            PlayerProfilesById[peerConnectedEvent.Id].Player = player;
-            World.AddChild(player);
             long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
 
             //У нового игрока спауним его самого
@@ -89,12 +86,9 @@ public partial class ServerGame
         
         foreach (ServerPlayerProfile playerServerInfo in PlayerProfiles)
         {
-            Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>();
+            Player player = World.CreateAndAddPlayer(PlayerProfilesById[playerServerInfo.Id]);
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-
-            playerServerInfo.Player = player;
-            serverBattleWorld.AddChild(player);
             long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
             
             Network.SendToClient(playerServerInfo.Id,  

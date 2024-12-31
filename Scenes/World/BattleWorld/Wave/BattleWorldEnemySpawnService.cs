@@ -34,13 +34,13 @@ public static class BattleWorldEnemySpawnService
             var battleWorld = battleWorldPhysicsProcessEvent.ServerBattleWorld;
             //CreateEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Double * Mathf.Pi * 2, Rand.Range(1500, 2500));
             //RequiredEnemies--;
-            CreateEnemyGroupAroundCharacter(battleWorld, battleWorld.Player, Rand.Range(1000, 1500));
+            //CreateEnemyGroupAroundCharacter(battleWorld, battleWorld.Player, Rand.Range(1000, 1500));
         }
 
         if (RequiredBosses > 0)
         {
             var battleWorld = battleWorldPhysicsProcessEvent.ServerBattleWorld;
-            CreateBossEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Float * Mathf.Pi * 2, Rand.Range(1500, 2500));
+            //CreateBossEnemyAroundCharacter(battleWorld, battleWorld.Player, Rand.Float * Mathf.Pi * 2, Rand.Range(1500, 2500));
             RequiredBosses--;
             
         }

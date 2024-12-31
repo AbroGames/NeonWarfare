@@ -10,12 +10,13 @@ public partial class ClientGame
 {
 	
 	/*
-	 * Сразу после подключения к серверу запускаем систему пинга.
+	 * Сразу после подключения к серверу создаем профиль игрока и запускаем систему пинга 
 	 * Все остальные действия (например, убрать загрузочный экран) проинициирует сервер через соответствующие пакеты.
 	 */
 	[EventListener(ListenerSide.Client)]
 	public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
+		AddPlayerProfile(Network.Multiplayer.GetUniqueId());
 		PingChecker.Start();
 	}
 	
