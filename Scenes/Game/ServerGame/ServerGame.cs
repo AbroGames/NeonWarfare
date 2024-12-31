@@ -6,8 +6,6 @@ using NeonWarfare;
 
 public partial class ServerGame : Node2D
 {
-
-    private static ServerGame Instance => ServerRoot.Instance.Game;
 	
 	public override void _Ready()
 	{
