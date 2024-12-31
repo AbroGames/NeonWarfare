@@ -23,7 +23,8 @@ public abstract partial class ServerWorld : Node2D
             throw new ArgumentException($"Player with Id {playerProfile.Id} already exists.");
         }
 
-        Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>(); //TODO ServerPlayer special ~~constructor~~ static builder
+        Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>(); //TODO ServerPlayer special ~~constructor~~ static builder, based on playerProfile
+        _playerById[playerProfile.Id] = player;
         AddChild(player);
         return player;
     }

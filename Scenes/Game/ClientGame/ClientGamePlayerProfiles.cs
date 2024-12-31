@@ -15,7 +15,7 @@ public partial class ClientGame
     {
         if (PlayerProfile != null)
         {
-            throw new ArgumentException($"Player already exists.");
+            throw new ArgumentException("Player already exists.");
         }
         
         PlayerProfile = new ClientPlayerProfile(id);

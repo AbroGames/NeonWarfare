@@ -9,13 +9,12 @@ public static class ClientEntityNetworkListener
     [EventListener(ListenerSide.Client)]
     public static void OnServerSpawnPlayerPacket(ServerSpawnPlayerPacket serverSpawnPlayerPacket)
     {
-        Player player = ClientRoot.Instance.PackedScenes.Player.Instantiate<Player>();
+        ClientWorld world = ClientRoot.Instance.Game.World;
+        
+        Player player = world.CreateAndAddPlayer(ClientRoot.Instance.Game.PlayerProfile);
         player.Position = Vec((float) serverSpawnPlayerPacket.X, (float) serverSpawnPlayerPacket.Y);
         player.Rotation = (float) serverSpawnPlayerPacket.Dir;
-        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
-
-        ClientWorld world = ClientRoot.Instance.Game.World;
-        world.Player = player;
+        world.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 		
         var camera = new Camera();
         camera.Position = player.Position;
@@ -28,8 +27,8 @@ public static class ClientEntityNetworkListener
         var floor = world.Floor;
         floor.Camera = camera;
         floor.ForceCheck();
-        
-        world.AddChild(player); // must be here to draw over the floor
+
+        player.Camera = camera;
     }
 
     [EventListener(ListenerSide.Client)]
