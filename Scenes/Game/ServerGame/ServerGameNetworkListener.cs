@@ -16,6 +16,7 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
+        Log.Info($"Client connected to server. Peer id = {peerConnectedEvent.Id}");
         AddPlayerProfile(peerConnectedEvent.Id);
 
         if (World is ServerSafeWorld)

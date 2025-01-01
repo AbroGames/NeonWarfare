@@ -16,7 +16,9 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
-		AddPlayerProfile(Network.Multiplayer.GetUniqueId());
+		long myPeerId = Network.Multiplayer.GetUniqueId();
+		Log.Info($"Connected to server. My peer id = {myPeerId}");
+		AddPlayerProfile(myPeerId);
 		PingChecker.Start();
 	}
 	
