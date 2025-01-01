@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://dsktb63djjnqc"]
 
-[ext_resource type="Script" path="res://Scenes/World/Effects/CpuParticlesFx.cs" id="1_n2dxd"]
+[ext_resource type="Script" path="res://Scenes/NewWorld/Effects/CpuParticlesFx.cs" id="1_n2dxd"]
 [ext_resource type="Texture2D" uid="uid://buoayhb6cvl1j" path="res://Assets/Textures/Particles/Effects/circle_03.png" id="2_evpui"]
 
 [sub_resource type="Curve" id="Curve_kyx2k"]
