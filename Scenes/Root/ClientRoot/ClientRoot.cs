@@ -31,17 +31,7 @@ public partial class ClientRoot : Node2D
 	
 	protected void Start()
 	{
-		if (CmdParams.FastTest.HasValue)
-		{
-			int serverPid = ProcessesService.StartNewDedicatedServerApplication(Network.DefaultPort, PlayerSettings.PlayerName, true);
-			for (int i = 0; i < CmdParams.FastTest-1; i++)
-			{
-				ProcessesService.StartNewClientApplicationAndAutoConnect(Network.DefaultHost, Network.DefaultPort);
-			}
-			
-			CreateClientGame(Network.DefaultHost, Network.DefaultPort, serverPid);
-		} 
-		else if (CmdParams.AutoConnectIp != null)
+		if (CmdParams.AutoConnectIp != null)
 		{
 			int autoConnectPort = CmdParams.AutoConnectPort.GetValueOrDefault(Network.DefaultPort);
 			CreateClientGame(CmdParams.AutoConnectIp, autoConnectPort);
