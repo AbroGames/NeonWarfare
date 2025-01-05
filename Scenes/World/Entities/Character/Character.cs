@@ -72,11 +72,11 @@ public partial class Character : CharacterBody2D
 			QueueFree();
 		}
     		
-		var dmgLabel = FloatingLabel.Create();
+		var dmgLabel = ClientRoot.Instance.PackedScenes.FloatingLabel.Instantiate<FloatingLabel>();
 		
 		if (appliedDamage <= 0) Log.Debug(appliedDamage.ToString("N0"));
     			
-		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, Mathf.Max(Math.Log(appliedDamage, 20), 0.8));
+		dmgLabel.Configure(appliedDamage.ToString("N0"), damage.LabelColor, (float) Mathf.Max(Math.Log(appliedDamage, 20), 0.8));
 		dmgLabel.Position = Position + Rand.InsideUnitCircle * 50;
 		GetParent().AddChild(dmgLabel);
 	}

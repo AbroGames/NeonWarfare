@@ -1,18 +1,18 @@
 [gd_scene load_steps=4 format=3 uid="uid://dfv2jfwdn10pn"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/FloatingLabel/FloatingLabel.cs" id="1_semnw"]
+[ext_resource type="Script" path="res://Scenes/NewWorld/Effects/FloatingLabel/FloatingLabel.cs" id="1_semnw"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_oxmcq"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_m7m7t"]
 resource_local_to_scene = true
 font = ExtResource("2_oxmcq")
 font_size = 22
-font_color = Color(1, 0, 1, 1)
 outline_size = 10
 outline_color = Color(0.572549, 0.572549, 0.572549, 1)
 
-[node name="FloatingLabel" type="Node2D"]
+[node name="FloatingLabel" type="Node2D" node_paths=PackedStringArray("Label")]
 script = ExtResource("1_semnw")
+Label = NodePath("Label")
 
 [node name="Label" type="Label" parent="."]
 anchors_preset = 8
@@ -27,7 +27,6 @@ offset_bottom = 13.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
-text = "88005553535"
 label_settings = SubResource("LabelSettings_m7m7t")
 horizontal_alignment = 1
 vertical_alignment = 1
