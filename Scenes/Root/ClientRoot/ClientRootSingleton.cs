@@ -6,7 +6,7 @@ public partial class ClientRoot
 {
 	private static ClientRoot _instance;
 	
-	public new static ClientRoot Instance
+	public static ClientRoot Instance
 	{
 		get
 		{

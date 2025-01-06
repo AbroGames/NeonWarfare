@@ -7,7 +7,7 @@ public partial class ServerRoot
 {
 	private static ServerRoot _instance;
 	
-	public new static ServerRoot Instance
+	public static ServerRoot Instance
 	{
 		get
 		{
