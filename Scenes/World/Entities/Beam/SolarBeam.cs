@@ -6,10 +6,6 @@ namespace NeonWarfare;
 
 public partial class SolarBeam : Node2D
 {
-	public Player Source { get; set; }
-	public double Dps { get; set; } = 3000;
-	public double RotationSpeedFactor = 0.075;
-	public double PushVel { get; set; } = 500;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D OuterBeamSprite { get; set; }
@@ -18,26 +14,30 @@ public partial class SolarBeam : Node2D
 	[Export] [NotNull] public Sprite2D InnerSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D InnerBeamSprite { get; set; }
 	[Export] [NotNull] public CpuParticles2D Particles { get; set; }
-
+	
+	public Player Source { get; set; }
+	public double Dps { get; set; } = 3000;
+	public double RotationSpeedFactor = 0.075;
+	public double PushVel { get; set; } = 500;
 	public double Ttl = 7;
-	public double InnerStartWidth;
-	public double OuterStartWidth;
-	public double Ang;
-	public float StartGlow;
-	public double InterpolationFactor = (240.0 / 60) * 60;
-	public Cooldown DamageCd = new(duration: 0.1, isReady: true);
-
+	
+	private double _innerStartWidth;
+	private double _outerStartWidth;
+	private double _ang;
+	private float _startGlow;
+	private double _interpolationFactor = (240.0 / 60) * 60;
+	private Cooldown _damageCd = new(duration: 0.1, isReady: true);
 	
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		OuterStartWidth = OuterBeamSprite.Scale.Y;
-		InnerStartWidth = InnerBeamSprite.Scale.Y;
+		_outerStartWidth = OuterBeamSprite.Scale.Y;
+		_innerStartWidth = InnerBeamSprite.Scale.Y;
 		Source.RotationSpeed *= RotationSpeedFactor;
-		DamageCd.Ready += () =>
+		_damageCd.Ready += () =>
 		{
-			DoDamage(DamageCd.Duration);
+			DoDamage(_damageCd.Duration);
 		};
 	}
 
@@ -54,16 +54,16 @@ public partial class SolarBeam : Node2D
 		
 		
 		Ttl -= delta;
-		Ang += 1800 * delta;
-		Ang %= 360;
+		_ang += 1800 * delta;
+		_ang %= 360;
 		var shrinkFactor = Mathf.Min(1, Ttl * 4);
 
 		InnerSpawnSprite.Rotation += (float) Mathf.DegToRad(360 * delta);
 		OuterSpawnSprite.Rotation -= (float) Mathf.DegToRad(360 * delta);
-		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (float) ((OuterStartWidth + OuterStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) * shrinkFactor) };
-		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (float) ((InnerStartWidth + InnerStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) * shrinkFactor) };
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (float) ((_outerStartWidth + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor) };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (float) ((_innerStartWidth + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) * shrinkFactor) };
 		
-		DamageCd.Update(delta);
+		_damageCd.Update(delta);
 	}
 	
 	private void DoDamage(double delta)

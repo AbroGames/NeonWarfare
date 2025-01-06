@@ -13,20 +13,19 @@ public partial class Bullet : Node2D
 		PLAYER, ENEMY, ALLY
 	}
 
-	[Export] public double Speed = 700; //pixels/sec
-	[Export] public double RemainingDistance = 2000; //pixels
+	public double Speed = 700; //pixels/sec
+	public double RemainingDistance = 2000; //pixels
 
 	public Character Source { get; set; }
 	public AuthorEnum Author;
 	public double RemainingDamage = 1000;
-	
-	public static readonly ReadOnlyDictionary<AuthorEnum, Color> Colors = new Dictionary<AuthorEnum, Color>()
+
+	public static readonly IReadOnlyDictionary<AuthorEnum, Color> Colors = new Dictionary<AuthorEnum, Color>()
 	{
-		{ AuthorEnum.PLAYER, new Color(0, 1, 1)},
-		{ AuthorEnum.ALLY, new Color(0, 1, 0)},
-		{ AuthorEnum.ENEMY, new Color(1, 0, 0)}
-			
-	}.AsReadOnly();
+		{ AuthorEnum.PLAYER, new Color(0, 1, 1) },
+		{ AuthorEnum.ALLY, new Color(0, 1, 0) },
+		{ AuthorEnum.ENEMY, new Color(1, 0, 0) }
+	};
 	
 	public override void _Ready()
 	{

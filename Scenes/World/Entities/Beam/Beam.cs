@@ -6,9 +6,6 @@ namespace NeonWarfare;
 
 public partial class Beam : Node2D
 {
-	public Player Source { get; set; }
-	public double Dps { get; set; } = 6000;
-	public double PushVel { get; set; } = 1000;
 	[Export] [NotNull] public Area2D OuterHitArea { get; private set; }
 	[Export] [NotNull] public Sprite2D OuterSpawnSprite { get; set; }
 	[Export] [NotNull] public Sprite2D OuterBeamSprite { get; set; }
@@ -18,29 +15,33 @@ public partial class Beam : Node2D
 	[Export] [NotNull] public Sprite2D InnerBeamSprite { get; set; }
 	[Export] [NotNull] public Curve SizeCurve { get; set; }
 	[Export] [NotNull] public CpuParticles2D Particles { get; set; }
+	
+	public Player Source { get; set; }
+	public double Dps { get; set; } = 6000;
+	public double PushVel { get; set; } = 1000;
+	public double Ttl = 2;
 
 	public ManualShake Shaker;
 	
-	internal double Ttl = 2;
-	internal double StartTtl;
-	internal double InnerStartWidth;
-	internal double OuterStartWidth;
-	internal double Ang;
-	internal float StartGlow;
-	internal double ShakeDist = 1500;
-	internal Cooldown DamageCd = new(duration: 0.1, isReady: true);
+	private double _startTtl;
+	private double _innerStartWidth;
+	private double _outerStartWidth;
+	private double _ang;
+	private float _startGlow;
+	private double _shakeDist = 1500;
+	private Cooldown _damageCd = new(duration: 0.1, isReady: true);
 	
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		StartTtl = Ttl;
-		OuterStartWidth = OuterBeamSprite.Scale.Y;
-		InnerStartWidth = InnerBeamSprite.Scale.Y;
+		_startTtl = Ttl;
+		_outerStartWidth = OuterBeamSprite.Scale.Y;
+		_innerStartWidth = InnerBeamSprite.Scale.Y;
 
-		DamageCd.Ready += () =>
+		_damageCd.Ready += () =>
 		{
-			DoDamage(DamageCd.Duration);
+			DoDamage(_damageCd.Duration);
 		};
 	}
 
@@ -57,24 +58,24 @@ public partial class Beam : Node2D
 			QueueFree();
 		}
 		
-		var ttlFactor = Ttl / StartTtl;
+		var ttlFactor = Ttl / _startTtl;
 		var sizeFactor = SizeCurve.Sample((float) ttlFactor);
 		
 		Ttl -= delta;
-		Ang += 1800 * delta;
-		Ang %= 360;
+		_ang += 1800 * delta;
+		_ang %= 360;
 
 		InnerSpawnSprite.Rotation += (float) Mathf.DegToRad(360 * delta);
 		OuterSpawnSprite.Rotation -= (float) Mathf.DegToRad(360 * delta);
-		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (float) (OuterStartWidth * sizeFactor + OuterStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) };
-		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (float) (InnerStartWidth * sizeFactor + InnerStartWidth * Mathf.Sin(Mathf.DegToRad(Ang)) * 0.07) };
+		OuterBeamSprite.Scale = OuterBeamSprite.Scale with { Y = (float) (_outerStartWidth * sizeFactor + _outerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) };
+		InnerBeamSprite.Scale = InnerBeamSprite.Scale with { Y = (float) (_innerStartWidth * sizeFactor + _innerStartWidth * Mathf.Sin(Mathf.DegToRad(_ang)) * 0.07) };
 
-		DamageCd.Update(delta);
+		_damageCd.Update(delta);
 	}
 	
 	private void DoDamage(double delta)
 	{
-		Shaker.Strength = 10 * (float) Mathf.Max(0, 1 - Source.DistanceTo(this) / ShakeDist); 
+		Shaker.Strength = 10 * (float) Mathf.Max(0, 1 - Source.DistanceTo(this) / _shakeDist); 
 		
 		var outerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 0.5 * Source.UniversalDamageMultiplier, Source);
 		var innerDamage = new Damage(Bullet.AuthorEnum.PLAYER, new Color(1, 0, 0), Dps * delta * 2 * Source.UniversalDamageMultiplier, Source);
