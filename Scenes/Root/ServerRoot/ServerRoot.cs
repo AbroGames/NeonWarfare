@@ -38,10 +38,6 @@ public partial class ServerRoot : Node2D
 
 	protected void Start()
 	{
-		GetWindow().Set("position", new Vector2I(
-			DisplayServer.ScreenGetSize().X - (int) GetViewport().GetVisibleRect().Size.X,
-			DisplayServer.ScreenGetSize().Y - (int) GetViewport().GetVisibleRect().Size.Y - 40));
-
 		CreateServerGame(CmdParams.Port, CmdParams.ParentPid);
 	}
 	
