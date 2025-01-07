@@ -1,13 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bsof5i3qpnyv0"]
+[gd_scene load_steps=2 format=3 uid="uid://bsof5i3qpnyv0"]
 
 [ext_resource type="Script" path="res://Scenes/World/BattleWorld/ClientBattleWorld.cs" id="1_175qr"]
-[ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Floor.cs" id="2_s00f6"]
-[ext_resource type="Texture2D" uid="uid://2sy6uyv2haxf" path="res://Assets/Textures/floor3.png" id="3_ncvcw"]
 
-[node name="BattleWorld" type="Node2D" node_paths=PackedStringArray("Floor")]
+[node name="BattleWorld" type="Node2D"]
 script = ExtResource("1_175qr")
-Floor = NodePath("Floor")
-
-[node name="Floor" type="Node2D" parent="."]
-script = ExtResource("2_s00f6")
-Texture = ExtResource("3_ncvcw")

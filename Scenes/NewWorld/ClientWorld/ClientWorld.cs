@@ -6,11 +6,18 @@ namespace NeonWarfare;
 
 public partial class ClientWorld : Node2D
 {
-    [Export] [NotNull] public Floor Floor { get; set; }
+    public Floor Floor { get; set; }
     
     public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
     public Player Player { get; private set; } //TODO ClientPlayer
-    
+
+    public override void _EnterTree()
+    {
+        Floor = new Floor();
+        Floor.Texture = ImageTexture.CreateFromImage(Image.LoadFromFile(Sprites.Floor));
+        AddChild(Floor);
+    }
+
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);

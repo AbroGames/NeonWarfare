@@ -8,6 +8,9 @@ namespace NeonWarfare
 		public const string SpritesDir = $"{TexturesDir}/Sprites";
 		public const string ParticlesDir = $"{TexturesDir}/Particles";
 
+		// sprites
+		public static string Floor { get; } = $"{SpritesDir}/Floor.png";
+		
 		// glow
 		public static RandomPicker<string> Spotlight { get; } = new RandomPicker<string>(
 			$"{ParticlesDir}/Glow/256/spotlight_{{0}}.png".BatchNumber(1,8)
