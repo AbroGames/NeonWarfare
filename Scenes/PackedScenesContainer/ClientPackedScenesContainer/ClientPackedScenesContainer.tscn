@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/ClientGame/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="7_0iiio"]
 [ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="8_02aqn"]
 [ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/Screen/MainScene/MainMenuMainScene.tscn" id="9_6gxor"]
-[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/NewWorld/SafeWorld/ClientSafeWorld.tscn" id="9_17hfk"]
+[ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/NewWorld/ClientWorld/ClientSafeWorld/ClientSafeWorld.tscn" id="9_17hfk"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld.tscn" id="10_0t0c3"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="10_3txv8"]
 [ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/World/Entities/Character/Player/Player.tscn" id="11_rscso"]
