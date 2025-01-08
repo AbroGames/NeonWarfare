@@ -52,8 +52,8 @@ public partial class BattleHud : Hud
 		Player player = ClientBattleWorld.Player;
 		if (player == null) return;
 		
-		Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";
-		Enemies.Text = $"Enemies: {ClientBattleWorld.Enemies.Count}";
+		//Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";
+		//Enemies.Text = $"Enemies: {ClientBattleWorld.Enemies.Count}";
         
 		HpBar.CurrentUpperValue = (float) player.Hp;
 		double hpBarValueDelta = Mathf.Clamp(HpBar.CurrentLowerValue - HpBar.CurrentUpperValue, 
@@ -69,8 +69,8 @@ public partial class BattleHud : Hud
 		SolarBeamIcon.Progress = player.AdvancedAbilityCd.FractionElapsed;
 		
 		var shader = TimerSprite.Material as ShaderMaterial;
-		shader.SetShaderParameter("Progress", 1-ClientBattleWorld.EnemyWave.NextWaveTimer / ClientBattleWorld.EnemyWave.WaveTimeout);
-		TimerLabel.Text = ClientBattleWorld.EnemyWave.NextWaveTimer.ToString("N0");
+		//shader.SetShaderParameter("Progress", 1-ClientBattleWorld.EnemyWave.NextWaveTimer / ClientBattleWorld.EnemyWave.WaveTimeout);
+		//TimerLabel.Text = ClientBattleWorld.EnemyWave.NextWaveTimer.ToString("N0");
 	}
 
 	/// <summary>

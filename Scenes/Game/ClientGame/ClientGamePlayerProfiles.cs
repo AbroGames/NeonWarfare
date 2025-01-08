@@ -11,7 +11,7 @@ public partial class ClientGame
 {
     public ClientPlayerProfile PlayerProfile { get; private set; }
 
-    public void AddPlayerProfile(long id) //TODO MultiplayerApi.getUniqueId. Затестить и сверить с сервером! 
+    public void AddPlayerProfile(long id)
     {
         if (PlayerProfile != null)
         {

@@ -8,8 +8,6 @@ namespace NeonWarfare;
 
 public abstract partial class ServerWorld : Node2D
 {
-
-    public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
     
     public IReadOnlyDictionary<long, Player> PlayerById => _playerById;
     public IEnumerable<Player> Players => _playerById.Values; //TODO ServerPlayer

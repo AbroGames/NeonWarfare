@@ -98,7 +98,7 @@ public static class BattleWorldEnemySpawnService
         fx.Finished += () =>
         {
             clientBattleWorld.AddChild(enemy);
-            clientBattleWorld.Enemies.Add(enemy);
+            //clientBattleWorld.Enemies.Add(enemy);
             enemy.SkipSmoothing();
         };
         fx.Position = enemy.Position;
@@ -127,7 +127,7 @@ public static class BattleWorldEnemySpawnService
         var enemy = template.Instantiate<Enemy>();
         enemy.MaxHp = 250;
         enemy.Hp = enemy.MaxHp;
-        enemy.BaseXp *= 1 + serverBattleWorld.EnemyWave.WaveNumber / 10;
+        enemy.BaseXp *= 1;// + serverBattleWorld.EnemyWave.WaveNumber / 10;
         enemy.MovementSpeed = 200; // in pixels/secRegenHpSpeed = 0;
         if (_attractorCounter == 0 || forceAttractor)
         {
@@ -147,7 +147,7 @@ public static class BattleWorldEnemySpawnService
     private static void CreateBossEnemyAroundCharacter(ServerBattleWorld serverBattleWorld, Character character, float angle, double distance)
     {
         var enemy = GenEnemyAroundCharacter(serverBattleWorld, ServerRoot.Instance.PackedScenes.Boss, character, angle, distance, true);
-        var scale = 1 + 0.1 * serverBattleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
+        var scale = 1;// + 0.1 * serverBattleWorld.EnemyWave.WaveNumber; //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Scale  = Vec((float) scale);  //5 волна = 1.5, 10 волна = 2, 20 волна = 3 ... и т.д.
         enemy.Hp *= 50 * scale; //5 волна = *50, 10 волна = *100, 20 волна = *150 ... и т.д.
         enemy.Damage *= 5 * scale; //5 волна = *5, 10 волна = *10, 20 волна = *15 ... и т.д.

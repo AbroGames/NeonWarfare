@@ -9,16 +9,16 @@ namespace NeonWarfare;
 public static class EnemyMovementService
 {
 
-    [EventListener(ListenerSide.Server)]
+    //[EventListener(ListenerSide.Server)]
     public static void OnEnemyStartAttractionEvent(EnemyStartAttractionEvent attractionEvent)
     {
-        attractionEvent.serverBattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
+        //attractionEvent.serverBattleWorld.EnemyAttractors.Add(attractionEvent.Enemy);
     }
 
-    [EventListener(ListenerSide.Server)]
+    //[EventListener(ListenerSide.Server)]
     public static void OnEnemyStopAttractionEvent(EnemyStopAttractionEvent attractionEvent)
     {
-        attractionEvent.serverBattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
+        //attractionEvent.serverBattleWorld.EnemyAttractors.Remove(attractionEvent.Enemy);
     }
 
     [EventListener(ListenerSide.Server)]
@@ -71,8 +71,9 @@ public static class EnemyMovementService
 
     private static Vector2 GetAttractionDirection(Enemy enemy)
     {
-        if ((enemy.GetParent() as ClientBattleWorld).EnemyAttractors.Count == 0) return Vec();
-            
+        return Vector2.Zero;
+        /*if ((enemy.GetParent() as ClientBattleWorld).EnemyAttractors.Count == 0) return Vec();
+
         Enemy closestAttractor = (enemy.GetParent() as ClientBattleWorld).EnemyAttractors.FirstOrDefault();
         double dist = closestAttractor.Position.DistanceSquaredTo(enemy.Position);
         foreach (var attractor in (enemy.GetParent() as ClientBattleWorld).EnemyAttractors)
@@ -86,6 +87,6 @@ public static class EnemyMovementService
             }
         }
 
-        return enemy.DirectionTo(closestAttractor);
+        return enemy.DirectionTo(closestAttractor);*/
     }
 }
