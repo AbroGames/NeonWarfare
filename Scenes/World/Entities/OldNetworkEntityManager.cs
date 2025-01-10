@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-public class NetworkEntityManager
+public class OldNetworkEntityManager
 {
     private readonly IDictionary<Node2D, long> _nodeToNid = new Dictionary<Node2D, long>(ReferenceEqualityComparer.Instance);
     private readonly IDictionary<long, Node2D> _nidToNode = new Dictionary<long, Node2D>();
