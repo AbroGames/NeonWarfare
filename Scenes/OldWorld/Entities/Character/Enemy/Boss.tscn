@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://cjqj75fvk34l7"]
 
-[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="1_t65df"]
+[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/OldWorld/Entities/Character/Enemy/Enemy.tscn" id="1_t65df"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_y5vl5"]
 [ext_resource type="Texture2D" uid="uid://drvu6fdhwasqc" path="res://Assets/Textures/Sprites/Boss.svg" id="3_rasxh"]
 

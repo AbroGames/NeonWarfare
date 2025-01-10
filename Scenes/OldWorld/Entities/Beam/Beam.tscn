@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://c6f2wg8qd1yec"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Beam/Beam.cs" id="1_q2rq7"]
+[ext_resource type="Script" path="res://Scenes/OldWorld/Entities/Beam/Beam.cs" id="1_q2rq7"]
 [ext_resource type="Texture2D" uid="uid://0lxupe8u6ixf" path="res://Assets/Textures/Particles/Glow/256/spotlight_5.png" id="1_w4etn"]
 [ext_resource type="Texture2D" uid="uid://btrdjnjrhw88o" path="res://Assets/Textures/Sprites/BeamSource.svg" id="2_2sf3i"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="2_m1glf"]

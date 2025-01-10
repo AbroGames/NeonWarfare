@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://bb528sse5312l"]
 
-[ext_resource type="Script" path="res://Scenes/NewWorld/Effects/GpuParticles/GpuParticlesFx.cs" id="1_bv3d5"]
+[ext_resource type="Script" path="res://Scenes/World/Effects/GpuParticles/GpuParticlesFx.cs" id="1_bv3d5"]
 [ext_resource type="Texture2D" uid="uid://v0sgsd674iy6" path="res://Assets/Textures/Particles/Glow/256/alpha/spotlight_8.png" id="2_stgyx"]
 
 [sub_resource type="Gradient" id="Gradient_ni34l"]

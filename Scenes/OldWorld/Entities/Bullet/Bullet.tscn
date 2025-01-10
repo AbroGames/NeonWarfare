@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dpq1k8xkcy67o"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Bullet/Bullet.cs" id="1_w368o"]
+[ext_resource type="Script" path="res://Scenes/OldWorld/Entities/Bullet/Bullet.cs" id="1_w368o"]
 [ext_resource type="Texture2D" uid="uid://cjnay76gpvl0a" path="res://Assets/Textures/Particles/Effects/rotated/trace_01_rotated.png" id="2_2m1t7"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_gdlum"]
