@@ -1,13 +1,13 @@
 [gd_scene load_steps=9 format=3 uid="uid://bkft5taaifavw"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.cs" id="1_1ofgs"]
-[ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/World/Entities/Character/Player/Player.tscn" id="2_g32s2"]
-[ext_resource type="PackedScene" uid="uid://beqibs6gp5l0y" path="res://Scenes/World/Entities/Character/Ally/Ally.tscn" id="3_570vt"]
-[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/World/Entities/Character/Enemy/Enemy.tscn" id="4_t8cwx"]
-[ext_resource type="PackedScene" uid="uid://cjqj75fvk34l7" path="res://Scenes/World/Entities/Character/Enemy/Boss.tscn" id="5_bkpnl"]
-[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/World/Entities/Bullet/Bullet.tscn" id="6_6i45h"]
-[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/World/Entities/Beam/SolarBeam.tscn" id="7_ejjk5"]
-[ext_resource type="PackedScene" uid="uid://c6f2wg8qd1yec" path="res://Scenes/World/Entities/Beam/Beam.tscn" id="8_q2vxj"]
+[ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/OldWorld/Entities/Character/Player/Player.tscn" id="2_g32s2"]
+[ext_resource type="PackedScene" uid="uid://beqibs6gp5l0y" path="res://Scenes/OldWorld/Entities/Character/Ally/Ally.tscn" id="3_570vt"]
+[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/OldWorld/Entities/Character/Enemy/Enemy.tscn" id="4_t8cwx"]
+[ext_resource type="PackedScene" uid="uid://cjqj75fvk34l7" path="res://Scenes/OldWorld/Entities/Character/Enemy/Boss.tscn" id="5_bkpnl"]
+[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/OldWorld/Entities/Bullet/Bullet.tscn" id="6_6i45h"]
+[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/OldWorld/Entities/Beam/SolarBeam.tscn" id="7_ejjk5"]
+[ext_resource type="PackedScene" uid="uid://c6f2wg8qd1yec" path="res://Scenes/OldWorld/Entities/Beam/Beam.tscn" id="8_q2vxj"]
 
 [node name="ServerPackedScenesContainer" type="Node"]
 script = ExtResource("1_1ofgs")
