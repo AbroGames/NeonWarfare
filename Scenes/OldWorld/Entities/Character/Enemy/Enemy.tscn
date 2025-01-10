@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://cpeupva8xuj3x"]
 
-[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Character/Character.tscn" id="1_btvsj"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Character/Enemy/Enemy.cs" id="2_00irn"]
+[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/OldWorld/Entities/Character/Character.tscn" id="1_btvsj"]
+[ext_resource type="Script" path="res://Scenes/OldWorld/Entities/Character/Enemy/Enemy.cs" id="2_00irn"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_6l4qt"]
 [ext_resource type="Texture2D" uid="uid://diw7e7ffqedqt" path="res://Assets/Textures/Sprites/Enemy.svg" id="4_allx4"]
 

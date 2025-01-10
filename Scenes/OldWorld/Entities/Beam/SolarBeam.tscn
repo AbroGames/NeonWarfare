@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://d0w8nqq28xtnw"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Beam/SolarBeam.cs" id="1_fmlhb"]
+[ext_resource type="Script" path="res://Scenes/OldWorld/Entities/Beam/SolarBeam.cs" id="1_fmlhb"]
 [ext_resource type="Script" path="res://Scripts/KludgeBox/Godot/Nodes/Smoothing2D.cs" id="2_5e4bd"]
 [ext_resource type="Texture2D" uid="uid://bf1cf224o02k0" path="res://Assets/Textures/Particles/Effects/fire_01.png" id="2_kjrbo"]
 [ext_resource type="Texture2D" uid="uid://0lxupe8u6ixf" path="res://Assets/Textures/Particles/Glow/256/spotlight_5.png" id="3_h3mp6"]
