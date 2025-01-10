@@ -41,7 +41,7 @@ public static class EnemyAttackService
 		
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, enemy.Position, 0.7f);
         enemy.GetParent().AddChild(bullet);
-        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet);
+        long nid = ServerRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(bullet);
         
         Network.SendToAll(new ServerSpawnEnemyBulletPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, enemy.Damage > 1000));
     }
@@ -60,7 +60,7 @@ public static class EnemyAttackService
         }
 
         ClientRoot.Instance.Game.World.AddChild(bullet);
-        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
+        ClientRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(bullet, serverSpawnEnemyBulletPacket.Nid);
     }
     
     

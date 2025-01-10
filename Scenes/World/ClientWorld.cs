@@ -5,11 +5,12 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class ClientWorld : Node2D
+public abstract partial class ClientWorld : Node2D
 {
     
-    public NetworkEntityManager NetworkEntityManager { get; private set; } = new();
-
+    public ClientNetworkEntityManager NetworkEntityManager;
+    public OldNetworkEntityManager OldNetworkEntityManager { get; private set; } = new(); //TODO del
+    
     public override void _EnterTree()
     {
         AddFloor();

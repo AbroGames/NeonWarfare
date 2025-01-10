@@ -15,7 +15,7 @@ public partial class ClientGame
 		Network = new();
 		AddChild(Network);
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
-		Network.SetDefaultResolver(nid => World.NetworkEntityManager.GetNode((long) nid));
+		Network.SetDefaultResolver(nid => World.OldNetworkEntityManager.GetNode((long) nid));
 		Network.AddInstanceResolver(typeof(ClientGame), id => this);
 
 		PingChecker = new();

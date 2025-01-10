@@ -5,7 +5,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public partial class ClientWorld : Node2D
+public partial class ClientWorld
 {
     public Floor Floor { get; set; }
 

@@ -6,7 +6,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public abstract partial class ServerWorld : Node2D
+public partial class ServerWorld 
 {
     
     public IReadOnlyDictionary<long, Player> PlayerById => _playerById;

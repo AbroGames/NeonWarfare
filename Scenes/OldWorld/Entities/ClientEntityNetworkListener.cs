@@ -14,7 +14,7 @@ public static class ClientEntityNetworkListener
         Player player = world.CreateAndAddPlayer(ClientRoot.Instance.Game.PlayerProfile);
         player.Position = Vec((float) serverSpawnPlayerPacket.X, (float) serverSpawnPlayerPacket.Y);
         player.Rotation = (float) serverSpawnPlayerPacket.Dir;
-        world.NetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
+        world.OldNetworkEntityManager.AddEntity(player, serverSpawnPlayerPacket.Nid);
 		
         var camera = new Camera();
         camera.Position = player.Position;
@@ -37,7 +37,7 @@ public static class ClientEntityNetworkListener
         Ally ally = ClientRoot.Instance.PackedScenes.Ally.Instantiate<Ally>();
         ally.Position = Vec((float) serverSpawnAllyPacket.X, (float) serverSpawnAllyPacket.Y);
         ally.Rotation = (float) serverSpawnAllyPacket.Dir;
-        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
+        ClientRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(ally, serverSpawnAllyPacket.Nid);
         
         ClientWorld world = ClientRoot.Instance.Game.World;
         world.AddChild(ally);
@@ -54,7 +54,7 @@ public static class ClientEntityNetworkListener
     [EventListener(ListenerSide.Client)]
     public static void OnServerDestroyEntityPacket(ServerDestroyEntityPacket serverDestroyEntityPacket)
     {
-        Node2D node = ClientRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
+        Node2D node = ClientRoot.Instance.Game.World.OldNetworkEntityManager.RemoveEntity(serverDestroyEntityPacket.Nid);
         node.QueueFree();
     }
 }

@@ -19,7 +19,7 @@ public static class EnemyDamageService
             EventBus.Publish(new EnemyStopAttractionEvent(battleWorld, enemy));
         }
         
-        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(enemy);
+        long nid = ServerRoot.Instance.Game.World.OldNetworkEntityManager.RemoveEntity(enemy);
         Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }
 }

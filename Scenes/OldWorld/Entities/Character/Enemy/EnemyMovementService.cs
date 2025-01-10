@@ -60,7 +60,7 @@ public static class EnemyMovementService
         enemy.Velocity = velDir * (float) enemy.MovementSpeed;
         enemy.MoveAndSlide();
 
-        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.GetNid(enemy);
+        long nid = ServerRoot.Instance.Game.World.OldNetworkEntityManager.GetNid(enemy);
         Network.SendToAll(new ServerPositionEntityPacket(nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
     }
     

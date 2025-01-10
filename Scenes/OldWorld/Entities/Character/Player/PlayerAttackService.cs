@@ -30,7 +30,7 @@ public static class PlayerAttackService
         bullet.Scale *= 2;
         bullet.Source = player;
         player.GetParent().AddChild(bullet);
-        long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet);
+        long nid = ServerRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(bullet);
         
         Network.SendToAll(new ServerPlayerPrimaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, (float) bullet.Speed));
     }
@@ -48,7 +48,7 @@ public static class PlayerAttackService
         bullet.Author = Bullet.AuthorEnum.PLAYER;
 
         ClientRoot.Instance.Game.World.AddChild(bullet);
-        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
+        ClientRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(bullet, serverPlayerPrimaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 1f).PitchVariation(0.05f);
     }
@@ -79,7 +79,7 @@ public static class PlayerAttackService
             bullet.RemainingDamage = player.SecondaryDamage;
             bullet.Source = player;
             player.GetParent().AddChild(bullet);
-            long nid = ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet);
+            long nid = ServerRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(bullet);
             
             Network.SendToAll(new ServerPlayerSecondaryAttackPacket(nid, bullet.Position.X, bullet.Position.Y, bullet.Rotation, (float) bullet.Speed));
         }
@@ -97,7 +97,7 @@ public static class PlayerAttackService
         bullet.Author = Bullet.AuthorEnum.PLAYER;
         
         ClientRoot.Instance.Game.World.AddChild(bullet);
-        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
+        ClientRoot.Instance.Game.World.OldNetworkEntityManager.AddEntity(bullet, serverPlayerSecondaryAttackPacket.Nid);
         
         Audio2D.PlaySoundAt(Sfx.SmallLaserShot, bullet.Position, 0.5f);
     }

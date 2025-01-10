@@ -27,7 +27,7 @@ public partial class ServerGame
             Player player = World.CreateAndAddPlayer(PlayerProfilesById[peerConnectedEvent.Id]);
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-            long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = World.OldNetworkEntityManager.AddEntity(player);
 
             //У нового игрока спауним его самого
             Network.SendToClient(peerConnectedEvent.Id, 
@@ -41,7 +41,7 @@ public partial class ServerGame
             foreach (ServerPlayerProfile playerServerInfo in allyProfiles)
             {
                 Player ally = playerServerInfo.Player;
-                long allyNid = World.NetworkEntityManager.GetNid(ally);
+                long allyNid = World.OldNetworkEntityManager.GetNid(ally);
                 Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
             }
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ClearLoadingScreenPacket());
@@ -64,9 +64,9 @@ public partial class ServerGame
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Player player = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
-        World.NetworkEntityManager.RemoveEntity(player);
+        World.OldNetworkEntityManager.RemoveEntity(player);
         RemovePlayerProfile(peerDisconnectedEvent.Id);
-        long nid = World.NetworkEntityManager.RemoveEntity(player);
+        long nid = World.OldNetworkEntityManager.RemoveEntity(player);
         player.QueueFree();
         
         Network.SendToAll(new ServerDestroyEntityPacket(nid));
@@ -90,7 +90,7 @@ public partial class ServerGame
             Player player = World.CreateAndAddPlayer(PlayerProfilesById[playerServerInfo.Id]);
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-            long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
+            long newPlayerNid = World.OldNetworkEntityManager.AddEntity(player);
             
             Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
