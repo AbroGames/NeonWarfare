@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://br3ns4pa22dor"]
+[gd_scene load_steps=16 format=3 uid="uid://br3ns4pa22dor"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/CreateServerMenuButton.cs" id="2_qxhat"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ConnectToServerMenuButton.cs" id="3_6ncrt"]
@@ -14,12 +14,18 @@ font_size = 68
 font_color = Color(1, 1, 1, 0)
 outline_size = 3
 outline_color = Color(0, 0.647059, 0.647059, 1)
+shadow_color = Color(0, 0, 1, 0)
 shadow_offset = Vector2(0, 0)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1r8b"]
-bg_color = Color(0, 0.647059, 0.647059, 1)
-shadow_color = Color(0, 0, 0, 1)
-shadow_size = 1
+[sub_resource type="Gradient" id="Gradient_yeiqh"]
+offsets = PackedFloat32Array(0, 0.5, 0.516393, 1)
+colors = PackedColorArray(0, 1, 1, 0, 0, 0.819608, 0.819608, 1, 1.92523e-06, 0.818315, 0.818315, 1, 0, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_oixw4"]
+gradient = SubResource("Gradient_yeiqh")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rxtu6"]
+texture = SubResource("GradientTexture1D_oixw4")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_enomp"]
 
@@ -40,12 +46,14 @@ grow_vertical = 2
 [node name="Background" type="TextureRect" parent="."]
 modulate = Color(0, 0.647059, 0.647059, 0.211765)
 layout_mode = 1
-offset_left = -603.0
-offset_top = -36.0
-offset_right = 1189.0
-offset_bottom = 701.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("6_idndk")
-expand_mode = 1
+expand_mode = 5
+stretch_mode = 5
 
 [node name="GameName" type="Label" parent="."]
 layout_mode = 2
@@ -64,7 +72,7 @@ offset_bottom = 327.0
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/hover = SubResource("StyleBoxTexture_rxtu6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_enomp")
 text = "                      Create server          "
 alignment = 0
@@ -78,7 +86,7 @@ offset_bottom = 362.0
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/hover = SubResource("StyleBoxTexture_rxtu6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_8167e")
 text = "                      Connect to server"
 alignment = 0
@@ -92,7 +100,7 @@ offset_bottom = 397.0
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/hover = SubResource("StyleBoxTexture_rxtu6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_6ughm")
 text = "                      Settings"
 alignment = 0
@@ -106,7 +114,7 @@ offset_bottom = 466.0
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
-theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/hover = SubResource("StyleBoxTexture_rxtu6")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_hr5bf")
 text = "                      Exit"
 alignment = 0
