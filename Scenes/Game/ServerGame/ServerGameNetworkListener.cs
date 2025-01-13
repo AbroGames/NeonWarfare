@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
@@ -24,26 +25,15 @@ public partial class ServerGame
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
-            Player player = World.CreateAndAddPlayer(PlayerProfilesById[peerConnectedEvent.Id]);
-            player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
-            player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-            long newPlayerNid = World.OldNetworkEntityManager.AddEntity(player);
-
-            //У нового игрока спауним его самого
-            Network.SendToClient(peerConnectedEvent.Id, 
-                new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
-            
-            //У всех остальных игроков спауним нового игрока
-            Network.SendToAllExclude(peerConnectedEvent.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+            //Спауним нового игрока
+            ServerPlayer.CreateAndSpawn(PlayerProfilesById[peerConnectedEvent.Id]);
             
             //У нового игрока спауним всех остальных игроков
-            var allyProfiles = GetPlayerProfilesExcluding(peerConnectedEvent.Id);
-            foreach (ServerPlayerProfile playerServerInfo in allyProfiles)
+            foreach (ServerPlayer player in World.GetPlayersExcluding(peerConnectedEvent.Id))
             {
-                Player ally = playerServerInfo.Player;
-                long allyNid = World.OldNetworkEntityManager.GetNid(ally);
-                Network.SendToClient(peerConnectedEvent.Id, new ServerSpawnAllyPacket(allyNid, ally.Position.X, ally.Position.Y, ally.Rotation));
+                Network.SendToClient(peerConnectedEvent.Id, new ClientPlayer.SC_PlayerSpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.Id));
             }
+            
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ClearLoadingScreenPacket());
         } 
         else if (World is ServerBattleWorld)
@@ -63,13 +53,13 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        Player player = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
-        World.OldNetworkEntityManager.RemoveEntity(player);
+        ServerPlayer player = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
+        World.NetworkEntityManager.RemoveEntity(player);
         RemovePlayerProfile(peerDisconnectedEvent.Id);
-        long nid = World.OldNetworkEntityManager.RemoveEntity(player);
+        long nid = player.GetChild<NetworkEntityComponent>().Nid;
         player.QueueFree();
         
-        Network.SendToAll(new ServerDestroyEntityPacket(nid));
+        //TODO Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }
     
     /*
@@ -77,9 +67,10 @@ public partial class ServerGame
      * Ставим загрузочный экран, меняем текущий мир, создаем все объекты и сообщаем о них, убираем загрузочный экран. 
      */
     [EventListener(ListenerSide.Server)]
-    public void OnWantToBattlePacket(CS_WantToBattlePacket emptyPacket) 
+    public void OnWantToBattlePacket(CS_WantToBattlePacket wantToBattlePacket) 
     {
-        Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+        //TODO
+        /*Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
         Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         
@@ -87,16 +78,16 @@ public partial class ServerGame
         
         foreach (ServerPlayerProfile playerServerInfo in PlayerProfiles)
         {
-            Player player = World.CreateAndAddPlayer(PlayerProfilesById[playerServerInfo.Id]);
+            ServerPlayer player = World.CreateAndAddPlayer(PlayerProfilesById[playerServerInfo.Id]);
             player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
             player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-            long newPlayerNid = World.OldNetworkEntityManager.AddEntity(player);
+            long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
             
             Network.SendToClient(playerServerInfo.Id,  
                 new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
             Network.SendToAllExclude(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
         }
-        Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
+        Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());*/
     }
 
     /*

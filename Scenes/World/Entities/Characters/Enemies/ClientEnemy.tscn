@@ -1,0 +1,28 @@
+[gd_scene load_steps=7 format=3 uid="uid://cuiphblebxnot"]
+
+[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Characters/ClientCharacter.tscn" id="1_ebgac"]
+[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.cs" id="2_pdsbg"]
+[ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_wxo2n"]
+[ext_resource type="Texture2D" uid="uid://diw7e7ffqedqt" path="res://Assets/Textures/Sprites/Enemy.svg" id="3_cdwmw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uqmx5"]
+resource_local_to_scene = true
+shader = ExtResource("2_wxo2n")
+shader_parameter/colorMaskFactor = 0.0
+shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
+shader_parameter/grayscaleFactor = 0.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g16qw"]
+resource_local_to_scene = true
+radius = 18.0
+
+[node name="ClientEnemy" instance=ExtResource("1_ebgac")]
+script = ExtResource("2_pdsbg")
+
+[node name="Sprite2D" parent="." index="0"]
+material = SubResource("ShaderMaterial_uqmx5")
+position = Vector2(0, -6)
+texture = ExtResource("3_cdwmw")
+
+[node name="CharacterShape" parent="." index="1"]
+shape = SubResource("CircleShape2D_g16qw")

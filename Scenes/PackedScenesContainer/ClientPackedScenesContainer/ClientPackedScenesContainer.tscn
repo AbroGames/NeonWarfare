@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=27 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -12,24 +12,20 @@
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld/ClientSafeWorld.tscn" id="9_17hfk"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld/ClientBattleWorld.tscn" id="10_0t0c3"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="10_3txv8"]
-[ext_resource type="PackedScene" uid="uid://coh85utcj5br5" path="res://Scenes/OldWorld/Entities/Character/Player/Player.tscn" id="11_rscso"]
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/SettingsMenu.tscn" id="11_wjjxj"]
 [ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/Screen/MainMenuInterfaces/PlayerSettingsInterface/PlayerSettingsMenu.tscn" id="12_0aydt"]
-[ext_resource type="PackedScene" uid="uid://beqibs6gp5l0y" path="res://Scenes/OldWorld/Entities/Character/Ally/Ally.tscn" id="12_cm42j"]
-[ext_resource type="PackedScene" uid="uid://cpeupva8xuj3x" path="res://Scenes/OldWorld/Entities/Character/Enemy/Enemy.tscn" id="13_lka4d"]
+[ext_resource type="PackedScene" uid="uid://c36qj0341opia" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="12_cm42j"]
 [ext_resource type="PackedScene" uid="uid://bo4752bgus85w" path="res://Scenes/Screen/MainMenuInterfaces/GraphicSettingInterface/GraphicSettingsMenu.tscn" id="13_sh88y"]
-[ext_resource type="PackedScene" uid="uid://cjqj75fvk34l7" path="res://Scenes/OldWorld/Entities/Character/Enemy/Boss.tscn" id="14_7oyap"]
 [ext_resource type="PackedScene" uid="uid://be1870tomtt30" path="res://Scenes/Screen/MainMenuInterfaces/SoundSettingsInterface/SoundSettingsMenu.tscn" id="14_n3rfo"]
 [ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/Screen/MainMenuInterfaces/ConnectToServerInterface/ConnectToServerMenu.tscn" id="15_1x6bd"]
-[ext_resource type="PackedScene" uid="uid://dpq1k8xkcy67o" path="res://Scenes/OldWorld/Entities/Bullet/Bullet.tscn" id="15_cyn7i"]
-[ext_resource type="PackedScene" uid="uid://d0w8nqq28xtnw" path="res://Scenes/OldWorld/Entities/Beam/SolarBeam.tscn" id="16_27rjr"]
 [ext_resource type="PackedScene" uid="uid://cdfkul01f3eck" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/CreateServerMenu.tscn" id="16_r8vo5"]
-[ext_resource type="PackedScene" uid="uid://c6f2wg8qd1yec" path="res://Scenes/OldWorld/Entities/Beam/Beam.tscn" id="17_inoa3"]
 [ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="17_rgedi"]
 [ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="18_ggxrk"]
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="19_xmh5k"]
 [ext_resource type="PackedScene" uid="uid://d2qm2kk0flcrl" path="res://Scenes/Screen/Components/Overlay/Overlay.tscn" id="20_2s2nn"]
 [ext_resource type="PackedScene" uid="uid://cra1y5dubl2eb" path="res://Scenes/Screen/Components/Overlay/HitOverlay.tscn" id="21_c2w5t"]
+[ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientMyPlayer.tscn" id="24_p0bw0"]
+[ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="25_gitci"]
 
 [node name="ClientPackedScenesContainer" type="Node"]
 script = ExtResource("1_i6j64")
@@ -55,10 +51,6 @@ Overlay = ExtResource("20_2s2nn")
 HitOverlay = ExtResource("21_c2w5t")
 SafeWorld = ExtResource("9_17hfk")
 BattleWorld = ExtResource("10_0t0c3")
-Player = ExtResource("11_rscso")
-Ally = ExtResource("12_cm42j")
-Enemy = ExtResource("13_lka4d")
-Boss = ExtResource("14_7oyap")
-Bullet = ExtResource("15_cyn7i")
-SolarBeam = ExtResource("16_27rjr")
-Beam = ExtResource("17_inoa3")
+MyPlayer = ExtResource("24_p0bw0")
+Player = ExtResource("12_cm42j")
+Enemy = ExtResource("25_gitci")

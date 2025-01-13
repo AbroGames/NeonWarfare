@@ -8,8 +8,7 @@ namespace NeonWarfare;
 public abstract partial class ClientWorld : Node2D
 {
     
-    public ClientNetworkEntityManager NetworkEntityManager;
-    public OldNetworkEntityManager OldNetworkEntityManager { get; private set; } = new(); //TODO del
+    public ClientNetworkEntityManager NetworkEntityManager = new();
     
     public override void _EnterTree()
     {

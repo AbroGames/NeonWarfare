@@ -9,22 +9,20 @@ namespace NeonWarfare;
 public partial class ServerWorld 
 {
     
-    public IReadOnlyDictionary<long, Player> PlayerById => _playerById;
-    public IEnumerable<Player> Players => _playerById.Values; //TODO ServerPlayer
+    public IReadOnlyDictionary<long, ServerPlayer> PlayerById => _playerById;
+    public IEnumerable<ServerPlayer> Players => _playerById.Values;
     
-    private readonly Dictionary<long, Player> _playerById = new();
+    private readonly Dictionary<long, ServerPlayer> _playerById = new();
 
-    public Player CreateAndAddPlayer(ServerPlayerProfile playerProfile)
+    public void AddPlayer(ServerPlayer player)
     {
-        if (_playerById.ContainsKey(playerProfile.Id)) 
+        if (_playerById.ContainsKey(player.PlayerProfile.Id)) 
         {
-            throw new ArgumentException($"Player with Id {playerProfile.Id} already exists.");
+            throw new ArgumentException($"Player with Id {player.PlayerProfile.Id} already exists.");
         }
 
-        Player player = ServerRoot.Instance.PackedScenes.Player.Instantiate<Player>(); //TODO ServerPlayer special ~~constructor~~ static builder, based on playerProfile
-        _playerById[playerProfile.Id] = player;
+        _playerById[player.PlayerProfile.Id] = player;
         AddChild(player);
-        return player;
     }
 
     public void RemovePlayer(long id)
@@ -33,14 +31,14 @@ public partial class ServerWorld
         _playerById.Remove(id);
     }
     
-    public IReadOnlyDictionary<long, Player> GetPlayersByIdExcluding(long excludeId)
+    public IReadOnlyDictionary<long, ServerPlayer> GetPlayersByIdExcluding(long excludeId)
     {
         return _playerById
             .Where(kv => kv.Key != excludeId)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
     
-    public IEnumerable<Player> GetPlayersExcluding(long excludeId)
+    public IEnumerable<ServerPlayer> GetPlayersExcluding(long excludeId)
     {
         return GetPlayersByIdExcluding(excludeId).Values;
     }

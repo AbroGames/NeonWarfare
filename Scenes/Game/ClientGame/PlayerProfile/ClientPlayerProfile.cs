@@ -1,4 +1,5 @@
-﻿using NeonWarfare;
+﻿using System;
+using NeonWarfare;
 
 public class ClientPlayerProfile
 {
@@ -7,7 +8,8 @@ public class ClientPlayerProfile
     public string Nickname { get; set; } = "";
     public bool IsAdmin { get; set; } = false;
 
-    public Player Player => ClientRoot.Instance.Game.World.Player;
+    public ClientMyPlayer MyPlayer => ClientRoot.Instance.Game.World.MyPlayer;
+    //TODO может быть хранить всех союзников тоже? Тогда создание ServerPlayer, ClientPlayer и ClientMyPlayer будут схожи
 
     public ClientPlayerProfile(long id)
     {

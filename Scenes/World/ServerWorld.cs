@@ -9,7 +9,6 @@ namespace NeonWarfare;
 public abstract partial class ServerWorld : Node2D
 {
 
-    public ServerNetworkEntityManager NetworkEntityManager;
-    public OldNetworkEntityManager OldNetworkEntityManager { get; private set; } = new(); //TODO del
-  
+    public ServerNetworkEntityManager NetworkEntityManager = new();
+
 }

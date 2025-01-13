@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://beqibs6gp5l0y"]
-
-[ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/OldWorld/Entities/Character/Character.tscn" id="1_hlmfo"]
-[ext_resource type="Script" path="res://Scenes/OldWorld/Entities/Character/Ally/Ally.cs" id="1_mplhw"]
-
-[node name="Character" instance=ExtResource("1_hlmfo")]
-script = ExtResource("1_mplhw")

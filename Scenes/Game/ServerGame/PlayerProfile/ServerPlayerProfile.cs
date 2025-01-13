@@ -7,7 +7,7 @@ public class ServerPlayerProfile
     public string Nickname { get; set; } = "";
     public bool IsAdmin { get; set; } = false;
 
-    public Player Player => ServerRoot.Instance.Game.World.PlayerById[Id];
+    public ServerPlayer Player => ServerRoot.Instance.Game.World.PlayerById[Id];
 
     public ServerPlayerProfile(long id)
     {

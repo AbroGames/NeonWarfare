@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://758pqudrkrii"]
+
+[ext_resource type="PackedScene" uid="uid://brbg6sxfslo8o" path="res://Scenes/World/Entities/Characters/ServerCharacter.tscn" id="1_nfij0"]
+[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/ServerEnemy.cs" id="2_lvk3t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7856p"]
+resource_local_to_scene = true
+radius = 18.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mp1a7"]
+resource_local_to_scene = true
+radius = 24.0
+
+[node name="ServerEnemy" node_paths=PackedStringArray("RayCast") instance=ExtResource("1_nfij0")]
+script = ExtResource("2_lvk3t")
+RayCast = NodePath("RayCast")
+
+[node name="CharacterShape" parent="." index="0"]
+shape = SubResource("CircleShape2D_7856p")
+
+[node name="HitBoxShape" parent="HitBox" index="0"]
+shape = SubResource("CircleShape2D_mp1a7")
+
+[node name="RayCast" type="RayCast2D" parent="." index="2"]
+target_position = Vector2(0, -500)

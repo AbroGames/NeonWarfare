@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using KludgeBox;
 
@@ -7,24 +8,57 @@ namespace NeonWarfare;
 
 public partial class ClientWorld
 {
-    public Player Player { get; private set; } //TODO ClientPlayer
     
-    public Player CreateAndAddPlayer(ClientPlayerProfile playerProfile)
+    public ClientMyPlayer MyPlayer { get; set; }
+    
+    public IReadOnlyDictionary<long, ClientPlayer> PlayerById => _playerById;
+    public IEnumerable<ClientPlayer> Players => _playerById.Values;
+    
+    private readonly Dictionary<long, ClientPlayer> _playerById = new();
+    
+    public void AddMyPlayer(ClientMyPlayer player)
     {
-        if (Player != null)
+        if (MyPlayer != null)
         {
             throw new ArgumentException("Player already exists.");
         }
-
-        Player player = ClientRoot.Instance.PackedScenes.Player.Instantiate<Player>(); //TODO ClientPlayer special ~~constructor~~ static builder, based on playerProfile
-        Player = player;
+        
+        MyPlayer = player;
         AddChild(player);
-        return player;
     }
 
-    public void RemovePlayer()
+    public void RemoveMyPlayer()
     {
-        Player.QueueFree();
-        Player = null;
+        MyPlayer.QueueFree();
+        MyPlayer = null;
+    }
+
+    public void AddPlayer(ClientPlayer player)
+    {
+        if (_playerById.ContainsKey(player.PlayerProfile.Id)) 
+        {
+            throw new ArgumentException($"Player with Id {player.PlayerProfile.Id} already exists.");
+        }
+
+        _playerById[player.PlayerProfile.Id] = player;
+        AddChild(player);
+    }
+
+    public void RemovePlayer(long id)
+    {
+        _playerById[id].QueueFree();
+        _playerById.Remove(id);
+    }
+    
+    public IReadOnlyDictionary<long, ClientPlayer> GetPlayersByIdExcluding(long excludeId)
+    {
+        return _playerById
+            .Where(kv => kv.Key != excludeId)
+            .ToDictionary(kv => kv.Key, kv => kv.Value);
+    }
+    
+    public IEnumerable<ClientPlayer> GetPlayersExcluding(long excludeId)
+    {
+        return GetPlayersByIdExcluding(excludeId).Values;
     }
 }

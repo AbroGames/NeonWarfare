@@ -10,7 +10,7 @@ public partial class ClientGame
 {
 	
 	/*
-	 * Сразу после подключения к серверу создаем профиль игрока и запускаем систему пинга 
+	 * Сразу после подключения к серверу создаем профиль игрока и запускаем систему пинга.
 	 * Все остальные действия (например, убрать загрузочный экран) проинициирует сервер через соответствующие пакеты.
 	 */
 	[EventListener(ListenerSide.Client)]
@@ -18,8 +18,19 @@ public partial class ClientGame
 	{
 		long myPeerId = Network.Multiplayer.GetUniqueId();
 		Log.Info($"Connected to server. My peer id = {myPeerId}");
-		AddPlayerProfile(myPeerId);
+		AddMyPlayerProfile(myPeerId);
 		PingChecker.Start();
+	}
+	
+	/*
+	 * Вызывается при подключении другого игрока к серверу.
+	 * Создаем для него PlayerProfile.
+	 */
+	[EventListener(ListenerSide.Client)]
+	public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
+	{
+		Log.Info($"New client connected to server. Peer id = {peerConnectedEvent.Id}");
+		AddPlayerProfile(peerConnectedEvent.Id);
 	}
 	
 	/*

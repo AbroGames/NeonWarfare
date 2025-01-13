@@ -49,7 +49,7 @@ public partial class BattleHud : Hud
 
 	public override void _Process(double delta)
 	{
-		Player player = ClientBattleWorld.Player;
+		ClientMyPlayer player = ClientBattleWorld.MyPlayer;
 		if (player == null) return;
 		
 		//Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";
@@ -65,8 +65,8 @@ public partial class BattleHud : Hud
 		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
 		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
 
-		BeamIcon.Progress = player.BasicAbilityCd.FractionElapsed;
-		SolarBeamIcon.Progress = player.AdvancedAbilityCd.FractionElapsed;
+		//BeamIcon.Progress = player.BasicAbilityCd.FractionElapsed;
+		//SolarBeamIcon.Progress = player.AdvancedAbilityCd.FractionElapsed;
 		
 		var shader = TimerSprite.Material as ShaderMaterial;
 		//shader.SetShaderParameter("Progress", 1-ClientBattleWorld.EnemyWave.NextWaveTimer / ClientBattleWorld.EnemyWave.WaveTimeout);
