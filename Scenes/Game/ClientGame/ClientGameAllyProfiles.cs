@@ -6,49 +6,49 @@ public partial class ClientGame
 {
     public ClientPlayerProfile PlayerProfile { get; private set; }
     
-    public IReadOnlyDictionary<long, ClientAllyProfile> AllyProfilesById => _allyProfilesById;
-    public IEnumerable<ClientAllyProfile> AllyProfiles => _allyProfilesById.Values;
+    public IReadOnlyDictionary<long, ClientAllyProfile> AllyProfilesByPeerId => _allyProfilesByPeerId;
+    public IEnumerable<ClientAllyProfile> AllyProfiles => _allyProfilesByPeerId.Values;
     
-    private readonly Dictionary<long, ClientAllyProfile> _allyProfilesById = new();
+    private readonly Dictionary<long, ClientAllyProfile> _allyProfilesByPeerId = new();
 
-    public void AddPlayerProfile(long id)
+    public void AddPlayerProfile(long peerId)
     {
         if (PlayerProfile != null)
         {
             throw new ArgumentException("Player already exists.");
         }
         
-        PlayerProfile = new ClientPlayerProfile(id);
-        _allyProfilesById.Add(id, PlayerProfile);
+        PlayerProfile = new ClientPlayerProfile(peerId);
+        _allyProfilesByPeerId.Add(peerId, PlayerProfile);
     }
     
-    public void AddAllyProfile(long id) //TODO вызывать в OnPeerConnect, на клиенте пока не реализован этот слушатель. В дисконекте игрока (на клиенте и на сервере) уничтожать PlayerProfile
+    public void AddAllyProfile(long peerId) //TODO вызывать в OnPeerConnect, на клиенте пока не реализован этот слушатель. В дисконекте игрока (на клиенте и на сервере) уничтожать PlayerProfile
     {
-        if (!_allyProfilesById.TryAdd(id, new ClientAllyProfile(id)))
+        if (!_allyProfilesByPeerId.TryAdd(peerId, new ClientAllyProfile(peerId)))
         {
-            throw new ArgumentException($"Ally with Id {id} already exists.");
+            throw new ArgumentException($"Ally with PeerId {peerId} already exists.");
         }
     }
 
-    public void RemoveAllyProfile(long id)
+    public void RemoveAllyProfile(long peerId)
     {
-        _allyProfilesById.Remove(id);
+        _allyProfilesByPeerId.Remove(peerId);
     }
     
-    public IReadOnlyDictionary<long, ClientAllyProfile> GetAllyProfilesByIdExcluding(long excludeId)
+    public IReadOnlyDictionary<long, ClientAllyProfile> GetAllyProfilesByPeerIdExcluding(long excludePeerId)
     {
-        return _allyProfilesById
-            .Where(kv => kv.Key != excludeId)
+        return _allyProfilesByPeerId
+            .Where(kv => kv.Key != excludePeerId)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
     
-    public IEnumerable<ClientAllyProfile> GetAllyProfilesExcluding(long excludeId)
+    public IEnumerable<ClientAllyProfile> GetAllyProfilesExcluding(long excludePeerId)
     {
-        return GetAllyProfilesByIdExcluding(excludeId).Values;
+        return GetAllyProfilesByPeerIdExcluding(excludePeerId).Values;
     }
     
     public IEnumerable<ClientAllyProfile> GetAllyProfilesExcludePlayer()
     {
-        return GetAllyProfilesExcluding(PlayerProfile.Id);
+        return GetAllyProfilesExcluding(PlayerProfile.PeerId);
     }
 }

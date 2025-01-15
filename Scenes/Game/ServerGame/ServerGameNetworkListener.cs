@@ -26,12 +26,12 @@ public partial class ServerGame
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
             //Спауним нового игрока
-            World.SpawnPlayer(PlayerProfilesById[peerConnectedEvent.Id]);
+            World.SpawnPlayer(PlayerProfilesByPeerId[peerConnectedEvent.Id]);
             
             //У нового игрока спауним всех остальных игроков
             foreach (ServerPlayer player in World.GetPlayersExcluding(peerConnectedEvent.Id))
             {
-                Network.SendToClient(peerConnectedEvent.Id, new ClientAlly.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.Id));
+                Network.SendToClient(peerConnectedEvent.Id, new ClientAlly.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.PeerId));
             }
             
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ClearLoadingScreenPacket());
@@ -53,7 +53,7 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        ServerPlayer disconnectedPlayer = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
+        ServerPlayer disconnectedPlayer = PlayerProfilesByPeerId[peerDisconnectedEvent.Id].Player;
         World.NetworkEntityManager.RemoveEntity(disconnectedPlayer); //TODO перенести куда-нибудь в NetworkEntityComponent?
         RemovePlayerProfile(peerDisconnectedEvent.Id);
         World.RemovePlayer(disconnectedPlayer);

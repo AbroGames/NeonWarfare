@@ -21,10 +21,10 @@ public partial class ServerPlayer : ServerCharacter
         Rotation = Mathf.DegToRad(Rand.Range(0, 360));
         
         //У нового игрока спауним его самого
-        Network.SendToClient(PlayerProfile.Id, 
+        Network.SendToClient(PlayerProfile.PeerId, 
             new ClientPlayer.SC_PlayerSpawnPacket(Nid, Position.X, Position.Y, Rotation));
         
         //У всех остальных игроков спауним нового игрока
-        Network.SendToAllExclude(PlayerProfile.Id, new ClientAlly.SC_AllySpawnPacket(Nid, Position.X, Position.Y, Rotation, PlayerProfile.Id));
+        Network.SendToAllExclude(PlayerProfile.PeerId, new ClientAlly.SC_AllySpawnPacket(Nid, Position.X, Position.Y, Rotation, PlayerProfile.PeerId));
     }
 }

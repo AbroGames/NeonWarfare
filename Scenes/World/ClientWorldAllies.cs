@@ -11,10 +11,10 @@ public partial class ClientWorld
     
     public ClientPlayer Player { get; set; }
     
-    public IReadOnlyDictionary<long, ClientAlly> AlliesById => _alliesById;
-    public IEnumerable<ClientAlly> Allies => _alliesById.Values;
+    public IReadOnlyDictionary<long, ClientAlly> AlliesByPeerId => _alliesByPeerId;
+    public IEnumerable<ClientAlly> Allies => _alliesByPeerId.Values;
     
-    private readonly Dictionary<long, ClientAlly> _alliesById = new();
+    private readonly Dictionary<long, ClientAlly> _alliesByPeerId = new();
     
     public void AddPlayer(ClientPlayer player)
     {
@@ -35,40 +35,40 @@ public partial class ClientWorld
 
     public void AddAlly(ClientAlly ally)
     {
-        if (_alliesById.ContainsKey(ally.AllyProfile.Id)) 
+        if (_alliesByPeerId.ContainsKey(ally.AllyProfile.PeerId)) 
         {
-            throw new ArgumentException($"Ally with Id {ally.AllyProfile.Id} already exists.");
+            throw new ArgumentException($"Ally with PeerId {ally.AllyProfile.PeerId} already exists.");
         }
 
-        _alliesById[ally.AllyProfile.Id] = ally;
+        _alliesByPeerId[ally.AllyProfile.PeerId] = ally;
         AddChild(ally);
     }
 
     public void RemoveAlly(long id)
     {
-        _alliesById[id].QueueFree();
-        _alliesById.Remove(id);
+        _alliesByPeerId[id].QueueFree();
+        _alliesByPeerId.Remove(id);
     }
     
     public void RemoveAlly(ClientAlly ally)
     {
-        RemoveAlly(ally.AllyProfile.Id);
+        RemoveAlly(ally.AllyProfile.PeerId);
     }
     
-    public IReadOnlyDictionary<long, ClientAlly> GetAllyByIdExcluding(long excludeId)
+    public IReadOnlyDictionary<long, ClientAlly> GetAllyByPeerIdExcluding(long excludePeerId)
     {
-        return _alliesById
-            .Where(kv => kv.Key != excludeId)
+        return _alliesByPeerId
+            .Where(kv => kv.Key != excludePeerId)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
     
-    public IEnumerable<ClientAlly> GetAllyExcluding(long excludeId)
+    public IEnumerable<ClientAlly> GetAllyExcluding(long excludePeerId)
     {
-        return GetAllyByIdExcluding(excludeId).Values;
+        return GetAllyByPeerIdExcluding(excludePeerId).Values;
     }
     
     public IEnumerable<ClientAlly> GetAllyExcludePlayer()
     {
-        return GetAllyExcluding(Player.PlayerProfile.Id);
+        return GetAllyExcluding(Player.PlayerProfile.PeerId);
     }
 }

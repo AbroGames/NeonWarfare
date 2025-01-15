@@ -9,10 +9,10 @@ namespace NeonWarfare;
 public partial class ServerWorld 
 {
     
-    public IReadOnlyDictionary<long, ServerPlayer> PlayerById => _playerById;
-    public IEnumerable<ServerPlayer> Players => _playerById.Values;
+    public IReadOnlyDictionary<long, ServerPlayer> PlayerByPeerId => _playerByPeerId;
+    public IEnumerable<ServerPlayer> Players => _playerByPeerId.Values;
     
-    private readonly Dictionary<long, ServerPlayer> _playerById = new();
+    private readonly Dictionary<long, ServerPlayer> _playerByPeerId = new();
 
     public void AddEntity(ServerEnemy enemy)
     {
@@ -24,35 +24,35 @@ public partial class ServerWorld
     
     public void AddPlayer(ServerPlayer player)
     {
-        if (_playerById.ContainsKey(player.PlayerProfile.Id)) 
+        if (_playerByPeerId.ContainsKey(player.PlayerProfile.PeerId)) 
         {
-            throw new ArgumentException($"Player with Id {player.PlayerProfile.Id} already exists.");
+            throw new ArgumentException($"Player with PeerId {player.PlayerProfile.PeerId} already exists.");
         }
 
-        _playerById[player.PlayerProfile.Id] = player;
+        _playerByPeerId[player.PlayerProfile.PeerId] = player;
         AddChild(player);
     }
 
-    public void RemovePlayer(long id)
+    public void RemovePlayer(long peerId)
     {
-        _playerById[id].QueueFree();
-        _playerById.Remove(id);
+        _playerByPeerId[peerId].QueueFree();
+        _playerByPeerId.Remove(peerId);
     }
     
     public void RemovePlayer(ServerPlayer serverPlayer)
     {
-        RemovePlayer(serverPlayer.PlayerProfile.Id);
+        RemovePlayer(serverPlayer.PlayerProfile.PeerId);
     }
     
-    public IReadOnlyDictionary<long, ServerPlayer> GetPlayersByIdExcluding(long excludeId)
+    public IReadOnlyDictionary<long, ServerPlayer> GetPlayersByPeerIdExcluding(long excludePeerId)
     {
-        return _playerById
-            .Where(kv => kv.Key != excludeId)
+        return _playerByPeerId
+            .Where(kv => kv.Key != excludePeerId)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
     
-    public IEnumerable<ServerPlayer> GetPlayersExcluding(long excludeId)
+    public IEnumerable<ServerPlayer> GetPlayersExcluding(long excludePeerId)
     {
-        return GetPlayersByIdExcluding(excludeId).Values;
+        return GetPlayersByPeerIdExcluding(excludePeerId).Values;
     }
 }

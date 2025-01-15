@@ -43,7 +43,7 @@ public abstract partial class ClientWorld : Node2D
             ClientRoot.Instance.PackedScenes.Ally, allySpawnPacket.Nid);
         
         //TODO компонент с инерцией
-        ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesById[allySpawnPacket.Id]);
+        ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesByPeerId[allySpawnPacket.Id]);
         world.AddAlly(ally);
         ally.OnSpawnPacket(allySpawnPacket.X, allySpawnPacket.Y, allySpawnPacket.Dir);
     }

@@ -3,15 +3,15 @@ using NeonWarfare;
 
 public class ClientAllyProfile
 {
-    public long Id { get; private set; } //TODO и тут и на сервере и в Game/World переименовать Id на PeerId
+    public long PeerId { get; private set; } 
     public long UserId { get; set; }
     public string Nickname { get; set; } = "";
     public bool IsAdmin { get; set; } = false;
 
-    public ClientAlly Ally => ClientRoot.Instance.Game.World.AlliesById[Id];
+    public ClientAlly Ally => ClientRoot.Instance.Game.World.AlliesByPeerId[PeerId];
 
-    public ClientAllyProfile(long id)
+    public ClientAllyProfile(long peerId)
     {
-        Id = id;
+        PeerId = peerId;
     }
 }

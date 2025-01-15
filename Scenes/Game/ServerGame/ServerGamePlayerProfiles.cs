@@ -9,34 +9,34 @@ using NeonWarfare;
 
 public partial class ServerGame
 {
-    public IReadOnlyDictionary<long, ServerPlayerProfile> PlayerProfilesById => _playerProfilesById;
-    public IEnumerable<ServerPlayerProfile> PlayerProfiles => _playerProfilesById.Values;
+    public IReadOnlyDictionary<long, ServerPlayerProfile> PlayerProfilesByPeerId => _playerProfilesByPeerId;
+    public IEnumerable<ServerPlayerProfile> PlayerProfiles => _playerProfilesByPeerId.Values;
     
-    private readonly Dictionary<long, ServerPlayerProfile> _playerProfilesById = new();
+    private readonly Dictionary<long, ServerPlayerProfile> _playerProfilesByPeerId = new();
 
-    public void AddPlayerProfile(long id)
+    public void AddPlayerProfile(long peerId)
     {
-        if (!_playerProfilesById.TryAdd(id, new ServerPlayerProfile(id)))
+        if (!_playerProfilesByPeerId.TryAdd(peerId, new ServerPlayerProfile(peerId)))
         {
-            throw new ArgumentException($"Player with Id {id} already exists.");
+            throw new ArgumentException($"Player with PeerId {peerId} already exists.");
         }
     }
 
-    public void RemovePlayerProfile(long id)
+    public void RemovePlayerProfile(long peerId)
     {
-        _playerProfilesById.Remove(id);
+        _playerProfilesByPeerId.Remove(peerId);
     }
     
-    public IReadOnlyDictionary<long, ServerPlayerProfile> GetPlayerProfilesByIdExcluding(long excludeId)
+    public IReadOnlyDictionary<long, ServerPlayerProfile> GetPlayerProfilesByPeerIdExcluding(long excludePeerId)
     {
-        return _playerProfilesById
-            .Where(kv => kv.Key != excludeId)
+        return _playerProfilesByPeerId
+            .Where(kv => kv.Key != excludePeerId)
             .ToDictionary(kv => kv.Key, kv => kv.Value);
     }
     
-    public IEnumerable<ServerPlayerProfile> GetPlayerProfilesExcluding(long excludeId)
+    public IEnumerable<ServerPlayerProfile> GetPlayerProfilesExcluding(long excludePeerId)
     {
-        return GetPlayerProfilesByIdExcluding(excludeId).Values;
+        return GetPlayerProfilesByPeerIdExcluding(excludePeerId).Values;
     }
 
 }
