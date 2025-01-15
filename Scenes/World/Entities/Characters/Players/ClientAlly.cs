@@ -15,10 +15,4 @@ public partial class ClientAlly : ClientCharacter
         AllyProfile = allyProfile;
         allyProfile.Ally = this;
     }
-    
-    public void OnSpawnPacket(float x, float y, float dir)
-    {
-        Position = Vec(x, y);
-        Rotation = dir;
-    }
 }

@@ -73,10 +73,10 @@ public partial class ServerGame
     public void OnWantToBattlePacket(CS_WantToBattlePacket wantToBattlePacket) 
     {
         Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+        Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         ChangeMainScene(serverBattleWorld);
-        Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         
         foreach (ServerPlayerProfile playerProfile in PlayerProfiles)
         {

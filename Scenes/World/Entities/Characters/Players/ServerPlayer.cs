@@ -16,7 +16,7 @@ public partial class ServerPlayer : ServerCharacter
         //TODO MaxHp = maxHp и т.д, у клиента аналогично
     }
 
-    public void Init()
+    public override void _Ready()
     {
         Position = Vec(400, 400); //TODO временно для теста, потом удалить и у следующей строки убрать знак +
         Position += Vec(Rand.Range(-100, 100), Rand.Range(-100, 100)); 

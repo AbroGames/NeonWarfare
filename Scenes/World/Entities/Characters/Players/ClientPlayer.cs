@@ -18,6 +18,4 @@ public partial class ClientPlayer : ClientAlly
         base.InitOnProfile(playerProfile);
         PlayerProfile = playerProfile;
     }
-    
-    
 }

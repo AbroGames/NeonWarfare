@@ -20,4 +20,10 @@ public partial class ClientCharacter : CharacterBody2D
     {
         NotNullChecker.CheckProperties(this);
     }
+    
+    public void OnSpawnPacket(float x, float y, float dir)
+    {
+        Position = Vec(x, y);
+        Rotation = dir;
+    }
 }

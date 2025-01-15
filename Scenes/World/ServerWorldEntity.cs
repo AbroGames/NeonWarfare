@@ -22,11 +22,17 @@ public abstract partial class ServerWorld
     {
         ServerPlayer player = CreateNetworkEntity<ServerPlayer>(ServerRoot.Instance.PackedScenes.Player);
         player.AddChild(new NetworkInertiaComponent());
-        
         player.InitOnProfile(playerProfile);
-        player.Init();
         AddChild(player);
         
         return player;
+    }
+
+    public ServerEnemy SpawnEnemy()
+    {
+        ServerEnemy enemy = CreateNetworkEntity<ServerEnemy>(ServerRoot.Instance.PackedScenes.Enemy);
+        AddChild(enemy);
+
+        return enemy;
     }
 }

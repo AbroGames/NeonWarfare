@@ -1,6 +1,6 @@
 namespace NeonWarfare;
 
-public partial class ClientSafeWorld : ClientWorld
+public partial class ClientSafeWorld
 {
 	
 	private void PlaySafeMusic()
