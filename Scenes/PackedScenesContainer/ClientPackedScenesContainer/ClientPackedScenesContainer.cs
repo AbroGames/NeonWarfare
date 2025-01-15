@@ -51,8 +51,8 @@ public partial class ClientPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
     [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
     
-    [Export] [NotNull] public PackedScene MyPlayer { get; private set; }
     [Export] [NotNull] public PackedScene Player { get; private set; }
+    [Export] [NotNull] public PackedScene Ally { get; private set; }
     [Export] [NotNull] public PackedScene Enemy { get; private set; }
     
     public override void _Ready()

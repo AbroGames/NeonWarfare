@@ -15,11 +15,11 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 18.0
 
-[node name="ClientCharacter" type="CharacterBody2D" node_paths=PackedStringArray("Sprite", "CollisionShape")]
+[node name="ClientCharacter" type="CharacterBody2D" node_paths=PackedStringArray("CollisionShape", "Sprite")]
 motion_mode = 1
 script = ExtResource("1_jfda0")
-Sprite = NodePath("Sprite2D")
 CollisionShape = NodePath("CharacterShape")
+Sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_fxydm")

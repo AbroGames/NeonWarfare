@@ -26,12 +26,12 @@ public partial class ServerGame
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
             //Спауним нового игрока
-            ServerPlayer.CreateAndSpawn(PlayerProfilesById[peerConnectedEvent.Id]);
+            World.SpawnPlayer(PlayerProfilesById[peerConnectedEvent.Id]);
             
             //У нового игрока спауним всех остальных игроков
             foreach (ServerPlayer player in World.GetPlayersExcluding(peerConnectedEvent.Id))
             {
-                Network.SendToClient(peerConnectedEvent.Id, new ClientPlayer.SC_PlayerSpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.Id));
+                Network.SendToClient(peerConnectedEvent.Id, new ClientAlly.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.Id));
             }
             
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ClearLoadingScreenPacket());
@@ -53,11 +53,12 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
-        ServerPlayer player = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
-        World.NetworkEntityManager.RemoveEntity(player);
+        ServerPlayer disconnectedPlayer = PlayerProfilesById[peerDisconnectedEvent.Id].Player;
+        World.NetworkEntityManager.RemoveEntity(disconnectedPlayer); //TODO перенести куда-нибудь в NetworkEntityComponent?
         RemovePlayerProfile(peerDisconnectedEvent.Id);
-        long nid = player.GetChild<NetworkEntityComponent>().Nid;
-        player.QueueFree();
+        World.RemovePlayer(disconnectedPlayer);
+        long nid = disconnectedPlayer.GetChild<NetworkEntityComponent>().Nid;
+        disconnectedPlayer.QueueFree();
         
         //TODO Network.SendToAll(new ServerDestroyEntityPacket(nid));
     }

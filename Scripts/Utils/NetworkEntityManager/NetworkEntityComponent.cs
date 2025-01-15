@@ -7,8 +7,6 @@ public partial class NetworkEntityComponent : Node
 {
     public long Nid { get; set; } = -1; 
     public Action BeforeDestroy { get; set; }
-
-    public NetworkEntityComponent() { }
     
     public NetworkEntityComponent(long nid)
     {

@@ -145,7 +145,7 @@ public partial class Network : Node
 	{
 		var packetObj = PacketHelper.DecodePacket(packet, PacketRegistry);
 		packetObj.SenderId = id;
-		Log.Info($"Received packet from {id} with {packet.Length} - 4 bytes. Received type is {packetObj.GetType().FullName}");
+		Log.Info($"Received packet from {id} with {packet.Length - 4} bytes. Received type is {packetObj.GetType().FullName}");
 		
 		EventBus.Publish(packetObj);
 	}

@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="10_3txv8"]
 [ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/SettingsMenu.tscn" id="11_wjjxj"]
 [ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/Screen/MainMenuInterfaces/PlayerSettingsInterface/PlayerSettingsMenu.tscn" id="12_0aydt"]
-[ext_resource type="PackedScene" uid="uid://c36qj0341opia" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="12_cm42j"]
+[ext_resource type="PackedScene" uid="uid://c36qj0341opia" path="res://Scenes/World/Entities/Characters/Players/ClientAlly.tscn" id="12_cm42j"]
 [ext_resource type="PackedScene" uid="uid://bo4752bgus85w" path="res://Scenes/Screen/MainMenuInterfaces/GraphicSettingInterface/GraphicSettingsMenu.tscn" id="13_sh88y"]
 [ext_resource type="PackedScene" uid="uid://be1870tomtt30" path="res://Scenes/Screen/MainMenuInterfaces/SoundSettingsInterface/SoundSettingsMenu.tscn" id="14_n3rfo"]
 [ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/Screen/MainMenuInterfaces/ConnectToServerInterface/ConnectToServerMenu.tscn" id="15_1x6bd"]
@@ -24,7 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="19_xmh5k"]
 [ext_resource type="PackedScene" uid="uid://d2qm2kk0flcrl" path="res://Scenes/Screen/Components/Overlay/Overlay.tscn" id="20_2s2nn"]
 [ext_resource type="PackedScene" uid="uid://cra1y5dubl2eb" path="res://Scenes/Screen/Components/Overlay/HitOverlay.tscn" id="21_c2w5t"]
-[ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientMyPlayer.tscn" id="24_p0bw0"]
+[ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="24_p0bw0"]
 [ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="25_gitci"]
 
 [node name="ClientPackedScenesContainer" type="Node"]
@@ -51,6 +51,6 @@ Overlay = ExtResource("20_2s2nn")
 HitOverlay = ExtResource("21_c2w5t")
 SafeWorld = ExtResource("9_17hfk")
 BattleWorld = ExtResource("10_0t0c3")
-MyPlayer = ExtResource("24_p0bw0")
-Player = ExtResource("12_cm42j")
+Player = ExtResource("24_p0bw0")
+Ally = ExtResource("12_cm42j")
 Enemy = ExtResource("25_gitci")

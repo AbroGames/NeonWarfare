@@ -19,7 +19,7 @@ public partial class SafeHud : Hud
 
 	public override void _Process(double delta)
 	{
-		ClientMyPlayer player = ClientSafeWorld.MyPlayer;
+		ClientPlayer player = ClientSafeWorld.Player;
 		if (player == null) return;
 
 		HpBar.CurrentUpperValue = (float) player.Hp;

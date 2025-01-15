@@ -49,7 +49,7 @@ public partial class BattleHud : Hud
 
 	public override void _Process(double delta)
 	{
-		ClientMyPlayer player = ClientBattleWorld.MyPlayer;
+		ClientPlayer player = ClientBattleWorld.Player;
 		if (player == null) return;
 		
 		//Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";

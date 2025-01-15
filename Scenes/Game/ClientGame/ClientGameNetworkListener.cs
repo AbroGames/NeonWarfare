@@ -18,7 +18,7 @@ public partial class ClientGame
 	{
 		long myPeerId = Network.Multiplayer.GetUniqueId();
 		Log.Info($"Connected to server. My peer id = {myPeerId}");
-		AddMyPlayerProfile(myPeerId);
+		AddPlayerProfile(myPeerId);
 		PingChecker.Start();
 	}
 	
@@ -26,11 +26,15 @@ public partial class ClientGame
 	 * Вызывается при подключении другого игрока к серверу.
 	 * Создаем для него PlayerProfile.
 	 */
+	//TODO будет надежней, если AllyProfile будут создаваться и удаляться по команде с сервера. Серверу все равно инициализировать там всю инфу.
+	//TODO Мб даже наш PlayerProfile. Отдельным пакетом, с нашим peerId. Тогда все будет аналогично инициализации Players/Allies
 	[EventListener(ListenerSide.Client)]
 	public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
 	{
+		if (peerConnectedEvent.Id == 1) return; //Если пиром является сервер, то ничего не делаем.
+		
 		Log.Info($"New client connected to server. Peer id = {peerConnectedEvent.Id}");
-		AddPlayerProfile(peerConnectedEvent.Id);
+		AddAllyProfile(peerConnectedEvent.Id);
 	}
 	
 	/*

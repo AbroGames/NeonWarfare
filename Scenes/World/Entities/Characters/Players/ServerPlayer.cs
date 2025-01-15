@@ -22,22 +22,9 @@ public partial class ServerPlayer : ServerCharacter
         
         //У нового игрока спауним его самого
         Network.SendToClient(PlayerProfile.Id, 
-            new ClientMyPlayer.SC_MyPlayerSpawnPacket(Nid, Position.X, Position.Y, Rotation));
+            new ClientPlayer.SC_PlayerSpawnPacket(Nid, Position.X, Position.Y, Rotation));
         
         //У всех остальных игроков спауним нового игрока
-        Network.SendToAllExclude(PlayerProfile.Id, new ClientPlayer.SC_PlayerSpawnPacket(Nid, Position.X, Position.Y, Rotation, PlayerProfile.Id));
-    }
-
-    public static ServerPlayer CreateAndSpawn(ServerPlayerProfile playerProfile) //TODO в readme о том, что мы такое стараемся использовать или убрать нахер
-    {
-        ServerPlayer player = ServerRoot.Instance.PackedScenes.Player.Instantiate<ServerPlayer>();        
-        player.AddChild(new NetworkEntityComponent());
-        ServerRoot.Instance.Game.World.NetworkEntityManager.AddEntity(player);
-        
-        player.InitOnProfile(playerProfile);
-        ServerRoot.Instance.Game.World.AddPlayer(player);
-        player.Init();
-        
-        return player;
+        Network.SendToAllExclude(PlayerProfile.Id, new ClientAlly.SC_AllySpawnPacket(Nid, Position.X, Position.Y, Rotation, PlayerProfile.Id));
     }
 }

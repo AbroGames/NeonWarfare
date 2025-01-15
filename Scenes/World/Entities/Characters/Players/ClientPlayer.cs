@@ -1,35 +1,56 @@
+using System;
+using System.Collections;
+using System.Linq;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
+using NeonWarfare.Utils.Cooldown;
 
 namespace NeonWarfare;
 
-public partial class ClientPlayer : ClientCharacter 
+public partial class ClientPlayer : ClientAlly 
 {
-    [Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
     
     public ClientPlayerProfile PlayerProfile { get; private set; }
     
     public void InitOnProfile(ClientPlayerProfile playerProfile)
     {
+        base.InitOnProfile(playerProfile);
         PlayerProfile = playerProfile;
     }
     
-    public void OnPlayerSpawnPacket(float x, float y, float dir)
+    //TODO del
+    private AutoCooldown log;
+    public override void _Ready()
     {
-        Position = Vec(x, y);
-        Rotation = dir;
+        base._Ready();
+        log = new AutoCooldown(5, true, Log);
     }
-    
-    [EventListener(ListenerSide.Client)]
-    public static void OnPlayerSpawnPacketListener(SC_PlayerSpawnPacket playerSpawnPacket)
+
+    public override void _Process(double delta)
     {
-        ClientPlayer player = ClientRoot.Instance.PackedScenes.Player.Instantiate<ClientPlayer>();
-        player.AddChild(new NetworkEntityComponent(playerSpawnPacket.Nid));
-        ClientRoot.Instance.Game.World.NetworkEntityManager.AddEntity(player);
-        
-        player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfilesById[playerSpawnPacket.Id]);
-        ClientRoot.Instance.Game.World.AddPlayer(player);
-        player.OnPlayerSpawnPacket(playerSpawnPacket.X, playerSpawnPacket.Y, playerSpawnPacket.Dir);
+        base._Process(delta);
+        log.Update(delta);
+    }
+
+    private void Log()
+    {
+        ClientWorld world = ClientRoot.Instance.Game.World;
+        ClientGame game = ClientRoot.Instance.Game;
+
+        string str;
+        str = $"Game.ally id: {getStr(game.AllyProfiles.Select(ally => ally.Id).ToArray())}; Game.Player id: {game.PlayerProfile.Id}";
+        global::KludgeBox.Log.Info(str);
+        str = $"Game.ally link: {getStr(game.AllyProfiles.Select(ally => ally.Ally.Nid).ToArray())}; Game.Player link: {game.PlayerProfile.Player.Nid}";
+        global::KludgeBox.Log.Info(str);
+        str = $"World.ally link: {getStr(world.Allies.Select(ally => ally.Nid).ToArray())}; World.Player link: {world.Player.Nid}";
+        global::KludgeBox.Log.Info(str);
+        str = $"World.ally id: {getStr(world.Allies.Select(ally => ally.AllyProfile.Id).ToArray())}; World.Player id: {world.Player.PlayerProfile.Id}";
+        global::KludgeBox.Log.Info(str);
+    }
+
+    private string getStr(long[] objets)
+    {
+        return "[" + String.Join(", ", objets) + "]";
     }
 }
