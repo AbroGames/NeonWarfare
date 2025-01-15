@@ -22,7 +22,7 @@ public partial class ClientGame
         _allyProfilesByPeerId.Add(peerId, PlayerProfile);
     }
     
-    public void AddAllyProfile(long peerId) //TODO вызывать в OnPeerConnect, на клиенте пока не реализован этот слушатель. В дисконекте игрока (на клиенте и на сервере) уничтожать PlayerProfile
+    public void AddAllyProfile(long peerId)
     {
         if (!_allyProfilesByPeerId.TryAdd(peerId, new ClientAllyProfile(peerId)))
         {

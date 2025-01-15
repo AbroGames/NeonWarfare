@@ -1,7 +1,7 @@
 using KludgeBox.Events;
 using KludgeBox.Networking;
 
-public partial class NetworkEntityComponent
+public partial class ClientNetworkEntityComponent
 {
 
     [GamePacket]

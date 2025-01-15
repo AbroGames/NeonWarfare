@@ -27,7 +27,7 @@ public partial class ClientGame
 	 * Создаем для него PlayerProfile.
 	 */
 	//TODO будет надежней, если AllyProfile будут создаваться и удаляться по команде с сервера. Серверу все равно инициализировать там всю инфу.
-	//TODO Мб даже наш PlayerProfile. Отдельным пакетом, с нашим peerId. Тогда все будет аналогично инициализации Players/Allies
+	//Мб даже наш PlayerProfile. Отдельным пакетом, с нашим peerId. Тогда все будет аналогично инициализации Players/Allies
 	[EventListener(ListenerSide.Client)]
 	public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
 	{

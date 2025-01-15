@@ -7,7 +7,7 @@ public abstract class NetworkEntityManager
 {
     protected readonly IDictionary<long, NetworkEntityComponent> NidToNetworkEntity = new Dictionary<long, NetworkEntityComponent>();
     
-    public NetworkEntityComponent GetEntityComponent(long nid)
+    public virtual NetworkEntityComponent GetEntityComponent(long nid)
     {
         return NidToNetworkEntity[nid];
     }

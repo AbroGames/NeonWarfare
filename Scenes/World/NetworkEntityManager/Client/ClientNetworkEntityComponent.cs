@@ -1,16 +1,16 @@
 ﻿using System;
 using Godot;
+using KludgeBox;
 using KludgeBox.Events;
 using NeonWarfare;
 
-public partial class NetworkEntityComponent : Node
+public partial class ClientNetworkEntityComponent : NetworkEntityComponent
 {
-    public long Nid { get; set; } = -1; 
-    public Action BeforeDestroy { get; set; }
-    
-    public NetworkEntityComponent(long nid)
+    public ClientNetworkEntityComponent(long nid) : base(nid) { }
+
+    public override void _ExitTree() //TODO сделать так, чтобы не вызывалось при смене мира (World) целиком. Аналогично серверу.
     {
-        Nid = nid;
+        ClientRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(this);
     }
 
     public void OnPositionEntityPacket(SC_PositionEntityPacket positionEntityPacket)
@@ -21,21 +21,20 @@ public partial class NetworkEntityComponent : Node
     
     public void OnDestroyEntityPacket(SC_DestroyEntityPacket destroyEntityPacket)
     {
-        BeforeDestroy.Invoke();
         GetParent<Node>().QueueFree();
     }
 
     [EventListener(ListenerSide.Client)]
     public static void OnPositionEntityPacketListener(SC_PositionEntityPacket positionEntityPacket)
     {
-        NetworkEntityComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetEntityComponent(positionEntityPacket.Nid);
+        ClientNetworkEntityComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetEntityComponent(positionEntityPacket.Nid);
         entityComponent.OnPositionEntityPacket(positionEntityPacket);
     }
     
     [EventListener(ListenerSide.Client)]
     public static void OnDestroyEntityPacketListener(SC_DestroyEntityPacket destroyEntityPacket)
     {
-        NetworkEntityComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetEntityComponent(destroyEntityPacket.Nid);
+        ClientNetworkEntityComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetEntityComponent(destroyEntityPacket.Nid);
         entityComponent.OnDestroyEntityPacket(destroyEntityPacket);
     }
 }

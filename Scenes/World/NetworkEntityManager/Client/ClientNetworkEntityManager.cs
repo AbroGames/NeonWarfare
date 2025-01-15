@@ -8,8 +8,13 @@ public class ClientNetworkEntityManager : NetworkEntityManager
     
     public void AddEntity(Node node, long nid)
     {
-        NetworkEntityComponent networkEntityComponent = new NetworkEntityComponent(nid);
+        ClientNetworkEntityComponent networkEntityComponent = new ClientNetworkEntityComponent(nid);
         node.AddChild(networkEntityComponent);
         NidToNetworkEntity.Add(networkEntityComponent.Nid, networkEntityComponent);
+    }
+
+    public override ClientNetworkEntityComponent GetEntityComponent(long nid)
+    {
+        return (ClientNetworkEntityComponent) base.GetEntityComponent(nid);
     }
 }

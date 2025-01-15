@@ -22,9 +22,9 @@ public partial class ServerPlayer : ServerCharacter
         
         //У нового игрока спауним его самого
         Network.SendToClient(PlayerProfile.PeerId, 
-            new ClientPlayer.SC_PlayerSpawnPacket(Nid, Position.X, Position.Y, Rotation));
+            new ClientWorld.SC_PlayerSpawnPacket(Nid, Position.X, Position.Y, Rotation));
         
         //У всех остальных игроков спауним нового игрока
-        Network.SendToAllExclude(PlayerProfile.PeerId, new ClientAlly.SC_AllySpawnPacket(Nid, Position.X, Position.Y, Rotation, PlayerProfile.PeerId));
+        Network.SendToAllExclude(PlayerProfile.PeerId, new ClientWorld.SC_AllySpawnPacket(Nid, Position.X, Position.Y, Rotation, PlayerProfile.PeerId));
     }
 }
