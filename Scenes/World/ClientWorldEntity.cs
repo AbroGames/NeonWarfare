@@ -22,6 +22,8 @@ public abstract partial class ClientWorld
     {
         ClientPlayer player = CreateNetworkEntity<ClientPlayer>(
             ClientRoot.Instance.PackedScenes.Player, playerSpawnPacket.Nid);
+        player.AddChild(new ClientPlayerMovementComponent());
+        player.AddChild(new ClientPlayerRotateComponent());
         
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
         AddChild(player);
@@ -32,8 +34,8 @@ public abstract partial class ClientWorld
     {
         ClientAlly ally = CreateNetworkEntity<ClientAlly>(
             ClientRoot.Instance.PackedScenes.Ally, allySpawnPacket.Nid);
+        ally.AddChild(new NetworkInertiaComponent());
         
-        //TODO компонент с инерцией
         ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesByPeerId[allySpawnPacket.Id]);
         AddChild(ally);
         ally.OnSpawnPacket(allySpawnPacket.X, allySpawnPacket.Y, allySpawnPacket.Dir);

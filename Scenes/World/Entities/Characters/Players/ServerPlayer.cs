@@ -1,5 +1,6 @@
 using Godot;
 using KludgeBox;
+using KludgeBox.Events;
 using KludgeBox.Networking;
 
 namespace NeonWarfare;

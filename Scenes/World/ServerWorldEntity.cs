@@ -21,6 +21,8 @@ public abstract partial class ServerWorld
     public ServerPlayer SpawnPlayer(ServerPlayerProfile playerProfile) 
     {
         ServerPlayer player = CreateNetworkEntity<ServerPlayer>(ServerRoot.Instance.PackedScenes.Player);
+        player.AddChild(new NetworkInertiaComponent());
+        
         player.InitOnProfile(playerProfile);
         player.Init();
         AddChild(player);
