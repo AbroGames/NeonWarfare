@@ -6,7 +6,7 @@ using KludgeBox;
 
 namespace NeonWarfare;
 
-public abstract partial class ServerWorld 
+public abstract partial class ServerWorld
 {
 
     public ServerNetworkEntityManager NetworkEntityManager = new();
@@ -17,18 +17,13 @@ public abstract partial class ServerWorld
         NetworkEntityManager.AddEntity(newNode);
         return newNode;
     }
-
-    public void RemoveFromNetworkManager(Node node)
-    {
-        NetworkEntityManager.RemoveEntity(node);
-    }
     
-    public ServerPlayer SpawnPlayer(ServerPlayerProfile playerProfile) //TODO в readme о том, что мы такое стараемся использовать? Аналогично в ридми об обработке на клиенте в ClientWorld
+    public ServerPlayer SpawnPlayer(ServerPlayerProfile playerProfile) 
     {
         ServerPlayer player = CreateNetworkEntity<ServerPlayer>(ServerRoot.Instance.PackedScenes.Player);
         player.InitOnProfile(playerProfile);
-        AddPlayer(player);
         player.Init();
+        AddChild(player);
         
         return player;
     }

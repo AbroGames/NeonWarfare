@@ -9,9 +9,13 @@ public partial class ServerNetworkEntityComponent : NetworkEntityComponent
 {
     public ServerNetworkEntityComponent(long nid) : base(nid) { }
 
-    public override void _ExitTree() //TODO сделать так, чтобы не вызывалось при смене мира (World) целиком. Там отдельный один пакет будет.
+    public override void _ExitTree()
     {
-        ServerRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(this);
-        Network.SendToAll(new ClientNetworkEntityComponent.SC_DestroyEntityPacket(Nid));
+        //Проверка нужна, чтобы сообщения не отправлялись при смене мира целиком.
+        //В случае полной смены мира будет новый NetworkEntityManager и попытка удаления вернёт false
+        if (ServerRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(this))
+        {
+            Network.SendToAll(new ClientNetworkEntityComponent.SC_DestroyEntityPacket(Nid));
+        }
     }
 }

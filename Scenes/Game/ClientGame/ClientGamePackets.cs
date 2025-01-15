@@ -27,4 +27,22 @@ public partial class ClientGame
         
         public ServerWorldType WorldType = worldType;
     }
+    
+    [GamePacket]
+    public class SC_AddPlayerProfilePacket(long peerId) : BinaryPacket
+    {
+        public long PeerId = peerId;
+    }
+    
+    [GamePacket]
+    public class SC_AddAllyProfilePacket(long peerId) : BinaryPacket
+    {
+        public long PeerId = peerId;
+    }
+    
+    [GamePacket]
+    public class SC_RemoveAllyProfilePacket(long peerId) : BinaryPacket
+    {
+        public long PeerId = peerId;
+    }
 }

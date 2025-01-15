@@ -13,6 +13,7 @@ public partial class ClientAlly : ClientCharacter
     public void InitOnProfile(ClientAllyProfile allyProfile)
     {
         AllyProfile = allyProfile;
+        allyProfile.Ally = this;
     }
     
     public void OnSpawnPacket(float x, float y, float dir)

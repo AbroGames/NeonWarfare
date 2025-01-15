@@ -11,6 +11,7 @@ public partial class ServerPlayer : ServerCharacter
     public void InitOnProfile(ServerPlayerProfile playerProfile)
     {
         PlayerProfile = playerProfile;
+        playerProfile.Player = this;
         //TODO MaxHp = maxHp и т.д, у клиента аналогично
     }
 

@@ -43,9 +43,7 @@ public partial class ClientPlayer : ClientAlly
         global::KludgeBox.Log.Info(str);
         str = $"Game.ally link: {getStr(game.AllyProfiles.Select(ally => ally.Ally.Nid).ToArray())}; Game.Player link: {game.PlayerProfile.Player.Nid}";
         global::KludgeBox.Log.Info(str);
-        str = $"World.ally link: {getStr(world.Allies.Select(ally => ally.Nid).ToArray())}; World.Player link: {world.Player.Nid}";
-        global::KludgeBox.Log.Info(str);
-        str = $"World.ally id: {getStr(world.Allies.Select(ally => ally.AllyProfile.PeerId).ToArray())}; World.Player id: {world.Player.PlayerProfile.PeerId}";
+        str = $"World.Player link: {world.Player.Nid}; World.Player id: {world.Player.PlayerProfile.PeerId}";
         global::KludgeBox.Log.Info(str);
     }
 

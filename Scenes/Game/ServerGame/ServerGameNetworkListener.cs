@@ -11,14 +11,20 @@ public partial class ServerGame
     
     /*
      * При подключении нового игрока создаем/активируем его PlayerProfile.
-     * Если сейчас BattleWorld, то отправляемему заглушку и ждем окончания боя.
+     * Если сейчас BattleWorld, то отправляем ему заглушку и ждем окончания боя.
      * Если сейчас SafeWorld, то синхронизируем мир, загружая союзников и окружающие объекты. Союзникам передаем инфу о новом игроке.
      */
     [EventListener(ListenerSide.Server)]
     public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         Log.Info($"Client connected to server. Peer id = {peerConnectedEvent.Id}");
+        
         AddPlayerProfile(peerConnectedEvent.Id);
+        //У нового игрока создаем профили уже подключенных игроков
+        foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(peerConnectedEvent.Id))
+        {
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_AddAllyProfilePacket(profile.PeerId));
+        }
 
         if (World is ServerSafeWorld)
         {
@@ -29,7 +35,7 @@ public partial class ServerGame
             World.SpawnPlayer(PlayerProfilesByPeerId[peerConnectedEvent.Id]);
             
             //У нового игрока спауним всех остальных игроков
-            foreach (ServerPlayer player in World.GetPlayersExcluding(peerConnectedEvent.Id))
+            foreach (ServerPlayer player in GetPlayerProfilesExcluding(peerConnectedEvent.Id).Select(profile => profile.Player))
             {
                 Network.SendToClient(peerConnectedEvent.Id, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.PeerId));
             }
@@ -53,13 +59,10 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
+        Log.Info($"Client disconnected from server. Peer id = {peerDisconnectedEvent.Id}");
         ServerPlayer disconnectedPlayer = PlayerProfilesByPeerId[peerDisconnectedEvent.Id].Player;
-        World.NetworkEntityManager.RemoveEntity(disconnectedPlayer); //TODO перенести куда-нибудь в NetworkEntityComponent? И создание мб туда же?
-                                                                     //Сделать общий родитель NetworkEntity? Но с ним проблема в наследование CharacterBody от Node. INetworkEntity с двумя реализациями от Node2D и CharacterBody? А общий код в сервис?
-                                                                     //И в него убрать всю логику по автоматическому добавлению и удалению в NetworkEntity. По созданию и удалению. А наследники при необходимости переопределяют.
-        RemovePlayerProfile(peerDisconnectedEvent.Id);
-        World.RemovePlayer(disconnectedPlayer);
         disconnectedPlayer.QueueFree();
+        RemovePlayerProfile(peerDisconnectedEvent.Id);
     }
     
     /*
@@ -69,24 +72,18 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnWantToBattlePacket(CS_WantToBattlePacket wantToBattlePacket) 
     {
-        /*Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-        Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
+        Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+        
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
-        
         ChangeMainScene(serverBattleWorld);
+        Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         
-        foreach (ServerPlayerProfile playerServerInfo in PlayerProfiles)
+        foreach (ServerPlayerProfile playerProfile in PlayerProfiles)
         {
-            ServerPlayer player = World.CreateAndAddPlayer(PlayerProfilesById[playerServerInfo.Id]);
-            player.Position = Vec(Rand.Range(-100, 100), Rand.Range(-100, 100));
-            player.Rotation = Mathf.DegToRad(Rand.Range(0, 360));
-            long newPlayerNid = World.NetworkEntityManager.AddEntity(player);
-            
-            Network.SendToClient(playerServerInfo.Id,  
-                new ServerSpawnPlayerPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
-            Network.SendToAllExclude(playerServerInfo.Id, new ServerSpawnAllyPacket(newPlayerNid, player.Position.X, player.Position.Y, player.Rotation));
+            serverBattleWorld.SpawnPlayer(playerProfile);
         }
-        Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());*/
+        
+        Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
     }
 
     /*

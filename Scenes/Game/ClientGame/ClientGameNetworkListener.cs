@@ -10,31 +10,47 @@ public partial class ClientGame
 {
 	
 	/*
-	 * Сразу после подключения к серверу создаем профиль игрока и запускаем систему пинга.
+	 * Сразу после подключения к серверу запускаем систему пинга.
 	 * Все остальные действия (например, убрать загрузочный экран) проинициирует сервер через соответствующие пакеты.
 	 */
 	[EventListener(ListenerSide.Client)]
 	public void OnConnectedToServerEvent(ConnectedToServerEvent connectedToServerEvent)
 	{
-		long myPeerId = Network.Multiplayer.GetUniqueId();
-		Log.Info($"Connected to server. My peer id = {myPeerId}");
-		AddPlayerProfile(myPeerId);
+		Log.Info($"Connected to server. My peer id = {Network.Multiplayer.GetUniqueId()}");
 		PingChecker.Start();
 	}
 	
 	/*
-	 * Вызывается при подключении другого игрока к серверу.
-	 * Создаем для него PlayerProfile.
+	 * Вызывается при подключении игрока к серверу.
+	 * Создаем для нас PlayerProfile.
 	 */
-	//TODO будет надежней, если AllyProfile будут создаваться и удаляться по команде с сервера. Серверу все равно инициализировать там всю инфу.
-	//Мб даже наш PlayerProfile. Отдельным пакетом, с нашим peerId. Тогда все будет аналогично инициализации Players/Allies
 	[EventListener(ListenerSide.Client)]
-	public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
+	public void OnAddPlayerProfilePacket(SC_AddPlayerProfilePacket addPlayerProfilePacket)
 	{
-		if (peerConnectedEvent.Id == 1) return; //Если пиром является сервер, то ничего не делаем.
-		
-		Log.Info($"New client connected to server. Peer id = {peerConnectedEvent.Id}");
-		AddAllyProfile(peerConnectedEvent.Id);
+		Log.Info($"Create PlayerProfile. Peer id = {addPlayerProfilePacket.PeerId}");
+		AddPlayerProfile(addPlayerProfilePacket.PeerId);
+	}
+	
+	/*
+	 * Вызывается при подключении другого игрока к серверу.
+	 * Создаем для него AllyProfile.
+	 */
+	[EventListener(ListenerSide.Client)]
+	public void OnAddAllyProfilePacket(SC_AddAllyProfilePacket addAllyProfilePacket)
+	{
+		Log.Info($"Create AllyProfile. Peer id = {addAllyProfilePacket.PeerId}");
+		AddAllyProfile(addAllyProfilePacket.PeerId);
+	}
+	
+	/*
+	 * Вызывается при отключении другого игрока от сервера.
+	 * Удаляем его AllyProfile.
+	 */
+	[EventListener(ListenerSide.Client)]
+	public void OnRemoveAllyProfilePacket(SC_RemoveAllyProfilePacket removeAllyProfilePacket)
+	{
+		Log.Info($"Remove AllyProfile. Peer id = {removeAllyProfilePacket.PeerId}");
+		RemoveAllyProfile(removeAllyProfilePacket.PeerId);
 	}
 	
 	/*

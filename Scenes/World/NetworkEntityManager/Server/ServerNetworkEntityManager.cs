@@ -6,7 +6,9 @@ namespace NeonWarfare;
 public class ServerNetworkEntityManager : NetworkEntityManager
 {
     
-    private long _nextNid = 0; 
+    //static для того, чтобы у следующего NetworkEntityManager не повторялись id от предыдущего.
+    //Иначе могут прийти пакеты от предыдущего NetworkEntityManager и примениться к новому.
+    private static long _nextNid = 0; 
     
     public void AddEntity(Node node)
     {

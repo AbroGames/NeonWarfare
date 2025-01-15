@@ -8,7 +8,7 @@ namespace NeonWarfare;
 
 public abstract partial class ClientWorld
 {
-    
+    public ClientPlayer Player => ClientRoot.Instance.Game.PlayerProfile.Player;
     public ClientNetworkEntityManager NetworkEntityManager = new();
 
     public T CreateNetworkEntity<T>(PackedScene scene, long nid) where T : Node
@@ -24,7 +24,7 @@ public abstract partial class ClientWorld
             ClientRoot.Instance.PackedScenes.Player, playerSpawnPacket.Nid);
         
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
-        AddPlayer(player);
+        AddChild(player);
         player.OnSpawnPacket(playerSpawnPacket.X, playerSpawnPacket.Y, playerSpawnPacket.Dir);
     }
 
@@ -35,7 +35,7 @@ public abstract partial class ClientWorld
         
         //TODO компонент с инерцией
         ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesByPeerId[allySpawnPacket.Id]);
-        AddAlly(ally);
+        AddChild(ally);
         ally.OnSpawnPacket(allySpawnPacket.X, allySpawnPacket.Y, allySpawnPacket.Dir);
     }
     
