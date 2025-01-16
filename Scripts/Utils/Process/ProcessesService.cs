@@ -11,9 +11,9 @@ public static class ProcessesService
         return OS.CreateInstance(arguments);
     }
     
-    public static int StartNewDedicatedServerApplication(int port, string adminNickname, bool showConsole)
+    public static int StartNewDedicatedServerApplication(int port, string adminNickname, bool showGui)
     {
-        ServerParams serverParams = new ServerParams(!showConsole, false, port, adminNickname, OS.GetProcessId());
+        ServerParams serverParams = new ServerParams(!showGui, port, adminNickname, OS.GetProcessId());
 
         return StartNewApplication(serverParams.GetArrayToStartServer());
     }

@@ -3,12 +3,11 @@ using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scripts.Utils.CmdArgs;
 
-public readonly record struct ServerParams(bool IsHeadless, bool IsRender, int Port, string Admin, int? ParentPid)
+public readonly record struct ServerParams(bool IsHeadless, int Port, string Admin, int? ParentPid)
 {
     public static readonly string ServerFlag = "--server";
     
     public static readonly string HeadlessFlag = "--headless";
-    public static readonly string RenderFlag = "--render";
     public static readonly string PortParam = "--port";
     public static readonly string AdminParam = "--admin";
     public static readonly string ParentPidParam = "--parent-pid";
@@ -17,7 +16,6 @@ public readonly record struct ServerParams(bool IsHeadless, bool IsRender, int P
     {
         return new ServerParams(
             CmdArgsService.ContainsInCmdArgs(HeadlessFlag),
-            CmdArgsService.ContainsInCmdArgs(RenderFlag),
             CmdArgsService.GetIntFromCmdArgs(PortParam, Network.DefaultPort),
             CmdArgsService.GetStringFromCmdArgs(AdminParam),
             CmdArgsService.GetIntFromCmdArgs(ParentPidParam)
@@ -31,10 +29,6 @@ public readonly record struct ServerParams(bool IsHeadless, bool IsRender, int P
         if (IsHeadless)
         {
             listParams.Add(HeadlessFlag);
-        }
-        if (IsRender)
-        {
-            listParams.Add(RenderFlag);
         }
 
         listParams.AddRange([

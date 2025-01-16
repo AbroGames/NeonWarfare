@@ -12,7 +12,7 @@ namespace NeonWarfare.Scenes.Root.ServerRoot;
 public partial class ServerRoot : Node2D
 {
 	[Export] [NotNull] public ServerPackedScenesContainer PackedScenes { get; private set; }
-	[Export] [NotNull] public Console Console { get; private set; }
+	//TODO ServerGUI [Export] [NotNull] public Console Console { get; private set; }
 	
 	public ServerParams CmdParams { get; private set; }
 
@@ -26,15 +26,6 @@ public partial class ServerRoot : Node2D
 	{
 		RootService.CommonInit(ListenerSide.Server);
 		CmdParams = ServerParams.GetFromCmd();
-		
-		if (CmdParams.IsRender)
-		{
-			Console.QueueFree();
-		}
-		else
-		{
-			Log.AddLogger(Console);
-		}
 	}
 
 	protected void Start()
