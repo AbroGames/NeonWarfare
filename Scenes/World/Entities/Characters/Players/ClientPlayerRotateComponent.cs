@@ -6,11 +6,11 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientPlayerRotateComponent : Node
 {
-    public ClientPlayer Parent { get; private set; } 
+    private ClientPlayer _parent;
     
     public override void _Ready()
     {
-        Parent = GetParent<ClientPlayer>();
+        _parent = GetParent<ClientPlayer>();
     }
 
     public override void _Process(double delta)
@@ -18,11 +18,11 @@ public partial class ClientPlayerRotateComponent : Node
         //Куда хотим повернуться
         double targetAngle = GetAngleToMouse();
         //На какой угол надо повернуться (знак указывает направление)
-        double deltaAngleToTargetAngel = Mathf.AngleDifference(Parent.Rotation - Mathf.Pi / 2, targetAngle);
+        double deltaAngleToTargetAngel = Mathf.AngleDifference(_parent.Rotation - Mathf.Pi / 2, targetAngle);
         //Только направление (-1, 0, 1)
         double directionToTargetAngel = Mathf.Sign(deltaAngleToTargetAngel);
         //Максимальная скорость поворота (за секунду)
-        double rotationSpeedRad = Mathf.DegToRad(Parent.RotationSpeed);
+        double rotationSpeedRad = Mathf.DegToRad(_parent.RotationSpeed);
         //Максимальная скорость поворота (за прошедшее время)
         rotationSpeedRad *= delta;
         //Если надо повернуться на угол меньший максимальной скорости, то обрезаем скорость, чтобы повернуться ровно в цель
@@ -30,15 +30,15 @@ public partial class ClientPlayerRotateComponent : Node
         //Добавляем к скорости поворота направление, чтобы поворачивать в сторону цели
         rotationSpeedRad *= directionToTargetAngel;
         //Поворачиваемся на угол
-        Parent.Rotation += (float) rotationSpeedRad;
+        _parent.Rotation += (float) rotationSpeedRad;
     }
 
     private double GetAngleToMouse()
     {
         // Получаем текущую позицию мыши
-        var mousePos = Parent.GetGlobalMousePosition();
+        var mousePos = _parent.GetGlobalMousePosition();
         // Вычисляем вектор направления от объекта к мыши
-        var mouseDir = Parent.GlobalPosition.DirectionTo(mousePos);
+        var mouseDir = _parent.GlobalPosition.DirectionTo(mousePos);
         // Вычисляем направление от объекта к мыши
         return mouseDir.Angle();
     }
