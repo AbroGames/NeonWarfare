@@ -12,7 +12,7 @@ public partial class ServerBattleWorld : ServerWorld
     {
         base._Ready();
     
-        //TODO поменять на нормальный спаун
+        //TODO поменять на нормальный спаун. Сделать Spawn компонент, который будет спаунить врагов растянуто по времени. Нельзя за кадр спаунить больше десятка противников.
         for (int i = 0; i < 50; i++)
         {
             SpawnEnemy();
