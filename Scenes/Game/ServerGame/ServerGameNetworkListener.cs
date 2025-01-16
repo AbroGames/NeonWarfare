@@ -38,7 +38,7 @@ public partial class ServerGame
             Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
             //Спауним нового игрока
-            World.SpawnPlayer(PlayerProfilesByPeerId[peerConnectedEvent.Id]);
+            World.SpawnPlayerInCenter(PlayerProfilesByPeerId[peerConnectedEvent.Id]);
             
             //У нового игрока спауним всех остальных игроков
             foreach (ServerPlayer player in GetPlayerProfilesExcluding(peerConnectedEvent.Id).Select(profile => profile.Player))
@@ -86,7 +86,7 @@ public partial class ServerGame
         
         foreach (ServerPlayerProfile playerProfile in PlayerProfiles)
         {
-            serverBattleWorld.SpawnPlayer(playerProfile);
+            serverBattleWorld.SpawnPlayerInCenter(playerProfile);
         }
         
         Network.SendToAll(new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());

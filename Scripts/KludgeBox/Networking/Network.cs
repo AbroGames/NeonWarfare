@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
+using NeonWarfare.Scenes.Game.ClientGame.Ping;
+using NeonWarfare.Scenes.Game.ServerGame;
 using NeonWarfare.Scripts.KludgeBox.Events.Global;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
+using NeonWarfare.Scripts.Utils.Components;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
@@ -143,8 +147,18 @@ public partial class Network : Node
 	{
 		var packetObj = PacketHelper.DecodePacket(packet, PacketRegistry);
 		packetObj.SenderId = id;
-		//Log.Info($"Received packet from {id} with {packet.Length - 4} bytes. Received type is {packetObj.GetType().FullName}");
-		
+
+		Type[] ignoredTypes = [
+			typeof(NetworkInertiaComponent.CS_InertiaEntityPacket), 
+			typeof(NetworkInertiaComponent.SC_InertiaEntityPacket),
+			typeof(ServerGame.CS_PingPacket),
+			typeof(PingChecker.SC_PingPacket),
+		];
+		if (!ignoredTypes.Contains(packetObj.GetType()))
+		{
+			Log.Info($"Received packet from {id} with {packet.Length - 4} bytes. Received type is {packetObj.GetType().FullName}");
+		}
+
 		EventBus.Publish(packetObj);
 	}
 	
