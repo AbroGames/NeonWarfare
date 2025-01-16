@@ -28,6 +28,8 @@ public abstract partial class ClientWorld
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
         AddChild(player);
         player.OnSpawnPacket(playerSpawnPacket.X, playerSpawnPacket.Y, playerSpawnPacket.Dir);
+        
+        Camera.TargetNode = player;
     }
 
     public void OnAllySpawnPacket(SC_AllySpawnPacket allySpawnPacket)

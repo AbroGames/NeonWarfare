@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using KludgeBox;
 using KludgeBox.Scheduling;
 
 [GlobalClass]
@@ -9,10 +10,8 @@ public partial class Floor : Node2D
 	/// <summary>
 	/// Used for terrain generation on-the-fly
 	/// </summary>
-	[Export]
-	public Camera2D Camera { get; set; }
-
-	[Export] public Texture2D Texture { get; set; }
+	[Export] [NotNull] public Camera2D Camera { get; set; }
+	[Export] [NotNull] public Texture2D Texture { get; set; }
 
 	private Cooldown _checksCooldown = new Cooldown(0.25, CooldownMode.Single);
 

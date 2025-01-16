@@ -8,9 +8,12 @@ namespace NeonWarfare;
 
 public abstract partial class ClientWorld : Node2D
 {
+
+    public Camera Camera {get; private set;} = new();
     
     public override void _EnterTree()
     {
-        AddFloor();
+        AddChild(ClientRoot.Instance.PackedScenes.Background.Instantiate());
+        AddChild(Camera);
     }
 }

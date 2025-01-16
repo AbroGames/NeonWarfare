@@ -7,9 +7,6 @@ namespace NeonWarfare
 		public const string TexturesDir = "res://Assets/Textures";
 		public const string SpritesDir = $"{TexturesDir}/Sprites";
 		public const string ParticlesDir = $"{TexturesDir}/Particles";
-
-		// sprites
-		public static string Floor { get; } = $"{SpritesDir}/Floor.png";
 		
 		// glow
 		public static RandomPicker<string> Spotlight { get; } = new RandomPicker<string>(

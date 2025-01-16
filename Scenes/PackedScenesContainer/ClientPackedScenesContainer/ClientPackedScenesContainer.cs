@@ -50,6 +50,7 @@ public partial class ClientPackedScenesContainer : Node
     [ExportGroup("World")]
     [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
     [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
+    [Export] [NotNull] public PackedScene Background { get; private set; }
     
     [Export] [NotNull] public PackedScene Player { get; private set; }
     [Export] [NotNull] public PackedScene Ally { get; private set; }
