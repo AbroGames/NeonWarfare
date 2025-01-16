@@ -1,3 +1,4 @@
+using Godot;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
@@ -9,6 +10,8 @@ public partial class NetworkInertiaComponent
     public class SC_InertiaEntityPacket(long nid, float x, float y, float dir,
         float movementDir, float movementSpeed) : BinaryPacket
     {
+        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
+        
         public long Nid = nid;
         public float X = x;
         public float Y = y;
@@ -24,6 +27,8 @@ public partial class NetworkInertiaComponent
     public class CS_InertiaEntityPacket(long nid, float x, float y, float dir,
         float movementDir, float movementSpeed) : BinaryPacket
     {
+        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
+        
         public long Nid = nid;
         public float X = x;
         public float Y = y;

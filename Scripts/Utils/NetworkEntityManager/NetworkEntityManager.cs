@@ -22,6 +22,11 @@ public abstract class NetworkEntityManager
     {
         return GetEntityComponent(nid).GetParent<Node>().GetChild<T>();
     }
+
+    public bool HasEntityComponent(long nid)
+    {
+        return NidToNetworkEntity.ContainsKey(nid);
+    }
     
     public bool RemoveEntity(Node node)
     {

@@ -12,7 +12,7 @@ namespace NeonWarfare.Scripts.Utils.Components;
 public partial class NetworkInertiaComponent : Node
 {
     public Node2D Parent;
-    public double InertiaCooldown { get; set; } = 0.15;
+    public double InertiaCooldown { get; set; } = 0.08;
 
     private float _movementSpeed;
     private float _movementDir;
@@ -65,6 +65,9 @@ public partial class NetworkInertiaComponent : Node
     [EventListener(ListenerSide.Client)]
     public static void OnInertiaEntityPacketListener(SC_InertiaEntityPacket inertiaEntityPacket) //TODO подумать над таким неймингом. Записать в readme.
     {
+        //Проверка нужна, т.к. пакет InertiaEntityPacket.Mode = Unreliable и из-за задержки может прийти после пакета смены мира.
+        if (!ClientRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
+        
         NetworkInertiaComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
         entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, 
             inertiaEntityPacket.MovementDir, inertiaEntityPacket.MovementSpeed);
@@ -73,6 +76,9 @@ public partial class NetworkInertiaComponent : Node
     [EventListener(ListenerSide.Server)]
     public static void OnInertiaEntityPacketListener(CS_InertiaEntityPacket inertiaEntityPacket)
     {
+        //Проверка нужна, т.к. пакет InertiaEntityPacket.Mode = Unreliable и из-за задержки может прийти после пакета смены мира.
+        if (!ServerRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
+        
         NetworkInertiaComponent entityComponent = ServerRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
         entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, 
             inertiaEntityPacket.MovementDir, inertiaEntityPacket.MovementSpeed);

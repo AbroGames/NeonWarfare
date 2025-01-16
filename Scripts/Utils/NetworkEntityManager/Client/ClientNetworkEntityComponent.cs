@@ -8,9 +8,13 @@ public partial class ClientNetworkEntityComponent : NetworkEntityComponent
 {
     public ClientNetworkEntityComponent(long nid) : base(nid) { }
 
-    public override void _ExitTree() //TODO сделать так, чтобы не вызывалось при смене мира (World) целиком. Аналогично серверу.
+    public override void _ExitTree() //TODO Попробовать сделать так, чтобы не вызывалось при смене игры или мира (Game/World) целиком. Аналогично сделать на сервере.
     {
-        ClientRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(this);
+        //Првоерка нужна, чтобы при выходе в меню мы не получили NPE
+        if (ClientRoot.Instance.Game != null)
+        {
+            ClientRoot.Instance.Game.World.NetworkEntityManager.RemoveEntity(this);
+        }
     }
 
     public void OnPositionEntityPacket(SC_PositionEntityPacket positionEntityPacket)
@@ -27,6 +31,9 @@ public partial class ClientNetworkEntityComponent : NetworkEntityComponent
     [EventListener(ListenerSide.Client)]
     public static void OnPositionEntityPacketListener(SC_PositionEntityPacket positionEntityPacket)
     {
+        //Проверка нужна, т.к. пакет InertiaEntityPacket.Mode = Unreliable и из-за задержки может прийти после пакета смены мира.
+        if (!ClientRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(positionEntityPacket.Nid)) return;
+        
         ClientNetworkEntityComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetEntityComponent(positionEntityPacket.Nid);
         entityComponent.OnPositionEntityPacket(positionEntityPacket);
     }

@@ -10,15 +10,15 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientPlayerMovementComponent : Node
 {
-    private const int NetworkMessagePerSecond = 30; 
-    
-    public ClientPlayer Parent { get; private set; }
-    private AutoCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);
+    private const int NetworkMessagePerSecond = 30;
+
+    private ClientPlayer _parent;
+    private ManualCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);
     
     public override void _Ready()
     {
-        Parent = GetParent<ClientPlayer>();
-        _sendPositionCooldown.ActionWhenReady += SendPositionToServer;
+        _parent = GetParent<ClientPlayer>();
+        _sendPositionCooldown.ActionWhenReady += () => { SendPositionToServer(); _sendPositionCooldown.Restart(); };
     }
 
     public override void _Process(double delta)
@@ -29,22 +29,22 @@ public partial class ClientPlayerMovementComponent : Node
 
     public override void _PhysicsProcess(double delta)
     {
-        Parent.MoveAndCollide(GetMovementInSecondFromInput() * (float) delta);
+        _parent.MoveAndCollide(GetMovementInSecondFromInput() * (float) delta);
     }
 
     private void SendPositionToServer()
     {
         var movementInSecond = GetMovementInSecondFromInput();
-        long nid = Parent.GetChild<ClientNetworkEntityComponent>().Nid;
+        long nid = _parent.GetChild<ClientNetworkEntityComponent>().Nid;
         Network.SendToServer(new NetworkInertiaComponent.CS_InertiaEntityPacket(nid, 
-            Parent.Position.X, Parent.Position.Y, Parent.Rotation,
+            _parent.Position.X, _parent.Position.Y, _parent.Rotation,
             movementInSecond.Angle(), movementInSecond.Length()));
     }
 
     private Vector2 GetMovementInSecondFromInput()
     {
         var movementInput = GetInput();
-        return movementInput * (float) Parent.MovementSpeed;
+        return movementInput * (float) _parent.MovementSpeed;
     }
 
     private Vector2 GetInput()
