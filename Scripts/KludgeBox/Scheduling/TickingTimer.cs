@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace KludgeBox.Scheduling;
+namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 /// <summary>
 /// Represents a simple ticking timer that triggers an event when reaching the specified tick delay.

@@ -1,4 +1,4 @@
-﻿namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Core;
 
 public static partial class Utils
 {

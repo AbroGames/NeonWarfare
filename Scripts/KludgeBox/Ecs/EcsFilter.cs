@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using KludgeBox.Collections;
 
-namespace KludgeBox.Ecs;
+namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 public class EcsFilter
 {

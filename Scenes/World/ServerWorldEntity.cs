@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ServerWorld
 {

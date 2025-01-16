@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Godot;
 
 public static partial class Utils 
 {

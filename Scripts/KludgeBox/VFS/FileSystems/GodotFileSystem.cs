@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Godot;
 using FileAccess = Godot.FileAccess;
 
-namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 
 public enum GodotFsRoot
 {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace KludgeBox.Collections;
+namespace NeonWarfare.Scripts.KludgeBox.Collections;
 
 public static class CollectionExtensions
 {

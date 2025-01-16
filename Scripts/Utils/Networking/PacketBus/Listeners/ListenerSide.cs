@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners;
 
 [Flags]
 public enum ListenerSide

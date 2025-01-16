@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS.Base;
 
 public class FsFile : FsEntry
 {

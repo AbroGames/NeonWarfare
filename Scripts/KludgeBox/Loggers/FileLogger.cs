@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Text;
 using Godot;
 using KludgeBox.VFS;
 using Environment = System.Environment;
 
-namespace KludgeBox.Loggers;
+namespace NeonWarfare.Scripts.KludgeBox.Loggers;
 
 public class FileLogger : ILogger
 {

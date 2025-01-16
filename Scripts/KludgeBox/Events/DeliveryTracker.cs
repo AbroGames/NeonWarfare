@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeonWarfare.KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 internal class DeliveryTracker(IEvent @event)
 {

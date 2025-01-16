@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 
-namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 
 /// <summary>
 /// Provides access to the local file system.

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.Camera;
 
 public partial class Camera : Camera2D
 {

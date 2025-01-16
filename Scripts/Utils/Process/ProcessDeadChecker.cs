@@ -5,7 +5,7 @@ using Godot;
 using KludgeBox;
 using NeonWarfare.Utils.Cooldown;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.Process;
 
 public partial class ProcessDeadChecker : Node
 {

@@ -6,7 +6,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using NeonWarfare.Utils.Cooldown;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientPlayer : ClientAlly 
 {

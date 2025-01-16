@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Godot;
 using CooldownMode = KludgeBox.Scheduling.CooldownMode;
 
-namespace NeonWarfare.Utils.Cooldown;
+namespace NeonWarfare.Scripts.Utils.Cooldown;
 
 public class ManualCooldown : Cooldown
 {

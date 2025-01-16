@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 public sealed class PacketRegistrySynchronizationPacket : NetPacket
 {

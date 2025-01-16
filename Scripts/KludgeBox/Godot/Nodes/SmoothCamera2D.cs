@@ -1,6 +1,6 @@
 using Godot;
 
-namespace MicroSurvivors;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 [GlobalClass]
 public partial class SmoothCamera2D : Camera2D

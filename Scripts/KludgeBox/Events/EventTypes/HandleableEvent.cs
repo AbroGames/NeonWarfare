@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 public abstract class HandleableEvent : IEvent
 {

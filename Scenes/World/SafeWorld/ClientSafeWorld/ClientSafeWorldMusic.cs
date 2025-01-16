@@ -1,4 +1,4 @@
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.SafeWorld.ClientSafeWorld;
 
 public partial class ClientSafeWorld
 {

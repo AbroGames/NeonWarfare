@@ -4,6 +4,8 @@ using KludgeBox;
 using NeonWarfare;
 using NeonWarfare.LoadingScreen;
 
+namespace NeonWarfare.Scenes.Game.ClientGame;
+
 public partial class ClientGame
 {
 	public CanvasLayer LoadingCanvas { get; private set; }

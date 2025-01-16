@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace KludgeBox.Scheduling;
+namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 /// <summary>
 /// Scheduler class.

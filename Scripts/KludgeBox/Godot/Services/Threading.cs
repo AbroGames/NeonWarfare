@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Godot;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Services;
 
 [GlobalClass]
 public partial class Threading : Node

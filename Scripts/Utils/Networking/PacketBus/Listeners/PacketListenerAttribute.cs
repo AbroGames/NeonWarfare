@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners;
 
 [AttributeUsage(AttributeTargets.Method)]
 public class PacketListenerAttribute : Attribute

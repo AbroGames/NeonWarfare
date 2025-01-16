@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using KludgeBox.Networking.Serializers;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization;
 
 /// <summary>
 /// Just some utility functions for binary serialization.

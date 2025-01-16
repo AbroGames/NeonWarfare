@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare.Utils;
+namespace NeonWarfare.Scripts.Utils;
 
 public static class ExceptionHandlerService
 {

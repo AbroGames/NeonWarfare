@@ -4,6 +4,8 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Scheduling;
 
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
+
 [GlobalClass]
 public partial class Floor : Node2D
 {

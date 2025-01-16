@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 /// <summary>
 /// Provides a central event bus for publishing and subscribing to events.

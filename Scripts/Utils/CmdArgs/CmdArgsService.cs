@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare.Utils;
+namespace NeonWarfare.Scripts.Utils.CmdArgs;
 
 public class CmdArgsService
 {

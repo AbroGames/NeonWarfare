@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.PlayerSettings;
 
 public static class PlayerSettingsService
 {

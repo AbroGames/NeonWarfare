@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.PackedScenesContainer.ServerPackedScenesContainer;
 
 public partial class ServerPackedScenesContainer : Node
 {

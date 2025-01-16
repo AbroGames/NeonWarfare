@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace KludgeBox.Networking.Serializers;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 
 public static partial class BinarySerializers
 {

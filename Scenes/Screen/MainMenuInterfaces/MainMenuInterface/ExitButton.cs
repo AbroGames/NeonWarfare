@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.MainMenuInterface;
 
 public partial class ExitButton : Button
 {

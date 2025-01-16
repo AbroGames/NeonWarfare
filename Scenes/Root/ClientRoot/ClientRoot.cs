@@ -5,7 +5,7 @@ using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 using NeonWarfare.Utils;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Root.ClientRoot;
 
 public partial class ClientRoot : Node2D
 {

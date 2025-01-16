@@ -1,4 +1,4 @@
-﻿global using KludgeBox.Godot;
-global using static KludgeBox.Godot.VectorExtensions;
-global using static KludgeBox.Godot.ColorExtensions;
+global using NeonWarfare.Scripts.KludgeBox.Godot;
+global using static NeonWarfare.Scripts.KludgeBox.Godot.Extensions.VectorExtensions;
+global using static NeonWarfare.Scripts.KludgeBox.Godot.Extensions.ColorExtensions;
 

@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.SafeHud;
 
 public partial class ToBattleButton : Button
 {

@@ -1,4 +1,4 @@
-﻿namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS;
 
 public static class FsExtensions
 {

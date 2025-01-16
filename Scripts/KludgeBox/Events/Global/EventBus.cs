@@ -5,7 +5,7 @@ using Godot;
 using NeonWarfare;
 using NeonWarfare.Utils;
 
-namespace KludgeBox.Events.Global;
+namespace NeonWarfare.Scripts.KludgeBox.Events.Global;
 
 public static class EventBus
 {

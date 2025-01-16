@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Content;
 
 public class Fx
 {

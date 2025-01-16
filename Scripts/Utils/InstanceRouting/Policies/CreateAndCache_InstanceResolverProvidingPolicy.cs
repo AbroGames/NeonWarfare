@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using KludgeBox;
 
-namespace NeonWarfare.Utils.InstanceRouting.Policies;
+namespace NeonWarfare.Scripts.Utils.InstanceRouting.Policies;
 
 /// <summary>
 /// Дефолтная политика получения резолвера - создать и сохранить для переиспользования.

@@ -1,6 +1,6 @@
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Root.ServerRoot;
 
 public partial class ServerRoot
 {

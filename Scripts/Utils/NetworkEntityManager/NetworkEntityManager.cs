@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.NetworkEntityManager;
 
 public abstract class NetworkEntityManager
 {

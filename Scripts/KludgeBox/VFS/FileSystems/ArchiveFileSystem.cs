@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 
 public abstract class ArchiveFileSystem : FileSystem, IDisposable
 {

@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
-namespace KludgeBox.Structs;
+namespace NeonWarfare.Scripts.KludgeBox.Structs;
 
 /// <summary>
 /// Represents a cluster of intersecting circles in 2D space.

@@ -3,7 +3,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ServerPlayer : ServerCharacter
 {

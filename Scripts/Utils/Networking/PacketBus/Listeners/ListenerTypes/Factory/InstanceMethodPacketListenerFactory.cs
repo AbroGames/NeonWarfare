@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Reflection;
 using NeonWarfare.Utils.InstanceRouting;
 using NeonWarfare.Utils.Networking.DestinationTypes;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes.Factory;
 
 public class InstanceMethodPacketListenerFactory : IPacketListenerFactory
 {

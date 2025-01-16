@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 /// <summary>
 /// Reparents node to its parents parent.

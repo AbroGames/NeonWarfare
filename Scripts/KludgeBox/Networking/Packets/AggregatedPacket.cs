@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using KludgeBox.Collections;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 /// <summary>
 /// This packet can contain multiple other packets.

@@ -1,7 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using Godot;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 
 public class Vector2Handler : PayloadHandler<Vector2>
 {

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare.LoadingScreen;
+namespace NeonWarfare.Scenes.Screen.LoadingScreen;
 
 public partial class LoadingScreen : CanvasLayer
 {

@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.Components.Overlay;
 
 /// <summary>
 /// WARNING: Here be dragons! Be careful, as this node code will also run IN THE EDITOR.

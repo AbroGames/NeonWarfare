@@ -4,7 +4,7 @@ using Godot;
 using KludgeBox;
 using NeonWarfare.Utils;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Root.StarterScene;
 
 public partial class StarterScene : Node
 {

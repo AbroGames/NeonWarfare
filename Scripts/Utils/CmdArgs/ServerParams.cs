@@ -3,7 +3,7 @@ using Godot;
 using KludgeBox.Networking;
 using NeonWarfare.Utils;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.CmdArgs;
 
 public readonly record struct ServerParams(bool IsHeadless, bool IsRender, int Port, string Admin, int? ParentPid)
 {

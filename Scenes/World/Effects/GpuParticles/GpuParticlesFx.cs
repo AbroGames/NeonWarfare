@@ -2,7 +2,7 @@ using System;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Effects.GpuParticles;
 
 public partial class GpuParticlesFx : Node2D
 {

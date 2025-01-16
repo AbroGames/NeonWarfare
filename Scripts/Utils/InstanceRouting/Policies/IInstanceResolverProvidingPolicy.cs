@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.InstanceRouting.Policies;
+namespace NeonWarfare.Scripts.Utils.InstanceRouting.Policies;
 
 /// <summary>
 /// Интерфейс описывает логику получения резолвера указанного типа.

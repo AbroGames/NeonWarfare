@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS.Base;
 
 public class FsEntry : IEquatable<FsEntry>
 {

@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using KludgeBox.Networking;
 using NeonWarfare.KludgeBox.Events;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 internal sealed class EventHub
 {

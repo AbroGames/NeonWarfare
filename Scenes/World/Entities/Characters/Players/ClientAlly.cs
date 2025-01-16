@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientAlly : ClientCharacter 
 {

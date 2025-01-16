@@ -4,7 +4,7 @@ global using real = double;
 global using real = float;
 #endif
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox;
 
 public static class FloatHelper
 {

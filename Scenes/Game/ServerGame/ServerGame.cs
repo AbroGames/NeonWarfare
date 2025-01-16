@@ -4,6 +4,8 @@ using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
 
+namespace NeonWarfare.Scenes.Game.ServerGame;
+
 public partial class ServerGame : Node2D
 {
 	

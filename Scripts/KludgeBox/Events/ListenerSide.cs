@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 [Flags]
 public enum ListenerSide

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace KludgeBox.Collections;
+namespace NeonWarfare.Scripts.KludgeBox.Collections;
 
 public class ReadOnlyHashSet<T> : IReadOnlyCollection<T>
 {

@@ -1,6 +1,7 @@
 using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.GraphicSettingInterface;
+
 public partial class FullscreenCheckBox : CheckBox
 {
 	public override void _Ready()

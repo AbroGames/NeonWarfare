@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Content;
 
 public static class Keys
 {

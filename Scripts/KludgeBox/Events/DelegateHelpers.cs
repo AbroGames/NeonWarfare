@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Reflection;
 using KludgeBox.Networking;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 public static class DelegateHelpers
 {

@@ -3,7 +3,7 @@ using System.Linq;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.Process;
 
 public partial class ProcessShutdowner : Node
 {

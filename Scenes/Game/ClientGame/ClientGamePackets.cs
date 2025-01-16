@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Godot;
 using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.LoadingScreen;
+
+namespace NeonWarfare.Scenes.Game.ClientGame;
 
 public partial class ClientGame
 {

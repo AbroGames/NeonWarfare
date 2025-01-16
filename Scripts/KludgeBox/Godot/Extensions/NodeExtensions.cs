@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 public static class NodeExtensions
 {

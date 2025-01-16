@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.Camera.Shifts;
 
 public interface IShiftProvider
 {

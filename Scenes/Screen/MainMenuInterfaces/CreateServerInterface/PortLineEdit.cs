@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.CreateServerInterface;
 
 public partial class PortLineEdit : LineEdit
 {

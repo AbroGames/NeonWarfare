@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.PackedScenesContainer.ClientPackedScenesContainer;
+
 public partial class ClientPackedScenesContainer : Node 
 {
     /*

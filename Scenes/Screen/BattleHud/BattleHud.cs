@@ -5,7 +5,7 @@ using System.Linq;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.BattleHud;
 
 public partial class BattleHud : Hud
 {

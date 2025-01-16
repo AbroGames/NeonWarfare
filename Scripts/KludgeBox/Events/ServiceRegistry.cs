@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using KludgeBox.Events;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 public class ServiceRegistry
 {

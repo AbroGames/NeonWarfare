@@ -1,4 +1,4 @@
-﻿namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 public abstract class CancellableEvent : IEvent
 {

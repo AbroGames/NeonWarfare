@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 
 public class ByteHandler : PayloadHandler<byte>
 {

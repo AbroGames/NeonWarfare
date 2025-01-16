@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.BattleHud;
 
 public partial class Icon : TextureRect
 {

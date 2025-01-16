@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization;
 
 public class ConfigurableBinarySerializer<T> : IBinarySerializer<T> where T : new()
 {

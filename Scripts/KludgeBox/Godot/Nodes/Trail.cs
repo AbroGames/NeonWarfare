@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Godot;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 /// <summary>
 /// This node is slow AF

@@ -1,6 +1,8 @@
 ﻿using System;
 using NeonWarfare;
 
+namespace NeonWarfare.Scenes.Game.ClientGame.AllyProfile;
+
 public class ClientPlayerProfile : ClientAllyProfile
 {
 

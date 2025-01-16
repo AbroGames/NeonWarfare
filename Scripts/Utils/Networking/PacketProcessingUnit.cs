@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using NeonWarfare.Utils.InstanceRouting;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking;
 
 public class PacketProcessingUnit
 {

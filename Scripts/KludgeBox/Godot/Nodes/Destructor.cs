@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.Scheduling;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 [GlobalClass]
 public partial class Destructor : Node

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace NeonWarfare.LoadingScreen;
+namespace NeonWarfare.Scenes.Screen.LoadingScreen;
 
 public class LoadingScreenBuilder
 {

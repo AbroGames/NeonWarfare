@@ -1,3 +1,3 @@
-﻿namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
 
 public interface IPacket;

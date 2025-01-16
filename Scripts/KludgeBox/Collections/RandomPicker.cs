@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KludgeBox.Collections;
+namespace NeonWarfare.Scripts.KludgeBox.Collections;
 
 public class RandomPicker<T> : ICollection<T>
 {

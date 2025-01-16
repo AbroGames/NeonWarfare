@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Game.ClientGame.MainScenes.SafeWorld;
 
 public partial class SafeWorldMainScene : Node2D, IWorldMainScene
 {

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace KludgeBox.VFS;
-
+namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 
 /// <summary>
 /// Allows to merge FileSystems. Added FileSystems will add new files or overwrite existing files.

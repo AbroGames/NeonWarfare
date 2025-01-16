@@ -1,7 +1,6 @@
-﻿
-using System;
+﻿using System;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class GamePacketAttribute : Attribute;

@@ -3,6 +3,8 @@ using Godot;
 using KludgeBox.Networking;
 using NeonWarfare;
 
+namespace NeonWarfare.Scenes.Game.ClientGame.Ping;
+
 public partial class PingChecker
 {
     

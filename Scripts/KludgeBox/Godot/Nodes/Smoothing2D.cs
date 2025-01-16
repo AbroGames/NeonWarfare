@@ -1,7 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Godot;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 [GlobalClass]
 public partial class Smoothing2D : Node2D

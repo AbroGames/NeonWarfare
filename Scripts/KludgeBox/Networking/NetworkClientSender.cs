@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using Godot;
 using KludgeBox.Events.Global;
 using NeonWarfare;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
 public partial class Network
 {

@@ -6,6 +6,8 @@ using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.LoadingScreen;
 
+namespace NeonWarfare.Scenes.Game.ServerGame;
+
 public partial class ServerGame
 {
     

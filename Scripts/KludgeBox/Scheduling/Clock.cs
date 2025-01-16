@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Timers;
 using static KludgeBox.Scheduling.ClockEvents;
 
-namespace KludgeBox.Scheduling;
+namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 /// <summary>
 /// This class provides basic clock functionality.

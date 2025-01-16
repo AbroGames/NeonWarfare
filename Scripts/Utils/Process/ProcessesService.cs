@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.Process;
 
 public static class ProcessesService
 {

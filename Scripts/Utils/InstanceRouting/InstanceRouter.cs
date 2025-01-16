@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NeonWarfare.Utils.InstanceRouting.Policies;
 
-namespace NeonWarfare.Utils.InstanceRouting;
+namespace NeonWarfare.Scripts.Utils.InstanceRouting;
 
 /// <summary>
 /// Главный класс, отвечающий за резолвинг сущностей. В теории достаточно создать один экземпляр этого класса и он будет работать без дополнительных ручных настроек.

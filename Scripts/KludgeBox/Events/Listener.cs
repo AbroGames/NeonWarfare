@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using NeonWarfare.KludgeBox.Events;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 internal class Listener<T> : IListener where T : IEvent
 {

@@ -6,6 +6,8 @@ using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.Utils.Cooldown;
 
+namespace NeonWarfare.Scenes.Game.ClientGame.Ping;
+
 public partial class PingChecker : Node
 {
     public record PingInfo(long PingId, Stopwatch SentTimer);

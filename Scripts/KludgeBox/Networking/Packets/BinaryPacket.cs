@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using KludgeBox.Collections;
 using KludgeBox;
 using KludgeBox.Networking.Serializers;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 /// <summary>
 /// Base type for all binary serializable packets. Only public <b>fields without [<see cref="NonSerializedAttribute"/>]</b> are serialized.

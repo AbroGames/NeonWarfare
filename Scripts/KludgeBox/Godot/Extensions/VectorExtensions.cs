@@ -1,7 +1,7 @@
-﻿using System.Linq;
+using System.Linq;
 using Godot;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 public static class VectorExtensions
 {

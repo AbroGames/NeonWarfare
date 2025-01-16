@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Core;
 
 public static class NotNullChecker
 {

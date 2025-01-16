@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Utils.InstanceRouting;
+namespace NeonWarfare.Scripts.Utils.InstanceRouting;
 
 public interface IInstanceResolver
 {

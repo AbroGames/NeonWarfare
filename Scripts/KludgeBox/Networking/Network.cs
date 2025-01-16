@@ -6,7 +6,7 @@ using System.Linq;
 using Godot;
 using KludgeBox.Events.Global;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
 /// <summary>
 /// Describes logic for obtaining instance by its identifier.

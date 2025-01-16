@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 using NeonWarfare;
+
+namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 
 public partial class ClientNetworkEntityComponent : NetworkEntityComponent
 {

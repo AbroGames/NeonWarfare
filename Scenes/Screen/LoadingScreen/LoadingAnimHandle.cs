@@ -1,6 +1,8 @@
 using Godot;
 using System;
 
+namespace NeonWarfare.Scenes.Screen.LoadingScreen;
+
 public partial class LoadingAnimHandle : Node2D
 {
 	[Export] public Sprite2D ThickPart;

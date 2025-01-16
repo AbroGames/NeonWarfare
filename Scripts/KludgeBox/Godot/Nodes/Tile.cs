@@ -1,5 +1,7 @@
 ﻿using Godot;
 
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
+
 public partial class Tile : Sprite2D
 {
 	public float Width;

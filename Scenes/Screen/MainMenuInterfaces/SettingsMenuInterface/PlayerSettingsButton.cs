@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.SettingsMenuInterface;
 
 public partial class PlayerSettingsButton : Button
 {

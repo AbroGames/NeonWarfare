@@ -1,4 +1,4 @@
-﻿namespace KludgeBox.Scheduling;
+namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 public static class ClockEvents
 {

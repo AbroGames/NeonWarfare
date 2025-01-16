@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.IO;
 using KludgeBox.Collections;
 using KludgeBox.Networking;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 
 public class PacketSerializer
 {

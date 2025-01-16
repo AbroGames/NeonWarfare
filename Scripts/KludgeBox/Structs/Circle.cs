@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Godot;
 using Newtonsoft.Json;
 
-namespace KludgeBox.Structs;
+namespace NeonWarfare.Scripts.KludgeBox.Structs;
 
 /// <summary>
 /// Represents a circle in 2D space defined by its center <see cref="Position"/> and <see cref="Radius"/>.

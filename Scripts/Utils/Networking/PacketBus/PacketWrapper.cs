@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus;
 
 public class PacketWrapper
 {

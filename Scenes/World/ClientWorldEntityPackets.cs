@@ -5,7 +5,7 @@ using KludgeBox;
 using KludgeBox.Events;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ClientWorld
 {

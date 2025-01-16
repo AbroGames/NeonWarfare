@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 public static class PacketHelper
 {

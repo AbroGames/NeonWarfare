@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainScene;
 
 public partial class NodeContainer : Node
 {

@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace KludgeBox.Scheduling;
+namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 /// <summary>
 /// Specifies the mode of a cooldown mechanism.

@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.Components.TwoColoredBar;
 
 public partial class TwoColoredBar : ColorRect
 {

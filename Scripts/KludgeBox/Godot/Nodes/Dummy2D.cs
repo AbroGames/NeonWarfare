@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 /// <summary>
 /// Custom 2D node class for a dummy object with optional despawn functionality.

@@ -1,4 +1,4 @@
-﻿namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 public enum ListenerPriority
 {

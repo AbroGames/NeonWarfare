@@ -3,6 +3,8 @@ using Godot;
 using KludgeBox.Networking;
 using NeonWarfare;
 
+namespace NeonWarfare.Scenes.Game.ServerGame;
+
 public partial class ServerGame
 {
     

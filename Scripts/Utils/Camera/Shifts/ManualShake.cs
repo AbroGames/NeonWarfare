@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.Camera.Shifts;
 
 public class ManualShake : IShiftProvider
 {

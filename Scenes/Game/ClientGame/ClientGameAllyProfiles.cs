@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+namespace NeonWarfare.Scenes.Game.ClientGame;
+
 public partial class ClientGame
 {
     public ClientPlayerProfile PlayerProfile { get; private set; }

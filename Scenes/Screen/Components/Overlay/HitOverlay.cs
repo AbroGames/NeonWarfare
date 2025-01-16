@@ -1,7 +1,6 @@
 using Godot;
 
-namespace NeonWarfare;
-
+namespace NeonWarfare.Scenes.Screen.Components.Overlay;
 
 public partial class HitOverlay : Overlay
 {

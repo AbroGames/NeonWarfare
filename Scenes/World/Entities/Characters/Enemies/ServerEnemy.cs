@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 
 public partial class ServerEnemy : ServerCharacter
 {

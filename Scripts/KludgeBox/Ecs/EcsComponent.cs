@@ -1,4 +1,4 @@
-﻿namespace KludgeBox.Ecs;
+namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 /// <summary>
 /// У компонентов не должно быть никакой иерархии наследования, кроме этого класса.

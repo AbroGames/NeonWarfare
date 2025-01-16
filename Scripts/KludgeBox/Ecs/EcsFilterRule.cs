@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace KludgeBox.Ecs;
+namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 public sealed class EcsFilterRule(Type filterType, bool include)
 {

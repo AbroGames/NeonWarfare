@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using Godot;
 using KludgeBox.Events;
 using NeonWarfare;
+
+namespace NeonWarfare.Scripts.Utils.NetworkEntityManager;
 
 public abstract partial class NetworkEntityComponent : Node
 {

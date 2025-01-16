@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Reflection;
 using KludgeBox;
 
-namespace KludgeBox.Networking.Serializers;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 
 public static partial class BinarySerializers
 {

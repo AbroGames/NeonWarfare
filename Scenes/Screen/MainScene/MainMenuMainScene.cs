@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainScene;
 
 public partial class MainMenuMainScene : Node2D
 {

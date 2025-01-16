@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.InstanceRouting;
+namespace NeonWarfare.Scripts.Utils.InstanceRouting;
 
 /// <summary>
 /// Интерфейс - заглушка для строгой типизации в методах. Никогда не должен реализовываться напрямую. Вместо него используй <see cref="IResolvableBy{TResolver}"/>

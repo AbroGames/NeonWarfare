@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using KludgeBox.Structs;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Core;
 
 /// <summary>
 /// Represents a pseudo-random number generator with the ability to save and restore its state.

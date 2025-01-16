@@ -1,6 +1,6 @@
-﻿using NeonWarfare.KludgeBox.Events;
+using NeonWarfare.KludgeBox.Events;
 
-namespace KludgeBox.Events;
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 internal interface IListener
 {

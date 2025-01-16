@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -6,7 +6,7 @@ using Godot;
 using KludgeBox.Events;
 using Newtonsoft.Json;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 public abstract class NetPacket : HandleableEvent
 {

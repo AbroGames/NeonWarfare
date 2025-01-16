@@ -1,4 +1,6 @@
-﻿using NeonWarfare;
+using NeonWarfare;
+
+namespace NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 
 public class ServerPlayerProfile
 {

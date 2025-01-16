@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox.Structs;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 public static class RectExtensions
 {

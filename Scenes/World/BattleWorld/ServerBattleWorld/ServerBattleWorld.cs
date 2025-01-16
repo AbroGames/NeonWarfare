@@ -3,7 +3,7 @@ using KludgeBox;
 using KludgeBox.Events.Global;
 using NeonWarfare.Utils.Cooldown;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 
 public partial class ServerBattleWorld : ServerWorld
 {

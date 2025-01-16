@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.Cooldown;
+namespace NeonWarfare.Scripts.Utils.Cooldown;
 
 public class AutoCooldown : Cooldown
 {

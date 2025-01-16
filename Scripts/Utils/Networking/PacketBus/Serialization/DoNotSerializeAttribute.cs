@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class DoNotSerializeAttribute : Attribute;

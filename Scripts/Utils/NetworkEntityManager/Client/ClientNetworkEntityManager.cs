@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 
 public class ClientNetworkEntityManager : NetworkEntityManager
 {

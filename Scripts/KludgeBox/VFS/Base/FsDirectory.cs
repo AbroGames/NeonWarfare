@@ -1,10 +1,10 @@
-﻿// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMember.Global
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace KludgeBox.VFS;
+namespace NeonWarfare.Scripts.KludgeBox.VFS.Base;
 
 public class FsDirectory : FsEntry
 {

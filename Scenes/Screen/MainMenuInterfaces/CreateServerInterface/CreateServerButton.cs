@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using Godot;
 using KludgeBox;
 using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.CreateServerInterface;
 
 public partial class CreateServerButton : Button
 {

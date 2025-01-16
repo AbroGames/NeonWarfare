@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Godot;
 using KludgeBox.Godot;
 
-namespace KludgeBox.Networking.Serializers;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 
 /// <summary>
 /// <see cref="IBinarySerializer"/> collection.

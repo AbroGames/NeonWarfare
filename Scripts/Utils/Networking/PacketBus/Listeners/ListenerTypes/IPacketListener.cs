@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.Networking.DestinationTypes;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes;
 
 public interface IPacketListener
 {

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using Godot;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Core;
 
 public static class Maths
 {

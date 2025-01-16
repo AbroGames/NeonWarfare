@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using Godot;
 using KludgeBox.Collections;
 
-namespace KludgeBox.Ecs;
+namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 public partial class EcsEntity : Node
 {

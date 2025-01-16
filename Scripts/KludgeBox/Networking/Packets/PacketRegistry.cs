@@ -1,9 +1,9 @@
-﻿
+
 using System;
 using KludgeBox.Collections;
 using KludgeBox;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 public class PacketRegistry : TypeRegistry
 {

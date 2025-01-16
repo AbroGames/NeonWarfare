@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace NeonWarfare.Utils.InstanceRouting.Policies;
+namespace NeonWarfare.Scripts.Utils.InstanceRouting.Policies;
 
 /// <summary>
 /// Дополнительная неиспользуемая политика получения резолвера - вернуть заранее созданный экземпляр резолвера

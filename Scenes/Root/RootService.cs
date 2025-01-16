@@ -4,7 +4,7 @@ using KludgeBox.Events.Global;
 using KludgeBox.Networking;
 using NeonWarfare.Utils;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Root;
 
 public static class RootService
 {

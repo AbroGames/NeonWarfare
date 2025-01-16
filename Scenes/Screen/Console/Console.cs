@@ -3,7 +3,7 @@ using System.Text;
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.Console;
 
 public partial class Console : CanvasLayer, ILogger
 {

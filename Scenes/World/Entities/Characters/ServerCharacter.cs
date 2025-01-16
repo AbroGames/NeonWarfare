@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Entities.Characters;
 
 public partial class ServerCharacter : CharacterBody2D
 {

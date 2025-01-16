@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace KludgeBox.Collections
+namespace NeonWarfare.Scripts.KludgeBox.Collections
 {
 	/// <summary>
 	/// Represents a weighted random picker that can randomly select stored items based on their weight.

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NeonWarfare.Utils.InstanceRouting;
-
+namespace NeonWarfare.Scripts.Utils.InstanceRouting;
 
 /// <summary>
 /// Вспомогательные статические утилиты для маппинга типа сущности в тип её резолвера через чтение интерфейса <see cref="IResolvableBy{TResolver}"/>

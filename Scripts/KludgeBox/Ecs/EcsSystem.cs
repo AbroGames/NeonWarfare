@@ -1,5 +1,4 @@
-﻿
-namespace KludgeBox.Ecs;
+﻿namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 public abstract class EcsSystem : ISystem
 {

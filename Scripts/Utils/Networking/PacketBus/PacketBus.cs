@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NeonWarfare.Utils.InstanceRouting;
 using NeonWarfare.Utils.Networking.DestinationTypes;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus;
 
 public class PacketBus
 {

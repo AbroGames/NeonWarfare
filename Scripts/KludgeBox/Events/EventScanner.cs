@@ -6,8 +6,7 @@ using System.Reflection;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace KludgeBox.Events;
-
+namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 /// <summary>
 /// Provides functionality to scan for event listener methods and subscribe them to an event bus.

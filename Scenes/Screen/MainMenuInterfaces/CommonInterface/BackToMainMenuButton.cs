@@ -1,7 +1,7 @@
-﻿using Godot;
+using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.CommonInterface;
 
 public partial class BackToMainMenuButton : Button
 {

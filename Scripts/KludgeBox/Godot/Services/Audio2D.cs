@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Godot;
 using KludgeBox.Collections;
 
-namespace KludgeBox.Godot;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Services;
 
 [GlobalClass]
 public partial class Audio2D : Node2D

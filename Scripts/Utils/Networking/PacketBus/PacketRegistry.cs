@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using KludgeBox;
 using KludgeBox.Collections;
 using KludgeBox.Networking;
 
-namespace NeonWarfare.Utils.Networking;
+namespace NeonWarfare.Scripts.Utils.Networking.PacketBus;
 
 public class PacketRegistry
 {

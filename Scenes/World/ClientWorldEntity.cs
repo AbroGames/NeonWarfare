@@ -4,7 +4,7 @@ using Godot;
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ClientWorld
 {

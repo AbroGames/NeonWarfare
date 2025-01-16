@@ -1,6 +1,6 @@
 using KludgeBox.Events;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
 public readonly record struct PeerConnectedEvent(long Id) : IEvent;
 public readonly record struct PeerDisconnectedEvent(long Id) : IEvent;

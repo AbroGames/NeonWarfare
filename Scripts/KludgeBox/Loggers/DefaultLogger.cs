@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Text;
 using Godot;
 
-namespace KludgeBox.Loggers;
+namespace NeonWarfare.Scripts.KludgeBox.Loggers;
 
 internal class DefaultLogger : ILogger
 {

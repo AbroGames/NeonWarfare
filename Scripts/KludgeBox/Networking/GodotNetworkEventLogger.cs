@@ -1,7 +1,7 @@
 using KludgeBox;
 using KludgeBox.Events;
 
-namespace KludgeBox.Networking;
+namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
 public static class GodotClientService
 {

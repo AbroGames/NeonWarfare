@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +6,7 @@ using Godot;
 using KludgeBox.Loggers;
 using Environment = System.Environment;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox;
 
 internal enum PrefixType
 {

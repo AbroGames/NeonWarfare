@@ -3,6 +3,8 @@ using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.Utils;
 
+namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
+
 public partial class ClientPlayerMovementComponent : Node
 {
     public ClientPlayer Parent { get; private set; } 

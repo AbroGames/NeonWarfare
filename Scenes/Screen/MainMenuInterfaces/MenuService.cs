@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces;
 
 public static class MenuService
 {

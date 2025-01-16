@@ -1,9 +1,11 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Godot;
 using KludgeBox.Events;
 using KludgeBox.Networking;
 using NeonWarfare;
 using NeonWarfare.Utils.Cooldown;
+
+namespace NeonWarfare.Scripts.Utils.Components;
 
 public partial class NetworkInertiaComponent : Node
 {

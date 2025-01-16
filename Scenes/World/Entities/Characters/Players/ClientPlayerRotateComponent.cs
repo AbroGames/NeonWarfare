@@ -2,6 +2,8 @@ using System;
 using Godot;
 using NeonWarfare;
 
+namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
+
 public partial class ClientPlayerRotateComponent : Node
 {
     public ClientPlayer Parent { get; private set; } 

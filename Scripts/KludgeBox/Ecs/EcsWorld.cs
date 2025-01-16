@@ -3,7 +3,7 @@ using System.Linq;
 using Godot;
 using KludgeBox.Collections;
 
-namespace KludgeBox.Ecs;
+namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 public partial class EcsWorld : Node2D
 {

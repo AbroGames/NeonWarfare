@@ -1,5 +1,7 @@
 using KludgeBox.Networking;
 
+namespace NeonWarfare.Scripts.Utils.Components;
+
 public partial class NetworkInertiaComponent
 {
     [GamePacket]

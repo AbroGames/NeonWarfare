@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace KludgeBox;
+namespace NeonWarfare.Scripts.KludgeBox.Core;
 
 /// <summary>
 /// The random distribution allows achieving a more reliable, yet still quite unpredictable randomness.

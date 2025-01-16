@@ -1,6 +1,6 @@
-﻿using Godot;
+using Godot;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.PlayerSettingsInterface;
 
 public partial class BlueSlider : HSlider
 {

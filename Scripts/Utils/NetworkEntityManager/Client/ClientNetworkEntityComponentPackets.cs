@@ -1,6 +1,8 @@
 using KludgeBox.Events;
 using KludgeBox.Networking;
 
+namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
+
 public partial class ClientNetworkEntityComponent
 {
 

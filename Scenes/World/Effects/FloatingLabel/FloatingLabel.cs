@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox;
 
-namespace NeonWarfare;
+namespace NeonWarfare.Scenes.World.Effects.FloatingLabel;
 
 public partial class FloatingLabel : Node2D
 {
