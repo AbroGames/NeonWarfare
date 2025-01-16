@@ -1,9 +1,8 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Godot;
-using KludgeBox;
-using NeonWarfare.Utils.Cooldown;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scripts.Utils.Process;
 
@@ -28,7 +27,7 @@ public partial class ProcessDeadChecker : Node
 
     public void CheckProcessIsDead()
     {
-        if (ProcessPid.HasValue && !Process.GetProcesses().Any(x => x.Id == ProcessPid.Value))
+        if (ProcessPid.HasValue && !System.Diagnostics.Process.GetProcesses().Any(x => x.Id == ProcessPid.Value))
         {
             Log.Info(LogMessageGenerator(ProcessPid.Value));
             ActionWhenDead?.Invoke();

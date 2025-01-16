@@ -1,7 +1,8 @@
 using System;
 using System.Text;
 using Godot;
-using KludgeBox.VFS;
+using NeonWarfare.Scripts.KludgeBox.VFS.Base;
+using NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 using Environment = System.Environment;
 
 namespace NeonWarfare.Scripts.KludgeBox.Loggers;

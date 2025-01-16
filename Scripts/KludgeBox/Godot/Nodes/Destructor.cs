@@ -1,5 +1,5 @@
-using Godot;
-using KludgeBox.Scheduling;
+﻿using Godot;
+using NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 

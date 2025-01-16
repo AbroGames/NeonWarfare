@@ -1,7 +1,6 @@
-
-using System;
-using KludgeBox.Collections;
-using KludgeBox;
+﻿using System;
+using NeonWarfare.Scripts.KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 

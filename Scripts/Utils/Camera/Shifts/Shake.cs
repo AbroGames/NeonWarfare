@@ -1,5 +1,5 @@
-using Godot;
-using KludgeBox;
+﻿using Godot;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.Utils.Camera.Shifts;
 

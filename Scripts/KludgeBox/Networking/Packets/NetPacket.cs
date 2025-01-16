@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Godot;
-using KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 using Newtonsoft.Json;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;

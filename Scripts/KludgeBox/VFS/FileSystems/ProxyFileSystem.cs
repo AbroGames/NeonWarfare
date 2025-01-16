@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using NeonWarfare.Scripts.KludgeBox.VFS.Base;
 
 namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 

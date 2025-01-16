@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 namespace NeonWarfare.Scripts.KludgeBox.Events;
 

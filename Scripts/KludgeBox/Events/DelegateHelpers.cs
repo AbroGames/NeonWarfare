@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Reflection;
-using KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scripts.KludgeBox.Events;
 

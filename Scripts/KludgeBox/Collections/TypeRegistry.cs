@@ -17,7 +17,7 @@ public abstract class TypeRegistry
     /// <summary>
     /// Creates new type registry.
     /// </summary>
-    /// <param name="type">Base type for all types registered in this registry. If not present will default to Object.</param>
+    /// <param name="type">Base type for all types registered in this registry. If not presnt will default to Object.</param>
     public TypeRegistry(Type type = null)
     {
         TargetType = type ?? typeof(Object);

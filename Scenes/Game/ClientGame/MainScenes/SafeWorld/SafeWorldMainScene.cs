@@ -1,5 +1,9 @@
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scenes.Screen;
+using NeonWarfare.Scenes.Screen.SafeHud;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.SafeWorld.ClientSafeWorld;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Game.ClientGame.MainScenes.SafeWorld;
 

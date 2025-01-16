@@ -1,5 +1,3 @@
-using NeonWarfare.Utils;
-
 namespace NeonWarfare.Scripts.Utils.CmdArgs;
 
 public readonly record struct ClientParams(string AutoConnectIp, int? AutoConnectPort)

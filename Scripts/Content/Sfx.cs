@@ -1,4 +1,4 @@
-using KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Collections;
 
 namespace NeonWarfare.Scripts.Content
 {

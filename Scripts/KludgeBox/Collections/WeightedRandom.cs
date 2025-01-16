@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.KludgeBox.Collections
 {

@@ -1,7 +1,8 @@
 using System;
 using System.Text;
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Screen.Console;
 

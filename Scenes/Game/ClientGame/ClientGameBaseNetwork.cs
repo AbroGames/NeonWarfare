@@ -1,8 +1,7 @@
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
+using NeonWarfare.Scenes.Game.ClientGame.Ping;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 

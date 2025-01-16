@@ -1,7 +1,7 @@
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
+using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 

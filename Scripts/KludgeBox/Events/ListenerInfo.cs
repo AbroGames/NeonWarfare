@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.Reflection;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 namespace NeonWarfare.Scripts.KludgeBox.Events;
 

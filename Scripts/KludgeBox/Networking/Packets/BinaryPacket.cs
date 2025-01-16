@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using KludgeBox.Collections;
-using KludgeBox;
-using KludgeBox.Networking.Serializers;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Networking.Serialization;
+using NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 

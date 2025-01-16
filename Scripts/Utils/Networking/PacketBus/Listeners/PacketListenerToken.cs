@@ -1,4 +1,4 @@
-using NeonWarfare.Utils.Networking.DestinationTypes;
+﻿using NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners;
 

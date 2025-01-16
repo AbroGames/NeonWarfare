@@ -1,8 +1,6 @@
-using System;
-using System.Diagnostics;
 using Godot;
-using KludgeBox;
-using NeonWarfare.Utils;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.Utils.CmdArgs;
 
 namespace NeonWarfare.Scenes.Root.StarterScene;
 

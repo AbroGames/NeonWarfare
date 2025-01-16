@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KludgeBox;
-using KludgeBox.Collections;
-using KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.BuiltinPackets;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus;
 

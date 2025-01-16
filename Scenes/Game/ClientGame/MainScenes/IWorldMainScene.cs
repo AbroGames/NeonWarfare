@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using NeonWarfare;
+using NeonWarfare.Scenes.Screen;
+using NeonWarfare.Scenes.World;
 
 namespace NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 

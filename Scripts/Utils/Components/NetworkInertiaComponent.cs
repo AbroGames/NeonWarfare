@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using Godot;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
-using NeonWarfare.Utils.Cooldown;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scripts.KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scripts.Utils.Components;
 

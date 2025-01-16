@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
-using NeonWarfare.Utils.Cooldown;
+using NeonWarfare.Scripts.KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scenes.Game.ClientGame.Ping;
 
@@ -43,7 +42,7 @@ public partial class PingChecker : Node
         _orderedPingInfo.AddLast(new PingInfo(pingId, stopwatch));
         
         stopwatch.Start();
-        Network.SendToServer(new ServerGame.CS_PingPacket(pingId));
+        Network.SendToServer(new ServerGame.ServerGame.CS_PingPacket(pingId));
         
         CheckAndDeleteOldAttempts();
     }

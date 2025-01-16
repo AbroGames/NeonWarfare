@@ -1,4 +1,4 @@
-using KludgeBox;
+using NeonWarfare.Scripts.KludgeBox;
 
 namespace NeonWarfare.Scenes.Root.ServerRoot;
 

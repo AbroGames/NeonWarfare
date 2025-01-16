@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Godot;
+using NeonWarfare.Scripts.KludgeBox.VFS.Base;
 using FileAccess = Godot.FileAccess;
 
 namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;

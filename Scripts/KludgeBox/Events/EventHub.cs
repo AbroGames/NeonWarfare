@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using KludgeBox.Networking;
-using NeonWarfare.KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 namespace NeonWarfare.Scripts.KludgeBox.Events;
 

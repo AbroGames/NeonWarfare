@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using KludgeBox.Godot;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 

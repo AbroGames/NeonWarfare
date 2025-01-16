@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Godot;
-using NeonWarfare;
-using NeonWarfare.Utils;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 namespace NeonWarfare.Scripts.KludgeBox.Events.Global;
 

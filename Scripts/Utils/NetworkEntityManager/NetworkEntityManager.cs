@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scripts.Utils.NetworkEntityManager;
 

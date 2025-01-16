@@ -1,5 +1,6 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Godot;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 

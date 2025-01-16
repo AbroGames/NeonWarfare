@@ -1,6 +1,6 @@
 using Godot;
-using KludgeBox;
-using KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 

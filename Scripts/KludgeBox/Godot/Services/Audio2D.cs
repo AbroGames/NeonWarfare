@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Services;
 

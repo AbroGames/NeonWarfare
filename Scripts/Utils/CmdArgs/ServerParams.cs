@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using Godot;
-using KludgeBox.Networking;
-using NeonWarfare.Utils;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scripts.Utils.CmdArgs;
 

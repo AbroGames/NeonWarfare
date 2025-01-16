@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Godot;
-using KludgeBox.Events.Global;
+using NeonWarfare.Scripts.KludgeBox.Events.Global;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking;
 

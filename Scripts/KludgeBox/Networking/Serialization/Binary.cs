@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using KludgeBox.Networking.Serializers;
+using NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization;
 

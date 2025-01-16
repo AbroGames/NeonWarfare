@@ -1,8 +1,4 @@
-using System;
-using System.Text.Json;
 using Godot;
-using KludgeBox;
-
 namespace NeonWarfare.Scripts.Utils.PlayerSettings;
 
 public class PlayerSettings

@@ -1,5 +1,7 @@
-using Godot;
-using KludgeBox;
+﻿using Godot;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.Utils.PlayerSettings;
 
 namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.PlayerSettingsInterface;
 

@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using NeonWarfare.Utils.Networking.DestinationTypes;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus;
 

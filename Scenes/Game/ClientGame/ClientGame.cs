@@ -1,9 +1,5 @@
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
-using NeonWarfare.LoadingScreen;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 

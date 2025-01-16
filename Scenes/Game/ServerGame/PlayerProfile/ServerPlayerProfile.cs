@@ -1,4 +1,5 @@
 using NeonWarfare;
+using NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 namespace NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 

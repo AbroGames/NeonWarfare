@@ -1,4 +1,4 @@
-using KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking;
 

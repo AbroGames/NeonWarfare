@@ -1,16 +1,20 @@
-using Godot;
-using NeonWarfare.Utils.InstanceRouting;
+﻿using NeonWarfare.Scripts.Utils.InstanceRouting;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerSources;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 
 namespace NeonWarfare.Scripts.Utils.Networking;
 
 public class PacketProcessingUnit
 {
-    public PacketBus PacketBus { get; set; }
+    public PacketBus.PacketBus PacketBus { get; set; }
     public PacketSerializer PacketSerializer { get; set; }
     public PacketRegistry PacketRegistry { get; set; }
     public InstanceRouter InstanceRouter { get; set; }
     
-    public PacketProcessingUnit(PacketBus bus, PacketRegistry registry, PacketSerializer packetSerializer, InstanceRouter instanceRouter)
+    public PacketProcessingUnit(PacketBus.PacketBus bus, PacketRegistry registry, PacketSerializer packetSerializer, InstanceRouter instanceRouter)
     {
         InstanceRouter = instanceRouter ?? new InstanceRouter();
         PacketBus = bus;
@@ -25,7 +29,7 @@ public class PacketProcessingUnit
 
         if (PacketBus is null)
         {
-            PacketBus = new PacketBus();
+            PacketBus = new PacketBus.PacketBus();
             PacketBus.SubscribeAll(new SidedListenerSource(ListenerSide.Both));
         }
     }

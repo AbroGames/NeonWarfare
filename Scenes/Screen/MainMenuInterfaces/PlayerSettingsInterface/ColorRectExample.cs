@@ -1,5 +1,6 @@
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.PlayerSettingsInterface;
 

@@ -1,10 +1,14 @@
 using System.Linq;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
-using NeonWarfare.LoadingScreen;
+using NeonWarfare.Scenes.Game.ClientGame.Ping;
+using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
+using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Game.ServerGame;
 
@@ -25,13 +29,13 @@ public partial class ServerGame
         //У нового игрока создаем профили уже подключенных игроков
         foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(peerConnectedEvent.Id))
         {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_AddAllyProfilePacket(profile.PeerId));
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_AddAllyProfilePacket(profile.PeerId));
         }
 
         if (World is ServerSafeWorld)
         {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
 
             //Спауним нового игрока
             World.SpawnPlayer(PlayerProfilesByPeerId[peerConnectedEvent.Id]);
@@ -42,11 +46,11 @@ public partial class ServerGame
                 Network.SendToClient(peerConnectedEvent.Id, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.PeerId));
             }
             
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ClearLoadingScreenPacket());
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
         } 
         else if (World is ServerBattleWorld)
         {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
+            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
         }
         else
         {
@@ -74,8 +78,8 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnWantToBattlePacket(CS_WantToBattlePacket wantToBattlePacket) 
     {
-        Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-        Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
+        Network.SendToAll(new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+        Network.SendToAll(new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
         
         ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
         ChangeMainScene(serverBattleWorld);
@@ -85,7 +89,7 @@ public partial class ServerGame
             serverBattleWorld.SpawnPlayer(playerProfile);
         }
         
-        Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
+        Network.SendToAll(new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
     }
 
     /*

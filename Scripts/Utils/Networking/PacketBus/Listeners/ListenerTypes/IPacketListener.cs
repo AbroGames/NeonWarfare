@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes;
 

@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 namespace NeonWarfare.Scenes.World;
 

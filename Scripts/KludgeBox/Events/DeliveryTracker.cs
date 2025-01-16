@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using KludgeBox;
-using KludgeBox.Events;
+﻿using System.Collections.Generic;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
 
 namespace NeonWarfare.Scripts.KludgeBox.Events;
 

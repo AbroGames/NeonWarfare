@@ -1,5 +1,5 @@
-using KludgeBox.Events;
-using KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 

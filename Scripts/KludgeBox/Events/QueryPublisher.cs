@@ -1,3 +1,5 @@
+﻿using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
+
 namespace NeonWarfare.Scripts.KludgeBox.Events;
 
 public sealed class QueryPublisher<T> where T : QueryEvent

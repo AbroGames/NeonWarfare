@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 using System.Reflection;
-using NeonWarfare.Utils.Networking.DestinationTypes;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes.Factory;
 

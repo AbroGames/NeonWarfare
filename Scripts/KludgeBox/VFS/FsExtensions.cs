@@ -1,3 +1,5 @@
+﻿using NeonWarfare.Scripts.KludgeBox.VFS.Base;
+
 namespace NeonWarfare.Scripts.KludgeBox.VFS;
 
 public static class FsExtensions

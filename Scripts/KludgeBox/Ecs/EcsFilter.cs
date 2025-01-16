@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Collections;
 
 namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 

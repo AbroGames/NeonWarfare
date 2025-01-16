@@ -1,6 +1,4 @@
-using NeonWarfare.Utils.Networking.DestinationTypes;
-
-namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes.Factory;
+﻿namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Listeners.ListenerTypes.Factory;
 
 public interface IPacketListenerFactory
 {

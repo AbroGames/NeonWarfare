@@ -1,4 +1,6 @@
-﻿namespace NeonWarfare.Scripts.KludgeBox.Ecs;
+﻿using NeonWarfare.Scripts.KludgeBox.Ecs.Systems.Interfaces;
+
+namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 
 public abstract class EcsSystem : ISystem
 {

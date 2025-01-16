@@ -1,9 +1,6 @@
-using System;
-using System.IO;
-using System.Linq;
-using Godot;
-using KludgeBox.Events.Global;
-using NeonWarfare;
+﻿using Godot;
+using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking;
 

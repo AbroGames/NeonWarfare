@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.Utils.Camera;
 
 namespace NeonWarfare.Scenes.World;
 

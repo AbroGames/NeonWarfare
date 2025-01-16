@@ -1,3 +1,5 @@
+﻿using NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
+
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus;
 
 public class PacketWrapper

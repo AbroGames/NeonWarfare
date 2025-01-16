@@ -1,5 +1,9 @@
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scenes.Screen;
+using NeonWarfare.Scenes.Screen.BattleHud;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Game.ClientGame.MainScenes.BattleWorld;
 

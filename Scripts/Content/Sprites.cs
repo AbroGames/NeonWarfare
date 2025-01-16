@@ -1,6 +1,6 @@
-using KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Collections;
 
-namespace NeonWarfare.Scripts.Content;
+namespace NeonWarfare.Scripts.Content
 {
 	public static class Sprites
 	{

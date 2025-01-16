@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Godot;
+using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.Utils.Camera.Shifts;
 
 namespace NeonWarfare.Scripts.Utils.Camera;
 

@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using KludgeBox;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 

@@ -1,3 +1,6 @@
+using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
+
 namespace NeonWarfare.Scenes.World.SafeWorld.ClientSafeWorld;
 
 public partial class ClientSafeWorld

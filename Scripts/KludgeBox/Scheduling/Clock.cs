@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Timers;
-using static KludgeBox.Scheduling.ClockEvents;
 
 namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 
@@ -10,7 +9,7 @@ namespace NeonWarfare.Scripts.KludgeBox.Scheduling;
 /// </summary>
 public class Clock
 {
-	public static event Action<Clock, TickEvent> Tick = null;
+	public static event Action<Clock, ClockEvents.TickEvent> Tick = null;
 		
 	public static int DefaultTps { get; set; } = 60;
 
@@ -90,7 +89,7 @@ public class Clock
 
 		// Fire tick start event
 		if (FireEvents)
-			Tick?.Invoke(this, new TickEvent(TickStage.Start, _first ? 0 : interval, CurrentTick, ClockName));
+			Tick?.Invoke(this, new ClockEvents.TickEvent(ClockEvents.TickStage.Start, _first ? 0 : interval, CurrentTick, ClockName));
 
 		// Execute main action
 		TickAction?.Invoke(interval);
@@ -100,7 +99,7 @@ public class Clock
 
 		// Fire tick end event
 		if (FireEvents)
-			Tick?.Invoke(this, new TickEvent(TickStage.End, _first? 0 : interval, CurrentTick, ClockName));
+			Tick?.Invoke(this, new ClockEvents.TickEvent(ClockEvents.TickStage.End, _first? 0 : interval, CurrentTick, ClockName));
 
 		if (_first)
 			_first = false;

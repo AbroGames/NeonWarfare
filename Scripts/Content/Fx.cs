@@ -1,3 +1,7 @@
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scenes.World.Effects.CpuParticles;
+using NeonWarfare.Scenes.World.Effects.GpuParticles;
+
 namespace NeonWarfare.Scripts.Content;
 
 public class Fx

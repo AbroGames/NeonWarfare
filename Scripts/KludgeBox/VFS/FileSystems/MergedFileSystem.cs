@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NeonWarfare.Scripts.KludgeBox.VFS.Base;
 
 namespace NeonWarfare.Scripts.KludgeBox.VFS.FileSystems;
 

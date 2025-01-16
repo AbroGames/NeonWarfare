@@ -1,8 +1,6 @@
-using System;
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using NeonWarfare;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.KludgeBox.Events;
 
 namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 

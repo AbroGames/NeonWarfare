@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
-using NeonWarfare.LoadingScreen;
+using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 

@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using KludgeBox;
-using KludgeBox.Scheduling;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Scheduling;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 

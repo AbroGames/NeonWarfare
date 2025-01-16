@@ -1,9 +1,6 @@
-using System;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using KludgeBox.Networking;
-using NeonWarfare;
+using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 
 namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Server;
 

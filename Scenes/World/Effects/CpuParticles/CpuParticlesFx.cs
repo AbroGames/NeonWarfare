@@ -1,6 +1,6 @@
 using System;
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.World.Effects.CpuParticles;
 

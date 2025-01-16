@@ -1,8 +1,9 @@
 using System;
 using Godot;
-using KludgeBox;
-using KludgeBox.Events.Global;
-using KludgeBox.Networking;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.ConnectToServerInterface;
 

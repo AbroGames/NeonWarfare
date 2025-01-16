@@ -1,5 +1,5 @@
-using Godot;
-using KludgeBox.Networking;
+﻿using Godot;
+using NeonWarfare.Scenes.Root.ClientRoot;
 
 namespace NeonWarfare.Scenes.Screen.SafeHud;
 

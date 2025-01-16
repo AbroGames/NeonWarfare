@@ -1,5 +1,6 @@
-using System.Linq;
+﻿using System.Linq;
 using Godot;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 

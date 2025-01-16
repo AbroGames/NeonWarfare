@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Godot;
-using KludgeBox;
+using NeonWarfare.Scenes.Screen.Components.TwoColoredBar;
+using NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
+using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Screen.BattleHud;
 

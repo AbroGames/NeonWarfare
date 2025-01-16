@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Godot;
-using KludgeBox;
-using NeonWarfare;
-using NeonWarfare.LoadingScreen;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 

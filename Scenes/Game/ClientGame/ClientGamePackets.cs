@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Godot;
-using KludgeBox.Networking;
-using NeonWarfare;
-using NeonWarfare.LoadingScreen;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 

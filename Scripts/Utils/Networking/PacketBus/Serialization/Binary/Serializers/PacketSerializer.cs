@@ -1,8 +1,6 @@
-using System;
-using System.Buffers;
+﻿using System;
 using System.IO;
-using KludgeBox.Collections;
-using KludgeBox.Networking;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.PacketTypes;
 
 namespace NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 

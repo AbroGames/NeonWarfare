@@ -1,11 +1,10 @@
-using System.Collections.Generic;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events.Global;
+using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 
 namespace NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
 
-public partial class ClientBattleWorld : ClientWorld
+public partial class ClientBattleWorld
 {
 
 	private void PlayBattleMusic()

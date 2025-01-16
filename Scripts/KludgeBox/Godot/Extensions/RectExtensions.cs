@@ -1,5 +1,5 @@
 using Godot;
-using KludgeBox.Structs;
+using NeonWarfare.Scripts.KludgeBox.Structs;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 

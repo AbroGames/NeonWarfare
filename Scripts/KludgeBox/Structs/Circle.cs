@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using Godot;
+using NeonWarfare.Scripts.KludgeBox.Core;
 using Newtonsoft.Json;
 
 namespace NeonWarfare.Scripts.KludgeBox.Structs;

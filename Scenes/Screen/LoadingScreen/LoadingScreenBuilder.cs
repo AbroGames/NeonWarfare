@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using NeonWarfare.Scenes.Root.ClientRoot;
 
 namespace NeonWarfare.Scenes.Screen.LoadingScreen;
 

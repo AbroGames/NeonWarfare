@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Godot;
-using KludgeBox.Loggers;
+using NeonWarfare.Scripts.KludgeBox.Loggers;
 using Environment = System.Environment;
 
 namespace NeonWarfare.Scripts.KludgeBox;

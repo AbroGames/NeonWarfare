@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Collections;
+using NeonWarfare.Scripts.KludgeBox.Ecs.Systems.Interfaces;
 
 namespace NeonWarfare.Scripts.KludgeBox.Ecs;
 

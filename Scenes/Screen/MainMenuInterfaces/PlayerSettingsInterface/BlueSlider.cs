@@ -1,4 +1,5 @@
 using Godot;
+using NeonWarfare.Scenes.Root.ClientRoot;
 
 namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces.PlayerSettingsInterface;
 

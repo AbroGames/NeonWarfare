@@ -1,10 +1,4 @@
-using System;
-using System.Collections;
-using System.Linq;
-using Godot;
-using KludgeBox;
-using KludgeBox.Events;
-using NeonWarfare.Utils.Cooldown;
+using NeonWarfare.Scenes.Game.ClientGame.AllyProfile;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
