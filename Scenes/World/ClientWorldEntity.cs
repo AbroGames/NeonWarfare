@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
@@ -12,9 +12,20 @@ namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ClientWorld
 {
+    
     public ClientPlayer Player => ClientRoot.Instance.Game.PlayerProfile.Player;
     public ClientNetworkEntityManager NetworkEntityManager = new();
 
+    public IEnumerable<ClientAlly> GetAllies()
+    {
+        return ClientRoot.Instance.Game.AllyProfiles.Select(profile => profile.Ally);
+    }
+    
+    public ClientAlly GetAllyByPeerId(long peerId)
+    {
+        return ClientRoot.Instance.Game.AllyProfilesByPeerId[peerId].Ally;
+    }
+    
     public T CreateNetworkEntity<T>(PackedScene scene, long nid) where T : Node
     {
         T newNode = scene.Instantiate<T>();

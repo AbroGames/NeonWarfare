@@ -15,6 +15,9 @@ public partial class NetworkInertiaComponent
         public float Dir = dir;
         public float MovementDir = movementDir;
         public float MovementSpeed = movementSpeed;
+
+        public SC_InertiaEntityPacket(CS_InertiaEntityPacket packet) : 
+            this(packet.Nid, packet.X, packet.Y, packet.Dir, packet.MovementDir, packet.MovementSpeed) { }
     }
     
     [GamePacket]

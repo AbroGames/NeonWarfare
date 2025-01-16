@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ServerRoot;
@@ -12,6 +14,16 @@ public abstract partial class ServerWorld
 {
 
     public ServerNetworkEntityManager NetworkEntityManager = new();
+    
+    public IEnumerable<ServerPlayer> GetPlayers()
+    {
+        return ServerRoot.Instance.Game.PlayerProfiles.Select(profile => profile.Player);
+    }
+    
+    public ServerPlayer GetPlayerByPeerId(long peerId)
+    {
+        return ServerRoot.Instance.Game.PlayerProfilesByPeerId[peerId].Player;
+    }
     
     public T CreateNetworkEntity<T>(PackedScene scene) where T : Node
     {

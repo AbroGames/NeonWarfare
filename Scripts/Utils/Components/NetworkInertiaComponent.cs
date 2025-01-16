@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Cooldown;
@@ -11,7 +12,7 @@ namespace NeonWarfare.Scripts.Utils.Components;
 public partial class NetworkInertiaComponent : Node
 {
     public Node2D Parent;
-    public double InertiaCooldown { get; set; } = 0.1;
+    public double InertiaCooldown { get; set; } = 0.15;
 
     private float _movementSpeed;
     private float _movementDir;
@@ -41,7 +42,7 @@ public partial class NetworkInertiaComponent : Node
         Parent.Position += Vector2.FromAngle(_movementDir) * _movementSpeed * realDelta;
     }
 
-    public void OnInertiaEntityPacket(float x, float y, float dir, float movementSpeed, float movementDir)
+    public void OnInertiaEntityPacket(float x, float y, float dir, float movementDir, float movementSpeed)
     {
         Parent.Position = Vec(x, y);
         Parent.Rotation = dir;
@@ -65,16 +66,16 @@ public partial class NetworkInertiaComponent : Node
     public static void OnInertiaEntityPacketListener(SC_InertiaEntityPacket inertiaEntityPacket) //TODO подумать над таким неймингом. Записать в readme.
     {
         NetworkInertiaComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
-        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, inertiaEntityPacket.MovementSpeed, inertiaEntityPacket.MovementDir);
+        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, 
+            inertiaEntityPacket.MovementDir, inertiaEntityPacket.MovementSpeed);
     }
     
     [EventListener(ListenerSide.Server)]
     public static void OnInertiaEntityPacketListener(CS_InertiaEntityPacket inertiaEntityPacket)
     {
         NetworkInertiaComponent entityComponent = ServerRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
-        entityComponent.OnInertiaEntityPacket(
-            inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, inertiaEntityPacket.MovementSpeed, inertiaEntityPacket.MovementDir);
-        Network.SendToAllExclude(inertiaEntityPacket.SenderId, new SC_InertiaEntityPacket(inertiaEntityPacket.Nid, 
-            inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, inertiaEntityPacket.MovementSpeed, inertiaEntityPacket.MovementDir));
+        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, 
+            inertiaEntityPacket.MovementDir, inertiaEntityPacket.MovementSpeed);
+        Network.SendToAllExclude(inertiaEntityPacket.SenderId, new SC_InertiaEntityPacket(inertiaEntityPacket));
     }
 }
