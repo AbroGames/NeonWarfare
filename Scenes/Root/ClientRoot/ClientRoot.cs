@@ -11,7 +11,6 @@ namespace NeonWarfare.Scenes.Root.ClientRoot;
 public partial class ClientRoot : Node2D
 {
 	[Export] [NotNull] public ClientPackedScenesContainer PackedScenes { get; private set; }
-	[Export] [NotNull] public WorldEnvironment Environment { get; private set; }
 	
 	public ClientParams CmdParams { get; private set; }
 	public PlayerSettings PlayerSettings { get; private set; }

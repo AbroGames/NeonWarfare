@@ -6,12 +6,20 @@ namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ClientWorld : Node2D
 {
-
-    public Camera Camera {get; private set;} = new();
+    
+    public WorldEnvironment Environment {get; private set;}
+    public Background Background {get; private set;}
+    public Camera Camera {get; private set;}
     
     public override void _EnterTree()
     {
-        AddChild(ClientRoot.Instance.PackedScenes.Background.Instantiate());
+        Environment = ClientRoot.Instance.PackedScenes.WorldEnvironment.Instantiate<WorldEnvironment>();
+        AddChild(Environment);
+        
+        Background = ClientRoot.Instance.PackedScenes.Background.Instantiate<Background>();
+        AddChild(Background);
+        
+        Camera = new Camera();
         AddChild(Camera);
     }
 }
