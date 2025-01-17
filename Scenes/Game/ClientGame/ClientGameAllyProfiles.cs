@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeonWarfare.Scenes.Game.ClientGame.AllyProfile;
+using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 

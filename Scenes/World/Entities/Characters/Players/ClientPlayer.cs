@@ -1,4 +1,4 @@
-using NeonWarfare.Scenes.Game.ClientGame.AllyProfile;
+using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 

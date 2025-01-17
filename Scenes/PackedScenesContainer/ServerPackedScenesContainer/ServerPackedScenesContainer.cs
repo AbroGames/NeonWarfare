@@ -10,6 +10,9 @@ public partial class ServerPackedScenesContainer : Node
      * WORLD
      */
     [ExportGroup("World")]
+    [Export] [NotNull] public PackedScene SafeWorld { get; private set; }
+    [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
+    
     [Export] [NotNull] public PackedScene Player { get; private set; }
     [Export] [NotNull] public PackedScene Enemy { get; private set; }
     

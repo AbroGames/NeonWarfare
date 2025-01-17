@@ -57,7 +57,7 @@ text = "Neon Warfare"
 label_settings = SubResource("LabelSettings_ht27c")
 
 [node name="CreateServerButton" type="Button" parent="."]
-layout_mode = 2
+layout_mode = 0
 offset_top = 295.0
 offset_right = 340.0
 offset_bottom = 327.0
@@ -71,6 +71,7 @@ alignment = 0
 script = ExtResource("2_qxhat")
 
 [node name="ConnectToServerButton" type="Button" parent="."]
+layout_mode = 0
 offset_top = 330.0
 offset_right = 340.0
 offset_bottom = 362.0
@@ -84,6 +85,7 @@ alignment = 0
 script = ExtResource("3_6ncrt")
 
 [node name="SettingsButton" type="Button" parent="."]
+layout_mode = 0
 offset_top = 365.0
 offset_right = 340.0
 offset_bottom = 397.0
@@ -97,6 +99,7 @@ alignment = 0
 script = ExtResource("4_wn3h0")
 
 [node name="ExitButton" type="Button" parent="."]
+layout_mode = 0
 offset_top = 434.0
 offset_right = 340.0
 offset_bottom = 466.0

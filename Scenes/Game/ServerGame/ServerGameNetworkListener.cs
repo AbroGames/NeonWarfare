@@ -1,6 +1,7 @@
 using System.Linq;
 using NeonWarfare.Scenes.Game.ClientGame.Ping;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
+using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
@@ -73,7 +74,7 @@ public partial class ServerGame
 
         if (PlayerProfiles.Count() == 0)
         {
-            ServerSafeWorld serverSafeWorld = new ServerSafeWorld();
+            ServerSafeWorld serverSafeWorld = ServerRoot.Instance.PackedScenes.SafeWorld.Instantiate<ServerSafeWorld>();
             ChangeMainScene(serverSafeWorld);
         }
     }
@@ -87,13 +88,13 @@ public partial class ServerGame
     {
         Network.SendToAll(new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
         Network.SendToAll(new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
-        
-        ServerBattleWorld serverBattleWorld = new ServerBattleWorld();
-        ChangeMainScene(serverBattleWorld);
+
+        ServerBattleWorld battleWorld = ServerRoot.Instance.PackedScenes.BattleWorld.Instantiate<ServerBattleWorld>();
+        ChangeMainScene(battleWorld);
         
         foreach (ServerPlayerProfile playerProfile in PlayerProfiles)
         {
-            serverBattleWorld.SpawnPlayerInCenter(playerProfile);
+            battleWorld.SpawnPlayerInCenter(playerProfile);
         }
         
         Network.SendToAll(new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());

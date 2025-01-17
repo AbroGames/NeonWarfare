@@ -1,5 +1,5 @@
 using Godot;
-using NeonWarfare.Scenes.Game.ClientGame.AllyProfile;
+using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Players;

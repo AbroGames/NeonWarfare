@@ -1,8 +1,6 @@
-﻿using System;
-using NeonWarfare;
-using NeonWarfare.Scenes.World.Entities.Characters.Players;
+﻿using NeonWarfare.Scenes.World.Entities.Characters.Players;
 
-namespace NeonWarfare.Scenes.Game.ClientGame.AllyProfile;
+namespace NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 
 public class ClientPlayerProfile : ClientAllyProfile
 {

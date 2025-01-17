@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://ciaftf876v06k"]
+
+[ext_resource type="Script" path="res://Scenes/World/BattleWorld/ServerBattleWorld/ServerBattleWorld.cs" id="1_370tt"]
+[ext_resource type="PackedScene" uid="uid://bid1tsk0l2v1v" path="res://Scenes/World/BattleWorld/ClientBattleWorld/Wall.tscn" id="2_scg6d"]
+
+[node name="ServerBattleWorld" type="Node2D"]
+script = ExtResource("1_370tt")
+
+[node name="Wall" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(-5187, 56)
+scale = Vector2(1, 20)
+
+[node name="Wall2" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(2180, -3794)
+scale = Vector2(2.6, 1)
+
+[node name="Wall3" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(-3198, 2634)
+scale = Vector2(1, 6.8)
+
+[node name="Wall4" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(-1676, -3011)
+rotation = 0.943161
+scale = Vector2(1, 4.16)
+
+[node name="Wall5" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(2237, 1614)
+scale = Vector2(1, 7.68)
+
+[node name="Wall6" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(1045, -1927)
+scale = Vector2(5.24, 1)
+
+[node name="Wall7" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(4516, 12)
+scale = Vector2(1, 20)
+
+[node name="Wall8" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(-332, 5341)
+scale = Vector2(20, 1)
+
+[node name="Wall9" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(-332, -5327)
+scale = Vector2(20, 1)
+
+[node name="Wall10" parent="." instance=ExtResource("2_scg6d")]
+position = Vector2(-515, 2347)
+rotation = 2.34129
+scale = Vector2(1, 7)

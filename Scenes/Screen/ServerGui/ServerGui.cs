@@ -11,6 +11,8 @@ public partial class ServerGui : Control
     [Export] [NotNull] public Label Fps {get; set;}
     [Export] [NotNull] public Label Tps {get; set;}
     [Export] [NotNull] public Label Info {get; set;}
+
+    private const int MAX_TPS = 60; //TODO брать из ProjectSettings.GetSetting("physics/common/physics_ticks_per_second")
     
     private readonly Stopwatch _physicsStopwatch = new();
     private readonly Queue<double> _deltas = new();
@@ -25,7 +27,7 @@ public partial class ServerGui : Control
         Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
         Info.Text = $"Nodes: {Performance.GetMonitor(Performance.Monitor.ObjectNodeCount)}";
         Info.Text += $"\nFrame time process: {Performance.GetMonitor(Performance.Monitor.TimeProcess)}";
-        Info.Text += $"\nPhysics time process: {Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess)}";
+        Info.Text += $"\nPhysics time process: {Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess)} ({(Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess) * MAX_TPS * 100):N0} %)";
         Info.Text += $"\nWorld 1-level nodes: {ServerRoot.Instance.Game.World.GetChildCount()}";
     }
     
