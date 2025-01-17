@@ -24,6 +24,8 @@ public partial class ServerGui : Control
     {
         Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
         Info.Text = $"Nodes: {Performance.GetMonitor(Performance.Monitor.ObjectNodeCount)}";
+        Info.Text += $"\nFrame time process: {Performance.GetMonitor(Performance.Monitor.TimeProcess)}";
+        Info.Text += $"\nPhysics time process: {Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess)}";
         Info.Text += $"\nWorld 1-level nodes: {ServerRoot.Instance.Game.World.GetChildCount()}";
     }
     

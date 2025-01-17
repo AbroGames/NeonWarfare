@@ -61,6 +61,7 @@ public partial class ServerGame
     /*
      * При отключении игрока удаляем/деактивируем его PlayerProfile.
      * Удаляем игрока из мира и сообщаем об этом всем.
+     * Если это был последний игрок в боевом мире, то меняем мир на безопасный хаб.
      */
     [EventListener(ListenerSide.Server)]
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
@@ -69,6 +70,12 @@ public partial class ServerGame
         ServerPlayer disconnectedPlayer = PlayerProfilesByPeerId[peerDisconnectedEvent.Id].Player;
         disconnectedPlayer.QueueFree();
         RemovePlayerProfile(peerDisconnectedEvent.Id);
+
+        if (PlayerProfiles.Count() == 0)
+        {
+            ServerSafeWorld serverSafeWorld = new ServerSafeWorld();
+            ChangeMainScene(serverSafeWorld);
+        }
     }
     
     /*

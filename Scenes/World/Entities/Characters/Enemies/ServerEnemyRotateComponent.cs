@@ -18,6 +18,8 @@ public partial class ServerEnemyRotateComponent : Node
     //TODO вынести в отдельный Utils класс / common component, дублируется с ClientRotate
     public override void _Process(double delta)
     {
+        if (_parent.Target == null) return;
+        
         //Куда хотим повернуться
         double targetAngle = GetAngleToTarget();
         //На какой угол надо повернуться (знак указывает направление)
@@ -25,7 +27,7 @@ public partial class ServerEnemyRotateComponent : Node
         //Только направление (-1, 0, 1)
         double directionToTargetAngel = Mathf.Sign(deltaAngleToTargetAngel);
         //Максимальная скорость поворота (за секунду)
-        double rotationSpeedRad = Mathf.DegToRad(_parent.RotationSpeed); //TODO RotationSpeed хранить в компоненте? Или лямбда для получения?
+        double rotationSpeedRad = Mathf.DegToRad(_parent.RotationSpeed); //TODO RotationSpeed хранить в компоненте? Или в компоненте хранить лямбду для получения?
         //Максимальная скорость поворота (за прошедшее время)
         rotationSpeedRad *= delta;
         //Если надо повернуться на угол меньший максимальной скорости, то обрезаем скорость, чтобы повернуться ровно в цель
@@ -38,30 +40,11 @@ public partial class ServerEnemyRotateComponent : Node
     
     private double GetAngleToTarget()
     {
-        // Получаем текущую позицию игрока
-        var targetPos = GetClosestPlayer();
-        // Вычисляем вектор направления от объекта к игроку
-        var targetDir = _parent.DirectionTo(targetPos);
-        // Вычисляем направление от объекта к игроку
+        // Получаем текущую цель
+        var target = _parent.Target;
+        // Вычисляем вектор направления от объекта к цели
+        var targetDir = _parent.DirectionTo(target);
+        // Вычисляем направление от объекта к цели
         return targetDir.Angle();
-    }
-
-    //TODO поменять на более сложный алгоритм смены цели, чтобы врага нельзя было таскать туда-сюда. Учесть возможность выхода всех игроков с сервера (например, падение сети).
-    private ServerPlayer GetClosestPlayer()
-    {
-        ServerPlayer closestPlayer = null;
-        double closestDistance = double.MaxValue;
-        
-        foreach (ServerPlayer player in ServerRoot.Instance.Game.World.GetPlayers())
-        {
-            double distance = _parent.DistanceTo(player);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestPlayer = player;
-            }
-        }
-
-        return closestPlayer;
     }
 }

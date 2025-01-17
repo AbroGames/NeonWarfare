@@ -16,7 +16,7 @@ public partial class ServerBattleWorld : ServerWorld
         _enemySpawner.AddSpawnTask(new EnemySpawnRectTask(10, 0, Mathf.DegToRad(360), Vec(0, 0), Vec(200, 200)));
         _enemySpawner.AddSpawnTask(new EnemySpawnRectTask(100, 0, Mathf.DegToRad(360), Vec(-500, 0), Vec(0, 0)));
         _enemySpawner.AddSpawnTask(new EnemySpawnRectTask(10, 0, Mathf.DegToRad(0), Vec(500, 0), Vec(200, 200)));
-        _enemySpawner.AddSpawnTask(new EnemySpawnRingTask(100, 0, Mathf.DegToRad(360), Vec(0, 1000), 400, 400));
+        _enemySpawner.AddSpawnTask(new EnemySpawnRingTask(200, 0, Mathf.DegToRad(360), Vec(0, 1000), 400, 400));
     }
 
     public override void _Process(double delta)
