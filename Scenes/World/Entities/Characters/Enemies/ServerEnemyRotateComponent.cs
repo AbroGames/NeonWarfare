@@ -15,6 +15,7 @@ public partial class ServerEnemyRotateComponent : Node
         _parent = GetParent<ServerEnemy>();
     }
 
+    //TODO вынести в отдельный Utils класс / common component, дублируется с ClientRotate
     public override void _Process(double delta)
     {
         //Куда хотим повернуться
@@ -24,7 +25,7 @@ public partial class ServerEnemyRotateComponent : Node
         //Только направление (-1, 0, 1)
         double directionToTargetAngel = Mathf.Sign(deltaAngleToTargetAngel);
         //Максимальная скорость поворота (за секунду)
-        double rotationSpeedRad = Mathf.DegToRad(_parent.RotationSpeed);
+        double rotationSpeedRad = Mathf.DegToRad(_parent.RotationSpeed); //TODO RotationSpeed хранить в компоненте? Или лямбда для получения?
         //Максимальная скорость поворота (за прошедшее время)
         rotationSpeedRad *= delta;
         //Если надо повернуться на угол меньший максимальной скорости, то обрезаем скорость, чтобы повернуться ровно в цель

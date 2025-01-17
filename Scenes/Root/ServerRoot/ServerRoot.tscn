@@ -2,13 +2,13 @@
 
 [ext_resource type="Script" path="res://Scenes/Root/ServerRoot/ServerRoot.cs" id="1_mqlya"]
 [ext_resource type="PackedScene" uid="uid://bkft5taaifavw" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.tscn" id="2_qobvx"]
-[ext_resource type="PackedScene" uid="uid://b2gaknpctobq8" path="res://Scenes/Screen/Console/Console.tscn" id="3_dgb0x"]
+[ext_resource type="PackedScene" uid="uid://b0wr6xbhu5e1r" path="res://Scenes/Screen/ServerGui/ServerGui.tscn" id="3_jy53x"]
 
-[node name="ServerRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes", "Console")]
+[node name="ServerRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes", "ServerGui")]
 script = ExtResource("1_mqlya")
 PackedScenes = NodePath("ServerPackedScenesContainer")
-Console = NodePath("Console")
+ServerGui = NodePath("ServerGui")
 
 [node name="ServerPackedScenesContainer" parent="." instance=ExtResource("2_qobvx")]
 
-[node name="Console" parent="." instance=ExtResource("3_dgb0x")]
+[node name="ServerGui" parent="." instance=ExtResource("3_jy53x")]

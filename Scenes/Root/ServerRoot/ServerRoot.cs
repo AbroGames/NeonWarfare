@@ -12,7 +12,7 @@ namespace NeonWarfare.Scenes.Root.ServerRoot;
 public partial class ServerRoot : Node2D
 {
 	[Export] [NotNull] public ServerPackedScenesContainer PackedScenes { get; private set; }
-	//TODO ServerGUI [Export] [NotNull] public Console Console { get; private set; }
+	[Export] [NotNull] public ServerGui ServerGui { get; private set; }
 	
 	public ServerParams CmdParams { get; private set; }
 
