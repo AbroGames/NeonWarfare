@@ -1,10 +1,33 @@
-[gd_scene load_steps=6 format=3 uid="uid://br3ns4pa22dor"]
+[gd_scene load_steps=14 format=3 uid="uid://br3ns4pa22dor"]
 
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_inqmo"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/CreateServerMenuButton.cs" id="2_qxhat"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ConnectToServerMenuButton.cs" id="3_6ncrt"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/SettingsButton.cs" id="4_wn3h0"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ExitButton.cs" id="5_d204j"]
+[ext_resource type="Texture2D" uid="uid://b8y04ktoyxq80" path="res://Assets/Textures/MainMenuBackground.png" id="6_idndk"]
+[ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="7_eethm"]
+[ext_resource type="FontFile" uid="uid://bvcm8i6hwq1kx" path="res://Assets/Fonts/Play-Regular.ttf" id="8_bun70"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ht27c"]
+font = ExtResource("7_eethm")
+font_size = 68
+font_color = Color(1, 1, 1, 0)
+outline_size = 3
+outline_color = Color(0, 0.647059, 0.647059, 1)
+shadow_offset = Vector2(0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1r8b"]
+bg_color = Color(0, 0.647059, 0.647059, 1)
+shadow_color = Color(0, 0, 0, 1)
+shadow_size = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_enomp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8167e"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6ughm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hr5bf"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -14,40 +37,74 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Background" type="TextureRect" parent="."]
+modulate = Color(0, 0.647059, 0.647059, 0.211765)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -171.0
-offset_top = -208.0
-offset_right = 171.0
-offset_bottom = 208.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -603.0
+offset_top = -36.0
+offset_right = 1189.0
+offset_bottom = 701.0
+texture = ExtResource("6_idndk")
+expand_mode = 1
 
-[node name="CreateServerButton" type="Button" parent="VBoxContainer"]
+[node name="GameName" type="Label" parent="."]
 layout_mode = 2
-text = "Создать сервер"
-icon = ExtResource("1_inqmo")
+offset_left = 101.0
+offset_top = 190.0
+offset_right = 629.0
+offset_bottom = 269.0
+text = "Neon Warfare"
+label_settings = SubResource("LabelSettings_ht27c")
+
+[node name="CreateServerButton" type="Button" parent="."]
+layout_mode = 2
+offset_top = 295.0
+offset_right = 340.0
+offset_bottom = 327.0
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_bun70")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_enomp")
+text = "                      Create server          "
+alignment = 0
 script = ExtResource("2_qxhat")
 
-[node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Подключиться к серверу"
-icon = ExtResource("1_inqmo")
+[node name="ConnectToServerButton" type="Button" parent="."]
+offset_top = 330.0
+offset_right = 340.0
+offset_bottom = 362.0
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_bun70")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_8167e")
+text = "                      Connect to server"
+alignment = 0
 script = ExtResource("3_6ncrt")
 
-[node name="SettingsButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Настройки"
-icon = ExtResource("1_inqmo")
+[node name="SettingsButton" type="Button" parent="."]
+offset_top = 365.0
+offset_right = 340.0
+offset_bottom = 397.0
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_bun70")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6ughm")
+text = "                      Settings"
+alignment = 0
 script = ExtResource("4_wn3h0")
 
-[node name="ExitButton" type="Button" parent="VBoxContainer"]
-layout_mode = 2
-text = "Выход"
-icon = ExtResource("1_inqmo")
+[node name="ExitButton" type="Button" parent="."]
+offset_top = 434.0
+offset_right = 340.0
+offset_bottom = 466.0
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_bun70")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxFlat_n1r8b")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_hr5bf")
+text = "                      Exit"
+alignment = 0
 script = ExtResource("5_d204j")
