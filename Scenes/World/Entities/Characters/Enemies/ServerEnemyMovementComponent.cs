@@ -12,7 +12,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 
 public partial class ServerEnemyMovementComponent : Node
 {
-    private const int NetworkMessagePerSecond = 20;
+    private const int NetworkMessagePerSecond = 25;
 
     private ServerEnemy _parent;
     private ManualCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);

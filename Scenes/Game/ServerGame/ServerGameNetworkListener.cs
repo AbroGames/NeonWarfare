@@ -18,45 +18,12 @@ public partial class ServerGame
     
     /*
      * При подключении нового игрока создаем/активируем его PlayerProfile.
-     * Если сейчас BattleWorld, то отправляем ему заглушку и ждем окончания боя.
-     * Если сейчас SafeWorld, то синхронизируем мир, загружая союзников и окружающие объекты. Союзникам передаем инфу о новом игроке.
      */
     [EventListener(ListenerSide.Server)]
     public void OnPeerConnectedEvent(PeerConnectedEvent peerConnectedEvent)
     {
         Log.Info($"Client connected to server. Peer id = {peerConnectedEvent.Id}");
-        
         AddPlayerProfile(peerConnectedEvent.Id);
-        //У нового игрока создаем профили уже подключенных игроков
-        foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(peerConnectedEvent.Id))
-        {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_AddAllyProfilePacket(profile.PeerId));
-        }
-
-        if (World is ServerSafeWorld)
-        {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
-
-            //Спауним нового игрока
-            World.SpawnPlayerInCenter(PlayerProfilesByPeerId[peerConnectedEvent.Id]);
-            
-            //У нового игрока спауним всех остальных игроков
-            foreach (ServerPlayer player in GetPlayerProfilesExcluding(peerConnectedEvent.Id).Select(profile => profile.Player))
-            {
-                Network.SendToClient(peerConnectedEvent.Id, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.PeerId));
-            }
-            
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
-        } 
-        else if (World is ServerBattleWorld)
-        {
-            Network.SendToClient(peerConnectedEvent.Id, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
-        }
-        else
-        {
-            Log.Error($"Unknown world in ServerGame.World: {World}");
-        }
     }
     
     /*
@@ -70,12 +37,66 @@ public partial class ServerGame
         Log.Info($"Client disconnected from server. Peer id = {peerDisconnectedEvent.Id}");
         ServerPlayer disconnectedPlayer = PlayerProfilesByPeerId[peerDisconnectedEvent.Id].Player;
         disconnectedPlayer.QueueFree();
+        
         RemovePlayerProfile(peerDisconnectedEvent.Id);
+        Network.SendToAll(new ClientGame.ClientGame.SC_RemoveAllyProfilePacket(peerDisconnectedEvent.Id)); //Информацию об отключении отправляем всем, т.к. отключенный игрок уже отключен.
 
         if (PlayerProfiles.Count() == 0)
         {
             ServerSafeWorld serverSafeWorld = ServerRoot.Instance.PackedScenes.SafeWorld.Instantiate<ServerSafeWorld>();
             ChangeMainScene(serverSafeWorld);
+        }
+    }
+
+    /*
+     * После отправки игроком информации о себе, отправляем игроку его PlayerProfile, и профили союзников. Союзникам отправляем профиль игрока.
+     * 
+     * Если сейчас BattleWorld, то отправляем ему заглушку и ждем окончания боя.
+     * Если сейчас SafeWorld, то синхронизируем мир, загружая союзных игроков и окружающие объекты. Союзникам передаем инфу о новом игроке.
+     */
+    [EventListener(ListenerSide.Server)]
+    public void OnInitPlayerProfilePacket(CS_InitPlayerProfilePacket initPlayerProfilePacket)
+    {
+        long newPlayerPeerId = initPlayerProfilePacket.SenderId;
+        ServerPlayerProfile newPlayerProfile = PlayerProfilesByPeerId[newPlayerPeerId];
+
+        newPlayerProfile.Name = initPlayerProfilePacket.Name;
+        newPlayerProfile.Color = initPlayerProfilePacket.Color;
+        
+        //Отправляем новому игроку его PlayerProfile
+        Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddPlayerProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
+        //Отправляем союзникам PlayerProfile нового игрока
+        Network.SendToAllExclude(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
+        
+        //У нового игрока создаем профили уже подключенных игроков
+        foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(newPlayerPeerId))
+        {
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(profile.PeerId, profile.Name, profile.Color));
+        }
+
+        if (World is ServerSafeWorld)
+        {
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
+
+            //Спауним нового игрока
+            World.SpawnPlayerInCenter(PlayerProfilesByPeerId[newPlayerPeerId]);
+            
+            //У нового игрока спауним всех остальных игроков
+            foreach (ServerPlayer player in GetPlayerProfilesExcluding(newPlayerPeerId).Select(profile => profile.Player))
+            {
+                Network.SendToClient(newPlayerPeerId, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.PeerId));
+            }
+            
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
+        } 
+        else if (World is ServerBattleWorld)
+        {
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
+        }
+        else
+        {
+            Log.Error($"Unknown world in ServerGame.World: {World}");
         }
     }
     

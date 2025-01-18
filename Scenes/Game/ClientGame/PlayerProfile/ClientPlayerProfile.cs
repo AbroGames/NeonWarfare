@@ -2,7 +2,7 @@
 
 namespace NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 
-public class ClientPlayerProfile : ClientAllyProfile
+public partial class ClientPlayerProfile : ClientAllyProfile
 {
 
     public ClientPlayer Player => (ClientPlayer) Ally;

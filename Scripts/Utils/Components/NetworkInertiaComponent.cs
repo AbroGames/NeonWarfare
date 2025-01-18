@@ -12,7 +12,7 @@ namespace NeonWarfare.Scripts.Utils.Components;
 public partial class NetworkInertiaComponent : Node
 {
     public Node2D Parent;
-    public double InertiaCooldown { get; set; } = 0.08;
+    public double InertiaCooldown { get; set; } = 0.1;
 
     private float _movementSpeed;
     private float _movementDir;

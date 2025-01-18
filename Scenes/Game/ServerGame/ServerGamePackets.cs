@@ -17,4 +17,11 @@ public partial class ServerGame
     
         public long PingId = pingId;
     }
+    
+    [GamePacket]
+    public class CS_InitPlayerProfilePacket(string name, Color color) : BinaryPacket
+    {
+        public string Name = name;
+        public Color Color = color;
+    }
 }

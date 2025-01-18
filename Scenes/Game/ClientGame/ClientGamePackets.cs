@@ -31,20 +31,24 @@ public partial class ClientGame
     }
     
     [GamePacket]
-    public class SC_AddPlayerProfilePacket(long peerId) : BinaryPacket
+    public class SC_AddAllyProfilePacket(long peerId, string name, Color color) : BinaryPacket
     {
         public long PeerId = peerId;
-    }
-    
-    [GamePacket]
-    public class SC_AddAllyProfilePacket(long peerId) : BinaryPacket
-    {
-        public long PeerId = peerId;
+        public string Name = name;
+        public Color Color = color;
     }
     
     [GamePacket]
     public class SC_RemoveAllyProfilePacket(long peerId) : BinaryPacket
     {
         public long PeerId = peerId;
+    }
+    
+    [GamePacket]
+    public class SC_AddPlayerProfilePacket(long peerId, string name, Color color) : BinaryPacket
+    {
+        public long PeerId = peerId;
+        public string Name = name;
+        public Color Color = color;
     }
 }

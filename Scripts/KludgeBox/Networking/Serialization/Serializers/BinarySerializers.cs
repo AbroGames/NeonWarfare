@@ -248,7 +248,7 @@ public static partial class BinarySerializers
             }));
         
         RegisterTypedSerializer<Color>(new ConfigurableBinarySerializer<Color>(
-            (writer, value) => writer.Write(value.ToArgb32()),
+            (writer, value) => writer.Write(value.ToRgba32()),
             reader => new Color(reader.ReadUInt32())));
         
         RegisterTypedSerializer<Rect2>(new ConfigurableBinarySerializer<Rect2>(

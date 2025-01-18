@@ -9,6 +9,8 @@ public abstract class Cooldown
 	
     //Gets elapsed time in seconds
     public double ElapsedTime => Duration - _timeLeft;
+    //Gets time left in seconds
+    public double TimeLeft => _timeLeft;
 
     //Gets the fraction of the cooldown completed, ranging from 0 to 1.
     public double FractionElapsedTime => ElapsedTime / Duration;

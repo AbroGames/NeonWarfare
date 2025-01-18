@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
 public partial class ServerGui : Control
@@ -29,6 +30,12 @@ public partial class ServerGui : Control
         Info.Text += $"\nWorld 1-level nodes: {ServerRoot.Instance.Game.World.GetChildCount()}";
         Info.Text += $"\nFrame time process: {Performance.GetMonitor(Performance.Monitor.TimeProcess)*1000:N1}ms";
         Info.Text += $"\nPhysics time process: {Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess)*1000:N1}ms ({Performance.GetMonitor(Performance.Monitor.TimePhysicsProcess) * MAX_TPS * 100:N0} %)";
+
+        if (ServerRoot.Instance.Game.World is ServerBattleWorld)
+        {
+            ServerBattleWorld battleWorld = ServerRoot.Instance.Game.World as ServerBattleWorld;
+            Info.Text += $"\n\nBattle. Wave: {battleWorld.EnemyWave.WaveNumber}. Timer: {battleWorld.EnemyWave.NextWaveCooldown.TimeLeft:N1}.";
+        }
     }
     
     /// <summary>

@@ -46,6 +46,12 @@ public abstract class NetPacket : HandleableEvent
             
             foreach (var param in neededParams)
             {
+                if (param.ParameterType == typeof(string))
+                {
+                    args.Add("");
+                    continue;
+                }
+                
                 args.Add(Activator.CreateInstance(param.ParameterType));
             }
             

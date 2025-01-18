@@ -9,10 +9,14 @@ public partial class ClientAlly : ClientCharacter
     [Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
     
     public ClientAllyProfile AllyProfile { get; private set; }
+    public string Name { get; private set; }
     
     public void InitOnProfile(ClientAllyProfile allyProfile)
     {
         AllyProfile = allyProfile;
         allyProfile.Ally = this;
+
+        Modulate = allyProfile.Color;
+        Name = allyProfile.Name;
     }
 }

@@ -19,16 +19,11 @@ public partial class ServerGame
         {
             throw new ArgumentException($"Player with PeerId {peerId} already exists.");
         }
-        
-        Network.SendToClient(peerId, new ClientGame.ClientGame.SC_AddPlayerProfilePacket(peerId));
-        Network.SendToAllExclude(peerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(peerId));
     }
 
     public void RemovePlayerProfile(long peerId)
     {
         _playerProfilesByPeerId.Remove(peerId);
-        
-        Network.SendToAllExclude(peerId, new ClientGame.ClientGame.SC_RemoveAllyProfilePacket(peerId));
     }
     
     public IReadOnlyDictionary<long, ServerPlayerProfile> GetPlayerProfilesByPeerIdExcluding(long excludePeerId)
