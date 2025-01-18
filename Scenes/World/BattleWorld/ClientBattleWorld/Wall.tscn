@@ -6,7 +6,6 @@
 
 [node name="Wall" type="StaticBody2D"]
 modulate = Color(0.19, 0.19, 0.19, 1)
-position = Vector2(-2019, -645)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(25.595, 25.595)
