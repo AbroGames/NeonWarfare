@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization.Binary.Serializers;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking.Serialization.Serializers;
 
@@ -209,7 +210,7 @@ public static partial class BinarySerializers
             },
             reader =>
             {
-                return new Vector2((float) reader.ReadDouble(), (float) reader.ReadDouble());
+                return new Vector2(reader.ReadReal(), reader.ReadReal());
             }));
         
         RegisterTypedSerializer<Vector3>(new ConfigurableBinarySerializer<Vector3>(

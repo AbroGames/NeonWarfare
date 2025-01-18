@@ -18,7 +18,7 @@ public partial class ServerEnemyRotateComponent : Node
     //TODO вынести в отдельный Utils класс / common component, дублируется с ClientRotate
     public override void _Process(double delta)
     {
-        if (_parent.Target == null) return;
+        if (_parent.Target == null || !_parent.Target.IsValid()) return;
         
         //Куда хотим повернуться
         double targetAngle = GetAngleToTarget();
