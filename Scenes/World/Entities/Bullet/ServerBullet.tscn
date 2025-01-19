@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0ow4uadhkuwj"]
+
+[ext_resource type="Script" path="res://Scenes/World/Entities/Bullet/ServerBullet.cs" id="1_o2k4p"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bagji"]
+radius = 0.4
+height = 14.0
+
+[node name="ServerBullet" type="Node2D"]
+script = ExtResource("1_o2k4p")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -3)
+scale = Vector2(5, 5)
+shape = SubResource("CapsuleShape2D_bagji")

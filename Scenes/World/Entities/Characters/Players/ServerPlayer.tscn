@@ -17,5 +17,9 @@ script = ExtResource("2_u8e3u")
 [node name="CharacterShape" parent="." index="0"]
 shape = SubResource("CircleShape2D_q3t30")
 
+[node name="HitBox" parent="." index="1"]
+collision_layer = 4
+collision_mask = 4
+
 [node name="HitBoxShape" parent="HitBox" index="0"]
 shape = SubResource("CircleShape2D_68y15")

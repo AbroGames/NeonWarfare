@@ -1,6 +1,9 @@
 using Godot;
+using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
+using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
@@ -11,6 +14,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 public partial class ServerEnemy : ServerCharacter
 {
     [Export] [NotNull] public RayCast2D RayCast { get; private set; }
+    [Export] [NotNull] public Area2D HitBox { get; private set; }
     private const double TargetChangeTimeout = 3; 
 
     public ServerCharacter Target { get; set; }
@@ -19,7 +23,22 @@ public partial class ServerEnemy : ServerCharacter
     public override void _Ready()
     {
         base._Ready();
-        
+        HitBox.AreaEntered += (area) => //TODO del after test
+        {
+            if (area.GetParent() is ServerBullet)
+            {
+                QueueFree();
+            }
+
+            if (area.GetParent() is ServerPlayer)
+            {
+                ServerSafeWorld serverSafeWorld = ServerRoot.Instance.PackedScenes.SafeWorld.Instantiate<ServerSafeWorld>();
+                ServerRoot.Instance.Game.ChangeMainScene(serverSafeWorld);
+                Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
+            }
+
+        };
+
         UpdateTarget();
         _changeTargetCooldown.ActionWhenReady += UpdateTarget;
         _changeTargetCooldown.Update(Rand.Range(0.0, TargetChangeTimeout)); //Для того чтобы одновременно заспауненные враги не переключались все синхронно.

@@ -27,5 +27,6 @@ material = SubResource("ShaderMaterial_2pw46")
 shape = SubResource("CircleShape2D_jjy8c")
 
 [node name="ShieldSprite" type="Sprite2D" parent="." index="2"]
+visible = false
 scale = Vector2(0.19, 0.19)
 texture = ExtResource("3_oa3jk")
