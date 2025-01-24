@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=29 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -28,7 +28,6 @@
 [ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="24_p0bw0"]
 [ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="25_gitci"]
 [ext_resource type="PackedScene" uid="uid://bn0qrlv6wb2i7" path="res://Scenes/World/WorldEnvironment.tscn" id="25_uoidq"]
-[ext_resource type="PackedScene" uid="uid://8a5xhxc2ta5m" path="res://Scenes/World/Entities/Bullet/ClientBullet.tscn" id="29_m5i50"]
 
 [node name="ClientPackedScenesContainer" type="Node"]
 script = ExtResource("1_i6j64")
@@ -59,4 +58,3 @@ WorldEnvironment = ExtResource("25_uoidq")
 Player = ExtResource("24_p0bw0")
 Ally = ExtResource("12_cm42j")
 Enemy = ExtResource("25_gitci")
-Bullet = ExtResource("29_m5i50")

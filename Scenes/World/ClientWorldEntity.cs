@@ -69,17 +69,6 @@ public abstract partial class ClientWorld
         enemy.OnSpawnPacket(enemySpawnPacket.X, enemySpawnPacket.Y, enemySpawnPacket.Dir);
     }
     
-    public void OnBulletSpawnPacket(SC_BulletSpawnPacket bulletSpawnPacket) //TODO del after test
-    {
-        Node2D bullet = CreateNetworkEntity<Node2D>(
-            ClientRoot.Instance.PackedScenes.Bullet, bulletSpawnPacket.Nid);
-        bullet.Modulate = bulletSpawnPacket.Color;
-        
-        AddChild(bullet);
-        bullet.Position = bulletSpawnPacket.StartPosition;
-        bullet.Rotation = bulletSpawnPacket.Rotation;
-    }
-    
     [EventListener(ListenerSide.Client)]
     public static void OnPlayerSpawnPacketListener(SC_PlayerSpawnPacket playerSpawnPacket) //TODO попробовать убрать static. Если убрать, то резолвер почему-то дважды вызывает этот метод. Возможно, из-за наследования.
     {
@@ -97,11 +86,4 @@ public abstract partial class ClientWorld
     {
         ClientRoot.Instance.Game.World.OnEnemySpawnPacket(enemySpawnPacket);
     }
-    
-    [EventListener(ListenerSide.Client)]
-    public static void OnBulletSpawnPacketListener(SC_BulletSpawnPacket bulletSpawnPacket) //TODO del after test
-    {
-        ClientRoot.Instance.Game.World.OnBulletSpawnPacket(bulletSpawnPacket);
-    }
-    
 }

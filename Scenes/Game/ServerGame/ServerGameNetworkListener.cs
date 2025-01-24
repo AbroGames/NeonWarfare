@@ -129,12 +129,4 @@ public partial class ServerGame
     {
         Network.SendToClient(pingPacket.SenderId, new PingChecker.SC_PingPacket(pingPacket.PingId));
     }
-    
-    //TODO del after test
-    [EventListener(ListenerSide.Server)]
-    public void OnPlayerWantShootPacket(ServerPlayer.CS_PlayerWantShootPacket playerWantShootPacket)
-    {
-        World.SpawnBullet(playerWantShootPacket.StartPosition, playerWantShootPacket.Rotation,
-            PlayerProfilesByPeerId[playerWantShootPacket.SenderId].Color);
-    }
 }

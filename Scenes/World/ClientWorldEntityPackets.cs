@@ -1,4 +1,3 @@
-using Godot;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
@@ -33,14 +32,5 @@ public abstract partial class ClientWorld
         public float X = x;
         public float Y = y;
         public float Dir = dir;
-    }
-    
-    [GamePacket]
-    public class SC_BulletSpawnPacket(long nid, Vector2 startPosition, float rotation, Color color) : BinaryPacket //TODO del after test
-    {
-        public long Nid = nid;
-        public Vector2 StartPosition = startPosition;
-        public float Rotation = rotation;
-        public Color Color = color;
     }
 }
