@@ -100,3 +100,4 @@ common/physics_jitter_fix=0.0
 [rendering]
 
 environment/defaults/default_clear_color=Color(0.0313726, 0.0313726, 0.0313726, 1)
+viewport/hdr_2d=true
