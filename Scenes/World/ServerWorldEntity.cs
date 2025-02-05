@@ -72,7 +72,7 @@ public abstract partial class ServerWorld
         AddChild(enemy);
         
         //У всех игроков спауним нового врага
-        Network.SendToAll(new ClientWorld.SC_EnemySpawnPacket(enemy.Nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation));
+        Network.SendToAll(new ClientWorld.SC_EnemySpawnPacket(enemy.Nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, new Color(1, 0, 0))); //TODO брать из сцены или из описания конкретного врага
 
         return enemy;
     }

@@ -63,7 +63,7 @@ public abstract partial class ClientWorld
         ClientEnemy enemy = CreateNetworkEntity<ClientEnemy>(
             ClientRoot.Instance.PackedScenes.Enemy, enemySpawnPacket.Nid);
         enemy.AddChild(new NetworkInertiaComponent());
-        enemy.Modulate = new Color(1, 0, 0); //TODO del after test. Must be from packet or from .tscn
+        enemy.Modulate = enemySpawnPacket.Color; //TODO убрать в OnSpawnPacket
         
         AddChild(enemy);
         enemy.OnSpawnPacket(enemySpawnPacket.X, enemySpawnPacket.Y, enemySpawnPacket.Dir);
