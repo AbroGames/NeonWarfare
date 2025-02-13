@@ -54,10 +54,10 @@ public abstract partial class ServerWorld
         
         //У нового игрока спауним его самого
         Network.SendToClient(playerProfile.PeerId, 
-            new ClientWorld.SC_PlayerSpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation));
+            new ClientWorld.SC_PlayerSpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, playerProfile.Color));
         //У всех остальных игроков спауним нового игрока
         Network.SendToAllExclude(playerProfile.PeerId, 
-            new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, playerProfile.PeerId));
+            new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, playerProfile.Color, playerProfile.PeerId));
         
         return player;
     }

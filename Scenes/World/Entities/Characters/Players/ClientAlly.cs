@@ -16,7 +16,6 @@ public partial class ClientAlly : ClientCharacter
         AllyProfile = allyProfile;
         allyProfile.Ally = this;
 
-        Modulate = allyProfile.Color;
         Name = allyProfile.Name;
     }
 }
