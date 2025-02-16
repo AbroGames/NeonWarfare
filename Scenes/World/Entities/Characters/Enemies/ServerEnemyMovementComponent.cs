@@ -42,7 +42,7 @@ public partial class ServerEnemyMovementComponent : Node
         var movementInSecond = GetMovementInSecondFromAngle();
         long nid = _parent.GetChild<ServerNetworkEntityComponent>().Nid;
         Network.SendToAll(new NetworkInertiaComponent.SC_InertiaEntityPacket(nid, 
-            _parent.Position.X, _parent.Position.Y, _parent.Rotation,
+            _parent.Position, _parent.Rotation,
             movementInSecond.Angle(), movementInSecond.Length()));
     }
 

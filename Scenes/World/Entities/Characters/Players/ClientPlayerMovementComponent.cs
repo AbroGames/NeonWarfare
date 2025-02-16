@@ -37,7 +37,7 @@ public partial class ClientPlayerMovementComponent : Node
         var movementInSecond = GetMovementInSecondFromInput();
         long nid = _parent.GetChild<ClientNetworkEntityComponent>().Nid;
         Network.SendToServer(new NetworkInertiaComponent.CS_InertiaEntityPacket(nid, 
-            _parent.Position.X, _parent.Position.Y, _parent.Rotation,
+            _parent.Position, _parent.Rotation,
             movementInSecond.Angle(), movementInSecond.Length()));
     }
 
