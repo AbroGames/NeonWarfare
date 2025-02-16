@@ -23,9 +23,9 @@ public partial class ClientCharacter : CharacterBody2D
         NotNullChecker.CheckProperties(this);
     }
     
-    public void OnSpawnPacket(float x, float y, float dir, Color color)
+    public void OnSpawnPacket(Vector2 position, float dir, Color color)
     {
-        Position = Vec(x, y);
+        Position = position;
         Rotation = dir;
         Modulate = color;
     }

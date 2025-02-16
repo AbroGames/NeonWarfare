@@ -42,7 +42,7 @@ public abstract partial class ClientWorld
         
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
         AddChild(player);
-        player.OnSpawnPacket(playerSpawnPacket.X, playerSpawnPacket.Y, playerSpawnPacket.Dir, playerSpawnPacket.Color);
+        player.OnSpawnPacket(playerSpawnPacket.Position, playerSpawnPacket.Dir, playerSpawnPacket.Color);
         
         Camera.TargetNode = player;
     }
@@ -55,7 +55,7 @@ public abstract partial class ClientWorld
         
         ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesByPeerId[allySpawnPacket.Id]);
         AddChild(ally);
-        ally.OnSpawnPacket(allySpawnPacket.X, allySpawnPacket.Y, allySpawnPacket.Dir, allySpawnPacket.Color);
+        ally.OnSpawnPacket(allySpawnPacket.Position, allySpawnPacket.Dir, allySpawnPacket.Color);
     }
     
     public void OnEnemySpawnPacket(SC_EnemySpawnPacket enemySpawnPacket)
@@ -65,7 +65,7 @@ public abstract partial class ClientWorld
         enemy.AddChild(new NetworkInertiaComponent());
         
         AddChild(enemy);
-        enemy.OnSpawnPacket(enemySpawnPacket.X, enemySpawnPacket.Y, enemySpawnPacket.Dir, enemySpawnPacket.Color);
+        enemy.OnSpawnPacket(enemySpawnPacket.Position, enemySpawnPacket.Dir, enemySpawnPacket.Color);
     }
     
     [EventListener(ListenerSide.Client)]

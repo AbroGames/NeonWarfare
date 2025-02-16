@@ -19,7 +19,7 @@ public partial class ClientNetworkEntityComponent : NetworkEntityComponent
 
     public void OnPositionEntityPacket(SC_PositionEntityPacket positionEntityPacket)
     {
-        GetParent<Node2D>().Position = Vec(positionEntityPacket.X, positionEntityPacket.Y);
+        GetParent<Node2D>().Position = positionEntityPacket.Position;
         GetParent<Node2D>().Rotation = positionEntityPacket.Dir;
     }
     
