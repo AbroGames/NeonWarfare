@@ -42,9 +42,9 @@ public partial class NetworkInertiaComponent : Node
         Parent.Position += Vector2.FromAngle(_movementDir) * _movementSpeed * realDelta;
     }
 
-    public void OnInertiaEntityPacket(float x, float y, float dir, float movementDir, float movementSpeed)
+    public void OnInertiaEntityPacket(Vector2 position, float dir, float movementDir, float movementSpeed)
     {
-        Parent.Position = Vec(x, y);
+        Parent.Position = position;
         Parent.Rotation = dir;
         
         _movementSpeed = movementSpeed;
@@ -69,7 +69,7 @@ public partial class NetworkInertiaComponent : Node
         if (!ClientRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
         
         NetworkInertiaComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
-        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, 
+        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.Position, inertiaEntityPacket.Dir, 
             inertiaEntityPacket.MovementDir, inertiaEntityPacket.MovementSpeed);
     }
     
@@ -80,7 +80,7 @@ public partial class NetworkInertiaComponent : Node
         if (!ServerRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
         
         NetworkInertiaComponent entityComponent = ServerRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
-        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.X, inertiaEntityPacket.Y, inertiaEntityPacket.Dir, 
+        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.Position, inertiaEntityPacket.Dir, 
             inertiaEntityPacket.MovementDir, inertiaEntityPacket.MovementSpeed);
         Network.SendToAllExclude(inertiaEntityPacket.SenderId, new SC_InertiaEntityPacket(inertiaEntityPacket));
     }

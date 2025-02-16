@@ -54,10 +54,10 @@ public abstract partial class ServerWorld
         
         //У нового игрока спауним его самого
         Network.SendToClient(playerProfile.PeerId, 
-            new ClientWorld.SC_PlayerSpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, playerProfile.Color));
+            new ClientWorld.SC_PlayerSpawnPacket(player.Nid, player.Position, player.Rotation, playerProfile.Color));
         //У всех остальных игроков спауним нового игрока
         Network.SendToAllExclude(playerProfile.PeerId, 
-            new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, playerProfile.Color, playerProfile.PeerId));
+            new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position, player.Rotation, playerProfile.Color, playerProfile.PeerId));
         
         return player;
     }
@@ -72,7 +72,7 @@ public abstract partial class ServerWorld
         AddChild(enemy);
         
         //У всех игроков спауним нового врага
-        Network.SendToAll(new ClientWorld.SC_EnemySpawnPacket(enemy.Nid, enemy.Position.X, enemy.Position.Y, enemy.Rotation, new Color(1, 0, 0))); //TODO брать из сцены или из описания конкретного врага
+        Network.SendToAll(new ClientWorld.SC_EnemySpawnPacket(enemy.Nid, enemy.Position, enemy.Rotation, new Color(1, 0, 0))); //TODO брать из сцены или из описания конкретного врага
 
         return enemy;
     }

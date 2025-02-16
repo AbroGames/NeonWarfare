@@ -85,7 +85,7 @@ public partial class ServerGame
             //У нового игрока спауним всех остальных игроков
             foreach (ServerPlayer player in GetPlayerProfilesExcluding(newPlayerPeerId).Select(profile => profile.Player))
             {
-                Network.SendToClient(newPlayerPeerId, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position.X, player.Position.Y, player.Rotation, player.PlayerProfile.Color, player.PlayerProfile.PeerId));
+                Network.SendToClient(newPlayerPeerId, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position, player.Rotation, player.PlayerProfile.Color, player.PlayerProfile.PeerId));
             }
             
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
