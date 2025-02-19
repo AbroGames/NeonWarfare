@@ -13,8 +13,6 @@ public partial class ServerPlayerProfile
     public string Name { get; set; }
     public Color Color { get; set; }
 
-    public ServerPlayer Player {get; set;}
-
     public ServerPlayerProfile(long peerId)
     {
         PeerId = peerId;

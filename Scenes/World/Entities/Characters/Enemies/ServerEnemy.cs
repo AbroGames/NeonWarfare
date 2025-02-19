@@ -37,7 +37,7 @@ public partial class ServerEnemy : ServerCharacter
         ServerPlayer closestPlayer = null;
         double closestDistance = double.MaxValue;
         
-        foreach (ServerPlayer player in ServerRoot.Instance.Game.World.GetPlayers())
+        foreach (ServerPlayer player in ServerRoot.Instance.Game.World.Players)
         {
             double distance = this.DistanceTo(player);
             if (distance < closestDistance)

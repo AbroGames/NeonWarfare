@@ -35,7 +35,7 @@ public partial class ServerGame
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Log.Info($"Client disconnected from server. Peer id = {peerDisconnectedEvent.Id}");
-        ServerPlayer disconnectedPlayer = PlayerProfilesByPeerId[peerDisconnectedEvent.Id].Player;
+        ServerPlayer disconnectedPlayer = World.PlayersByPeerId[peerDisconnectedEvent.Id];
         disconnectedPlayer.QueueFree();
         
         RemovePlayerProfile(peerDisconnectedEvent.Id);
@@ -83,7 +83,7 @@ public partial class ServerGame
             World.SpawnPlayerInCenter(PlayerProfilesByPeerId[newPlayerPeerId]);
             
             //У нового игрока спауним всех остальных игроков
-            foreach (ServerPlayer player in GetPlayerProfilesExcluding(newPlayerPeerId).Select(profile => profile.Player))
+            foreach (ServerPlayer player in World.GetPlayerProfilesExcluding(newPlayerPeerId))
             {
                 Network.SendToClient(newPlayerPeerId, new ClientWorld.SC_AllySpawnPacket(player.Nid, player.Position, player.Rotation, player.PlayerProfile.Color, player.PlayerProfile.PeerId));
             }
