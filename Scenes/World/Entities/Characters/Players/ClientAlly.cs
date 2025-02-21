@@ -14,7 +14,6 @@ public partial class ClientAlly : ClientCharacter
     public void InitOnProfile(ClientAllyProfile allyProfile)
     {
         AllyProfile = allyProfile;
-        allyProfile.Ally = this;
 
         Name = allyProfile.Name;
     }

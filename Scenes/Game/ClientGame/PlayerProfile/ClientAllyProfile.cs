@@ -12,8 +12,6 @@ public partial class ClientAllyProfile
     public string Name { get; set; }
     public Color Color { get; set; }
 
-    public ClientAlly Ally { get; set; }
-
     public ClientAllyProfile(long peerId)
     {
         PeerId = peerId;
