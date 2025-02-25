@@ -37,6 +37,7 @@ public partial class ServerGui : Control
             Info.Text += "\n\nBattle world.";
             Info.Text += $"\nWave: {battleWorld.EnemyWave.WaveNumber}.";
             Info.Text += $"\nTimer: {battleWorld.EnemyWave.NextWaveCooldown.TimeLeft:N1}.";
+            Info.Text += $"\nEnemies: {battleWorld.Enemies.Count:N1}.";
         }
         if (ServerRoot.Instance.Game.World is ServerSafeWorld)
         {
