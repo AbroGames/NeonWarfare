@@ -22,10 +22,15 @@ public abstract partial class ServerWorld
     public ServerEnemy SpawnEnemy(Vector2 position, float rotation)
     {
         ServerEnemy enemy = CreateNetworkEntity<ServerEnemy>(ServerRoot.Instance.PackedScenes.Enemy);
-        enemy.AddChild(new ServerEnemyMovementComponent());
-        enemy.AddChild(new ServerEnemyRotateComponent());
         enemy.Position = position;
         enemy.Rotation = rotation;
+        enemy.AddChild(new ServerEnemyMovementComponent());
+        enemy.AddChild(new ServerEnemyRotateComponent());
+        
+        ExitTreeLogicComponent exitTreeLogicComponent = new();
+        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveEnemy((ServerEnemy) node));
+        enemy.AddChild(exitTreeLogicComponent);
+        
         AddChild(enemy);
         _enemies.Add(enemy);
         
@@ -37,7 +42,6 @@ public abstract partial class ServerWorld
     
     public void RemoveEnemy(ServerEnemy enemy)
     {
-        _enemies.Remove(enemy);  //TODO не забывать вызвать
-        //TODO RemoveChild? или нет смысла, т.к. queueFree делает тоже самое?
+        _enemies.Remove(enemy);
     }
 }

@@ -49,6 +49,11 @@ public abstract partial class ServerWorld
         player.Position = position;
         player.Rotation = rotation;
         player.AddChild(new NetworkInertiaComponent());
+        
+        ExitTreeLogicComponent exitTreeLogicComponent = new();
+        exitTreeLogicComponent.AddActionWhenExitTree(node => RemovePlayer((ServerPlayer) node));
+        player.AddChild(exitTreeLogicComponent);
+        
         player.InitOnProfile(playerProfile);
         AddChild(player);
         _players.Add(player);
@@ -66,9 +71,8 @@ public abstract partial class ServerWorld
 
     public void RemovePlayer(ServerPlayer player)
     {
-        _players.Remove(player);  //TODO не забывать вызвать
+        _players.Remove(player);
         _playersByPeerId.Remove(player.PlayerProfile.PeerId);
-        //TODO RemoveChild? или нет смысла, т.к. queueFree делает тоже самое?
     }
     
 }
