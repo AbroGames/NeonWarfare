@@ -22,8 +22,15 @@ public abstract partial class ClientWorld
         player.AddChild(new ClientPlayerMovementComponent());
         player.AddChild(new ClientPlayerRotateComponent());
         
+        ExitTreeLogicComponent exitTreeLogicComponent = new();
+        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveAlly((ClientAlly) node));
+        exitTreeLogicComponent.AddActionWhenExitTree(RemovePlayer);
+        player.AddChild(exitTreeLogicComponent);
+        
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
         AddChild(player);
+        _allies.Add(player);
+        _alliesByPeerId.Add(ClientRoot.Instance.Game.PlayerProfile.PeerId, player);
         Player = player;
         player.OnSpawnPacket(playerSpawnPacket.Position, playerSpawnPacket.Dir, playerSpawnPacket.Color);
         
@@ -32,7 +39,6 @@ public abstract partial class ClientWorld
 
     public void RemovePlayer()
     {
-        RemoveAlly(Player); //TODO здесь? Или вызывать RemovePlayer и RemoveAlly из места вызова?
         Player = null;
     }
     

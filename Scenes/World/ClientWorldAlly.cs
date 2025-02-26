@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
-using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.Utils.Components;
-using NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 
 namespace NeonWarfare.Scenes.World;
 
@@ -41,17 +38,21 @@ public abstract partial class ClientWorld
         ClientAlly ally = CreateNetworkEntity<ClientAlly>(
             ClientRoot.Instance.PackedScenes.Ally, allySpawnPacket.Nid);
         ally.AddChild(new NetworkInertiaComponent());
-        _allies.Add(ally);
-        _alliesByPeerId.Add(allySpawnPacket.Id, ally);
+        
+        ExitTreeLogicComponent exitTreeLogicComponent = new();
+        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveAlly((ClientAlly) node));
+        ally.AddChild(exitTreeLogicComponent);
         
         ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesByPeerId[allySpawnPacket.Id]);
         AddChild(ally);
+        _allies.Add(ally);
+        _alliesByPeerId.Add(allySpawnPacket.Id, ally);
         ally.OnSpawnPacket(allySpawnPacket.Position, allySpawnPacket.Dir, allySpawnPacket.Color);
     }
 
     public void RemoveAlly(ClientAlly ally)
     {
-        _allies.Remove(ally); //TODO не забывать вызвать
+        _allies.Remove(ally);
         _alliesByPeerId.Remove(ally.AllyProfile.PeerId);
     }
     

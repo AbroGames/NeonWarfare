@@ -22,6 +22,10 @@ public abstract partial class ClientWorld
             ClientRoot.Instance.PackedScenes.Enemy, enemySpawnPacket.Nid);
         enemy.AddChild(new NetworkInertiaComponent());
         
+        ExitTreeLogicComponent exitTreeLogicComponent = new();
+        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveEnemy((ClientEnemy) node));
+        enemy.AddChild(exitTreeLogicComponent);
+        
         AddChild(enemy);
         _enemies.Add(enemy);
         enemy.OnSpawnPacket(enemySpawnPacket.Position, enemySpawnPacket.Dir, enemySpawnPacket.Color);
@@ -29,7 +33,7 @@ public abstract partial class ClientWorld
 
     public void RemoveEnemy(ClientEnemy clientEnemy)
     {
-        _enemies.Remove(clientEnemy); //TODO не забывать вызвать
+        _enemies.Remove(clientEnemy);
     }
     
     [EventListener(ListenerSide.Client)]
