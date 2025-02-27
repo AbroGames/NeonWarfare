@@ -34,4 +34,22 @@ public abstract partial class ClientWorld
         public float Dir = dir;
         public Color Color = color;
     }
+    
+    [GamePacket]
+    public class SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType entityType, Vector2 position, Vector2 scale, float dir, Color color) : BinaryPacket
+    {
+        public enum StaticEntityType
+        {
+            Wall
+        }
+
+        public StaticEntityType EntityType = entityType;
+        public Vector2 Position = position;
+        public Vector2 Scale = scale;
+        public float Dir = dir;
+        public Color Color = color;
+
+        public SC_StaticEntitySpawnPacket(StaticEntityType entityType, Vector2 position, float dir) :
+            this(entityType, position, Vector2.One, dir, new Color(1, 1, 1)) {}
+    }
 }
