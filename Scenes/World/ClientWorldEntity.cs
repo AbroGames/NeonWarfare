@@ -25,22 +25,26 @@ public abstract partial class ClientWorld
         return newNode;
     }
     
-    
     public void OnStaticEntitySpawnPacket(SC_StaticEntitySpawnPacket staticEntitySpawnPacket)
     {
-        /*Dictionary<ClientGame.SC_ChangeWorldPacket.ServerWorldType, PackedScene> worldScenesMap = new() 
+        Dictionary<SC_StaticEntitySpawnPacket.StaticEntityType, PackedScene> staticEntityScenesMap = new() 
         {
-            { ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe, ClientRoot.Instance.PackedScenes.SafeWorldMainScene },
-            { ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle, ClientRoot.Instance.PackedScenes.BattleWorldMainScene }
+            { SC_StaticEntitySpawnPacket.StaticEntityType.Wall, ClientRoot.Instance.PackedScenes.Wall }
         };
-		
-        if (!worldScenesMap.TryGetValue(changeWorldPacket.WorldType, out var newWorldMainScene))
+        
+        
+        if (!staticEntityScenesMap.TryGetValue(staticEntitySpawnPacket.EntityType, out var entityScene))
         {
-            Log.Error($"Received unknown type of WorldMainScene: {changeWorldPacket.WorldType}");
+            Log.Error($"Received unknown type of StaticEntityType: {staticEntitySpawnPacket.EntityType}");
             return;
         }
-		
-        ChangeMainScene(newWorldMainScene.Instantiate<IWorldMainScene>());*/
+        
+        Node2D entity = entityScene.Instantiate<Node2D>();
+        entity.Position = staticEntitySpawnPacket.Position;
+        entity.Rotation = staticEntitySpawnPacket.Dir;
+        entity.Scale = staticEntitySpawnPacket.Scale;
+        entity.Modulate = staticEntitySpawnPacket.Color;
+        AddChild(entity);
     }
 
     [EventListener(ListenerSide.Client)]

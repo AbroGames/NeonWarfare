@@ -4,6 +4,8 @@ using NeonWarfare.Scenes.World;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
+using static NeonWarfare.Scenes.World.ClientWorld.SC_StaticEntitySpawnPacket.StaticEntityType;
+
 namespace NeonWarfare.Scripts.Utils.MapGenerator;
 
 public class MapGenerator
@@ -26,10 +28,11 @@ public class MapGenerator
      */
     public List<ClientWorld.SC_StaticEntitySpawnPacket> Generate()
     {
+        Color gray = new(0.2f, 0.2f, 0.2f);
         return new List<ClientWorld.SC_StaticEntitySpawnPacket>
         {
-            new ClientWorld.SC_StaticEntitySpawnPacket(ClientWorld.SC_StaticEntitySpawnPacket.StaticEntityType.Wall, new Vector2(200, 200), 0),
-            new ClientWorld.SC_StaticEntitySpawnPacket(ClientWorld.SC_StaticEntitySpawnPacket.StaticEntityType.Wall, new Vector2(-200, -200), 0)
+            new(Wall, new Vector2(400, 400), new Vector2(0.5f, 2), 0, gray),
+            new(Wall, new Vector2(-400, -400), new Vector2(2, 0.5f), 0, gray)
         };
     }
 }
