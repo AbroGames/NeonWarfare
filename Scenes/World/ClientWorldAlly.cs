@@ -38,10 +38,7 @@ public abstract partial class ClientWorld
         ClientAlly ally = CreateNetworkEntity<ClientAlly>(
             ClientRoot.Instance.PackedScenes.Ally, allySpawnPacket.Nid);
         ally.AddChild(new NetworkInertiaComponent());
-        
-        ExitTreeLogicComponent exitTreeLogicComponent = new();
-        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveAlly((ClientAlly) node));
-        ally.AddChild(exitTreeLogicComponent);
+        ally.TreeExiting += () => RemoveAlly(ally);
         
         ally.InitOnProfile(ClientRoot.Instance.Game.AllyProfilesByPeerId[allySpawnPacket.Id]);
         AddChild(ally);

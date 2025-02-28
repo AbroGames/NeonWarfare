@@ -21,10 +21,7 @@ public abstract partial class ClientWorld
         ClientEnemy enemy = CreateNetworkEntity<ClientEnemy>(
             ClientRoot.Instance.PackedScenes.Enemy, enemySpawnPacket.Nid);
         enemy.AddChild(new NetworkInertiaComponent());
-        
-        ExitTreeLogicComponent exitTreeLogicComponent = new();
-        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveEnemy((ClientEnemy) node));
-        enemy.AddChild(exitTreeLogicComponent);
+        enemy.TreeExiting += () => RemoveEnemy(enemy);
         
         AddChild(enemy);
         _enemies.Add(enemy);

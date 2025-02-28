@@ -49,10 +49,7 @@ public abstract partial class ServerWorld
         player.Position = position;
         player.Rotation = rotation;
         player.AddChild(new NetworkInertiaComponent());
-        
-        ExitTreeLogicComponent exitTreeLogicComponent = new();
-        exitTreeLogicComponent.AddActionWhenExitTree(node => RemovePlayer((ServerPlayer) node));
-        player.AddChild(exitTreeLogicComponent);
+        player.TreeExiting += () => RemovePlayer(player);
         
         player.InitOnProfile(playerProfile);
         AddChild(player);

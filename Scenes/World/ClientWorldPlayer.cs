@@ -21,11 +21,8 @@ public abstract partial class ClientWorld
             ClientRoot.Instance.PackedScenes.Player, playerSpawnPacket.Nid);
         player.AddChild(new ClientPlayerMovementComponent());
         player.AddChild(new ClientPlayerRotateComponent());
-        
-        ExitTreeLogicComponent exitTreeLogicComponent = new();
-        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveAlly((ClientAlly) node));
-        exitTreeLogicComponent.AddActionWhenExitTree(RemovePlayer);
-        player.AddChild(exitTreeLogicComponent);
+        player.TreeExiting += () => RemoveAlly(player);
+        player.TreeExiting += RemovePlayer;
         
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
         AddChild(player);

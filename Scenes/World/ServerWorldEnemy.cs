@@ -26,10 +26,7 @@ public abstract partial class ServerWorld
         enemy.Rotation = rotation;
         enemy.AddChild(new ServerEnemyMovementComponent());
         enemy.AddChild(new ServerEnemyRotateComponent());
-        
-        ExitTreeLogicComponent exitTreeLogicComponent = new();
-        exitTreeLogicComponent.AddActionWhenExitTree(node => RemoveEnemy((ServerEnemy) node));
-        enemy.AddChild(exitTreeLogicComponent);
+        enemy.TreeExiting += () => RemoveEnemy(enemy);
         
         AddChild(enemy);
         _enemies.Add(enemy);
