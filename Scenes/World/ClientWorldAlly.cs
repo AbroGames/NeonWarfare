@@ -44,7 +44,7 @@ public abstract partial class ClientWorld
         AddChild(ally);
         _allies.Add(ally);
         _alliesByPeerId.Add(allySpawnPacket.Id, ally);
-        ally.OnSpawnPacket(allySpawnPacket.Position, allySpawnPacket.Dir, allySpawnPacket.Color);
+        ally.OnSpawnPacket(allySpawnPacket.Position, allySpawnPacket.Rotation, allySpawnPacket.Color);
     }
 
     public void RemoveAlly(ClientAlly ally)

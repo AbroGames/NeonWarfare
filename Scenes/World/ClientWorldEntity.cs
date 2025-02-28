@@ -41,7 +41,7 @@ public abstract partial class ClientWorld
         
         Node2D entity = entityScene.Instantiate<Node2D>();
         entity.Position = staticEntitySpawnPacket.Position;
-        entity.Rotation = staticEntitySpawnPacket.Dir;
+        entity.Rotation = staticEntitySpawnPacket.Rotation;
         entity.Scale = staticEntitySpawnPacket.Scale;
         entity.Modulate = staticEntitySpawnPacket.Color;
         AddChild(entity);

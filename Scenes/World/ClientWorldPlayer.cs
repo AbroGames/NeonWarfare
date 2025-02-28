@@ -29,7 +29,7 @@ public abstract partial class ClientWorld
         _allies.Add(player);
         _alliesByPeerId.Add(ClientRoot.Instance.Game.PlayerProfile.PeerId, player);
         Player = player;
-        player.OnSpawnPacket(playerSpawnPacket.Position, playerSpawnPacket.Dir, playerSpawnPacket.Color);
+        player.OnSpawnPacket(playerSpawnPacket.Position, playerSpawnPacket.Rotation, playerSpawnPacket.Color);
         
         Camera.TargetNode = player;
     }

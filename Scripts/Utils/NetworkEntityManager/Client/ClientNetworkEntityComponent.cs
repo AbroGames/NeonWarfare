@@ -20,7 +20,7 @@ public partial class ClientNetworkEntityComponent : NetworkEntityComponent
     public void OnPositionEntityPacket(SC_PositionEntityPacket positionEntityPacket)
     {
         GetParent<Node2D>().Position = positionEntityPacket.Position;
-        GetParent<Node2D>().Rotation = positionEntityPacket.Dir;
+        GetParent<Node2D>().Rotation = positionEntityPacket.Rotation;
     }
     
     public void OnDestroyEntityPacket(SC_DestroyEntityPacket destroyEntityPacket)

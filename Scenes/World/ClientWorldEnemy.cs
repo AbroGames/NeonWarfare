@@ -25,7 +25,7 @@ public abstract partial class ClientWorld
         
         AddChild(enemy);
         _enemies.Add(enemy);
-        enemy.OnSpawnPacket(enemySpawnPacket.Position, enemySpawnPacket.Dir, enemySpawnPacket.Color);
+        enemy.OnSpawnPacket(enemySpawnPacket.Position, enemySpawnPacket.Rotation, enemySpawnPacket.Color);
     }
 
     public void RemoveEnemy(ClientEnemy clientEnemy)

@@ -54,9 +54,9 @@ public partial class Camera : Camera2D
 		}
 	}
 
-	public Punch Punch(Vector2 dir, double strength, double movementSpeed = 3000)
+	public Punch Punch(Vector2 rotation, double strength, double movementSpeed = 3000)
 	{
-		var punch = new Punch(dir, strength, movementSpeed);
+		var punch = new Punch(rotation, strength, movementSpeed);
 		Shifts.Add(punch);
 		return punch;
 	}

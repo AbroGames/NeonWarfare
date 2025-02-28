@@ -2,13 +2,13 @@ using Godot;
 
 namespace NeonWarfare.Scripts.Utils.Camera.Shifts;
 
-public class Punch(Vector2 dir, double strength, double movementSpeed = 3000) : IShiftProvider
+public class Punch(Vector2 rotation, double strength, double movementSpeed = 3000) : IShiftProvider
 {
-    public Vector2 Direction { get; private set; } = dir.Normalized();
+    public Vector2 Rotation { get; private set; } = rotation.Normalized();
     public double Strength { get; private set; } = strength;
     public double InitialStrength { get; private set; } = strength;
 
-    public Vector2 Shift => Direction * (float) Strength;
+    public Vector2 Shift => Rotation * (float) Strength;
     public bool IsAlive => Strength > Mathf.Epsilon;
     public void Update(double delta)
     {
