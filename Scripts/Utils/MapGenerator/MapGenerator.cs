@@ -73,11 +73,14 @@ public class MapGenerator
         public List<Entity> Entities = entiries;
         public List<Vector2> GetBorderCoordinates()
         {
+            //TODO лучше получать динамически из объектов стены
+            int wallSizeX = 512;
+            int wallSizeY = 512;
             return Entities
                 .FindAll(entity => entity.Type == Entity.EntityType.Border)
                 .Select(entity => new Vector2(
-                    entity.Position.X + entity.Position.X < Position.X ? (256 * entity.Scale.X) : (-1 * 256 * entity.Scale.X), 
-                    entity.Position.Y + entity.Position.Y < Position.Y ? (256 * entity.Scale.Y) : (-1 * 256 * entity.Scale.Y)))
+                    entity.Position.X + entity.Position.X < Position.X ? (wallSizeX/2 * entity.Scale.X) : (-1 * wallSizeX/2 * entity.Scale.X), 
+                    entity.Position.Y + entity.Position.Y < Position.Y ? (wallSizeY/2 * entity.Scale.Y) : (-1 * wallSizeY/2 * entity.Scale.Y)))
                 .ToList();
         }
         public Location(Vector2 locationPosition) :
