@@ -26,15 +26,18 @@ public class MapGenerator
         1) Создание SC_StaticEntitySpawnPacket и отправка на клиент
         2) Создание ноды-сцены и спаун её на сервере
      */
-    public List<ClientWorld.SC_StaticEntitySpawnPacket> Generate()
+    public List<ClientWorld.SC_LocationSpawnPacket> Generate()
     {
         Color gray = new(0.3f, 0.3f, 0.3f);
-        return new List<ClientWorld.SC_StaticEntitySpawnPacket>
-        {
-            new(Wall, new Vector2(-5187, 56), new Vector2(1, 20), 0, gray),
-            new(Wall, new Vector2(4516, 12), new Vector2(1, 20), 0, gray),
-            new(Wall, new Vector2(-332, 5341), new Vector2(20, 1), 0, gray),
-            new(Wall, new Vector2(-332, -5327), new Vector2(20, 1), 0, gray),
+        Color yellow = new(0.6f, 0.6f, 0.0f);
+        Color green = new(0.0f, 0.6f, 0.0f);
+        Color blue = new(0.0f, 0.0f, 0.6f);
+        Color red = new(0.6f, 0.0f, 0.0f);
+        ClientWorld.SC_LocationSpawnPacket mainLocation = new ClientWorld.SC_LocationSpawnPacket(new Vector2(0, 0), [
+            new(Wall, new Vector2(-5187, 56), new Vector2(1, 20), 0, yellow),
+            new(Wall, new Vector2(4516, 12), new Vector2(1, 20), 0, green),
+            new(Wall, new Vector2(-332, 5341), new Vector2(20, 1), 0, blue),
+            new(Wall, new Vector2(-332, -5327), new Vector2(20, 1), 0, red),
             new(Wall, new Vector2(-2492, -3283), new Vector2(0.2f, 2), 0.943161f, gray),
             new(Wall, new Vector2(1782, -1297), new Vector2(0.2f, 2), 2.09439f, gray),
             new(Wall, new Vector2(-1878, -1367), new Vector2(0.2f, 2), 0.261799f, gray),
@@ -61,6 +64,7 @@ public class MapGenerator
             new(Wall, new Vector2(3326, 1005), new Vector2(0.2f, 2), -0.785397f, gray),
             new(Wall, new Vector2(-1012, 2093), new Vector2(0.2f, 2), 2.35619f, gray),
             new(Wall, new Vector2(-3693, 1090), new Vector2(0.2f, 2), -1.0472f, gray)
-        };
+        ]);
+        return [mainLocation];
     }
 }
