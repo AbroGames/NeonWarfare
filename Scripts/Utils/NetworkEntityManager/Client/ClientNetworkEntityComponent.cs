@@ -1,11 +1,15 @@
 using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
 
 namespace NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 
 public partial class ClientNetworkEntityComponent : NetworkEntityComponent
 {
+
+    private long _lastOrderId = -1;
+    
     public ClientNetworkEntityComponent(long nid) : base(nid) { }
 
     public override void _ExitTree() //TODO Попробовать сделать так, чтобы не вызывалось при смене игры или мира (Game/World) целиком. Аналогично сделать на сервере.
@@ -19,6 +23,9 @@ public partial class ClientNetworkEntityComponent : NetworkEntityComponent
 
     public void OnPositionEntityPacket(SC_PositionEntityPacket positionEntityPacket)
     {
+        if (positionEntityPacket.OrderId <= _lastOrderId) return;
+        _lastOrderId = positionEntityPacket.OrderId;
+        
         GetParent<Node2D>().Position = positionEntityPacket.Position;
         GetParent<Node2D>().Rotation = positionEntityPacket.Rotation;
     }

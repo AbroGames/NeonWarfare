@@ -14,6 +14,7 @@ public partial class NetworkInertiaComponent : Node
     public Node2D Parent;
     public double InertiaCooldown { get; set; } = 0.1;
 
+    private long _lastOrderId = -1;
     private float _movementSpeed;
     private float _movementRotation;
     private ManualCooldown _inertiaCooldown;
@@ -42,8 +43,11 @@ public partial class NetworkInertiaComponent : Node
         Parent.Position += Vector2.FromAngle(_movementRotation) * _movementSpeed * realDelta;
     }
 
-    public void OnInertiaEntityPacket(Vector2 position, float rotation, float movementRotation, float movementSpeed)
+    public void OnInertiaEntityPacket(long orderId, Vector2 position, float rotation, float movementRotation, float movementSpeed)
     {
+        if (orderId <= _lastOrderId) return;
+        _lastOrderId = orderId;
+        
         Parent.Position = position;
         Parent.Rotation = rotation;
         
@@ -69,7 +73,7 @@ public partial class NetworkInertiaComponent : Node
         if (!ClientRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
         
         NetworkInertiaComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
-        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.Position, inertiaEntityPacket.Rotation, 
+        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.OrderId, inertiaEntityPacket.Position, inertiaEntityPacket.Rotation, 
             inertiaEntityPacket.MovementRotation, inertiaEntityPacket.MovementSpeed);
     }
     
@@ -80,7 +84,7 @@ public partial class NetworkInertiaComponent : Node
         if (!ServerRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
         
         NetworkInertiaComponent entityComponent = ServerRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);
-        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.Position, inertiaEntityPacket.Rotation, 
+        entityComponent.OnInertiaEntityPacket(inertiaEntityPacket.OrderId, inertiaEntityPacket.Position, inertiaEntityPacket.Rotation, 
             inertiaEntityPacket.MovementRotation, inertiaEntityPacket.MovementSpeed);
         Network.SendToAllExclude(inertiaEntityPacket.SenderId, new SC_InertiaEntityPacket(inertiaEntityPacket));
     }

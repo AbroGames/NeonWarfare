@@ -8,11 +8,12 @@ public partial class ClientNetworkEntityComponent
 {
 
     [GamePacket]
-    public class SC_PositionEntityPacket(long nid, Vector2 position, float rotation) : BinaryPacket
+    public class SC_PositionEntityPacket(long nid, long orderId, Vector2 position, float rotation) : BinaryPacket
     {
         public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
         
         public long Nid = nid;
+        public long OrderId = orderId;
         public Vector2 Position = position;
         public float Rotation = rotation;
     }

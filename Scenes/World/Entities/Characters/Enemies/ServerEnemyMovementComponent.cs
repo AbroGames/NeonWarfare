@@ -14,6 +14,7 @@ public partial class ServerEnemyMovementComponent : Node
 {
     private const int NetworkMessagePerSecond = 25;
 
+    private long _orderId = 0;
     private ServerEnemy _parent;
     private ManualCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);
     
@@ -41,7 +42,7 @@ public partial class ServerEnemyMovementComponent : Node
     {
         var movementInSecond = GetMovementInSecondFromAngle();
         long nid = _parent.GetChild<ServerNetworkEntityComponent>().Nid;
-        Network.SendToAll(new NetworkInertiaComponent.SC_InertiaEntityPacket(nid, 
+        Network.SendToAll(new NetworkInertiaComponent.SC_InertiaEntityPacket(nid, _orderId++,
             _parent.Position, _parent.Rotation,
             movementInSecond.Angle(), movementInSecond.Length()));
     }

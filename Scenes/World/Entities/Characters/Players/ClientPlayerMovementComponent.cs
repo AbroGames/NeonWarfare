@@ -12,6 +12,7 @@ public partial class ClientPlayerMovementComponent : Node
 {
     private const int NetworkMessagePerSecond = 30;
 
+    private long _orderId = 0;
     private ClientPlayer _parent;
     private ManualCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);
     
@@ -36,7 +37,7 @@ public partial class ClientPlayerMovementComponent : Node
     {
         var movementInSecond = GetMovementInSecondFromInput();
         long nid = _parent.GetChild<ClientNetworkEntityComponent>().Nid;
-        Network.SendToServer(new NetworkInertiaComponent.CS_InertiaEntityPacket(nid, 
+        Network.SendToServer(new NetworkInertiaComponent.CS_InertiaEntityPacket(nid, _orderId++,
             _parent.Position, _parent.Rotation,
             movementInSecond.Angle(), movementInSecond.Length()));
     }
