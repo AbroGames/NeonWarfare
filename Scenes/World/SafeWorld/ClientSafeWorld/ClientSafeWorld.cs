@@ -16,14 +16,14 @@ public partial class ClientSafeWorld : ClientWorld
 		
 		//TODO перенести на серверную сторону, и в боевой мир вместо мирного хаба
 		MapGenerator mapGenerator = new MapGenerator();
-		foreach (SC_LocationSpawnPacket locationSpawnPacket in mapGenerator.Generate())
+		foreach (MapGenerator.Location location in mapGenerator.Generate())
 		{
-			foreach (SC_StaticEntitySpawnPacket entitySpawnPacket in locationSpawnPacket.Entities)
+			foreach (MapGenerator.Entity entity in location.Entities)
 			{
-				OnStaticEntitySpawnPacket(entitySpawnPacket);
+				OnStaticEntitySpawnPacket(new SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType.Wall, entity.Position, entity.Scale, entity.Rotation ,entity.Color));
 			}
-
-			foreach (var borderPoint in locationSpawnPacket.GetBorderCoordinates())
+			//TODO потом удалю, чисто для отображения точек границ
+			foreach (var borderPoint in location.GetBorderCoordinates())
 			{
 				OnStaticEntitySpawnPacket(new SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType.Wall, borderPoint, new Vector2(0.1f, 0.1f), 0, new Color(1, 0, 0)));
 			}

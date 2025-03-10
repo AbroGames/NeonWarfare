@@ -36,30 +36,6 @@ public abstract partial class ClientWorld
         public Color Color = color;
     }
     
-    public class SC_LocationSpawnPacket(Vector2 locationPosition, List<SC_StaticEntitySpawnPacket> entiries) : BinaryPacket
-    {
-        public Vector2 LocationPosition = locationPosition;
-        public List<SC_StaticEntitySpawnPacket> Entities = entiries;
-        public List<Vector2> GetBorderCoordinates()
-        {
-            List<Vector2> borderPoints = [];
-            foreach (var entity in Entities)
-            {
-                if (entity.EntityType == SC_StaticEntitySpawnPacket.StaticEntityType.Border)
-                {
-                    //TODO лучше получать динамически из объектов стены
-                    borderPoints.Add(new Vector2(
-                        entity.Position.X + entity.Position.X < LocationPosition.X ? (256 * entity.Scale.X) : (-1 * 256 * entity.Scale.X), 
-                        entity.Position.Y + entity.Position.Y < LocationPosition.Y ? (256 * entity.Scale.Y) : (-1 * 256 * entity.Scale.Y)));
-                }
-            }
-
-            return borderPoints;
-        }
-        public SC_LocationSpawnPacket(Vector2 locationPosition) :
-            this(locationPosition, new List<SC_StaticEntitySpawnPacket>()) {}
-    }
-    
     [GamePacket]
     public class SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType entityType, Vector2 position, Vector2 scale, float rotation, Color color) : BinaryPacket
     {
