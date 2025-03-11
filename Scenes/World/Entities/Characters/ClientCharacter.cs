@@ -23,7 +23,7 @@ public partial class ClientCharacter : CharacterBody2D
         NotNullChecker.CheckProperties(this);
     }
     
-    public void OnSpawnPacket(Vector2 position, float rotation, Color color)
+    public void InitOnSpawnPacket(Vector2 position, float rotation, Color color)
     {
         Position = position;
         Rotation = rotation;

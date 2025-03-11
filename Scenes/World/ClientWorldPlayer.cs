@@ -19,17 +19,17 @@ public abstract partial class ClientWorld
     {
         ClientPlayer player = CreateNetworkEntity<ClientPlayer>(
             ClientRoot.Instance.PackedScenes.Player, playerSpawnPacket.Nid);
-        player.AddChild(new ClientPlayerMovementComponent());
-        player.AddChild(new ClientPlayerRotateComponent());
-        player.TreeExiting += () => RemoveAlly(player);
-        player.TreeExiting += RemovePlayer;
         
+        player.InitComponents();
         player.InitOnProfile(ClientRoot.Instance.Game.PlayerProfile);
+        player.InitOnSpawnPacket(playerSpawnPacket.Position, playerSpawnPacket.Rotation, playerSpawnPacket.Color);
+        
         AddChild(player);
         _allies.Add(player);
         _alliesByPeerId.Add(ClientRoot.Instance.Game.PlayerProfile.PeerId, player);
         Player = player;
-        player.OnSpawnPacket(playerSpawnPacket.Position, playerSpawnPacket.Rotation, playerSpawnPacket.Color);
+        TreeExiting += () => RemoveAlly(player);
+        TreeExiting += RemovePlayer;
         
         Camera.TargetNode = player;
     }
