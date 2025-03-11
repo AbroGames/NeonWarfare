@@ -1,5 +1,5 @@
 ﻿using Godot;
-using NeonWarfare.Scripts.KludgeBox.Scheduling;
+using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
@@ -11,25 +11,15 @@ public partial class Destructor : Node
     public double TimeLeft
     {
         get => _cooldown.TimeLeft;
-        set
-        {
-            _cooldown.Duration = value;
-            _cooldown.Restart();
-        }
+        set => _cooldown = new ManualCooldown(value, false, true, Destruct);
     }
 
-    private Cooldown _cooldown = new Cooldown();
-
-    public Destructor()
-    {
-        _cooldown.Ready += Destruct;
-        TimeLeft = 0;
-    }
+    private ManualCooldown _cooldown;
 
     public Destructor(double time)
     {
         TimeLeft = time;
-        _cooldown.Ready += Destruct;
+        _cooldown = new ManualCooldown(time, false, true, Destruct);
     }
 
     /// <inheritdoc />
