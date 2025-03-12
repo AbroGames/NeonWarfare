@@ -32,10 +32,8 @@ public partial class ServerEnemyMovementComponent : Node
 
     public override void _PhysicsProcess(double delta)
     {
-        //TODO определиться с типом перемещения, у игрока тоже. Подумать над отключением коллизий врагов друг с другом на клиенте. 
         _parent.Velocity = GetMovementInSecondFromAngle();
         _parent.MoveAndSlide();
-        //_parent.MoveAndCollide(GetMovementInSecondFromAngle() * (float) delta);
     }
 
     private void SendPositionToServer()

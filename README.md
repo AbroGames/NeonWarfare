@@ -140,6 +140,7 @@
 Все сетевые обработчики имеют аннотацию `[EventListener]`. Всегда указываем на какой стороне мы обрабатываем пакет (например, `ListenerSide.Client`).  
 Все сетевые обработчики начинаются с префикса `On` и повторяют название пакета без префикса `SC_` или `CS_`.  
 В название переменной сетевого пакета также убираем префикс `SC_` или `CS_`. Пример наименования: `OnChangeWorldPacket(SC_ChangeWorldPacket changeWorldPacket)`.  
+Если приходится использовать статический обработчик, то к названию в конце добавляем `Listener`. Например: `OnChangeWorldPacketListener`. Статический обработчик не должен содержать логики, а должен просто вызывать нестатический обработчик.  
   
 Стараемся использовать резолверы сетевых пакетов. В `ClientGame` и `ServerGame` заданы дефолтные резолверы: `Network.SetDefaultResolver(nid => World.NetworkEntityManager.GetNode((long) nid));`.  
 Можно делать свои кастомные резолверы. Например, в `ClientGame` задан резолвер: `Network.AddInstanceResolver(typeof(ClientGame), id => this);`

@@ -12,7 +12,7 @@ public partial class ClientNetworkEntityComponent : NetworkEntityComponent
     
     public ClientNetworkEntityComponent(long nid) : base(nid) { }
 
-    public override void _ExitTree() //TODO Попробовать сделать так, чтобы не вызывалось при смене игры или мира (Game/World) целиком. Аналогично сделать на сервере.
+    public override void _ExitTree()
     {
         //Проверка нужна, чтобы при выходе в меню мы не получили NPE
         if (ClientRoot.Instance.Game != null)

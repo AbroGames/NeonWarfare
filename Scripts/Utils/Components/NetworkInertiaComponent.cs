@@ -67,7 +67,7 @@ public partial class NetworkInertiaComponent : Node
     }
     
     [EventListener(ListenerSide.Client)]
-    public static void OnInertiaEntityPacketListener(SC_InertiaEntityPacket inertiaEntityPacket) //TODO подумать над таким неймингом. Записать в readme.
+    public static void OnInertiaEntityPacketListener(SC_InertiaEntityPacket inertiaEntityPacket)
     {
         //Проверка нужна, т.к. пакет InertiaEntityPacket.Mode = Unreliable и из-за задержки может прийти после пакета смены мира.
         if (!ClientRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
