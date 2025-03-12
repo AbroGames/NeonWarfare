@@ -1,5 +1,8 @@
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame.Ping;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
+using NeonWarfare.Scenes.World.SafeWorld.ClientSafeWorld;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 
@@ -18,6 +21,9 @@ public partial class ClientGame
 		Network.Initialize(GetTree().GetMultiplayer() as SceneMultiplayer);
 		Network.SetDefaultResolver(nid => World.NetworkEntityManager.GetNode<Node>((long) nid));
 		Network.AddInstanceResolver(typeof(ClientGame), id => this);
+		Network.AddInstanceResolver(typeof(ClientWorld), id => World);
+		Network.AddInstanceResolver(typeof(ClientSafeWorld), id => World);
+		Network.AddInstanceResolver(typeof(ClientBattleWorld), id => World);
 
 		PingChecker = new();
 		AddChild(PingChecker);

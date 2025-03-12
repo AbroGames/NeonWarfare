@@ -16,6 +16,7 @@ public abstract partial class ClientWorld
     public IReadOnlyList<ClientEnemy> Enemies => _enemies;
     private List<ClientEnemy> _enemies = new(); 
     
+    [EventListener(ListenerSide.Client)]
     public void OnEnemySpawnPacket(SC_EnemySpawnPacket enemySpawnPacket)
     {
         ClientEnemy enemy = CreateNetworkEntity<ClientEnemy>(
@@ -33,9 +34,4 @@ public abstract partial class ClientWorld
         _enemies.Remove(clientEnemy);
     }
     
-    [EventListener(ListenerSide.Client)]
-    public static void OnEnemySpawnPacketListener(SC_EnemySpawnPacket enemySpawnPacket)
-    {
-        ClientRoot.Instance.Game.World.OnEnemySpawnPacket(enemySpawnPacket);
-    }
 }

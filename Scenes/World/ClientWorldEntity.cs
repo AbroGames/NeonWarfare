@@ -25,6 +25,7 @@ public abstract partial class ClientWorld
         return newNode;
     }
     
+    [EventListener(ListenerSide.Client)]
     public void OnStaticEntitySpawnPacket(SC_StaticEntitySpawnPacket staticEntitySpawnPacket)
     {
         Dictionary<SC_StaticEntitySpawnPacket.StaticEntityType, PackedScene> staticEntityScenesMap = new() 
@@ -45,12 +46,6 @@ public abstract partial class ClientWorld
         entity.Scale = staticEntitySpawnPacket.Scale;
         entity.Modulate = staticEntitySpawnPacket.Color;
         AddChild(entity);
-    }
-
-    [EventListener(ListenerSide.Client)]
-    public void OnStaticEntitySpawnPacketListener(SC_StaticEntitySpawnPacket staticEntitySpawnPacket)
-    {
-        ClientRoot.Instance.Game.World.OnStaticEntitySpawnPacket(staticEntitySpawnPacket);
     }
 
 }

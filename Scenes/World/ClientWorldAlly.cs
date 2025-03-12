@@ -32,7 +32,8 @@ public abstract partial class ClientWorld
     {
         return GetAllyProfilesExcluding(Player.PlayerProfile.PeerId);
     }
-
+    
+    [EventListener(ListenerSide.Client)]
     public void OnAllySpawnPacket(SC_AllySpawnPacket allySpawnPacket)
     {
         ClientAlly ally = CreateNetworkEntity<ClientAlly>(
@@ -51,11 +52,5 @@ public abstract partial class ClientWorld
     {
         _allies.Remove(ally);
         _alliesByPeerId.Remove(ally.AllyProfile.PeerId);
-    }
-    
-    [EventListener(ListenerSide.Client)]
-    public static void OnAllySpawnPacketListener(SC_AllySpawnPacket allySpawnPacket)
-    {
-        ClientRoot.Instance.Game.World.OnAllySpawnPacket(allySpawnPacket);
     }
 }

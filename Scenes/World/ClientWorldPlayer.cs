@@ -4,6 +4,7 @@ using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.Utils.Components;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
@@ -14,7 +15,8 @@ public abstract partial class ClientWorld
 {
 
     public ClientPlayer Player { get; private set; }
-
+    
+    [EventListener(ListenerSide.Client)]
     public void OnPlayerSpawnPacket(SC_PlayerSpawnPacket playerSpawnPacket)
     {
         ClientPlayer player = CreateNetworkEntity<ClientPlayer>(
@@ -37,11 +39,5 @@ public abstract partial class ClientWorld
     public void RemovePlayer()
     {
         Player = null;
-    }
-    
-    [EventListener(ListenerSide.Client)]
-    public static void OnPlayerSpawnPacketListener(SC_PlayerSpawnPacket playerSpawnPacket) //TODO попробовать убрать static. Если убрать, то резолвер почему-то дважды вызывает этот метод. Возможно, из-за наследования.
-    {
-        ClientRoot.Instance.Game.World.OnPlayerSpawnPacket(playerSpawnPacket);
     }
 }
