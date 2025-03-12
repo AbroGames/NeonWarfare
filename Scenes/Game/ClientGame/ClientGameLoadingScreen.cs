@@ -24,6 +24,6 @@ public partial class ClientGame
 		LoadingCanvas?.QueueFree();
 		LoadingCanvas = loadingScreen;
 		AddChild(loadingScreen);
-		MoveChild(loadingScreen, 0);
+		MoveChild(loadingScreen, -1);
 	}
 }
