@@ -17,6 +17,8 @@ public partial class Camera : Camera2D
 	
 	public double SmoothingBase = 0.1;
 	public double SmoothingPower = 1.5; // The power to which the SmoothingBase value will be raised
+
+	public float MinSpeed = 10; // Minimum possible camera speed in px/sec
 	
 	public List<IShiftProvider> Shifts = new();
 
@@ -82,7 +84,9 @@ public partial class Camera : Camera2D
 		TargetPosition = TargetNode.Position;
 		var availableMovement = (TargetPosition + PositionShift) - ActualPosition;
 		var actualMovement = availableMovement * (float) Mathf.Pow(SmoothingBase, SmoothingPower);
-		
+		var actualMovementLength = actualMovement.Length();
+		actualMovement = availableMovement.Normalized() * (float)Mathf.Min(availableMovement.Length(), Mathf.Max(actualMovementLength, MinSpeed * delta));
+			
 		ActualPosition += actualMovement;
 		Position = ActualPosition + HardPositionShift + AdditionalShift;
 	}
