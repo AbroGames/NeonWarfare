@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scripts.KludgeBox.Collections;
@@ -127,12 +128,18 @@ public partial class Audio2D : Node2D
     /// Plays music at the specified path.
     /// </summary>
     /// <param name="path">Path to the music resource.</param>
-    public static AudioStreamPlayer PlayMusic(string path, float volume = 1f)
+    public static AudioStreamPlayer PlayMusic(string path, float volume = 1f, Node target = null)
 	{
 		if (CurrentMusic.IsValid())
 		{
 			CurrentMusic.QueueFree();
 		}
+
+		if (!target.IsValid())
+		{
+			target = Instance;
+		}
+		
 		var stream = new AudioStreamPlayer();
 		stream.Stream = GD.Load<AudioStream>(path);
 		stream.Bus = MusicBus;
@@ -140,10 +147,97 @@ public partial class Audio2D : Node2D
 		stream.VolumeDb = Mathf.LinearToDb(volume);
 
 		CurrentMusic = stream;
-		Instance.AddChild(stream);
+		target.AddChild(stream);
 		return stream;
 	}
 
+    /// <summary>
+    /// Запустит воспроизведение музыки в указанном порядке. Этим методом можно генерировать плейлист динамически.
+    /// </summary>
+    /// <param name="playlist">Перечислитель саундтреков</param>
+    /// <param name="target"></param>
+    /// <returns></returns>
+	public static PlaylistHandle PlayMusicSequence(IEnumerator<string> playlist, float volume = 1f,
+		Node target = null)
+	{
+		if(target is null)
+			target = Instance;
+			
+		var handle = new PlaylistHandle(playlist, target, volume);
+		handle.PlayNextBgm();
+		
+		return handle;
+	}
+
+	private class LoopedStringEnumerator : IEnumerator<string>
+	{
+		private List<string> _cachedList = new ();
+		private IEnumerator<string> _current;
+		private bool _firstPass = true;
+		public LoopedStringEnumerator(IEnumerator<string> enumerator)
+		{
+			_current = enumerator;
+		}
+		public bool MoveNext()
+		{
+			if (_current.MoveNext())
+			{
+				if (_firstPass)
+				{
+					_cachedList.Add(_current.Current);
+				}
+				return true;
+			}
+
+			if (_cachedList.Count == 0) // Если список пустой, прекращаем.
+				return false;
+
+			_firstPass = false;
+			_current = _cachedList.GetEnumerator();
+			return _current.MoveNext();
+		}
+
+		public void Reset()
+		{
+			_current.Reset();
+		}
+
+		public string Current => _current.Current;
+
+		object IEnumerator.Current => Current;
+
+		public void Dispose()
+		{
+			_current.Dispose();
+		}
+	}
+	
+	/// <summary>
+	/// Запускает музыку из указанного плейлиста.
+	/// </summary>
+	/// <param name="playlist">Плейлист для проигрывания</param>
+	/// <param name="loop">Для false - проиграет плейлист до конца и остановится. Для true - закэширует элементы плейлиста и продолжит воспроизводить их по кругу.</param>
+	/// <param name="target">Узел, к которому будет прикреплена музыка</param>
+	/// <returns></returns>
+	/// <remarks>
+	/// Важно: в случае loop = true оригинальный IEnumerable будет обойден только ОДИН раз, после чего вместо него будет использован закэшированный список.
+	/// </remarks>
+	public static PlaylistHandle PlayMusicSequence(IEnumerable<string> playlist, float volume = 1f, bool loop = false, Node target = null)
+	{
+		Func<IEnumerator<string>> playlistEnumeratorProvider;
+		
+		if (!loop)
+		{
+			playlistEnumeratorProvider = playlist.GetEnumerator; // используем стандартный перечислитель для однократного прохода
+		}
+		else
+		{
+			playlistEnumeratorProvider = () => new LoopedStringEnumerator(playlist.GetEnumerator()); // используем кэширующую обертку для зацикливания плейлиста
+		}
+		
+		return PlayMusicSequence(playlistEnumeratorProvider(), volume, target);
+	}
+    
 
 	/// <summary>
 	/// Plays a UI sound at the specified path with optional volume.
@@ -224,6 +318,9 @@ public partial class Audio2D : Node2D
 
 	public static Tween StopMusic(double fadeOut = 0)
 	{
+		if (!CurrentMusic.IsValid())
+			return null;
+		
 		var tween = Utils.SceneTree.CreateTween();
 		var music = CurrentMusic;
 		tween.TweenProperty(music, "volume_db", -30, fadeOut);
@@ -261,7 +358,82 @@ public partial class Audio2D : Node2D
 
 		return stream;
 	}
+	
+	/// <summary>
+	/// Эта штука будет воспроизводить звуковые файлы из перечисления до тех пор, пока перечисление не закончится, либо пока текущий трек не будет принудительно остановлен.
+	/// </summary>
+	public class PlaylistHandle
+	{
+		public AudioStreamPlayer CurrentMusicPlayer { get; private set; } // текущий трек
+		public bool IsPlaying { get; private set; }
+		
+		private IEnumerator<string> _playlistEnumerator;
+		private Action _safeNextAction;
+		private bool _firstLoop = true;
+		private Node _target;
+		private float _volume;
+		public PlaylistHandle(IEnumerator<string> playlistEnumerator, Node target, float volume = 1)
+		{
+			_playlistEnumerator = playlistEnumerator;
+			_target = target;
+			_safeNextAction = PlayNextBgm;
+			_volume = volume;
+		}
+		
+		/// <summary>
+		/// Остановит воспроизведение плейлиста. После остановки нельзя продолжить воспроизведение.
+		/// </summary>
+		public void StopBgm()
+		{
+			if(CurrentMusicPlayer.IsValid())
+				CurrentMusicPlayer.Stop();
+			
+			IsPlaying = false;
+			_firstLoop = false;
+		}
+
+		/// <summary>
+		/// Остановит текущий трек и воспроизведет следующий трек в списке, если такой имеется
+		/// </summary>
+		public void PlayNextBgm()
+		{
+			var isReadyToPlay = IsPlaying || _firstLoop;
+			var isStopped = !CurrentMusicPlayer.IsValid() && !_firstLoop;
+			
+			if (!isReadyToPlay || isStopped)
+			{
+				IsPlaying = false;
+				return;
+			}
+
+			Node nextTarget;
+			float nextVolume;
+			if (_firstLoop)
+			{
+				nextTarget = _target;
+				nextVolume = _volume;
+			}
+			else
+			{
+				nextTarget = CurrentMusicPlayer.GetParent();
+				nextVolume = _volume;
+			}
+
+			if (_playlistEnumerator.MoveNext())
+			{
+				Audio2D.StopMusic();
+				var bgm = PlayMusic(_playlistEnumerator.Current, nextVolume, nextTarget);
+				bgm.Finished += _safeNextAction;
+				CurrentMusicPlayer = bgm;
+			}
+		}
+	}
 }
+
+
+
+
+
 
 public static class AudioExtensions
 {
