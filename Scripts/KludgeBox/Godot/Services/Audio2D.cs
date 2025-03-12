@@ -130,10 +130,7 @@ public partial class Audio2D : Node2D
     /// <param name="path">Path to the music resource.</param>
     public static AudioStreamPlayer PlayMusic(string path, float volume = 1f, Node target = null)
 	{
-		if (CurrentMusic.IsValid())
-		{
-			CurrentMusic.QueueFree();
-		}
+		StopMusic();
 
 		if (!target.IsValid())
 		{
@@ -321,13 +318,15 @@ public partial class Audio2D : Node2D
 		if (!CurrentMusic.IsValid())
 			return null;
 		
-		var tween = Utils.SceneTree.CreateTween();
+		var tween = CurrentMusic.GetParent().CreateTween();
 		var music = CurrentMusic;
 		tween.TweenProperty(music, "volume_db", -30, fadeOut);
 		tween.TweenCallback(Callable.From(() =>
 		{
-			music.QueueFree();
+			if(music.IsValid())
+				music.QueueFree();
 		}));
+		tween.Play();
 		CurrentMusic = null;
 		return tween;
 	}
@@ -385,9 +384,18 @@ public partial class Audio2D : Node2D
 		/// </summary>
 		public void StopBgm()
 		{
-			if(CurrentMusicPlayer.IsValid())
-				CurrentMusicPlayer.Stop();
-			
+			if (CurrentMusicPlayer.IsValid())
+			{
+				if (CurrentMusicPlayer == Audio2D.CurrentMusic)
+				{
+					Audio2D.StopMusic();
+				}
+				else
+				{
+					CurrentMusicPlayer.QueueFree();
+				}
+			}
+
 			IsPlaying = false;
 			_firstLoop = false;
 		}
