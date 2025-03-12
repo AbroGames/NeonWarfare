@@ -82,21 +82,38 @@ public static class EventScanner
         var types = assemblies.SelectMany(x => x.GetTypes()); // returns all types defined in these assemblies
         var classes = types.Where(x => x.IsClass); // only yields classes
         var methods = classes.SelectMany(x => x.GetMethods()); // returns all methods defined in those classes
-        var staticMethods = methods.Where(x => !x.IsStatic); // returns all methods defined in those classes
+        var staticMethods = methods.Where(x => !x.IsStatic); // returns all not static methods 
         var voidReturns = staticMethods.Where(method => method.ReturnType == typeof(void)); // method should return void
         var singleParameter = voidReturns.Where(x => x.GetParameters().Length == 1); // method should accept only one parameter
         var rightParamType = singleParameter.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(paramType)); // and that parameter must be assignable to a variable of type
         var alsoRightParamType = rightParamType.Where(x => x.GetParameters().First().ParameterType.IsAssignableTo(typeof(IEvent))); // that parameter must also contain InstanceId property
         var listeners = alsoRightParamType.Where(x => x.GetCustomAttributes(typeof(EventListenerAttribute), false).FirstOrDefault() != null); // returns only methods that have the EventListener attribute
 
-        var subscriptionInfo = listeners.Select(method => 
-            new MethodSubscriptionInfo(method, null, 
+        // Убираем дубликаты, оставляя только методы из базовых классов
+        var uniqueListeners = listeners
+            .GroupBy(method => new { method.Name, DeclaringType = method.DeclaringType }) // Группируем по имени метода и классу, в котором он объявлен
+            .Select(group => group.OrderBy(m => GetClassDepth(m.DeclaringType!)).First()); // Оставляем метод из самого верхнего класса
+        
+        var subscriptionInfo = uniqueListeners.Select(method =>
+            new MethodSubscriptionInfo(method, null,
                 method.GetCustomAttribute<EventListenerAttribute>()!.Priority,
                 method.GetCustomAttribute<EventListenerAttribute>()!.Side,
                 method.GetCustomAttribute<EventListenerAttribute>()!.IsDefault
                 , true));
         
         return subscriptionInfo;
+    }
+    
+// Вспомогательный метод для определения глубины наследования
+    private static int GetClassDepth(Type type)
+    {
+        int depth = 0;
+        while (type.BaseType != null)
+        {
+            depth++;
+            type = type.BaseType;
+        }
+        return depth;
     }
 
     /// <summary>
