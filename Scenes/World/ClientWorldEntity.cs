@@ -28,19 +28,7 @@ public abstract partial class ClientWorld
     [EventListener(ListenerSide.Client)]
     public void OnStaticEntitySpawnPacket(SC_StaticEntitySpawnPacket staticEntitySpawnPacket)
     {
-        Dictionary<SC_StaticEntitySpawnPacket.StaticEntityType, PackedScene> staticEntityScenesMap = new() 
-        {
-            { SC_StaticEntitySpawnPacket.StaticEntityType.Wall, ClientRoot.Instance.PackedScenes.Wall }
-        };
-        
-        
-        if (!staticEntityScenesMap.TryGetValue(staticEntitySpawnPacket.EntityType, out var entityScene))
-        {
-            Log.Error($"Received unknown type of StaticEntityType: {staticEntitySpawnPacket.EntityType}");
-            return;
-        }
-        
-        Node2D entity = entityScene.Instantiate<Node2D>();
+        Node2D entity = staticEntitySpawnPacket.StaticEntityClientScene.Instantiate<Node2D>();
         entity.Position = staticEntitySpawnPacket.Position;
         entity.Rotation = staticEntitySpawnPacket.Rotation;
         entity.Scale = staticEntitySpawnPacket.Scale;

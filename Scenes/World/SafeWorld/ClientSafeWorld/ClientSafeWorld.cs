@@ -16,9 +16,9 @@ public partial class ClientSafeWorld : ClientWorld
 		
 		//TODO перенести на серверную сторону, и в боевой мир вместо мирного хаба
 		MapGenerator mapGenerator = new MapGenerator();
-		foreach (MapGenerator.Location location in mapGenerator.Generate())
+		foreach (var location in mapGenerator.Generate())
 		{
-			foreach (MapGenerator.Entity entity in location.Entities)
+			foreach (var entity in location.Entities)
 			{
 				OnStaticEntitySpawnPacket(new SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType.Wall, entity.Position, entity.Scale, entity.Rotation ,entity.Color));
 			}

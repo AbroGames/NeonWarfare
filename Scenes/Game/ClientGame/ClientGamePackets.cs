@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Godot;
+using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
@@ -21,13 +23,19 @@ public partial class ClientGame
     [GamePacket]
     public class SC_ChangeWorldPacket(SC_ChangeWorldPacket.ServerWorldType worldType) : BinaryPacket
     {
+        public ServerWorldType WorldType = worldType;
+        public PackedScene WorldMainScene => WorldScenesMap[WorldType].Invoke();
         
         public enum ServerWorldType
         {
             Safe, Battle
         }
         
-        public ServerWorldType WorldType = worldType;
+        private static readonly Dictionary<ServerWorldType, Func<PackedScene>> WorldScenesMap = new() 
+        {
+            { ServerWorldType.Safe, () => ClientRoot.Instance.PackedScenes.SafeWorldMainScene },
+            { ServerWorldType.Battle, () => ClientRoot.Instance.PackedScenes.BattleWorldMainScene }
+        };
     }
     
     [GamePacket]
