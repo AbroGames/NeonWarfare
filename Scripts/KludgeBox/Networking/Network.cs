@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Game.ServerGame;
 using NeonWarfare.Scripts.KludgeBox.Events.Global;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 using NeonWarfare.Scripts.Utils.Components;
+using NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
@@ -149,6 +150,7 @@ public partial class Network : Node
 		packetObj.SenderId = id;
 
 		Type[] ignoredTypes = [
+			typeof(ClientNetworkEntityComponent.SC_PositionEntityPacket), 
 			typeof(NetworkInertiaComponent.CS_InertiaEntityPacket), 
 			typeof(NetworkInertiaComponent.SC_InertiaEntityPacket),
 			typeof(ServerGame.CS_PingPacket),
@@ -156,7 +158,7 @@ public partial class Network : Node
 		];
 		if (!ignoredTypes.Contains(packetObj.GetType()))
 		{
-			Log.Info($"Received packet from {id} with {packet.Length - 4} bytes. Received type is {packetObj.GetType().FullName}");
+			Log.Debug($"Received packet from {id} with {packet.Length - 4} bytes. Received type is {packetObj.GetType().FullName}");
 		}
 
 		EventBus.Publish(packetObj);
