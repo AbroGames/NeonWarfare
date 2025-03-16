@@ -112,11 +112,7 @@ public partial class ServerGame
 
         ServerBattleWorld battleWorld = ServerRoot.Instance.PackedScenes.BattleWorld.Instantiate<ServerBattleWorld>();
         ChangeMainScene(battleWorld);
-        
-        foreach (ServerPlayerProfile playerProfile in PlayerProfiles)
-        {
-            battleWorld.SpawnPlayerInCenter(playerProfile);
-        }
+        battleWorld.Init(PlayerProfiles.ToList());
         
         Network.SendToAll(new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
     }
