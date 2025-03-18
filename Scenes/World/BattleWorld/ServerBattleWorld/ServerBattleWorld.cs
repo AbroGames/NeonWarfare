@@ -38,7 +38,7 @@ public partial class ServerBattleWorld : ServerWorld
             var coords = location.GetBorderCoordinates().ToArray();
             Network.SendToAll(new ClientWorld.SC_LocationMesh(coords)); // отправляем дебаг-пакет клиентам, чтобы они смогли построить у себя ПРИМЕРНУЮ карту путей.
             locationMeshes.Add(coords);
-            Log.Info($"Adding location mesh: {string.Join(' ', coords)}");
+            Log.Debug($"Adding location mesh: {string.Join(' ', coords)}");
         }
         
         // Генерируем и запекаем карты путей
