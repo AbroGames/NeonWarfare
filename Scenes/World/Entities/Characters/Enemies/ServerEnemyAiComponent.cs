@@ -39,6 +39,12 @@ public partial class ServerEnemyAiComponent : Node
             _parent.GlobalPosition = _parent.NavigationAgent.TargetPosition;
         };
         
+        // Телепортируем юнита в промежуточную точку пути, если он достаточно близок к ней
+        _parent.NavigationAgent.WaypointReached += details =>
+        {
+            _parent.GlobalPosition = (Vector2)details["position"];
+        };
+        
         _recalculatePathCooldown.ActionWhenReady += RecalculatePath;
 
         ConfigureComponents();
@@ -89,6 +95,7 @@ public partial class ServerEnemyAiComponent : Node
     public override void _PhysicsProcess(double delta)
     {
         _recalculatePathCooldown.Update(delta);
+        _parent.NavigationAgent.PathDesiredDistance = (float)(_parent.MovementSpeed * delta * 1.5);
     }
     
     private Vector2 GetAvailableMovement()
