@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.Content;
@@ -18,6 +19,12 @@ public partial class ServerEnemyMovementComponent : Node
     private ServerEnemy _parent;
     private ServerEnemyTargetComponent _parentTargetComponent;
     private ManualCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);
+    
+    /// <summary>
+    /// Если отсюда вернется что-то кроме null, это что-то будет использоваться в качестве направления движения
+    /// TODO: продумать вариант, когда расстояние до конечной точки оказывается меньше скорости.
+    /// </summary>
+    public Func<Vector2?> CustomMovementDirectionProvider;
     
     public override void _Ready()
     {
@@ -54,8 +61,13 @@ public partial class ServerEnemyMovementComponent : Node
             movementInSecond.Angle(), movementInSecond.Length()));
     }
 
+    private Vector2 GetMovementDirection()
+    {
+        return CustomMovementDirectionProvider?.Invoke() // Сначала пытаемся получить кастомное направление
+               ?? Vector2.FromAngle(_parent.GetRotation() - Mathf.DegToRad(90)); // и используем стандартную логику, если кастомная ничего не дала
+    }
     private Vector2 GetMovementInSecondFromAngle()
     {
-        return Vector2.FromAngle(_parent.GetRotation() - Mathf.DegToRad(90)) * (float) _parent.MovementSpeed;
+        return GetMovementDirection() * (float) _parent.MovementSpeed;
     }
 }
