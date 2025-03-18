@@ -11,7 +11,7 @@ public partial class CorridorContainer : Node3D
     private int _corridorSegmentsCount = 5;
     private float _maxAllowedSegmentPosition = 10; // 10 метров за камерой
     private float _segmentLength = 7; // длина одного сегмента - 7 метров
-    private float _coridorSpeed = 0.2f;
+    private float _coridorSpeed = 0.05f;
     
     
     public override void _Ready()

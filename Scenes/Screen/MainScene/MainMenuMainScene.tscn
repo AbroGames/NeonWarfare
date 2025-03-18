@@ -55,7 +55,7 @@ script = ExtResource("3_ti4af")
 _light = NodePath("OmniLight3D")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Screen/SubViewportContainer/SubViewport/Background3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 8)
 light_energy = 16.0
 distance_fade_begin = 0.0
 distance_fade_length = 0.0

@@ -3,12 +3,12 @@
 [ext_resource type="Texture2D" uid="uid://bq51renh3lna4" path="res://Assets/Textures/MainMenuBackgroundGrid.png" id="1_gnxjf"]
 
 [resource]
-albedo_color = Color(0, 1, 0, 1)
+albedo_color = Color(0, 1, 0.647059, 1)
 albedo_texture = ExtResource("1_gnxjf")
 albedo_texture_force_srgb = true
 metallic_specular = 0.0
 emission_enabled = true
-emission = Color(0.0901961, 1, 0.0901961, 1)
+emission = Color(0.0901961, 1, 0.74902, 1)
 emission_energy_multiplier = 5.49
 emission_operator = 1
 emission_texture = ExtResource("1_gnxjf")
