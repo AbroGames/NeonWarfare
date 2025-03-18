@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvj1gxq3db2hc"
-path.s3tc="res://.godot/imported/Square.png-7b17cd5ce7ee28653c988e8770d87e02.s3tc.ctex"
+uid="uid://bq51renh3lna4"
+path.s3tc="res://.godot/imported/MainMenuBackgroundGrid.png-ce371818ef05e6cc8def5059fad50528.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Assets/Textures/Sprites/Square.png"
-dest_files=["res://.godot/imported/Square.png-7b17cd5ce7ee28653c988e8770d87e02.s3tc.ctex"]
+source_file="res://Assets/Textures/MainMenuBackgroundGrid.png"
+dest_files=["res://.godot/imported/MainMenuBackgroundGrid.png-ce371818ef05e6cc8def5059fad50528.s3tc.ctex"]
 
 [params]
 

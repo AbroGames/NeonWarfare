@@ -1,8 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://dw24k3p4lhskq"]
+[gd_scene load_steps=8 format=3 uid="uid://dw24k3p4lhskq"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/MainScene/MainMenuMainScene.cs" id="1_tlyle"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainScene/NodeContainer.cs" id="1_ugbjc"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="3_fgxhg"]
+[ext_resource type="PackedScene" uid="uid://b3g407ij4nj4q" path="res://Scenes/Screen/MainScene/CorridorSegment3D.tscn" id="3_o0a6v"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainScene/Background3D.cs" id="3_ti4af"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainScene/CorridorContainer.cs" id="4_qieib"]
+
+[sub_resource type="Environment" id="Environment_touy5"]
+background_mode = 2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0, 0, 0, 1)
+fog_density = 1.0
+fog_depth_begin = 0.0
+fog_depth_end = 15.0
 
 [node name="MainMenuMainScene" type="Node2D" node_paths=PackedStringArray("BackgroundContainer", "MenuContainer", "ForegroundContainer")]
 script = ExtResource("1_tlyle")
@@ -20,6 +32,57 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ugbjc")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Screen"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Screen/SubViewportContainer"]
+handle_input_locally = false
+msaa_3d = 3
+screen_space_aa = 1
+use_debanding = true
+mesh_lod_threshold = 0.0
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="Background3D" type="Node3D" parent="Screen/SubViewportContainer/SubViewport" node_paths=PackedStringArray("_light")]
+script = ExtResource("3_ti4af")
+_light = NodePath("OmniLight3D")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Screen/SubViewportContainer/SubViewport/Background3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -2)
+light_energy = 16.0
+distance_fade_begin = 0.0
+distance_fade_length = 0.0
+omni_range = 9.326
+omni_attenuation = -1.717
+
+[node name="Camera3D" type="Camera3D" parent="Screen/SubViewportContainer/SubViewport/Background3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+projection = 2
+current = true
+fov = 85.0
+near = 0.583
+
+[node name="CorridorContainer" type="Node3D" parent="Screen/SubViewportContainer/SubViewport/Background3D"]
+script = ExtResource("4_qieib")
+_corridorSegmentScene = ExtResource("3_o0a6v")
+
+[node name="CorridorSegment2" parent="Screen/SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("3_o0a6v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="CorridorSegment" parent="Screen/SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("3_o0a6v")]
+
+[node name="CorridorSegment3" parent="Screen/SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("3_o0a6v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Screen/SubViewportContainer/SubViewport/Background3D"]
+environment = SubResource("Environment_touy5")
 
 [node name="MenuContainer" type="Control" parent="Screen"]
 layout_mode = 3
