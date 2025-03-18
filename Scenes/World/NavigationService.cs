@@ -13,8 +13,8 @@ public partial class NavigationService : Node2D
     /// </summary>
     /// <remarks>Чем их меньше, тем лучше для производительности при запекании карты путей. Допускается не более 32 различных размеров.</remarks>
     public static readonly IReadOnlyList<int> UnitSizes = [5, 10, 20, 40, 80, 160];
-    public static int SmallestUnitSize => UnitSizes[0]; // Самый большой размер в списке
-    public static int BiggestUnitSize => UnitSizes[^1]; // Самый маленбкий размер в списке
+    public static int SmallestUnitSize => UnitSizes[0]; // Самый маленбкий размер в списке
+    public static int BiggestUnitSize => UnitSizes[^1]; // Самый большой размер в списке
     
     private Dictionary<int, NavigationRegion2D> _regions = new ();
     
