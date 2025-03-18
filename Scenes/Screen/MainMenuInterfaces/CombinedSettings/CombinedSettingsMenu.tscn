@@ -1,0 +1,91 @@
+[gd_scene load_steps=7 format=3 uid="uid://cxq687ukoox5e"]
+
+[ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="1_73skt"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/CombinedSettingsMenu.cs" id="1_p2lt3"]
+[ext_resource type="PackedScene" uid="uid://cqsklmny1uks6" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingContainer.tscn" id="2_eqemr"]
+[ext_resource type="PackedScene" uid="uid://csiurost6ln7m" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingsGroupPanel.tscn" id="3_ljw7m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_geqcd"]
+font = ExtResource("1_73skt")
+font_size = 32
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2y8x6"]
+bg_color = Color(0, 0, 0, 0.854902)
+
+[node name="CombinedSettingsMenu" type="Control" node_paths=PackedStringArray("_settingsContainer", "_returnButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p2lt3")
+_settingContainerScene = ExtResource("2_eqemr")
+_settingGroupPanelScene = ExtResource("3_ljw7m")
+_settingsContainer = NodePath("MarginContainer/RootVerticalLayout/PanelContainer/ScrollContainer/MarginContainer/SettingsContainer")
+_returnButton = NodePath("MarginContainer/RootVerticalLayout/ButtonsContainer/BackButton")
+
+[node name="Background" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.839216)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 120
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 120
+theme_override_constants/margin_bottom = 20
+
+[node name="RootVerticalLayout" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="SettingsTitle" type="Label" parent="MarginContainer/RootVerticalLayout"]
+layout_mode = 2
+text = "НАСТРОЙКИ"
+label_settings = SubResource("LabelSettings_geqcd")
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/RootVerticalLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_2y8x6")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/RootVerticalLayout/PanelContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/RootVerticalLayout/PanelContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 120
+theme_override_constants/margin_right = 120
+
+[node name="SettingsContainer" type="VBoxContainer" parent="MarginContainer/RootVerticalLayout/PanelContainer/ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="MarginContainer/RootVerticalLayout"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="BackButton" type="Button" parent="MarginContainer/RootVerticalLayout/ButtonsContainer"]
+custom_minimum_size = Vector2(256, 64)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_73skt")
+theme_override_font_sizes/font_size = 24
+text = "НАЗАД"

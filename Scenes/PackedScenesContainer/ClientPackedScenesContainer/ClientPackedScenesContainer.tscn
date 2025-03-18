@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld/ClientSafeWorld.tscn" id="9_17hfk"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld/ClientBattleWorld.tscn" id="10_0t0c3"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="10_3txv8"]
-[ext_resource type="PackedScene" uid="uid://dkmaek7egfvff" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/SettingsMenu.tscn" id="11_wjjxj"]
+[ext_resource type="PackedScene" uid="uid://cxq687ukoox5e" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/CombinedSettingsMenu.tscn" id="11_qchdy"]
 [ext_resource type="PackedScene" uid="uid://cjrxgi0aql38u" path="res://Scenes/Screen/MainMenuInterfaces/PlayerSettingsInterface/PlayerSettingsMenu.tscn" id="12_0aydt"]
 [ext_resource type="PackedScene" uid="uid://c36qj0341opia" path="res://Scenes/World/Entities/Characters/Players/ClientAlly.tscn" id="12_cm42j"]
 [ext_resource type="PackedScene" uid="uid://bo4752bgus85w" path="res://Scenes/Screen/MainMenuInterfaces/GraphicSettingInterface/GraphicSettingsMenu.tscn" id="13_sh88y"]
@@ -46,7 +46,7 @@ BattleWorldMainScene = ExtResource("7_0iiio")
 SafeWorldMainScene = ExtResource("8_02aqn")
 MainMenuPackedScene = ExtResource("9_6gxor")
 MainMenu = ExtResource("10_3txv8")
-SettingsMenu = ExtResource("11_wjjxj")
+SettingsMenu = ExtResource("11_qchdy")
 PlayerSettingsMenu = ExtResource("12_0aydt")
 GraphicSettingsMenu = ExtResource("13_sh88y")
 SoundSettingsMenu = ExtResource("14_n3rfo")

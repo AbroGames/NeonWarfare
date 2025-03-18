@@ -10,7 +10,7 @@ public class PlayerSettings
 	
 	public PlayerSettings() {}
 
-	private PlayerSettings(string playerName, Color playerColor)
+	public PlayerSettings(string playerName, Color playerColor)
 	{
 		PlayerName = playerName;
 		PlayerColor = playerColor;

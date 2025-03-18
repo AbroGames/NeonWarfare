@@ -14,7 +14,7 @@ public static class SerializationUtils
         typeof(NonSerializedAttribute),
         typeof(IgnoreDataMemberAttribute),
         typeof(JsonIgnoreAttribute),
-        typeof(Newtonsoft.Json.JsonIgnoreAttribute)
+        //typeof(Newtonsoft.Json.JsonIgnoreAttribute)
     ];
     
     private static readonly Dictionary<Type, IMemberAccessor[]> CachedAccessors = new();
@@ -30,7 +30,7 @@ public static class SerializationUtils
         var accessors = new List<IMemberAccessor>();
         foreach (var member in members)
         {
-            if (!ShouldBeSerialized(member))
+            if (!CanBeSerialized(member))
                 continue;
 
             if (member is PropertyInfo property)
@@ -53,7 +53,7 @@ public static class SerializationUtils
         return orderedAccessors;
     }
     
-    private static bool ShouldBeSerialized(MemberInfo member)
+    private static bool CanBeSerialized(MemberInfo member)
     {
         if (member is not (FieldInfo or PropertyInfo))
             return false;
@@ -69,10 +69,10 @@ public static class SerializationUtils
             var getMethod = property.GetGetMethod();
             var setMethod = property.GetSetMethod();
             
-            if (getMethod is not null && !getMethod.IsStatic && getMethod.IsPublic)
+            if (getMethod is null || getMethod.IsStatic || !getMethod.IsPublic)
                 return false;
         
-            if (setMethod is not null && !setMethod.IsStatic && setMethod.IsPublic)
+            if (setMethod is null || setMethod.IsStatic || !setMethod.IsPublic)
                 return false;
             
             return true;
@@ -134,10 +134,10 @@ public class PropertyAccessor : IMemberAccessor
 
     public PropertyAccessor(PropertyInfo property)
     {
-        if (property.GetGetMethod() is not null && property.GetGetMethod()!.IsPublic)
+        if (property.GetGetMethod() is null || !property.GetGetMethod()!.IsPublic)
             throw new ArgumentException($"Property {property.Name} does not have a public getter.");
         
-        if (property.GetSetMethod() is not null && property.GetSetMethod()!.IsPublic)
+        if (property.GetSetMethod() is null || !property.GetSetMethod()!.IsPublic)
             throw new ArgumentException($"Property {property.Name} does not have a public setter.");
         
         _property = property;
