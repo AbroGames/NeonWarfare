@@ -125,4 +125,13 @@ public partial class ServerEnemy : ServerCharacter
     {
         return 2000; // Самое большое значение, которое я нашел в скиллах
     }
+
+    /// <summary>
+    /// Назначает маску поиска пути для NavigationAgent
+    /// </summary>
+    /// <param name="layersBitMask"></param>
+    public void AssignNavigationLayers(uint layersBitMask)
+    {
+        NavigationAgent.SetNavigationLayers(layersBitMask);
+    }
 }

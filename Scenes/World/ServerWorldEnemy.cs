@@ -15,7 +15,7 @@ public abstract partial class ServerWorld
     public ServerEnemy SpawnEnemy(EnemyInfoStorage.EnemyType type, Vector2 position, float rotation)
     {
         ServerEnemy enemy = CreateNetworkEntity<ServerEnemy>(EnemyInfoStorage.GetServerScene(type));
-        enemy.NavigationAgent.NavigationLayers = NavigationService.GetNavigationLayersForSize(enemy.GetNavigationRadius());
+        enemy.AssignNavigationLayers(NavigationService.GetNavigationLayersForSize(enemy.GetNavigationRadius()));
         enemy.InitComponents();
         enemy.InitOnSpawn(position, rotation);
         enemy.InitStats(EnemyInfoStorage.GetEnemyInfo(type));
