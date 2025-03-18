@@ -27,10 +27,10 @@ public class MapGenerator
         Color gray = new(0.3f, 0.3f, 0.3f);
         Color darkGray = new(0.2f, 0.2f, 0.2f);
         Location mainLocation = new Location(new Vector2(0, 0), [
-            new(Wall, new Vector2(-5187, 56), new Vector2(1, 20), 0, darkGray),
-            new(Wall, new Vector2(4516, 12), new Vector2(1, 20), 0, darkGray),
-            new(Wall, new Vector2(-332, 5341), new Vector2(20, 1), 0, darkGray),
-            new(Wall, new Vector2(-332, -5327), new Vector2(20, 1), 0, darkGray),
+            new(Border, new Vector2(-5187, 56), new Vector2(1, 20), 0, darkGray),
+            new(Border, new Vector2(4516, 12), new Vector2(1, 20), 0, darkGray),
+            new(Border, new Vector2(-332, 5341), new Vector2(20, 1), 0, darkGray),
+            new(Border, new Vector2(-332, -5327), new Vector2(20, 1), 0, darkGray),
             new(Wall, new Vector2(-2492, -3283), new Vector2(0.2f, 2), 0.943161f, gray),
             new(Wall, new Vector2(1782, -1297), new Vector2(0.2f, 2), 2.09439f, gray),
             new(Wall, new Vector2(-1878, -1367), new Vector2(0.2f, 2), 0.261799f, gray),
@@ -69,10 +69,10 @@ public class MapGenerator
         Color blue = new(0.0f, 0.0f, 0.6f);
         Color red = new(0.6f, 0.0f, 0.0f);
         Location mainLocation = new Location(new Vector2(0, 0), [
-            new(Wall, new Vector2(-5187, 56), new Vector2(1, 20), 0, yellow),
-            new(Wall, new Vector2(4516, 12), new Vector2(1, 20), 0, green),
-            new(Wall, new Vector2(-332, 5341), new Vector2(20, 1), 0, blue),
-            new(Wall, new Vector2(-332, -5327), new Vector2(20, 1), 0, red),
+            new(Border, new Vector2(-5187, 56), new Vector2(1, 20), 0, yellow),
+            new(Border, new Vector2(4516, 12), new Vector2(1, 20), 0, green),
+            new(Border, new Vector2(-332, 5341), new Vector2(20, 1), 0, blue),
+            new(Border, new Vector2(-332, -5327), new Vector2(20, 1), 0, red),
             new(Wall, new Vector2(-2492, -3283), new Vector2(0.2f, 2), 0.943161f, gray),
             new(Wall, new Vector2(1782, -1297), new Vector2(0.2f, 2), 2.09439f, gray),
             new(Wall, new Vector2(-1878, -1367), new Vector2(0.2f, 2), 0.261799f, gray),
