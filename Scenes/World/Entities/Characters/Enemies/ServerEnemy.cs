@@ -123,7 +123,7 @@ public partial class ServerEnemy : ServerCharacter
     /// </remarks>
     public virtual float GetEnemyReachRange()
     {
-        return 2000; // Самое большое значение, которое я нашел в скиллах
+        return 5000; // Самое большое значение, которое я нашел в скиллах
     }
 
     /// <summary>
