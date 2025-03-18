@@ -15,7 +15,8 @@ public static class EntityInfoStorage
     
     public enum StaticEntityType
     {
-        Wall, Border
+        Wall,
+        Border
     }
 
     public static readonly IReadOnlyDictionary<StaticEntityType, StaticEntityInfo> StaticEntityInfoByType = new Dictionary<StaticEntityType, StaticEntityInfo>
