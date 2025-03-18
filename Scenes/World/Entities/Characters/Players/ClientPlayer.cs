@@ -13,7 +13,7 @@ public partial class ClientPlayer : ClientAlly
         AddChild(new ClientPlayerMovementComponent());
         
         RotateComponent rotateComponent = new RotateComponent();
-        rotateComponent.GetTargetFunc = () => GetGlobalMousePosition();
+        rotateComponent.GetTargetGlobalPositionFunc = () => GetGlobalMousePosition();
         rotateComponent.GetRotationSpeedFunc = () => RotationSpeed;
         AddChild(rotateComponent);
     }

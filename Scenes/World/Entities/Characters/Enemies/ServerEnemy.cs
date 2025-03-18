@@ -12,7 +12,6 @@ public partial class ServerEnemy : ServerCharacter
 {
     [Export] [NotNull] public RayCast2D RayCast { get; private set; }
 
-
     public void InitComponents()
     {
         AddChild(new ServerEnemyMovementComponent());
@@ -21,7 +20,7 @@ public partial class ServerEnemy : ServerCharacter
         AddChild(serverEnemyTargetComponent);
         
         RotateComponent rotateComponent = new RotateComponent();
-        rotateComponent.GetTargetFunc = () =>
+        rotateComponent.GetTargetGlobalPositionFunc = () =>
         {
             if (serverEnemyTargetComponent.Target == null || !serverEnemyTargetComponent.Target.IsValid()) return null;
             return serverEnemyTargetComponent.Target.GlobalPosition;

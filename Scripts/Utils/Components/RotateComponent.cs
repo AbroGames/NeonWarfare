@@ -7,7 +7,7 @@ namespace NeonWarfare.Scripts.Utils.Components;
 public partial class RotateComponent : Node
 {
     
-    public Func<Vector2?> GetTargetFunc;
+    public Func<Vector2?> GetTargetGlobalPositionFunc;
     public Func<double> GetRotationSpeedFunc;
     
     private Node2D _parent;    
@@ -16,7 +16,7 @@ public partial class RotateComponent : Node
     {
         _parent = GetParent<Node2D>();
 
-        if (GetTargetFunc == null || GetRotationSpeedFunc == null)
+        if (GetTargetGlobalPositionFunc == null || GetRotationSpeedFunc == null)
         {
             Log.Warning("GetTargetFunc and GetRotationSpeedFunc must be not null");
         }
@@ -25,7 +25,7 @@ public partial class RotateComponent : Node
     public override void _Process(double delta)
     {
         // Получаем координаты цели, куда хотим повернуться
-        Vector2? targetPosition = GetTargetFunc.Invoke();
+        Vector2? targetPosition = GetTargetGlobalPositionFunc.Invoke();
         double rotationSpeed = GetRotationSpeedFunc.Invoke();
         if (!targetPosition.HasValue || rotationSpeed == 0) return;
         
