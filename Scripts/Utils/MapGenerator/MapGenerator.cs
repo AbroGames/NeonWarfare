@@ -108,17 +108,42 @@ public class MapGenerator
     {
         public Vector2 Position = position;
         public List<SC_StaticEntitySpawnPacket> Entities = entities;
+        
+        /// <remarks>
+        /// Я думаю, что в будущем нам стоит действовать от обратного: объявить границы локации и уже по ним строить стены.
+        /// </remarks>
         public List<Vector2> GetBorderCoordinates()
         {
             //TODO лучше получать динамически из объектов стены
+            //TODO: реализовать утилиты для трансформации локальных координат и размеров в глобальные. Это упростит вообще всё в этом методе и в паре других мест.
             int wallSizeX = 512;
             int wallSizeY = 512;
-            return Entities
-                .FindAll(entity => entity.Type == Border)
-                .Select(entity => new Vector2(
-                    entity.Position.X + entity.Position.X < Position.X ? (wallSizeX/2 * entity.Scale.X) : (-1 * wallSizeX/2 * entity.Scale.X), 
-                    entity.Position.Y + entity.Position.Y < Position.Y ? (wallSizeY/2 * entity.Scale.Y) : (-1 * wallSizeY/2 * entity.Scale.Y)))
-                .ToList();
+            List<Vector2> rawCoordinates = new();
+            
+            // новая логика поиска границ игровой локации, которая также работает как говно, но вроде как чутка получше
+            foreach (var border in Entities.FindAll(entity => entity.Type == Border))
+            {
+                var scaleX = border.Scale.X;
+                var scaleY = border.Scale.Y;
+                
+                // Строим полигон стены
+                Vector2[] poly = [
+                    border.Position + new Vector2(wallSizeX / 2f * scaleX, -wallSizeY / 2f * scaleY), // top right
+                    border.Position + new Vector2(-wallSizeX / 2f * scaleX, -wallSizeY / 2f * scaleY), // top left
+                    border.Position + new Vector2(-wallSizeX / 2f * scaleX, wallSizeY / 2f * scaleY), // bottom left
+                    border.Position + new Vector2(wallSizeX / 2f * scaleX, wallSizeY / 2f * scaleY) // bottom right
+                ];
+
+                // и добавляем ДВЕ самые удаленные от центра карты точки в массив общего полигона
+                var farthestFaceVertices = poly.OrderByDescending(vertex => vertex.DistanceTo(Position)).Take(2);
+                rawCoordinates.AddRange(farthestFaceVertices);
+            }
+
+            // Получаем ВЫПУКЛУЮ форму для локации. 
+            // Если нужна вогнутая форма, то всё очень сильно усложняется. Придется разбивать вогнутую форму на несколько выпуклых и комбинировать их.
+            // Либо найти алгоритм для сортировки точек по часовой стрелке относительно центра.
+            // Алсо, без этого метода полигон, описанный в rawCoordinates свернётся в "восьмёрочку"
+            return Geometry2D.ConvexHull(rawCoordinates.ToArray()).ToList();
         }
         public Location(Vector2 locationPosition) :
             this(locationPosition, new List<SC_StaticEntitySpawnPacket>()) {}
