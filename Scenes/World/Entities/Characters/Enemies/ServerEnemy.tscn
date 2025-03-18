@@ -11,9 +11,12 @@ radius = 18.0
 resource_local_to_scene = true
 radius = 24.0
 
-[node name="ServerEnemy" node_paths=PackedStringArray("RayCast") instance=ExtResource("1_nfij0")]
+[node name="ServerEnemy" node_paths=PackedStringArray("RayCast", "NavigationAgent") instance=ExtResource("1_nfij0")]
+platform_on_leave = 2
+platform_floor_layers = 0
 script = ExtResource("2_lvk3t")
 RayCast = NodePath("RayCast")
+NavigationAgent = NodePath("NavigationAgent2D")
 
 [node name="CharacterShape" parent="." index="0"]
 shape = SubResource("CircleShape2D_7856p")
@@ -23,3 +26,7 @@ shape = SubResource("CircleShape2D_mp1a7")
 
 [node name="RayCast" type="RayCast2D" parent="." index="2"]
 target_position = Vector2(0, -5000)
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." index="3"]
+path_desired_distance = 1.0
+target_desired_distance = 1.0

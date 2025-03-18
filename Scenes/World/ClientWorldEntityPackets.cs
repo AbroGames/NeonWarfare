@@ -72,4 +72,11 @@ public abstract partial class ClientWorld
         public Color Color = color;
         public string CustomParams = customParams;
     }
+
+    [GamePacket]
+    public class SC_LocationMesh(Vector2[] meshVertices) : BinaryPacket
+    {
+        public Vector2[] MeshVertices = meshVertices;
+        public SC_LocationMesh() : this([]) {}
+    }
 }

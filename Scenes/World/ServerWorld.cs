@@ -12,9 +12,11 @@ namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ServerWorld : Node2D
 {
-    
+    public NavigationService NavigationService { get; protected set; }
     public void Init(List<ServerPlayerProfile> playerProfiles)
     {
+        NavigationService = new NavigationService();
+        AddChild(NavigationService);
         InitMap();
         InitPlayers(playerProfiles);
     }

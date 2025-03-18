@@ -38,6 +38,21 @@ public abstract partial class ClientWorld
     }
 
     [EventListener(ListenerSide.Client)]
+    public void OnLocationMeshPacket(SC_LocationMesh locationMeshPacket)
+    {
+        // Вручную генерируем и запекаем карту путей для отладочных целей.
+        var region = new NavigationRegion2D();
+        var polygon = new NavigationPolygon();
+        var navSource = new NavigationMeshSourceGeometryData2D();
+        polygon.AddOutline(locationMeshPacket.MeshVertices);
+        
+        NavigationServer2D.ParseSourceGeometryData(polygon, navSource, this);
+        NavigationServer2D.BakeFromSourceGeometryData(polygon, navSource);
+        region.NavigationPolygon = polygon;
+        AddChild(region);
+    }
+
+    [EventListener(ListenerSide.Client)]
     public void OnUseSkillPacket(SC_UseSkillPacket useSkillPacket)
     {
         Skill.ClientSkillUseInfo useInfo = new Skill.ClientSkillUseInfo(
