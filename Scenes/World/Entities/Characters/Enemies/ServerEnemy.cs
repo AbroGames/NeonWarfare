@@ -110,8 +110,9 @@ public partial class ServerEnemy : ServerCharacter
     public virtual float GetNavigationRadius()
     {
         return CollisionShape.Shape.GetRect().Size.X // ширина прямоугольника, описанного вокруг формы, БЕЗ учета Scale
-            / 2 // половина этой ширины будет равна радиусу окружности
-            * 1.05f; // небольшой запасик на всякий случай
+               * GlobalScale.X // ладно, попробуем учесть scale
+               / 2 // половина этой ширины будет равна радиусу окружности
+               * 1.05f; // небольшой запасик на всякий случай
     }
 
     /// <summary>
