@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=36 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -20,10 +20,11 @@
 [ext_resource type="PackedScene" uid="uid://3j3wpv6my2si" path="res://Scenes/Screen/MainMenuInterfaces/ConnectToServerInterface/ConnectToServerMenu.tscn" id="15_1x6bd"]
 [ext_resource type="PackedScene" uid="uid://cdfkul01f3eck" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/CreateServerMenu.tscn" id="16_r8vo5"]
 [ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="17_rgedi"]
-[ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="18_ggxrk"]
-[ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="19_xmh5k"]
+[ext_resource type="PackedScene" uid="uid://cdm4naiiirayl" path="res://Scenes/Screen/Hud/SafeHud/NewSafeHud.tscn" id="18_m3tcb"]
+[ext_resource type="PackedScene" uid="uid://r5m6oi6tl8bm" path="res://Scenes/Screen/Hud/BattleHud/NewBattleHud.tscn" id="19_2bbbp"]
 [ext_resource type="PackedScene" uid="uid://d2qm2kk0flcrl" path="res://Scenes/Screen/Components/Overlay/Overlay.tscn" id="20_2s2nn"]
 [ext_resource type="PackedScene" uid="uid://cra1y5dubl2eb" path="res://Scenes/Screen/Components/Overlay/HitOverlay.tscn" id="21_c2w5t"]
+[ext_resource type="PackedScene" uid="uid://cr1rdhtrdpo7j" path="res://Scenes/Screen/Hud/Icon.tscn" id="22_qkx4i"]
 [ext_resource type="PackedScene" uid="uid://djpq1rixw27hn" path="res://Scripts/Utils/Background/Background.tscn" id="24_o4x2b"]
 [ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="24_p0bw0"]
 [ext_resource type="PackedScene" uid="uid://bn0qrlv6wb2i7" path="res://Scenes/World/WorldEnvironment.tscn" id="25_uoidq"]
@@ -53,10 +54,11 @@ SoundSettingsMenu = ExtResource("14_n3rfo")
 ConnectToServerMenu = ExtResource("15_1x6bd")
 CreateServerMenu = ExtResource("16_r8vo5")
 LoadingScreenCanvas = ExtResource("17_rgedi")
-SafeHud = ExtResource("18_ggxrk")
-BattleHud = ExtResource("19_xmh5k")
+SafeHud = ExtResource("18_m3tcb")
+BattleHud = ExtResource("19_2bbbp")
 Overlay = ExtResource("20_2s2nn")
 HitOverlay = ExtResource("21_c2w5t")
+SkillIcon = ExtResource("22_qkx4i")
 SafeWorld = ExtResource("9_17hfk")
 BattleWorld = ExtResource("10_0t0c3")
 Background = ExtResource("24_o4x2b")

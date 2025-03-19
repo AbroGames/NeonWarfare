@@ -4,6 +4,7 @@ using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Components;
@@ -39,6 +40,16 @@ public partial class ClientPlayer : ClientAlly
         }
         PlayerProfile = playerProfile;
     }
+
+    public ManualCooldown GetCooldownById(long id)
+    {
+        return _skillCooldownById[id].Cooldown;
+    }
+
+    public StringName GetActionNameById(long id)
+    {
+        return _skillCooldownById[id].ActionToActivate;
+    }
     
     public override void _Process(double delta)
     {
@@ -54,5 +65,17 @@ public partial class ClientPlayer : ClientAlly
                 Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(kv.Key, Position, Rotation, GetGlobalMousePosition()));
             }
         }
+    }
+
+    public List<ClientPlayerSkillHandle> GetSkills()
+    {
+        List<ClientPlayerSkillHandle> skills = new();
+        foreach (var (id, skillInfo) in PlayerProfile.SkillById)
+        {
+            var skill = SkillStorage.GetSkill(skillInfo.SkillType);
+            skills.Add(new ClientPlayerSkillHandle(this, skill, id));
+        }
+        
+        return skills;
     }
 }

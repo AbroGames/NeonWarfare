@@ -43,6 +43,7 @@ public partial class ClientPackedScenesContainer : Node
     
     [Export] [NotNull] public PackedScene Overlay { get; private set; }
     [Export] [NotNull] public PackedScene HitOverlay { get; private set; }
+    [Export] [NotNull] public PackedScene SkillIcon { get; private set; }
     
     /*
      * WORLD

@@ -1,0 +1,73 @@
+[gd_scene load_steps=5 format=3 uid="uid://c7ag8o3ynyuyj"]
+
+[ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="1_er04k"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_kmqq8"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="3_61jvx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_j64jc"]
+resource_local_to_scene = true
+font = ExtResource("3_61jvx")
+font_size = 14
+font_color = Color(0.34902, 0.34902, 0.34902, 1)
+
+[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SkillsContainer")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kmqq8")
+HpBar = NodePath("MarginContainer/VBoxContainer/HpBar")
+Fps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/FPS")
+Tps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/TPS")
+SkillsContainer = NodePath("MarginContainer/SkillsContainer")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.00104219
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HpBar" parent="MarginContainer/VBoxContainer" instance=ExtResource("1_er04k")]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LeftUpInfo" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightUpInfo" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FPS" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
+layout_mode = 2
+text = "FPS"
+label_settings = SubResource("LabelSettings_j64jc")
+horizontal_alignment = 2
+
+[node name="TPS" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
+layout_mode = 2
+text = "TPS"
+label_settings = SubResource("LabelSettings_j64jc")
+horizontal_alignment = 2
+
+[node name="SkillsContainer" type="HBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8

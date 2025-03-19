@@ -2,15 +2,15 @@
 
 [ext_resource type="Script" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeWorldMainScene.cs" id="1_v35jn"]
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld/ClientSafeWorld.tscn" id="2_0omu6"]
-[ext_resource type="PackedScene" uid="uid://cfr65i5i8050m" path="res://Scenes/Screen/SafeHud/SafeHud.tscn" id="3_jh3ok"]
+[ext_resource type="PackedScene" uid="uid://cdm4naiiirayl" path="res://Scenes/Screen/Hud/SafeHud/NewSafeHud.tscn" id="3_3nkyx"]
 
 [node name="SafeWorldMainScene" type="Node2D" node_paths=PackedStringArray("ClientSafeWorld", "SafeHud")]
 script = ExtResource("1_v35jn")
 ClientSafeWorld = NodePath("SafeWorld")
-SafeHud = NodePath("Screen/SafeHud")
+SafeHud = NodePath("Screen/NewSafeHud")
 
 [node name="SafeWorld" parent="." instance=ExtResource("2_0omu6")]
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
-[node name="SafeHud" parent="Screen" instance=ExtResource("3_jh3ok")]
+[node name="NewSafeHud" parent="Screen" instance=ExtResource("3_3nkyx")]

@@ -1,4 +1,5 @@
 using Godot;
+using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Screen.BattleHud;
@@ -9,6 +10,20 @@ public partial class Icon : TextureRect
 	[Export] [NotNull] public TextureRect IconImage { get; private set; }
 	[Export] [NotNull] public TextureRect Overlay { get; private set; }
 	[Export] [NotNull] public ColorRect CooldownOverlay { get; private set; }
+	[Export] [NotNull] public ColorRect KeyBackground { get; private set; }
+	
+	public ClientPlayerSkillHandle SkillHandle { get; private set; }
+
+	public void SetHandle(ClientPlayerSkillHandle skillHandle)
+	{
+		SkillHandle = skillHandle;
+		IconImage.Texture = SkillHandle.GetIcon();
+		KeyLabel.Text = skillHandle.Key;
+		if (KeyLabel.Text.Trim() == "")
+		{
+			KeyBackground.Visible = false;
+		}
+	}
 	
 	public double Progress
 	{
@@ -26,11 +41,6 @@ public partial class Icon : TextureRect
 		set => Overlay.Visible = !value;
 	}
 
-	public char Key
-	{
-		get => KeyLabel.Text[0];
-		set => KeyLabel.Text = value.ToString();
-	}
 	
 	private double _process;
 	public override void _Ready()
@@ -40,5 +50,9 @@ public partial class Icon : TextureRect
 	
 	public override void _Process(double delta)
 	{
+		if(SkillHandle is null)
+			return;
+
+		Progress = SkillHandle.GetCooldownProgress();
 	}
 }

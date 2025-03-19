@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.Screen.Components.TwoColoredBar;
+using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.KludgeBox.Core;
@@ -12,26 +13,14 @@ namespace NeonWarfare.Scenes.Screen.BattleHud;
 
 public partial class BattleHud : Hud
 {
-	[ExportGroup("Bars")]
-	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
-	
-	[ExportGroup("Labels")]
-	[Export] [NotNull] public Label Waves { get; private set; }
-	[Export] [NotNull] public Label Enemies { get; private set; }
-	[Export] [NotNull] public Label Level { get; private set; }
-	
-	[ExportGroup("FPS & TPS")]
-	[Export] [NotNull] public Label Fps { get; private set; }
-	[Export] [NotNull] public Label Tps { get; private set; }
-	
-	[ExportGroup("Other")]
+	/*[ExportGroup("Other")]
 	[Export] [NotNull] public Label WaveMessage { get; private set; }
 	[Export] [NotNull] public Sprite2D TimerSprite { get; private set; }
-	[Export] [NotNull] public Label TimerLabel { get; private set; }
+	[Export] [NotNull] public Label TimerLabel { get; private set; }*/
 	
-	[ExportGroup("Abilities")]
+	/*[ExportGroup("Abilities")]
 	[Export] [NotNull] public Icon BeamIcon { get; private set; }
-	[Export] [NotNull] public Icon SolarBeamIcon { get; private set; }
+	[Export] [NotNull] public Icon SolarBeamIcon { get; private set; }*/
 	
 	public ClientBattleWorld ClientBattleWorld { get; set; }
 	public Vector2 WaveMessageInitialPosition { get; set; }
@@ -47,33 +36,23 @@ public partial class BattleHud : Hud
 	{
 		NotNullChecker.CheckProperties(this);
 		
-		WaveMessageInitialPosition = WaveMessage.Position;
+		//WaveMessageInitialPosition = WaveMessage.Position;
 	}
 
 	public override void _Process(double delta)
 	{
-		ClientPlayer player = ClientBattleWorld.Player;
-		if (player == null) return;
-		
 		//Waves.Text = $"Wave: {ClientBattleWorld.EnemyWave.WaveNumber}";
 		//Enemies.Text = $"Enemies: {ClientBattleWorld.Enemies.Count}";
         
-		HpBar.CurrentUpperValue = (float) player.Hp;
-		double hpBarValueDelta = Mathf.Clamp(HpBar.CurrentLowerValue - HpBar.CurrentUpperValue, 
-			0, Math.Max(HpBar.MaxValue - HpBar.CurrentUpperValue, 0));
-		double hpBarValueDeltaDecrease = HpBar.MaxValue * 0.25 * delta;
-		HpBar.CurrentLowerValue = (float) (player.Hp + hpBarValueDelta - hpBarValueDeltaDecrease);
-        
-		HpBar.MaxValue = (float) player.MaxHp;
-		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
-		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
+		
 
 		//BeamIcon.Progress = player.BasicAbilityCd.FractionElapsed;
 		//SolarBeamIcon.Progress = player.AdvancedAbilityCd.FractionElapsed;
 		
-		var shader = TimerSprite.Material as ShaderMaterial;
+		//var shader = TimerSprite.Material as ShaderMaterial;
 		//shader.SetShaderParameter("Progress", 1-ClientBattleWorld.EnemyWave.NextWaveTimer / ClientBattleWorld.EnemyWave.WaveTimeout);
 		//TimerLabel.Text = ClientBattleWorld.EnemyWave.NextWaveTimer.ToString("N0");
+		base._Process(delta);
 	}
 
 	/// <summary>
@@ -94,18 +73,23 @@ public partial class BattleHud : Hud
 		_physicsStopwatch.Restart();
 	}
 
+	public override ClientWorld GetCurrentWorld()
+	{
+		return ClientBattleWorld;
+	}
+
 	public void PlayNewWaveEffect(int waveNumber)
 	{
-		WaveMessage.Text = $"WAVE {waveNumber}";
+		//WaveMessage.Text = $"WAVE {waveNumber}";
 		Tween colorTween = GetTree().CreateTween();
 		Tween positionTween = GetTree().CreateTween();
 
-		colorTween.TweenProperty(WaveMessage, "modulate:a", 1f, FadeInTime);
+		//colorTween.TweenProperty(WaveMessage, "modulate:a", 1f, FadeInTime);
 		colorTween.TweenInterval(HoldTime);
-		colorTween.TweenProperty(WaveMessage, "modulate:a", 0f, FadeOutTime);
+		//colorTween.TweenProperty(WaveMessage, "modulate:a", 0f, FadeOutTime);
 		
-		positionTween.TweenProperty(WaveMessage, "position:y", WaveMessageInitialPosition.Y + 50, FadeInTime);
+		//positionTween.TweenProperty(WaveMessage, "position:y", WaveMessageInitialPosition.Y + 50, FadeInTime);
 		positionTween.TweenInterval(HoldTime);
-		positionTween.TweenProperty(WaveMessage, "position:y", WaveMessageInitialPosition.Y, FadeOutTime);
+		//positionTween.TweenProperty(WaveMessage, "position:y", WaveMessageInitialPosition.Y, FadeOutTime);
 	}
 }

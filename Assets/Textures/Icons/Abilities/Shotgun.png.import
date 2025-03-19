@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dh63xg7ugs5dx"
-path="res://.godot/imported/BeamIcon.png-a68aebbedbedc9df583ebe80e586a525.ctex"
+uid="uid://hoqwp1cdqc5n"
+path="res://.godot/imported/Shotgun.png-3effdb066fc2b1d7c7a9480adfd8655d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Icons/BeamIcon.png"
-dest_files=["res://.godot/imported/BeamIcon.png-a68aebbedbedc9df583ebe80e586a525.ctex"]
+source_file="res://Assets/Textures/Icons/Abilities/Shotgun.png"
+dest_files=["res://.godot/imported/Shotgun.png-3effdb066fc2b1d7c7a9480adfd8655d.ctex"]
 
 [params]
 

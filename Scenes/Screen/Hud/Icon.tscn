@@ -1,0 +1,95 @@
+[gd_scene load_steps=10 format=3 uid="uid://cr1rdhtrdpo7j"]
+
+[ext_resource type="Texture2D" uid="uid://df5mmkciayart" path="res://Assets/Textures/Icons/IconBase.png" id="1_6f1fp"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/Icon.cs" id="2_wr2lr"]
+[ext_resource type="Texture2D" uid="uid://6ss2jvst0b3v" path="res://Assets/Textures/Icons/IconBorder.png" id="3_sbvg0"]
+[ext_resource type="Shader" path="res://Assets/Shaders/TransparentCooldown.gdshader" id="4_gx24u"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="5_mxiw8"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_r70jy"]
+resource_local_to_scene = true
+font = ExtResource("5_mxiw8")
+font_size = 14
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a1w3t"]
+resource_local_to_scene = true
+shader = ExtResource("4_gx24u")
+shader_parameter/Progress = 0.33
+
+[sub_resource type="Gradient" id="Gradient_ybuad"]
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wrg4k"]
+gradient = SubResource("Gradient_ybuad")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+
+[node name="Icon" type="TextureRect" node_paths=PackedStringArray("KeyLabel", "IconImage", "Overlay", "CooldownOverlay", "KeyBackground")]
+texture = ExtResource("1_6f1fp")
+expand_mode = 3
+script = ExtResource("2_wr2lr")
+KeyLabel = NodePath("MarginContainer/Label")
+IconImage = NodePath("IconImage")
+Overlay = NodePath("IconOverlay")
+CooldownOverlay = NodePath("ColorRect")
+KeyBackground = NodePath("MarginContainer/ColorRect")
+
+[node name="IconImage" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 3
+
+[node name="IconBorder" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_sbvg0")
+expand_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0.870588)
+
+[node name="Label" type="Label" parent="MarginContainer"]
+custom_minimum_size = Vector2(20, 18)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "E"
+label_settings = SubResource("LabelSettings_r70jy")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_a1w3t")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.666667)
+
+[node name="IconOverlay" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_wrg4k")
+expand_mode = 3

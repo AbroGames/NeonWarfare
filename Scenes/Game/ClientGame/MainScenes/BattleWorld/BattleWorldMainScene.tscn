@@ -2,15 +2,15 @@
 
 [ext_resource type="Script" path="res://Scenes/Game/ClientGame/MainScenes/BattleWorld/BattleWorldMainScene.cs" id="1_ddpms"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld/ClientBattleWorld.tscn" id="2_1wr57"]
-[ext_resource type="PackedScene" uid="uid://dlelsat4bmqw3" path="res://Scenes/Screen/BattleHud/BattleHud.tscn" id="3_v22hi"]
+[ext_resource type="PackedScene" uid="uid://r5m6oi6tl8bm" path="res://Scenes/Screen/Hud/BattleHud/NewBattleHud.tscn" id="3_1rqv0"]
 
 [node name="BattleWorldMainScene" type="Node2D" node_paths=PackedStringArray("ClientBattleWorld", "BattleHud")]
 script = ExtResource("1_ddpms")
 ClientBattleWorld = NodePath("BattleWorld")
-BattleHud = NodePath("Screen/BattleHud")
+BattleHud = NodePath("Screen/NewBattleHud")
 
 [node name="BattleWorld" parent="." instance=ExtResource("2_1wr57")]
 
 [node name="Screen" type="CanvasLayer" parent="."]
 
-[node name="BattleHud" parent="Screen" instance=ExtResource("3_v22hi")]
+[node name="NewBattleHud" parent="Screen" instance=ExtResource("3_1rqv0")]

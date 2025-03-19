@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3 uid="uid://cdm4naiiirayl"]
+
+[ext_resource type="PackedScene" uid="uid://c7ag8o3ynyuyj" path="res://Scenes/Screen/Hud/Hud.tscn" id="1_l0ogl"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ToBattleButton.cs" id="2_7g6de"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/SafeHud.cs" id="2_enfq4"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ToMenuButton.cs" id="3_u4b6x"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="4_kqdnk"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_l73d1"]
+resource_local_to_scene = true
+font = ExtResource("4_kqdnk")
+font_size = 14
+font_color = Color(0.34902, 0.34902, 0.34902, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wcr48"]
+font_size = 12
+
+[node name="NewSafeHud" node_paths=PackedStringArray("SystemInfo") instance=ExtResource("1_l0ogl")]
+script = ExtResource("2_enfq4")
+SystemInfo = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/SystemInfo")
+
+[node name="ToBattleButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="0"]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "To Battle"
+script = ExtResource("2_7g6de")
+
+[node name="ToMainMenuButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="1"]
+modulate = Color(0, 0.560784, 0.886275, 1)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "To Menu"
+script = ExtResource("3_u4b6x")
+
+[node name="FPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="0"]
+label_settings = SubResource("LabelSettings_l73d1")
+
+[node name="TPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="1"]
+label_settings = SubResource("LabelSettings_l73d1")
+
+[node name="SystemInfo" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="2"]
+layout_mode = 2
+size_flags_horizontal = 8
+label_settings = SubResource("LabelSettings_wcr48")
