@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://csiurost6ln7m"]
+
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingsGroupPanel.cs" id="1_kyfrp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ec8c7"]
+
+[node name="SettingsGroupPanel" type="PanelContainer" node_paths=PackedStringArray("BackgroundColor", "SettingsContainer")]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_ec8c7")
+script = ExtResource("1_kyfrp")
+BackgroundColor = NodePath("BackgroundColor")
+SettingsContainer = NodePath("MarginContainer/SettingsContainer")
+
+[node name="BackgroundColor" type="ColorRect" parent="."]
+layout_mode = 2
+color = Color(4.51226e-08, 0.136864, 0.103673, 0.533333)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="SettingsContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
