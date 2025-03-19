@@ -17,7 +17,7 @@ public partial class ClientRoot : Node2D
 	[Export] [NotNull] public ClientPackedScenesContainer PackedScenes { get; private set; }
 	
 	public ClientParams CmdParams { get; private set; }
-	public PlayerSettings PlayerSettings { get; private set; }
+	//public PlayerSettings PlayerSettings { get; private set; }
 	public Settings Settings { get; set; } = new Settings();
 
 	public override void _Ready()
@@ -31,7 +31,7 @@ public partial class ClientRoot : Node2D
 		RootService.CommonInit(ListenerSide.Client);
 		CmdParams = ClientParams.GetFromCmd();
 
-		PlayerSettings = PlayerSettingsService.LoadSettings();
+		//PlayerSettings = PlayerSettingsService.LoadSettings();
 		Settings = SettingsService.Load();
 		Settings.Changed += ApplySettings;
 		if (Settings.MaximizeOnStart)
@@ -45,9 +45,6 @@ public partial class ClientRoot : Node2D
 		Audio2D.MasterVolume = settings.MasterVolume / 100;
 		Audio2D.MusicVolume = settings.MusicVolume / 100;
 		Audio2D.SoundsVolume = settings.SoundVolume / 100;
-		
-		PlayerSettings.PlayerName = settings.PlayerName;
-		PlayerSettings.PlayerColor = settings.PlayerColor;
 	}
 	
 	protected void Start()

@@ -40,10 +40,6 @@ public static class SettingsService
         {
             Log.Error($"Failed to load {SettingsFileName}: {ex.Message}");
             var newSettings = new Settings();
-            var legacySettings = ClientRoot.Instance.PlayerSettings;
-            
-            newSettings.PlayerColor = legacySettings.PlayerColor;
-            newSettings.PlayerName = legacySettings.PlayerName;
             
             return new Settings();
         }

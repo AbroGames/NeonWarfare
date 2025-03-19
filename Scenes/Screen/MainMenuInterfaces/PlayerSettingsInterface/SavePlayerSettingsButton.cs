@@ -17,9 +17,9 @@ public partial class SavePlayerSettingsButton : Button
         {
             string newNickname = NickLineEdit.Text;
             Color newColor = ColorRect.Color;
-            ClientRoot.Instance.PlayerSettings.PlayerName = newNickname;
-            ClientRoot.Instance.PlayerSettings.PlayerColor = newColor;
-            PlayerSettingsService.SaveSettings(ClientRoot.Instance.PlayerSettings);
+            //ClientRoot.Instance.PlayerSettings.PlayerName = newNickname;
+            //ClientRoot.Instance.PlayerSettings.PlayerColor = newColor;
+            //PlayerSettingsService.SaveSettings(ClientRoot.Instance.PlayerSettings);
         };
     }
 }

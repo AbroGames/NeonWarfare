@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using NeonWarfare.Scenes.Game.ClientGame.ClientSettings;
 using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
@@ -23,7 +24,7 @@ public partial class ClientGame
 	{
 		Log.Info($"Connected to server. My peer id = {Network.Multiplayer.GetUniqueId()}");
 		
-		PlayerSettings playerSettings = ClientRoot.Instance.PlayerSettings;
+		Settings playerSettings = ClientRoot.Instance.Settings;
 		Network.SendToServer(new ServerGame.ServerGame.CS_InitPlayerProfilePacket(playerSettings.PlayerName, playerSettings.PlayerColor));
 		PingChecker.Start();
 	}

@@ -7,6 +7,6 @@ public partial class BlueSlider : HSlider
 {
     public override void _Ready()
     {
-        Value = ClientRoot.Instance.PlayerSettings.PlayerColor.B * 255f;
+        //Value = ClientRoot.Instance.PlayerSettings.PlayerColor.B * 255f;
     }
 }
