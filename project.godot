@@ -91,6 +91,13 @@ WheelDown={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="GeneralCollisions"
+2d_physics/layer_2="PlayerCollisions"
+2d_physics/layer_3="EnemyCollisions"
+2d_physics/layer_4="StaticCollisions"
+
 [physics]
 
 2d/run_on_separate_thread=true

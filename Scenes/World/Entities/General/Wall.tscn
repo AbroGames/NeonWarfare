@@ -9,14 +9,16 @@ size = Vector2(512, 512)
 size = Vector2(512, 512)
 
 [node name="Wall" type="StaticBody2D"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_87sgc")
+collision_layer = 9
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_m250c")
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_87sgc")
+
 [node name="Area2D" type="Area2D" parent="."]
+collision_layer = 9
 collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]

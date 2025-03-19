@@ -13,6 +13,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 public partial class ServerEnemy : ServerCharacter
 {
     [Export] [NotNull] public RayCast2D RayCast { get; private set; }
+    [Export] [NotNull] public RayCast2D SightRayCast { get; private set; }
     [Export] [NotNull] public NavigationAgent2D NavigationAgent { get; private set; }
 
     public void InitComponents()

@@ -12,10 +12,14 @@ resource_local_to_scene = true
 radius = 24.0
 
 [node name="ServerPlayer" instance=ExtResource("1_lh5pn")]
+collision_layer = 3
 script = ExtResource("2_u8e3u")
 
 [node name="CharacterShape" parent="." index="0"]
 shape = SubResource("CircleShape2D_q3t30")
+
+[node name="HitBox" parent="." index="1"]
+collision_layer = 3
 
 [node name="HitBoxShape" parent="HitBox" index="0"]
 shape = SubResource("CircleShape2D_68y15")
