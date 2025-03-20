@@ -14,9 +14,16 @@ public partial class ServerPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene BattleWorld { get; private set; }
     
     [Export] [NotNull] public PackedScene Player { get; private set; }
-    [Export] [NotNull] public PackedScene Enemy { get; private set; }
     
     [Export] [NotNull] public PackedScene Wall { get; private set; }
+    
+    /*
+     * ENEMY
+     */
+    [ExportGroup("Enemy")]
+    [Export] [NotNull] public PackedScene ZergEnemy { get; private set; }
+    [Export] [NotNull] public PackedScene ShooterEnemy { get; private set; }
+    [Export] [NotNull] public PackedScene TurtleEnemy { get; private set; }
     
     public override void _Ready()
     {

@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=32 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -26,9 +26,11 @@
 [ext_resource type="PackedScene" uid="uid://cra1y5dubl2eb" path="res://Scenes/Screen/Components/Overlay/HitOverlay.tscn" id="21_c2w5t"]
 [ext_resource type="PackedScene" uid="uid://djpq1rixw27hn" path="res://Scripts/Utils/Background/Background.tscn" id="24_o4x2b"]
 [ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="24_p0bw0"]
-[ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="25_gitci"]
 [ext_resource type="PackedScene" uid="uid://bn0qrlv6wb2i7" path="res://Scenes/World/WorldEnvironment.tscn" id="25_uoidq"]
+[ext_resource type="PackedScene" uid="uid://cvcagebd46o2o" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ZergClientEnemy.tscn" id="29_1ceh7"]
 [ext_resource type="PackedScene" uid="uid://berq21ct3dsrh" path="res://Scenes/World/Entities/General/Wall.tscn" id="29_30m28"]
+[ext_resource type="PackedScene" uid="uid://dc1yw0ba6jxqf" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ShooterClientEnemy.tscn" id="30_vhdbd"]
+[ext_resource type="PackedScene" uid="uid://dkfncld3bfhv1" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/TurtleClientEnemy.tscn" id="31_syq0i"]
 
 [node name="ClientPackedScenesContainer" type="Node"]
 script = ExtResource("1_i6j64")
@@ -58,5 +60,7 @@ Background = ExtResource("24_o4x2b")
 WorldEnvironment = ExtResource("25_uoidq")
 Player = ExtResource("24_p0bw0")
 Ally = ExtResource("12_cm42j")
-Enemy = ExtResource("25_gitci")
 Wall = ExtResource("29_30m28")
+ZergEnemy = ExtResource("29_1ceh7")
+ShooterEnemy = ExtResource("30_vhdbd")
+TurtleEnemy = ExtResource("31_syq0i")

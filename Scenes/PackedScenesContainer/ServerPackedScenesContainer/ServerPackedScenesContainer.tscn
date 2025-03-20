@@ -1,16 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://bkft5taaifavw"]
+[gd_scene load_steps=9 format=3 uid="uid://bkft5taaifavw"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.cs" id="1_1ofgs"]
 [ext_resource type="PackedScene" uid="uid://cqyevma8i265i" path="res://Scenes/World/SafeWorld/ServerSafeWorld/ServerSafeWorld.tscn" id="2_bl3u7"]
 [ext_resource type="PackedScene" uid="uid://dfdo6rs11rt6m" path="res://Scenes/World/Entities/Characters/Players/ServerPlayer.tscn" id="2_y0xde"]
 [ext_resource type="PackedScene" uid="uid://ciaftf876v06k" path="res://Scenes/World/BattleWorld/ServerBattleWorld/ServerBattleWorld.tscn" id="3_2kkvj"]
-[ext_resource type="PackedScene" uid="uid://758pqudrkrii" path="res://Scenes/World/Entities/Characters/Enemies/ServerEnemy.tscn" id="3_3ocof"]
 [ext_resource type="PackedScene" uid="uid://berq21ct3dsrh" path="res://Scenes/World/Entities/General/Wall.tscn" id="6_0h16l"]
+[ext_resource type="PackedScene" uid="uid://dsrqvo3u6hnaw" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ZergServerEnemy.tscn" id="6_7cqan"]
+[ext_resource type="PackedScene" uid="uid://csg127clytout" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ShooterServerEnemy.tscn" id="7_swkv0"]
+[ext_resource type="PackedScene" uid="uid://c2sn6tvune64g" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/TurtleServerEnemy.tscn" id="8_81po5"]
 
 [node name="ServerPackedScenesContainer" type="Node"]
 script = ExtResource("1_1ofgs")
 SafeWorld = ExtResource("2_bl3u7")
 BattleWorld = ExtResource("3_2kkvj")
 Player = ExtResource("2_y0xde")
-Enemy = ExtResource("3_3ocof")
 Wall = ExtResource("6_0h16l")
+ZergEnemy = ExtResource("6_7cqan")
+ShooterEnemy = ExtResource("7_swkv0")
+TurtleEnemy = ExtResource("8_81po5")
