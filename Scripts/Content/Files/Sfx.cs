@@ -262,6 +262,18 @@ namespace NeonWarfare.Scripts.Content
 		);
 		
 		
+		
+		// skills
+		public static RandomPicker<string> Heal { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/heal{{0}}.ogg".BatchNumber(0, 1)
+		);
+		
+		public static RandomPicker<string> Resurrect { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/resurrection.ogg"
+		);
+		
+		
+		
 		// UI
 		public static RandomPicker<string> UiSelect { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/ui/select{{0}}.wav".BatchNumber(1, 4)
