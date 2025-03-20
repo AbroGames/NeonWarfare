@@ -14,12 +14,13 @@ shader_parameter/grayscaleFactor = 0.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vsjts"]
 resource_local_to_scene = true
-radius = 49.0
+radius = 56.0
 
 [node name="TurtleClientEnemy" instance=ExtResource("1_xise4")]
 script = ExtResource("2_wm8ha")
 
 [node name="Sprite2D" parent="." index="0"]
+modulate = Color(0.614894, 0.690467, 0.45866, 1)
 material = SubResource("ShaderMaterial_jv0wh")
 position = Vector2(9.53674e-07, 9.53674e-07)
 scale = Vector2(0.18555, 0.18555)

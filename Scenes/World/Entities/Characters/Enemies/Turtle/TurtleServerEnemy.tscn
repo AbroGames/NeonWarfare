@@ -5,11 +5,11 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_idqir"]
 resource_local_to_scene = true
-radius = 49.0
+radius = 56.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hmyiv"]
 resource_local_to_scene = true
-radius = 57.0789
+radius = 59.0
 
 [node name="TurtleServerEnemy" instance=ExtResource("1_ohbb1")]
 script = ExtResource("2_qjjdk")

@@ -20,6 +20,7 @@ radius = 18.0
 script = ExtResource("2_6jdtt")
 
 [node name="Sprite2D" parent="." index="0"]
+modulate = Color(1, 0.752941, 0, 1)
 material = SubResource("ShaderMaterial_enhjw")
 position = Vector2(0, -6)
 scale = Vector2(0.094, 0.094)
