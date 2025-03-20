@@ -228,6 +228,38 @@ namespace NeonWarfare.Scripts.Content
 		);
 		
 		
+		// zerg
+		public static RandomPicker<string> ZergExplosionSmall { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zerg_ExplosionSmall{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		public static RandomPicker<string> ZergExplosionMedium { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zerg_ExplosionMedium{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		public static RandomPicker<string> ZerglingDeath { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zergling_Death{{0}}.ogg".BatchNumber(0, 3)
+		);
+		
+		public static RandomPicker<string> ZerglingYes { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zergling_Yes{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		public static RandomPicker<string> HydraliskDeath { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Hydralisk_Death{{0}}.ogg".BatchNumber(0, 3)
+		);
+		
+		public static RandomPicker<string> HydraliskYes { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Hydralisk_Yes{{0}}.ogg".BatchNumber(0, 1)
+		);
+		
+		public static RandomPicker<string> UltraliskRoar { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Ultralisk_Roar0.ogg"
+		);
+		
+		public static RandomPicker<string> UltraliskWhat { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/UltraLisk_What{{0}}.ogg".BatchNumber(0, 2)
+		);
 		
 		
 		// UI
