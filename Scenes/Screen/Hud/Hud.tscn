@@ -67,7 +67,8 @@ label_settings = SubResource("LabelSettings_j64jc")
 horizontal_alignment = 2
 
 [node name="SkillsContainer" type="HBoxContainer" parent="MarginContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
+theme_override_constants/separation = 8

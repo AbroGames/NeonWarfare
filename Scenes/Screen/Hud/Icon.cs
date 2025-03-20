@@ -4,11 +4,12 @@ using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Screen.BattleHud;
 
-public partial class Icon : TextureRect
+public partial class Icon : Control
 {
 	[Export] [NotNull] public Label KeyLabel { get; private set; }
 	[Export] [NotNull] public TextureRect IconImage { get; private set; }
 	[Export] [NotNull] public TextureRect Overlay { get; private set; }
+	[Export] [NotNull] public TextureRect GlowRect { get; private set; }
 	[Export] [NotNull] public ColorRect CooldownOverlay { get; private set; }
 	[Export] [NotNull] public ColorRect KeyBackground { get; private set; }
 	
@@ -54,5 +55,11 @@ public partial class Icon : TextureRect
 			return;
 
 		Progress = SkillHandle.GetCooldownProgress();
+		
+		if (SkillHandle.CanUse() && !GlowRect.Visible)
+			GlowRect.Visible = true;
+		
+		if (!SkillHandle.CanUse() && GlowRect.Visible)
+			GlowRect.Visible = false;
 	}
 }
