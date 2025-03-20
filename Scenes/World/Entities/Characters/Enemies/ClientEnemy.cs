@@ -1,4 +1,6 @@
+using Godot;
 using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.Components;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
@@ -9,6 +11,7 @@ public partial class ClientEnemy : ClientCharacter
     public void InitComponents()
     {
         AddChild(new NetworkInertiaComponent());
+        AddChild(new ClientEnemyAudioComponent());
     }
     
     public void InitStats(EnemyInfoStorage.EnemyInfo enemyInfo)
