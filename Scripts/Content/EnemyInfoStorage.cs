@@ -11,7 +11,6 @@ namespace NeonWarfare.Scripts.Content;
 
 public static class EnemyInfoStorage
 {
-    
     public record EnemyInfo(
         Func<PackedScene> ClientScene, 
         Func<PackedScene> ServerScene,
@@ -20,7 +19,8 @@ public static class EnemyInfoStorage
         double MaxHp,
         double RegenHpSpeed,
         double MovementSpeed,
-        double RotationSpeed
+        double RotationSpeed,
+        EnemyAudioProfileStorage.ClientEnemyAudioProfile AudioProfile
         );
     
     public enum EnemyType
@@ -40,7 +40,8 @@ public static class EnemyInfoStorage
                 MaxHp: 25,
                 RegenHpSpeed: 0,
                 MovementSpeed: 220,
-                RotationSpeed: 300
+                RotationSpeed: 300,
+                AudioProfile: EnemyAudioProfileStorage.GetEnemyAudioProfile(EnemyAudioProfileStorage.ProfileType.Zergling)
             )
         },
         { 
@@ -53,7 +54,8 @@ public static class EnemyInfoStorage
                 MaxHp: 40,
                 RegenHpSpeed: 0,
                 MovementSpeed: 200,
-                RotationSpeed: 280
+                RotationSpeed: 280,
+                AudioProfile: EnemyAudioProfileStorage.GetEnemyAudioProfile(EnemyAudioProfileStorage.ProfileType.Hydralisk)
             )
         },
         { 
@@ -70,7 +72,8 @@ public static class EnemyInfoStorage
                 MaxHp: 800,
                 RegenHpSpeed: 20,
                 MovementSpeed: 140,
-                RotationSpeed: 220
+                RotationSpeed: 220,
+                AudioProfile: EnemyAudioProfileStorage.GetEnemyAudioProfile(EnemyAudioProfileStorage.ProfileType.Ultralisk)
             )
         }
     };
