@@ -12,6 +12,8 @@ using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Components;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager.Server;
 
+using static NeonWarfare.Scenes.World.ClientWorld.SC_EnemySpawnPacket;
+
 namespace NeonWarfare.Scenes.World;
 
 public abstract partial class ServerWorld
@@ -20,9 +22,9 @@ public abstract partial class ServerWorld
     public IReadOnlyList<ServerEnemy> Enemies => _enemies;
     private List<ServerEnemy> _enemies = new();
 
-    public ServerEnemy SpawnEnemy(Vector2 position, float rotation)
+    public ServerEnemy SpawnEnemy(EnemyType type, Vector2 position, float rotation)
     {
-        ServerEnemy enemy = CreateNetworkEntity<ServerEnemy>(ServerRoot.Instance.PackedScenes.Enemy);
+        ServerEnemy enemy = CreateNetworkEntity<ServerEnemy>(EnemyScenesMap[type].ServerScene.Invoke());
         enemy.InitComponents();
         enemy.InitOnSpawn(position, rotation);
         
@@ -31,7 +33,7 @@ public abstract partial class ServerWorld
         enemy.TreeExiting += () => RemoveEnemy(enemy);
         
         //У всех игроков спауним нового врага
-        Network.SendToAll(new ClientWorld.SC_EnemySpawnPacket(enemy.Nid, enemy.Position, enemy.Rotation, new Color(1, 0, 0))); //TODO брать из сцены или из описания конкретного врага
+        Network.SendToAll(new ClientWorld.SC_EnemySpawnPacket(type, enemy.Nid, enemy.Position, enemy.Rotation));
 
         return enemy;
     }

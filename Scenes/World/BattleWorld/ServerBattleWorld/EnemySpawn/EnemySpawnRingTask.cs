@@ -1,6 +1,8 @@
 using Godot;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
+using static NeonWarfare.Scenes.World.ClientWorld.SC_EnemySpawnPacket;
+
 namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
 
 public record EnemySpawnRingTask : EnemySpawnTask
@@ -9,7 +11,7 @@ public record EnemySpawnRingTask : EnemySpawnTask
     public int MinDist { get; init; }
     public int MaxDist { get; init; }
 
-    public EnemySpawnRingTask(int count, float rotation, float rotationScatter, Vector2 centerPosition, int minDist, int maxDist) : base(count, rotation, rotationScatter)
+    public EnemySpawnRingTask(EnemyType enemyType, int count, float rotation, float rotationScatter, Vector2 centerPosition, int minDist, int maxDist) : base(enemyType, count, rotation, rotationScatter)
     {
         CenterPosition = centerPosition;
         MinDist = minDist;
