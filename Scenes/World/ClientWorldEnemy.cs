@@ -20,7 +20,7 @@ public abstract partial class ClientWorld
     public void OnEnemySpawnPacket(SC_EnemySpawnPacket enemySpawnPacket)
     {
         ClientEnemy enemy = CreateNetworkEntity<ClientEnemy>(
-            ClientRoot.Instance.PackedScenes.Enemy, enemySpawnPacket.Nid);
+            enemySpawnPacket.EnemyClientScene, enemySpawnPacket.Nid);
         enemy.AddChild(new NetworkInertiaComponent());
         enemy.TreeExiting += () => RemoveEnemy(enemy);
         

@@ -17,4 +17,15 @@ public partial class ClientAlly : ClientCharacter
 
         Name = allyProfile.Name;
     }
+
+    public override void InitOnSpawnPacket(Vector2 position, float rotation, Color color)
+    {
+        base.InitOnSpawnPacket(position, rotation, color);
+        
+        if (color != new Color(0, 0, 0, 0))
+        {
+            ShieldSprite.Modulate = new Color(color.R, color.G, color.B, ShieldSprite.Modulate.A);
+        }
+    }
+
 }

@@ -23,10 +23,14 @@ public partial class ClientCharacter : CharacterBody2D
         NotNullChecker.CheckProperties(this);
     }
     
-    public void InitOnSpawnPacket(Vector2 position, float rotation, Color color)
+    public virtual void InitOnSpawnPacket(Vector2 position, float rotation, Color color)
     {
         Position = position;
         Rotation = rotation;
-        Modulate = color;
+
+        if (color != new Color(0, 0, 0, 0))
+        {
+            Sprite.Modulate = color;
+        }
     }
 }
