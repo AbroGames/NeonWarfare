@@ -54,7 +54,7 @@ public class ShotgunSkill() : Skill(SkillTypeConst)
         }
 
         string customParams = JsonSerializer.Serialize(new PacketCustomParams(
-            Speed: (float) Speed,
+            Speed: (float) (Speed*useInfo.SpeedFactor),
             ShotInfos: shotInfos
         ));
         Network.SendToAll(new ClientWorld.SC_UseSkillPacket(
