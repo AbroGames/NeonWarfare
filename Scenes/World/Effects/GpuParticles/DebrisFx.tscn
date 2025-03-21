@@ -29,7 +29,6 @@ script = ExtResource("1_j77oh")
 Particles2D = NodePath("GPUParticles2D")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
-emitting = false
 process_material = SubResource("ParticleProcessMaterial_2hy4l")
 texture = ExtResource("2_d26xt")
 lifetime = 10.0

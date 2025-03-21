@@ -7,18 +7,16 @@ using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 
-public partial class ClientEnemyAudioComponent : Node
+public partial class ClientEnemyAudioComponent : ClientEnemyComponentBase
 {
-    private ClientEnemy _parent;
-
     private bool _isActive;
 
     private AutoCooldown _tryToPlayVoiceCooldown;
     private EnemyInfoStorage.ClientEnemyAudioProfile _audioProfile;
-    public override void _Ready()
+    protected override void Initialize()
     {
-        _parent = GetParent<ClientEnemy>();
-        _audioProfile = _parent.EnemyTemplate.AudioProfile;
+        Parent = GetParent<ClientEnemy>();
+        _audioProfile = Parent.EnemyTemplate.AudioProfile;
         if (_audioProfile is null)
             return;
         
@@ -26,7 +24,7 @@ public partial class ClientEnemyAudioComponent : Node
         _tryToPlayVoiceCooldown = new AutoCooldown(_audioProfile.VoicePeriod);
         _tryToPlayVoiceCooldown.Update(Rand.Range(_audioProfile.VoicePeriod));
 
-        _parent.TreeExiting += PlayDeathSound;
+        Parent.TreeExiting += PlayDeathSound;
         _tryToPlayVoiceCooldown.ActionWhenReady += PlayVoice;
         
         TryToPlaySound(_audioProfile.SpawnVoice);
@@ -39,7 +37,7 @@ public partial class ClientEnemyAudioComponent : Node
 
     private void PlayVoice()
     {
-        if(_audioProfile.CanDoVoice(_parent))
+        if(_audioProfile.CanDoVoice(Parent))
             TryToPlaySound(_audioProfile.NormalVoice);
     }
 
@@ -62,7 +60,7 @@ public partial class ClientEnemyAudioComponent : Node
         var path = playbackOptions.Path;
         var volume = playbackOptions.Volume;
         
-        var audio = Audio2D.PlaySoundAt(path, _parent.GlobalPosition, volume, _parent.GetParent());
+        var audio = Audio2D.PlaySoundAt(path, Parent.GlobalPosition, volume, Parent.GetParent());
         audio.PanningStrength = playbackOptions.PanningStrength;
         audio.MaxDistance = playbackOptions.MaxDistance;
         audio.Attenuation = playbackOptions.Attenuation;

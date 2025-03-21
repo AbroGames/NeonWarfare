@@ -36,13 +36,10 @@ public partial class ClientCharacter
             //TODO я полагаю в этой ситуации мы индикатор урона не рисуем
         }
         
-        //Если дамаг нанесли по данному клиенту
-        if (this is ClientPlayer) //TODO вместо проверки я бы просто вызвал виртуальный метод, который переопределен в ClientPlayer
-        {
-            //TODO рисуем, сколько урона получил игрок
-            //TODO учти, что это условие может сработать одновременно вместе с одним из верхних, если враг нанес урон игроку или игрок сам себе
-        }
+        ProcessDamage(damageCharacterPacket);
     }
+
+    protected virtual void ProcessDamage(CS_DamageCharacterPacket damageCharacterPacket) {}
     
     [EventListener(ListenerSide.Client)]
     public void OnHealCharacterPacket(CS_HealCharacterPacket healCharacterPacket)

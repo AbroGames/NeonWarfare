@@ -31,7 +31,8 @@ public static class EnemyInfoStorage
         Func<PlaybackOptions> SpawnVoice = null,
         Func<PlaybackOptions> DeathVoice = null,
         Func<PlaybackOptions> NormalVoice = null,
-        Func<PlaybackOptions> DeathSfx = null
+        Func<PlaybackOptions> DeathSfx = null,
+        Func<PlaybackOptions> HitSfx = null
     );
     
     public enum EnemyType
@@ -58,7 +59,8 @@ public static class EnemyInfoStorage
                     SpawnVoice: null,
                     DeathVoice: () => new PlaybackOptions(Sfx.ZerglingDeath, 0.2f),
                     NormalVoice: () => new PlaybackOptions(Sfx.ZerglingYes, 0.2f),
-                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.1f)
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.1f),
+                    HitSfx: () => new PlaybackOptions(Sfx.HitFlesh, 0.3f)
                 )
             )
         },
@@ -79,7 +81,8 @@ public static class EnemyInfoStorage
                     SpawnVoice: null,
                     DeathVoice: () => new PlaybackOptions(Sfx.HydraliskDeath, 1f),
                     NormalVoice: () => new PlaybackOptions(Sfx.HydraliskYes, 0.2f),
-                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.2f)
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.2f),
+                    HitSfx: () => new PlaybackOptions(Sfx.HitFlesh, 0.3f)
                 )
             )
         },
@@ -109,7 +112,8 @@ public static class EnemyInfoStorage
                     ),
                     DeathVoice: () => new PlaybackOptions(Sfx.UltraliskWhat, 1f),
                     NormalVoice: () => null,
-                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionMedium, 1f)
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionMedium, 1f),
+                    HitSfx: () => new PlaybackOptions(Sfx.Hit, 0.3f)
                 )
             )
         }

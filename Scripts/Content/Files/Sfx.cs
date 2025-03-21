@@ -44,7 +44,7 @@ namespace NeonWarfare.Scripts.Content
 			$"{SoundsDir}/normal/impact/deep_impact{{0}}.wav".BatchNumber(1, 4)
 		);
 		public static RandomPicker<string> HitFlesh { get; } = new RandomPicker<string>(
-			$"{SoundsDir}/normal/impact/hit_flesh{{0}}.wav".BatchNumber(0, 4)
+			$"{SoundsDir}/normal/impact/hit_flesh{{0}}.ogg".BatchNumber(0, 4)
 		);
 
 		
