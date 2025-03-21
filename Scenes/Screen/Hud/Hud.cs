@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.Screen.Components.TwoColoredBar;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Entities.Characters;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
@@ -31,6 +32,7 @@ public partial class Hud : Control
 	[ExportGroup("General")]
 	[Export] [NotNull] public DeathOverlay DeathOverlay { get; private set; }
 	[Export] [NotNull] public Control DamageOverlay { get; private set; }
+	[Export] [NotNull] public ChatContainer ChatContainer { get; private set; }
 	
 	
 	private readonly Stopwatch _physicsStopwatch = new();
@@ -116,6 +118,11 @@ public partial class Hud : Control
 	public override void _ExitTree()
 	{
 		AdjustSoundMuffleStrength(0);
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		
 	}
 
 	private void OnPlayerTakingDamage(ClientCharacter.SC_DamageCharacterPacket damageCharacterPacket)

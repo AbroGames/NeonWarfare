@@ -1,10 +1,13 @@
-[gd_scene load_steps=12 format=3 uid="uid://c7ag8o3ynyuyj"]
+[gd_scene load_steps=15 format=3 uid="uid://c7ag8o3ynyuyj"]
 
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="1_er04k"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_kmqq8"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="3_61jvx"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/DeathOverlay.cs" id="4_3x15c"]
 [ext_resource type="Shader" path="res://Assets/Shaders/GrayscaleFilter.gdshader" id="4_vfln8"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/ChatContainer.cs" id="6_dfdpx"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/MessagesContainer.cs" id="7_xllyd"]
+[ext_resource type="PackedScene" uid="uid://depp3d71j4ket" path="res://Scenes/Screen/Hud/Message.tscn" id="8_21jhe"]
 
 [sub_resource type="Gradient" id="Gradient_5tern"]
 offsets = PackedFloat32Array(0.847328, 1)
@@ -34,7 +37,7 @@ gradient = SubResource("Gradient_xrg5d")
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SkillsContainer", "DeathOverlay", "DamageOverlay")]
+[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SkillsContainer", "DeathOverlay", "DamageOverlay", "ChatContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,6 +51,7 @@ Tps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/TPS")
 SkillsContainer = NodePath("MarginContainer/SkillsContainer")
 DeathOverlay = NodePath("DeathOverlay")
 DamageOverlay = NodePath("DamageOverlay")
+ChatContainer = NodePath("ChatContainer")
 
 [node name="DamageOverlay" type="TextureRect" parent="."]
 layout_mode = 1
@@ -140,3 +144,52 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_tfqyn")
+
+[node name="ChatContainer" type="MarginContainer" parent="." node_paths=PackedStringArray("MessagesContainer", "ScrollContainer", "MessageInputBox", "InputSpacePlaceholder")]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 90
+script = ExtResource("6_dfdpx")
+MessagesContainer = NodePath("PartsContainer/PanelContainer/ScrollContainer/MessagesContainer")
+ScrollContainer = NodePath("PartsContainer/PanelContainer/ScrollContainer")
+MessageInputBox = NodePath("PartsContainer/MessageInput")
+InputSpacePlaceholder = NodePath("PartsContainer/InputSpacePlaceholder")
+
+[node name="PartsContainer" type="VBoxContainer" parent="ChatContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="PanelContainer" type="PanelContainer" parent="ChatContainer/PartsContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer/PartsContainer/PanelContainer"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 10
+horizontal_scroll_mode = 0
+
+[node name="MessagesContainer" type="VBoxContainer" parent="ChatContainer/PartsContainer/PanelContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+alignment = 2
+script = ExtResource("7_xllyd")
+MessageScene = ExtResource("8_21jhe")
+
+[node name="MessageInput" type="LineEdit" parent="ChatContainer/PartsContainer"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(0.633757, 0.633757, 0.633757, 1)
+placeholder_text = "Введите сообщение и нажмите Enter"
+
+[node name="InputSpacePlaceholder" type="Control" parent="ChatContainer/PartsContainer"]
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2

@@ -10,6 +10,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientPlayerMovementComponent : Node
 {
+    
     private const int NetworkMessagePerSecond = 30;
 
     private long _orderId = 0;
@@ -50,7 +51,7 @@ public partial class ClientPlayerMovementComponent : Node
 
     private Vector2 GetInput()
     {
-        if (_parent.IsDead) return Vector2.Zero;
+        if (_parent.IsDead || ClientPlayer.IsInputBlocked) return Vector2.Zero;
         return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
     }
 }

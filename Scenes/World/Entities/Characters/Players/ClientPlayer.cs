@@ -15,6 +15,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientPlayer : ClientAlly 
 {
+    public static bool IsInputBlocked { get; set; } = false;
     public event Action<SC_DamageCharacterPacket> PlayerTakingDamage;
     
     public ClientPlayerProfile PlayerProfile { get; private set; }
@@ -61,7 +62,7 @@ public partial class ClientPlayer : ClientAlly
         foreach (var kv in _skillCooldownById)
         {
             kv.Value.Cooldown.Update(IsDead ? delta*skillCooldownFactorWhileDead : delta);  //Если персонаж мертв, то скиллы откатываются медленней
-            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted && !IsDead)
+            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted && !IsDead && !IsInputBlocked)
             {
                 kv.Value.Cooldown.Restart();
                 Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(kv.Key, Position, Rotation, GetGlobalMousePosition()));

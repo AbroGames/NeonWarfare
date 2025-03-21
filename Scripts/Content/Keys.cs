@@ -22,4 +22,14 @@ public static class Keys
     // Abilities
     public static readonly StringName AbilityBasic = "KeyAbilityBasic";
     public static readonly StringName AbilityAdvanced = "KeyAbilityAdvanced";
+    
+    // UI
+    public static readonly StringName Chat = "KeyChat";
+    public static readonly StringName Enter = "KeyEnter";
+    public static readonly StringName Cancel = "KeyCancel";
+    
+    public static readonly StringName UiUp = "ui_up";
+    public static readonly StringName UiDown = "ui_down";
+    public static readonly StringName UiLeft = "ui_left";
+    public static readonly StringName UiRight = "ui_right";
 }
