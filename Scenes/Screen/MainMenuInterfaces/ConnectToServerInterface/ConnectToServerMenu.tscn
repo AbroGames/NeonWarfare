@@ -1,6 +1,5 @@
-[gd_scene load_steps=4 format=3 uid="uid://3j3wpv6my2si"]
+[gd_scene load_steps=3 format=3 uid="uid://3j3wpv6my2si"]
 
-[ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_nq6w6"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CommonInterface/BackToMainMenuButton.cs" id="2_nop7s"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/ConnectToServerInterface/ConnectToServerButton.cs" id="3_57gpj"]
 
@@ -38,17 +37,17 @@ layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
 layout_mode = 2
+theme_override_constants/separation = 40
 
 [node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 text = "Вернуться в меню"
-icon = ExtResource("1_nq6w6")
 script = ExtResource("2_nop7s")
 
-[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("IpLineEdit", "PortLineEdit")]
+[node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("IpLineEdit")]
+custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 text = "Подключится к серверу"
-icon = ExtResource("1_nq6w6")
 script = ExtResource("3_57gpj")
 IpLineEdit = NodePath("../../IPSplit/IpLineEdit")
-PortLineEdit = NodePath("")
