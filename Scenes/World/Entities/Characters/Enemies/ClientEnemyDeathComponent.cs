@@ -8,7 +8,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 public partial class ClientEnemyDeathComponent : ClientEnemyComponentBase
 {
     private const float BaseScaleFactor = 0.1f;
-    
+
     public override void _ExitTree()
     {
         var deathEffect = Fx.CreateDeathFx();
@@ -25,7 +25,7 @@ public partial class ClientEnemyDeathComponent : ClientEnemyComponentBase
         deathEffect.Scale *= scaleFactorRatio;
         debrisEffect.Scale *= scaleFactorRatio;
 
-        var world = ClientRoot.Instance.Game.World;
+        var world = Parent.GetParent();
         world.TryAddChildDeferred(deathEffect);
         world.TryAddChildDeferred(debrisEffect);
     }
