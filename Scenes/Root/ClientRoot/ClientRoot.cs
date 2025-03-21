@@ -59,12 +59,24 @@ public partial class ClientRoot : Node2D
 		}
 	}
 	
+	private static float _preserverVolume;
 	public override void _Notification(int what)
 	{
 		if (what == NotificationWMCloseRequest)
 		{
 			SettingsService.Save(Settings);
 			Log.Info("Game exiting...");
+		}
+		
+		if (what == NotificationWMWindowFocusOut)
+		{
+			_preserverVolume = Audio2D.MasterVolume;
+			Audio2D.MasterVolume = 0;
+		}
+
+		if (what == NotificationWMWindowFocusIn)
+		{
+			Audio2D.MasterVolume = _preserverVolume;
 		}
 	}
 	
