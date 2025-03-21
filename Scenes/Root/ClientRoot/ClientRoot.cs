@@ -22,7 +22,11 @@ public partial class ClientRoot : Node2D
 	public override void _Ready()
 	{
 		NotNullChecker.CheckProperties(this);
-		Callable.From(() => { Init(); Start(); }).CallDeferred();
+		Callable.From(() => { 
+			Init(); 
+			Start(); 
+			ApplySettings(Settings);
+		}).CallDeferred();
 	}
 	
 	protected void Init()
@@ -44,6 +48,9 @@ public partial class ClientRoot : Node2D
 		Audio2D.MasterVolume = settings.MasterVolume / 100;
 		Audio2D.MusicVolume = settings.MusicVolume / 100;
 		Audio2D.SoundsVolume = settings.SoundVolume / 100;
+		
+		settings.PlayerColor.ToHsv(out var h, out var s, out var _);
+		MainMenu?.Background3D?.SetAccentColor(settings.PlayerColor);
 	}
 	
 	protected void Start()

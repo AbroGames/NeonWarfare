@@ -7,6 +7,7 @@ public partial class MainMenuMainScene : Node2D
 {
 
 	[Export] [NotNull] public NodeContainer BackgroundContainer { get; private set; }
+	[Export] [NotNull] public Background3D Background3D { get; private set; }
 	[Export] [NotNull] public NodeContainer MenuContainer { get; private set; }
 	[Export] [NotNull] public NodeContainer ForegroundContainer { get; private set; }
 	

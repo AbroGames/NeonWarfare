@@ -7,7 +7,9 @@ namespace NeonWarfare.Scenes.Game.ClientGame.ClientSettings.SettingTypes;
 public class ColorSetting : Setting
 {
     public float ForcedAlpha { get; }
+    public float ForcedValue { get; }
     public bool HasForcedAlpha { get; }
+    public bool HasForcedValue { get; }
     public ColorSetting(IMemberAccessor accessor, Settings settings) : base(accessor, settings)
     {
         if (accessor.Member.TryGetAttribute<SettingForceColorAlphaAttribute>(out var forcedAlphaAttribute))
@@ -15,17 +17,29 @@ public class ColorSetting : Setting
             ForcedAlpha = forcedAlphaAttribute.ForcedAlpha;
             HasForcedAlpha = true;
         }
+        
+        if (accessor.Member.TryGetAttribute<SettingForceColorValueAttribute>(out var forcedValueAttribute))
+        {
+            ForcedValue = forcedValueAttribute.ForcedValue;
+            HasForcedValue = true;
+        }
     }
 
     public override void SetValue(object value)
     {
-        var colorValue = (Color)value;
+        var color = (Color)value;
 
         if (HasForcedAlpha)
         {
-            colorValue.A = ForcedAlpha;
+            color.A = ForcedAlpha;
+        }
+
+        if (HasForcedValue)
+        {
+            color.ToHsv(out var h, out var s, out var _);
+            color = Color.FromHsv(h, s, ForcedValue);
         }
         
-        base.SetValue(colorValue);
+        base.SetValue(color);
     }
 }

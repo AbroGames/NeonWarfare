@@ -22,6 +22,12 @@ public class SettingForceColorAlphaAttribute(float alpha) : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class SettingForceColorValueAttribute(float value) : Attribute
+{
+    public float ForcedValue { get; } = value;
+}
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class SettingNumberInputTypeAttribute(NumberInputType numberInputType) : Attribute
 {
     public NumberInputType NumberInputType { get; } = numberInputType;

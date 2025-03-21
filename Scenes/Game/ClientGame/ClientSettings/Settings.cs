@@ -21,6 +21,7 @@ public class Settings
     [SettingName("Цвет игрока")]
     [SettingDescription("Определяет цвет персонажа игрока в игре.")]
     [SettingForceColorAlpha(1)]
+    [SettingForceColorValue(1)]
     public Color PlayerColor { get; set; } = Colors.Green;
     
     
