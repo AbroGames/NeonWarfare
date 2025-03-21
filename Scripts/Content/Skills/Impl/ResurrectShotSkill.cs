@@ -9,14 +9,24 @@ using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using ClientHealShotAction = NeonWarfare.Scenes.World.Entities.Actions.HealShot.ClientHealShotAction;
 using ServerHealShotAction = NeonWarfare.Scenes.World.Entities.Actions.HealShot.ServerHealShotAction;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class ResurrectShotSkill() : Skill(SkillTypeConst)
+public class ResurrectShotSkill : Skill
 {
+    public ResurrectShotSkill() : base(SkillTypeConst)
+    {
+        AudioProfile = new SkillAudioProfile(
+            BeginSound: () => new PlaybackOptions(
+                Path: Sfx.ResurrectionLaunch, 
+                Volume: 1f
+            )
+        );
+    }
 
     public const string SkillTypeConst = "ResurrectShot";
     
@@ -65,6 +75,12 @@ public class ResurrectShotSkill() : Skill(SkillTypeConst)
         shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation);
         shotAction.InitStats(customParams.Speed);
         useInfo.World.AddChild(shotAction);
+        
+        PlaybackOptions playback = AudioProfile?.BeginSound?.Invoke();
+        if (playback is not null)
+        {
+            Audio2D.PlaySoundAt(playback, useInfo.CharacterPosition, useInfo.World);
+        }
     }
 
     public override bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor)

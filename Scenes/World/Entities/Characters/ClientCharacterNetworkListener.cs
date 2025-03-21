@@ -3,6 +3,7 @@ using Godot;
 using NeonWarfare.Scenes.Game.ServerGame;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
@@ -14,6 +15,9 @@ namespace NeonWarfare.Scenes.World.Entities.Characters;
 
 public partial class ClientCharacter 
 {
+    private float LabelSpawnPositionDeviation { get; set; } = 10f;
+    
+    // Кажется, логике этой штуки место в скилле. У разных скиллов может быть разная логика отрисовки эффекта. Надо подумац.
     [EventListener(ListenerSide.Client)]
     public void OnDamageCharacterPacket(CS_DamageCharacterPacket damageCharacterPacket)
     {
@@ -21,13 +25,17 @@ public partial class ClientCharacter
         //Если дамаг нанес данный клиент
         if (damageCharacterPacket.AuthorPeerId == ClientRoot.Instance.Game.PlayerProfile.PeerId)
         {
-            //TODO рисуем сколько урона нанес игрок
+            var label = Fx.CreateFloatingLabel($"{damageCharacterPacket.Damage:N0}", Colors.Red, 1);
+            label.Position = Rand.InsideCircle(new (Position, LabelSpawnPositionDeviation));
+            ClientRoot.Instance.Game.World.AddChild(label);
         }
+        
         //Если дамаг нанес враг
         if (damageCharacterPacket.AuthorPeerId == -1)
         {
             //TODO я полагаю в этой ситуации мы индикатор урона не рисуем
         }
+        
         //Если дамаг нанесли по данному клиенту
         if (this is ClientPlayer) //TODO вместо проверки я бы просто вызвал виртуальный метод, который переопределен в ClientPlayer
         {
@@ -39,12 +47,20 @@ public partial class ClientCharacter
     [EventListener(ListenerSide.Client)]
     public void OnHealCharacterPacket(CS_HealCharacterPacket healCharacterPacket)
     {
-        
+        var skillFx = Fx.CreateHealFx();
+        skillFx.UseGlobalRotation(0);
+        skillFx.Target = this;
+        skillFx.Position = Position;
+        ClientRoot.Instance.Game.World.AddChild(skillFx);
     }
     
     [EventListener(ListenerSide.Client)]
     public void OnResurrectCharacterPacket(CS_ResurrectCharacterPacket resurrectCharacterPacket)
     {
-        
+        var skillFx = Fx.CreateResurrectFx();
+        skillFx.UseGlobalRotation(0);
+        skillFx.Target = this;
+        skillFx.Position = Position;
+        ClientRoot.Instance.Game.World.AddChild(skillFx);
     }
 }

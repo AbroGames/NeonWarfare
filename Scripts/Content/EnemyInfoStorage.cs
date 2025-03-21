@@ -4,8 +4,10 @@ using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.Entities.Characters;
+using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scripts.Content.Skills.Impl;
 using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.Content;
 
@@ -20,8 +22,17 @@ public static class EnemyInfoStorage
         double RegenHpSpeed,
         double MovementSpeed,
         double RotationSpeed,
-        EnemyAudioProfileStorage.ClientEnemyAudioProfile AudioProfile
+        ClientEnemyAudioProfile AudioProfile
         );
+    
+    public record ClientEnemyAudioProfile(
+        double VoicePeriod,
+        Func<ClientEnemy, bool> CanDoVoice, 
+        Func<PlaybackOptions> SpawnVoice = null,
+        Func<PlaybackOptions> DeathVoice = null,
+        Func<PlaybackOptions> NormalVoice = null,
+        Func<PlaybackOptions> DeathSfx = null
+    );
     
     public enum EnemyType
     {
@@ -41,7 +52,14 @@ public static class EnemyInfoStorage
                 RegenHpSpeed: 0,
                 MovementSpeed: 220,
                 RotationSpeed: 300,
-                AudioProfile: EnemyAudioProfileStorage.GetEnemyAudioProfile(EnemyAudioProfileStorage.ProfileType.Zergling)
+                AudioProfile: new ClientEnemyAudioProfile(
+                    VoicePeriod: 1,
+                    CanDoVoice: _ => Rand.Chance(0.5),
+                    SpawnVoice: null,
+                    DeathVoice: () => new PlaybackOptions(Sfx.ZerglingDeath, 0.2f),
+                    NormalVoice: () => new PlaybackOptions(Sfx.ZerglingYes, 0.2f),
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.1f)
+                )
             )
         },
         { 
@@ -55,7 +73,14 @@ public static class EnemyInfoStorage
                 RegenHpSpeed: 0,
                 MovementSpeed: 200,
                 RotationSpeed: 280,
-                AudioProfile: EnemyAudioProfileStorage.GetEnemyAudioProfile(EnemyAudioProfileStorage.ProfileType.Hydralisk)
+                AudioProfile: new ClientEnemyAudioProfile(
+                    VoicePeriod: 2,
+                    CanDoVoice: _ => Rand.Chance(0.5),
+                    SpawnVoice: null,
+                    DeathVoice: () => new PlaybackOptions(Sfx.HydraliskDeath, 1f),
+                    NormalVoice: () => new PlaybackOptions(Sfx.HydraliskYes, 0.2f),
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.2f)
+                )
             )
         },
         { 
@@ -73,7 +98,19 @@ public static class EnemyInfoStorage
                 RegenHpSpeed: 20,
                 MovementSpeed: 140,
                 RotationSpeed: 220,
-                AudioProfile: EnemyAudioProfileStorage.GetEnemyAudioProfile(EnemyAudioProfileStorage.ProfileType.Ultralisk)
+                AudioProfile: new ClientEnemyAudioProfile(
+                    VoicePeriod: 10,
+                    CanDoVoice: _ => false,
+                    SpawnVoice: () => new PlaybackOptions(
+                        Path:Sfx.UltraliskWhat,
+                        Volume: 1f,
+                        MaxDistance: 10000f, // мы хотим слышать спавн <s>ультралиска</s> черепахи с очень большого расстояния
+                        Attenuation: 1f
+                    ),
+                    DeathVoice: () => new PlaybackOptions(Sfx.UltraliskWhat, 1f),
+                    NormalVoice: () => null,
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionMedium, 1f)
+                )
             )
         }
     };

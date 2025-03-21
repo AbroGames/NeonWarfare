@@ -3,6 +3,7 @@ using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.World.Effects.CpuParticles;
 using NeonWarfare.Scenes.World.Effects.FloatingLabel;
 using NeonWarfare.Scenes.World.Effects.GpuParticles;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 
 namespace NeonWarfare.Scripts.Content;
 
@@ -19,5 +20,24 @@ public class Fx
         FloatingLabel floatingLabel = ClientRoot.Instance.PackedScenes.FloatingLabel.Instantiate<FloatingLabel>();
         floatingLabel.Configure(text, color, scale);
         return floatingLabel;
+    }
+
+    public static CpuParticlesFx CreateHealFx()
+    {
+        var fx = ClientRoot.Instance.PackedScenes.HealFx.Instantiate<CpuParticlesFx>();
+        fx.Started += () => PlaySoundFor(Sfx.Heal, fx);
+        return fx;
+    }
+    
+    public static CpuParticlesFx CreateResurrectFx()
+    {
+        var fx = ClientRoot.Instance.PackedScenes.ResurrectionFx.Instantiate<CpuParticlesFx>();
+        fx.Started += () => PlaySoundFor(Sfx.Resurrect, fx);
+        return fx;
+    }
+
+    private static void PlaySoundFor(string soundPath, Node2D target)
+    {
+        var sfx = Audio2D.PlaySoundAt(soundPath, target.Position, 1f, target.GetParent());
     }
 }

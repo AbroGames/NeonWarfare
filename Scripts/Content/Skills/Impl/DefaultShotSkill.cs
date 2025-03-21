@@ -8,14 +8,25 @@ using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using ClientShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ClientShotAction;
 using ServerShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ServerShotAction;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class DefaultShotSkill() : Skill(SkillTypeConst)
+public class DefaultShotSkill : Skill
 {
+    public DefaultShotSkill() : base(SkillTypeConst)
+    {
+        AudioProfile = new SkillAudioProfile(
+            BeginSound: () => new PlaybackOptions(
+                Path: Sfx.SmallLaserShot, 
+                Volume: 0.5f,
+                PitchScale: 1f
+                )
+            );
+    }
 
     public const string SkillTypeConst = "DefaultShot";
     
@@ -64,6 +75,12 @@ public class DefaultShotSkill() : Skill(SkillTypeConst)
         shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation);
         shotAction.InitStats(customParams.Speed, useInfo.Color);
         useInfo.World.AddChild(shotAction);
+
+        PlaybackOptions playback = AudioProfile?.BeginSound?.Invoke();
+        if (playback is not null)
+        {
+            Audio2D.PlaySoundAt(playback, useInfo.CharacterPosition, useInfo.World);
+        }
     }
 
     public override bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor)

@@ -43,6 +43,9 @@ namespace NeonWarfare.Scripts.Content
 		public static RandomPicker<string> DeepImpact { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/impact/deep_impact{{0}}.wav".BatchNumber(1, 4)
 		);
+		public static RandomPicker<string> HitFlesh { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/impact/hit_flesh{{0}}.wav".BatchNumber(0, 4)
+		);
 
 		
 		
@@ -268,8 +271,16 @@ namespace NeonWarfare.Scripts.Content
 			$"{SoundsDir}/normal/skills/heal{{0}}.ogg".BatchNumber(0, 1)
 		);
 		
+		public static RandomPicker<string> HealLaunch { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/heal_launch.ogg"
+		);
+		
 		public static RandomPicker<string> Resurrect { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/skills/resurrection.ogg"
+		);
+		
+		public static RandomPicker<string> ResurrectionLaunch { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/resurrection_launch{{0}}.ogg".BatchNumber(0, 1)
 		);
 		
 		

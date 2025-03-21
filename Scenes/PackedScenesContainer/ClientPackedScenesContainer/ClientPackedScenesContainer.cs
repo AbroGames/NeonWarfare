@@ -14,6 +14,8 @@ public partial class ClientPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene BulletHitFx { get; private set; }
     [Export] [NotNull] public PackedScene SpawnFx { get; private set; }
     [Export] [NotNull] public PackedScene FloatingLabel { get; private set; }
+    [Export] [NotNull] public PackedScene HealFx { get; private set; }
+    [Export] [NotNull] public PackedScene ResurrectionFx { get; private set; }
     
     /*
      * MAIN SCENES

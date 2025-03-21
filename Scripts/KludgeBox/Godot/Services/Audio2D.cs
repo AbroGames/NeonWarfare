@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Godot;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox.Collections;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
@@ -277,7 +278,24 @@ public partial class Audio2D : Node2D
 		
 		stream.Position = position;
 		stream.Autoplay = true;
-		Callable.From(() => parent.AddChild(stream)).CallDeferred();
+		Callable.From(() =>
+		{
+			if(parent.IsValid())
+				parent.AddChild(stream);
+			else
+				stream.QueueFree();
+		}).CallDeferred();
+		return stream;
+	}
+
+	public static AudioStreamPlayer2D PlaySoundAt(PlaybackOptions options, Vector2 position, Node parent = null)
+	{
+		var stream = PlaySoundAt(options.Path, position, options.Volume, parent);
+		stream.Attenuation = options.Attenuation;
+		stream.MaxDistance = options.MaxDistance;
+		stream.PanningStrength = options.PanningStrength;
+		stream.PitchScale = options.PitchScale;
+		
 		return stream;
 	}
 

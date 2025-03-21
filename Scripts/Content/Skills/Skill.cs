@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Entities.Characters;
@@ -10,12 +11,24 @@ namespace NeonWarfare.Scripts.Content.Skills;
 public abstract class Skill
 {
     public readonly string SkillType;
+    public SkillAudioProfile AudioProfile { get; protected set; }
+
 
     protected Skill(string skillType)
     {
         SkillType = skillType;
     }
+    
+    public record SkillAudioProfile(
+        Func<PlaybackOptions> BeginSound = null,
+        Func<PlaybackOptions> HitSound = null
+        );
 
+    public record TargetDamagedEventInfo(
+        ClientCharacter.CS_DamageCharacterPacket Packet,
+        ClientCharacter Target
+        );
+        
     public record ServerSkillUseInfo(ServerWorld World, Vector2 CharacterPosition, float CharacterRotation, Vector2 CursorGlobalPosition,
         ServerCharacter Author, long AuthorPeerId,
         double DamageFactor, double SpeedFactor, double RangeFactor);
@@ -26,7 +39,9 @@ public abstract class Skill
     
     public virtual void OnServerUse(ServerSkillUseInfo useInfo) {}
     public virtual void OnClientUse(ClientSkillUseInfo useInfo) {}
+    public virtual void OnClientTargetDamaged(TargetDamagedEventInfo damageEvent) {}
     public virtual bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor) { return false; }
+
 
     protected bool CheckEnemyRayCastAndDistToTarget(ServerEnemy enemy, double range)
     {

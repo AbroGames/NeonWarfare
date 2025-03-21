@@ -15,7 +15,6 @@ public partial class ClientCharacter
     [GamePacket]
     public class CS_DamageCharacterPacket(long nid, long authorPeerId, string skillType, double damage) : BinaryPacket, IInstanceEvent
     {
-        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
         public object NetworkId => Nid;
         
         public long Nid = nid;
@@ -27,7 +26,6 @@ public partial class ClientCharacter
     [GamePacket]
     public class CS_HealCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
     {
-        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
         public object NetworkId => Nid;
         
         public long Nid = nid;
@@ -39,7 +37,6 @@ public partial class ClientCharacter
     [GamePacket]
     public class CS_ResurrectCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
     {
-        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
         public object NetworkId => Nid;
         
         public long Nid = nid;

@@ -14,7 +14,7 @@ public partial class ClientEnemyAudioComponent : Node
     private bool _isActive;
 
     private AutoCooldown _tryToPlayVoiceCooldown;
-    private EnemyAudioProfileStorage.ClientEnemyAudioProfile _audioProfile;
+    private EnemyInfoStorage.ClientEnemyAudioProfile _audioProfile;
     public override void _Ready()
     {
         _parent = GetParent<ClientEnemy>();
@@ -54,9 +54,9 @@ public partial class ClientEnemyAudioComponent : Node
         TryToPlaySound(_audioProfile.DeathVoice);
     }
 
-    private void TryToPlaySound(Func<EnemyAudioProfileStorage.PlaybackOptions> pathProvider)
+    private void TryToPlaySound(Func<PlaybackOptions> pathProvider)
     {
-        EnemyAudioProfileStorage.PlaybackOptions playbackOptions = pathProvider?.Invoke();
+        PlaybackOptions playbackOptions = pathProvider?.Invoke();
         if (playbackOptions is null) return;
 
         var path = playbackOptions.Path;
