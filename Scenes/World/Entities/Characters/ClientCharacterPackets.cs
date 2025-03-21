@@ -13,7 +13,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters;
 public partial class ClientCharacter 
 {
     [GamePacket]
-    public class CS_DamageCharacterPacket(long nid, long authorPeerId, string skillType, double damage) : BinaryPacket, IInstanceEvent
+    public class SC_DamageCharacterPacket(long nid, long authorPeerId, string skillType, double damage) : BinaryPacket, IInstanceEvent
     {
         public object NetworkId => Nid;
         
@@ -24,7 +24,7 @@ public partial class ClientCharacter
     }
     
     [GamePacket]
-    public class CS_HealCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
+    public class SC_HealCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
     {
         public object NetworkId => Nid;
         
@@ -35,7 +35,7 @@ public partial class ClientCharacter
     }
     
     [GamePacket]
-    public class CS_ResurrectCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
+    public class SC_ResurrectCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
     {
         public object NetworkId => Nid;
         

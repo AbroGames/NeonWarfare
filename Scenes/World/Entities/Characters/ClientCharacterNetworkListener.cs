@@ -19,7 +19,7 @@ public partial class ClientCharacter
     
     // Кажется, логике этой штуки место в скилле. У разных скиллов может быть разная логика отрисовки эффекта. Надо подумац.
     [EventListener(ListenerSide.Client)]
-    public void OnDamageCharacterPacket(CS_DamageCharacterPacket damageCharacterPacket)
+    public void OnDamageCharacterPacket(SC_DamageCharacterPacket damageCharacterPacket)
     {
         Skill skill = SkillStorage.GetSkill(damageCharacterPacket.SkillType); //TODO Я полагаю в Skill надо добавить ссылку (лямбду) на PackedScene с эффектом урона (брызги крови). Как сейчас сделано с Action для Skill.
         //Если дамаг нанес данный клиент
@@ -39,10 +39,10 @@ public partial class ClientCharacter
         ProcessDamage(damageCharacterPacket);
     }
 
-    protected virtual void ProcessDamage(CS_DamageCharacterPacket damageCharacterPacket) {}
+    protected virtual void ProcessDamage(SC_DamageCharacterPacket damageCharacterPacket) {}
     
     [EventListener(ListenerSide.Client)]
-    public void OnHealCharacterPacket(CS_HealCharacterPacket healCharacterPacket)
+    public void OnHealCharacterPacket(SC_HealCharacterPacket healCharacterPacket)
     {
         var skillFx = Fx.CreateHealFx();
         skillFx.UseGlobalRotation(0);
@@ -52,7 +52,7 @@ public partial class ClientCharacter
     }
     
     [EventListener(ListenerSide.Client)]
-    public void OnResurrectCharacterPacket(CS_ResurrectCharacterPacket resurrectCharacterPacket)
+    public void OnResurrectCharacterPacket(SC_ResurrectCharacterPacket resurrectCharacterPacket)
     {
         var skillFx = Fx.CreateResurrectFx();
         skillFx.UseGlobalRotation(0);

@@ -25,7 +25,7 @@ public abstract class Skill
         );
 
     public record TargetDamagedEventInfo(
-        ClientCharacter.CS_DamageCharacterPacket Packet,
+        ClientCharacter.SC_DamageCharacterPacket Packet,
         ClientCharacter Target
         );
         

@@ -29,7 +29,7 @@ public partial class ClientEnemy : ClientCharacter
         RotationSpeed = enemyInfo.RotationSpeed;
     }
 
-    protected override void ProcessDamage(CS_DamageCharacterPacket damageCharacterPacket)
+    protected override void ProcessDamage(SC_DamageCharacterPacket damageCharacterPacket)
     {
         var sfx = EnemyTemplate.AudioProfile?.HitSfx?.Invoke();
         if (sfx is not null)
