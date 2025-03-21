@@ -22,8 +22,10 @@ public class DoubleShotSkill : Skill
         AudioProfile = new SkillAudioProfile(
             BeginSound: () => new PlaybackOptions(
                 Path: Sfx.LaserShot, 
-                Volume: 0.5f,
-                PitchScale: 0.75f
+                Volume: 1f,
+                PitchScale: 1f,
+                MaxDistance: 5000,
+                Attenuation: 0.9f
             )
         );
     }

@@ -79,7 +79,7 @@ public static class EnemyInfoStorage
                     VoicePeriod: 2,
                     CanDoVoice: _ => Rand.Chance(0.5),
                     SpawnVoice: null,
-                    DeathVoice: () => new PlaybackOptions(Sfx.HydraliskDeath, 1f),
+                    DeathVoice: () => new PlaybackOptions(Sfx.HydraliskDeath, 0.3f),
                     NormalVoice: () => new PlaybackOptions(Sfx.HydraliskYes, 0.2f),
                     DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionSmall, 0.2f),
                     HitSfx: () => new PlaybackOptions(Sfx.HitFlesh, 0.3f)
