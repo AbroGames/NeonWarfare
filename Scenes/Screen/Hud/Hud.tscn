@@ -1,10 +1,19 @@
-[gd_scene load_steps=10 format=3 uid="uid://c7ag8o3ynyuyj"]
+[gd_scene load_steps=12 format=3 uid="uid://c7ag8o3ynyuyj"]
 
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="1_er04k"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_kmqq8"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="3_61jvx"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/DeathOverlay.cs" id="4_3x15c"]
 [ext_resource type="Shader" path="res://Assets/Shaders/GrayscaleFilter.gdshader" id="4_vfln8"]
+
+[sub_resource type="Gradient" id="Gradient_5tern"]
+offsets = PackedFloat32Array(0.847328, 1)
+colors = PackedColorArray(1, 0, 0, 0, 1, 0, 0, 0.141176)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_phdw8"]
+gradient = SubResource("Gradient_5tern")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
 
 [sub_resource type="LabelSettings" id="LabelSettings_j64jc"]
 resource_local_to_scene = true
@@ -17,15 +26,15 @@ shader = ExtResource("4_vfln8")
 shader_parameter/strength = 1.0
 
 [sub_resource type="Gradient" id="Gradient_xrg5d"]
-offsets = PackedFloat32Array(0.39313, 1)
-colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.870588)
+offsets = PackedFloat32Array(0.515267, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.8)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_tfqyn"]
 gradient = SubResource("Gradient_xrg5d")
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SkillsContainer", "DeathOverlay")]
+[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SkillsContainer", "DeathOverlay", "DamageOverlay")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,6 +47,17 @@ Fps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/FPS")
 Tps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/TPS")
 SkillsContainer = NodePath("MarginContainer/SkillsContainer")
 DeathOverlay = NodePath("DeathOverlay")
+DamageOverlay = NodePath("DamageOverlay")
+
+[node name="DamageOverlay" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_phdw8")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -89,6 +109,7 @@ size_flags_vertical = 8
 theme_override_constants/separation = 8
 
 [node name="DeathOverlay" type="Control" parent="." node_paths=PackedStringArray("GrayscaleShader", "Vignette")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

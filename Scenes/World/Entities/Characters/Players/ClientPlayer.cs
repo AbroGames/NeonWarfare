@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
@@ -14,6 +15,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
 public partial class ClientPlayer : ClientAlly 
 {
+    public event Action<SC_DamageCharacterPacket> PlayerTakingDamage;
     
     public ClientPlayerProfile PlayerProfile { get; private set; }
 
@@ -77,5 +79,10 @@ public partial class ClientPlayer : ClientAlly
         }
         
         return skills;
+    }
+
+    protected override void ProcessDamage(SC_DamageCharacterPacket damageCharacterPacket)
+    {
+        PlayerTakingDamage?.Invoke(damageCharacterPacket);
     }
 }

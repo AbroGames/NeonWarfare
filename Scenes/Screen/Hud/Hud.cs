@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Screen.BattleHud;
 using NeonWarfare.Scenes.Screen.Components.TwoColoredBar;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Entities.Characters;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
@@ -29,6 +30,7 @@ public partial class Hud : Control
 	
 	[ExportGroup("General")]
 	[Export] [NotNull] public DeathOverlay DeathOverlay { get; private set; }
+	[Export] [NotNull] public Control DamageOverlay { get; private set; }
 	
 	
 	private readonly Stopwatch _physicsStopwatch = new();
@@ -37,8 +39,11 @@ public partial class Hud : Control
 	private float _deathOverlayAnimationTime = 2f;
 	private float _deathEffectStrength;
 	private float _previousDeathEffectStrength = -1;
+	
+	private float _damageOverlayFadeTime = 0.3f;
+	private float _damageEffectStrength;
 
-	private float[] _deathEqGains = [2f, 6.8f, 6f, 3.5f, 0.1f, -8.4f, -10.1f, -11.5f, -12f, -12f];
+	private float[] _deathEqGains = [-6f, 3f, 2f, 0.1f, -1.1f, -8.4f, -12.1f, -14.5f, -16f, -20f];
 	public virtual ClientPlayer GetCurrentPlayer()
 	{
 		return GetCurrentWorld().Player;
@@ -55,6 +60,7 @@ public partial class Hud : Control
 		
 		ClientPlayer player = GetCurrentPlayer();
 		if (player is null) return;
+		player.PlayerTakingDamage += OnPlayerTakingDamage;
 		
 		InitHudForPlayer();
 		
@@ -87,6 +93,10 @@ public partial class Hud : Control
 		}
 		
 		_previousDeathEffectStrength = _deathEffectStrength;
+		
+		_damageEffectStrength -= (float)delta / _damageOverlayFadeTime;
+		_damageEffectStrength = Math.Clamp(_damageEffectStrength, 0, 1);
+		DamageOverlay.Modulate = DamageOverlay.Modulate with { A = _damageEffectStrength };
 	}
 	
 	public override void _PhysicsProcess(double delta)
@@ -108,6 +118,15 @@ public partial class Hud : Control
 		AdjustSoundMuffleStrength(0);
 	}
 
+	private void OnPlayerTakingDamage(ClientCharacter.SC_DamageCharacterPacket damageCharacterPacket)
+	{
+		Callable.From(() =>
+		{
+			var player = GetCurrentPlayer();
+			return _damageEffectStrength = 1 - (float)(player.Hp / player.MaxHp);
+		}).CallDeferred();
+	}
+	
 	private void AdjustSoundMuffleStrength(float strenght)
 	{
 		const float additionalStrenght = 2f;
