@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Godot;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox.Collections;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
@@ -270,13 +271,31 @@ public partial class Audio2D : Node2D
 	/// <param name="path">Path to the sound resource.</param>
 	/// <param name="position">Position in the game world.</param>
 	/// <param name="volume">Volume of the sound (0.0 to 1.0).</param>
-	public static AudioStreamPlayer2D PlaySoundAt(string path, Vector2 position, float volume = 1)
+	public static AudioStreamPlayer2D PlaySoundAt(string path, Vector2 position, float volume = 1, Node parent = null)
 	{
 		var stream = ConfigureSound(path,volume);
-
+		parent ??= Instance;
+		
 		stream.Position = position;
 		stream.Autoplay = true;
-		Instance.AddChild(stream);
+		Callable.From(() =>
+		{
+			if(parent.IsValid())
+				parent.AddChild(stream);
+			else
+				stream.QueueFree();
+		}).CallDeferred();
+		return stream;
+	}
+
+	public static AudioStreamPlayer2D PlaySoundAt(PlaybackOptions options, Vector2 position, Node parent = null)
+	{
+		var stream = PlaySoundAt(options.Path, position, options.Volume, parent);
+		stream.Attenuation = options.Attenuation;
+		stream.MaxDistance = options.MaxDistance;
+		stream.PanningStrength = options.PanningStrength;
+		stream.PitchScale = options.PitchScale;
+		
 		return stream;
 	}
 
@@ -357,6 +376,8 @@ public partial class Audio2D : Node2D
 
 		return stream;
 	}
+	
+	
 	
 	/// <summary>
 	/// Эта штука будет воспроизводить звуковые файлы из перечисления до тех пор, пока перечисление не закончится, либо пока текущий трек не будет принудительно остановлен.

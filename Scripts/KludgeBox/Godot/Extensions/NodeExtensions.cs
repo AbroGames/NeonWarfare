@@ -229,6 +229,22 @@ public static class NodeExtensions
 
         return parent.GetParent<T>();
     }
+
+    /// <summary>
+    /// Этот метод моет быть полезен, когда при удалении одного узла нужно добавить на его место новый. В этой ситуации
+    /// может случиться так, что узел удаляется потому, что его родительский узел тоже удаляется. В этот момент попытка добавить на место узла другой
+    /// вызовет ошибку. Этот метод подождет до конца кадра и только после этого ПОПЫТАЕТСЯ добавить узел.
+    /// </summary>
+    public static void TryAddChildDeferred(this Node parent, Node child)
+    {
+        Callable.From(() =>
+        {
+            if (parent.IsValid())
+            {
+                parent.AddChild(child);
+            }
+        }).CallDeferred();
+    }
     
     /// <summary>
     /// Gets the upward vector relative to the given Node2D's rotation.

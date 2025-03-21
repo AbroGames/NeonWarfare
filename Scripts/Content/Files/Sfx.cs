@@ -43,6 +43,9 @@ namespace NeonWarfare.Scripts.Content
 		public static RandomPicker<string> DeepImpact { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/impact/deep_impact{{0}}.wav".BatchNumber(1, 4)
 		);
+		public static RandomPicker<string> HitFlesh { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/impact/hit_flesh{{0}}.ogg".BatchNumber(0, 4)
+		);
 
 		
 		
@@ -227,6 +230,58 @@ namespace NeonWarfare.Scripts.Content
 			$"{SoundsDir}/normal/weapons/laserbeam.ogg"
 		);
 		
+		
+		// zerg
+		public static RandomPicker<string> ZergExplosionSmall { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zerg_ExplosionSmall{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		public static RandomPicker<string> ZergExplosionMedium { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zerg_ExplosionMedium{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		public static RandomPicker<string> ZerglingDeath { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zergling_Death{{0}}.ogg".BatchNumber(0, 3)
+		);
+		
+		public static RandomPicker<string> ZerglingYes { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Zergling_Yes{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		public static RandomPicker<string> HydraliskDeath { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Hydralisk_Death{{0}}.ogg".BatchNumber(0, 3)
+		);
+		
+		public static RandomPicker<string> HydraliskYes { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Hydralisk_Yes{{0}}.ogg".BatchNumber(0, 1)
+		);
+		
+		public static RandomPicker<string> UltraliskRoar { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/Ultralisk_Roar0.ogg"
+		);
+		
+		public static RandomPicker<string> UltraliskWhat { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/zerg/UltraLisk_What{{0}}.ogg".BatchNumber(0, 2)
+		);
+		
+		
+		
+		// skills
+		public static RandomPicker<string> Heal { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/heal{{0}}.ogg".BatchNumber(0, 1)
+		);
+		
+		public static RandomPicker<string> HealLaunch { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/heal_launch.ogg"
+		);
+		
+		public static RandomPicker<string> Resurrect { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/resurrection.ogg"
+		);
+		
+		public static RandomPicker<string> ResurrectionLaunch { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/skills/resurrection_launch{{0}}.ogg".BatchNumber(0, 1)
+		);
 		
 		
 		

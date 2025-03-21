@@ -20,6 +20,7 @@ public partial class ServerRoot : Node2D
 	{
 		NotNullChecker.CheckProperties(this);
 		Callable.From(() => { Init(); Start(); }).CallDeferred();
+		GetTree().Root.Title = $"[SERVER] {GetTree().Root.Title}";
 	}
 	
 	protected void Init()

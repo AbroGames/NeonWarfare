@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=38 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://dsktb63djjnqc" path="res://Scenes/World/Effects/CpuParticles/SpawnFx.tscn" id="5_517r2"]
 [ext_resource type="PackedScene" uid="uid://dfv2jfwdn10pn" path="res://Scenes/World/Effects/FloatingLabel/FloatingLabel.tscn" id="6_soawm"]
 [ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/ClientGame/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="7_0iiio"]
+[ext_resource type="PackedScene" uid="uid://b51ysj0ux0fci" path="res://Scenes/World/Effects/CpuParticles/HealFx.tscn" id="7_43ewm"]
 [ext_resource type="PackedScene" uid="uid://ckusgv6yysi45" path="res://Scenes/Game/ClientGame/MainScenes/SafeWorld/SafeWorldMainScene.tscn" id="8_02aqn"]
+[ext_resource type="PackedScene" uid="uid://y8cm3anqnpvc" path="res://Scenes/World/Effects/CpuParticles/ResurrectionFx.tscn" id="8_lblxd"]
 [ext_resource type="PackedScene" uid="uid://dw24k3p4lhskq" path="res://Scenes/Screen/MainScene/MainMenuMainScene.tscn" id="9_6gxor"]
 [ext_resource type="PackedScene" uid="uid://xid2ekx5i2m" path="res://Scenes/World/SafeWorld/ClientSafeWorld/ClientSafeWorld.tscn" id="9_17hfk"]
 [ext_resource type="PackedScene" uid="uid://bsof5i3qpnyv0" path="res://Scenes/World/BattleWorld/ClientBattleWorld/ClientBattleWorld.tscn" id="10_0t0c3"]
@@ -43,6 +45,8 @@ DebrisFx = ExtResource("3_7erab")
 BulletHitFx = ExtResource("4_fxdr8")
 SpawnFx = ExtResource("5_517r2")
 FloatingLabel = ExtResource("6_soawm")
+HealFx = ExtResource("7_43ewm")
+ResurrectionFx = ExtResource("8_lblxd")
 BattleWorldMainScene = ExtResource("7_0iiio")
 SafeWorldMainScene = ExtResource("8_02aqn")
 MainMenuPackedScene = ExtResource("9_6gxor")

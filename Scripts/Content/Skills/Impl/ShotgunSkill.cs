@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using ClientShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ClientShotAction;
@@ -16,8 +17,19 @@ using ServerShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ServerSh
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class ShotgunSkill() : Skill(SkillTypeConst)
+public class ShotgunSkill : Skill
 {
+    public ShotgunSkill() : base(SkillTypeConst)
+    {
+        AudioProfile = new SkillAudioProfile(
+            BeginSound: () => new PlaybackOptions(
+                Path: Sfx.SmallLaserShot, 
+                Volume: 0.75f,
+                PitchScale: 0.5f
+            )
+        );
+    }
+
     public const string SkillTypeConst = "Shotgun";
     
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
@@ -54,7 +66,7 @@ public class ShotgunSkill() : Skill(SkillTypeConst)
         }
 
         string customParams = JsonSerializer.Serialize(new PacketCustomParams(
-            Speed: (float) Speed,
+            Speed: (float) (Speed*useInfo.SpeedFactor),
             ShotInfos: shotInfos
         ));
         Network.SendToAll(new ClientWorld.SC_UseSkillPacket(
@@ -78,6 +90,12 @@ public class ShotgunSkill() : Skill(SkillTypeConst)
             shotAction.Init(useInfo.CharacterPosition, customParams.ShotInfos[i].Rotation);
             shotAction.InitStats(customParams.Speed, useInfo.Color);
             useInfo.World.AddChild(shotAction);
+        }
+        
+        PlaybackOptions playback = AudioProfile?.BeginSound?.Invoke();
+        if (playback is not null)
+        {
+            Audio2D.PlaySoundAt(playback, useInfo.CharacterPosition, useInfo.World);
         }
     }
 

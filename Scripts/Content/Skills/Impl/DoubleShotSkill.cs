@@ -8,14 +8,25 @@ using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using ClientShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ClientShotAction;
 using ServerShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ServerShotAction;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class DoubleShotSkill() : Skill(SkillTypeConst)
+public class DoubleShotSkill : Skill
 {
+    public DoubleShotSkill() : base(SkillTypeConst)
+    {
+        AudioProfile = new SkillAudioProfile(
+            BeginSound: () => new PlaybackOptions(
+                Path: Sfx.LaserShot, 
+                Volume: 0.5f,
+                PitchScale: 0.75f
+            )
+        );
+    }
 
     public const string SkillTypeConst = "DoubleShot";
     
@@ -76,6 +87,12 @@ public class DoubleShotSkill() : Skill(SkillTypeConst)
         PacketCustomParams customParams = JsonSerializer.Deserialize<PacketCustomParams>(useInfo.CustomParams);
         CreateClientShotAction(useInfo, customParams.Speed, customParams.Nid1, DeltaPos);
         CreateClientShotAction(useInfo, customParams.Speed, customParams.Nid2, -DeltaPos);
+        
+        PlaybackOptions playback = AudioProfile?.BeginSound?.Invoke();
+        if (playback is not null)
+        {
+            Audio2D.PlaySoundAt(playback, useInfo.CharacterPosition, useInfo.World);
+        }
     }
 
     private void CreateClientShotAction(ClientSkillUseInfo useInfo, float speed, long nid, float deltaPosX)
