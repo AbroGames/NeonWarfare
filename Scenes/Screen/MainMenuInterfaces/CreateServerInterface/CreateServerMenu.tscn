@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdfkul01f3eck"]
+[gd_scene load_steps=6 format=3 uid="uid://cdfkul01f3eck"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/PortLineEdit.cs" id="1_35p31"]
+[ext_resource type="Texture2D" uid="uid://q6xhlshsuo13" path="res://Assets/Textures/Icons/StartIconSmall.png" id="2_j63mg"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CommonInterface/BackToMainMenuButton.cs" id="3_pb2kk"]
+[ext_resource type="Texture2D" uid="uid://cgmv4bfxl52ep" path="res://Assets/Textures/Icons/ReturnIconSmall.png" id="4_0h6vw"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/CreateServerButton.cs" id="4_14b0i"]
 
 [node name="CreateServerMenu" type="Control"]
@@ -26,39 +28,45 @@ offset_bottom = 99.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="GridContainer"]
+custom_minimum_size = Vector2(400, 75)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="PortLabel" type="Label" parent="GridContainer/HBoxContainer2"]
+[node name="PortLabel" type="Label" parent="GridContainer/HBoxContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Порт:"
 
-[node name="PortLineEdit" type="LineEdit" parent="GridContainer/HBoxContainer2"]
+[node name="PortLineEdit" type="LineEdit" parent="GridContainer/HBoxContainer/HBoxContainer2"]
 layout_mode = 2
 script = ExtResource("1_35p31")
 
-[node name="ShowConsoleLabel" type="Label" parent="GridContainer/HBoxContainer2"]
+[node name="ShowConsoleLabel" type="Label" parent="GridContainer/HBoxContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Показывать консоль"
 
-[node name="ShowConsoleCheckBox" type="CheckBox" parent="GridContainer/HBoxContainer2"]
+[node name="ShowConsoleCheckBox" type="CheckBox" parent="GridContainer/HBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
-custom_minimum_size = Vector2(0, 75)
+[node name="Space" type="Control" parent="GridContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-theme_override_constants/separation = 40
-
-[node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
-layout_mode = 2
-text = "Вернуться в меню"
-script = ExtResource("3_pb2kk")
 
 [node name="CreateServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("PortLineEdit", "ShowConsoleCheckBox")]
 layout_mode = 2
 text = "Создать сервер"
+icon = ExtResource("2_j63mg")
 script = ExtResource("4_14b0i")
-PortLineEdit = NodePath("../../HBoxContainer2/PortLineEdit")
-ShowConsoleCheckBox = NodePath("../../HBoxContainer2/ShowConsoleCheckBox")
+PortLineEdit = NodePath("../HBoxContainer2/PortLineEdit")
+ShowConsoleCheckBox = NodePath("../HBoxContainer2/ShowConsoleCheckBox")
+
+[node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
+layout_mode = 2
+text = "Вернуться в меню"
+icon = ExtResource("4_0h6vw")
+script = ExtResource("3_pb2kk")

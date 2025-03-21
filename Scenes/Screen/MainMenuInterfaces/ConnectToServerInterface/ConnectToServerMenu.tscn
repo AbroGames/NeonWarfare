@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://3j3wpv6my2si"]
+[gd_scene load_steps=5 format=3 uid="uid://3j3wpv6my2si"]
 
+[ext_resource type="Texture2D" uid="uid://q6xhlshsuo13" path="res://Assets/Textures/Icons/StartIconSmall.png" id="1_onmss"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CommonInterface/BackToMainMenuButton.cs" id="2_nop7s"]
+[ext_resource type="Texture2D" uid="uid://cgmv4bfxl52ep" path="res://Assets/Textures/Icons/ReturnIconSmall.png" id="3_5aka7"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/ConnectToServerInterface/ConnectToServerButton.cs" id="3_57gpj"]
 
 [node name="ConnectToServerMenu" type="Control"]
@@ -25,29 +27,36 @@ offset_bottom = 99.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="IPSplit" type="HSplitContainer" parent="GridContainer"]
+[node name="HBoxContainer" type="VBoxContainer" parent="GridContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="IPSplit" type="HSplitContainer" parent="GridContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="IpLabel" type="Label" parent="GridContainer/IPSplit"]
+[node name="IpLabel" type="Label" parent="GridContainer/HBoxContainer/IPSplit"]
 layout_mode = 2
 text = "IP:"
 
-[node name="IpLineEdit" type="LineEdit" parent="GridContainer/IPSplit"]
+[node name="IpLineEdit" type="LineEdit" parent="GridContainer/HBoxContainer/IPSplit"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer"]
+[node name="Space" type="Control" parent="GridContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-theme_override_constants/separation = 40
-
-[node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
-custom_minimum_size = Vector2(0, 75)
-layout_mode = 2
-text = "Вернуться в меню"
-script = ExtResource("2_nop7s")
 
 [node name="ConnectToServerButton" type="Button" parent="GridContainer/HBoxContainer" node_paths=PackedStringArray("IpLineEdit")]
 custom_minimum_size = Vector2(0, 75)
 layout_mode = 2
 text = "Подключится к серверу"
+icon = ExtResource("1_onmss")
 script = ExtResource("3_57gpj")
-IpLineEdit = NodePath("../../IPSplit/IpLineEdit")
+IpLineEdit = NodePath("../IPSplit/IpLineEdit")
+
+[node name="BackToMenuButton" type="Button" parent="GridContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+text = "Вернуться в меню"
+icon = ExtResource("3_5aka7")
+script = ExtResource("2_nop7s")

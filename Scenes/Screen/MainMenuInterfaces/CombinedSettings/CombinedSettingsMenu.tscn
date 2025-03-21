@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cxq687ukoox5e"]
+[gd_scene load_steps=8 format=3 uid="uid://cxq687ukoox5e"]
 
 [ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="1_73skt"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/CombinedSettingsMenu.cs" id="1_p2lt3"]
 [ext_resource type="PackedScene" uid="uid://cqsklmny1uks6" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingContainer.tscn" id="2_eqemr"]
 [ext_resource type="PackedScene" uid="uid://csiurost6ln7m" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingsGroupPanel.tscn" id="3_ljw7m"]
+[ext_resource type="Texture2D" uid="uid://cgmv4bfxl52ep" path="res://Assets/Textures/Icons/ReturnIconSmall.png" id="5_cg6f6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_geqcd"]
 font = ExtResource("1_73skt")
@@ -89,3 +90,4 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("1_73skt")
 theme_override_font_sizes/font_size = 24
 text = "НАЗАД"
+icon = ExtResource("5_cg6f6")
