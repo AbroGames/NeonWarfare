@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.Utils.Cooldown;
-
-using static NeonWarfare.Scenes.World.ClientWorld.SC_EnemySpawnPacket;
 
 namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
 
@@ -61,7 +60,7 @@ public class EnemySpawner
 
     private void SpawnEnemy(EnemySpawnTask spawnTask)
     {
-        EnemyType enemyType = spawnTask.EnemyType;
+        EnemyInfoStorage.EnemyType enemyType = spawnTask.EnemyType;
         Vector2 position = spawnTask.GenSpawnPoint();
         float rotation = spawnTask.GenRotation();
         _serverBattleWorld.SpawnEnemy(enemyType, position, rotation);

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Godot.Collections;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 
@@ -32,30 +33,17 @@ public abstract partial class ClientWorld
     }
     
     [GamePacket]
-    public class SC_EnemySpawnPacket(SC_EnemySpawnPacket.EnemyType type, long nid, Vector2 position, float rotation, Color color) : BinaryPacket
+    public class SC_EnemySpawnPacket(EnemyInfoStorage.EnemyType type, long nid, Vector2 position, float rotation, Color color) : BinaryPacket
     {
-        public EnemyType Type = type;
+        public EnemyInfoStorage.EnemyType Type = type;
         public long Nid = nid;
         public Vector2 Position = position;
         public float Rotation = rotation;
         public Color Color = color;
-        public PackedScene EnemyClientScene => EnemyScenesMap[Type].ClientScene.Invoke();
-        public PackedScene EnemyServerScene => EnemyScenesMap[Type].ServerScene.Invoke();
+        public PackedScene EnemyClientScene => EnemyInfoStorage.GetClientScene(Type);
+        public PackedScene EnemyServerScene => EnemyInfoStorage.GetServerScene(Type);
         
-        public enum EnemyType
-        {
-            Zerg, Shooter, Turtle
-        }
-
-        public record EnemyScenes(Func<PackedScene> ClientScene, Func<PackedScene> ServerScene);
-        public static readonly IReadOnlyDictionary<EnemyType, EnemyScenes> EnemyScenesMap = new System.Collections.Generic.Dictionary<EnemyType, EnemyScenes>
-        {
-            { EnemyType.Zerg, new(() => ClientRoot.Instance.PackedScenes.ZergEnemy, () => ServerRoot.Instance.PackedScenes.ZergEnemy) },
-            { EnemyType.Shooter, new(() => ClientRoot.Instance.PackedScenes.ShooterEnemy, () => ServerRoot.Instance.PackedScenes.ShooterEnemy) },
-            { EnemyType.Turtle, new(() => ClientRoot.Instance.PackedScenes.TurtleEnemy, () => ServerRoot.Instance.PackedScenes.TurtleEnemy) } 
-        };
-        
-        public SC_EnemySpawnPacket(EnemyType type, long nid, Vector2 position, float rotation) : this(type, nid, position, rotation, new Color(0, 0, 0, 0)) {}
+        public SC_EnemySpawnPacket(EnemyInfoStorage.EnemyType type, long nid, Vector2 position, float rotation) : this(type, nid, position, rotation, new Color(0, 0, 0, 0)) {}
     }
     
     [GamePacket]
@@ -75,7 +63,7 @@ public abstract partial class ClientWorld
         }
 
         public record StaticEntityScenes(Func<PackedScene> ClientScene, Func<PackedScene> ServerScene);
-        public static readonly IReadOnlyDictionary<StaticEntityType, StaticEntityScenes> StaticEntityScenesMap = new System.Collections.Generic.Dictionary<StaticEntityType, StaticEntityScenes>
+        public static readonly IReadOnlyDictionary<StaticEntityType, StaticEntityScenes> StaticEntityScenesMap = new Dictionary<StaticEntityType, StaticEntityScenes>
         {
             { StaticEntityType.Wall, new(() => ClientRoot.Instance.PackedScenes.Wall, () => ServerRoot.Instance.PackedScenes.Wall) },
             { StaticEntityType.Border, new(() => ClientRoot.Instance.PackedScenes.Wall, () => ServerRoot.Instance.PackedScenes.Wall) } 
