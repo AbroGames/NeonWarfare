@@ -10,6 +10,7 @@ public partial class DeathOverlay : Control
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
+        Visible = true;
     }
 
     public void SetStrength(float strength)
