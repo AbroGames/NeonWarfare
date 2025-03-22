@@ -26,7 +26,7 @@ public partial class ClientEnemyDeathComponent : ClientEnemyComponentBase
         debrisEffect.Scale *= scaleFactorRatio;
 
         var world = Parent.GetParent();
-        world.TryAddChildDeferred(deathEffect);
-        world.TryAddChildDeferred(debrisEffect);
+        world.TryAddChildDeferred(deathEffect, () => world.MoveChild(deathEffect, 1));
+        world.TryAddChildDeferred(debrisEffect, () => world.MoveChild(debrisEffect, 1));
     }
 }

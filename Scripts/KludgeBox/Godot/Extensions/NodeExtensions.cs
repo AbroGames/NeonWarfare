@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
@@ -235,13 +236,14 @@ public static class NodeExtensions
     /// может случиться так, что узел удаляется потому, что его родительский узел тоже удаляется. В этот момент попытка добавить на место узла другой
     /// вызовет ошибку. Этот метод подождет до конца кадра и только после этого ПОПЫТАЕТСЯ добавить узел.
     /// </summary>
-    public static void TryAddChildDeferred(this Node parent, Node child)
+    public static void TryAddChildDeferred(this Node parent, Node child, Action callback = null)
     {
         Callable.From(() =>
         {
             if (parent.IsValid())
             {
                 parent.AddChild(child);
+                callback?.Invoke();
             }
         }).CallDeferred();
     }
