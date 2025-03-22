@@ -110,6 +110,7 @@ label_settings = SubResource("LabelSettings_j64jc")
 horizontal_alignment = 2
 
 [node name="SystemInfo" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 8
 label_settings = SubResource("LabelSettings_lj76j")

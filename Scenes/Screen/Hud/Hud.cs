@@ -85,6 +85,14 @@ public partial class Hud : Control
 		_physicsStopwatch.Restart();
 	}
 
+	public override void _Input(InputEvent @event)
+	{
+		if (@event.IsActionPressed(Keys.Debug))
+		{
+			SystemInfo.Visible = !SystemInfo.Visible;
+		}
+	}
+
 	public override void _ExitTree()
 	{
 		AdjustSoundMuffleStrength(0);

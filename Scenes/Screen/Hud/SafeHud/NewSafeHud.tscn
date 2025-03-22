@@ -15,9 +15,8 @@ font_color = Color(0.34902, 0.34902, 0.34902, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_wcr48"]
 font_size = 12
 
-[node name="NewSafeHud" node_paths=PackedStringArray("SystemInfo") instance=ExtResource("1_l0ogl")]
+[node name="NewSafeHud" instance=ExtResource("1_l0ogl")]
 script = ExtResource("2_enfq4")
-SystemInfo = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/SystemInfo")
 
 [node name="ToBattleButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="0"]
 modulate = Color(1, 0, 0, 1)
@@ -41,7 +40,7 @@ label_settings = SubResource("LabelSettings_l73d1")
 [node name="TPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="1"]
 label_settings = SubResource("LabelSettings_l73d1")
 
-[node name="SystemInfo" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="2"]
+[node name="SystemInfo2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="2"]
 layout_mode = 2
 size_flags_horizontal = 8
 label_settings = SubResource("LabelSettings_wcr48")
