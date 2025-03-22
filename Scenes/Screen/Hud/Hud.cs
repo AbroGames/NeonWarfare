@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Godot;
+using NeonWarfare.Scenes.Game.ClientGame.Ping;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Screen.BattleHud;
 using NeonWarfare.Scenes.Screen.Components.TwoColoredBar;
@@ -25,6 +26,7 @@ public partial class Hud : Control
 	[ExportGroup("FPS & TPS")]
 	[Export] [NotNull] public Label Fps { get; private set; }
 	[Export] [NotNull] public Label Tps { get; private set; }
+	[Export] [NotNull] public Label SystemInfo { get; private set; }
 	
 	[ExportGroup("Bottom part")]
 	[Export] [NotNull] public HBoxContainer SkillsContainer { get; private set; }
@@ -62,20 +64,45 @@ public partial class Hud : Control
 		
 		ClientPlayer player = GetCurrentPlayer();
 		if (player is null) return;
-		player.PlayerTakingDamage += OnPlayerTakingDamage;
 		
 		InitHudForPlayer();
-		
-		HpBar.CurrentUpperValue = (float) player.Hp;
-		double hpBarValueDelta = Mathf.Clamp(HpBar.CurrentLowerValue - HpBar.CurrentUpperValue, 
-			0, Math.Max(HpBar.MaxValue - HpBar.CurrentUpperValue, 0));
-		double hpBarValueDeltaDecrease = HpBar.MaxValue * 0.25 * delta;
-		HpBar.CurrentLowerValue = (float) (player.Hp + hpBarValueDelta - hpBarValueDeltaDecrease);
+		UpdatePlayerInfo(player, delta);
+		ProcessDeathEffects(player, delta);
+		RenderSystemInfo();
+	}
+	
+	public override void _PhysicsProcess(double delta)
+	{
+		var realDelta = _physicsStopwatch.Elapsed.TotalSeconds;
         
-		HpBar.MaxValue = (float) player.MaxHp;
-		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
-		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
+		_deltas.Enqueue(realDelta);
+		if (_deltas.Count >= 120)
+		{
+			var tps = _deltas.Average();
+			Tps.Text = $"TPS: {1/tps:N0}";
+			_deltas.Dequeue();
+		}
+		_physicsStopwatch.Restart();
+	}
 
+	public override void _ExitTree()
+	{
+		AdjustSoundMuffleStrength(0);
+	}
+
+	private void RenderSystemInfo()
+	{
+		PingAnalyzer analyzer = ClientRoot.Instance.Game.PingChecker.PingAnalyzer;
+		string pingCurrentInfo = $"Ping: {analyzer.CurrentPingTime} ms";
+		string pingSlidingWindowInfo = $"Ping min/avg/max ({PingAnalyzer.MaxTimeOfAnalyticalSlidingWindowForPing/1000}s): {analyzer.MinimumPingTime:N1}/{analyzer.AveragePingTime:N1}/{analyzer.MaximumPingTime:N1} ms";
+		string pingPercentileSlidingWindowInfo = $"Ping P50/P90/P99 ({PingAnalyzer.MaxTimeOfAnalyticalSlidingWindowForPing/1000}s): {analyzer.P50PingTime:N1}/{analyzer.P90PingTime:N1}/{analyzer.P99PingTime:N1} ms";
+		string packetLossSlidingWindowInfo = $"Packet loss ({PingAnalyzer.ShortTimeOfAnalyticalSlidingWindowForPacketLoss/1000}s/{PingAnalyzer.MidTimeOfAnalyticalSlidingWindowForPacketLoss/1000}s/{PingAnalyzer.MaxTimeOfAnalyticalSlidingWindowForPacketLoss/1000}s): " +
+		                                     $"{analyzer.AveragePacketLossInPercentForShortTime:N2}/{analyzer.AveragePacketLossInPercentForMidTime:N2}/{analyzer.AveragePacketLossInPercentForLongTime:N2} %";
+		SystemInfo.Text = pingCurrentInfo + "\n" + pingSlidingWindowInfo + "\n" + pingPercentileSlidingWindowInfo + "\n" + packetLossSlidingWindowInfo;
+	}
+
+	private void ProcessDeathEffects(ClientPlayer player, double delta)
+	{
 		if (player.IsDead)
 		{
 			_deathEffectStrength += (float)delta / _deathOverlayAnimationTime;
@@ -100,29 +127,17 @@ public partial class Hud : Control
 		_damageEffectStrength = Math.Clamp(_damageEffectStrength, 0, 1);
 		DamageOverlay.Modulate = DamageOverlay.Modulate with { A = _damageEffectStrength };
 	}
-	
-	public override void _PhysicsProcess(double delta)
+
+	private void UpdatePlayerInfo(ClientPlayer player, double delta)
 	{
-		var realDelta = _physicsStopwatch.Elapsed.TotalSeconds;
+		HpBar.CurrentUpperValue = (float) player.Hp;
+		double hpBarValueDelta = Mathf.Clamp(HpBar.CurrentLowerValue - HpBar.CurrentUpperValue, 
+			0, Math.Max(HpBar.MaxValue - HpBar.CurrentUpperValue, 0));
+		double hpBarValueDeltaDecrease = HpBar.MaxValue * 0.25 * delta;
+		HpBar.CurrentLowerValue = (float) (player.Hp + hpBarValueDelta - hpBarValueDeltaDecrease);
         
-		_deltas.Enqueue(realDelta);
-		if (_deltas.Count >= 120)
-		{
-			var tps = _deltas.Average();
-			Tps.Text = $"TPS: {1/tps:N0}";
-			_deltas.Dequeue();
-		}
-		_physicsStopwatch.Restart();
-	}
-
-	public override void _ExitTree()
-	{
-		AdjustSoundMuffleStrength(0);
-	}
-
-	public override void _Input(InputEvent @event)
-	{
-		
+		HpBar.MaxValue = (float) player.MaxHp;
+		HpBar.Label.Text = $"Health: {player.Hp:N0} / {player.MaxHp:N0}";
 	}
 
 	private void OnPlayerTakingDamage(ClientCharacter.SC_DamageCharacterPacket damageCharacterPacket)
@@ -153,6 +168,7 @@ public partial class Hud : Control
 			return;
 		
 		_isPlayerInitialized = true;
+		GetCurrentPlayer().PlayerTakingDamage += OnPlayerTakingDamage;
 		
 		var skills = GetCurrentPlayer().GetSkills();
 		foreach (var skillHandle in skills)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c7ag8o3ynyuyj"]
+[gd_scene load_steps=16 format=3 uid="uid://c7ag8o3ynyuyj"]
 
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="1_er04k"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_kmqq8"]
@@ -24,6 +24,9 @@ font = ExtResource("3_61jvx")
 font_size = 14
 font_color = Color(0.34902, 0.34902, 0.34902, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_lj76j"]
+font_size = 12
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0uimj"]
 shader = ExtResource("4_vfln8")
 shader_parameter/strength = 1.0
@@ -37,7 +40,7 @@ gradient = SubResource("Gradient_xrg5d")
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SkillsContainer", "DeathOverlay", "DamageOverlay", "ChatContainer")]
+[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "Fps", "Tps", "SystemInfo", "SkillsContainer", "DeathOverlay", "DamageOverlay", "ChatContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,6 +51,7 @@ script = ExtResource("1_kmqq8")
 HpBar = NodePath("MarginContainer/VBoxContainer/HpBar")
 Fps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/FPS")
 Tps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/TPS")
+SystemInfo = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/SystemInfo")
 SkillsContainer = NodePath("MarginContainer/SkillsContainer")
 DeathOverlay = NodePath("DeathOverlay")
 DamageOverlay = NodePath("DamageOverlay")
@@ -104,6 +108,11 @@ layout_mode = 2
 text = "TPS"
 label_settings = SubResource("LabelSettings_j64jc")
 horizontal_alignment = 2
+
+[node name="SystemInfo" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
+layout_mode = 2
+size_flags_horizontal = 8
+label_settings = SubResource("LabelSettings_lj76j")
 
 [node name="SkillsContainer" type="HBoxContainer" parent="MarginContainer"]
 custom_minimum_size = Vector2(0, 75)

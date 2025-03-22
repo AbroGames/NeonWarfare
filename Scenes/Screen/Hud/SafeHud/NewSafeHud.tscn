@@ -45,6 +45,3 @@ label_settings = SubResource("LabelSettings_l73d1")
 layout_mode = 2
 size_flags_horizontal = 8
 label_settings = SubResource("LabelSettings_wcr48")
-
-[node name="DeathOverlay" parent="." index="1"]
-visible = false
