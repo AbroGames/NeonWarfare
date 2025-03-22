@@ -151,6 +151,7 @@ layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
@@ -164,10 +165,12 @@ InputSpacePlaceholder = NodePath("PartsContainer/InputSpacePlaceholder")
 [node name="PartsContainer" type="VBoxContainer" parent="ChatContainer"]
 layout_mode = 2
 size_flags_vertical = 8
+mouse_filter = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="ChatContainer/PartsContainer"]
 layout_mode = 2
 size_flags_vertical = 8
+mouse_filter = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer/PartsContainer/PanelContainer"]
 custom_minimum_size = Vector2(0, 300)

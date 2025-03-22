@@ -20,7 +20,7 @@ public partial class ChatContainer : MarginContainer
     private List<string> _history = new();
     private string _lastMessage = "";
     private int _historyIndex = -1;
-    private const float MaxChatHeight = 500;
+    private const float MaxChatHeight = 350;
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
