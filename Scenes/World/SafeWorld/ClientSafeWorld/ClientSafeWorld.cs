@@ -14,7 +14,7 @@ public partial class ClientSafeWorld : ClientWorld
 		
 		//TODO удалить целиком после теста генератора, в BattleWorld уже реализовано
 		MapGenerator mapGenerator = new MapGenerator();
-		foreach (var location in mapGenerator.Generate())
+		foreach (var location in mapGenerator.SafeWorldGenerate())
 		{
 			foreach (var entity in location.Entities)
 			{
