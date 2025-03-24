@@ -4,6 +4,7 @@ using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.Utils.Components;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
@@ -21,12 +22,13 @@ public abstract partial class ClientWorld
     {
         ClientEnemy enemy = CreateNetworkEntity<ClientEnemy>(
             enemySpawnPacket.EnemyClientScene, enemySpawnPacket.Nid);
-        enemy.AddChild(new NetworkInertiaComponent());
-        enemy.TreeExiting += () => RemoveEnemy(enemy);
+        enemy.InitComponents();
+        enemy.InitOnSpawnPacket(enemySpawnPacket.Position, enemySpawnPacket.Rotation, enemySpawnPacket.Color);
+        enemy.InitStats(EnemyInfoStorage.GetEnemyInfo(enemySpawnPacket.Type));
         
         AddChild(enemy);
         _enemies.Add(enemy);
-        enemy.InitOnSpawnPacket(enemySpawnPacket.Position, enemySpawnPacket.Rotation, enemySpawnPacket.Color);
+        enemy.TreeExiting += () => RemoveEnemy(enemy);
     }
 
     public void RemoveEnemy(ClientEnemy clientEnemy)

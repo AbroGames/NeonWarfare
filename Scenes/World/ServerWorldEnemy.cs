@@ -17,6 +17,7 @@ public abstract partial class ServerWorld
         ServerEnemy enemy = CreateNetworkEntity<ServerEnemy>(EnemyInfoStorage.GetServerScene(type));
         enemy.InitComponents();
         enemy.InitOnSpawn(position, rotation);
+        enemy.InitStats(EnemyInfoStorage.GetEnemyInfo(type));
         
         AddChild(enemy);
         _enemies.Add(enemy);

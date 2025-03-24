@@ -1,6 +1,7 @@
 using Godot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.Utils.Components;
@@ -35,4 +36,12 @@ public partial class ServerEnemy : ServerCharacter
         Rotation = rotation;
     }
 
+    public void InitStats(EnemyInfoStorage.EnemyInfo enemyInfo)
+    {
+        MaxHp = enemyInfo.MaxHp;
+        Hp = MaxHp;
+        RegenHpSpeed = enemyInfo.RegenHpSpeed;
+        MovementSpeed = enemyInfo.MovementSpeed;
+        RotationSpeed = enemyInfo.RotationSpeed;
+    }
 }
