@@ -5,7 +5,7 @@ using NeonWarfare.Scenes.World;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
-using static NeonWarfare.Scenes.World.ClientWorld.SC_StaticEntitySpawnPacket.StaticEntityType;
+using static NeonWarfare.Scripts.Content.EntityInfoStorage.StaticEntityType;
 using static NeonWarfare.Scenes.World.ClientWorld;
 
 namespace NeonWarfare.Scripts.Utils.MapGenerator;

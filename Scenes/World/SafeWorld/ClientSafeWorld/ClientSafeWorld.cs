@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Godot;
-using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Utils.MapGenerator;
 
 namespace NeonWarfare.Scenes.World.SafeWorld.ClientSafeWorld;
@@ -24,7 +22,7 @@ public partial class ClientSafeWorld : ClientWorld
 			}
 			foreach (var borderPoint in location.GetBorderCoordinates())
 			{
-				OnStaticEntitySpawnPacket(new SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType.Wall, borderPoint, new Vector2(0.1f, 0.1f), 0, new Color(1, 0, 0)));
+				OnStaticEntitySpawnPacket(new SC_StaticEntitySpawnPacket(EntityInfoStorage.StaticEntityType.Wall, borderPoint, new Vector2(0.1f, 0.1f), 0, new Color(1, 0, 0)));
 			}
 		}
 	}

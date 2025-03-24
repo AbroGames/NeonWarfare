@@ -47,29 +47,17 @@ public abstract partial class ClientWorld
     }
     
     [GamePacket]
-    public class SC_StaticEntitySpawnPacket(SC_StaticEntitySpawnPacket.StaticEntityType type, Vector2 position, Vector2 scale, float rotation, Color color) : BinaryPacket
+    public class SC_StaticEntitySpawnPacket(EntityInfoStorage.StaticEntityType type, Vector2 position, Vector2 scale, float rotation, Color color) : BinaryPacket
     {
-        public StaticEntityType Type = type;
+        public EntityInfoStorage.StaticEntityType Type = type;
         public Vector2 Position = position;
         public Vector2 Scale = scale;
         public float Rotation = rotation;
         public Color Color = color;
-        public PackedScene StaticEntityClientScene => StaticEntityScenesMap[Type].ClientScene.Invoke();
-        public PackedScene StaticEntityServerScene => StaticEntityScenesMap[Type].ServerScene.Invoke();
-        
-        public enum StaticEntityType
-        {
-            Wall, Border
-        }
+        public PackedScene StaticEntityClientScene => EntityInfoStorage.GetStaticEntityClientScene(Type);
+        public PackedScene StaticEntityServerScene => EntityInfoStorage.GetStaticEntityServerScene(Type);
 
-        public record StaticEntityScenes(Func<PackedScene> ClientScene, Func<PackedScene> ServerScene);
-        public static readonly IReadOnlyDictionary<StaticEntityType, StaticEntityScenes> StaticEntityScenesMap = new Dictionary<StaticEntityType, StaticEntityScenes>
-        {
-            { StaticEntityType.Wall, new(() => ClientRoot.Instance.PackedScenes.Wall, () => ServerRoot.Instance.PackedScenes.Wall) },
-            { StaticEntityType.Border, new(() => ClientRoot.Instance.PackedScenes.Wall, () => ServerRoot.Instance.PackedScenes.Wall) } 
-        };
-
-        public SC_StaticEntitySpawnPacket(StaticEntityType type, Vector2 position, float rotation) :
+        public SC_StaticEntitySpawnPacket(EntityInfoStorage.StaticEntityType type, Vector2 position, float rotation) :
             this(type, position, Vector2.One, rotation, new Color(1, 1, 1)) {}
     }
 }

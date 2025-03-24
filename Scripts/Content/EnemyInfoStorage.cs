@@ -79,6 +79,4 @@ public static class EnemyInfoStorage
     {
         return GetEnemyInfo(enemyType).ServerScene.Invoke();
     }
-    
-
 }
