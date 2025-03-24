@@ -56,20 +56,34 @@ texture = ExtResource("6_idndk")
 expand_mode = 5
 stretch_mode = 5
 
-[node name="GameName" type="Label" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -95.5
+offset_right = 448.0
+offset_bottom = 95.5
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
-offset_left = 101.0
-offset_top = 190.0
-offset_right = 629.0
-offset_bottom = 269.0
+
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(95, 0)
+layout_mode = 2
+
+[node name="GameName" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
 text = "Neon Warfare"
 label_settings = SubResource("LabelSettings_ht27c")
 
-[node name="CreateServerButton" type="Button" parent="."]
-layout_mode = 0
-offset_top = 295.0
-offset_right = 340.0
-offset_bottom = 327.0
+[node name="SpaceControl" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="CreateServerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
@@ -79,11 +93,8 @@ text = "                      Create server          "
 alignment = 0
 script = ExtResource("2_qxhat")
 
-[node name="ConnectToServerButton" type="Button" parent="."]
-layout_mode = 0
-offset_top = 330.0
-offset_right = 340.0
-offset_bottom = 362.0
+[node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
@@ -93,11 +104,8 @@ text = "                      Connect to server"
 alignment = 0
 script = ExtResource("3_6ncrt")
 
-[node name="SettingsButton" type="Button" parent="."]
-layout_mode = 0
-offset_top = 365.0
-offset_right = 340.0
-offset_bottom = 397.0
+[node name="SettingsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
@@ -107,11 +115,12 @@ text = "                      Settings"
 alignment = 0
 script = ExtResource("4_wn3h0")
 
-[node name="ExitButton" type="Button" parent="."]
-layout_mode = 0
-offset_top = 434.0
-offset_right = 340.0
-offset_bottom = 466.0
+[node name="SpaceControl2" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ExitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("8_bun70")
 theme_override_font_sizes/font_size = 20
