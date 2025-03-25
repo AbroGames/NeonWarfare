@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="1_xise4"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_kqrf5"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/TurtleClientEnemy.cs" id="2_wm8ha"]
+[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/ClientTurtleEnemy.cs" id="2_wm8ha"]
 [ext_resource type="Texture2D" uid="uid://drvu6fdhwasqc" path="res://Assets/Textures/Sprites/Boss.svg" id="3_t5c1o"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jv0wh"]
@@ -16,7 +16,7 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 56.0
 
-[node name="TurtleClientEnemy" instance=ExtResource("1_xise4")]
+[node name="ClientTurtleEnemy" instance=ExtResource("1_xise4")]
 script = ExtResource("2_wm8ha")
 
 [node name="Sprite2D" parent="." index="0"]

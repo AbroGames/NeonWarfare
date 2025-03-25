@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c2sn6tvune64g"]
 
 [ext_resource type="PackedScene" uid="uid://758pqudrkrii" path="res://Scenes/World/Entities/Characters/Enemies/ServerEnemy.tscn" id="1_ohbb1"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/TurtleServerEnemy.cs" id="2_qjjdk"]
+[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/ServerTurtleEnemy.cs" id="2_qjjdk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_idqir"]
 resource_local_to_scene = true
@@ -11,7 +11,7 @@ radius = 56.0
 resource_local_to_scene = true
 radius = 59.0
 
-[node name="TurtleServerEnemy" instance=ExtResource("1_ohbb1")]
+[node name="ServerTurtleEnemy" instance=ExtResource("1_ohbb1")]
 script = ExtResource("2_qjjdk")
 
 [node name="CharacterShape" parent="." index="0"]

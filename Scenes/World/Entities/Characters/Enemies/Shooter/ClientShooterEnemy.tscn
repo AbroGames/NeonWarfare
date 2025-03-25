@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="1_28j6v"]
 [ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_2nq67"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ShooterClientEnemy.cs" id="2_sqt1s"]
+[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ClientShooterEnemy.cs" id="2_sqt1s"]
 [ext_resource type="Texture2D" uid="uid://btrdjnjrhw88o" path="res://Assets/Textures/Sprites/BeamSource.svg" id="3_pwxwy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ymosn"]
@@ -16,7 +16,7 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 23.0
 
-[node name="ShooterClientEnemy" instance=ExtResource("1_28j6v")]
+[node name="ClientShooterEnemy" instance=ExtResource("1_28j6v")]
 script = ExtResource("2_sqt1s")
 
 [node name="Sprite2D" parent="." index="0"]

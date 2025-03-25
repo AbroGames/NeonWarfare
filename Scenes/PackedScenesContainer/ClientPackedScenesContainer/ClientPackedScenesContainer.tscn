@@ -27,10 +27,10 @@
 [ext_resource type="PackedScene" uid="uid://djpq1rixw27hn" path="res://Scripts/Utils/Background/Background.tscn" id="24_o4x2b"]
 [ext_resource type="PackedScene" uid="uid://cysbd05luq84o" path="res://Scenes/World/Entities/Characters/Players/ClientPlayer.tscn" id="24_p0bw0"]
 [ext_resource type="PackedScene" uid="uid://bn0qrlv6wb2i7" path="res://Scenes/World/WorldEnvironment.tscn" id="25_uoidq"]
-[ext_resource type="PackedScene" uid="uid://cvcagebd46o2o" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ZergClientEnemy.tscn" id="29_1ceh7"]
+[ext_resource type="PackedScene" uid="uid://cvcagebd46o2o" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ClientZergEnemy.tscn" id="29_1ceh7"]
 [ext_resource type="PackedScene" uid="uid://berq21ct3dsrh" path="res://Scenes/World/Entities/General/Wall.tscn" id="29_30m28"]
-[ext_resource type="PackedScene" uid="uid://dc1yw0ba6jxqf" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ShooterClientEnemy.tscn" id="30_vhdbd"]
-[ext_resource type="PackedScene" uid="uid://dkfncld3bfhv1" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/TurtleClientEnemy.tscn" id="31_syq0i"]
+[ext_resource type="PackedScene" uid="uid://dc1yw0ba6jxqf" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ClientShooterEnemy.tscn" id="30_vhdbd"]
+[ext_resource type="PackedScene" uid="uid://dkfncld3bfhv1" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/ClientTurtleEnemy.tscn" id="31_syq0i"]
 [ext_resource type="PackedScene" uid="uid://bs0gtjlsfmlt6" path="res://Scenes/World/Entities/Actions/ClientShotAction.tscn" id="32_uaxnx"]
 
 [node name="ClientPackedScenesContainer" type="Node"]
