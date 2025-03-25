@@ -1,5 +1,4 @@
 ﻿using Godot;
-using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scripts.Content.Skills;
 
@@ -11,14 +10,13 @@ public static class SkillIconProvider
     public static Texture2D GetSkillIcon(string skillType)
     {
         var iconPath = IconsPath + skillType + ".png";
-        
-        var icon = GD.Load(iconPath) as Texture2D;
-        if (!icon.IsValid())
+
+        if (!ResourceLoader.Exists(iconPath))
         {
             iconPath = IconsPath + UnknownType + ".png";
-            icon = GD.Load(iconPath) as Texture2D;
         }
         
+        var icon = GD.Load<Texture2D>(iconPath);
         return icon;
     }
 }
