@@ -4,7 +4,17 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>NeonWarfare</RootNamespace>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <ItemGroup>
+      <DirectoriesToCreate Include="$(ProjectDir)bin\win-64" />
+      <FilesToCreate Include="$(ProjectDir)bin\.gdignore" />
+    </ItemGroup>
+    <MakeDir Directories="@(DirectoriesToCreate)" />
+    <WriteLinesToFile File="@(FilesToCreate)" Lines="" Overwrite="true" />
+  </Target>
 </Project>
