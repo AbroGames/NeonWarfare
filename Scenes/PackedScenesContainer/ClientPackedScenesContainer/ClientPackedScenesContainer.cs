@@ -66,6 +66,12 @@ public partial class ClientPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene ShooterEnemy { get; private set; }
     [Export] [NotNull] public PackedScene TurtleEnemy { get; private set; }
     
+    /*
+     * Action
+     */
+    [ExportGroup("Action")]
+    [Export] [NotNull] public PackedScene ShotAction { get; private set; }
+    
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
