@@ -15,6 +15,8 @@ using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Services;
+using NeonWarfare.Scripts.Utils.Cooldown;
+using NeonWarfare.Scripts.Utils.Profiling;
 
 namespace NeonWarfare.Scenes.Screen;
 
@@ -48,6 +50,7 @@ public partial class Hud : Control
 	private float _damageEffectStrength;
 
 	private float[] _deathEqGains = [-6f, 3f, 2f, 0.1f, -1.1f, -8.4f, -12.1f, -14.5f, -16f, -20f];
+	private AutoCooldown _pingAnalyzerEventCooldown = new AutoCooldown(0.5);
 	public virtual ClientPlayer GetCurrentPlayer()
 	{
 		return GetCurrentWorld().Player;
@@ -62,6 +65,7 @@ public partial class Hud : Control
 	{
 		Fps.Text = $"FPS: {Engine.GetFramesPerSecond():N0}";
 		
+		_pingAnalyzerEventCooldown.Update(delta);
 		ClientPlayer player = GetCurrentPlayer();
 		if (player is null) return;
 		
@@ -176,6 +180,12 @@ public partial class Hud : Control
 			return;
 		
 		_isPlayerInitialized = true;
+		
+		_pingAnalyzerEventCooldown.ActionWhenReady += () =>
+		{
+			PingAnalyzer analyzer = ClientRoot.Instance.Game.PingChecker.PingAnalyzer;
+			ProfilingContainer.AddEvent(new PingProfilingEvent(analyzer));
+		};
 		GetCurrentPlayer().PlayerTakingDamage += OnPlayerTakingDamage;
 		
 		var skills = GetCurrentPlayer().GetSkills();
