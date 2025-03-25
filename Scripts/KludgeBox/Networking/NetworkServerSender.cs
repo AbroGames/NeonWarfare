@@ -45,6 +45,7 @@ public partial class Network
     private static void SendAsServer(long id, NetPacket packet, MultiplayerPeer.TransferModeEnum mode, int channel)
     {
         var bytes = PacketHelper.EncodePacket(packet, ServerRoot.Instance.Game.Network.PacketRegistry);
+        
         ServerRoot.Instance.Game.Network.SendRaw(id, bytes, mode, channel);
     }
 }

@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Components;
 using NeonWarfare.Scripts.Utils.Cooldown;
@@ -57,6 +58,8 @@ public partial class ClientPlayer : ClientAlly
     public override void _Process(double delta)
     {
         base._Process(delta);
+        if (!ClientRoot.Instance.Game.IsValid())
+            return;
 
         double skillCooldownFactorWhileDead = ClientRoot.Instance.Game.GameSettings.SkillCooldownFactorWhileDead;
         foreach (var kv in _skillCooldownById)

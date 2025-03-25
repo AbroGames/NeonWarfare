@@ -372,3 +372,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 NeonWarfare.Sandbox.sln
+*profiler_data_*

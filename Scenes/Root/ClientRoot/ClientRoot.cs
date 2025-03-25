@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Net;
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame.ClientSettings;
 using NeonWarfare.Scenes.PackedScenesContainer.ClientPackedScenesContainer;
@@ -8,6 +11,7 @@ using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.CmdArgs;
 using NeonWarfare.Scripts.Utils.GameSettings;
+using NeonWarfare.Scripts.Utils.Profiling;
 
 namespace NeonWarfare.Scenes.Root.ClientRoot;
 
@@ -26,6 +30,7 @@ public partial class ClientRoot : Node2D
 			Init(); 
 			Start(); 
 			ApplySettings(Settings);
+			ProfilingContainer.StartProfilingSession();
 		}).CallDeferred();
 	}
 	
@@ -72,6 +77,13 @@ public partial class ClientRoot : Node2D
 		if (what == NotificationWMCloseRequest)
 		{
 			SettingsService.Save(Settings);
+			var profilingName = $"profiler_data_{DateTime.Now:yy-MM-dd} {DateTime.Now:h.mm.ss}.dat";
+			var profilingPath = ProjectSettings.GlobalizePath($"res://{profilingName}");
+
+			using var profilingFile = File.OpenWrite(profilingPath);
+			var session = ProfilingContainer.StopProfilingSession();
+			session?.WriteProfilingSession(profilingFile);
+			
 			Log.Info("Game exiting...");
 		}
 		

@@ -8,6 +8,7 @@ using NeonWarfare.Scripts.KludgeBox.Events.Global;
 using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
 using NeonWarfare.Scripts.Utils.Components;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager.Client;
+using NeonWarfare.Scripts.Utils.Profiling;
 
 namespace NeonWarfare.Scripts.KludgeBox.Networking;
 
@@ -160,6 +161,13 @@ public partial class Network : Node
 		{
 			Log.Debug($"Received packet from {id} with {packet.Length - 4} bytes. Received type is {packetObj.GetType().FullName}");
 		}
+		
+		var networkEvent = new IncomingNetworkProfilingEvent(
+			packet: packetObj,
+			size: packet.Length
+		);
+		
+		ProfilingContainer.AddEvent(networkEvent);
 
 		EventBus.Publish(packetObj);
 	}

@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scenes.World.Effects.CpuParticles;
 
@@ -58,7 +59,7 @@ public partial class CpuParticlesFx : Node2D
 
 	public override void _Process(double delta)
 	{
-		if (Target is not null)
+		if (Target.IsValid())
 		{
 			GlobalPosition = Target.GlobalPosition + Offset;
 		}
