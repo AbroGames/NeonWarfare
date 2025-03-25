@@ -6,5 +6,13 @@ namespace NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 
 public partial class ClientAllyProfile
 {
-    //TODO Для пакетов изменения снаряжения и т.п. Создание самого ClientAllyProfile находится в ClientGame
+    [GamePacket]
+    public class SC_ChangeAllyProfilePacket(long peerId, double maxHp, double regenHpSpeed, double movementSpeed, double rotationSpeed) : BinaryPacket
+    {
+        public long PeerId = peerId;
+        public double MaxHp = maxHp;
+        public double RegenHpSpeed = regenHpSpeed;
+        public double MovementSpeed = movementSpeed;
+        public double RotationSpeed = rotationSpeed;
+    }
 }

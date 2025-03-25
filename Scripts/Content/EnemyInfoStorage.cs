@@ -53,10 +53,10 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.TurtleEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.TurtleEnemy,
-                MaxHp: 200,
-                RegenHpSpeed: 2,
-                MovementSpeed: 120,
-                RotationSpeed: 200
+                MaxHp: 400,
+                RegenHpSpeed: 8,
+                MovementSpeed: 140,
+                RotationSpeed: 220
             )
         }
     };

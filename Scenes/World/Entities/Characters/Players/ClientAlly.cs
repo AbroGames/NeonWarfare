@@ -16,6 +16,12 @@ public partial class ClientAlly : ClientCharacter
         AllyProfile = allyProfile;
 
         Name = allyProfile.Name;
+        
+        MaxHp = allyProfile.MaxHp;
+        Hp = MaxHp;
+        RegenHpSpeed = allyProfile.RegenHpSpeed;
+        MovementSpeed = allyProfile.MovementSpeed;
+        RotationSpeed = allyProfile.RotationSpeed;
     }
 
     public override void InitOnSpawnPacket(Vector2 position, float rotation, Color color)

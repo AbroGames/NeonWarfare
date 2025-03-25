@@ -1,5 +1,6 @@
 using System.Linq;
 using NeonWarfare.Scenes.Game.ClientGame.Ping;
+using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
@@ -67,11 +68,14 @@ public partial class ServerGame
         Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddPlayerProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
         //Отправляем союзникам PlayerProfile нового игрока
         Network.SendToAllExclude(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
+        //Отправляем всем инфу о характеристиках нового игрока
+        Network.SendToAll(new ClientAllyProfile.SC_ChangeAllyProfilePacket(newPlayerPeerId, newPlayerProfile.MaxHp, newPlayerProfile.RegenHpSpeed, newPlayerProfile.MovementSpeed, newPlayerProfile.RotationSpeed));
         
         //У нового игрока создаем профили уже подключенных игроков
         foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(newPlayerPeerId))
         {
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(profile.PeerId, profile.Name, profile.Color));
+            Network.SendToClient(newPlayerPeerId, new ClientAllyProfile.SC_ChangeAllyProfilePacket(profile.PeerId, profile.MaxHp, profile.RegenHpSpeed, profile.MovementSpeed, profile.RotationSpeed));
         }
 
         if (World is ServerSafeWorld)

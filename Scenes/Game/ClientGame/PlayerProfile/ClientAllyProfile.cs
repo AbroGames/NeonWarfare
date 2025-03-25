@@ -11,6 +11,11 @@ public partial class ClientAllyProfile
     
     public string Name { get; set; }
     public Color Color { get; set; }
+    
+    public double MaxHp { get; set; }
+    public double RegenHpSpeed { get; set; }
+    public double MovementSpeed { get; set; }
+    public double RotationSpeed { get; set; }
 
     public ClientAllyProfile(long peerId)
     {

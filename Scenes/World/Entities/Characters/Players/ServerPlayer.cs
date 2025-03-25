@@ -12,6 +12,11 @@ public partial class ServerPlayer : ServerCharacter
     public void InitOnProfile(ServerPlayerProfile playerProfile)
     {
         PlayerProfile = playerProfile;
-        //TODO MaxHp = maxHp и т.д, у клиента аналогично
+        
+        MaxHp = playerProfile.MaxHp;
+        Hp = MaxHp;
+        RegenHpSpeed = playerProfile.RegenHpSpeed;
+        MovementSpeed = playerProfile.MovementSpeed;
+        RotationSpeed = playerProfile.RotationSpeed;
     }
 }
