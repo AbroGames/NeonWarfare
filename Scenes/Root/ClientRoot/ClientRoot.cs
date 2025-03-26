@@ -33,7 +33,12 @@ public partial class ClientRoot : Node2D
 			ProfilingContainer.StartProfilingSession();
 		}).CallDeferred();
 	}
-	
+
+	public override void _Process(double delta)
+	{
+		UpdateStretchScale();
+	}
+
 	protected void Init()
 	{
 		RootService.CommonInit(ListenerSide.Client);
