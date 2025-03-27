@@ -1,42 +1,42 @@
-﻿using Godot;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Godot;
 using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Root.ClientRoot;
 
 public partial class ClientRoot
 {
-    private const int HeightThreshold0 = 400;
-    private const int HeightThreshold1 = 900;
-    private const int HeightThreshold2 = 1400;
-    
-    private const float Scale0 = 0.75f;
-    private const float Scale1 = 1.0f;
-    private const float Scale2 = 1.15f;
-    private const float Scale3 = 1.3f;
+    // values were picked empirically and need testing on other screen resolutions
+    // TODO: KeyJ: test this on a resolution larger than my 1920x1080
+    private readonly List<(int expectedWindowHeight, float scaleFactor)> _scaleFactorMappings =
+    [
+        (expectedWindowHeight: -1, scaleFactor: 0.75f), // smallest possible scale
+        (expectedWindowHeight: 400, scaleFactor: 1.0f),
+        (expectedWindowHeight: 900, scaleFactor: 1.15f),
+        (expectedWindowHeight: 1400, scaleFactor: 1.3f),
+    ];
     
     private float _currentScale = 1;
+
+    private float GetScaleForWindowSize(Vector2I size)
+    {
+        int currentWindowHeight = size.Y;
+        return _scaleFactorMappings
+            .Where(f => size.Y >= f.expectedWindowHeight)
+            .Select(f => f.scaleFactor)
+            .LastOrDefault(0.75f);
+    }
     
+    // called from the _Process method in the main file of this partial class
     private void UpdateStretchScale()
     {
-        var viewport = GetTree().Root;
-        int height = viewport.Size.Y;
-    
-        float newScale = Scale0;
-    
-        if (height >= HeightThreshold2)
-        {
-            newScale = Scale3;
-        }
-        else if (height >= HeightThreshold1)
-        {
-            newScale = Scale2;
-        }
-        else if (height >= HeightThreshold0)
-        {
-            newScale = Scale1;
-        }
-
-        if (_currentScale != newScale)
+        var window = GetTree().Root;
+        
+        float newScale = GetScaleForWindowSize(window.Size);
+        
+        if (!_currentScale.IsEqualApprox(newScale))
         {
             Log.Debug($"Adjusting scale to {newScale}");
             _currentScale = newScale;
