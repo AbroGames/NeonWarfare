@@ -17,6 +17,7 @@ public partial class ClientAlly : ClientCharacter
 
         Name = allyProfile.Name;
         
+        Color = allyProfile.Color;
         MaxHp = allyProfile.MaxHp;
         Hp = MaxHp;
         RegenHpSpeed = allyProfile.RegenHpSpeed;

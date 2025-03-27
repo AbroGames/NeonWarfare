@@ -11,7 +11,8 @@ public partial class ClientCharacter : CharacterBody2D
     [Export] [NotNull] public Sprite2D Sprite { get; private set; }
     
     public long Nid => this.GetChild<NetworkEntityComponent>().Nid;
-	
+    
+    public Color Color { get; protected set; } //Цвет, который будет использоваться для снарядов и т.п.
     public double MaxHp { get; set; }
     public double Hp { get; set; }
     public double RegenHpSpeed { get; set; }

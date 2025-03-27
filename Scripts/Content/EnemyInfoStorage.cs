@@ -13,6 +13,7 @@ public static class EnemyInfoStorage
     public record EnemyInfo(
         Func<PackedScene> ClientScene, 
         Func<PackedScene> ServerScene,
+        Color Color, //Используется для снарядов и т.п.
         double MaxHp,
         double RegenHpSpeed,
         double MovementSpeed,
@@ -31,6 +32,7 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.ZergEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.ZergEnemy,
+                Color: new Color(1f, 0.75f, 0),
                 MaxHp: 25,
                 RegenHpSpeed: 0,
                 MovementSpeed: 220,
@@ -42,6 +44,7 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.ShooterEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.ShooterEnemy,
+                Color: new Color(1f, 0, 0),
                 MaxHp: 40,
                 RegenHpSpeed: 0,
                 MovementSpeed: 200,
@@ -53,6 +56,7 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.TurtleEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.TurtleEnemy,
+                Color: new Color(0.62f, 0.69f, 0.46f),
                 MaxHp: 400,
                 RegenHpSpeed: 8,
                 MovementSpeed: 140,

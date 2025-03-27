@@ -6,6 +6,7 @@ using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.Utils.Components;
@@ -34,6 +35,21 @@ public abstract partial class ClientWorld
         entity.Scale = staticEntitySpawnPacket.Scale;
         entity.Modulate = staticEntitySpawnPacket.Color;
         AddChild(entity);
+    }
+
+    [EventListener(ListenerSide.Client)]
+    public void OnUseSkillPacket(SC_UseSkillPacket useSkillPacket)
+    {
+        Skill.ClientSkillUseInfo useInfo = new Skill.ClientSkillUseInfo(
+            World: this,
+            Nid: useSkillPacket.Nid,
+            CharacterPosition: useSkillPacket.CharacterPosition,
+            CharacterRotation: useSkillPacket.CharacterRotation,
+            CursorGlobalPosition: useSkillPacket.CursorGlobalPosition,
+            Color: useSkillPacket.Color,
+            CustomParams: useSkillPacket.CustomParams);
+        
+        SkillStorage.GetSkill(useSkillPacket.SkillType).OnClientUse(useInfo);
     }
 
 }

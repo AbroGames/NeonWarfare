@@ -60,4 +60,16 @@ public abstract partial class ClientWorld
         public SC_StaticEntitySpawnPacket(EntityInfoStorage.StaticEntityType type, Vector2 position, float rotation) :
             this(type, position, Vector2.One, rotation, new Color(1, 1, 1)) {}
     }
+    
+    [GamePacket]
+    public class SC_UseSkillPacket(string skillType, long nid, Vector2 characterPosition, float characterRotation, Vector2 cursorGlobalPosition, Color color, string customParams) : BinaryPacket
+    {
+        public string SkillType = skillType;
+        public long Nid = nid;
+        public Vector2 CharacterPosition = characterPosition;
+        public float CharacterRotation = characterRotation;
+        public Vector2 CursorGlobalPosition = cursorGlobalPosition;
+        public Color Color = color;
+        public string CustomParams = customParams;
+    }
 }

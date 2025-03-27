@@ -38,10 +38,26 @@ public partial class ServerEnemy : ServerCharacter
 
     public void InitStats(EnemyInfoStorage.EnemyInfo enemyInfo)
     {
+        Color = enemyInfo.Color;
         MaxHp = enemyInfo.MaxHp;
         Hp = MaxHp;
         RegenHpSpeed = enemyInfo.RegenHpSpeed;
         MovementSpeed = enemyInfo.MovementSpeed;
         RotationSpeed = enemyInfo.RotationSpeed;
+    }
+    
+    public override void OnHit(double damage, ServerCharacter author, long authorPeerId)
+    {
+        base.OnHit(damage, author, authorPeerId);
+        
+        if (author == this) return;
+        if (authorPeerId == -1 && !ServerRoot.Instance.Game.EnemyFriendlyFire) return;
+        
+        TakeDamage(damage, author);
+    }
+    
+    public void UseSkill(long skillId)
+    {
+        UseSkill(skillId, Position, Rotation, GetGlobalMousePosition(), -1);
     }
 }

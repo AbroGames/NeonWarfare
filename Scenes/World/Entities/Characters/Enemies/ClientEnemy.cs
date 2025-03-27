@@ -12,6 +12,7 @@ public partial class ClientEnemy : ClientCharacter
     
     public void InitStats(EnemyInfoStorage.EnemyInfo enemyInfo)
     {
+        Color = enemyInfo.Color;
         MaxHp = enemyInfo.MaxHp;
         Hp = MaxHp;
         RegenHpSpeed = enemyInfo.RegenHpSpeed;
