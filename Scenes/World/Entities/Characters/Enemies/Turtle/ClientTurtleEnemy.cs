@@ -1,6 +1,4 @@
-using Godot;
-using System;
-using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
+namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies.Turtle;
 
 public partial class ClientTurtleEnemy : ClientEnemy
 {
