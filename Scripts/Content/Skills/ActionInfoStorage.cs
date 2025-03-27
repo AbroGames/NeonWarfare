@@ -5,7 +5,7 @@ using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scripts.KludgeBox;
 
-namespace NeonWarfare.Scripts.Content;
+namespace NeonWarfare.Scripts.Content.Skills;
 
 public static class ActionInfoStorage
 {

@@ -5,8 +5,9 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fd6pn"]
 size = Vector2(6, 60)
 
-[node name="ServerShotAction" type="Node2D"]
+[node name="ServerShotAction" type="Node2D" node_paths=PackedStringArray("HitBox")]
 script = ExtResource("1_i17im")
+HitBox = NodePath("Area2D")
 
 [node name="Area2D" type="Area2D" parent="."]
 
