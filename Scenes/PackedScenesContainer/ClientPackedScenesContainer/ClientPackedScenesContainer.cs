@@ -32,6 +32,7 @@ public partial class ClientPackedScenesContainer : Node
     
     [Export] [NotNull] public PackedScene MainMenu { get; private set; }
     [Export] [NotNull] public PackedScene SettingsMenu { get; private set; }
+    [Export] [NotNull] public PackedScene AchievementsMenu { get; private set; }
     [Export] [NotNull] public PackedScene PlayerSettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene GraphicSettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene SoundSettingsMenu { get; private set; }

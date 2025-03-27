@@ -7,6 +7,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 public partial class ClientAlly : ClientCharacter 
 {
     [Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
+    [Export] [NotNull] public Label NameLabel { get; private set; }
     
     public ClientAllyProfile AllyProfile { get; private set; }
     public string Name { get; private set; }
@@ -23,6 +24,9 @@ public partial class ClientAlly : ClientCharacter
         RegenHpSpeed = allyProfile.RegenHpSpeed;
         MovementSpeed = allyProfile.MovementSpeed;
         RotationSpeed = allyProfile.RotationSpeed;
+        
+        NameLabel.Text = Name;
+        NameLabel.LabelSettings.FontColor = AllyProfile.Color;
     }
 
     public override void InitOnSpawnPacket(Vector2 position, float rotation, Color color)
@@ -35,4 +39,24 @@ public partial class ClientAlly : ClientCharacter
         }
     }
 
+    public override void _Ready()
+    {
+        base._Ready();
+        Callable.From(() =>
+        {
+            NameLabel.Reparent(GetParent());
+            NameLabel.Rotation = 0;
+        }).CallDeferred();
+        
+        TreeExiting += () =>
+        {
+            NameLabel.QueueFree();
+        };
+    }
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        NameLabel.GlobalPosition = GlobalPosition + new Vector2(-NameLabel.Size.X / 2, -60);
+    }
 }

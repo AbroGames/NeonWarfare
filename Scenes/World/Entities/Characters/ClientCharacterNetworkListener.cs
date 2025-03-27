@@ -2,6 +2,8 @@ using System;
 using Godot;
 using NeonWarfare.Scenes.Game.ServerGame;
 using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
+using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.Skills;
@@ -28,6 +30,27 @@ public partial class ClientCharacter
             var label = Fx.CreateFloatingLabel($"{damageCharacterPacket.Damage:N0}", Colors.Red, 1);
             label.Position = Rand.InsideCircle(new (Position, LabelSpawnPositionDeviation));
             ClientRoot.Instance.Game.World.AddChild(label);
+            if (damageCharacterPacket.TargetDied)
+            {
+                
+                if (this is ClientAlly ally && ClientRoot.Instance.Game.World.LastResurrectedTargetId == ally.AllyProfile.PeerId)
+                {
+                    if (ClientRoot.Instance.Game.World.TimeSinceLastResurrection <=
+                        AchievementsPrerequisites.MyBad_TimeToKill)
+                    {
+                        ClientRoot.Instance.UnlockAchievement(AchievementIds.MyBadAchievement);
+                    }
+                }
+                
+                if (this is ClientEnemy)
+                {
+                    ClientRoot.Instance.Game.World.EnemiesKilled++;
+                    if (ClientRoot.Instance.Game.World.EnemiesKilled >= AchievementsPrerequisites.Massacre_EnemiesToKill)
+                    {
+                        ClientRoot.Instance.UnlockAchievement(AchievementIds.Massacre);
+                    }
+                }
+            }
         }
         
         //Если дамаг нанес враг
@@ -59,5 +82,11 @@ public partial class ClientCharacter
         skillFx.Target = this;
         skillFx.Position = Position;
         ClientRoot.Instance.Game.World.AddChild(skillFx);
+        
+        if (this is ClientAlly ally)
+        {
+            ClientRoot.Instance.Game.World.TimeSinceLastResurrection = 0;
+            ClientRoot.Instance.Game.World.LastResurrectedTargetId = ally.AllyProfile.PeerId;
+        }
     }
 }

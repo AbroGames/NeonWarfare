@@ -5,6 +5,7 @@ using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.GameSettings;
 using NeonWarfare.Scripts.KludgeBox;
@@ -86,7 +87,12 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnChangeLoadingScreenPacket(SC_ChangeLoadingScreenPacket changeLoadingScreenPacket)
 	{
-		SetLoadingScreen(changeLoadingScreenPacket.LoadingScreenType);
+		if (changeLoadingScreenPacket.LoadingScreenType == LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE)
+		{
+			ClientRoot.Instance.UnlockAchievement(AchievementIds.NopeAchievement);
+		}
+
+		ClientRoot.Instance.SetLoadingScreen(changeLoadingScreenPacket.LoadingScreenType);
 	}
 	
 	/*
@@ -95,7 +101,7 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnClearLoadingScreenPacket(SC_ClearLoadingScreenPacket clearLoadingScreenPacket)
 	{
-		ClearLoadingScreen();
+		ClientRoot.Instance.ClearLoadingScreen();
 	}
 	
 	/*

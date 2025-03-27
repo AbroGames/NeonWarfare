@@ -13,7 +13,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters;
 public partial class ClientCharacter 
 {
     [GamePacket]
-    public class SC_DamageCharacterPacket(long nid, long authorPeerId, string skillType, double damage) : BinaryPacket, IInstanceEvent
+    public class SC_DamageCharacterPacket(long nid, long authorPeerId, string skillType, double damage, bool targetDied) : BinaryPacket, IInstanceEvent
     {
         public object NetworkId => Nid;
         
@@ -21,6 +21,7 @@ public partial class ClientCharacter
         public long AuthorPeerId = authorPeerId;
         public string SkillType = skillType;
         public double Damage = damage;
+        public bool TargetDied = targetDied;
     }
     
     [GamePacket]

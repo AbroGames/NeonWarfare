@@ -1,0 +1,81 @@
+[gd_scene load_steps=7 format=3 uid="uid://cmj4sy8hw0ryl"]
+
+[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/AchievementsSystem/AchievementPanel.cs" id="1_odj2i"]
+[ext_resource type="Texture2D" uid="uid://df5mmkciayart" path="res://Assets/Textures/Icons/IconBase.png" id="1_pf81h"]
+[ext_resource type="Texture2D" uid="uid://cy6a5ddwycf47" path="res://Assets/Textures/Icons/Abilities/Unknown.png" id="2_hiiit"]
+[ext_resource type="Texture2D" uid="uid://6ss2jvst0b3v" path="res://Assets/Textures/Icons/IconBorder.png" id="3_xtuhv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c4f7k"]
+bg_color = Color(0.133196, 0.133196, 0.133196, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="LabelSettings" id="LabelSettings_jbvbu"]
+font_size = 14
+
+[node name="AchievementPanel" type="PanelContainer" node_paths=PackedStringArray("IconRect", "NameLabel", "UnlockedLabel")]
+custom_minimum_size = Vector2(300, 100)
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -310.0
+offset_top = -100.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_c4f7k")
+script = ExtResource("1_odj2i")
+IconRect = NodePath("MarginContainer/HBoxContainer/IconContainer/Icon")
+NameLabel = NodePath("MarginContainer/HBoxContainer/TextContainer/NameLabel")
+UnlockedLabel = NodePath("MarginContainer/HBoxContainer/TextContainer/UnlockedLabel")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="IconContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="IconBase" type="TextureRect" parent="MarginContainer/HBoxContainer/IconContainer"]
+layout_mode = 2
+texture = ExtResource("1_pf81h")
+expand_mode = 3
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/HBoxContainer/IconContainer"]
+layout_mode = 2
+texture = ExtResource("2_hiiit")
+expand_mode = 3
+
+[node name="IconBorder" type="TextureRect" parent="MarginContainer/HBoxContainer/IconContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("3_xtuhv")
+expand_mode = 3
+
+[node name="TextContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="UnlockedLabel" type="Label" parent="MarginContainer/HBoxContainer/TextContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+text = "Achievemet Unlocked!"
+
+[node name="NameLabel" type="Label" parent="MarginContainer/HBoxContainer/TextContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Achievement name"
+label_settings = SubResource("LabelSettings_jbvbu")

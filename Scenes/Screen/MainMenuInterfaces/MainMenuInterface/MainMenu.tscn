@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://br3ns4pa22dor"]
+[gd_scene load_steps=17 format=3 uid="uid://br3ns4pa22dor"]
 
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/CreateServerMenuButton.cs" id="2_qxhat"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ConnectToServerMenuButton.cs" id="3_6ncrt"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/SettingsButton.cs" id="4_wn3h0"]
 [ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ExitButton.cs" id="5_d204j"]
 [ext_resource type="Texture2D" uid="uid://b8y04ktoyxq80" path="res://Assets/Textures/MainMenuBackground.png" id="6_idndk"]
+[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/AchievementsButton.cs" id="7_5vckw"]
 [ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="7_eethm"]
 [ext_resource type="FontFile" uid="uid://bvcm8i6hwq1kx" path="res://Assets/Fonts/Play-Regular.ttf" id="8_bun70"]
 
@@ -114,6 +115,17 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_6ughm")
 text = "                      Settings"
 alignment = 0
 script = ExtResource("4_wn3h0")
+
+[node name="AchievementsButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("8_bun70")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/hover = SubResource("StyleBoxTexture_rxtu6")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6ughm")
+text = "                      Achievements"
+alignment = 0
+script = ExtResource("7_5vckw")
 
 [node name="SpaceControl2" type="Control" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 20)

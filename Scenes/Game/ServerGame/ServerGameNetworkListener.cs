@@ -66,7 +66,6 @@ public partial class ServerGame
         newPlayerProfile.Name = initPlayerProfilePacket.Name;
         newPlayerProfile.Color = initPlayerProfilePacket.Color;
         
-        BroadcastMessage($"{newPlayerProfile.Name} connected.");
         //Отправляем новому игроку настройки мира
         Network.SendToClient(newPlayerPeerId, GameSettings.ToPacket());
         //Отправляем новому игроку его PlayerProfile
@@ -112,6 +111,8 @@ public partial class ServerGame
         {
             Log.Error($"Unknown world in ServerGame.World: {World}");
         }
+        
+        BroadcastMessage($"[color={newPlayerProfile.Color.ToHtml()}]{newPlayerProfile.Name}[/color] connected.");
     }
     
     /*

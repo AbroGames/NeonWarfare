@@ -103,6 +103,13 @@ public partial class CombinedSettingsMenu : Control
 		colorPicker.CustomMinimumSize = new Vector2(100, 30);
 		colorPicker.SetAnchorsPreset(LayoutPreset.CenterLeft);
 		colorPicker.SizeFlagsHorizontal = SizeFlags.ShrinkBegin;
+
+		setting.ValueValidationFailed += (info) =>
+		{
+			if (((Color)info.ProvidedValue).A < 0.5
+			    || ((Color)info.ProvidedValue).V < 0.3)
+				ClientRoot.Instance.UnlockAchievement(AchievementIds.NinjaAchievement);
+		};
 		
 		colorPicker.ColorChanged += (Color color) =>
 		{

@@ -1,10 +1,39 @@
-[gd_scene load_steps=3 format=3 uid="uid://6v3fu0vexvah"]
+[gd_scene load_steps=5 format=3 uid="uid://6v3fu0vexvah"]
 
 [ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
 [ext_resource type="PackedScene" uid="uid://bdvsb2vvfjdil" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.tscn" id="2_6lwjn"]
+[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/AchievementsSystem/AchievementsOverlay.cs" id="3_ymfay"]
+[ext_resource type="PackedScene" uid="uid://cmj4sy8hw0ryl" path="res://Scenes/Root/ClientRoot/AchievementsSystem/AchievementPanel.tscn" id="4_s5hfm"]
 
-[node name="ClientRoot" type="Node2D" node_paths=PackedStringArray("PackedScenes")]
+[node name="ClientRoot" type="Node2D" node_paths=PackedStringArray("AchievementsOverlayLayer", "LoadingScreenLayer", "PackedScenes", "ContextContainer")]
 script = ExtResource("1_7bmax")
+AchievementsOverlayLayer = NodePath("AchievementsOverlayLayer")
+LoadingScreenLayer = NodePath("LoadingScreenLayer")
 PackedScenes = NodePath("ClientPackedScenesContainer")
+ContextContainer = NodePath("ContextContainer")
 
 [node name="ClientPackedScenesContainer" parent="." instance=ExtResource("2_6lwjn")]
+
+[node name="ContextContainer" type="Node2D" parent="."]
+
+[node name="LoadingScreenLayer" type="CanvasLayer" parent="."]
+
+[node name="AchievementsOverlayLayer" type="CanvasLayer" parent="." node_paths=PackedStringArray("OverlayRoot")]
+script = ExtResource("3_ymfay")
+AchievementScene = ExtResource("4_s5hfm")
+OverlayRoot = NodePath("OverlayRoot")
+
+[node name="OverlayRoot" type="Control" parent="AchievementsOverlayLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="AchievementPanel" parent="AchievementsOverlayLayer/OverlayRoot" instance=ExtResource("4_s5hfm")]
+visible = false
+layout_mode = 1

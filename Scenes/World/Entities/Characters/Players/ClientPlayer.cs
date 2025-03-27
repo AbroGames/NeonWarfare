@@ -32,6 +32,8 @@ public partial class ClientPlayer : ClientAlly
         rotateComponent.GetTargetGlobalPositionFunc = () => GetGlobalMousePosition();
         rotateComponent.GetRotationSpeedFunc = () => IsDead ? 0 : RotationSpeed;
         AddChild(rotateComponent);
+
+        //NameLabel.Visible = false;
     }
     
     public void InitOnProfile(ClientPlayerProfile playerProfile)

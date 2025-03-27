@@ -25,7 +25,8 @@ public partial class Hud : Control
 	[ExportGroup("Bars")]
 	[Export] [NotNull] public TwoColoredBar HpBar { get; private set; }
 	
-	[ExportGroup("FPS & TPS")]
+	[ExportGroup("Debug")]
+	[Export] [NotNull] public VBoxContainer DebugContainer { get; private set; }
 	[Export] [NotNull] public Label Fps { get; private set; }
 	[Export] [NotNull] public Label Tps { get; private set; }
 	[Export] [NotNull] public Label SystemInfo { get; private set; }
@@ -93,7 +94,7 @@ public partial class Hud : Control
 	{
 		if (@event.IsActionPressed(Keys.Debug))
 		{
-			SystemInfo.Visible = !SystemInfo.Visible;
+			DebugContainer.Visible = !DebugContainer.Visible;
 		}
 	}
 

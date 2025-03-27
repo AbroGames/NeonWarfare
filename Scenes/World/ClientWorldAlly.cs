@@ -46,6 +46,12 @@ public abstract partial class ClientWorld
         _allies.Add(ally);
         _alliesByPeerId.Add(allySpawnPacket.Id, ally);
         ally.InitOnSpawnPacket(allySpawnPacket.Position, allySpawnPacket.Rotation, allySpawnPacket.Color);
+
+        ClientRoot.Instance.UnlockAchievement(AchievementIds.BuddyAchievement);
+        if (Allies.Count + 1 >= AchievementsPrerequisites.Crowd_PlayersCount)
+        {
+            ClientRoot.Instance.UnlockAchievement(AchievementIds.CrowdAchievement);
+        }
     }
 
     public void RemoveAlly(ClientAlly ally)

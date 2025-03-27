@@ -1,6 +1,7 @@
 using System.Linq;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.BattleWorld.ClientBattleWorld;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 
 
@@ -20,6 +21,7 @@ public partial class ServerGame
 		serverWorld.Init(PlayerProfiles.ToList());
         
 		Network.SendToAll(new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
+		Network.SendToAll(new ClientBattleWorld.SC_WaveStartedPacket(1));
 	}
 	
 	private void ChangeMainScene(ServerWorld serverWorld)

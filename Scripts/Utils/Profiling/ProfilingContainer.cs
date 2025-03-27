@@ -33,13 +33,14 @@ public class ProfilingContainer
     
     private Stopwatch _stopwatch;
     private System.Diagnostics.Process _process;
+    private Stream _fileStream;
 
     private ProfilingContainer()
     {
         
     }
 
-    public static void StartProfilingSession()
+    public static void StartProfilingSession(string filePath)
     {
         Instance = new ProfilingContainer();
         
@@ -47,6 +48,10 @@ public class ProfilingContainer
         Instance.StartTime = DateTime.Now;
         Instance._process = System.Diagnostics.Process.GetCurrentProcess();
         Instance._stopwatch = Stopwatch.StartNew();
+
+        Instance._fileStream = File.OpenWrite(filePath);
+        
+        
     }
 
     public static void AddEvent(ProfilingEvent profilingEvent)
@@ -54,8 +59,7 @@ public class ProfilingContainer
         if (!IsRunning)
             return;
         
-        profilingEvent.Timestamp = Instance._stopwatch.ElapsedTicks;
-        Instance.ProfilingEvents.Add(profilingEvent);
+        AddEventLow(profilingEvent);
         AddPerformanceData();
     }
 
@@ -70,6 +74,19 @@ public class ProfilingContainer
             fps: Performance.GetMonitor(Performance.Monitor.TimeFps),
             tps: Performance.GetMonitor(Performance.Monitor.TimeProcess)
             );
+        
+        AddEventLow(perf);
+    }
+
+    private static void AddEventLow(ProfilingEvent profilingEvent)
+    {
+        profilingEvent.Timestamp = Instance._stopwatch.ElapsedTicks;
+        Instance.ProfilingEvents.Add(profilingEvent);
+    }
+
+    private void FLushProfilingData()
+    {
+        
     }
 
     public static ProfilingContainer StopProfilingSession()

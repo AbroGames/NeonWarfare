@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.Networking.PacketBus.Serialization;
 
@@ -6,6 +7,10 @@ namespace NeonWarfare.Scenes.Game.ClientGame.ClientSettings.SettingTypes;
 
 public abstract class Setting
 {
+    public record ValidationInfo(object ProvidedValue, object AcceptedValue, object Validator);
+    public event Action<ValidationInfo> ValueValidationFailed;
+    public event Action<ValidationInfo> ValueValidationSucceeded;
+    
     public string Name { get; }
     public string Description { get; }
     public IMemberAccessor Accessor { get; }
@@ -54,5 +59,15 @@ public abstract class Setting
     public virtual void SetValue(object value)
     {
         Accessor.SetValue(_settings, value);
+    }
+
+    protected void RaiseValueValidationFailed(ValidationInfo validationInfo)
+    {
+        ValueValidationFailed?.Invoke(validationInfo);
+    }
+
+    protected void RaiseValueValidationSucceeded(ValidationInfo validationInfo)
+    {
+        ValueValidationSucceeded?.Invoke(validationInfo);
     }
 }

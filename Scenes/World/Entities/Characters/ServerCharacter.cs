@@ -66,15 +66,20 @@ public partial class ServerCharacter : CharacterBody2D
     public void TakeDamage(double damage, ServerCharacter author, long authorPeerId, string skillType)
     {
         double realDamage = Math.Min(damage, Hp);
-        Network.SendToAll(new ClientCharacter.SC_DamageCharacterPacket(Nid, authorPeerId, skillType, realDamage));
+        bool resultedInDeath = false;
         
-        if (IsDead) return;
-        Hp -= realDamage;
-        if (Hp <= 0)
+        if (!IsDead)
         {
-            Hp = 0;
-            Death(author);
+            Hp -= realDamage;
+            if (Hp <= 0)
+            {
+                Hp = 0;
+                resultedInDeath = true;
+                Death(author);
+            }
         }
+        
+        Network.SendToAll(new ClientCharacter.SC_DamageCharacterPacket(Nid, authorPeerId, skillType, realDamage, resultedInDeath));
     }
 
     public void TakeHeal(double heal, ServerCharacter author, long authorPeerId, string skillType)

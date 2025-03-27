@@ -7,7 +7,9 @@ public class LoadingScreenBuilder
 {
     public enum LoadingScreenType
     {
-        CONNECTING, WAITING_END_OF_BATTLE, LOADING
+        CONNECTING, 
+        WAITING_END_OF_BATTLE, 
+        LOADING
     }
     
     private static Dictionary<LoadingScreenType, string> _loadingScreenTextByType = new()

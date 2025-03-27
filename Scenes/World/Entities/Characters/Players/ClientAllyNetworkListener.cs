@@ -16,6 +16,14 @@ public partial class ClientAlly
 
     public void OnChangeAllyStatsPacket(SC_ChangeAllyStatsPacket changeAllyStatsPacket)
     {
+        if (this is ClientPlayer 
+            && changeAllyStatsPacket.Hp < Hp 
+            && changeAllyStatsPacket.Hp <= AchievementsPrerequisites.LuckyDevil_HpLeft 
+            && changeAllyStatsPacket.Hp > 0)
+        {
+            ClientRoot.Instance.UnlockAchievement(AchievementIds.LuckyDevil);
+        }
+        
         Hp = changeAllyStatsPacket.Hp;
     }
     

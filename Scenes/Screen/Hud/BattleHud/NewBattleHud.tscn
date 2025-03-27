@@ -10,8 +10,23 @@ font = ExtResource("2_5kx4p")
 font_size = 14
 font_color = Color(0.34902, 0.34902, 0.34902, 1)
 
-[node name="NewBattleHud" instance=ExtResource("1_n2ph5")]
+[node name="NewBattleHud" node_paths=PackedStringArray("WaveNumberLabel", "TimerLabel", "EnemiesCountLabel") instance=ExtResource("1_n2ph5")]
 script = ExtResource("2_rtvpi")
+WaveNumberLabel = NodePath("MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/WaveLabel")
+TimerLabel = NodePath("MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/TimeLabel")
+EnemiesCountLabel = NodePath("MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/EnemiesCounter")
+
+[node name="WaveLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="0"]
+layout_mode = 2
+text = "Wave:"
+
+[node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="1"]
+layout_mode = 2
+text = "Next wave in:"
+
+[node name="EnemiesCounter" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="2"]
+layout_mode = 2
+text = "Enemies left:"
 
 [node name="FPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="0"]
 label_settings = SubResource("LabelSettings_jvjw3")

@@ -1,11 +1,13 @@
+using Godot;
 using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Screen.MainScene;
+using NeonWarfare.Scripts.KludgeBox.Core;
 
 namespace NeonWarfare.Scenes.Root.ClientRoot;
 
 public partial class ClientRoot
 {
-	
+	[Export] [NotNull] private Node2D ContextContainer { get; set; }
 	public ClientGame Game { get; private set; }
 	public MainMenuMainScene MainMenu { get; private set; }
 
@@ -13,14 +15,14 @@ public partial class ClientRoot
 	{
 		ClearStoredNode();
 		Game = game;
-		AddChild(game);
+		ContextContainer.AddChild(game);
 	}
 	
 	private void SetMainScene(MainMenuMainScene mainScene)
 	{
 		ClearStoredNode();
 		MainMenu = mainScene;
-		AddChild(mainScene);
+		ContextContainer.AddChild(mainScene);
 	}
 
 	private void ClearStoredNode()

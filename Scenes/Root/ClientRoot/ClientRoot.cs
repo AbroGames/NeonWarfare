@@ -20,7 +20,6 @@ public partial class ClientRoot : Node2D
 	[Export] [NotNull] public ClientPackedScenesContainer PackedScenes { get; private set; }
 	
 	public ClientParams CmdParams { get; private set; }
-	//public PlayerSettings PlayerSettings { get; private set; }
 	public Settings Settings { get; set; } = new Settings();
 
 	public override void _Ready()
@@ -28,9 +27,7 @@ public partial class ClientRoot : Node2D
 		NotNullChecker.CheckProperties(this);
 		Callable.From(() => { 
 			Init(); 
-			Start(); 
-			ApplySettings(Settings);
-			ProfilingContainer.StartProfilingSession();
+			Start();
 		}).CallDeferred();
 	}
 
@@ -44,13 +41,15 @@ public partial class ClientRoot : Node2D
 		RootService.CommonInit(ListenerSide.Client);
 		CmdParams = ClientParams.GetFromCmd();
 
-		//PlayerSettings = PlayerSettingsService.LoadSettings();
 		Settings = SettingsService.Load();
 		Settings.Changed += ApplySettings;
 		if (Settings.MaximizeOnStart)
 		{
 			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
 		}
+		
+		AchievementsList.Initialize();
+		AchievementsState = AchievementsState.Load();
 	}
 
 	private void ApplySettings(Settings settings)
@@ -65,6 +64,14 @@ public partial class ClientRoot : Node2D
 	
 	protected void Start()
 	{
+		if (CmdParams.RunProfiler)
+		{
+			var profilingName = $"profiler_data_{DateTime.Now:yy-MM-dd} {DateTime.Now:h.mm.ss}.dat";
+			var profilingPath = ProjectSettings.GlobalizePath($"res://{profilingName}");
+			
+			//ProfilingContainer.StartProfilingSession(profilingPath);
+		}
+		
 		if (CmdParams.AutoConnectIp != null)
 		{
 			int autoConnectPort = CmdParams.AutoConnectPort.GetValueOrDefault(Network.DefaultPort);
@@ -74,6 +81,9 @@ public partial class ClientRoot : Node2D
 		{
 			CreateMainMenu();
 		}
+		
+		ApplySettings(Settings);
+		UnlockAchievement(AchievementIds.MainMenuAchievement);
 	}
 	
 	private static float _preserverVolume;
@@ -82,13 +92,7 @@ public partial class ClientRoot : Node2D
 		if (what == NotificationWMCloseRequest)
 		{
 			SettingsService.Save(Settings);
-			var profilingName = $"profiler_data_{DateTime.Now:yy-MM-dd} {DateTime.Now:h.mm.ss}.dat";
-			var profilingPath = ProjectSettings.GlobalizePath($"res://{profilingName}");
-
-			using var profilingFile = File.OpenWrite(profilingPath);
-			var session = ProfilingContainer.StopProfilingSession();
-			session?.WriteProfilingSession(profilingFile);
-			
+			//ProfilingContainer.StopProfilingSession();
 			Log.Info("Game exiting...");
 		}
 		

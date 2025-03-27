@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://c36qj0341opia"]
+[gd_scene load_steps=8 format=3 uid="uid://c36qj0341opia"]
 
 [ext_resource type="PackedScene" uid="uid://n0xmwymx5ba5" path="res://Scenes/World/Entities/Characters/ClientCharacter.tscn" id="1_33krp"]
 [ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Players/ClientAlly.cs" id="2_2afdg"]
@@ -16,9 +16,14 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 18.0
 
-[node name="ClientAlly" node_paths=PackedStringArray("ShieldSprite") instance=ExtResource("1_33krp")]
+[sub_resource type="LabelSettings" id="LabelSettings_sgnoa"]
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="ClientAlly" node_paths=PackedStringArray("ShieldSprite", "NameLabel") instance=ExtResource("1_33krp")]
 script = ExtResource("2_2afdg")
 ShieldSprite = NodePath("ShieldSprite")
+NameLabel = NodePath("NameLabel")
 
 [node name="Sprite2D" parent="." index="0"]
 material = SubResource("ShaderMaterial_2pw46")
@@ -30,3 +35,16 @@ shape = SubResource("CircleShape2D_jjy8c")
 modulate = Color(1, 1, 1, 0)
 scale = Vector2(0.19, 0.19)
 texture = ExtResource("3_oa3jk")
+
+[node name="NameLabel" type="Label" parent="." index="3"]
+anchors_preset = -1
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -60.0
+offset_right = 20.0
+offset_bottom = -37.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "AYAYOYA"
+label_settings = SubResource("LabelSettings_sgnoa")

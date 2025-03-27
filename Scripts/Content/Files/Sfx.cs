@@ -294,6 +294,10 @@ namespace NeonWarfare.Scripts.Content
 			$"{SoundsDir}/ui/neutral_select.wav"
 		);
 		
+		public static RandomPicker<string> UiAchievement { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/ui/achievement.ogg"
+		);
+		
 		public static RandomPicker<string> UiClick { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/ui/click{{0}}.wav".BatchNumber(1, 3)
 		);

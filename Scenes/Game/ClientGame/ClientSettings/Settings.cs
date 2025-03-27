@@ -10,55 +10,53 @@ public class Settings
 {
     public static event Action<Settings> Changed;
 
-    [SettingName("Настройки игрока")]
-    [SettingDescription("Настройки отвечающие за визуальную и информативную составляющую игрока в сетевой игре.")]
+    [SettingName("Player Settings")]
+    [SettingDescription("Settings related to the visual and informational aspects of the player in a networked game.")]
     public SettingGroup PlayerSettingsGroup { get; set; }
-    
-    [SettingName("Имя игрока")]
-    [SettingDescription("Имя игрока, используемое в контексте сетевой игры.")]
+
+    [SettingName("Player Name")]
+    [SettingDescription("The player's name used in the context of the networked game.")]
     public string PlayerName { get; set; } = "Player";
-    
-    [SettingName("Цвет игрока")]
-    [SettingDescription("Определяет цвет персонажа игрока в игре.")]
+
+    [SettingName("Player Color")]
+    [SettingDescription("Determines the color of the player's character in the game.")]
     [SettingForceColorAlpha(1)]
     [SettingForceColorValue(1)]
     public Color PlayerColor { get; set; } = Colors.Green;
-    
-    
-    
-    [SettingName("Настройки аудио")]
-    [SettingDescription("Настройки громкости звуковых эффектов музыки и аудио в целом.")]
+
+
+    [SettingName("Audio Settings")]
+    [SettingDescription("Settings for adjusting the volume of sound effects, music, and audio overall.")]
     public SettingGroup AudioSettingsGroup { get; set; }
-    
-    [SettingName("Общая громкость")]
-    [SettingDescription("Общая громкость звука в игре. Влияет на вообще весь звук в игре.")]
+
+    [SettingName("Master Volume")]
+    [SettingDescription("The overall volume level in the game. Affects all sound in the game.")]
     [SettingNumberRange(0, 100)]
     [SettingNumberStep(1)]
     [SettingNumberInputType(NumberInputType.Slider)]
     public float MasterVolume { get; set; } = 100;
 
-    [SettingName("Громкость звуков")]
-    [SettingDescription("Регулирует громкость звуковых эффектов.")]
+    [SettingName("Sound Effects Volume")]
+    [SettingDescription("Adjusts the volume of sound effects.")]
     [SettingNumberRange(0, 100)]
     [SettingNumberStep(1)]
     [SettingNumberInputType(NumberInputType.Slider)]
     public float SoundVolume { get; set; } = 100;
 
-    [SettingName("Громкость музыки")]
-    [SettingDescription("Регулирует громкость музыки в игре.")]
+    [SettingName("Music Volume")]
+    [SettingDescription("Adjusts the volume of in-game music.")]
     [SettingNumberRange(0, 100)]
     [SettingNumberStep(1)]
     [SettingNumberInputType(NumberInputType.Slider)]
     public float MusicVolume { get; set; } = 100;
-    
-    
-    
-    [SettingName("Настройки игры")]
-    [SettingDescription("Дополнительные настройки, изменяющие поведение игры.")]
+
+
+    [SettingName("Game Settings")]
+    [SettingDescription("Additional settings that modify the game’s behavior.")]
     public SettingGroup GameSettingsGroup { get; set; }
 
-    [SettingName("Развернуть при запуске")]
-    [SettingDescription("Развернет окно игры на весь экран при запуске.")]
+    [SettingName("Maximize on Start")]
+    [SettingDescription("Maximizes the game window to full screen upon launch.")]
     public bool MaximizeOnStart { get; set; } = false;
     
     

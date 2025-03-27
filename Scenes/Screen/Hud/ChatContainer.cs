@@ -68,56 +68,39 @@ public partial class ChatContainer : MarginContainer
 
     private void TryGetPreviousMessage()
     {
-        if (_historyIndex >= 0)
-        {
-            if (!MessageInputBox.Text.Equals(_history[_historyIndex]))
-            {
-                _historyIndex = -1;
-            }
-        }
-        
         if (_historyIndex == -1)
         {
-            _lastMessage = MessageInputBox.Text;
+            _lastMessage = MessageInputBox.Text; // Сохраняем текущий ввод перед просмотром истории
+            _historyIndex = _history.Count; // Начинаем с последнего сообщения
         }
 
-        if (_history.Count > _historyIndex && _history.Count > 0)
+        if (_historyIndex > 0)
         {
-            _historyIndex++;
+            _historyIndex--; 
             MessageInputBox.Text = _history[_historyIndex];
         }
     }
 
     private void TryGetNextMessage()
     {
-        if (_historyIndex >= 0)
-        {
-            if (!MessageInputBox.Text.Equals(_history[_historyIndex]))
-            {
-                _historyIndex = -1;
-            }
-        }
-        
         if (_historyIndex == -1)
-        {
             return;
-        }
 
-        if (_historyIndex >= 0)
+        _historyIndex++;
+
+        if (_historyIndex < _history.Count)
         {
-            _historyIndex--;
             MessageInputBox.Text = _history[_historyIndex];
         }
         else
         {
             _historyIndex = -1;
-            MessageInputBox.Text = _lastMessage;
+            MessageInputBox.Text = _lastMessage; // Вернуть текст, который был перед тем, как начал листать
         }
     }
 
     public void OpenChat()
     {
-        Log.Info("Chat opened!");
         ClientPlayer.IsInputBlocked = true;
         MessageInputBox.Text = "";
         MessageInputBox.Visible = true;

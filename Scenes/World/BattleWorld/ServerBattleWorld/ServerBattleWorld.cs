@@ -7,21 +7,26 @@ using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.MapGenerator;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 
 public partial class ServerBattleWorld : ServerWorld
 {
-
     public EnemyWave EnemyWave { get; private set; }
     private EnemySpawner _enemySpawner;
-
+    private AutoCooldown _timeSyncCooldown = new(1);
+    
     public override void _Ready()
     {
         base._Ready();
 
         _enemySpawner = new(this);
         EnemyWave = new(_enemySpawner);
+        _timeSyncCooldown.ActionWhenReady += () =>
+        {
+            Network.SendToAll(new ClientBattleWorld.ClientBattleWorld.SC_WaveTimeSyncPacket(EnemyWave.NextWaveCooldown.TimeLeft));
+        };
     }
     
     protected override void InitMap()
@@ -57,6 +62,7 @@ public partial class ServerBattleWorld : ServerWorld
         
         EnemyWave.Update(delta);
         _enemySpawner.Update(delta);
+        _timeSyncCooldown.Update(delta);
     }
     
     public override WorldInfoStorage.WorldType GetServerWorldType()

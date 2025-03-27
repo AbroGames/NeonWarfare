@@ -4,6 +4,7 @@ using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Cooldown;
 
 using static NeonWarfare.Scripts.Content.EnemyInfoStorage.EnemyType;
@@ -12,7 +13,6 @@ namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 
 public class EnemyWave
 {
-
     private const int DefaultWaveTime = 40;
     
     private EnemySpawner _enemySpawner;
@@ -40,6 +40,8 @@ public class EnemyWave
 
         double nextWaveTime = DefaultWaveTime + (WaveNumber-1)*2 ; //40,42,44,46,48,50,52,54...
         NextWaveCooldown = new(nextWaveTime, false, true, NextWaveSpawn);
+        
+        Network.SendToAll(new ClientBattleWorld.ClientBattleWorld.SC_WaveStartedPacket(WaveNumber));
     }
 
     private void SpawnEnemies(EnemyInfoStorage.EnemyType enemyType, int count)
