@@ -6,6 +6,7 @@ using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 
 public partial class ChatContainer : MarginContainer
@@ -140,6 +141,7 @@ public partial class ChatContainer : MarginContainer
 
     public void ReceiveMessage(ChatMessage message)
     {
+        Audio2D.PlayUiSound(Sfx.UiSelect);
         MessagesContainer.AppendMessage(message);
     }
 }
