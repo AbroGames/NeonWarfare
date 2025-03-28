@@ -7,7 +7,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 public partial class ServerPlayer 
 {
     [GamePacket]
-    public class CS_UseSkillPacket(int skillId, Vector2 playerPosition, float playerRotation, Vector2 cursorGlobalPosition) : BinaryPacket
+    public class CS_UseSkillPacket(long skillId, Vector2 playerPosition, float playerRotation, Vector2 cursorGlobalPosition) : BinaryPacket
     {
         public long SkillId = skillId;
         public Vector2 PlayerPosition = playerPosition;

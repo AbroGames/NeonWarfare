@@ -70,6 +70,11 @@ public partial class ServerGame
         Network.SendToAllExclude(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
         //Отправляем всем инфу о характеристиках нового игрока
         Network.SendToAll(new ClientAllyProfile.SC_ChangeAllyProfilePacket(newPlayerPeerId, newPlayerProfile.MaxHp, newPlayerProfile.RegenHpSpeed, newPlayerProfile.MovementSpeed, newPlayerProfile.RotationSpeed));
+        //Отправляем игроку его скиллы
+        foreach (var kv in newPlayerProfile.SkillById)
+        {
+            Network.SendToClient(newPlayerPeerId, new ClientPlayerProfile.SC_ChangeSkillPlayerProfilePacket(kv.Key, kv.Value.SkillType, kv.Value.Cooldown));
+        }
         
         //У нового игрока создаем профили уже подключенных игроков
         foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(newPlayerPeerId))

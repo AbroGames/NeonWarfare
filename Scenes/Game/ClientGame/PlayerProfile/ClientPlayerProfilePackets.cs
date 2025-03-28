@@ -7,5 +7,12 @@ namespace NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 
 public partial class ClientPlayerProfile 
 {
-    //TODO Для пакетов изменения снаряжения и т.п. Создание самого ClientPlayerProfile находится в ClientGame
+    
+    [GamePacket]
+    public class SC_ChangeSkillPlayerProfilePacket(long skillId, string skillType, double cooldown) : BinaryPacket
+    {
+        public long SkillId = skillId;
+        public string SkillType = skillType;
+        public double Cooldown = cooldown;
+    }
 }

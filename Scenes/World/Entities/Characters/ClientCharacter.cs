@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
@@ -33,5 +34,10 @@ public partial class ClientCharacter : CharacterBody2D
         {
             Sprite.Modulate = color;
         }
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        Hp = Math.Min(Hp + delta * RegenHpSpeed, MaxHp);
     }
 }

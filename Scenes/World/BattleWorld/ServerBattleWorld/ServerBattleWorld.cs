@@ -58,9 +58,9 @@ public partial class ServerBattleWorld : ServerWorld
         }
     }
 
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
-        base._Process(delta);
+        base._PhysicsProcess(delta);
         
         EnemyWave.Update(delta);
         _enemySpawner.Update(delta);

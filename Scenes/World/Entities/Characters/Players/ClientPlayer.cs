@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Components;
+using NeonWarfare.Scripts.Utils.Cooldown;
 
 namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 
@@ -10,6 +12,9 @@ public partial class ClientPlayer : ClientAlly
 {
     
     public ClientPlayerProfile PlayerProfile { get; private set; }
+
+    public record ClientSkillInfo(ManualCooldown Cooldown, StringName ActionToActivate);
+    private Dictionary<long, ClientSkillInfo> _skillCooldownById = new();
 
     public void InitComponents()
     {
@@ -24,30 +29,26 @@ public partial class ClientPlayer : ClientAlly
     public void InitOnProfile(ClientPlayerProfile playerProfile)
     {
         base.InitOnProfile(playerProfile);
+        
+        foreach (var kv in playerProfile.SkillById)
+        {
+            _skillCooldownById.Add(kv.Key, new ClientSkillInfo(new ManualCooldown(kv.Value.Cooldown, true), kv.Value.ActionToActivate));
+        }
         PlayerProfile = playerProfile;
     }
     
     public override void _Process(double delta)
     {
         base._Process(delta);
-        
-        //TODO del after test
-        if (Input.IsActionJustReleased(Keys.AttackPrimary))
-        {
-            Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(0, Position, Rotation, GetGlobalMousePosition()));
-        }
-        if (Input.IsActionJustReleased(Keys.AttackSecondary))
-        {
-            Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(1, Position, Rotation, GetGlobalMousePosition()));
-        }
-        
-        /*TODO 
-        _shootCooldown.Update(delta);
 
-        if (Input.IsActionPressed(Keys.AttackPrimary) && _shootCooldown.IsCompleted)
+        foreach (var kv in _skillCooldownById)
         {
-            _shootCooldown.Restart();
-            Network.SendToServer(new ServerPlayer.CS_PlayerWantShootPacket(Position + Vector2.FromAngle(Rotation - Mathf.DegToRad(90)) * 40, Rotation));
-        }*/
+            kv.Value.Cooldown.Update(delta);
+            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted)
+            {
+                kv.Value.Cooldown.Restart();
+                Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(kv.Key, Position, Rotation, GetGlobalMousePosition()));
+            }
+        }
     }
 }

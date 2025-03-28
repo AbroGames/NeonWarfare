@@ -1,3 +1,4 @@
+using System.Linq;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scripts.KludgeBox.Networking;
@@ -13,6 +14,11 @@ public partial class ServerPlayer : ServerCharacter
         PlayerProfile = playerProfile;
         
         Color = playerProfile.Color;
+        foreach (var kv in playerProfile.SkillById)
+        {
+            AddSkill(kv.Key, kv.Value);
+        }
+        
         MaxHp = playerProfile.MaxHp;
         Hp = MaxHp;
         RegenHpSpeed = playerProfile.RegenHpSpeed;
