@@ -5,6 +5,7 @@ using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scenes.Screen;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.GameSettings;
@@ -111,5 +112,36 @@ public partial class ClientGame
 	public void OnChangeSettingsPacket(SC_ChangeSettingsPacket changeSettingsPacket)
 	{
 		GameSettings = GameSettings.FromPacket(changeSettingsPacket);
+	}
+
+	[EventListener(ListenerSide.Client)]
+	public void OnClientUnlockedAchievementBroadcastPacket(SC_ClientUnlockedAchievementBroadcastPacket packet)
+	{
+		var achievement = AchievementsList.GetAchievement(packet.AchievementId);
+		if (achievement is null)
+		{
+			Log.Warning($"Received achievement notification with non-existent ID: {packet.AchievementId}");
+			return;
+		}
+
+		ClientAllyProfile profile;
+		if (packet.UnlockingPeer == PlayerProfile.PeerId)
+		{
+			profile = PlayerProfile;
+		}
+		else
+		{
+			_allyProfilesByPeerId.TryGetValue(packet.UnlockingPeer, out profile);
+		}
+
+		if (profile is null)
+		{
+			Log.Warning($"Attempt to unlock achievement for peer with non-existent ID: {packet.UnlockingPeer}");
+			return;
+		}
+		
+		var msg = new ChatMessage($"[color={profile.Color.ToHtml()}]{profile.Name}[/color] has just unlocked the achievement: " +
+		                          $"[color={achievement.Color.ToHtml()}][lp]{achievement.Name}[rp][/color]", SenderInfo.System);
+		Hud.ChatContainer.ReceiveMessage(msg);
 	}
 }

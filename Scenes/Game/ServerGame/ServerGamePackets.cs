@@ -24,4 +24,10 @@ public partial class ServerGame
         public string Name = name;
         public Color Color = color;
     }
+    
+    [GamePacket]
+    public class CS_ClientUnlockedAchievementPacket(string achievementId) : BinaryPacket
+    {
+        public string AchievementId = achievementId;
+    }
 }

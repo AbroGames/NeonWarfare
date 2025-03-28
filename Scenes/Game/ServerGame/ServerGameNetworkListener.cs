@@ -134,4 +134,10 @@ public partial class ServerGame
     {
         Network.SendToClient(pingPacket.SenderId, new PingChecker.SC_PingPacket(pingPacket.PingId));
     }
+
+    [EventListener(ListenerSide.Server)]
+    public void OnAchievementPacket(CS_ClientUnlockedAchievementPacket achievementPacket)
+    {
+        Network.SendToAll(new ClientGame.ClientGame.SC_ClientUnlockedAchievementBroadcastPacket(achievementPacket.SenderId, achievementPacket.AchievementId));
+    }
 }

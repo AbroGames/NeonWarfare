@@ -62,4 +62,11 @@ public partial class ClientGame
         public bool ResurrectPlayerByEnemy = resurrectPlayerByEnemy;
         public double SkillCooldownFactorWhileDead = skillCooldownFactorWhileDead;
     }
+    
+    [GamePacket]
+    public class SC_ClientUnlockedAchievementBroadcastPacket(long unlockingPeer, string achievementId) : BinaryPacket
+    {
+        public long UnlockingPeer = unlockingPeer;
+        public string AchievementId = achievementId;
+    }
 }

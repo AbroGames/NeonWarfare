@@ -1,5 +1,8 @@
 ﻿using Godot;
+using NeonWarfare.Scenes.Game.ServerGame;
 using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Root.ClientRoot;
 
@@ -20,6 +23,11 @@ public partial class ClientRoot
         
         var achievement = AchievementsList.GetAchievement(achievementId);
         AchievementsOverlayLayer.ShowAchievement(achievement);
+
+        if (Game.IsValid())
+        {
+            Network.SendToServer(new ServerGame.CS_ClientUnlockedAchievementPacket(achievementId));
+        }
         
         if (dontSave)
             return;

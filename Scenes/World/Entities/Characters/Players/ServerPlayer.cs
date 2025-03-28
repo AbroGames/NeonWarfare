@@ -62,6 +62,6 @@ public partial class ServerPlayer : ServerCharacter
     protected override void OnDeath()
     {
         Network.SendToAll(new ClientAlly.SC_AllyDeadPacket(PlayerProfile.PeerId));
-        ServerRoot.Instance.Game.BroadcastMessage($"[color=red][lb]DED: [rb][/color] [color={PlayerProfile.Color.ToHtml()}]{PlayerProfile.Name}[/color] died.");
+        ServerRoot.Instance.Game.BroadcastMessage($"[color=red][lb]DED[rb][/color] [color={PlayerProfile.Color.ToHtml()}]{PlayerProfile.Name}[/color] died.");
     }
 }
