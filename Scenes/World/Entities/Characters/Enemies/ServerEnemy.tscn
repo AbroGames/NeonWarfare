@@ -22,4 +22,6 @@ shape = SubResource("CircleShape2D_7856p")
 shape = SubResource("CircleShape2D_mp1a7")
 
 [node name="RayCast" type="RayCast2D" parent="." index="2"]
-target_position = Vector2(0, -500)
+target_position = Vector2(0, -5000)
+collide_with_areas = true
+collide_with_bodies = false
