@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.Utils.Camera.Shifts;
 
 namespace NeonWarfare.Scripts.Utils.Camera;
@@ -79,7 +80,7 @@ public partial class Camera : Camera2D
 	
 	private void MoveCamera(double delta)
 	{
-		if (TargetNode is null) return;
+		if (TargetNode is null || !TargetNode.IsValid()) return;
         
 		TargetPosition = TargetNode.Position;
 		var availableMovement = (TargetPosition + PositionShift) - ActualPosition;
