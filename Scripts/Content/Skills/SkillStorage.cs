@@ -7,16 +7,11 @@ namespace NeonWarfare.Scripts.Content.Skills;
 
 public static class SkillStorage
 {
-    
-    
-    public enum SkillType
-    {
-        DefaultShot, Shotgun, DoubleShot, BurstShot, BurstDoubleShot //TODO create Skill classes, and to list and del this enum
-    }
 
     private static readonly IReadOnlyList<Skill> Skills = new List<Skill>
     {
-        new DefaultShotSkill()
+        new DefaultShotSkill(),
+        new ShotgunSkill()
     };
 
     private static readonly IReadOnlyDictionary<string, Skill> SkillMap = Skills.ToDictionary(skill => skill.SkillType, skill => skill);

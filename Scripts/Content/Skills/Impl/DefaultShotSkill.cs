@@ -23,7 +23,7 @@ public class DefaultShotSkill() : Skill("DefaultShot")
     {
         ServerShotAction shotAction = useInfo.World.CreateNetworkEntity<ServerShotAction>(ActionInfoStorage.GetServerScene(ActionType));
         long nid = shotAction.GetChild<NetworkEntityComponent>().Nid;
-        shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation); //TODO Сделать небольшое смещение на половину длины снаряда, чтобы он не спавнился в центре персонажа (или сделать смещенеи на половину character.sprite.size*character.sprite.scale)
+        shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation); //TODO Сделать небольшое смещение на половину длины снаряда, чтобы он не спавнился в центре персонажа (или сделать смещенеи на половину character.sprite.size*character.sprite.scale). И у shotgun аналогично
         shotAction.InitStats(
             damage: Damage*useInfo.DamageFactor, 
             speed: (float) (Speed*useInfo.SpeedFactor), 

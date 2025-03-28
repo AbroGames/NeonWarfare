@@ -36,6 +36,7 @@ public partial class ServerCharacter : CharacterBody2D
         
         //TODO del after test
         _skillById[0] = new SkillInfo("DefaultShot", 0, 1, 1 ,1);
+        _skillById[1] = new SkillInfo("Shotgun", 0, 1, 1 ,1);
     }
 
     public virtual void OnHit(double damage, ServerCharacter author, long authorPeerId) { }

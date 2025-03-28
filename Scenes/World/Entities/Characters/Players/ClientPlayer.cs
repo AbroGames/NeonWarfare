@@ -36,6 +36,10 @@ public partial class ClientPlayer : ClientAlly
         {
             Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(0, Position, Rotation, GetGlobalMousePosition()));
         }
+        if (Input.IsActionJustReleased(Keys.AttackSecondary))
+        {
+            Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(1, Position, Rotation, GetGlobalMousePosition()));
+        }
         
         /*TODO 
         _shootCooldown.Update(delta);
