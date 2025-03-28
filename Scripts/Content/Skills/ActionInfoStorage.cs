@@ -20,7 +20,7 @@ public static class ActionInfoStorage
         Shot
     }
     
-    private static readonly IReadOnlyDictionary<ActionType, ActionInfo> ActionInfoMap = new Dictionary<ActionType, ActionInfo>
+    private static readonly IReadOnlyDictionary<ActionType, ActionInfo> ActionInfoByType = new Dictionary<ActionType, ActionInfo>
     {
         { 
             ActionType.Shot, 
@@ -33,7 +33,7 @@ public static class ActionInfoStorage
     
     public static ActionInfo GetActionInfo(ActionType actionType)
     {
-        if (!ActionInfoMap.TryGetValue(actionType, out var actionInfo))
+        if (!ActionInfoByType.TryGetValue(actionType, out var actionInfo))
         {
             Log.Error($"Not found ActionInfo for unknown ActionType. ActionType = {actionType}");
         }

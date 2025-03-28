@@ -3,19 +3,26 @@ using Godot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Entities.Actions;
+using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class DefaultShotSkill() : Skill("DefaultShot")
+public class DefaultShotSkill() : Skill(SkillTypeConst)
 {
 
+    public const string SkillTypeConst = "DefaultShot";
+    
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
     private const double Speed = 2000;
-    private const double Range = 6000;
+    private const double Range = 4000;
     private const double Damage = 50;
+    
+    private const double EnemyCheckRange = 1500;
 
     private record PacketCustomParams(float Speed);
     
@@ -56,8 +63,8 @@ public class DefaultShotSkill() : Skill("DefaultShot")
         useInfo.World.AddChild(shotAction);
     }
 
-    public override void CheckEnemyUse()
+    public override bool CheckEnemyCanUse(ServerEnemy enemy)
     {
-        
+        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange);
     }
 }

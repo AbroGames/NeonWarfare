@@ -18,7 +18,7 @@ public static class EntityInfoStorage
         Wall, Border
     }
 
-    public static readonly IReadOnlyDictionary<StaticEntityType, StaticEntityInfo> StaticEntityInfoMap = new Dictionary<StaticEntityType, StaticEntityInfo>
+    public static readonly IReadOnlyDictionary<StaticEntityType, StaticEntityInfo> StaticEntityInfoByType = new Dictionary<StaticEntityType, StaticEntityInfo>
     {
         { StaticEntityType.Wall, new StaticEntityInfo(() => ClientRoot.Instance.PackedScenes.Wall, () => ServerRoot.Instance.PackedScenes.Wall) },
         { StaticEntityType.Border, new StaticEntityInfo(() => ClientRoot.Instance.PackedScenes.Wall, () => ServerRoot.Instance.PackedScenes.Wall) } 
@@ -26,7 +26,7 @@ public static class EntityInfoStorage
     
     public static StaticEntityInfo GetStaticEntityInfo(StaticEntityType staticEntityType)
     {
-        if (!StaticEntityInfoMap.TryGetValue(staticEntityType, out var staticEntityInfo))
+        if (!StaticEntityInfoByType.TryGetValue(staticEntityType, out var staticEntityInfo))
         {
             Log.Error($"Not found StaticEntityInfo for unknown StaticEntityType. StaticEntityType = {staticEntityType}");
         }

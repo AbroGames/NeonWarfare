@@ -14,13 +14,13 @@ public static class SkillStorage
         new ShotgunSkill()
     };
 
-    private static readonly IReadOnlyDictionary<string, Skill> SkillMap = Skills.ToDictionary(skill => skill.SkillType, skill => skill);
+    private static readonly IReadOnlyDictionary<string, Skill> SkillByType = Skills.ToDictionary(skill => skill.SkillType, skill => skill);
     
-    public static Skill GetSkill(string skillName)
+    public static Skill GetSkill(string skillType)
     {
-        if (!SkillMap.TryGetValue(skillName, out var skill))
+        if (!SkillByType.TryGetValue(skillType, out var skill))
         {
-            Log.Error($"Not found Skill for unknown SkillName. SkillName = {skillName}");
+            Log.Error($"Not found Skill for unknown SkillName. SkillType = {skillType}");
         }
         return skill;
     }

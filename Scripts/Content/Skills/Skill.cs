@@ -1,6 +1,9 @@
 using Godot;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Entities.Characters;
+using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
+using NeonWarfare.Scripts.KludgeBox;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 
 namespace NeonWarfare.Scripts.Content.Skills;
 
@@ -23,5 +26,18 @@ public abstract class Skill
     
     public virtual void OnServerUse(ServerSkillUseInfo useInfo) {}
     public virtual void OnClientUse(ClientSkillUseInfo useInfo) {}
-    public virtual void CheckEnemyUse() {}
+    public virtual bool CheckEnemyCanUse(ServerEnemy enemy) { return false; }
+
+    protected bool CheckEnemyRayCastAndDistToTarget(ServerEnemy enemy, double range)
+    {
+        if (range > enemy.RayCast.TargetPosition.Length())
+        {
+            Log.Warning($"Too many enemy range in skill. SkillType = {SkillType}, RayCast lenght = {enemy.RayCast.TargetPosition.Length()}, Skill range = {range}");
+        }
+        
+        Node2D target = enemy.GetChild<ServerEnemyTargetComponent>().Target;
+        return enemy.RayCast.GetCollider() == target &&
+               target != null &&
+               enemy.DistanceTo(target) < range;
+    }
 }

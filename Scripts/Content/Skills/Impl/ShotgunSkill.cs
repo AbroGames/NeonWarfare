@@ -5,6 +5,7 @@ using Godot;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Entities.Actions;
 using NeonWarfare.Scenes.World.Entities.Characters;
+using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
@@ -13,14 +14,18 @@ using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class ShotgunSkill() : Skill("Shotgun")
+public class ShotgunSkill() : Skill(SkillTypeConst)
 {
+    public const string SkillTypeConst = "Shotgun";
+    
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
     private const double Speed = 1500;
-    private const double Range = 2000;
+    private const double Range = 1500;
     private const double Damage = 15;
     private const int Count = 4;
     private const int Spread = 25; //degrees in one direction
+    
+    private const double EnemyCheckRange = 800;
 
     private record ShotInfo(long Nid, float Rotation);
     private record PacketCustomParams(float Speed, ShotInfo[] ShotInfos);
@@ -73,8 +78,8 @@ public class ShotgunSkill() : Skill("Shotgun")
         }
     }
 
-    public override void CheckEnemyUse()
+    public override bool CheckEnemyCanUse(ServerEnemy enemy)
     {
-        
+        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange);
     }
 }

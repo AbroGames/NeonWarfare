@@ -2,6 +2,7 @@ using Godot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.Utils.Components;
@@ -39,13 +40,28 @@ public partial class ServerEnemy : ServerCharacter
     public void InitStats(EnemyInfoStorage.EnemyInfo enemyInfo)
     {
         Color = enemyInfo.Color;
+        enemyInfo.Skills.ForEach(AddSkill);
+        
         MaxHp = enemyInfo.MaxHp;
         Hp = MaxHp;
         RegenHpSpeed = enemyInfo.RegenHpSpeed;
         MovementSpeed = enemyInfo.MovementSpeed;
         RotationSpeed = enemyInfo.RotationSpeed;
     }
-    
+
+    public override void _PhysicsProcess(double delta)
+    {
+        base._PhysicsProcess(delta);
+
+        foreach (var kv in SkillById)
+        {
+            if (SkillStorage.GetSkill(kv.Value.SkillInfo.SkillType).CheckEnemyCanUse(this))
+            {
+                TryUseSkill(kv.Key);
+            }
+        }
+    }
+
     public override void OnHit(double damage, ServerCharacter author, long authorPeerId)
     {
         base.OnHit(damage, author, authorPeerId);
@@ -56,8 +72,8 @@ public partial class ServerEnemy : ServerCharacter
         TakeDamage(damage, author);
     }
     
-    public void UseSkill(long skillId)
+    public void TryUseSkill(long skillId)
     {
-        UseSkill(skillId, Position, Rotation, GetGlobalMousePosition(), -1);
+        TryUseSkill(skillId, Position, Rotation, GetGlobalMousePosition(), -1);
     }
 }
