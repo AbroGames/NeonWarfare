@@ -141,7 +141,7 @@ public partial class ClientGame
 		}
 		
 		var msg = new ChatMessage($"[color={profile.Color.ToHtml()}]{profile.Name}[/color] has just unlocked the achievement: " +
-		                          $"[color={achievement.Color.ToHtml()}][lp]{achievement.Name}[rp][/color]", SenderInfo.System);
+		                          $"[color={achievement.Color.ToHtml()}][lb]{achievement.Name}[rb][/color]", SenderInfo.System);
 		Hud.ChatContainer.ReceiveMessage(msg);
 	}
 }
