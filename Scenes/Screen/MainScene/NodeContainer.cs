@@ -17,11 +17,12 @@ public partial class NodeContainer : Node
 		}
 	}
 
-	public void ChangeStoredNode(Node newStoredNode)
+	public Node ChangeStoredNode(Node newStoredNode)
 	{
 		_currentStoredNode?.QueueFree();
 		_currentStoredNode = newStoredNode;
 		AddChild(newStoredNode);
+		return newStoredNode;
 	}
 
 	public void ClearStoredNode()

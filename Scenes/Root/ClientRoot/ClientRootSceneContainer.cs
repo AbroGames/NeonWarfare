@@ -1,5 +1,7 @@
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
+using NeonWarfare.Scenes.Screen.MainMenuInterfaces;
 using NeonWarfare.Scenes.Screen.MainScene;
 using NeonWarfare.Scripts.KludgeBox.Core;
 
@@ -48,7 +50,8 @@ public partial class ClientRoot
 	
 	public void CreateMainMenu()
 	{
-		var mainMenu = PackedScenes.MainMenuPackedScene;
-		SetMainScene(mainMenu.Instantiate<MainMenuMainScene>());
+		var mainMenuScene = PackedScenes.MainMenuPackedScene;
+		var mainMenu = mainMenuScene.Instantiate<MainMenuMainScene>();
+		SetMainScene(mainMenu);
 	}
 }

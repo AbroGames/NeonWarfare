@@ -71,10 +71,17 @@ public partial class ClientGame
     }
     
     [GamePacket]
-    public class SC_UpdateReadyClientsList(long[] readyClients) : BinaryPacket
+    public class SC_UpdateReadyClientsListPacket(long[] readyClients) : BinaryPacket
     {
         public long[] ReadyClients = readyClients;
         
-        public SC_UpdateReadyClientsList() : this([]){}
+        public SC_UpdateReadyClientsListPacket() : this([]){}
+    }
+    
+    [GamePacket]
+    public class SC_DisconnectedFromServerPacket(string message, string reasonDescription) : BinaryPacket
+    {
+        public string ReasonDescription = reasonDescription;
+        public string Message = message;
     }
 }

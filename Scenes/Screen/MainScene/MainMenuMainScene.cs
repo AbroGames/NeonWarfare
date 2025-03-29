@@ -16,8 +16,8 @@ public partial class MainMenuMainScene : Node2D
 		NotNullChecker.CheckProperties(this);
 	}
 
-	public void ChangeMenu(PackedScene newMenu)
+	public Node ChangeMenu(PackedScene newMenu)
 	{
-		MenuContainer.ChangeStoredNode(newMenu.Instantiate());
+		return MenuContainer.ChangeStoredNode(newMenu.Instantiate());
 	}
 }

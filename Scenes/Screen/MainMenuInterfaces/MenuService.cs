@@ -5,8 +5,8 @@ namespace NeonWarfare.Scenes.Screen.MainMenuInterfaces;
 
 public static class MenuService
 {
-    public static void ChangeMenuFromButtonClick(PackedScene menuChangeTo)
+    public static Node ChangeMenuFromButtonClick(PackedScene menuChangeTo)
     {
-        ClientRoot.Instance.MainMenu.ChangeMenu(menuChangeTo);
+        return ClientRoot.Instance.MainMenu.ChangeMenu(menuChangeTo);
     }
 }

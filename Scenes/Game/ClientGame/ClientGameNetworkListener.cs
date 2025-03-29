@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Screen;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
+using NeonWarfare.Scenes.Screen.MainMenuInterfaces;
 using NeonWarfare.Scenes.Screen.SafeHud;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.GameSettings;
@@ -18,6 +19,14 @@ namespace NeonWarfare.Scenes.Game.ClientGame;
 
 public partial class ClientGame
 {
+	[EventListener(ListenerSide.Server)]
+	public void OnServerDisconnectedEvent(ServerDisconnectedEvent peerConnectedEvent)
+	{
+		if (CurrentGameState is GameState.Disconnecting or GameState.None)
+			return;
+		
+		ExitToDisconnectedScreen(new SC_DisconnectedFromServerPacket("Disconnected from server", "Unknown reason"));
+	}
 	
 	/*
 	 * Сразу после подключения к серверу запускаем систему пинга и отправляем пакет с информацией о себе.
@@ -29,6 +38,7 @@ public partial class ClientGame
 		Log.Info($"Connected to server. My peer id = {Network.Multiplayer.GetUniqueId()}");
 		
 		Settings playerSettings = ClientRoot.Instance.Settings;
+		CurrentGameState = GameState.Connecting;
 		Network.SendToServer(new ServerGame.ServerGame.CS_InitPlayerProfilePacket(playerSettings.PlayerName, playerSettings.PlayerColor));
 		PingChecker.Start();
 	}
@@ -40,6 +50,7 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnAddPlayerProfilePacket(SC_AddPlayerProfilePacket addPlayerProfilePacket)
 	{
+		CurrentGameState = GameState.SynchronizingStates;
 		Log.Info($"Create PlayerProfile. Peer id = {addPlayerProfilePacket.PeerId}");
 		
 		AddPlayerProfile(addPlayerProfilePacket.PeerId);
@@ -92,6 +103,7 @@ public partial class ClientGame
 		if (changeLoadingScreenPacket.LoadingScreenType == LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE)
 		{
 			ClientRoot.Instance.UnlockAchievement(AchievementIds.NopeAchievement);
+			CurrentGameState = GameState.WaitingForBattleEnd;
 		}
 
 		ClientRoot.Instance.SetLoadingScreen(changeLoadingScreenPacket.LoadingScreenType);
@@ -103,6 +115,7 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnClearLoadingScreenPacket(SC_ClearLoadingScreenPacket clearLoadingScreenPacket)
 	{
+		CurrentGameState = GameState.Playing;
 		ClientRoot.Instance.ClearLoadingScreen();
 	}
 	
@@ -147,11 +160,18 @@ public partial class ClientGame
 	}
 
 	[EventListener(ListenerSide.Client)]
-	public void OnUpdateReadyClientsList(SC_UpdateReadyClientsList updateReadyClientsList)
+	public void OnUpdateReadyClientsList(SC_UpdateReadyClientsListPacket updateReadyClientsListPacket)
 	{
 		if (Hud is not SafeHud safeHud)
 			return;
 		
-		safeHud.ReadyPlayersList.RebuildReadyPlayersList(updateReadyClientsList.ReadyClients);
+		safeHud.ReadyPlayersList.RebuildReadyPlayersList(updateReadyClientsListPacket.ReadyClients);
+	}
+
+	[EventListener(ListenerSide.Client)]
+	public void OnDisconnectedFromServer(SC_DisconnectedFromServerPacket disconnectPacket)
+	{
+		CurrentGameState = GameState.Disconnecting;
+		ExitToDisconnectedScreen(disconnectPacket);
 	}
 }

@@ -38,6 +38,7 @@ public partial class ClientPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene SoundSettingsMenu { get; private set; }
     [Export] [NotNull] public PackedScene ConnectToServerMenu { get; private set; }
     [Export] [NotNull] public PackedScene CreateServerMenu { get; private set; }
+    [Export] [NotNull] public PackedScene DisconnectedScreen { get; private set; }
     
     [Export] [NotNull] public PackedScene LoadingScreenCanvas { get; private set; }
     

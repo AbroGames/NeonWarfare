@@ -11,6 +11,7 @@ using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Game.ServerGame;
@@ -37,9 +38,17 @@ public partial class ServerGame
     public void OnPeerDisconnectedEvent(PeerDisconnectedEvent peerDisconnectedEvent)
     {
         Log.Info($"Client disconnected from server. Peer id = {peerDisconnectedEvent.Id}");
-        ServerPlayer disconnectedPlayer = World.PlayersByPeerId[peerDisconnectedEvent.Id];
-        disconnectedPlayer.QueueFree();
-        BroadcastMessage($"{disconnectedPlayer.PlayerProfile.Name} disconnected.");
+        if (!World.PlayersByPeerId.TryGetValue(peerDisconnectedEvent.Id, out ServerPlayer disconnectedPlayer))
+        {
+            RemovePlayerProfile(peerDisconnectedEvent.Id);
+            return;
+        }
+        
+        if (disconnectedPlayer.IsValid())
+        {
+            disconnectedPlayer.QueueFree();
+            BroadcastMessage($"{disconnectedPlayer.PlayerProfile.Name} disconnected.");
+        }
         
         RemovePlayerProfile(peerDisconnectedEvent.Id);
         Network.SendToAll(new ClientGame.ClientGame.SC_RemoveAllyProfilePacket(peerDisconnectedEvent.Id)); //Информацию об отключении отправляем всем, т.к. отключенный игрок уже отключен.
@@ -63,6 +72,19 @@ public partial class ServerGame
         long newPlayerPeerId = initPlayerProfilePacket.SenderId;
         ServerPlayerProfile newPlayerProfile = PlayerProfilesByPeerId[newPlayerPeerId];
 
+        if (PlayerProfiles.Any(existingPlayer => existingPlayer.Name == initPlayerProfilePacket.Name))
+        {
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_DisconnectedFromServerPacket("Unable to connect to the server", "Player with this name already connected."));
+            Log.Warning($"Player with name '{initPlayerProfilePacket.Name}' just had tried to connect, while another player with this name is already connected.");
+
+            var timer = GetTree().CreateTimer(0.1, ignoreTimeScale: true);
+            timer.Timeout += () =>
+            {
+                Network.Api.DisconnectPeer((int)newPlayerPeerId);
+            };
+            return;
+        }
+
         newPlayerProfile.Name = initPlayerProfilePacket.Name;
         newPlayerProfile.Color = initPlayerProfilePacket.Color;
         
@@ -81,7 +103,8 @@ public partial class ServerGame
         }
         
         //У нового игрока создаем профили уже подключенных игроков
-        foreach (ServerPlayerProfile profile in GetPlayerProfilesExcluding(newPlayerPeerId))
+        var profiles = GetPlayerProfilesExcluding(newPlayerPeerId);
+        foreach (ServerPlayerProfile profile in profiles)
         {
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(profile.PeerId, profile.Name, profile.Color));
             Network.SendToClient(newPlayerPeerId, new ClientAllyProfile.SC_ChangeAllyProfilePacket(profile.PeerId, profile.MaxHp, profile.RegenHpSpeed, profile.MovementSpeed, profile.RotationSpeed));
@@ -102,7 +125,7 @@ public partial class ServerGame
             }
             
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
-            Network.SendToAll(new ClientGame.ClientGame.SC_UpdateReadyClientsList(((ServerSafeWorld)World).ReadyClients.ToArray()));
+            Network.SendToAll(new ClientGame.ClientGame.SC_UpdateReadyClientsListPacket(((ServerSafeWorld)World).ReadyClients.ToArray()));
         } 
         else if (World.GetServerWorldType() == WorldInfoStorage.WorldType.Battle)
         {
@@ -149,7 +172,7 @@ public partial class ServerGame
             return;
         }
         
-        Network.SendToAll(new ClientGame.ClientGame.SC_UpdateReadyClientsList(safeWorld.ReadyClients.ToArray()));
+        Network.SendToAll(new ClientGame.ClientGame.SC_UpdateReadyClientsListPacket(safeWorld.ReadyClients.ToArray()));
     }
     
     [EventListener(ListenerSide.Server)]

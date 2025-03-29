@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=40 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://cdm4naiiirayl" path="res://Scenes/Screen/Hud/SafeHud/NewSafeHud.tscn" id="18_m3tcb"]
 [ext_resource type="PackedScene" uid="uid://r5m6oi6tl8bm" path="res://Scenes/Screen/Hud/BattleHud/NewBattleHud.tscn" id="19_2bbbp"]
 [ext_resource type="PackedScene" uid="uid://d2qm2kk0flcrl" path="res://Scenes/Screen/Components/Overlay/Overlay.tscn" id="20_2s2nn"]
+[ext_resource type="PackedScene" uid="uid://f3rrmnc1krch" path="res://Scenes/Screen/MainMenuInterfaces/DisconnectedScreenInterface/DisconnectedScreen.tscn" id="20_rllg0"]
 [ext_resource type="PackedScene" uid="uid://cra1y5dubl2eb" path="res://Scenes/Screen/Components/Overlay/HitOverlay.tscn" id="21_c2w5t"]
 [ext_resource type="PackedScene" uid="uid://cr1rdhtrdpo7j" path="res://Scenes/Screen/Hud/Icon.tscn" id="22_qkx4i"]
 [ext_resource type="PackedScene" uid="uid://djpq1rixw27hn" path="res://Scripts/Utils/Background/Background.tscn" id="24_o4x2b"]
@@ -59,6 +60,7 @@ GraphicSettingsMenu = ExtResource("13_sh88y")
 SoundSettingsMenu = ExtResource("14_n3rfo")
 ConnectToServerMenu = ExtResource("15_1x6bd")
 CreateServerMenu = ExtResource("16_r8vo5")
+DisconnectedScreen = ExtResource("20_rllg0")
 LoadingScreenCanvas = ExtResource("17_rgedi")
 SafeHud = ExtResource("18_m3tcb")
 BattleHud = ExtResource("19_2bbbp")
