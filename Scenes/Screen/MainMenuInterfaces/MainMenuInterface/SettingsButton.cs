@@ -9,9 +9,17 @@ public partial class SettingsButton : Button
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
-        Pressed += () =>
+        if (!ClientRoot.Instance.CmdParams.IsHelper)
         {
-            MenuService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.SettingsMenu);
-        };
+            Pressed += () =>
+            {
+                MenuService.ChangeMenuFromButtonClick(ClientRoot.Instance.PackedScenes.SettingsMenu);
+            };
+        }
+        else
+        {
+            Disabled = true;
+            TooltipText = "Settings menu are not available in helper mode";
+        }
     }
 }

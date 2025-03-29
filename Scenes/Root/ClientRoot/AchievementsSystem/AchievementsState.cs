@@ -27,6 +27,11 @@ public class AchievementsState
 
     public void Save()
     {
+        if (ClientRoot.Instance.CmdParams.IsHelper)
+        {
+            return;
+        }
+        
         using var dataFile = FileAccess.Open($"user://{AchievementsDataFile}", FileAccess.ModeFlags.Write);
         try
         {
