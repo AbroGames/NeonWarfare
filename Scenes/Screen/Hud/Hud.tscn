@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://c7ag8o3ynyuyj"]
+[gd_scene load_steps=18 format=3 uid="uid://c7ag8o3ynyuyj"]
 
 [ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="1_er04k"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_kmqq8"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="3_61jvx"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/DeathOverlay.cs" id="4_3x15c"]
 [ext_resource type="Shader" path="res://Assets/Shaders/GrayscaleFilter.gdshader" id="4_vfln8"]
+[ext_resource type="Script" path="res://Scenes/Screen/Hud/PlayersList.cs" id="6_d3fxf"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/ChatContainer.cs" id="6_dfdpx"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/MessagesContainer.cs" id="7_xllyd"]
 [ext_resource type="PackedScene" uid="uid://depp3d71j4ket" path="res://Scenes/Screen/Hud/Message.tscn" id="8_21jhe"]
@@ -40,7 +41,9 @@ gradient = SubResource("Gradient_xrg5d")
 fill = 2
 fill_from = Vector2(0.5, 0.5)
 
-[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "DebugContainer", "Fps", "Tps", "SystemInfo", "SkillsContainer", "DeathOverlay", "DamageOverlay", "ChatContainer")]
+[sub_resource type="LabelSettings" id="LabelSettings_q6qo3"]
+
+[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "DebugContainer", "Fps", "Tps", "SystemInfo", "SkillsContainer", "DeathOverlay", "DamageOverlay", "PlayersList", "ChatContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,6 +59,7 @@ SystemInfo = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/S
 SkillsContainer = NodePath("MarginContainer/SkillsContainer")
 DeathOverlay = NodePath("DeathOverlay")
 DamageOverlay = NodePath("DamageOverlay")
+PlayersList = NodePath("PlayersList")
 ChatContainer = NodePath("ChatContainer")
 
 [node name="DamageOverlay" type="TextureRect" parent="."]
@@ -155,6 +159,60 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_tfqyn")
+
+[node name="PlayersList" type="Control" parent="." node_paths=PackedStringArray("_serverNameLabel", "_playersListContainer")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_d3fxf")
+_serverNameLabel = NodePath("MarginContainer/MainLayout/MarginContainer/ServerName")
+_playersListContainer = NodePath("MarginContainer/MainLayout/MarginContainer/PlayersList")
+
+[node name="MarginContainer" type="MarginContainer" parent="PlayersList"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -21.5
+offset_right = 150.0
+offset_bottom = 21.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayersListBackground" type="ColorRect" parent="PlayersList/MarginContainer"]
+layout_mode = 2
+color = Color(0.114897, 0.114897, 0.114897, 0.894118)
+
+[node name="MainLayout" type="VBoxContainer" parent="PlayersList/MarginContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PlayersList/MarginContainer/MainLayout"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ServerName" type="Label" parent="PlayersList/MarginContainer/MainLayout/MarginContainer"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_q6qo3")
+horizontal_alignment = 1
+
+[node name="PlayersList" type="VBoxContainer" parent="PlayersList/MarginContainer/MainLayout/MarginContainer"]
+layout_mode = 2
 
 [node name="ChatContainer" type="MarginContainer" parent="." node_paths=PackedStringArray("MessagesContainer", "ScrollContainer", "MessageInputBox", "InputSpacePlaceholder")]
 custom_minimum_size = Vector2(500, 0)

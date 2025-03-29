@@ -37,6 +37,7 @@ public partial class Hud : Control
 	[ExportGroup("General")]
 	[Export] [NotNull] public DeathOverlay DeathOverlay { get; private set; }
 	[Export] [NotNull] public Control DamageOverlay { get; private set; }
+	[Export] [NotNull] public PlayersList PlayersList { get; private set; }
 	[Export] [NotNull] public ChatContainer ChatContainer { get; private set; }
 	
 	
@@ -95,6 +96,17 @@ public partial class Hud : Control
 		if (@event.IsActionPressed(Keys.Debug))
 		{
 			DebugContainer.Visible = !DebugContainer.Visible;
+		}
+		
+		if (@event.IsActionPressed(Keys.ListPlayers))
+		{
+			PlayersList.RebuildPlayersList();
+			PlayersList.Visible = true;
+		}
+
+		if (@event.IsActionReleased(Keys.ListPlayers))
+		{
+			PlayersList.Visible = false;
 		}
 	}
 
