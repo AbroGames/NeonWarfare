@@ -87,11 +87,12 @@ public partial class ServerGame
 
         newPlayerProfile.Name = initPlayerProfilePacket.Name;
         newPlayerProfile.Color = initPlayerProfilePacket.Color;
+        newPlayerProfile.IsAdmin = ServerRoot.Instance.CmdParams.Admin == newPlayerProfile.Name;
         
         //Отправляем новому игроку настройки мира
         Network.SendToClient(newPlayerPeerId, GameSettings.ToPacket());
         //Отправляем новому игроку его PlayerProfile
-        Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddPlayerProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
+        Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddPlayerProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color, newPlayerProfile.IsAdmin));
         //Отправляем союзникам PlayerProfile нового игрока
         Network.SendToAllExclude(newPlayerPeerId, new ClientGame.ClientGame.SC_AddAllyProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
         //Отправляем всем инфу о характеристиках нового игрока

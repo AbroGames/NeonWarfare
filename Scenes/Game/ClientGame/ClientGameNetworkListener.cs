@@ -56,6 +56,7 @@ public partial class ClientGame
 		AddPlayerProfile(addPlayerProfilePacket.PeerId);
 		PlayerProfile.Name = addPlayerProfilePacket.Name;
 		PlayerProfile.Color = addPlayerProfilePacket.Color;
+		PlayerProfile.IsAdmin = addPlayerProfilePacket.IsAdmin;
 	}
 	
 	/*

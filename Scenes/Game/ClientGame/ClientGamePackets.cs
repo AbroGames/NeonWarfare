@@ -42,11 +42,12 @@ public partial class ClientGame
     }
     
     [GamePacket]
-    public class SC_AddPlayerProfilePacket(long peerId, string name, Color color) : BinaryPacket
+    public class SC_AddPlayerProfilePacket(long peerId, string name, Color color, bool isAdmin) : BinaryPacket
     {
         public long PeerId = peerId;
         public string Name = name;
         public Color Color = color;
+        public bool IsAdmin = isAdmin;
     }
     
     [GamePacket]
