@@ -13,6 +13,7 @@ public partial class ReadyPlayersListContainer : MarginContainer
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
+        RebuildReadyPlayersList([]);
     }
 
     public void RebuildReadyPlayersList(long[] readyClients)
