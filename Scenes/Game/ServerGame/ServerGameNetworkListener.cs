@@ -198,4 +198,9 @@ public partial class ServerGame
         Network.SendToAll(new ClientGame.ClientGame.SC_ClientUnlockedAchievementBroadcastPacket(achievementPacket.SenderId, achievementPacket.AchievementId));
     }
     
+    [EventListener(ListenerSide.Server)]
+    public void OnClientRequestedSelfResurrection(CS_ClientRequestedSelfResurrection selfResurrectionPacket)
+    {
+        ServerRoot.Instance.Game.World.PlayersByPeerId[selfResurrectionPacket.SenderId].OnResurrectRequest(100);
+    }
 }

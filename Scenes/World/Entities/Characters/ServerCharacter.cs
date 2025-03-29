@@ -113,6 +113,15 @@ public partial class ServerCharacter : CharacterBody2D
         Hp = realHeal;
         author.AsResurrector(this);
     }
+    
+    public void Resurrect(double hp)
+    {
+        double realHeal = IsDead ? Math.Min(hp, MaxHp) : 0;
+        Network.SendToAll(new ClientCharacter.SC_ResurrectCharacterPacket(Nid, 1, ResurrectShotSkill.SkillTypeConst, realHeal));
+        if (!IsDead) return;
+        IsDead = false;
+        Hp = realHeal;
+    }
 
     protected virtual void AsKiller(ServerCharacter dead) { }
     protected virtual void AsResurrector(ServerCharacter dead) { }

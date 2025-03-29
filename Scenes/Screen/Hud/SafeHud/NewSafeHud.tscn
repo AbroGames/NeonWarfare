@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cdm4naiiirayl"]
+[gd_scene load_steps=11 format=3 uid="uid://cdm4naiiirayl"]
 
 [ext_resource type="PackedScene" uid="uid://c7ag8o3ynyuyj" path="res://Scenes/Screen/Hud/Hud.tscn" id="1_l0ogl"]
 [ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ToBattleButton.cs" id="2_7g6de"]
@@ -15,10 +15,18 @@ font = ExtResource("4_kqdnk")
 font_size = 14
 font_color = Color(0.34902, 0.34902, 0.34902, 1)
 
-[node name="NewSafeHud" node_paths=PackedStringArray("ReadyPlayersList", "GoToBattleButton") instance=ExtResource("1_l0ogl")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f1cwi"]
+bg_color = Color(7.61067e-07, 0.169583, 0.0133122, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="NewSafeHud" node_paths=PackedStringArray("ReadyPlayersList", "GoToBattleButton", "SelfResurrectButton") instance=ExtResource("1_l0ogl")]
 script = ExtResource("2_enfq4")
 ReadyPlayersList = NodePath("MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/HBoxContainer/ReadyPlayersListContainer")
 GoToBattleButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/HBoxContainer/ButtonsContainer/ToBattleButton")
+SelfResurrectButton = NodePath("SelfResurrect/PositioningContainer/SelfResurrectButton")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo" index="0"]
 layout_mode = 2
@@ -78,11 +86,46 @@ text = "Players ready to battle:"
 [node name="PlayersContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/HBoxContainer/ReadyPlayersListContainer/MarginContainer/VerticalLayout" index="1"]
 layout_mode = 2
 
-[node name="RightUpInfo" parent="MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-visible = true
-
 [node name="FPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="0"]
 label_settings = SubResource("LabelSettings_l73d1")
 
 [node name="TPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="1"]
 label_settings = SubResource("LabelSettings_l73d1")
+
+[node name="PlayersList" parent="." index="3"]
+mouse_filter = 2
+
+[node name="PlayersListBackground" parent="PlayersList/MarginContainer" index="0"]
+color = Color(0.114897, 0.114897, 0.114897, 0.894118)
+
+[node name="SelfResurrect" type="Control" parent="." index="4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PositioningContainer" type="VBoxContainer" parent="SelfResurrect" index="0"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="SelfResurrectButton" type="Button" parent="SelfResurrect/PositioningContainer" index="0"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_f1cwi")
+text = "Resurrect"
+
+[node name="Control" type="Control" parent="SelfResurrect/PositioningContainer" index="1"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+mouse_filter = 2

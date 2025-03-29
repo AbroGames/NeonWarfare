@@ -36,4 +36,7 @@ public partial class ServerGame
     {
         public string AchievementId = achievementId;
     }
+
+    [GamePacket]
+    public class CS_ClientRequestedSelfResurrection : BinaryPacket;
 }

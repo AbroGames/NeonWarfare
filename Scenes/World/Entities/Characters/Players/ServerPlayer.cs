@@ -59,6 +59,13 @@ public partial class ServerPlayer : ServerCharacter
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, heal)); //TODO переделать так, чтобы в ServerPlayer можно было вызвать Heal внутри Resurrect и пакет бы сам отправился (+TODO вверху)
     }
 
+    public void OnResurrectRequest(double heal)
+    {
+        Resurrect(heal);
+        Network.SendToAll(new ClientAlly.SC_AllyResurrectionPacket(PlayerProfile.PeerId));
+        Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, heal)); //TODO переделать так, чтобы в ServerPlayer можно было вызвать Heal внутри Resurrect и пакет бы сам отправился (+TODO вверху)
+    }
+
     protected override void OnDeath()
     {
         Network.SendToAll(new ClientAlly.SC_AllyDeadPacket(PlayerProfile.PeerId));
