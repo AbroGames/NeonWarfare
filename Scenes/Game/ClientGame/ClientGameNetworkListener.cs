@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scenes.Screen;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
+using NeonWarfare.Scenes.Screen.SafeHud;
 using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.GameSettings;
 using NeonWarfare.Scripts.KludgeBox;
@@ -143,5 +144,14 @@ public partial class ClientGame
 		var msg = new ChatMessage($"[color={profile.Color.ToHtml()}]{profile.Name}[/color] has just unlocked the achievement: " +
 		                          $"[color={achievement.Color.ToHtml()}][hint={achievement.Description}][lb]{achievement.Name}[rb][/hint][/color]", SenderInfo.System);
 		Hud.ChatContainer.ReceiveMessage(msg);
+	}
+
+	[EventListener(ListenerSide.Client)]
+	public void OnUpdateReadyClientsList(SC_UpdateReadyClientsList updateReadyClientsList)
+	{
+		if (Hud is not SafeHud safeHud)
+			return;
+		
+		safeHud.ReadyPlayersList.RebuildReadyPlayersList(updateReadyClientsList.ReadyClients);
 	}
 }

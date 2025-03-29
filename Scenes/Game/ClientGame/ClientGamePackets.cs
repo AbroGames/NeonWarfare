@@ -69,4 +69,12 @@ public partial class ClientGame
         public long UnlockingPeer = unlockingPeer;
         public string AchievementId = achievementId;
     }
+    
+    [GamePacket]
+    public class SC_UpdateReadyClientsList(long[] readyClients) : BinaryPacket
+    {
+        public long[] ReadyClients = readyClients;
+        
+        public SC_UpdateReadyClientsList() : this([]){}
+    }
 }

@@ -28,6 +28,7 @@ public static class Keys
     public static readonly StringName Enter = "KeyEnter";
     public static readonly StringName Cancel = "KeyCancel";
     public static readonly StringName Debug = "KeyDebug";
+    public static readonly StringName ListPlayers = "KeyListPlayers";
     public static readonly StringName UiUp = "ui_up";
     public static readonly StringName UiDown = "ui_down";
     public static readonly StringName UiLeft = "ui_left";

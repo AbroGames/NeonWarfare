@@ -102,6 +102,7 @@ public partial class ServerGame
             }
             
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
+            Network.SendToAll(new ClientGame.ClientGame.SC_UpdateReadyClientsList(((ServerSafeWorld)World).ReadyClients.ToArray()));
         } 
         else if (World.GetServerWorldType() == WorldInfoStorage.WorldType.Battle)
         {
@@ -122,8 +123,40 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnWantToBattlePacket(CS_WantToBattlePacket wantToBattlePacket) 
     {
-        ServerBattleWorld battleWorld = ServerRoot.Instance.PackedScenes.BattleWorld.Instantiate<ServerBattleWorld>();
-        ChangeAndSendMainScene(battleWorld);
+        if (World is not ServerSafeWorld safeWorld)
+        {
+            return;
+        }
+
+        string messageReadyPart;
+        if (wantToBattlePacket.WantToBattle)
+        {
+            safeWorld.ReadyClients.Add(wantToBattlePacket.SenderId);
+            messageReadyPart = $"[color=green]READY[/color]";
+        }
+        else
+        {
+            safeWorld.ReadyClients.Remove(wantToBattlePacket.SenderId);
+            messageReadyPart = $"[color=red]NOT READY[/color]";
+        }
+
+        var player = PlayerProfilesByPeerId[wantToBattlePacket.SenderId];
+        BroadcastMessage($"[color={player.Color.ToHtml()}]{player.Name}[/color] are {messageReadyPart} to battle.");
+
+        if (safeWorld.ReadyClients.Count == PlayerProfiles.Count())
+        {
+            GoToBattleWorld();
+            return;
+        }
+        
+        Network.SendToAll(new ClientGame.ClientGame.SC_UpdateReadyClientsList(safeWorld.ReadyClients.ToArray()));
+    }
+    
+    [EventListener(ListenerSide.Server)]
+    public void OnAdminGoToBattlePacket(CS_AdminGoToBattlePacket wantToBattlePacket) 
+    {
+        if(PlayerProfilesByPeerId[wantToBattlePacket.SenderId].IsAdmin)
+            GoToBattleWorld();
     }
 
     /*
@@ -140,4 +173,5 @@ public partial class ServerGame
     {
         Network.SendToAll(new ClientGame.ClientGame.SC_ClientUnlockedAchievementBroadcastPacket(achievementPacket.SenderId, achievementPacket.AchievementId));
     }
+    
 }

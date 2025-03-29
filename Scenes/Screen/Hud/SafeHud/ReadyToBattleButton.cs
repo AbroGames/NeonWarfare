@@ -4,13 +4,13 @@ using NeonWarfare.Scripts.KludgeBox.Networking;
 
 namespace NeonWarfare.Scenes.Screen.SafeHud;
 
-public partial class ToBattleButton : Button
+public partial class ReadyToBattleButton : Button
 {
     public override void _Ready()
     {
-        Pressed += () =>
+        Toggled += (doWant) =>
         {
-            Network.SendToServer(new ServerGame.CS_AdminGoToBattlePacket());
+            Network.SendToServer(new ServerGame.CS_WantToBattlePacket(doWant));
         };
     }
 

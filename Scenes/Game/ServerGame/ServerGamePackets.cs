@@ -6,9 +6,15 @@ namespace NeonWarfare.Scenes.Game.ServerGame;
 
 public partial class ServerGame
 {
+
+    [GamePacket]
+    public class CS_WantToBattlePacket(bool want) : BinaryPacket
+    {
+        public bool WantToBattle = want;
+    }
     
     [GamePacket]
-    public class CS_WantToBattlePacket : BinaryPacket;
+    public class CS_AdminGoToBattlePacket : BinaryPacket;
     
     [GamePacket]
     public class CS_PingPacket(long pingId) : BinaryPacket
