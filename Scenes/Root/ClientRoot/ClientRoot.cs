@@ -42,7 +42,18 @@ public partial class ClientRoot : Node2D
 		CmdParams = ClientParams.GetFromCmd();
 
 		Settings = SettingsService.Load();
-		Settings.Changed += ApplySettings;
+
+		if (!CmdParams.IsHelper)
+		{
+			Settings.Changed += ApplySettings;
+		}
+		else
+		{
+			Settings.PlayerName = $"(HELPER) {Settings.PlayerName}";
+			Settings.PlayerColor = Settings.PlayerColor.Inverted();
+			GetTree().Root.Title = $"[HELPER] {GetTree().Root.Title}";
+		}
+		
 		if (Settings.MaximizeOnStart)
 		{
 			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);

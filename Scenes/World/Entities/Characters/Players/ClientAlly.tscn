@@ -16,7 +16,8 @@ shader_parameter/grayscaleFactor = 0.0
 resource_local_to_scene = true
 radius = 18.0
 
-[sub_resource type="LabelSettings" id="LabelSettings_sgnoa"]
+[sub_resource type="LabelSettings" id="LabelSettings_ghgue"]
+resource_local_to_scene = true
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
@@ -47,4 +48,4 @@ offset_bottom = -37.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "AYAYOYA"
-label_settings = SubResource("LabelSettings_sgnoa")
+label_settings = SubResource("LabelSettings_ghgue")
