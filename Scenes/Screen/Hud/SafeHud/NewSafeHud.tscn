@@ -37,6 +37,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 
 [node name="ToBattleButton" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/LeftUpInfo/HBoxContainer/ButtonsContainer" index="0"]
+visible = false
 modulate = Color(1, 0, 0, 1)
 custom_minimum_size = Vector2(128, 48)
 layout_mode = 2
