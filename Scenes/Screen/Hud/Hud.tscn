@@ -161,6 +161,7 @@ mouse_filter = 2
 texture = SubResource("GradientTexture2D_tfqyn")
 
 [node name="PlayersList" type="Control" parent="." node_paths=PackedStringArray("_serverNameLabel", "_playersListContainer")]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
