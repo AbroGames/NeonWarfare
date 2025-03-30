@@ -96,9 +96,6 @@ label_settings = SubResource("LabelSettings_l73d1")
 [node name="PlayersList" parent="." index="3"]
 mouse_filter = 2
 
-[node name="PlayersListBackground" parent="PlayersList/MarginContainer" index="0"]
-color = Color(0.114897, 0.114897, 0.114897, 0.894118)
-
 [node name="SelfResurrect" type="Control" parent="." index="4"]
 layout_mode = 1
 anchors_preset = 15
@@ -120,6 +117,7 @@ grow_vertical = 0
 mouse_filter = 2
 
 [node name="SelfResurrectButton" type="Button" parent="SelfResurrect/PositioningContainer" index="0"]
+visible = false
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
