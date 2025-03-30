@@ -67,8 +67,16 @@ public partial class ServerShotAction : Node2D
             {
                 QueueFree();
             }
+            Log.Warning("Character!");
         }
-        
-        //TODO Уничтожать снаряд при столкновении со стеной
+        else
+        {
+            Log.Warning("Not Character!");
+        }
+
+        if (area.GetParent() is StaticBody2D staticBody)
+        {
+            QueueFree();
+        }
     }
 }

@@ -15,13 +15,13 @@ public partial class ClientShotAction : Node2D
         NotNullChecker.CheckProperties(this);
     }
     
-    public void Init(Vector2 startPosition, float rotation) //TODO Init from packet/skillInfo
+    public void Init(Vector2 startPosition, float rotation)
     {
         Position = startPosition;
         Rotation = rotation;
     }
 
-    public void InitStats(float speed, Color color) //TODO Init from packet/skillInfo
+    public void InitStats(float speed, Color color)
     {
         Speed = speed;
         Sprite.Modulate = color;

@@ -1,8 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://berq21ct3dsrh"]
+[gd_scene load_steps=4 format=3 uid="uid://berq21ct3dsrh"]
 
 [ext_resource type="Texture2D" uid="uid://cvj1gxq3db2hc" path="res://Assets/Textures/Sprites/Square.png" id="1_m250c"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_87sgc"]
+size = Vector2(512, 512)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_grd4n"]
 size = Vector2(512, 512)
 
 [node name="Wall" type="StaticBody2D"]
@@ -12,3 +15,9 @@ shape = SubResource("RectangleShape2D_87sgc")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_m250c")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_grd4n")
