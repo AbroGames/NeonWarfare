@@ -5,11 +5,11 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7j1c1"]
 resource_local_to_scene = true
-radius = 23.0
+radius = 32.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_r2wty"]
 resource_local_to_scene = true
-radius = 27.0
+radius = 35.0
 
 [node name="ServerShooterEnemy" instance=ExtResource("1_xipky")]
 script = ExtResource("2_xd68d")
@@ -18,5 +18,5 @@ script = ExtResource("2_xd68d")
 shape = SubResource("CircleShape2D_7j1c1")
 
 [node name="HitBoxShape" parent="HitBox" index="0"]
-position = Vector2(0, 1)
+position = Vector2(0, 2)
 shape = SubResource("CircleShape2D_r2wty")

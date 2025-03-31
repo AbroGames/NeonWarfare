@@ -14,15 +14,15 @@ shader_parameter/grayscaleFactor = 0.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_73xsj"]
 resource_local_to_scene = true
-radius = 23.0
+radius = 32.0
 
 [node name="ClientShooterEnemy" instance=ExtResource("1_28j6v")]
 script = ExtResource("2_sqt1s")
 
 [node name="Sprite2D" parent="." index="0"]
-modulate = Color(1, 0, 0, 1)
+modulate = Color(1, 0.380392, 0, 1)
 material = SubResource("ShaderMaterial_ymosn")
-scale = Vector2(0.0918026, 0.0918026)
+scale = Vector2(0.0859375, 0.125)
 texture = ExtResource("3_pwxwy")
 
 [node name="CharacterShape" parent="." index="1"]

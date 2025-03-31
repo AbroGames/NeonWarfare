@@ -35,7 +35,7 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.ZergEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.ZergEnemy,
-                Color: new Color(1f, 0.75f, 0),
+                Color: new Color(1f, 0.9f, 0.46f),
                 Skills: [],
                 MaxHp: 25,
                 RegenHpSpeed: 0,
@@ -48,7 +48,7 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.ShooterEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.ShooterEnemy,
-                Color: new Color(1f, 0, 0),
+                Color: new Color(1f, 0.38f, 0),
                 Skills: [new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 1, 1, 1, 1)],
                 MaxHp: 40,
                 RegenHpSpeed: 0,
@@ -61,13 +61,14 @@ public static class EnemyInfoStorage
             new EnemyInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.TurtleEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.TurtleEnemy,
-                Color: new Color(0.62f, 0.69f, 0.46f),
+                Color: new Color(1f, 0, 0),
                 Skills: [
-                    new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 1, 1, 1, 1),
-                    new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.1, 1, 1, 1)
+                    new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 1, 1, 1, 1.5),
+                    new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.2, 1, 1, 1),
+                    new ServerCharacter.SkillInfo(DoubleShotSkill.SkillTypeConst, 5, 1, 1, 1),
                 ],
-                MaxHp: 400,
-                RegenHpSpeed: 8,
+                MaxHp: 800,
+                RegenHpSpeed: 20,
                 MovementSpeed: 140,
                 RotationSpeed: 220
             )

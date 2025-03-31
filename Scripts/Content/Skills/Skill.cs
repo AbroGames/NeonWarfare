@@ -26,7 +26,7 @@ public abstract class Skill
     
     public virtual void OnServerUse(ServerSkillUseInfo useInfo) {}
     public virtual void OnClientUse(ClientSkillUseInfo useInfo) {}
-    public virtual bool CheckEnemyCanUse(ServerEnemy enemy) { return false; }
+    public virtual bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor) { return false; }
 
     protected bool CheckEnemyRayCastAndDistToTarget(ServerEnemy enemy, double range)
     {

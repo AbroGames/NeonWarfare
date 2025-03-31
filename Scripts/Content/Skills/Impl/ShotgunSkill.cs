@@ -19,13 +19,13 @@ public class ShotgunSkill() : Skill(SkillTypeConst)
     public const string SkillTypeConst = "Shotgun";
     
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
-    private const double Speed = 1500;
-    private const double Range = 1500;
+    private const double Speed = 1000;
+    private const double Range = 700;
     private const double Damage = 15;
-    private const int Count = 4;
-    private const int Spread = 25; //degrees in one direction
+    private const int Count = 5;
+    private const int Spread = 20; //degrees in one direction
     
-    private const double EnemyCheckRange = 800;
+    private const double EnemyCheckRange = 600;
 
     private record ShotInfo(long Nid, float Rotation);
     private record PacketCustomParams(float Speed, ShotInfo[] ShotInfos);
@@ -78,8 +78,8 @@ public class ShotgunSkill() : Skill(SkillTypeConst)
         }
     }
 
-    public override bool CheckEnemyCanUse(ServerEnemy enemy)
+    public override bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor)
     {
-        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange);
+        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange * rangeFactor);
     }
 }

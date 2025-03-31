@@ -55,7 +55,7 @@ public partial class ServerEnemy : ServerCharacter
 
         foreach (var kv in SkillById)
         {
-            if (SkillStorage.GetSkill(kv.Value.SkillInfo.SkillType).CheckEnemyCanUse(this))
+            if (SkillStorage.GetSkill(kv.Value.SkillInfo.SkillType).CheckEnemyCanUse(this, kv.Value.SkillInfo.RangeFactor))
             {
                 TryUseSkill(kv.Key);
             }

@@ -11,7 +11,8 @@ public static class SkillStorage
     private static readonly IReadOnlyList<Skill> Skills = new List<Skill>
     {
         new DefaultShotSkill(),
-        new ShotgunSkill()
+        new ShotgunSkill(),
+        new DoubleShotSkill()
     };
 
     private static readonly IReadOnlyDictionary<string, Skill> SkillByType = Skills.ToDictionary(skill => skill.SkillType, skill => skill);

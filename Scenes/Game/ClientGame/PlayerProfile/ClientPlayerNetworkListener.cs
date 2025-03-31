@@ -20,7 +20,7 @@ public partial class ClientPlayerProfile
         }
         else
         {
-            List<StringName> skillActionKeys = [Keys.AttackPrimary, Keys.AttackSecondary];
+            List<StringName> skillActionKeys = [Keys.AttackPrimary, Keys.AttackSecondary, Keys.AbilityBasic, Keys.AbilityAdvanced];
             List<StringName> currentSkillActionKeys = SkillById.Values.Select(skill => skill.ActionToActivate).ToList();
             List<StringName> freeButtons = skillActionKeys.Except(currentSkillActionKeys).ToList();
             if (freeButtons.Count > 0)

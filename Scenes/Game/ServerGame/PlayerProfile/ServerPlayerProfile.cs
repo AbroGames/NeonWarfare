@@ -35,12 +35,12 @@ public partial class ServerPlayerProfile
     public void InitStats()
     {
         MaxHp = 100;
-        RegenHpSpeed = 1;
+        RegenHpSpeed = 2;
         MovementSpeed = 250;
         RotationSpeed = 300;
         
         AddSkill(new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.5, 1, 1, 1));
-        AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 5, 5, 1, 1));
+        AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.5, 1, 1, 1));
     }
 
     public void AddSkill(ServerCharacter.SkillInfo skill)

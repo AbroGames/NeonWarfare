@@ -18,11 +18,11 @@ public class DefaultShotSkill() : Skill(SkillTypeConst)
     public const string SkillTypeConst = "DefaultShot";
     
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
-    private const double Speed = 2000;
-    private const double Range = 4000;
+    private const double Speed = 1000;
+    private const double Range = 2000;
     private const double Damage = 50;
     
-    private const double EnemyCheckRange = 1500;
+    private const double EnemyCheckRange = 800;
 
     private record PacketCustomParams(float Speed);
     
@@ -30,7 +30,7 @@ public class DefaultShotSkill() : Skill(SkillTypeConst)
     {
         ServerShotAction shotAction = useInfo.World.CreateNetworkEntity<ServerShotAction>(ActionInfoStorage.GetServerScene(ActionType));
         long nid = shotAction.GetChild<NetworkEntityComponent>().Nid;
-        shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation); //TODO Сделать небольшое смещение на половину длины снаряда, чтобы он не спавнился в центре персонажа (или сделать смещенеи на половину character.sprite.size*character.sprite.scale). И у shotgun аналогично
+        shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation); //TODO Сделать небольшое смещение на половину длины снаряда, чтобы он не спавнился в центре персонажа (или сделать смещенеи на половину character.sprite.size*character.sprite.scale). И у остальных аналогично
         shotAction.InitStats(
             damage: Damage*useInfo.DamageFactor, 
             speed: (float) (Speed*useInfo.SpeedFactor), 
@@ -63,8 +63,8 @@ public class DefaultShotSkill() : Skill(SkillTypeConst)
         useInfo.World.AddChild(shotAction);
     }
 
-    public override bool CheckEnemyCanUse(ServerEnemy enemy)
+    public override bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor)
     {
-        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange);
+        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange * rangeFactor);
     }
 }
