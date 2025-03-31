@@ -24,4 +24,16 @@ public abstract partial class ServerWorld
         NetworkEntityManager.AddEntity(newNode);
         return newNode;
     }
+    
+    protected virtual void InitMap() { }
+    
+    protected void InitEntity(ClientWorld.SC_StaticEntitySpawnPacket staticEntitySpawnPacket)
+    {
+        Node2D entity = staticEntitySpawnPacket.StaticEntityServerScene.Instantiate<Node2D>();
+        entity.Position = staticEntitySpawnPacket.Position;
+        entity.Rotation = staticEntitySpawnPacket.Rotation;
+        entity.Scale = staticEntitySpawnPacket.Scale;
+        entity.Modulate = staticEntitySpawnPacket.Color;
+        AddChild(entity);
+    }
 }

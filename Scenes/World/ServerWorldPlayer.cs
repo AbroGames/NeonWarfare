@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ServerRoot;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
+using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
+using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Components;
@@ -70,6 +74,31 @@ public abstract partial class ServerWorld
     {
         _players.Remove(player);
         _playersByPeerId.Remove(player.PlayerProfile.PeerId);
+    }
+    
+    public void InitPlayers(List<ServerPlayerProfile> playerProfiles)
+    {
+        foreach (ServerPlayerProfile playerProfile in playerProfiles)
+        {
+            SpawnPlayerInCenter(playerProfile);
+        }
+    }
+
+    public void CheckAllDeadAndRestart()
+    {
+        //Если все игроки мертвы, то загружает SafeWorld
+        if (Players.Count > 0 && Players.Where(p => !p.IsDead).Count() == 0)
+        {
+            //TODO Здесь и в NeonWarfare.Scenes.Game.ServerGame.ServerGame.OnWantToBattlePacket много дубоирования, вынести в Game/World
+            Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
+            Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
+
+            ServerSafeWorld safeWorld = ServerRoot.Instance.PackedScenes.SafeWorld.Instantiate<ServerSafeWorld>();
+            ServerRoot.Instance.Game.ChangeMainScene(safeWorld);
+            safeWorld.Init(ServerRoot.Instance.Game.PlayerProfiles.ToList());
+        
+            Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
+        }
     }
     
 }

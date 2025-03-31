@@ -20,14 +20,8 @@ public partial class ServerBattleWorld : ServerWorld
         _enemySpawner = new(this);
         EnemyWave = new(_enemySpawner);
     }
-
-    public void Init(List<ServerPlayerProfile> playerProfiles)
-    {
-        InitMap();
-        InitPlayers(playerProfiles);
-    }
     
-    private void InitMap()
+    protected override void InitMap()
     {
         MapGenerator mapGenerator = new MapGenerator();
         foreach (var location in mapGenerator.Generate())
@@ -39,25 +33,7 @@ public partial class ServerBattleWorld : ServerWorld
             }
         }
     }
-
-    private void InitEntity(ClientWorld.SC_StaticEntitySpawnPacket staticEntitySpawnPacket)
-    {
-        Node2D entity = staticEntitySpawnPacket.StaticEntityServerScene.Instantiate<Node2D>();
-        entity.Position = staticEntitySpawnPacket.Position;
-        entity.Rotation = staticEntitySpawnPacket.Rotation;
-        entity.Scale = staticEntitySpawnPacket.Scale;
-        entity.Modulate = staticEntitySpawnPacket.Color;
-        AddChild(entity);
-    }
-
-    private void InitPlayers(List<ServerPlayerProfile> playerProfiles)
-    {
-        foreach (ServerPlayerProfile playerProfile in playerProfiles)
-        {
-            SpawnPlayerInCenter(playerProfile);
-        }
-    }
-
+    
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
