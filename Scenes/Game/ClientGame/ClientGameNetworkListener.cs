@@ -5,6 +5,7 @@ using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.GameSettings;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
@@ -75,7 +76,8 @@ public partial class ClientGame
 	public void OnChangeWorldPacket(SC_ChangeWorldPacket changeWorldPacket)
 	{
 		Log.Info($"Change MainScene. WorldType = {changeWorldPacket.WorldType}");
-		ChangeMainScene(changeWorldPacket.WorldMainScene.Instantiate<IWorldMainScene>());
+		PackedScene worldMainScene = WorldInfoStorage.GetClientMainScene(changeWorldPacket.WorldType);
+		ChangeMainScene(worldMainScene.Instantiate<IWorldMainScene>());
 	}
 	
 	/*

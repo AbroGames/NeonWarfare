@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
-using NeonWarfare.Scenes.Root.ServerRoot;
-using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
-using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.Content;
 
 namespace NeonWarfare.Scenes.World;
 
@@ -27,8 +23,8 @@ public abstract partial class ServerWorld : Node2D
         CheckAllDeadAndRestart();
     }
 
-    public virtual ClientGame.SC_ChangeWorldPacket.ServerWorldType GetServerWorldType()
+    public virtual WorldInfoStorage.WorldType GetServerWorldType()
     {
-        return ClientGame.SC_ChangeWorldPacket.ServerWorldType.Unknown;
+        return WorldInfoStorage.WorldType.Unknown;
     }
 }

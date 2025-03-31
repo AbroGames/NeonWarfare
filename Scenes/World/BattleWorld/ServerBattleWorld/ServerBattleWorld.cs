@@ -3,6 +3,7 @@ using Godot;
 using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.Content.MapGenerator;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Networking;
@@ -58,8 +59,8 @@ public partial class ServerBattleWorld : ServerWorld
         _enemySpawner.Update(delta);
     }
     
-    public override ClientGame.SC_ChangeWorldPacket.ServerWorldType GetServerWorldType()
+    public override WorldInfoStorage.WorldType GetServerWorldType()
     {
-        return ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle;
+        return WorldInfoStorage.WorldType.Battle;
     }
 }

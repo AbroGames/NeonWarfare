@@ -8,6 +8,7 @@ using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
+using NeonWarfare.Scripts.Content;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.KludgeBox.Networking;
@@ -85,10 +86,10 @@ public partial class ServerGame
             Network.SendToClient(newPlayerPeerId, new ClientAllyProfile.SC_ChangeAllyProfilePacket(profile.PeerId, profile.MaxHp, profile.RegenHpSpeed, profile.MovementSpeed, profile.RotationSpeed));
         }
 
-        if (World is ServerSafeWorld)
+        if (World.GetServerWorldType() == WorldInfoStorage.WorldType.Safe)
         {
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
+            Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeWorldPacket(World.GetServerWorldType()));
 
             //Спауним нового игрока
             World.SpawnPlayerInCenter(PlayerProfilesByPeerId[newPlayerPeerId]);
@@ -101,7 +102,7 @@ public partial class ServerGame
             
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
         } 
-        else if (World is ServerBattleWorld)
+        else if (World.GetServerWorldType() == WorldInfoStorage.WorldType.Battle)
         {
             Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.WAITING_END_OF_BATTLE));
         }

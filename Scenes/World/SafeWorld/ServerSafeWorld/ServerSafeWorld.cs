@@ -1,11 +1,12 @@
 using NeonWarfare.Scenes.Game.ClientGame;
+using NeonWarfare.Scripts.Content;
 
 namespace NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
 
 public partial class ServerSafeWorld : ServerWorld
 {
-    public override ClientGame.SC_ChangeWorldPacket.ServerWorldType GetServerWorldType()
+    public override WorldInfoStorage.WorldType GetServerWorldType()
     {
-        return ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe;
+        return WorldInfoStorage.WorldType.Safe;
     }
 }
