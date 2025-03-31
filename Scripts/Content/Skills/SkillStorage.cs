@@ -13,7 +13,9 @@ public static class SkillStorage
         new DefaultShotSkill(),
         new ShotgunSkill(),
         new DoubleShotSkill(),
-        new HealShotSkill()
+        new HealShotSkill(),
+        new ResurrectShotSkill()
+        //TODO BurstShot, BurstDoubleShot
     };
 
     private static readonly IReadOnlyDictionary<string, Skill> SkillByType = Skills.ToDictionary(skill => skill.SkillType, skill => skill);

@@ -42,6 +42,7 @@ public partial class ServerPlayerProfile
         AddSkill(new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.5, 1, 1, 1));
         AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.5, 1, 1, 1));
         AddSkill(new ServerCharacter.SkillInfo(HealShotSkill.SkillTypeConst, 5, 1, 1, 1));
+        AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 30, 1, 1, 1));
     }
 
     public void AddSkill(ServerCharacter.SkillInfo skill)

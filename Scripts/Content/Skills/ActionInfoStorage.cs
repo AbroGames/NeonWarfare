@@ -17,7 +17,7 @@ public static class ActionInfoStorage
     
     public enum ActionType
     {
-        Shot, HealShot
+        Shot, HealShot, ResurrectShot
     }
     
     private static readonly IReadOnlyDictionary<ActionType, ActionInfo> ActionInfoByType = new Dictionary<ActionType, ActionInfo>
@@ -34,6 +34,13 @@ public static class ActionInfoStorage
             new ActionInfo(
                 ClientScene: () => ClientRoot.Instance.PackedScenes.HealShotAction, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.HealShotAction
+            )
+        },
+        { 
+            ActionType.ResurrectShot, 
+            new ActionInfo(
+                ClientScene: () => ClientRoot.Instance.PackedScenes.ResurrectShotAction, 
+                ServerScene: () => ServerRoot.Instance.PackedScenes.ResurrectShotAction
             )
         }
     };

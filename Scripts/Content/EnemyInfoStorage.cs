@@ -36,7 +36,7 @@ public static class EnemyInfoStorage
                 ClientScene: () => ClientRoot.Instance.PackedScenes.ZergEnemy, 
                 ServerScene: () => ServerRoot.Instance.PackedScenes.ZergEnemy,
                 Color: new Color(1f, 0.9f, 0.46f),
-                Skills: [],
+                Skills: [new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.3, 0.1, 2, 0.08)], //TODO реализовать через скилл массового урона по области вокруг себя
                 MaxHp: 25,
                 RegenHpSpeed: 0,
                 MovementSpeed: 220,

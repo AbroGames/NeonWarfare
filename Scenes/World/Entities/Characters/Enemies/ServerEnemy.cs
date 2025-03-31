@@ -80,6 +80,15 @@ public partial class ServerEnemy : ServerCharacter
         
         TakeHeal(heal, author);
     }
+    
+    public override void OnResurrect(double heal, ServerCharacter author, long authorPeerId)
+    {
+        base.OnResurrect(heal, author, authorPeerId);
+        
+        if (authorPeerId > 0 && !ServerRoot.Instance.Game.ResurrectEnemyByPlayer) return;
+        
+        Resurrect(heal, author);
+    }
 
     public void TryUseSkill(long skillId)
     {

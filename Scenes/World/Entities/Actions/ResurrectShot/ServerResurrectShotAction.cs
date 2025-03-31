@@ -3,9 +3,9 @@ using NeonWarfare.Scenes.World.Entities.Characters;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.Cooldown;
 
-namespace NeonWarfare.Scenes.World.Entities.Actions.HealShot;
+namespace NeonWarfare.Scenes.World.Entities.Actions.ResurrectShot;
 
-public partial class ServerHealShotAction : Node2D
+public partial class ServerResurrectShotAction : Node2D
 {
     
     [Export] [NotNull] public Area2D HitBox { get; private set; }
@@ -56,7 +56,7 @@ public partial class ServerHealShotAction : Node2D
         {
             if (Author != character)
             {
-                character.OnHeal(Heal, Author, AuthorPeerId);
+                character.OnResurrect(Heal, Author, AuthorPeerId);
                 QueueFree();
             }
         }

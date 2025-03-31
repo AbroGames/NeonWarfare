@@ -54,9 +54,9 @@ public partial class ServerShotAction : Node2D
     {
         if (area.GetParent() is ServerCharacter character)
         {
-            character.OnHit(Damage, Author, AuthorPeerId);
             if (Author != character)
             {
+                character.OnHit(Damage, Author, AuthorPeerId);
                 QueueFree();
             }
         }

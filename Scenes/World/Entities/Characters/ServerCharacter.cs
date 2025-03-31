@@ -57,8 +57,8 @@ public partial class ServerCharacter : CharacterBody2D
     }
 
     public virtual void OnHit(double damage, ServerCharacter author, long authorPeerId) { }
-    
     public virtual void OnHeal(double heal, ServerCharacter author, long authorPeerId) { }
+    public virtual void OnResurrect(double heal, ServerCharacter author, long authorPeerId) { }
 
     public void TakeDamage(double damage, ServerCharacter author)
     {
@@ -93,13 +93,8 @@ public partial class ServerCharacter : CharacterBody2D
     {
         if (!IsDead) return;
         IsDead = false;
-        Hp = hp;
+        Hp = Math.Min(hp, MaxHp);
         author.AsResurrector(this);
-    }
-    
-    protected virtual void OnResurrect()
-    {
-        
     }
 
     protected virtual void AsKiller(ServerCharacter dead) { }
