@@ -71,7 +71,16 @@ public partial class ServerEnemy : ServerCharacter
         
         TakeDamage(damage, author);
     }
-    
+
+    public override void OnHeal(double heal, ServerCharacter author, long authorPeerId)
+    {
+        base.OnHeal(heal, author, authorPeerId);
+        
+        if (authorPeerId > 0 && !ServerRoot.Instance.Game.HealEnemyByPlayer) return;
+        
+        TakeHeal(heal, author);
+    }
+
     public void TryUseSkill(long skillId)
     {
         TryUseSkill(skillId, Position, Rotation, GetGlobalMousePosition(), -1);

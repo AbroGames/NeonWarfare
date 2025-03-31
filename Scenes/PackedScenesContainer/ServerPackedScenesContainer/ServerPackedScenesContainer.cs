@@ -30,6 +30,7 @@ public partial class ServerPackedScenesContainer : Node
      */
     [ExportGroup("Action")]
     [Export] [NotNull] public PackedScene ShotAction { get; private set; }
+    [Export] [NotNull] public PackedScene HealShotAction { get; private set; }
     
     public override void _Ready()
     {

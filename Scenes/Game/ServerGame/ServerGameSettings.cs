@@ -8,4 +8,6 @@ public partial class ServerGame
 {
 	public bool FriendlyFire = true;
 	public bool EnemyFriendlyFire = false;
+	public bool HealEnemyByPlayer = true;
+	public bool HealPlayerByEnemy = true;
 }

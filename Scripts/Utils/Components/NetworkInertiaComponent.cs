@@ -70,6 +70,7 @@ public partial class NetworkInertiaComponent : Node
     public static void OnInertiaEntityPacketListener(SC_InertiaEntityPacket inertiaEntityPacket)
     {
         //Проверка нужна, т.к. пакет InertiaEntityPacket.Mode = Unreliable и из-за задержки может прийти после пакета смены мира.
+        if (ClientRoot.Instance.Game.World == null) return;
         if (!ClientRoot.Instance.Game.World.NetworkEntityManager.HasEntityComponent(inertiaEntityPacket.Nid)) return;
         
         NetworkInertiaComponent entityComponent = ClientRoot.Instance.Game.World.NetworkEntityManager.GetChild<NetworkInertiaComponent>(inertiaEntityPacket.Nid);

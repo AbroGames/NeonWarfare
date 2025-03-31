@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://hwb6nmto0nci"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Actions/ServerShotAction.cs" id="1_i17im"]
+[ext_resource type="Script" path="res://Scenes/World/Entities/Actions/Shot/ServerShotAction.cs" id="1_i17im"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fd6pn"]
 size = Vector2(6, 60)

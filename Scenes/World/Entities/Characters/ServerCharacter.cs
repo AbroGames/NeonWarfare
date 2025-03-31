@@ -52,6 +52,8 @@ public partial class ServerCharacter : CharacterBody2D
     }
 
     public virtual void OnHit(double damage, ServerCharacter author, long authorPeerId) { }
+    
+    public virtual void OnHeal(double heal, ServerCharacter author, long authorPeerId) { }
 
     public void TakeDamage(double damage, ServerCharacter author)
     {
@@ -61,6 +63,11 @@ public partial class ServerCharacter : CharacterBody2D
             Hp = 0;
             OnDeath(author);
         }
+    }
+
+    public void TakeHeal(double heal, ServerCharacter author)
+    {
+        Hp = Math.Min(Hp + heal, MaxHp);
     }
 
     public virtual void OnDeath(ServerCharacter killer)

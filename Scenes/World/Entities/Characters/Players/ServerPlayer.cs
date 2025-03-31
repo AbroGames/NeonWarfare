@@ -36,4 +36,14 @@ public partial class ServerPlayer : ServerCharacter
         TakeDamage(damage, author);
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
     }
+
+    public override void OnHeal(double heal, ServerCharacter author, long authorPeerId)
+    {
+        base.OnHeal(heal, author, authorPeerId);
+        
+        if (authorPeerId == -1 && !ServerRoot.Instance.Game.HealPlayerByEnemy) return;
+        
+        TakeHeal(heal, author);
+        Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
+    }
 }

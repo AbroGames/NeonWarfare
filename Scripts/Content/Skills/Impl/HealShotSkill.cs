@@ -9,32 +9,32 @@ using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
-using ClientShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ClientShotAction;
-using ServerShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ServerShotAction;
+using ClientHealShotAction = NeonWarfare.Scenes.World.Entities.Actions.HealShot.ClientHealShotAction;
+using ServerHealShotAction = NeonWarfare.Scenes.World.Entities.Actions.HealShot.ServerHealShotAction;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
-public class DefaultShotSkill() : Skill(SkillTypeConst)
+public class HealShotSkill() : Skill(SkillTypeConst)
 {
 
-    public const string SkillTypeConst = "DefaultShot";
+    public const string SkillTypeConst = "HealShot";
     
-    private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
-    private const double Speed = 1300;
-    private const double Range = 2000;
-    private const double Damage = 50;
+    private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.HealShot;
+    private const double Speed = 1800;
+    private const double Range = 1500;
+    private const double Heal = 50;
     
-    private const double EnemyCheckRange = 800;
+    private const double EnemyCheckRange = 1200;
 
     private record PacketCustomParams(float Speed);
     
     public override void OnServerUse(ServerSkillUseInfo useInfo)
     {
-        ServerShotAction shotAction = useInfo.World.CreateNetworkEntity<ServerShotAction>(ActionInfoStorage.GetServerScene(ActionType));
+        ServerHealShotAction shotAction = useInfo.World.CreateNetworkEntity<ServerHealShotAction>(ActionInfoStorage.GetServerScene(ActionType));
         long nid = shotAction.GetChild<NetworkEntityComponent>().Nid;
-        shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation); //TODO Сделать небольшое смещение на половину длины снаряда, чтобы он не спавнился в центре персонажа (или сделать смещенеи на половину character.sprite.size*character.sprite.scale). И у остальных аналогично
+        shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation);
         shotAction.InitStats(
-            damage: Damage*useInfo.DamageFactor, 
+            heal: Heal*useInfo.DamageFactor, 
             speed: (float) (Speed*useInfo.SpeedFactor), 
             range: (float) (Range*useInfo.RangeFactor), 
             author: useInfo.Author, 
@@ -59,14 +59,16 @@ public class DefaultShotSkill() : Skill(SkillTypeConst)
     {
         PacketCustomParams customParams = JsonSerializer.Deserialize<PacketCustomParams>(useInfo.CustomParams);
         
-        ClientShotAction shotAction = useInfo.World.CreateNetworkEntity<ClientShotAction>(ActionInfoStorage.GetClientScene(ActionType), useInfo.Nid);
+        ClientHealShotAction shotAction = useInfo.World.CreateNetworkEntity<ClientHealShotAction>(ActionInfoStorage.GetClientScene(ActionType), useInfo.Nid);
         shotAction.Init(useInfo.CharacterPosition, useInfo.CharacterRotation);
-        shotAction.InitStats(customParams.Speed, useInfo.Color);
+        shotAction.InitStats(customParams.Speed);
         useInfo.World.AddChild(shotAction);
     }
 
     public override bool CheckEnemyCanUse(ServerEnemy enemy, double rangeFactor)
     {
-        return CheckEnemyRayCastAndDistToTarget(enemy, EnemyCheckRange * rangeFactor);
+        GodotObject collider = enemy.RayCast.GetCollider();
+        return collider is ServerEnemy serverEnemy &&
+               enemy.DistanceTo(serverEnemy) < EnemyCheckRange * rangeFactor;
     }
 }

@@ -9,6 +9,8 @@ using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
+using ClientShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ClientShotAction;
+using ServerShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ServerShotAction;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
@@ -18,7 +20,7 @@ public class DoubleShotSkill() : Skill(SkillTypeConst)
     public const string SkillTypeConst = "DoubleShot";
     
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
-    private const double Speed = 1400;
+    private const double Speed = 1900;
     private const double Range = 3500;
     private const double Damage = 90;
     

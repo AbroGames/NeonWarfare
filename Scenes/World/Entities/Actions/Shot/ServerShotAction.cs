@@ -1,17 +1,9 @@
 using Godot;
-using NeonWarfare.Scenes.Game.ClientGame;
-using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.Entities.Characters;
-using NeonWarfare.Scenes.World.Entities.Characters.Enemies;
-using NeonWarfare.Scenes.World.Entities.Characters.Players;
-using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
-using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Core;
-using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
-using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Cooldown;
 
-namespace NeonWarfare.Scenes.World.Entities.Actions;
+namespace NeonWarfare.Scenes.World.Entities.Actions.Shot;
 
 public partial class ServerShotAction : Node2D
 {
@@ -67,14 +59,9 @@ public partial class ServerShotAction : Node2D
             {
                 QueueFree();
             }
-            Log.Warning("Character!");
-        }
-        else
-        {
-            Log.Warning("Not Character!");
         }
 
-        if (area.GetParent() is StaticBody2D staticBody)
+        if (area.GetParent() is StaticBody2D)
         {
             QueueFree();
         }

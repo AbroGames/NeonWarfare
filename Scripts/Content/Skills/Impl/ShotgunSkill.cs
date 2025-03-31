@@ -11,6 +11,8 @@ using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.NetworkEntityManager;
+using ClientShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ClientShotAction;
+using ServerShotAction = NeonWarfare.Scenes.World.Entities.Actions.Shot.ServerShotAction;
 
 namespace NeonWarfare.Scripts.Content.Skills.Impl;
 
@@ -19,7 +21,7 @@ public class ShotgunSkill() : Skill(SkillTypeConst)
     public const string SkillTypeConst = "Shotgun";
     
     private const ActionInfoStorage.ActionType ActionType = ActionInfoStorage.ActionType.Shot;
-    private const double Speed = 1000;
+    private const double Speed = 1300;
     private const double Range = 700;
     private const double Damage = 15;
     private const int Count = 5;
