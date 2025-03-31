@@ -3,9 +3,9 @@ using Godot;
 using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
+using NeonWarfare.Scripts.Content.MapGenerator;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Networking;
-using NeonWarfare.Scripts.Utils.MapGenerator;
 
 namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld;
 

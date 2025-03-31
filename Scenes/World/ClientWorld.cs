@@ -2,7 +2,6 @@ using Godot;
 using NeonWarfare.Scenes.Root.ClientRoot;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.Utils.Camera;
-using NeonWarfare.Scripts.Utils.PlayerSettings;
 
 namespace NeonWarfare.Scenes.World;
 

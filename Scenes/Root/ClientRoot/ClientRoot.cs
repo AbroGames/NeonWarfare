@@ -8,7 +8,6 @@ using NeonWarfare.Scripts.KludgeBox.Godot.Services;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.CmdArgs;
 using NeonWarfare.Scripts.Utils.GameSettings;
-using NeonWarfare.Scripts.Utils.PlayerSettings;
 
 namespace NeonWarfare.Scenes.Root.ClientRoot;
 

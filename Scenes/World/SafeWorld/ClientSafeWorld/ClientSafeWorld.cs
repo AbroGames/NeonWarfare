@@ -1,6 +1,6 @@
 using Godot;
 using NeonWarfare.Scripts.Content;
-using NeonWarfare.Scripts.Utils.MapGenerator;
+using NeonWarfare.Scripts.Content.MapGenerator;
 
 namespace NeonWarfare.Scenes.World.SafeWorld.ClientSafeWorld;
 

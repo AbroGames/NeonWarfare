@@ -1,6 +1,6 @@
 using NeonWarfare.Scenes.Game.ClientGame;
 
-namespace NeonWarfare.Scripts.Utils.GameSettings;
+namespace NeonWarfare.Scripts.Content.GameSettings;
 
 public record GameSettings()
 {

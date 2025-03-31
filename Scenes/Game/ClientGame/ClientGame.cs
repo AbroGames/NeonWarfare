@@ -1,5 +1,6 @@
 using Godot;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
+using NeonWarfare.Scripts.Content.GameSettings;
 using NeonWarfare.Scripts.Utils.GameSettings;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;

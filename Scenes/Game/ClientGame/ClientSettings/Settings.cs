@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using NeonWarfare.Scripts.Utils.PlayerSettings;
+using NeonWarfare.Scripts.Content.PlayerSettings;
 using Newtonsoft.Json;
 
 namespace NeonWarfare.Scenes.Game.ClientGame.ClientSettings;

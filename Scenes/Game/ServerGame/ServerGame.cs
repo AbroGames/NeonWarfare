@@ -1,6 +1,7 @@
 using Godot;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.SafeWorld.ServerSafeWorld;
+using NeonWarfare.Scripts.Content.GameSettings;
 using NeonWarfare.Scripts.Utils.GameSettings;
 
 namespace NeonWarfare.Scenes.Game.ServerGame;

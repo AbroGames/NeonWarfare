@@ -1,5 +1,6 @@
 using Godot;
-namespace NeonWarfare.Scripts.Utils.PlayerSettings;
+
+namespace NeonWarfare.Scripts.Content.PlayerSettings;
 
 public class PlayerSettings
 {

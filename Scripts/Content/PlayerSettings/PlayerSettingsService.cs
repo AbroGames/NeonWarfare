@@ -3,20 +3,20 @@ using System.Text.Json;
 using Godot;
 using NeonWarfare.Scripts.KludgeBox;
 
-namespace NeonWarfare.Scripts.Utils.PlayerSettings;
+namespace NeonWarfare.Scripts.Content.PlayerSettings;
 
 public static class PlayerSettingsService
 {
     public static readonly string Filename = "PlayerSettings.json";
     
-    public static PlayerSettings LoadSettings()
+    public static Content.PlayerSettings.PlayerSettings LoadSettings()
     {
         try
         {
             FileAccess file = FileAccess.Open($"user://{Filename}", FileAccess.ModeFlags.Read);
             string jsonText = file.GetAsText();
             file.Close();
-            PlayerSettings.SerialisationData serialisationData = JsonSerializer.Deserialize<PlayerSettings.SerialisationData>(jsonText);
+            Content.PlayerSettings.PlayerSettings.SerialisationData serialisationData = JsonSerializer.Deserialize<Content.PlayerSettings.PlayerSettings.SerialisationData>(jsonText);
 
             return serialisationData.ToPlayerSettings();
         }
@@ -32,17 +32,17 @@ public static class PlayerSettingsService
                 Log.Error(e);
             }
             
-            PlayerSettings defaultSettings = new PlayerSettings();
+            Content.PlayerSettings.PlayerSettings defaultSettings = new Content.PlayerSettings.PlayerSettings();
             SaveSettings(defaultSettings);
             return defaultSettings;
         }
     }
 	
-    public static void SaveSettings(PlayerSettings playerSettings)
+    public static void SaveSettings(Content.PlayerSettings.PlayerSettings playerSettings)
     {
         try
         {
-            PlayerSettings.SerialisationData data = new PlayerSettings.SerialisationData(playerSettings);
+            Content.PlayerSettings.PlayerSettings.SerialisationData data = new Content.PlayerSettings.PlayerSettings.SerialisationData(playerSettings);
             string jsonText = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
                 
             FileAccess file = FileAccess.Open($"user://{Filename}", FileAccess.ModeFlags.WriteRead);

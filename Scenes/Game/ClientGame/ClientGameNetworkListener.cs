@@ -5,10 +5,10 @@ using NeonWarfare.Scenes.Game.ClientGame.MainScenes;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scripts.Content.GameSettings;
 using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Events;
 using NeonWarfare.Scripts.KludgeBox.Networking;
-using NeonWarfare.Scripts.Utils.PlayerSettings;
 
 namespace NeonWarfare.Scenes.Game.ClientGame;
 
@@ -102,6 +102,6 @@ public partial class ClientGame
 	[EventListener(ListenerSide.Client)]
 	public void OnChangeSettingsPacket(SC_ChangeSettingsPacket changeSettingsPacket)
 	{
-		GameSettings = Scripts.Utils.GameSettings.GameSettings.FromPacket(changeSettingsPacket);
+		GameSettings = GameSettings.FromPacket(changeSettingsPacket);
 	}
 }
