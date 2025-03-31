@@ -12,15 +12,17 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Enemies;
 
 public partial class ServerEnemyMovementComponent : Node
 {
-    private const int NetworkMessagePerSecond = 25;
+    private const int NetworkMessagePerSecond = 15;
 
     private long _orderId = 0;
     private ServerEnemy _parent;
+    private ServerEnemyTargetComponent _parentTargetComponent;
     private ManualCooldown _sendPositionCooldown = new(1.0/NetworkMessagePerSecond);
     
     public override void _Ready()
     {
         _parent = GetParent<ServerEnemy>();
+        _parentTargetComponent = _parent.GetChild<ServerEnemyTargetComponent>();
         _sendPositionCooldown.ActionWhenReady += () => { SendPositionToServer(); _sendPositionCooldown.Restart(); };
     }
 
@@ -32,13 +34,20 @@ public partial class ServerEnemyMovementComponent : Node
 
     public override void _PhysicsProcess(double delta)
     {
-        _parent.Velocity = GetMovementInSecondFromAngle();
-        _parent.MoveAndSlide();
+        if (_parentTargetComponent.Target != null)
+        {
+            _parent.Velocity = GetMovementInSecondFromAngle();
+            _parent.MoveAndSlide();
+        }
+        else
+        {
+            _parent.Velocity = Vector2.Zero;
+        }
     }
 
     private void SendPositionToServer()
     {
-        var movementInSecond = GetMovementInSecondFromAngle();
+        var movementInSecond = _parent.Velocity;
         long nid = _parent.GetChild<ServerNetworkEntityComponent>().Nid;
         Network.SendToAll(new NetworkInertiaComponent.SC_InertiaEntityPacket(nid, _orderId++,
             _parent.Position, _parent.Rotation,

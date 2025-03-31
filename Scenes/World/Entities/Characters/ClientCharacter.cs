@@ -20,6 +20,8 @@ public partial class ClientCharacter : CharacterBody2D
     public double MovementSpeed { get; set; }
     public double RotationSpeed { get; set; }
     
+    public bool IsDead { get; protected set; }
+    
     public override void _Ready()
     {
         NotNullChecker.CheckProperties(this);
@@ -35,9 +37,12 @@ public partial class ClientCharacter : CharacterBody2D
             Sprite.Modulate = color;
         }
     }
-
+    
     public override void _PhysicsProcess(double delta)
     {
-        Hp = Math.Min(Hp + delta * RegenHpSpeed, MaxHp);
+        if (!IsDead)
+        {
+            Hp = Math.Min(Hp + delta * RegenHpSpeed, MaxHp);
+        }
     }
 }

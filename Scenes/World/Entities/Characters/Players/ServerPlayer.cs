@@ -46,4 +46,14 @@ public partial class ServerPlayer : ServerCharacter
         TakeHeal(heal, author);
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
     }
+
+    protected override void OnDeath()
+    {
+        Network.SendToAll(new ClientAlly.SC_AllyDeadPacket(PlayerProfile.PeerId));
+    }
+    
+    protected override void OnResurrect()
+    {
+        Network.SendToAll(new ClientAlly.SC_AllyResurrectionPacket(PlayerProfile.PeerId));
+    }
 }

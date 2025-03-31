@@ -22,14 +22,16 @@ public partial class ServerCharacter : CharacterBody2D
     [Export] [NotNull] public Area2D HitBox { get; private set; }
 
     public long Nid => this.GetChild<NetworkEntityComponent>().Nid;
-	
+    
     public Color Color { get; protected set; } //Цвет, который будет использоваться для снарядов и т.п.
     public double MaxHp { get; set; }
     public double Hp { get; set; }
     public double RegenHpSpeed { get; set; }
     public double MovementSpeed { get; set; }
     public double RotationSpeed { get; set; }
-
+    
+    public bool IsDead { get; protected set; }
+    
     public record SkillWithCooldown(SkillInfo SkillInfo, ManualCooldown Cooldown);
     public record SkillInfo(string SkillType, double Cooldown, double DamageFactor, double SpeedFactor, double RangeFactor);
     public IReadOnlyDictionary<long, SkillWithCooldown> SkillById => _skillById;
@@ -44,7 +46,10 @@ public partial class ServerCharacter : CharacterBody2D
     {
         base._PhysicsProcess(delta);
 
-        Hp = Math.Min(Hp + delta * RegenHpSpeed, MaxHp);
+        if (!IsDead)
+        {
+            Hp = Math.Min(Hp + delta * RegenHpSpeed, MaxHp);
+        }
         foreach (var skillCooldown in _skillById.Values.Select(skill => skill.Cooldown))
         {
             skillCooldown.Update(delta);
@@ -57,26 +62,48 @@ public partial class ServerCharacter : CharacterBody2D
 
     public void TakeDamage(double damage, ServerCharacter author)
     {
+        if (IsDead) return;
         Hp -= damage;
         if (Hp <= 0)
         {
             Hp = 0;
-            OnDeath(author);
+            Death(author);
         }
     }
 
     public void TakeHeal(double heal, ServerCharacter author)
     {
+        if (IsDead) return;
         Hp = Math.Min(Hp + heal, MaxHp);
     }
 
-    public virtual void OnDeath(ServerCharacter killer)
+    public void Death(ServerCharacter killer)
     {
-        killer.OnKill(this);
+        IsDead = true;
+        killer.AsKiller(this);
+        OnDeath();
+    }
+
+    protected virtual void OnDeath()
+    {
         QueueFree();
     }
 
-    public virtual void OnKill(ServerCharacter dead) { }
+    public void Resurrect(double hp, ServerCharacter author)
+    {
+        if (!IsDead) return;
+        IsDead = false;
+        Hp = hp;
+        author.AsResurrector(this);
+    }
+    
+    protected virtual void OnResurrect()
+    {
+        
+    }
+
+    protected virtual void AsKiller(ServerCharacter dead) { }
+    protected virtual void AsResurrector(ServerCharacter dead) { }
     
     public void AddSkill(long skillId, SkillInfo skill)
     {

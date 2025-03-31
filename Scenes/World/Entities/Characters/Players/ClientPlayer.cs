@@ -22,7 +22,7 @@ public partial class ClientPlayer : ClientAlly
         
         RotateComponent rotateComponent = new RotateComponent();
         rotateComponent.GetTargetGlobalPositionFunc = () => GetGlobalMousePosition();
-        rotateComponent.GetRotationSpeedFunc = () => RotationSpeed;
+        rotateComponent.GetRotationSpeedFunc = () => IsDead ? 0 : RotationSpeed;
         AddChild(rotateComponent);
     }
     
@@ -44,7 +44,7 @@ public partial class ClientPlayer : ClientAlly
         foreach (var kv in _skillCooldownById)
         {
             kv.Value.Cooldown.Update(delta);
-            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted)
+            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted && !IsDead)
             {
                 kv.Value.Cooldown.Restart();
                 Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(kv.Key, Position, Rotation, GetGlobalMousePosition()));

@@ -12,4 +12,16 @@ public partial class ClientAlly
         public long PeerId = peerId;
         public double Hp = hp;
     }
+    
+    [GamePacket]
+    public class SC_AllyDeadPacket(long peerId) : BinaryPacket
+    {
+        public long PeerId = peerId;
+    }
+    
+    [GamePacket]
+    public class SC_AllyResurrectionPacket(long peerId) : BinaryPacket
+    {
+        public long PeerId = peerId;
+    }
 }

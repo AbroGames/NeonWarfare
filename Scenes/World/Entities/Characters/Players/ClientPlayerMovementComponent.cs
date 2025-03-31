@@ -50,6 +50,7 @@ public partial class ClientPlayerMovementComponent : Node
 
     private Vector2 GetInput()
     {
+        if (_parent.IsDead) return Vector2.Zero;
         return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
     }
 }

@@ -16,10 +16,10 @@ public partial class ServerEnemy : ServerCharacter
 
     public void InitComponents()
     {
-        AddChild(new ServerEnemyMovementComponent());
-
         ServerEnemyTargetComponent serverEnemyTargetComponent = new ServerEnemyTargetComponent();
         AddChild(serverEnemyTargetComponent);
+        
+        AddChild(new ServerEnemyMovementComponent());
         
         RotateComponent rotateComponent = new RotateComponent();
         rotateComponent.GetTargetGlobalPositionFunc = () =>

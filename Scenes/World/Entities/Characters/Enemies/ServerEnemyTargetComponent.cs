@@ -45,7 +45,7 @@ public partial class ServerEnemyTargetComponent : Node
         foreach (ServerPlayer player in ServerRoot.Instance.Game.World.Players)
         {
             double distance = _parent.DistanceTo(player);
-            if (distance < closestDistance)
+            if (distance < closestDistance && !player.IsDead)
             {
                 closestDistance = distance;
                 closestPlayer = player;
