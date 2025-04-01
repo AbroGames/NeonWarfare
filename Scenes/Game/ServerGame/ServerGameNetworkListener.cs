@@ -118,14 +118,8 @@ public partial class ServerGame
     [EventListener(ListenerSide.Server)]
     public void OnWantToBattlePacket(CS_WantToBattlePacket wantToBattlePacket) 
     {
-        Network.SendToAll(new ClientGame.ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-        Network.SendToAll(new ClientGame.ClientGame.SC_ChangeWorldPacket(ClientGame.ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle));
-
         ServerBattleWorld battleWorld = ServerRoot.Instance.PackedScenes.BattleWorld.Instantiate<ServerBattleWorld>();
-        ChangeMainScene(battleWorld);
-        battleWorld.Init(PlayerProfiles.ToList());
-        
-        Network.SendToAll(new ClientGame.ClientGame.SC_ClearLoadingScreenPacket());
+        ChangeAndSendMainScene(battleWorld);
     }
 
     /*

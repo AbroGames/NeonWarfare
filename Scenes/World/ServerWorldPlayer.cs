@@ -89,15 +89,8 @@ public abstract partial class ServerWorld
         //Если все игроки мертвы, то загружает SafeWorld
         if (Players.Count > 0 && Players.Where(p => !p.IsDead).Count() == 0)
         {
-            //TODO Здесь и в NeonWarfare.Scenes.Game.ServerGame.ServerGame.OnWantToBattlePacket много дубоирования, вынести в Game/World
-            Network.SendToAll(new ClientGame.SC_ChangeLoadingScreenPacket(LoadingScreenBuilder.LoadingScreenType.LOADING));
-            Network.SendToAll(new ClientGame.SC_ChangeWorldPacket(ClientGame.SC_ChangeWorldPacket.ServerWorldType.Safe));
-
             ServerSafeWorld safeWorld = ServerRoot.Instance.PackedScenes.SafeWorld.Instantiate<ServerSafeWorld>();
-            ServerRoot.Instance.Game.ChangeMainScene(safeWorld);
-            safeWorld.Init(ServerRoot.Instance.Game.PlayerProfiles.ToList());
-        
-            Network.SendToAll(new ClientGame.SC_ClearLoadingScreenPacket());
+            ServerRoot.Instance.Game.ChangeAndSendMainScene(safeWorld);
         }
     }
     

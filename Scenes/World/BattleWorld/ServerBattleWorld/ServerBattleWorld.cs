@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Godot;
+using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
 using NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
 using NeonWarfare.Scripts.KludgeBox;
@@ -55,5 +56,10 @@ public partial class ServerBattleWorld : ServerWorld
         
         EnemyWave.Update(delta);
         _enemySpawner.Update(delta);
+    }
+    
+    public override ClientGame.SC_ChangeWorldPacket.ServerWorldType GetServerWorldType()
+    {
+        return ClientGame.SC_ChangeWorldPacket.ServerWorldType.Battle;
     }
 }

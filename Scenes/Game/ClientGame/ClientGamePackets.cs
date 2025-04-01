@@ -28,7 +28,7 @@ public partial class ClientGame
         
         public enum ServerWorldType
         {
-            Safe, Battle
+            Unknown, Safe, Battle
         }
         
         private static readonly Dictionary<ServerWorldType, Func<PackedScene>> WorldScenesMap = new() 

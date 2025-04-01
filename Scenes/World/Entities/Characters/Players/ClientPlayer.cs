@@ -45,7 +45,6 @@ public partial class ClientPlayer : ClientAlly
         base._Process(delta);
 
         double skillCooldownFactorWhileDead = ClientRoot.Instance.Game.GameSettings.SkillCooldownFactorWhileDead;
-        Log.Warning(skillCooldownFactorWhileDead + "!!!!!!!!!!!!!");
         foreach (var kv in _skillCooldownById)
         {
             kv.Value.Cooldown.Update(IsDead ? delta*skillCooldownFactorWhileDead : delta);  //Если персонаж мертв, то скиллы откатываются медленней

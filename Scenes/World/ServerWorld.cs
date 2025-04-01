@@ -13,6 +13,7 @@ namespace NeonWarfare.Scenes.World;
 public abstract partial class ServerWorld : Node2D
 {
     public NavigationService NavigationService { get; protected set; }
+    
     public void Init(List<ServerPlayerProfile> playerProfiles)
     {
         NavigationService = new NavigationService();
@@ -24,5 +25,10 @@ public abstract partial class ServerWorld : Node2D
     public override void _PhysicsProcess(double delta)
     {
         CheckAllDeadAndRestart();
+    }
+
+    public virtual ClientGame.SC_ChangeWorldPacket.ServerWorldType GetServerWorldType()
+    {
+        return ClientGame.SC_ChangeWorldPacket.ServerWorldType.Unknown;
     }
 }
