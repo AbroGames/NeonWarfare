@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using NeonWarfare.Scenes.Game.ServerGame;
 using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scenes.World.Entities.Characters.Players;
 using NeonWarfare.Scripts.Content;
@@ -50,9 +51,11 @@ public partial class ServerCharacter : CharacterBody2D
         {
             Hp = Math.Min(Hp + delta * RegenHpSpeed, MaxHp);
         }
+
+        double skillCooldownFactorWhileDead = ServerRoot.Instance.Game.GameSettings.SkillCooldownFactorWhileDead;
         foreach (var skillCooldown in _skillById.Values.Select(skill => skill.Cooldown))
         {
-            skillCooldown.Update(delta);
+            skillCooldown.Update(IsDead ? delta*skillCooldownFactorWhileDead : delta); //Если персонаж мертв, то скиллы откатываются медленней
         }
     }
 

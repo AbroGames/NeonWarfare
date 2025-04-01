@@ -64,6 +64,8 @@ public partial class ServerGame
         newPlayerProfile.Name = initPlayerProfilePacket.Name;
         newPlayerProfile.Color = initPlayerProfilePacket.Color;
         
+        //Отправляем новому игроку настройки мира
+        Network.SendToClient(newPlayerPeerId, GameSettings.ToPacket());
         //Отправляем новому игроку его PlayerProfile
         Network.SendToClient(newPlayerPeerId, new ClientGame.ClientGame.SC_AddPlayerProfilePacket(newPlayerPeerId, initPlayerProfilePacket.Name, initPlayerProfilePacket.Color));
         //Отправляем союзникам PlayerProfile нового игрока

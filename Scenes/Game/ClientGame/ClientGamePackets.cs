@@ -59,4 +59,18 @@ public partial class ClientGame
         public string Name = name;
         public Color Color = color;
     }
+    
+    [GamePacket]
+    public class SC_ChangeSettingsPacket(bool friendlyFire, bool enemyFriendlyFire, bool healEnemyByPlayer, bool healPlayerByEnemy, 
+        bool resurrectEnemyByPlayer, bool resurrectPlayerByEnemy, double skillCooldownFactorWhileDead)
+        : BinaryPacket
+    {
+        public bool FriendlyFire = friendlyFire;
+        public bool EnemyFriendlyFire = enemyFriendlyFire;
+        public bool HealEnemyByPlayer = healEnemyByPlayer;
+        public bool HealPlayerByEnemy = healPlayerByEnemy;
+        public bool ResurrectEnemyByPlayer = resurrectEnemyByPlayer;
+        public bool ResurrectPlayerByEnemy = resurrectPlayerByEnemy;
+        public double SkillCooldownFactorWhileDead = skillCooldownFactorWhileDead;
+    }
 }

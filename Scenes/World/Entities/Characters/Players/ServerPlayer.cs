@@ -31,7 +31,7 @@ public partial class ServerPlayer : ServerCharacter
     {
         base.OnHit(damage, author, authorPeerId);
         
-        if (authorPeerId > 0 && !ServerRoot.Instance.Game.FriendlyFire) return;
+        if (authorPeerId > 0 && !ServerRoot.Instance.Game.GameSettings.FriendlyFire) return;
 
         TakeDamage(damage, author);
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
@@ -41,7 +41,7 @@ public partial class ServerPlayer : ServerCharacter
     {
         base.OnHeal(heal, author, authorPeerId);
         
-        if (authorPeerId == -1 && !ServerRoot.Instance.Game.HealPlayerByEnemy) return;
+        if (authorPeerId == -1 && !ServerRoot.Instance.Game.GameSettings.HealPlayerByEnemy) return;
         
         TakeHeal(heal, author);
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
@@ -51,7 +51,7 @@ public partial class ServerPlayer : ServerCharacter
     {
         base.OnResurrect(heal, author, authorPeerId);
         
-        if (authorPeerId == -1 && !ServerRoot.Instance.Game.ResurrectPlayerByEnemy) return;
+        if (authorPeerId == -1 && !ServerRoot.Instance.Game.GameSettings.ResurrectPlayerByEnemy) return;
         
         if (!IsDead) return; //TODO убрать дублирование с Resurrect (+TODO внизу)
         Resurrect(heal, author);

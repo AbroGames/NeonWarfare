@@ -94,4 +94,13 @@ public partial class ClientGame
 	{
 		ClearLoadingScreen();
 	}
+	
+	/*
+	 * Получаем с сервера все настройки мира
+	 */
+	[EventListener(ListenerSide.Client)]
+	public void OnChangeSettingsPacket(SC_ChangeSettingsPacket changeSettingsPacket)
+	{
+		GameSettings = Scripts.Utils.GameSettings.GameSettings.FromPacket(changeSettingsPacket);
+	}
 }

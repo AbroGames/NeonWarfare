@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame.PlayerProfile;
+using NeonWarfare.Scenes.Root.ClientRoot;
+using NeonWarfare.Scenes.Root.ServerRoot;
 using NeonWarfare.Scripts.Content;
+using NeonWarfare.Scripts.KludgeBox;
 using NeonWarfare.Scripts.KludgeBox.Networking;
 using NeonWarfare.Scripts.Utils.Components;
 using NeonWarfare.Scripts.Utils.Cooldown;
@@ -41,9 +44,11 @@ public partial class ClientPlayer : ClientAlly
     {
         base._Process(delta);
 
+        double skillCooldownFactorWhileDead = ClientRoot.Instance.Game.GameSettings.SkillCooldownFactorWhileDead;
+        Log.Warning(skillCooldownFactorWhileDead + "!!!!!!!!!!!!!");
         foreach (var kv in _skillCooldownById)
         {
-            kv.Value.Cooldown.Update(delta);
+            kv.Value.Cooldown.Update(IsDead ? delta*skillCooldownFactorWhileDead : delta);  //Если персонаж мертв, то скиллы откатываются медленней
             if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted && !IsDead)
             {
                 kv.Value.Cooldown.Restart();

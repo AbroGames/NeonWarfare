@@ -71,7 +71,7 @@ public partial class ServerEnemy : ServerCharacter
         base.OnHit(damage, author, authorPeerId);
         
         if (author == this) return;
-        if (authorPeerId == -1 && !ServerRoot.Instance.Game.EnemyFriendlyFire) return;
+        if (authorPeerId == -1 && !ServerRoot.Instance.Game.GameSettings.EnemyFriendlyFire) return;
         
         TakeDamage(damage, author);
     }
@@ -80,7 +80,7 @@ public partial class ServerEnemy : ServerCharacter
     {
         base.OnHeal(heal, author, authorPeerId);
         
-        if (authorPeerId > 0 && !ServerRoot.Instance.Game.HealEnemyByPlayer) return;
+        if (authorPeerId > 0 && !ServerRoot.Instance.Game.GameSettings.HealEnemyByPlayer) return;
         
         TakeHeal(heal, author);
     }
@@ -89,7 +89,7 @@ public partial class ServerEnemy : ServerCharacter
     {
         base.OnResurrect(heal, author, authorPeerId);
         
-        if (authorPeerId > 0 && !ServerRoot.Instance.Game.ResurrectEnemyByPlayer) return;
+        if (authorPeerId > 0 && !ServerRoot.Instance.Game.GameSettings.ResurrectEnemyByPlayer) return;
         
         Resurrect(heal, author);
     }
