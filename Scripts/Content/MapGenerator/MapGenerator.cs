@@ -60,6 +60,8 @@ public class MapGenerator
     
     public List<Location> SafeWorldGenerate()
     {
+        return new List<Location>(); //TODO Временно для релиза v0.1.0
+        
         Color gray = new(0.3f, 0.3f, 0.3f);
         Color yellow = new(0.6f, 0.6f, 0.0f);
         Color green = new(0.0f, 0.6f, 0.0f);
