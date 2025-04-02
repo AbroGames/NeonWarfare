@@ -53,7 +53,7 @@ public class HealShotSkill : Skill
         useInfo.World.AddChild(shotAction);
 
         string customParams = JsonSerializer.Serialize(new PacketCustomParams(
-            Speed: (float) Speed
+            Speed: (float) (Speed*useInfo.SpeedFactor)
             ));
         Network.SendToAll(new ClientWorld.SC_UseSkillPacket(
             skillType: SkillType, 

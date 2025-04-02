@@ -50,7 +50,7 @@ public class DoubleShotSkill : Skill
         long nid2 = CreateServerShotAction(useInfo, -DeltaPos);
 
         string customParams = JsonSerializer.Serialize(new PacketCustomParams(
-            Speed: (float) Speed,
+            Speed: (float) (Speed*useInfo.SpeedFactor),
             Nid1: nid1,
             Nid2: nid2
             ));
