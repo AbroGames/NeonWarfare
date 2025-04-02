@@ -27,34 +27,34 @@ public partial class ServerPlayer : ServerCharacter
         RotationSpeed = playerProfile.RotationSpeed;
     }
 
-    public override void OnHit(double damage, ServerCharacter author, long authorPeerId)
+    public override void OnHit(double damage, ServerCharacter author, long authorPeerId, string skillType)
     {
-        base.OnHit(damage, author, authorPeerId);
+        base.OnHit(damage, author, authorPeerId, skillType);
         
         if (authorPeerId > 0 && !ServerRoot.Instance.Game.GameSettings.FriendlyFire) return;
 
-        TakeDamage(damage, author);
+        TakeDamage(damage, author, authorPeerId, skillType);
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
     }
 
-    public override void OnHeal(double heal, ServerCharacter author, long authorPeerId)
+    public override void OnHeal(double heal, ServerCharacter author, long authorPeerId, string skillType)
     {
-        base.OnHeal(heal, author, authorPeerId);
+        base.OnHeal(heal, author, authorPeerId, skillType);
         
         if (authorPeerId == -1 && !ServerRoot.Instance.Game.GameSettings.HealPlayerByEnemy) return;
         
-        TakeHeal(heal, author);
+        TakeHeal(heal, author, authorPeerId, skillType);
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, Hp));
     }
     
-    public override void OnResurrect(double heal, ServerCharacter author, long authorPeerId)
+    public override void OnResurrect(double heal, ServerCharacter author, long authorPeerId, string skillType)
     {
-        base.OnResurrect(heal, author, authorPeerId);
+        base.OnResurrect(heal, author, authorPeerId, skillType);
         
         if (authorPeerId == -1 && !ServerRoot.Instance.Game.GameSettings.ResurrectPlayerByEnemy) return;
         
         if (!IsDead) return; //TODO убрать дублирование с Resurrect (+TODO внизу)
-        Resurrect(heal, author);
+        Resurrect(heal, author, authorPeerId, skillType);
         Network.SendToAll(new ClientAlly.SC_AllyResurrectionPacket(PlayerProfile.PeerId));
         Network.SendToAll(new ClientAlly.SC_ChangeAllyStatsPacket(PlayerProfile.PeerId, heal)); //TODO переделать так, чтобы в ServerPlayer можно было вызвать Heal внутри Resurrect и пакет бы сам отправился (+TODO вверху)
     }

@@ -39,7 +39,8 @@ public class ResurrectShotSkill() : Skill(SkillTypeConst)
             speed: (float) (Speed*useInfo.SpeedFactor), 
             range: (float) (Range*useInfo.RangeFactor), 
             author: useInfo.Author, 
-            authorPeerId: useInfo.AuthorPeerId);
+            authorPeerId: useInfo.AuthorPeerId,
+            skillType: SkillTypeConst);
         useInfo.World.AddChild(shotAction);
 
         string customParams = JsonSerializer.Serialize(new PacketCustomParams(

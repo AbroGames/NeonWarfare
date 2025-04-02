@@ -1,0 +1,50 @@
+using System;
+using Godot;
+using NeonWarfare.Scripts.Content.Skills;
+using NeonWarfare.Scripts.KludgeBox.Core;
+using NeonWarfare.Scripts.KludgeBox.Events.EventTypes;
+using NeonWarfare.Scripts.KludgeBox.Godot.Extensions;
+using NeonWarfare.Scripts.KludgeBox.Networking;
+using NeonWarfare.Scripts.KludgeBox.Networking.Packets;
+using NeonWarfare.Scripts.Utils.NetworkEntityManager;
+
+namespace NeonWarfare.Scenes.World.Entities.Characters;
+
+public partial class ClientCharacter 
+{
+    [GamePacket]
+    public class CS_DamageCharacterPacket(long nid, long authorPeerId, string skillType, double damage) : BinaryPacket, IInstanceEvent
+    {
+        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
+        public object NetworkId => Nid;
+        
+        public long Nid = nid;
+        public long AuthorPeerId = authorPeerId;
+        public string SkillType = skillType;
+        public double Damage = damage;
+    }
+    
+    [GamePacket]
+    public class CS_HealCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
+    {
+        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
+        public object NetworkId => Nid;
+        
+        public long Nid = nid;
+        public long AuthorPeerId = authorPeerId;
+        public string SkillType = skillType;
+        public double Heal = heal;
+    }
+    
+    [GamePacket]
+    public class CS_ResurrectCharacterPacket(long nid, long authorPeerId, string skillType, double heal) : BinaryPacket, IInstanceEvent
+    {
+        public override MultiplayerPeer.TransferModeEnum Mode => MultiplayerPeer.TransferModeEnum.Unreliable;
+        public object NetworkId => Nid;
+        
+        public long Nid = nid;
+        public long AuthorPeerId = authorPeerId;
+        public string SkillType = skillType;
+        public double Heal = heal;
+    }
+}

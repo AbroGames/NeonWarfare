@@ -67,32 +67,32 @@ public partial class ServerEnemy : ServerCharacter
         }
     }
 
-    public override void OnHit(double damage, ServerCharacter author, long authorPeerId)
+    public override void OnHit(double damage, ServerCharacter author, long authorPeerId, string skillType)
     {
-        base.OnHit(damage, author, authorPeerId);
+        base.OnHit(damage, author, authorPeerId, skillType);
         
         if (author == this) return;
         if (authorPeerId == -1 && !ServerRoot.Instance.Game.GameSettings.EnemyFriendlyFire) return;
         
-        TakeDamage(damage, author);
+        TakeDamage(damage, author, authorPeerId, skillType);
     }
 
-    public override void OnHeal(double heal, ServerCharacter author, long authorPeerId)
+    public override void OnHeal(double heal, ServerCharacter author, long authorPeerId, string skillType)
     {
-        base.OnHeal(heal, author, authorPeerId);
+        base.OnHeal(heal, author, authorPeerId, skillType);
         
         if (authorPeerId > 0 && !ServerRoot.Instance.Game.GameSettings.HealEnemyByPlayer) return;
         
-        TakeHeal(heal, author);
+        TakeHeal(heal, author, authorPeerId, skillType);
     }
     
-    public override void OnResurrect(double heal, ServerCharacter author, long authorPeerId)
+    public override void OnResurrect(double heal, ServerCharacter author, long authorPeerId, string skillType)
     {
-        base.OnResurrect(heal, author, authorPeerId);
+        base.OnResurrect(heal, author, authorPeerId, skillType);
         
         if (authorPeerId > 0 && !ServerRoot.Instance.Game.GameSettings.ResurrectEnemyByPlayer) return;
         
-        Resurrect(heal, author);
+        Resurrect(heal, author, authorPeerId, skillType);
     }
 
     public void TryUseSkill(long skillId)

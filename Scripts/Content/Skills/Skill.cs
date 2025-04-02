@@ -17,7 +17,7 @@ public abstract class Skill
     }
 
     public record ServerSkillUseInfo(ServerWorld World, Vector2 CharacterPosition, float CharacterRotation, Vector2 CursorGlobalPosition,
-        ServerCharacter Author, long AuthorPeerId, 
+        ServerCharacter Author, long AuthorPeerId,
         double DamageFactor, double SpeedFactor, double RangeFactor);
     
     public record ClientSkillUseInfo(ClientWorld World, long Nid,

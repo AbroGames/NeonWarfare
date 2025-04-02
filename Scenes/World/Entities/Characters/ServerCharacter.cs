@@ -59,14 +59,17 @@ public partial class ServerCharacter : CharacterBody2D
         }
     }
 
-    public virtual void OnHit(double damage, ServerCharacter author, long authorPeerId) { }
-    public virtual void OnHeal(double heal, ServerCharacter author, long authorPeerId) { }
-    public virtual void OnResurrect(double heal, ServerCharacter author, long authorPeerId) { }
+    public virtual void OnHit(double damage, ServerCharacter author, long authorPeerId, string skillType) { }
+    public virtual void OnHeal(double heal, ServerCharacter author, long authorPeerId, string skillType) { }
+    public virtual void OnResurrect(double heal, ServerCharacter author, long authorPeerId, string skillType) { }
 
-    public void TakeDamage(double damage, ServerCharacter author)
+    public void TakeDamage(double damage, ServerCharacter author, long authorPeerId, string skillType)
     {
+        double realDamage = Math.Min(damage, Hp);
+        Network.SendToAll(new ClientCharacter.CS_DamageCharacterPacket(Nid, authorPeerId, skillType, realDamage));
+        
         if (IsDead) return;
-        Hp -= damage;
+        Hp -= realDamage;
         if (Hp <= 0)
         {
             Hp = 0;
@@ -74,10 +77,13 @@ public partial class ServerCharacter : CharacterBody2D
         }
     }
 
-    public void TakeHeal(double heal, ServerCharacter author)
+    public void TakeHeal(double heal, ServerCharacter author, long authorPeerId, string skillType)
     {
+        double realHeal = IsDead ? 0 : Math.Min(heal, MaxHp - Hp);
+        Network.SendToAll(new ClientCharacter.CS_HealCharacterPacket(Nid, authorPeerId, skillType, realHeal));
+        
         if (IsDead) return;
-        Hp = Math.Min(Hp + heal, MaxHp);
+        Hp += realHeal;
     }
 
     public void Death(ServerCharacter killer)
@@ -92,11 +98,14 @@ public partial class ServerCharacter : CharacterBody2D
         QueueFree();
     }
 
-    public void Resurrect(double hp, ServerCharacter author)
+    public void Resurrect(double hp, ServerCharacter author, long authorPeerId, string skillType)
     {
+        double realHeal = IsDead ? Math.Min(hp, MaxHp) : 0;
+        Network.SendToAll(new ClientCharacter.CS_ResurrectCharacterPacket(Nid, authorPeerId, skillType, realHeal));
+        
         if (!IsDead) return;
         IsDead = false;
-        Hp = Math.Min(hp, MaxHp);
+        Hp = realHeal;
         author.AsResurrector(this);
     }
 

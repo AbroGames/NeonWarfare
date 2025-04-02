@@ -1,5 +1,6 @@
 using Godot;
 using NeonWarfare.Scenes.World.Entities.Characters;
+using NeonWarfare.Scripts.Content.Skills;
 using NeonWarfare.Scripts.KludgeBox.Core;
 using NeonWarfare.Scripts.Utils.Cooldown;
 
@@ -15,6 +16,7 @@ public partial class ServerShotAction : Node2D
     public float Range { get; private set; } //pixels
     public ServerCharacter Author { get; private set; } 
     public long AuthorPeerId { get; private set; } //PeerId выстрелившего, -1 для вражеского бота, PeerId владельца для союзного бота
+    public string SkillType { get; private set; } //SkillType скилла, который породил данный Action
     
     private ManualCooldown _destroyCooldown;
 
@@ -34,13 +36,14 @@ public partial class ServerShotAction : Node2D
         Rotation = rotation;
     }
 
-    public void InitStats(double damage, float speed, float range, ServerCharacter author, long authorPeerId)
+    public void InitStats(double damage, float speed, float range, ServerCharacter author, long authorPeerId, string skillType)
     {
         Damage = damage;
         Speed = speed;
         Range = range;
         Author = author;
         AuthorPeerId = authorPeerId;
+        SkillType = skillType;
     }
     
     public override void _PhysicsProcess(double delta)
@@ -56,7 +59,7 @@ public partial class ServerShotAction : Node2D
         {
             if (Author != character)
             {
-                character.OnHit(Damage, Author, AuthorPeerId);
+                character.OnHit(Damage, Author, AuthorPeerId, SkillType);
                 QueueFree();
             }
         }

@@ -15,6 +15,7 @@ public partial class ServerResurrectShotAction : Node2D
     public float Range { get; private set; } //pixels
     public ServerCharacter Author { get; private set; } 
     public long AuthorPeerId { get; private set; } //PeerId выстрелившего, -1 для вражеского бота, PeerId владельца для союзного бота
+    public string SkillType { get; private set; } //SkillType скилла, который породил данный Action
     
     private ManualCooldown _destroyCooldown;
 
@@ -34,13 +35,14 @@ public partial class ServerResurrectShotAction : Node2D
         Rotation = rotation;
     }
 
-    public void InitStats(double heal, float speed, float range, ServerCharacter author, long authorPeerId)
+    public void InitStats(double heal, float speed, float range, ServerCharacter author, long authorPeerId, string skillType)
     {
         Heal = heal;
         Speed = speed;
         Range = range;
         Author = author;
         AuthorPeerId = authorPeerId;
+        SkillType = skillType;
     }
     
     public override void _PhysicsProcess(double delta)
@@ -56,7 +58,7 @@ public partial class ServerResurrectShotAction : Node2D
         {
             if (Author != character)
             {
-                character.OnResurrect(Heal, Author, AuthorPeerId);
+                character.OnResurrect(Heal, Author, AuthorPeerId, SkillType);
                 QueueFree();
             }
         }
