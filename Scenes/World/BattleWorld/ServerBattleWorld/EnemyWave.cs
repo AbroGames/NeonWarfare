@@ -44,6 +44,6 @@ public class EnemyWave
 
     private void SpawnEnemies(EnemyInfoStorage.EnemyType enemyType, int count)
     {
-        _enemySpawner.AddSpawnTask(new EnemySpawnRectTask(enemyType, count, 0, Mathf.DegToRad(360), Vec(0, 0), Vec(8400, 10000)));
+        _enemySpawner.AddSpawnTask(new EnemySpawnRingTask(enemyType, count, 0, Mathf.DegToRad(360), Vec(0, 0), 2500, 4200));
     }
  }
