@@ -39,6 +39,7 @@ public partial class ServerGame
         Log.Info($"Client disconnected from server. Peer id = {peerDisconnectedEvent.Id}");
         ServerPlayer disconnectedPlayer = World.PlayersByPeerId[peerDisconnectedEvent.Id];
         disconnectedPlayer.QueueFree();
+        BroadcastMessage($"{disconnectedPlayer.PlayerProfile.Name} disconnected.");
         
         RemovePlayerProfile(peerDisconnectedEvent.Id);
         Network.SendToAll(new ClientGame.ClientGame.SC_RemoveAllyProfilePacket(peerDisconnectedEvent.Id)); //Информацию об отключении отправляем всем, т.к. отключенный игрок уже отключен.
@@ -65,6 +66,7 @@ public partial class ServerGame
         newPlayerProfile.Name = initPlayerProfilePacket.Name;
         newPlayerProfile.Color = initPlayerProfilePacket.Color;
         
+        BroadcastMessage($"{newPlayerProfile.Name} connected.");
         //Отправляем новому игроку настройки мира
         Network.SendToClient(newPlayerPeerId, GameSettings.ToPacket());
         //Отправляем новому игроку его PlayerProfile

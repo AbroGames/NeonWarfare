@@ -15,12 +15,16 @@ public static class ChatNetworking
     [GamePacket]
     public class CS_SendMessagePacket(string text) : BinaryPacket
     {
+        public override int PreferredChannel => 1;
+
         public string MessageText= text;
     }
     
     [GamePacket]
     public class SC_SendMessagePacket(string text, long authorId) : BinaryPacket
     {
+        public override int PreferredChannel => 1;
+        
         public string MessageText = text;
         public long AuthorId = authorId;
     }
@@ -30,7 +34,10 @@ public static class ChatNetworking
     [EventListener(ListenerSide.Client)]
     public static void OnMessageReceivedFromServer(SC_SendMessagePacket packet)
     {
-        ClientRoot.Instance.Game.Hud.ChatContainer.ReceiveMessage(ChatMessage.FromPacket(packet));
+        if (ClientRoot.Instance.Game.Hud != null)
+        {
+            ClientRoot.Instance.Game.Hud.ChatContainer.ReceiveMessage(ChatMessage.FromPacket(packet));
+        }
     }
 
     
