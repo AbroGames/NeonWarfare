@@ -139,14 +139,24 @@ public partial class Network : Node
 			CloseConnection();
 		}
 	}
-	
+
+	public static long SendPackets;
+	public static long ReceivedPackets;
+	public static long SendBytes;
+	public static long ReceivedBytes;
 	public void SendRaw(long id, byte[] encodedPacketBuffer, MultiplayerPeer.TransferModeEnum mode = MultiplayerPeer.TransferModeEnum.Reliable, int channel = 0)
 	{
+		SendPackets++;
+		SendBytes += encodedPacketBuffer.Length;
+		
 		Api.SendBytes(encodedPacketBuffer, (int) id, mode, channel);
 	}
 	
 	private void OnPacketReceived(long id, byte[] packet)
 	{
+		ReceivedPackets++;
+		ReceivedBytes += packet.Length;
+		
 		var packetObj = PacketHelper.DecodePacket(packet, PacketRegistry);
 		packetObj.SenderId = id;
 
