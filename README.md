@@ -1,3 +1,5 @@
+# Neon Warfare
+
 > [!IMPORTANT]
 > В проекте используется **.NET 8**.  
 > Перед тем как начать разработку, ознакомься с [Wiki](https://github.com/AbroGames/NeonWarfare/wiki).
