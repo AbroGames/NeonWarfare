@@ -46,7 +46,15 @@ public static class ChatNetworking
     {
         if (packet.MessageText.StartsWith('/'))
         {
-            ServerRoot.Instance.Game.CommandsService.TryExecuteCommand(ChatMessage.FromPacket(packet));
+            bool res = ServerRoot.Instance.Game.PlayerProfilesByPeerId[packet.SenderId].ChangeClass(packet.MessageText.Substring(1));
+            if (res)
+            {
+                Network.SendToAll(new SC_SendMessagePacket($"Класс успешно изменен на {packet.MessageText.Substring(1)}", packet.SenderId));
+            }
+            else
+            {
+                Network.SendToAll(new SC_SendMessagePacket($"Некорректное имя класса {packet.MessageText.Substring(1)}", packet.SenderId));
+            }
             return;
         }
         
