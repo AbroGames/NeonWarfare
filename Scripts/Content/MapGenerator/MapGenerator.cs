@@ -55,6 +55,11 @@ public class MapGenerator
             new(Wall, new Vector2(-1012, 2093), new Vector2(0.2f, 2), 2.35619f, gray),
             new(Wall, new Vector2(-3693, 1090), new Vector2(0.2f, 2), -1.0472f, gray)
         ]);
+
+        foreach (var entity in mainLocation.Entities)
+        {
+            entity.Scale *= 1.5f;
+        }
         return [mainLocation];
     }
     
