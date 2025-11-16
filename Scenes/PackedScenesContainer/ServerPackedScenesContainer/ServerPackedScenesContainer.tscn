@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bkft5taaifavw"]
+[gd_scene load_steps=13 format=3 uid="uid://bkft5taaifavw"]
 
 [ext_resource type="Script" uid="uid://d2on4kl7vseo5" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.cs" id="1_1ofgs"]
 [ext_resource type="PackedScene" uid="uid://cqyevma8i265i" path="res://Scenes/World/SafeWorld/ServerSafeWorld/ServerSafeWorld.tscn" id="2_bl3u7"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://hwb6nmto0nci" path="res://Scenes/World/Entities/Actions/Shot/ServerShotAction.tscn" id="9_rxd6r"]
 [ext_resource type="PackedScene" uid="uid://dxk3j3vyrh28a" path="res://Scenes/World/Entities/Actions/HealShot/ServerHealShotAction.tscn" id="10_ib1nh"]
 [ext_resource type="PackedScene" uid="uid://b5ma1ydjmm20r" path="res://Scenes/World/Entities/Actions/ResurrectShot/ServerResurrectShotAction.tscn" id="11_ktc7h"]
+[ext_resource type="PackedScene" uid="uid://bjurtxwtc70dm" path="res://Scenes/World/Entities/Actions/SlowShot/ServerSlowShotAction.tscn" id="12_ahwby"]
 
 [node name="ServerPackedScenesContainer" type="Node"]
 script = ExtResource("1_1ofgs")
@@ -24,3 +25,4 @@ TurtleEnemy = ExtResource("8_81po5")
 ShotAction = ExtResource("9_rxd6r")
 HealShotAction = ExtResource("10_ib1nh")
 ResurrectShotAction = ExtResource("11_ktc7h")
+SlowShotAction = ExtResource("12_ahwby")
