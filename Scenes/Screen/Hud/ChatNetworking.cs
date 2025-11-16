@@ -44,16 +44,30 @@ public static class ChatNetworking
     [EventListener(ListenerSide.Server)]
     public static void OnMessageReceivedFromClient(CS_SendMessagePacket packet)
     {
-        if (packet.MessageText.StartsWith('/'))
+        if (packet.MessageText.StartsWith("/class "))
         {
-            bool res = ServerRoot.Instance.Game.PlayerProfilesByPeerId[packet.SenderId].ChangeClass(packet.MessageText.Substring(1));
+            bool res = ServerRoot.Instance.Game.PlayerProfilesByPeerId[packet.SenderId].ChangeClass(packet.MessageText.Substring("/class ".Length));
             if (res)
             {
-                Network.SendToAll(new SC_SendMessagePacket($"Класс успешно изменен на {packet.MessageText.Substring(1)}", packet.SenderId));
+                Network.SendToAll(new SC_SendMessagePacket($"Класс успешно изменен на {packet.MessageText.Substring("/class ".Length)}", packet.SenderId));
             }
             else
             {
-                Network.SendToAll(new SC_SendMessagePacket($"Некорректное имя класса {packet.MessageText.Substring(1)}", packet.SenderId));
+                Network.SendToAll(new SC_SendMessagePacket($"Некорректное название класса {packet.MessageText.Substring("/class ".Length)}", packet.SenderId));
+            }
+            return;
+        }
+        
+        if (packet.MessageText.StartsWith("/wave "))
+        {
+            bool res = ServerRoot.Instance.Game.GameSettings.SetWaveType(packet.MessageText.Substring("/wave ".Length));
+            if (res)
+            {
+                Network.SendToAll(new SC_SendMessagePacket($"Тип волны успешно изменен на {packet.MessageText.Substring("/wave ".Length)}", packet.SenderId));
+            }
+            else
+            {
+                Network.SendToAll(new SC_SendMessagePacket($"Некорректный тип волны {packet.MessageText.Substring("/wave ".Length)}", packet.SenderId));
             }
             return;
         }

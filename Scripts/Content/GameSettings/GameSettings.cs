@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NeonWarfare.Scenes.Game.ClientGame;
 
 namespace NeonWarfare.Scripts.Content.GameSettings;
@@ -11,6 +12,25 @@ public record GameSettings()
     public readonly bool ResurrectEnemyByPlayer = true;
     public readonly bool ResurrectPlayerByEnemy = false;
     public readonly double SkillCooldownFactorWhileDead = 0.5;
+
+    public string WaveType = "def";
+
+    public bool SetWaveType(string waveType)
+    {
+        List<string> types = [
+            "def",
+            "zerg",
+            "shooter",
+            "turtle",
+            "shooter-turtle"
+        ];
+        if (types.Contains(waveType))
+        {
+            WaveType = waveType;
+            return true;
+        }
+        return false;
+    }
 
     public GameSettings(
         bool friendlyFire, 
