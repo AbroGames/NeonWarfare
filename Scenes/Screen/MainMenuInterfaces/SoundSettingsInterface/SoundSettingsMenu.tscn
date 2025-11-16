@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://be1870tomtt30"]
 
 [ext_resource type="Texture2D" uid="uid://op6cmehnxfe" path="res://icon.svg" id="1_mgmoq"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/BackToSettingsMenuButton.cs" id="2_06aah"]
+[ext_resource type="Script" uid="uid://bwn8wp2v68nby" path="res://Scenes/Screen/MainMenuInterfaces/SettingsMenuInterface/BackToSettingsMenuButton.cs" id="2_06aah"]
 
 [node name="SoundSettingsMenu" type="Control"]
 layout_mode = 3

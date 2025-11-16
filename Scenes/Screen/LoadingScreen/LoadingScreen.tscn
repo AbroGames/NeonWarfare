@@ -1,8 +1,8 @@
 [gd_scene load_steps=10 format=3 uid="uid://cuy77qqautv4t"]
 
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="1_bmt3c"]
-[ext_resource type="Script" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.cs" id="1_tw8yx"]
-[ext_resource type="Script" path="res://Scenes/Screen/LoadingScreen/LoadingAnimHandle.cs" id="2_jp6vp"]
+[ext_resource type="Script" uid="uid://bj3mgv62r6v41" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.cs" id="1_tw8yx"]
+[ext_resource type="Script" uid="uid://b24timr1o774b" path="res://Scenes/Screen/LoadingScreen/LoadingAnimHandle.cs" id="2_jp6vp"]
 [ext_resource type="Texture2D" uid="uid://d0bm03qw00g80" path="res://Scenes/Screen/LoadingScreen/LoadingPartThin.svg" id="3_k8283"]
 [ext_resource type="Texture2D" uid="uid://dd8qscwemtbcd" path="res://Scenes/Screen/LoadingScreen/LoadingPartFat.svg" id="4_67v6a"]
 [ext_resource type="Texture2D" uid="uid://dodbo34b0s7wf" path="res://Scenes/Screen/LoadingScreen/Dot.svg" id="5_icwjq"]
@@ -12,12 +12,12 @@ font = ExtResource("1_bmt3c")
 font_size = 36
 
 [sub_resource type="Curve" id="Curve_we0hx"]
-min_value = -1.0
+_limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.736842, -1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="Curve" id="Curve_sjuhh"]
-min_value = -1.0
+_limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, -0.934066), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.926316, -0.956044), 0.0, 0.0, 0, 0]
 point_count = 3
 
@@ -61,6 +61,8 @@ grow_vertical = 2
 layout_mode = 2
 text = "LOADING"
 label_settings = SubResource("LabelSettings_l4l47")
+horizontal_alignment = 1
+uppercase = true
 
 [node name="Anim" type="Control" parent="Control/VBoxContainer"]
 layout_mode = 2

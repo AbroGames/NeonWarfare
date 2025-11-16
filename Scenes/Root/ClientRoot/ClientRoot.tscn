@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://6v3fu0vexvah"]
 
-[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
+[ext_resource type="Script" uid="uid://c7st5h4lud4hr" path="res://Scenes/Root/ClientRoot/ClientRoot.cs" id="1_7bmax"]
 [ext_resource type="PackedScene" uid="uid://bdvsb2vvfjdil" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.tscn" id="2_6lwjn"]
-[ext_resource type="Script" path="res://Scenes/Root/ClientRoot/AchievementsSystem/AchievementsOverlay.cs" id="3_ymfay"]
+[ext_resource type="Script" uid="uid://c6ayqeruh4hfv" path="res://Scenes/Root/ClientRoot/AchievementsSystem/AchievementsOverlay.cs" id="3_ymfay"]
 [ext_resource type="PackedScene" uid="uid://cmj4sy8hw0ryl" path="res://Scenes/Root/ClientRoot/AchievementsSystem/AchievementPanel.tscn" id="4_s5hfm"]
 
 [node name="ClientRoot" type="Node2D" node_paths=PackedStringArray("AchievementsOverlayLayer", "LoadingScreenLayer", "PackedScenes", "ContextContainer")]

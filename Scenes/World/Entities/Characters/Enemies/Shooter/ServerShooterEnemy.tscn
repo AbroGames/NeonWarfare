@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://csg127clytout"]
 
 [ext_resource type="PackedScene" uid="uid://758pqudrkrii" path="res://Scenes/World/Entities/Characters/Enemies/ServerEnemy.tscn" id="1_xipky"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ServerShooterEnemy.cs" id="2_xd68d"]
+[ext_resource type="Script" uid="uid://c4gk6ci0v0i07" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ServerShooterEnemy.cs" id="2_xd68d"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7j1c1"]
 resource_local_to_scene = true

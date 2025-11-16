@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://n0xmwymx5ba5"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/ClientCharacter.cs" id="1_jfda0"]
-[ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="3_qd6n2"]
+[ext_resource type="Script" uid="uid://bcwv8gx21ks4p" path="res://Scenes/World/Entities/Characters/ClientCharacter.cs" id="1_jfda0"]
+[ext_resource type="Shader" uid="uid://j8ybwdrophsb" path="res://Assets/Shaders/Character.gdshader" id="3_qd6n2"]
 [ext_resource type="Texture2D" uid="uid://d2yh6feky0dp3" path="res://Assets/Textures/Sprites/Player.svg" id="3_qjj7c"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fxydm"]

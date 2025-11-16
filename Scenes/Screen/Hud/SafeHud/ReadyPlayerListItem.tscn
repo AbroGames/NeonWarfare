@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://d2vrr4baww4rf"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayerListItem.cs" id="1_8s2gk"]
+[ext_resource type="Script" uid="uid://djaxb8xca4q78" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayerListItem.cs" id="1_8s2gk"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_u0sq6"]
 font_color = Color(0.408329, 0.408329, 0.408329, 1)

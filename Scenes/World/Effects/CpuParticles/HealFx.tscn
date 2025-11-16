@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://b51ysj0ux0fci"]
 
-[ext_resource type="Script" path="res://Scenes/World/Effects/CpuParticles/CpuParticlesFx.cs" id="1_v0sax"]
+[ext_resource type="Script" uid="uid://bhhcib1c8tajc" path="res://Scenes/World/Effects/CpuParticles/CpuParticlesFx.cs" id="1_v0sax"]
 [ext_resource type="Texture2D" uid="uid://c2unl6ey7tiy1" path="res://Assets/Textures/Particles/Skills/HealParticle.png" id="2_yqohx"]
 [ext_resource type="Texture2D" uid="uid://do685u8f7shx4" path="res://Assets/Textures/Particles/Effects/star_09.png" id="3_qgfn1"]
 
@@ -13,7 +13,7 @@ _data = [Vector2(0, 0.205966), 0.0, 0.0, 0, 0]
 point_count = 1
 
 [sub_resource type="Curve" id="Curve_jq6n1"]
-max_value = 2.0
+_limits = [0.0, 2.0, 0.0, 1.0]
 _data = [Vector2(0, 2), 0.0, 0.0, 0, 0]
 point_count = 1
 

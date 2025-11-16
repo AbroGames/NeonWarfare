@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://3cohjn4xbp2o"]
 
-[ext_resource type="Script" path="res://Scenes/World/Effects/GpuParticles/GpuParticlesFx.cs" id="1_j77oh"]
+[ext_resource type="Script" uid="uid://drnbyp1p3okt2" path="res://Scenes/World/Effects/GpuParticles/GpuParticlesFx.cs" id="1_j77oh"]
 [ext_resource type="Texture2D" uid="uid://cvj1gxq3db2hc" path="res://Assets/Textures/Sprites/Square.png" id="2_d26xt"]
 
 [sub_resource type="Gradient" id="Gradient_0adk4"]

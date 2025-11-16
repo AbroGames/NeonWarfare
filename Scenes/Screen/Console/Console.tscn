@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b2gaknpctobq8"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Console/Console.cs" id="1_3lnyi"]
+[ext_resource type="Script" uid="uid://c52jifs3w8iu7" path="res://Scenes/Screen/Console/Console.cs" id="1_3lnyi"]
 
 [sub_resource type="Gradient" id="Gradient_jnsbo"]
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)

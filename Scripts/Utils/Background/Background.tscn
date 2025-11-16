@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://djpq1rixw27hn"]
 
 [ext_resource type="Texture2D" uid="uid://2sy6uyv2haxf" path="res://Assets/Textures/Sprites/Floor.png" id="1_nwxcs"]
-[ext_resource type="Script" path="res://Scripts/Utils/Background/Background.cs" id="2_drvnj"]
+[ext_resource type="Script" uid="uid://dju27xjnkaovx" path="res://Scripts/Utils/Background/Background.cs" id="2_drvnj"]
 
 [node name="Background" type="TextureRect"]
 show_behind_parent = true

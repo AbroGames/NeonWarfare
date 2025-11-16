@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=3 uid="uid://dw24k3p4lhskq"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/MainScene/MainMenuMainScene.cs" id="1_tlyle"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainScene/NodeContainer.cs" id="1_ugbjc"]
+[ext_resource type="Script" uid="uid://dw0tquwhrtnn" path="res://Scenes/Screen/MainScene/MainMenuMainScene.cs" id="1_tlyle"]
+[ext_resource type="Script" uid="uid://cosjikfb600pc" path="res://Scenes/Screen/MainScene/NodeContainer.cs" id="1_ugbjc"]
 [ext_resource type="PackedScene" uid="uid://br3ns4pa22dor" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/MainMenu.tscn" id="3_fgxhg"]
 [ext_resource type="PackedScene" uid="uid://b3g407ij4nj4q" path="res://Scenes/Screen/MainScene/CorridorSegment3D.tscn" id="3_o0a6v"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainScene/Background3D.cs" id="3_ti4af"]
+[ext_resource type="Script" uid="uid://dwatlbrm7sqvr" path="res://Scenes/Screen/MainScene/Background3D.cs" id="3_ti4af"]
 [ext_resource type="Material" uid="uid://nqy2drpwdb1b" path="res://Scenes/Screen/MainScene/WallMaterial.tres" id="4_4cbhb"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainScene/CorridorContainer.cs" id="4_qieib"]
+[ext_resource type="Script" uid="uid://cbmsa2oagruvp" path="res://Scenes/Screen/MainScene/CorridorContainer.cs" id="4_qieib"]
 
 [sub_resource type="Environment" id="Environment_touy5"]
 background_mode = 2

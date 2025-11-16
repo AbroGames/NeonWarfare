@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bub18jdmhtvfv"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Actions/HealShot/ClientHealShotAction.cs" id="1_wvebg"]
+[ext_resource type="Script" uid="uid://du885hsq2r5fa" path="res://Scenes/World/Entities/Actions/HealShot/ClientHealShotAction.cs" id="1_wvebg"]
 [ext_resource type="Texture2D" uid="uid://8m0gpuws2yxt" path="res://Assets/Textures/Sprites/Circle.png" id="3_ixwdg"]
 
 [node name="ClientHealShotAction" type="Node2D"]

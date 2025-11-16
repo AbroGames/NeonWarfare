@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://bkft5taaifavw"]
 
-[ext_resource type="Script" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.cs" id="1_1ofgs"]
+[ext_resource type="Script" uid="uid://d2on4kl7vseo5" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.cs" id="1_1ofgs"]
 [ext_resource type="PackedScene" uid="uid://cqyevma8i265i" path="res://Scenes/World/SafeWorld/ServerSafeWorld/ServerSafeWorld.tscn" id="2_bl3u7"]
 [ext_resource type="PackedScene" uid="uid://dfdo6rs11rt6m" path="res://Scenes/World/Entities/Characters/Players/ServerPlayer.tscn" id="2_y0xde"]
 [ext_resource type="PackedScene" uid="uid://ciaftf876v06k" path="res://Scenes/World/BattleWorld/ServerBattleWorld/ServerBattleWorld.tscn" id="3_2kkvj"]

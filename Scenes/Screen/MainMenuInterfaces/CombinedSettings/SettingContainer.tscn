@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://cqsklmny1uks6"]
 
 [ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="1_ac27d"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingContainer.cs" id="1_tu6q0"]
+[ext_resource type="Script" uid="uid://x3vkryyegvpm" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingContainer.cs" id="1_tu6q0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8eb4h"]
 

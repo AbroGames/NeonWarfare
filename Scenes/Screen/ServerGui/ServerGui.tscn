@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b0wr6xbhu5e1r"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/ServerGui/ServerGui.cs" id="1_nlioe"]
+[ext_resource type="Script" uid="uid://bknijo3jn2u3v" path="res://Scenes/Screen/ServerGui/ServerGui.cs" id="1_nlioe"]
 
 [node name="ServerGui" type="Control" node_paths=PackedStringArray("Fps", "Tps", "Info")]
 layout_mode = 3

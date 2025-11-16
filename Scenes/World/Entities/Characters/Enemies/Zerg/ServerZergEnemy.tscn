@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dsrqvo3u6hnaw"]
 
 [ext_resource type="PackedScene" uid="uid://758pqudrkrii" path="res://Scenes/World/Entities/Characters/Enemies/ServerEnemy.tscn" id="1_ujt8l"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ServerZergEnemy.cs" id="2_dulqr"]
+[ext_resource type="Script" uid="uid://0j73m3ftws4q" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ServerZergEnemy.cs" id="2_dulqr"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_dyy8g"]
 resource_local_to_scene = true

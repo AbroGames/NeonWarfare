@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://csiurost6ln7m"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingsGroupPanel.cs" id="1_kyfrp"]
+[ext_resource type="Script" uid="uid://v7mnw0jlpd04" path="res://Scenes/Screen/MainMenuInterfaces/CombinedSettings/SettingsGroupPanel.cs" id="1_kyfrp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ec8c7"]
 

@@ -1,9 +1,9 @@
 [gd_scene load_steps=12 format=3 uid="uid://cr1rdhtrdpo7j"]
 
 [ext_resource type="Texture2D" uid="uid://cy6a5ddwycf47" path="res://Assets/Textures/Icons/Abilities/Unknown.png" id="2_lc1rm"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/Icon.cs" id="2_wr2lr"]
+[ext_resource type="Script" uid="uid://bpp8wbk8f1uws" path="res://Scenes/Screen/Hud/Icon.cs" id="2_wr2lr"]
 [ext_resource type="Texture2D" uid="uid://6ss2jvst0b3v" path="res://Assets/Textures/Icons/IconBorder.png" id="3_sbvg0"]
-[ext_resource type="Shader" path="res://Assets/Shaders/TransparentCooldown.gdshader" id="4_gx24u"]
+[ext_resource type="Shader" uid="uid://dwdxrebw16yhv" path="res://Assets/Shaders/TransparentCooldown.gdshader" id="4_gx24u"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="5_mxiw8"]
 
 [sub_resource type="Gradient" id="Gradient_idx8t"]

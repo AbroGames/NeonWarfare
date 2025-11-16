@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bxdcd4nw0r03w"]
 
 [ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="1_1j4mi"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/AchievementsInterface/AchievementsMenu.cs" id="1_163oi"]
+[ext_resource type="Script" uid="uid://c3x08fv358f4n" path="res://Scenes/Screen/MainMenuInterfaces/AchievementsInterface/AchievementsMenu.cs" id="1_163oi"]
 [ext_resource type="PackedScene" uid="uid://brhi3i7j4bma2" path="res://Scenes/Screen/MainMenuInterfaces/AchievementsInterface/AchievementContainer.tscn" id="3_ho81y"]
 [ext_resource type="Texture2D" uid="uid://cgmv4bfxl52ep" path="res://Assets/Textures/Icons/ReturnIconSmall.png" id="3_vaydy"]
 

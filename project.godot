@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Neon Warfare"
 run/main_scene="res://Scenes/Root/StarterScene/StarterScene.tscn"
-config/features=PackedStringArray("4.3", "C#", "Forward Plus")
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://game.svg"
 
 [dotnet]
@@ -131,5 +131,5 @@ common/physics_jitter_fix=0.0
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.0313726, 0.0313726, 0.0313726, 1)
 viewport/hdr_2d=true
+environment/defaults/default_clear_color=Color(0.0313726, 0.0313726, 0.0313726, 1)

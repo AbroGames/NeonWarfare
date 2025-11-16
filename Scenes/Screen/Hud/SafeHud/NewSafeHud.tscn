@@ -1,13 +1,13 @@
 [gd_scene load_steps=11 format=3 uid="uid://cdm4naiiirayl"]
 
 [ext_resource type="PackedScene" uid="uid://c7ag8o3ynyuyj" path="res://Scenes/Screen/Hud/Hud.tscn" id="1_l0ogl"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ToBattleButton.cs" id="2_7g6de"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/SafeHud.cs" id="2_enfq4"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ToMenuButton.cs" id="3_u4b6x"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ReadyToBattleButton.cs" id="4_d6tp6"]
+[ext_resource type="Script" uid="uid://dshq83ixbj5n4" path="res://Scenes/Screen/Hud/SafeHud/ToBattleButton.cs" id="2_7g6de"]
+[ext_resource type="Script" uid="uid://caq6ki34uhi7j" path="res://Scenes/Screen/Hud/SafeHud/SafeHud.cs" id="2_enfq4"]
+[ext_resource type="Script" uid="uid://vi7ggsirpmtk" path="res://Scenes/Screen/Hud/SafeHud/ToMenuButton.cs" id="3_u4b6x"]
+[ext_resource type="Script" uid="uid://ckhvghptiiygm" path="res://Scenes/Screen/Hud/SafeHud/ReadyToBattleButton.cs" id="4_d6tp6"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="4_kqdnk"]
 [ext_resource type="PackedScene" uid="uid://d2vrr4baww4rf" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayerListItem.tscn" id="5_3oa80"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayersListContainer.cs" id="5_nves0"]
+[ext_resource type="Script" uid="uid://cdovlvd3dgm4k" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayersListContainer.cs" id="5_nves0"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l73d1"]
 resource_local_to_scene = true

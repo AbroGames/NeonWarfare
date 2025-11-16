@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cra1y5dubl2eb"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Components/Overlay/HitOverlay.cs" id="1_kxksf"]
+[ext_resource type="Script" uid="uid://csa27mwwueb35" path="res://Scenes/Screen/Components/Overlay/HitOverlay.cs" id="1_kxksf"]
 
 [sub_resource type="Gradient" id="Gradient_atni1"]
 offsets = PackedFloat32Array(0.9, 1)

@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://dkfncld3bfhv1"]
 
 [ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="1_xise4"]
-[ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_kqrf5"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/ClientTurtleEnemy.cs" id="2_wm8ha"]
+[ext_resource type="Shader" uid="uid://j8ybwdrophsb" path="res://Assets/Shaders/Character.gdshader" id="2_kqrf5"]
+[ext_resource type="Script" uid="uid://dl002ore2rwdd" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/ClientTurtleEnemy.cs" id="2_wm8ha"]
 [ext_resource type="Texture2D" uid="uid://drvu6fdhwasqc" path="res://Assets/Textures/Sprites/Boss.svg" id="3_t5c1o"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jv0wh"]

@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://cvcagebd46o2o"]
 
 [ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="1_qchu4"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ClientZergEnemy.cs" id="2_6jdtt"]
-[ext_resource type="Shader" path="res://Assets/Shaders/Character.gdshader" id="2_wmrb0"]
+[ext_resource type="Script" uid="uid://5f7fvew5ahjc" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ClientZergEnemy.cs" id="2_6jdtt"]
+[ext_resource type="Shader" uid="uid://j8ybwdrophsb" path="res://Assets/Shaders/Character.gdshader" id="2_wmrb0"]
 [ext_resource type="Texture2D" uid="uid://diw7e7ffqedqt" path="res://Assets/Textures/Sprites/Enemy.svg" id="3_1ppu6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_enhjw"]

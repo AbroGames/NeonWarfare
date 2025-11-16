@@ -1,11 +1,11 @@
 [gd_scene load_steps=17 format=3 uid="uid://br3ns4pa22dor"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/CreateServerMenuButton.cs" id="2_qxhat"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ConnectToServerMenuButton.cs" id="3_6ncrt"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/SettingsButton.cs" id="4_wn3h0"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ExitButton.cs" id="5_d204j"]
+[ext_resource type="Script" uid="uid://c1kvj53ppdwql" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/CreateServerMenuButton.cs" id="2_qxhat"]
+[ext_resource type="Script" uid="uid://bhrms373qchxt" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ConnectToServerMenuButton.cs" id="3_6ncrt"]
+[ext_resource type="Script" uid="uid://ccynuciul6ttt" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/SettingsButton.cs" id="4_wn3h0"]
+[ext_resource type="Script" uid="uid://cl0y6ulssm8jj" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/ExitButton.cs" id="5_d204j"]
 [ext_resource type="Texture2D" uid="uid://b8y04ktoyxq80" path="res://Assets/Textures/MainMenuBackground.png" id="6_idndk"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/AchievementsButton.cs" id="7_5vckw"]
+[ext_resource type="Script" uid="uid://eyciud8lc5h0" path="res://Scenes/Screen/MainMenuInterfaces/MainMenuInterface/AchievementsButton.cs" id="7_5vckw"]
 [ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="7_eethm"]
 [ext_resource type="FontFile" uid="uid://bvcm8i6hwq1kx" path="res://Assets/Fonts/Play-Regular.ttf" id="8_bun70"]
 

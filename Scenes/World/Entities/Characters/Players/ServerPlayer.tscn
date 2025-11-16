@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dfdo6rs11rt6m"]
 
 [ext_resource type="PackedScene" uid="uid://brbg6sxfslo8o" path="res://Scenes/World/Entities/Characters/ServerCharacter.tscn" id="1_lh5pn"]
-[ext_resource type="Script" path="res://Scenes/World/Entities/Characters/Players/ServerPlayer.cs" id="2_u8e3u"]
+[ext_resource type="Script" uid="uid://dgar4ow275qum" path="res://Scenes/World/Entities/Characters/Players/ServerPlayer.cs" id="2_u8e3u"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_q3t30"]
 resource_local_to_scene = true

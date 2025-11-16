@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://depp3d71j4ket"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/Message.cs" id="1_xx4r3"]
+[ext_resource type="Script" uid="uid://2pnjxba43cgy" path="res://Scenes/Screen/Hud/Message.cs" id="1_xx4r3"]
 
 [node name="Message" type="RichTextLabel"]
 focus_mode = 2

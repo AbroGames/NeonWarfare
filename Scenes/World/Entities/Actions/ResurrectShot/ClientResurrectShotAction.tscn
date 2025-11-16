@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bj4tciymuwtq3"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Actions/ResurrectShot/ClientResurrectShotAction.cs" id="1_6wiec"]
+[ext_resource type="Script" uid="uid://cmmyp8sfkldjd" path="res://Scenes/World/Entities/Actions/ResurrectShot/ClientResurrectShotAction.cs" id="1_6wiec"]
 [ext_resource type="Texture2D" uid="uid://bpp52d5hmncyv" path="res://Assets/Textures/Sprites/HCircle.png" id="2_8ct0v"]
 
 [node name="ClientResurrectShotAction" type="Node2D"]

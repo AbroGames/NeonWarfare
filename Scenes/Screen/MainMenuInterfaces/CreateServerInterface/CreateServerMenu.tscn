@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://cdfkul01f3eck"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/PortLineEdit.cs" id="1_35p31"]
+[ext_resource type="Script" uid="uid://d31oq37vroaxw" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/PortLineEdit.cs" id="1_35p31"]
 [ext_resource type="Texture2D" uid="uid://q6xhlshsuo13" path="res://Assets/Textures/Icons/StartIconSmall.png" id="2_j63mg"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CommonInterface/BackToMainMenuButton.cs" id="3_pb2kk"]
+[ext_resource type="Script" uid="uid://b68a4jydbbniq" path="res://Scenes/Screen/MainMenuInterfaces/CommonInterface/BackToMainMenuButton.cs" id="3_pb2kk"]
 [ext_resource type="Texture2D" uid="uid://cgmv4bfxl52ep" path="res://Assets/Textures/Icons/ReturnIconSmall.png" id="4_0h6vw"]
-[ext_resource type="Script" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/CreateServerButton.cs" id="4_14b0i"]
+[ext_resource type="Script" uid="uid://bhrnwxikfrn01" path="res://Scenes/Screen/MainMenuInterfaces/CreateServerInterface/CreateServerButton.cs" id="4_14b0i"]
 
 [node name="CreateServerMenu" type="Control"]
 layout_mode = 3

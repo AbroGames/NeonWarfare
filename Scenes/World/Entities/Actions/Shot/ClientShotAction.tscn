@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bs0gtjlsfmlt6"]
 
-[ext_resource type="Script" path="res://Scenes/World/Entities/Actions/Shot/ClientShotAction.cs" id="1_ft71o"]
+[ext_resource type="Script" uid="uid://b7i8jkphvv6is" path="res://Scenes/World/Entities/Actions/Shot/ClientShotAction.cs" id="1_ft71o"]
 [ext_resource type="Texture2D" uid="uid://cv4a5cp347o5t" path="res://Assets/Textures/Sprites/Crystall.png" id="2_hs53l"]
 
 [node name="ClientShotAction" type="Node2D" node_paths=PackedStringArray("Sprite")]

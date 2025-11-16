@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cqyevma8i265i"]
 
-[ext_resource type="Script" path="res://Scenes/World/SafeWorld/ServerSafeWorld/ServerSafeWorld.cs" id="1_3jvsx"]
+[ext_resource type="Script" uid="uid://bqr5s7kw1fdho" path="res://Scenes/World/SafeWorld/ServerSafeWorld/ServerSafeWorld.cs" id="1_3jvsx"]
 
 [node name="ServerSafeWorld" type="Node2D"]
 script = ExtResource("1_3jvsx")

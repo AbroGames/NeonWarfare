@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://c7ag8o3ynyuyj" path="res://Scenes/Screen/Hud/Hud.tscn" id="1_n2ph5"]
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="2_5kx4p"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/BattleHud/BattleHud.cs" id="2_rtvpi"]
+[ext_resource type="Script" uid="uid://b0765okjn04yt" path="res://Scenes/Screen/Hud/BattleHud/BattleHud.cs" id="2_rtvpi"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_jvjw3"]
 resource_local_to_scene = true
