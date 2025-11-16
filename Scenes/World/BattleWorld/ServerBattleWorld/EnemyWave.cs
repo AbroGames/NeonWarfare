@@ -33,7 +33,14 @@ public class EnemyWave
 
     private void NextWaveSpawn()
     {
-        WaveNumber++;
+        if (WaveNumber == 0)
+        {
+            WaveNumber = 1;
+        }
+        else
+        {
+            WaveNumber+=5;
+        }
         SpawnEnemies(Zerg, WaveNumber*4 + 16); //20,24,28,32,36,40,44,48...
         SpawnEnemies(Shooter, (int) Math.Round(WaveNumber*1.5) + 3); //5,6,7,9,11,12,13,15...
         SpawnEnemies(Turtle, (WaveNumber-1)/2 + 1); //1,1,2,2,3,3,4,4...

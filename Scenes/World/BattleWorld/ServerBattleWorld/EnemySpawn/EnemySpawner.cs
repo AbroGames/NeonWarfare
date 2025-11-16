@@ -10,8 +10,8 @@ namespace NeonWarfare.Scenes.World.BattleWorld.ServerBattleWorld.EnemySpawn;
 
 public class EnemySpawner
 {
-    private const int MaxSpawnInSecond = 100;
-    private const int MaxSpawnInOneUpdate = 10;
+    private const int MaxSpawnInSecond = 25;
+    private const int MaxSpawnInOneUpdate = 5;
 
     public IReadOnlyList<EnemySpawnTask> SpawnTasks => _spawnTasks.Select(taskCounter => taskCounter.EnemySpawnTask).ToList();
     
