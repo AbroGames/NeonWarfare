@@ -51,7 +51,7 @@ public static class EnemyInfoStorage
                 Skills: [new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.3, 0.1, 2, 0.08)], //TODO реализовать через скилл массового урона по области вокруг себя
                 MaxHp: 25,
                 RegenHpSpeed: 0,
-                MovementSpeed: 220,
+                MovementSpeed: 260,
                 RotationSpeed: 300,
                 AudioProfile: new ClientEnemyAudioProfile(
                     VoicePeriod: 1,
@@ -93,8 +93,8 @@ public static class EnemyInfoStorage
                 ServerScene: () => ServerRoot.Instance.PackedScenes.TurtleEnemy,
                 Color: new Color(1f, 0, 0),
                 Skills: [
-                    new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 1, 1, 1, 1.5),
-                    new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.2, 1, 1, 1),
+                    new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.65, 1, 1, 1.5),
+                    new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.4, 0.8, 1, 1),
                     new ServerCharacter.SkillInfo(DoubleShotSkill.SkillTypeConst, 5, 1, 1, 1),
                 ],
                 MaxHp: 800,
