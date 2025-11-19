@@ -30,13 +30,13 @@ public partial class ClientAlly
     public void OnAllyDeadPacket(SC_AllyDeadPacket allyDeadPacket)
     {
         IsDead = true;
-        Sprite.Modulate = new Color(0.5f, 0.5f, 0.5f);
+        Modulate = new Color(0.5f, 0.5f, 0.5f);
     }
     
     public void OnAllyResurrectionPacket(SC_AllyResurrectionPacket allyResurrectionPacket)
     {
         IsDead = false;
-        Sprite.Modulate = AllyProfile.Color;
+        Modulate = AllyProfile.Color;
     }
     
     [EventListener(ListenerSide.Client)]

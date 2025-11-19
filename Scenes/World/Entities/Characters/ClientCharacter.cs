@@ -34,7 +34,7 @@ public partial class ClientCharacter : CharacterBody2D
 
         if (color != new Color(0, 0, 0, 0))
         {
-            Sprite.Modulate = color;
+            Modulate = color;
         }
     }
     
