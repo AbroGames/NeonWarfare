@@ -72,6 +72,20 @@ public static class ChatNetworking
             return;
         }
         
+        if (packet.MessageText.StartsWith("/inc "))
+        {
+            bool res = ServerRoot.Instance.Game.GameSettings.SetWaveInc(packet.MessageText.Substring("/inc ".Length));
+            if (res)
+            {
+                Network.SendToAll(new SC_SendMessagePacket($"Рост волн успешно изменен на {packet.MessageText.Substring("/inc ".Length)}", packet.SenderId));
+            }
+            else
+            {
+                Network.SendToAll(new SC_SendMessagePacket($"Некорректный тип значения роста волн {packet.MessageText.Substring("/inc ".Length)}", packet.SenderId));
+            }
+            return;
+        }
+        
         Network.SendToAll(new SC_SendMessagePacket(packet.MessageText, packet.SenderId));
     }
 }

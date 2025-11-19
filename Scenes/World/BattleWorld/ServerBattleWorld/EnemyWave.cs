@@ -40,7 +40,7 @@ public class EnemyWave
         }
         else
         {
-            WaveNumber+=5;
+            WaveNumber += ServerRoot.Instance.Game.GameSettings.WaveInc;
         }
 
         string type = ServerRoot.Instance.Game.GameSettings.WaveType;
@@ -51,6 +51,8 @@ public class EnemyWave
             case "shooter": ShooterSpawn(); break;
             case "turtle": TurtleSpawn(); break;
             case "shooter-turtle": ShooterTurtleSpawn(); break;
+            case "boss": BossSpawn(); break;
+            case "only-boss": OnlyBossSpawn(); break;
         }
         
         double nextWaveTime = DefaultWaveTime + (WaveNumber-1)*2 ; //40,42,44,46,48,50,52,54...
@@ -97,5 +99,18 @@ public class EnemyWave
         SpawnEnemies(Zerg, WaveNumber*2 + 9); //10,12,14,16
         SpawnEnemies(Shooter, WaveNumber*3 + 9); //12,15,18,21
         SpawnEnemies(Turtle, WaveNumber); //1,2,3,4
+    }
+    
+    private void BossSpawn()
+    {
+        SpawnEnemies(Zerg, WaveNumber*2 + 9); //10,12,14,16
+        SpawnEnemies(Shooter, WaveNumber + 3); //4,5,6,7
+        SpawnEnemies(Turtle, (WaveNumber-1)/4 + 1);//1,1,1,1,2,2,2,2
+        SpawnEnemies(Boss, (WaveNumber-1)/10);//0,0,0,0,0,0,0,0,0,0,1
+    }
+    
+    private void OnlyBossSpawn()
+    {
+        SpawnEnemies(Boss, (WaveNumber-1)/10 + 1);//1,1,1,1,1,1,1,1,1,1,2
     }
  }
