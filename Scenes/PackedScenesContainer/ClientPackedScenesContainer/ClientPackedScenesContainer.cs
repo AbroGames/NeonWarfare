@@ -70,6 +70,7 @@ public partial class ClientPackedScenesContainer : Node
     [Export] [NotNull] public PackedScene ZergEnemy { get; private set; }
     [Export] [NotNull] public PackedScene ShooterEnemy { get; private set; }
     [Export] [NotNull] public PackedScene TurtleEnemy { get; private set; }
+    [Export] [NotNull] public PackedScene BossEnemy { get; private set; }
     
     /*
      * Action

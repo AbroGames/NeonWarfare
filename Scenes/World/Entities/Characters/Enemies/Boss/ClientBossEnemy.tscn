@@ -1,0 +1,29 @@
+[gd_scene load_steps=7 format=3 uid="uid://cxmdxfvnwf253"]
+
+[ext_resource type="PackedScene" uid="uid://cuiphblebxnot" path="res://Scenes/World/Entities/Characters/Enemies/ClientEnemy.tscn" id="1_xf2u2"]
+[ext_resource type="Script" uid="uid://be5wmvba23cg5" path="res://Scenes/World/Entities/Characters/Enemies/Boss/ClientBossEnemy.cs" id="2_yby65"]
+[ext_resource type="Shader" uid="uid://j8ybwdrophsb" path="res://Assets/Shaders/Character.gdshader" id="3_366bh"]
+[ext_resource type="Texture2D" uid="uid://drvu6fdhwasqc" path="res://Assets/Textures/Sprites/Boss.svg" id="4_vucv4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jv0wh"]
+resource_local_to_scene = true
+shader = ExtResource("3_366bh")
+shader_parameter/colorMaskFactor = 0.0
+shader_parameter/colorMask = Color(1, 1, 1, 0.45098)
+shader_parameter/grayscaleFactor = 0.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xf2u2"]
+size = Vector2(205, 205)
+
+[node name="ClientBossEnemy" instance=ExtResource("1_xf2u2")]
+script = ExtResource("2_yby65")
+
+[node name="Sprite2D" parent="." index="0"]
+modulate = Color(0.614457, 0.00348601, 0.929133, 1)
+material = SubResource("ShaderMaterial_jv0wh")
+position = Vector2(9.53674e-07, 9.53674e-07)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("4_vucv4")
+
+[node name="CharacterShape" parent="." index="1"]
+shape = SubResource("RectangleShape2D_xf2u2")

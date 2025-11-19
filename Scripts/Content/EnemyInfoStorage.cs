@@ -37,7 +37,7 @@ public static class EnemyInfoStorage
     
     public enum EnemyType
     {
-        Zerg, Shooter, Turtle
+        Zerg, Shooter, Turtle, Boss
     }
     
     private static readonly IReadOnlyDictionary<EnemyType, EnemyInfo> EnemyInfoByType = new Dictionary<EnemyType, EnemyInfo>
@@ -114,6 +114,37 @@ public static class EnemyInfoStorage
                     NormalVoice: () => null,
                     DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionMedium, 1f),
                     HitSfx: () => new PlaybackOptions(Sfx.Hit, 0.3f)
+                )
+            )
+        },
+        { 
+            EnemyType.Boss, 
+            new EnemyInfo(
+                ClientScene: () => ClientRoot.Instance.PackedScenes.BossEnemy, 
+                ServerScene: () => ServerRoot.Instance.PackedScenes.BossEnemy,
+                Color: new Color(0.5f, 0, 1f),
+                Skills: [
+                    new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 5, 12, 0.8, 5),
+                    new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.25, 0.4, 1.5, 1.5),
+                    new ServerCharacter.SkillInfo(DoubleShotSkill.SkillTypeConst, 0.1, 0.25, 1.5, 1),
+                ],
+                MaxHp: 4000,
+                RegenHpSpeed: 40,
+                MovementSpeed: 200,
+                RotationSpeed: 400,
+                AudioProfile: new ClientEnemyAudioProfile(
+                    VoicePeriod: 10,
+                    CanDoVoice: _ => false,
+                    SpawnVoice: () => new PlaybackOptions(
+                        Path:Sfx.UltraliskWhat,
+                        Volume: 1.3f,
+                        MaxDistance: 10000f, // мы хотим слышать спавн <s>ультралиска</s> черепахи с очень большого расстояния
+                        Attenuation: 1.3f
+                    ),
+                    DeathVoice: () => new PlaybackOptions(Sfx.UltraliskWhat, 1.3f),
+                    NormalVoice: () => null,
+                    DeathSfx: () => new PlaybackOptions(Sfx.ZergExplosionMedium, 1.3f),
+                    HitSfx: () => new PlaybackOptions(Sfx.Hit, 0.4f)
                 )
             )
         }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=42 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" uid="uid://d0h8ku7st4cei" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
@@ -39,6 +39,7 @@
 [ext_resource type="PackedScene" uid="uid://bs0gtjlsfmlt6" path="res://Scenes/World/Entities/Actions/Shot/ClientShotAction.tscn" id="32_uaxnx"]
 [ext_resource type="PackedScene" uid="uid://bub18jdmhtvfv" path="res://Scenes/World/Entities/Actions/HealShot/ClientHealShotAction.tscn" id="33_2l7bh"]
 [ext_resource type="PackedScene" uid="uid://bj4tciymuwtq3" path="res://Scenes/World/Entities/Actions/ResurrectShot/ClientResurrectShotAction.tscn" id="34_q1b7x"]
+[ext_resource type="PackedScene" uid="uid://cxmdxfvnwf253" path="res://Scenes/World/Entities/Characters/Enemies/Boss/ClientBossEnemy.tscn" id="37_3ksu8"]
 [ext_resource type="PackedScene" uid="uid://co5hk0rw22xpm" path="res://Scenes/World/Entities/Actions/SlowShot/ClientSlowShotAction.tscn" id="40_gv4b1"]
 
 [node name="ClientPackedScenesContainer" type="Node"]
@@ -78,6 +79,7 @@ Wall = ExtResource("29_30m28")
 ZergEnemy = ExtResource("29_1ceh7")
 ShooterEnemy = ExtResource("30_vhdbd")
 TurtleEnemy = ExtResource("31_syq0i")
+BossEnemy = ExtResource("37_3ksu8")
 ShotAction = ExtResource("32_uaxnx")
 HealShotAction = ExtResource("33_2l7bh")
 ResurrectShotAction = ExtResource("34_q1b7x")

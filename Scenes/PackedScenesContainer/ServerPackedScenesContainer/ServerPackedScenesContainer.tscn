@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bkft5taaifavw"]
+[gd_scene load_steps=14 format=3 uid="uid://bkft5taaifavw"]
 
 [ext_resource type="Script" uid="uid://d2on4kl7vseo5" path="res://Scenes/PackedScenesContainer/ServerPackedScenesContainer/ServerPackedScenesContainer.cs" id="1_1ofgs"]
 [ext_resource type="PackedScene" uid="uid://cqyevma8i265i" path="res://Scenes/World/SafeWorld/ServerSafeWorld/ServerSafeWorld.tscn" id="2_bl3u7"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dsrqvo3u6hnaw" path="res://Scenes/World/Entities/Characters/Enemies/Zerg/ServerZergEnemy.tscn" id="6_7cqan"]
 [ext_resource type="PackedScene" uid="uid://csg127clytout" path="res://Scenes/World/Entities/Characters/Enemies/Shooter/ServerShooterEnemy.tscn" id="7_swkv0"]
 [ext_resource type="PackedScene" uid="uid://c2sn6tvune64g" path="res://Scenes/World/Entities/Characters/Enemies/Turtle/ServerTurtleEnemy.tscn" id="8_81po5"]
+[ext_resource type="PackedScene" uid="uid://b1tkt6cm74c02" path="res://Scenes/World/Entities/Characters/Enemies/Boss/ServerBossEnemy.tscn" id="9_cm0st"]
 [ext_resource type="PackedScene" uid="uid://hwb6nmto0nci" path="res://Scenes/World/Entities/Actions/Shot/ServerShotAction.tscn" id="9_rxd6r"]
 [ext_resource type="PackedScene" uid="uid://dxk3j3vyrh28a" path="res://Scenes/World/Entities/Actions/HealShot/ServerHealShotAction.tscn" id="10_ib1nh"]
 [ext_resource type="PackedScene" uid="uid://b5ma1ydjmm20r" path="res://Scenes/World/Entities/Actions/ResurrectShot/ServerResurrectShotAction.tscn" id="11_ktc7h"]
@@ -22,6 +23,7 @@ Wall = ExtResource("6_0h16l")
 ZergEnemy = ExtResource("6_7cqan")
 ShooterEnemy = ExtResource("7_swkv0")
 TurtleEnemy = ExtResource("8_81po5")
+BossEnemy = ExtResource("9_cm0st")
 ShotAction = ExtResource("9_rxd6r")
 HealShotAction = ExtResource("10_ib1nh")
 ResurrectShotAction = ExtResource("11_ktc7h")

@@ -14,6 +14,7 @@ public record GameSettings()
     public readonly double SkillCooldownFactorWhileDead = 0.5;
 
     public string WaveType = "def";
+    public int WaveInc = 5;
 
     public bool SetWaveType(string waveType)
     {
@@ -22,7 +23,9 @@ public record GameSettings()
             "zerg",
             "shooter",
             "turtle",
-            "shooter-turtle"
+            "shooter-turtle",
+            "boss",
+            "only-boss"
         ];
         if (types.Contains(waveType))
         {
@@ -30,6 +33,11 @@ public record GameSettings()
             return true;
         }
         return false;
+    }
+
+    public bool SetWaveInc(string waveInc)
+    {
+        return int.TryParse(waveInc, out WaveInc);
     }
 
     public GameSettings(

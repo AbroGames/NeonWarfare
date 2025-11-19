@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://b1tkt6cm74c02"]
+
+[ext_resource type="PackedScene" uid="uid://758pqudrkrii" path="res://Scenes/World/Entities/Characters/Enemies/ServerEnemy.tscn" id="1_btkxs"]
+[ext_resource type="Script" uid="uid://q7ylvtul1tae" path="res://Scenes/World/Entities/Characters/Enemies/Boss/ServerBossEnemy.cs" id="2_htljd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_idqir"]
+resource_local_to_scene = true
+radius = 56.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hmyiv"]
+resource_local_to_scene = true
+radius = 59.0
+
+[node name="ServerBossEnemy" instance=ExtResource("1_btkxs")]
+script = ExtResource("2_htljd")
+
+[node name="CharacterShape" parent="." index="0"]
+shape = SubResource("CircleShape2D_idqir")
+
+[node name="HitBoxShape" parent="HitBox" index="0"]
+shape = SubResource("CircleShape2D_hmyiv")
