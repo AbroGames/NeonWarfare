@@ -37,7 +37,7 @@ public class ShotgunSkill : Skill
     private const double Range = 700;
     private const double Damage = 15;
     private const int Count = 5;
-    private const int Spread = 20; //degrees in one direction
+    private const int Spread = 15; //degrees in one direction
     
     private const double EnemyCheckRange = 600;
 

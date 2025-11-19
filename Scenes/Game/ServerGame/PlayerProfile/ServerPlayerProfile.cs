@@ -46,6 +46,7 @@ public partial class ServerPlayerProfile
             case "dd": InitStatsDd(); break;
             case "heal": InitStatsHeal(); break;
             case "imba": InitStatsImba(); break;
+            case "god": InitStatsGod(); break;
             default: return false;
         }
         
@@ -87,7 +88,7 @@ public partial class ServerPlayerProfile
         RotationSpeed = 200;
         
         _skillById.Clear();
-        AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.5, 2, 1.5, 0.7));
+        AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.4, 1.7, 1.5, 0.8));
         AddSkill(new ServerCharacter.SkillInfo(SlowShotSkill.SkillTypeConst, 5, 1, 1, 1));
         AddSkill(new ServerCharacter.SkillInfo(SelfHealSkill.SkillTypeConst, 25, 16, 1, 1));
         AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 30, 1, 1, 1));
@@ -116,9 +117,9 @@ public partial class ServerPlayerProfile
         
         _skillById.Clear();
         AddSkill(new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.75, 1, 1, 1.7));
-        AddSkill(new ServerCharacter.SkillInfo(HealShotSkill.SkillTypeConst, 0.5, 0.75, 1.7, 1.5));
+        AddSkill(new ServerCharacter.SkillInfo(HealShotSkill.SkillTypeConst, 0.2, 0.75, 1.5, 1.5));
         AddSkill(new ServerCharacter.SkillInfo(SlowShotSkill.SkillTypeConst, 20, 5, 2, 2));
-        AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 7.5, 4, 2, 2));
+        AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 7.5, 6.6, 2, 2));
     }
     
     public void InitStatsImba()
@@ -133,6 +134,20 @@ public partial class ServerPlayerProfile
         AddSkill(new ServerCharacter.SkillInfo(DoubleShotSkill.SkillTypeConst, 6, 9, 1.8, 1));
         AddSkill(new ServerCharacter.SkillInfo(SelfHealSkill.SkillTypeConst, 20, 8, 1, 1));
         AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 30, 1, 1, 1));
+    }
+    
+    public void InitStatsGod()
+    {
+        MaxHp = 8000;
+        RegenHpSpeed = 200;
+        MovementSpeed = 400;
+        RotationSpeed = 400;
+        
+        _skillById.Clear();
+        AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.1, 3.5, 1.5, 2.5));
+        AddSkill(new ServerCharacter.SkillInfo(DoubleShotSkill.SkillTypeConst, 0.3, 9, 1.8, 1));
+        AddSkill(new ServerCharacter.SkillInfo(SelfHealSkill.SkillTypeConst, 1, 160, 1, 1));
+        AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 1, 1, 1, 1));
     }
 
     public void AddSkill(ServerCharacter.SkillInfo skill)
