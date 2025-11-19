@@ -106,7 +106,7 @@ public partial class ChatContainer : MarginContainer
         MessageInputBox.Text = "";
         MessageInputBox.Visible = true;
         InputSpacePlaceholder.Visible = false;
-        MessageInputBox.GrabFocus();
+        Callable.From(MessageInputBox.GrabFocus).CallDeferred();
         IsOpened = true;
         MessagesContainer.SetForcedVisibility(true);
         ScrollContainer.ScrollVertical = Int32.MaxValue;
