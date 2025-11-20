@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cdm4naiiirayl"]
+[gd_scene load_steps=19 format=3 uid="uid://cdm4naiiirayl"]
 
 [ext_resource type="PackedScene" uid="uid://c7ag8o3ynyuyj" path="res://Scenes/Screen/Hud/Hud.tscn" id="1_l0ogl"]
 [ext_resource type="Script" uid="uid://dshq83ixbj5n4" path="res://Scenes/Screen/Hud/SafeHud/ToBattleButton.cs" id="2_7g6de"]
@@ -8,6 +8,14 @@
 [ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="4_kqdnk"]
 [ext_resource type="PackedScene" uid="uid://d2vrr4baww4rf" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayerListItem.tscn" id="5_3oa80"]
 [ext_resource type="Script" uid="uid://cdovlvd3dgm4k" path="res://Scenes/Screen/Hud/SafeHud/ReadyPlayersListContainer.cs" id="5_nves0"]
+[ext_resource type="FontFile" uid="uid://lri078vbj3ck" path="res://Assets/Fonts/HooskaiChamferedSquare.ttf" id="9_4v78w"]
+[ext_resource type="Script" uid="uid://hf5v00beetxk" path="res://Scenes/Screen/Hud/SafeHud/ClassSelectionButton.cs" id="10_d371t"]
+[ext_resource type="Texture2D" uid="uid://dtbybjds1scr5" path="res://Assets/Textures/Icons/Classes/Default.svg" id="10_f34q4"]
+[ext_resource type="Texture2D" uid="uid://denrik431noea" path="res://Assets/Textures/Icons/Classes/Damager.svg" id="11_d371t"]
+[ext_resource type="Texture2D" uid="uid://dtkwhbmh0bh16" path="res://Assets/Textures/Icons/Classes/Tank.svg" id="12_1wjha"]
+[ext_resource type="Texture2D" uid="uid://ddvg3s35b2tyh" path="res://Assets/Textures/Icons/Classes/Healer.svg" id="13_4ds74"]
+[ext_resource type="Texture2D" uid="uid://c08480c0n03cx" path="res://Assets/Textures/Icons/Classes/Imba.svg" id="14_mh0oh"]
+[ext_resource type="Texture2D" uid="uid://cipssw0jw2f5g" path="res://Assets/Textures/Icons/Classes/God.png" id="15_f34q4"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l73d1"]
 resource_local_to_scene = true
@@ -93,8 +101,9 @@ label_settings = SubResource("LabelSettings_l73d1")
 [node name="TPS" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo" index="1"]
 label_settings = SubResource("LabelSettings_l73d1")
 
-[node name="PlayersList" parent="." index="3"]
-mouse_filter = 2
+[node name="Control" type="Control" parent="VBoxContainer" index="1"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
 
 [node name="SelfResurrect" type="Control" parent="." index="4"]
 layout_mode = 1
@@ -128,3 +137,181 @@ text = "Resurrect"
 custom_minimum_size = Vector2(0, 150)
 layout_mode = 2
 mouse_filter = 2
+
+[node name="PlayersList" parent="." index="5"]
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="." index="6"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -110.0
+offset_top = -151.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="ClassContainer" type="VBoxContainer" parent="MarginContainer2" index="0"]
+custom_minimum_size = Vector2(200, 75)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+
+[node name="DefaultSelectionButton" type="Button" parent="MarginContainer2/ClassContainer" index="0"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_4v78w")
+text = "Default"
+alignment = 2
+script = ExtResource("10_d371t")
+_className = "def"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/ClassContainer/DefaultSelectionButton" index="0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/ClassContainer/DefaultSelectionButton/HBoxContainer" index="0"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_f34q4")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="DamagerSelectionButton" type="Button" parent="MarginContainer2/ClassContainer" index="1"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_4v78w")
+text = "Damager
+"
+alignment = 2
+script = ExtResource("10_d371t")
+_className = "dd"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/ClassContainer/DamagerSelectionButton" index="0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/ClassContainer/DamagerSelectionButton/HBoxContainer" index="0"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("11_d371t")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="TankSelectionButton" type="Button" parent="MarginContainer2/ClassContainer" index="2"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_4v78w")
+text = "Tank
+"
+alignment = 2
+script = ExtResource("10_d371t")
+_className = "tank"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/ClassContainer/TankSelectionButton" index="0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/ClassContainer/TankSelectionButton/HBoxContainer" index="0"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("12_1wjha")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="SupportSelectionButton" type="Button" parent="MarginContainer2/ClassContainer" index="3"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_4v78w")
+text = "Support
+"
+alignment = 2
+script = ExtResource("10_d371t")
+_className = "heal"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/ClassContainer/SupportSelectionButton" index="0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/ClassContainer/SupportSelectionButton/HBoxContainer" index="0"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("13_4ds74")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="ImbaSelectionButton" type="Button" parent="MarginContainer2/ClassContainer" index="4"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_4v78w")
+text = "Imba"
+alignment = 2
+script = ExtResource("10_d371t")
+_className = "imba"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/ClassContainer/ImbaSelectionButton" index="0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/ClassContainer/ImbaSelectionButton/HBoxContainer" index="0"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("14_mh0oh")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="GodSelectionButton" type="Button" parent="MarginContainer2/ClassContainer" index="5"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("9_4v78w")
+text = "God"
+alignment = 2
+script = ExtResource("10_d371t")
+_className = "god"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/ClassContainer/GodSelectionButton" index="0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2/ClassContainer/GodSelectionButton/HBoxContainer" index="0"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("15_f34q4")
+expand_mode = 2
+stretch_mode = 5
