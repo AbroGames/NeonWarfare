@@ -1,0 +1,96 @@
+[gd_scene load_steps=10 format=3 uid="uid://bjsd5alyxo3sj"]
+
+[ext_resource type="Script" uid="uid://bpp8wbk8f1uws" path="res://Scenes/Screen/Hud/Icon.cs" id="1_338g0"]
+[ext_resource type="Texture2D" uid="uid://dg1fd2l0t0j6k" path="res://Assets/Textures/Icons/Misc/laser.svg" id="2_338g0"]
+[ext_resource type="Texture2D" uid="uid://6ss2jvst0b3v" path="res://Assets/Textures/Icons/IconBorder.png" id="3_4k0e2"]
+[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="3_ae0u4"]
+
+[sub_resource type="Gradient" id="Gradient_idx8t"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.74026, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.580392, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_8yrho"]
+gradient = SubResource("Gradient_idx8t")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="LabelSettings" id="LabelSettings_r70jy"]
+resource_local_to_scene = true
+font = ExtResource("3_ae0u4")
+font_size = 14
+
+[sub_resource type="Gradient" id="Gradient_ybuad"]
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wrg4k"]
+gradient = SubResource("Gradient_ybuad")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+
+[node name="LaserIcon" type="MarginContainer" node_paths=PackedStringArray("KeyLabel", "IconImage", "Overlay", "GlowRect", "CooldownOverlay", "KeyBackground")]
+custom_minimum_size = Vector2(0, 50)
+offset_right = 64.0
+offset_bottom = 64.0
+script = ExtResource("1_338g0")
+KeyLabel = NodePath("MarginContainer2/Label")
+IconImage = NodePath("MarginContainer2/IconImage")
+Overlay = NodePath("MarginContainer2/IconOverlay")
+GlowRect = NodePath("GlowRect")
+CooldownOverlay = NodePath("MarginContainer2/CooldownRect")
+KeyBackground = NodePath("MarginContainer2/MarginContainer/ColorRect")
+
+[node name="GlowRect" type="TextureRect" parent="."]
+visible = false
+layout_mode = 2
+texture = SubResource("GradientTexture2D_8yrho")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="ColorRect2" type="ColorRect" parent="MarginContainer2"]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="IconImage" type="TextureRect" parent="MarginContainer2"]
+layout_mode = 2
+texture = ExtResource("2_338g0")
+expand_mode = 3
+
+[node name="IconBorder" type="TextureRect" parent="MarginContainer2"]
+layout_mode = 2
+texture = ExtResource("3_4k0e2")
+expand_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer2/MarginContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0.870588)
+
+[node name="CooldownRect" type="ColorRect" parent="MarginContainer2"]
+layout_mode = 2
+color = Color(0, 0, 0, 0.9607843)
+
+[node name="Label" type="Label" parent="MarginContainer2"]
+custom_minimum_size = Vector2(20, 18)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "F"
+label_settings = SubResource("LabelSettings_r70jy")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="IconOverlay" type="TextureRect" parent="MarginContainer2"]
+visible = false
+layout_mode = 2
+texture = SubResource("GradientTexture2D_wrg4k")
+expand_mode = 3

@@ -7,6 +7,7 @@ namespace NeonWarfare.Scenes.World.Entities.Characters.Players;
 public partial class ClientAlly : ClientCharacter 
 {
     [Export] [NotNull] public Sprite2D ShieldSprite { get; private set; }
+    [Export] [NotNull] public Sprite2D Laser { get; private set; }
     [Export] [NotNull] public Label NameLabel { get; private set; }
     
     public ClientAllyProfile AllyProfile { get; private set; }

@@ -18,6 +18,7 @@ public static class Keys
     
     // Special
     public static readonly StringName CameraShift = "KeyCameraShift";
+    public static readonly StringName Flashlight = "KeyFlashlight";
     
     // Abilities
     public static readonly StringName AbilityBasic = "KeyAbilityBasic";

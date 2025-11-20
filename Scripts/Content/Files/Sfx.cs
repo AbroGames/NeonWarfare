@@ -150,6 +150,10 @@ namespace NeonWarfare.Scripts.Content
 		public static RandomPicker<string> Beep { get; } = new RandomPicker<string>(
 			$"{SoundsDir}/normal/misc/beep.wav"
 		);
+		
+		public static RandomPicker<string> Flashlight { get; } = new RandomPicker<string>(
+			$"{SoundsDir}/normal/misc/flashlight.ogg"
+		);
 
 		
 		

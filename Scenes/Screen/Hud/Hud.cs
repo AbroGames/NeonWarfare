@@ -39,6 +39,7 @@ public partial class Hud : Control
 	[Export] [NotNull] public Control DamageOverlay { get; private set; }
 	[Export] [NotNull] public PlayersList PlayersList { get; private set; }
 	[Export] [NotNull] public ChatContainer ChatContainer { get; private set; }
+	[Export] [NotNull] public Icon LaserIcon { get; private set; }
 	
 	
 	private readonly Stopwatch _physicsStopwatch = new();
@@ -75,6 +76,8 @@ public partial class Hud : Control
 		UpdatePlayerInfo(player, delta);
 		ProcessDeathEffects(player, delta);
 		RenderSystemInfo();
+
+		LaserIcon.CooldownOverlay.Visible = !AimLaser.GlobalLaserVisibility;
 	}
 	
 	public override void _PhysicsProcess(double delta)
