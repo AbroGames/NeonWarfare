@@ -1,10 +1,11 @@
-[gd_scene load_steps=42 format=3 uid="uid://bdvsb2vvfjdil"]
+[gd_scene load_steps=43 format=3 uid="uid://bdvsb2vvfjdil"]
 
 [ext_resource type="Script" uid="uid://d0h8ku7st4cei" path="res://Scenes/PackedScenesContainer/ClientPackedScenesContainer/ClientPackedScenesContainer.cs" id="1_i6j64"]
 [ext_resource type="PackedScene" uid="uid://coxbclh2tfmnx" path="res://Scenes/World/Effects/CpuParticles/DeathFx.tscn" id="2_bm6dq"]
 [ext_resource type="PackedScene" uid="uid://3cohjn4xbp2o" path="res://Scenes/World/Effects/GpuParticles/DebrisFx.tscn" id="3_7erab"]
 [ext_resource type="PackedScene" uid="uid://bb528sse5312l" path="res://Scenes/World/Effects/GpuParticles/BulletHitFx.tscn" id="4_fxdr8"]
 [ext_resource type="PackedScene" uid="uid://dsktb63djjnqc" path="res://Scenes/World/Effects/CpuParticles/SpawnFx.tscn" id="5_517r2"]
+[ext_resource type="PackedScene" uid="uid://i3wfxuav703t" path="res://Scenes/World/Effects/ProjectieHitSprite.tscn" id="5_qkt2b"]
 [ext_resource type="PackedScene" uid="uid://dfv2jfwdn10pn" path="res://Scenes/World/Effects/FloatingLabel/FloatingLabel.tscn" id="6_soawm"]
 [ext_resource type="PackedScene" uid="uid://851poce6mggu" path="res://Scenes/Game/ClientGame/MainScenes/BattleWorld/BattleWorldMainScene.tscn" id="7_0iiio"]
 [ext_resource type="PackedScene" uid="uid://b51ysj0ux0fci" path="res://Scenes/World/Effects/CpuParticles/HealFx.tscn" id="7_43ewm"]
@@ -47,6 +48,7 @@ script = ExtResource("1_i6j64")
 DeathFx = ExtResource("2_bm6dq")
 DebrisFx = ExtResource("3_7erab")
 BulletHitFx = ExtResource("4_fxdr8")
+SpriteBulletHitFx = ExtResource("5_qkt2b")
 SpawnFx = ExtResource("5_517r2")
 FloatingLabel = ExtResource("6_soawm")
 HealFx = ExtResource("7_43ewm")

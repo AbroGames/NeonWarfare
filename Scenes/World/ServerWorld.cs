@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 using NeonWarfare.Scenes.Game.ClientGame;
 using NeonWarfare.Scenes.Game.ServerGame.PlayerProfile;
@@ -21,10 +22,21 @@ public abstract partial class ServerWorld : Node2D
     public override void _PhysicsProcess(double delta)
     {
         CheckAllDeadAndRestart();
+        
+        while (_physicsActions.TryDequeue(out var action))
+        {
+            action();
+        }
     }
 
     public virtual WorldInfoStorage.WorldType GetServerWorldType()
     {
         return WorldInfoStorage.WorldType.Unknown;
+    }
+
+    private Queue<Action> _physicsActions = new();
+    public void WaitForPhysics(Action action)
+    {
+        _physicsActions.Enqueue(action);
     }
 }

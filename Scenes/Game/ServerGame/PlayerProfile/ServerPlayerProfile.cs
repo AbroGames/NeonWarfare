@@ -74,6 +74,7 @@ public partial class ServerPlayerProfile
         RotationSpeed = 300;
         
         _skillById.Clear();
+        //AddSkill(new ServerCharacter.SkillInfo(QuickShotSkill.SkillTypeConst, 0.125, 0.1875, 3.5, 0.8));
         AddSkill(new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.5, 1.2, 1.2, 1));
         AddSkill(new ServerCharacter.SkillInfo(ShotgunSkill.SkillTypeConst, 0.5, 1.2, 1.2, 1));
         AddSkill(new ServerCharacter.SkillInfo(SelfHealSkill.SkillTypeConst, 20, 6, 1, 1));
@@ -102,7 +103,8 @@ public partial class ServerPlayerProfile
         RotationSpeed = 300;
         
         _skillById.Clear();
-        AddSkill(new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.125, 0.1875, 3.5, 0.8));
+        //AddSkill(new ServerCharacter.SkillInfo(DefaultShotSkill.SkillTypeConst, 0.125, 0.1875, 3.5, 0.8));
+        AddSkill(new ServerCharacter.SkillInfo(QuickShotSkill.SkillTypeConst, 0.0625, 0.09375, 3.5, 0.8));
         AddSkill(new ServerCharacter.SkillInfo(DoubleShotSkill.SkillTypeConst, 6, 4.5, 1.8, 0.8));
         AddSkill(new ServerCharacter.SkillInfo(HealShotSkill.SkillTypeConst, 5, 1, 1, 1));
         AddSkill(new ServerCharacter.SkillInfo(ResurrectShotSkill.SkillTypeConst, 30, 1, 1, 1));

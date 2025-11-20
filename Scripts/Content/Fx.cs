@@ -13,6 +13,20 @@ public class Fx
     public static CpuParticlesFx CreateSpawnFx() => ClientRoot.Instance.PackedScenes.SpawnFx.Instantiate<CpuParticlesFx>();
     public static GpuParticlesFx CreateDebrisFx() => ClientRoot.Instance.PackedScenes.DebrisFx.Instantiate<GpuParticlesFx>();
     public static GpuParticlesFx CreateBulletHitFx() => ClientRoot.Instance.PackedScenes.BulletHitFx.Instantiate<GpuParticlesFx>();
+    public static AnimatedSprite2D CreateSpriteBulletHitFx() => ClientRoot.Instance.PackedScenes.SpriteBulletHitFx.Instantiate<AnimatedSprite2D>();
+
+    public static (Line2D, Tween) CreateBulletBeamFx(Vector2 fromTo, float width, Color color, double duration)
+    {
+        var bullet = new Line2D();
+        bullet.Points = [fromTo, Vector2.Zero];
+        bullet.Width = width;
+        bullet.DefaultColor = color;
+        
+        var tween = bullet.CreateTween();
+        tween.TweenProperty(bullet, "width", 0f, duration);
+        
+        return (bullet, tween);
+    }
     
     public static FloatingLabel CreateFloatingLabel() => ClientRoot.Instance.PackedScenes.FloatingLabel.Instantiate<FloatingLabel>();
     public static FloatingLabel CreateFloatingLabel(string text, Color color, float scale)
