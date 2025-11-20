@@ -38,7 +38,7 @@ public class QuickShotSkill : Skill
     private const double Speed = 5000;
     private const double Range = 2000;
     private const double Damage = 50;
-    private const float Spread = Mathf.Pi / 25;
+    private const float Spread = Mathf.Pi / 30;
     
     private const double EnemyCheckRange = 800;
     private RandomNumberGenerator _random = new();
@@ -96,8 +96,8 @@ public class QuickShotSkill : Skill
         );
         //PacketCustomParams customParams = JsonSerializer.Deserialize<PacketCustomParams>(useInfo.CustomParams);
         var beamVector = customParams.HitPos - useInfo.CharacterPosition;
-        var (beam, tween) = Fx.CreateBulletBeamFx(beamVector, 5f, useInfo.Color, 0.3);
-        beam.Modulate = Col(1) with { A = 0.5f };
+        var (beam, tween) = Fx.CreateBulletBeamFx(beamVector, 5f, useInfo.Color, 0.1);
+        beam.Modulate = Col(1) with { A = 0.05f };
         beam.Position = useInfo.CharacterPosition;
         tween.Finished += () => beam.QueueFree();
         useInfo.World.AddChild(beam);
