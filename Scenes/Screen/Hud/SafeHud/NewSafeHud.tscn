@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://dtkwhbmh0bh16" path="res://Assets/Textures/Icons/Classes/Tank.svg" id="12_1wjha"]
 [ext_resource type="Texture2D" uid="uid://ddvg3s35b2tyh" path="res://Assets/Textures/Icons/Classes/Healer.svg" id="13_4ds74"]
 [ext_resource type="Texture2D" uid="uid://c08480c0n03cx" path="res://Assets/Textures/Icons/Classes/Imba.svg" id="14_mh0oh"]
-[ext_resource type="Texture2D" uid="uid://cipssw0jw2f5g" path="res://Assets/Textures/Icons/Classes/God.png" id="15_f34q4"]
+[ext_resource type="Texture2D" uid="uid://dlr7eyxi2gltp" path="res://Assets/Textures/Icons/Classes/AltGod.png" id="17_1wjha"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l73d1"]
 resource_local_to_scene = true
@@ -320,6 +320,6 @@ mouse_filter = 2
 [node name="TextureRect" type="TextureRect" parent="MarginContainer2/HBoxContainer/ClassContainer/GodSelectionButton/HBoxContainer" index="0"]
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("15_f34q4")
+texture = ExtResource("17_1wjha")
 expand_mode = 2
 stretch_mode = 5
