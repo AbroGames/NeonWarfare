@@ -64,10 +64,11 @@ public partial class ClientPlayer : ClientAlly
             return;
 
         double skillCooldownFactorWhileDead = ClientRoot.Instance.Game.GameSettings.SkillCooldownFactorWhileDead;
+        var isButtonHovered = GetViewport().GuiGetHoveredControl() is Button;
         foreach (var kv in _skillCooldownById)
         {
             kv.Value.Cooldown.Update(IsDead ? delta*skillCooldownFactorWhileDead : delta);  //Если персонаж мертв, то скиллы откатываются медленней
-            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted && !IsDead && !IsInputBlocked)
+            if (Input.IsActionPressed(kv.Value.ActionToActivate) && kv.Value.Cooldown.IsCompleted && !IsDead && !IsInputBlocked && !isButtonHovered)
             {
                 kv.Value.Cooldown.Restart();
                 Network.SendToServer(new ServerPlayer.CS_UseSkillPacket(kv.Key, Position, Rotation, GetGlobalMousePosition()));
