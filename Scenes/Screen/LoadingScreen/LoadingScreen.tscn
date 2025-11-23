@@ -1,30 +1,28 @@
 [gd_scene load_steps=10 format=3 uid="uid://cuy77qqautv4t"]
 
-[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="1_bmt3c"]
-[ext_resource type="Script" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.cs" id="1_tw8yx"]
-[ext_resource type="Script" path="res://Scenes/Screen/LoadingScreen/LoadingAnimHandle.cs" id="2_jp6vp"]
-[ext_resource type="Texture2D" uid="uid://d0bm03qw00g80" path="res://Scenes/Screen/LoadingScreen/LoadingPartThin.svg" id="3_k8283"]
-[ext_resource type="Texture2D" uid="uid://dd8qscwemtbcd" path="res://Scenes/Screen/LoadingScreen/LoadingPartFat.svg" id="4_67v6a"]
-[ext_resource type="Texture2D" uid="uid://dodbo34b0s7wf" path="res://Scenes/Screen/LoadingScreen/Dot.svg" id="5_icwjq"]
+[ext_resource type="FontFile" uid="uid://cir5jadbcsm8f" path="res://Assets/Fonts/Play-Regular.ttf" id="1_bmt3c"]
+[ext_resource type="Script" uid="uid://cfbq3x02d4qu6" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.cs" id="1_tw8yx"]
+[ext_resource type="Script" uid="uid://8nybyap1nsv6" path="res://Scenes/Screen/LoadingScreen/LoadingAnimHandle.cs" id="2_jp6vp"]
+[ext_resource type="Texture2D" uid="uid://cpblsfrr1dlie" path="res://Assets/Textures/LoadingScreen/LoadingPartThin.svg" id="3_k8283"]
+[ext_resource type="Texture2D" uid="uid://dg44fv67r5jpp" path="res://Assets/Textures/LoadingScreen/LoadingPartFat.svg" id="4_67v6a"]
+[ext_resource type="Texture2D" uid="uid://bl84qgojuj6td" path="res://Assets/Textures/LoadingScreen/Dot.svg" id="5_icwjq"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l4l47"]
 font = ExtResource("1_bmt3c")
 font_size = 36
 
 [sub_resource type="Curve" id="Curve_we0hx"]
-min_value = -1.0
+_limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.736842, -1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="Curve" id="Curve_sjuhh"]
-min_value = -1.0
+_limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, -0.934066), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.926316, -0.956044), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[node name="LoadingScreen" type="CanvasLayer" node_paths=PackedStringArray("LoadingAnimHandle", "LoadingLabel")]
+[node name="LoadingScreen" type="CanvasLayer"]
 script = ExtResource("1_tw8yx")
-LoadingAnimHandle = NodePath("Control/VBoxContainer/Anim/2DHandle")
-LoadingLabel = NodePath("Control/VBoxContainer/LoadingLabel")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -59,30 +57,30 @@ grow_vertical = 2
 
 [node name="LoadingLabel" type="Label" parent="Control/VBoxContainer"]
 layout_mode = 2
-text = "LOADING"
+text = "Loading"
 label_settings = SubResource("LabelSettings_l4l47")
+horizontal_alignment = 1
+uppercase = true
 
 [node name="Anim" type="Control" parent="Control/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="2DHandle" type="Node2D" parent="Control/VBoxContainer/Anim" node_paths=PackedStringArray("ThickPart", "ThinPart")]
+[node name="LoadingHandle" type="Node2D" parent="Control/VBoxContainer/Anim"]
 position = Vector2(0, 60)
 script = ExtResource("2_jp6vp")
-ThickPart = NodePath("LoadingPartFat")
-ThinPart = NodePath("LoadingPartThin")
 ThickRotationSpeedCurve = SubResource("Curve_we0hx")
 ThinRotationSpeedCurve = SubResource("Curve_sjuhh")
 
-[node name="LoadingPartThin" type="Sprite2D" parent="Control/VBoxContainer/Anim/2DHandle"]
+[node name="ThinPart" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle"]
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("3_k8283")
 
-[node name="LoadingPartFat" type="Sprite2D" parent="Control/VBoxContainer/Anim/2DHandle"]
+[node name="ThickPart" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle"]
 scale = Vector2(0.035, 0.035)
 texture = ExtResource("4_67v6a")
 
-[node name="Dot" type="Sprite2D" parent="Control/VBoxContainer/Anim/2DHandle"]
+[node name="Dot" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle"]
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_icwjq")

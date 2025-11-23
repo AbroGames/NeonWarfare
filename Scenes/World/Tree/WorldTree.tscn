@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8mpkavrkvkxh"]
+
+[ext_resource type="Script" uid="uid://dng6mje1goj0w" path="res://Scenes/World/Tree/WorldTree.cs" id="1_y5brc"]
+[ext_resource type="PackedScene" uid="uid://wdbyyryght8p" path="res://Scenes/World/Tree/Surface/Map/MapSurface.tscn" id="2_pydqr"]
+[ext_resource type="PackedScene" uid="uid://baeir4xp6kjyd" path="res://Scenes/World/MpSpawn/WorldMultiplayerSpawner.tscn" id="3_p4e4v"]
+
+[node name="Tree" type="Node2D" node_paths=PackedStringArray("MapSurface")]
+script = ExtResource("1_y5brc")
+MapSurface = NodePath("MapSurface")
+
+[node name="MapSurface" parent="." instance=ExtResource("2_pydqr")]
+
+[node name="MapSurface-MultiplayerSpawner" parent="." instance=ExtResource("3_p4e4v")]
+spawn_path = NodePath("../MapSurface")

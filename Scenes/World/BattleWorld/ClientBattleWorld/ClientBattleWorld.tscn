@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bsof5i3qpnyv0"]
-
-[ext_resource type="Script" path="res://Scenes/World/BattleWorld/ClientBattleWorld/ClientBattleWorld.cs" id="1_jmkvg"]
-
-[node name="ClientBattleWorld" type="Node2D"]
-script = ExtResource("1_jmkvg")

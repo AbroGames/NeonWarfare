@@ -1,0 +1,39 @@
+[gd_scene load_steps=11 format=3 uid="uid://bpjqlqsxaute2"]
+
+[ext_resource type="Script" uid="uid://dtpndmeabtt07" path="res://Scenes/World/World.cs" id="1_0nbjp"]
+[ext_resource type="PackedScene" uid="uid://baeir4xp6kjyd" path="res://Scenes/World/MpSpawn/WorldMultiplayerSpawner.tscn" id="2_ouhkt"]
+[ext_resource type="PackedScene" uid="uid://ba3apeajydxl6" path="res://Scenes/World/PackedScenes/WorldPackedScenes.tscn" id="2_xf6vi"]
+[ext_resource type="PackedScene" uid="uid://bic2y3aefedxr" path="res://Scenes/World/Data/WorldPersistenceData.tscn" id="3_5jr8x"]
+[ext_resource type="PackedScene" uid="uid://c8mpkavrkvkxh" path="res://Scenes/World/Tree/WorldTree.tscn" id="3_hveh7"]
+[ext_resource type="Script" uid="uid://b1sdp82lmtr2r" path="res://Scenes/World/Services/PersistenceFactory/PersistenceNodesFactoryService.cs" id="4_kuxid"]
+[ext_resource type="Script" uid="uid://b1lvv7kolowbi" path="res://Scenes/World/Services/WorldTemporaryDataService.cs" id="4_p7pgw"]
+[ext_resource type="Script" uid="uid://dup0k3cek5wg" path="res://Scenes/World/Services/WorldMultiplayerSpawnerService.cs" id="6_87yka"]
+[ext_resource type="Script" uid="uid://fbb6ibpssx62" path="res://Scenes/World/Services/StartStop/WorldStartStopService.cs" id="6_p7pgw"]
+[ext_resource type="PackedScene" uid="uid://buxateh143bl3" path="res://Scenes/World/PackedScenes/ClientPackedScenes.tscn" id="9_p7pgw"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_0nbjp")
+
+[node name="Tree" parent="." instance=ExtResource("3_hveh7")]
+
+[node name="Data" parent="." instance=ExtResource("3_5jr8x")]
+
+[node name="Factory" type="Node" parent="."]
+script = ExtResource("4_kuxid")
+
+[node name="TemporaryDataService" type="Node" parent="."]
+script = ExtResource("4_p7pgw")
+
+[node name="StartStopService" type="Node" parent="."]
+script = ExtResource("6_p7pgw")
+
+[node name="MultiplayerSpawnerService" type="Node" parent="."]
+script = ExtResource("6_87yka")
+WorldMultiplayerSpawnerPackedScene = ExtResource("2_ouhkt")
+
+[node name="WorldPackedScenes" parent="." instance=ExtResource("2_xf6vi")]
+
+[node name="ClientPackedScenes" parent="." instance=ExtResource("9_p7pgw")]
+
+[node name="Tree-MultiplayerSpawner" parent="." instance=ExtResource("2_ouhkt")]
+spawn_path = NodePath("../Tree")

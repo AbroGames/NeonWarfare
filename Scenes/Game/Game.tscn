@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=3 uid="uid://7yywjdawo4yu"]
+
+[ext_resource type="Script" uid="uid://dcl7nktce2ll0" path="res://Scenes/Game/Game.cs" id="1_gwu2e"]
+[ext_resource type="Script" uid="uid://boonlg7rqctth" path="res://Scenes/Game/GamePackedScenes.cs" id="2_xbxml"]
+[ext_resource type="Script" uid="uid://bxa7yaqut8dr7" path="res://Scenes/KludgeBox/NodeContainer.cs" id="2_y3kpf"]
+[ext_resource type="PackedScene" uid="uid://bpjqlqsxaute2" path="res://Scenes/World/World.tscn" id="3_ln2h6"]
+[ext_resource type="PackedScene" uid="uid://dnb3y8rbdon8t" path="res://Scenes/Screen/Hud/Hud.tscn" id="4_y3kpf"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_gwu2e")
+
+[node name="WorldContainer" type="Node2D" parent="."]
+script = ExtResource("2_y3kpf")
+
+[node name="HudContainer" type="CanvasLayer" parent="."]
+script = ExtResource("2_y3kpf")
+
+[node name="PackedScenes" type="Node" parent="."]
+script = ExtResource("2_xbxml")
+World = ExtResource("3_ln2h6")
+Hud = ExtResource("4_y3kpf")

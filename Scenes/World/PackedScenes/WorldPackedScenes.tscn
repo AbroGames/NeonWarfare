@@ -1,0 +1,12 @@
+[gd_scene load_steps=5 format=3 uid="uid://ba3apeajydxl6"]
+
+[ext_resource type="Script" uid="uid://bpih66ljivhva" path="res://Scenes/World/PackedScenes/WorldPackedScenes.cs" id="1_1ie7d"]
+[ext_resource type="PackedScene" uid="uid://wdbyyryght8p" path="res://Scenes/World/Tree/Surface/Map/MapSurface.tscn" id="2_3q5g2"]
+[ext_resource type="PackedScene" uid="uid://bqwjclof66q86" path="res://Scenes/World/Tree/Surface/Battle/BattleSurface.tscn" id="3_wuo5u"]
+[ext_resource type="PackedScene" uid="uid://cn7cyeit0cbbf" path="res://Scenes/World/Tree/Entity/Building/MapPoint.tscn" id="4_sehd1"]
+
+[node name="WorldPackedScenes" type="Node"]
+script = ExtResource("1_1ie7d")
+MapSurface = ExtResource("2_3q5g2")
+BattleSurface = ExtResource("3_wuo5u")
+MapPoint = ExtResource("4_sehd1")

@@ -1,268 +1,102 @@
-[gd_scene load_steps=18 format=3 uid="uid://c7ag8o3ynyuyj"]
+[gd_scene load_steps=2 format=3 uid="uid://dnb3y8rbdon8t"]
 
-[ext_resource type="PackedScene" uid="uid://cxdwclq64uubu" path="res://Scenes/Screen/Components/TwoColoredBar/TwoColoredBar.tscn" id="1_er04k"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/Hud.cs" id="1_kmqq8"]
-[ext_resource type="FontFile" uid="uid://7nwcw63qup8q" path="res://Assets/Fonts/Wadik.otf" id="3_61jvx"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/DeathOverlay.cs" id="4_3x15c"]
-[ext_resource type="Shader" path="res://Assets/Shaders/GrayscaleFilter.gdshader" id="4_vfln8"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/PlayersList.cs" id="6_d3fxf"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/ChatContainer.cs" id="6_dfdpx"]
-[ext_resource type="Script" path="res://Scenes/Screen/Hud/MessagesContainer.cs" id="7_xllyd"]
-[ext_resource type="PackedScene" uid="uid://depp3d71j4ket" path="res://Scenes/Screen/Hud/Message.tscn" id="8_21jhe"]
+[ext_resource type="Script" uid="uid://bpu3rci74u6fm" path="res://Scenes/Screen/Hud/Hud.cs" id="1_63bhl"]
 
-[sub_resource type="Gradient" id="Gradient_5tern"]
-offsets = PackedFloat32Array(0.847328, 1)
-colors = PackedColorArray(1, 0, 0, 0, 1, 0, 0, 0.141176)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_phdw8"]
-gradient = SubResource("Gradient_5tern")
-fill = 2
-fill_from = Vector2(0.5, 0.5)
-
-[sub_resource type="LabelSettings" id="LabelSettings_j64jc"]
-resource_local_to_scene = true
-font = ExtResource("3_61jvx")
-font_size = 14
-font_color = Color(0.34902, 0.34902, 0.34902, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_lj76j"]
-font_size = 12
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0uimj"]
-shader = ExtResource("4_vfln8")
-shader_parameter/strength = 1.0
-
-[sub_resource type="Gradient" id="Gradient_xrg5d"]
-offsets = PackedFloat32Array(0.515267, 1)
-colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.8)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_tfqyn"]
-gradient = SubResource("Gradient_xrg5d")
-fill = 2
-fill_from = Vector2(0.5, 0.5)
-
-[sub_resource type="LabelSettings" id="LabelSettings_q6qo3"]
-
-[node name="Hud" type="Control" node_paths=PackedStringArray("HpBar", "DebugContainer", "Fps", "Tps", "SystemInfo", "SkillsContainer", "DeathOverlay", "DamageOverlay", "PlayersList", "ChatContainer")]
+[node name="Hud" type="Control" node_paths=PackedStringArray("Test1", "Test2", "Test3", "LogChildren", "Info", "SaveButton", "ExitButton", "SaveTextEdit")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_kmqq8")
-HpBar = NodePath("MarginContainer/VBoxContainer/HpBar")
-DebugContainer = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo")
-Fps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/FPS")
-Tps = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/TPS")
-SystemInfo = NodePath("MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo/SystemInfo")
-SkillsContainer = NodePath("MarginContainer/SkillsContainer")
-DeathOverlay = NodePath("DeathOverlay")
-DamageOverlay = NodePath("DamageOverlay")
-PlayersList = NodePath("PlayersList")
-ChatContainer = NodePath("ChatContainer")
+script = ExtResource("1_63bhl")
 
-[node name="DamageOverlay" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("GradientTexture2D_phdw8")
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="HpBar" parent="MarginContainer/VBoxContainer" instance=ExtResource("1_er04k")]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="LeftUpInfo" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 2
-
-[node name="RightUpInfo" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 10
-
-[node name="FPS" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
-layout_mode = 2
-text = "FPS"
-label_settings = SubResource("LabelSettings_j64jc")
-horizontal_alignment = 2
-
-[node name="TPS" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
-layout_mode = 2
-text = "TPS"
-label_settings = SubResource("LabelSettings_j64jc")
-horizontal_alignment = 2
-
-[node name="SystemInfo" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/RightUpInfo"]
-layout_mode = 2
-size_flags_horizontal = 8
-label_settings = SubResource("LabelSettings_lj76j")
-
-[node name="SkillsContainer" type="HBoxContainer" parent="MarginContainer"]
-custom_minimum_size = Vector2(0, 75)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-theme_override_constants/separation = 8
-
-[node name="DeathOverlay" type="Control" parent="." node_paths=PackedStringArray("GrayscaleShader", "Vignette")]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("4_3x15c")
-GrayscaleShader = NodePath("GrayscaleShader")
-Vignette = NodePath("Vignette")
-
-[node name="GrayscaleShader" type="ColorRect" parent="DeathOverlay"]
-material = SubResource("ShaderMaterial_0uimj")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Vignette" type="TextureRect" parent="DeathOverlay"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("GradientTexture2D_tfqyn")
-
-[node name="PlayersList" type="Control" parent="." node_paths=PackedStringArray("_serverNameLabel", "_playersListContainer")]
-visible = false
+[node name="Test1Button" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -38.0
+offset_top = 153.0
+offset_right = 38.0
+offset_bottom = 184.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("6_d3fxf")
-_serverNameLabel = NodePath("MarginContainer/MainLayout/MarginContainer/ServerName")
-_playersListContainer = NodePath("MarginContainer/MainLayout/MarginContainer/PlayersList")
+text = "ТЕСТ 1"
 
-[node name="MarginContainer" type="MarginContainer" parent="PlayersList"]
+[node name="Test2Button" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -21.5
-offset_right = 150.0
-offset_bottom = 21.5
+offset_left = -38.0
+offset_top = 193.0
+offset_right = 38.0
+offset_bottom = 224.0
 grow_horizontal = 2
 grow_vertical = 2
+text = "ТЕСТ 2"
 
-[node name="PlayersListBackground" type="ColorRect" parent="PlayersList/MarginContainer"]
-layout_mode = 2
-color = Color(0.114897, 0.114897, 0.114897, 0.894118)
-
-[node name="MainLayout" type="VBoxContainer" parent="PlayersList/MarginContainer"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="PlayersList/MarginContainer/MainLayout"]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="ServerName" type="Label" parent="PlayersList/MarginContainer/MainLayout/MarginContainer"]
-layout_mode = 2
-label_settings = SubResource("LabelSettings_q6qo3")
-horizontal_alignment = 1
-
-[node name="PlayersList" type="VBoxContainer" parent="PlayersList/MarginContainer/MainLayout/MarginContainer"]
-layout_mode = 2
-
-[node name="ChatContainer" type="MarginContainer" parent="." node_paths=PackedStringArray("MessagesContainer", "ScrollContainer", "MessageInputBox", "InputSpacePlaceholder")]
-custom_minimum_size = Vector2(500, 0)
+[node name="Test3Button" type="Button" parent="."]
 layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -38.0
+offset_top = 232.0
+offset_right = 38.0
+offset_bottom = 263.0
+grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 90
-script = ExtResource("6_dfdpx")
-MessagesContainer = NodePath("PartsContainer/PanelContainer/ScrollContainer/MessagesContainer")
-ScrollContainer = NodePath("PartsContainer/PanelContainer/ScrollContainer")
-MessageInputBox = NodePath("PartsContainer/MessageInput")
-InputSpacePlaceholder = NodePath("PartsContainer/InputSpacePlaceholder")
+text = "ТЕСТ 3"
 
-[node name="PartsContainer" type="VBoxContainer" parent="ChatContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-mouse_filter = 2
+[node name="LogButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -38.0
+offset_top = 270.0
+offset_right = 38.0
+offset_bottom = 301.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "ЛОГ"
 
-[node name="PanelContainer" type="PanelContainer" parent="ChatContainer/PartsContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-mouse_filter = 2
+[node name="InfoLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="ChatContainer/PartsContainer/PanelContainer"]
-custom_minimum_size = Vector2(0, 300)
-layout_mode = 2
-size_flags_vertical = 10
-horizontal_scroll_mode = 0
+[node name="ExitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 563.0
+offset_right = 79.0
+offset_bottom = 594.0
+text = "В меню"
 
-[node name="MessagesContainer" type="VBoxContainer" parent="ChatContainer/PartsContainer/PanelContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 0
-alignment = 2
-script = ExtResource("7_xllyd")
-MessageScene = ExtResource("8_21jhe")
+[node name="SaveButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 125.0
+offset_top = 604.0
+offset_right = 231.0
+offset_bottom = 635.0
+text = "Сохранить"
 
-[node name="MessageInput" type="LineEdit" parent="ChatContainer/PartsContainer"]
-visible = false
-layout_mode = 2
-theme_override_colors/font_placeholder_color = Color(0.633757, 0.633757, 0.633757, 1)
-placeholder_text = "Введите сообщение и нажмите Enter"
-
-[node name="InputSpacePlaceholder" type="Control" parent="ChatContainer/PartsContainer"]
-custom_minimum_size = Vector2(0, 31)
-layout_mode = 2
+[node name="SaveTextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 601.0
+offset_right = 118.0
+offset_bottom = 637.0
+text = "default"
+placeholder_text = "filename"

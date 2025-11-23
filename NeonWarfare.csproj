@@ -1,20 +1,30 @@
-<Project Sdk="Godot.NET.Sdk/4.3.0">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <EnableDynamicLoading>true</EnableDynamicLoading>
-    <RootNamespace>NeonWarfare</RootNamespace>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+    </PropertyGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <ItemGroup>
-      <DirectoriesToCreate Include="$(ProjectDir)bin\win-64" />
-      <FilesToCreate Include="$(ProjectDir)bin\.gdignore" />
+        <PackageReference Include="KludgeBox" Version="2.2.0"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="MessagePack" Version="3.1.4"/>
     </ItemGroup>
-    <MakeDir Directories="@(DirectoriesToCreate)" />
-    <WriteLinesToFile File="@(FilesToCreate)" Lines="" Overwrite="true" />
-  </Target>
+
+    <PropertyGroup>
+        <NoWarn>CS0649</NoWarn>
+    </PropertyGroup>
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+        <ItemGroup>
+            <DirectoriesToCreate Include="$(ProjectDir)bin\win-64"/>
+            <DirectoriesToCreate Include="$(ProjectDir)bin\android"/>
+            <FilesToCreate Include="$(ProjectDir)bin\.gdignore"/>
+        </ItemGroup>
+        <MakeDir Directories="@(DirectoriesToCreate)"/>
+        <WriteLinesToFile File="@(FilesToCreate)" Lines="" Overwrite="true"/>
+    </Target>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="/"/>
+    </ItemGroup>
 </Project>

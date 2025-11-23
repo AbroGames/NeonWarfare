@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://wdbyyryght8p"]
+
+[ext_resource type="Script" uid="uid://b7itbaxmvo1l6" path="res://Scenes/World/Tree/Surface/Map/MapSurface.cs" id="1_fdd8p"]
+
+[node name="MapSurface" type="Node2D"]
+script = ExtResource("1_fdd8p")

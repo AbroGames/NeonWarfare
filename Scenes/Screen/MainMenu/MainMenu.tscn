@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3 uid="uid://t2ls4ub3hyoe"]
+
+[ext_resource type="Script" uid="uid://cyu2dncr70f6o" path="res://Scenes/Screen/MainMenu/MainMenu.cs" id="1_ll75u"]
+[ext_resource type="Script" uid="uid://bxa7yaqut8dr7" path="res://Scenes/KludgeBox/NodeContainer.cs" id="2_8wwy4"]
+[ext_resource type="Script" uid="uid://b7e7uvc3umiu4" path="res://Scenes/Screen/MainMenu/MainMenuPackedScenes.cs" id="3_8wwy4"]
+[ext_resource type="PackedScene" uid="uid://dl82oyababygh" path="res://Scenes/Screen/MainMenu/Pages/Main/MainMenuMainPage.tscn" id="4_861ql"]
+[ext_resource type="PackedScene" uid="uid://de3uhhcoffddv" path="res://Scenes/Screen/MainMenu/Pages/CreateServer/MainMenuHostPage.tscn" id="5_qwycf"]
+[ext_resource type="PackedScene" uid="uid://dfyy367ppdtvj" path="res://Scenes/Screen/MainMenu/Pages/ConnectToServer/MainMenuConnectPage.tscn" id="6_0kduk"]
+[ext_resource type="PackedScene" uid="uid://oioixqldjyt1" path="res://Scenes/Screen/MainMenu/Pages/Settings/MainMenuSettingsPage.tscn" id="7_qwycf"]
+
+[node name="MainMenu" type="Node2D"]
+script = ExtResource("1_ll75u")
+
+[node name="Screen" type="CanvasLayer" parent="."]
+
+[node name="BackgroundContainer" type="Control" parent="Screen"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_8wwy4")
+
+[node name="MenuContainer" type="Control" parent="Screen"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_8wwy4")
+
+[node name="PackedScenes" type="Node" parent="."]
+script = ExtResource("3_8wwy4")
+Main = ExtResource("4_861ql")
+CreateServer = ExtResource("5_qwycf")
+ConnectToServer = ExtResource("6_0kduk")
+Settings = ExtResource("7_qwycf")

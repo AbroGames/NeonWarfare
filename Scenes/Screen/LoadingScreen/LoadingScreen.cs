@@ -1,15 +1,28 @@
+using System;
 using Godot;
-using NeonWarfare.Scripts.KludgeBox.Core;
+using KludgeBox.DI.Requests.ChildInjection;
+using KludgeBox.DI.Requests.NotNullCheck;
 
 namespace NeonWarfare.Scenes.Screen.LoadingScreen;
 
 public partial class LoadingScreen : CanvasLayer
 {
-    [Export] [NotNull] public LoadingAnimHandle LoadingAnimHandle { get; private set; }
-    [Export] [NotNull] public Label LoadingLabel { get; private set; }
+    [Child] public LoadingAnimHandle LoadingHandle { get; private set; }
+    [Child] public Label LoadingLabel { get; private set; }
 
-    public void SetUpperText(string loadingText)
+    public LoadingScreen InitPreReady()
     {
-        LoadingLabel.Text = loadingText.ToUpper();
+        Di.Process(this);
+        return this;
+    }
+
+    public override void _Ready()
+    {
+        SetLayer(Int32.MaxValue);
+    }
+
+    public void SetText(string loadingText)
+    {
+        LoadingLabel.Text = loadingText;
     }
 }

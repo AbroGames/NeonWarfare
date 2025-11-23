@@ -1,0 +1,23 @@
+[gd_scene load_steps=7 format=3 uid="uid://bjyux48ai45ry"]
+
+[ext_resource type="Script" uid="uid://b32mf7xxe450a" path="res://Scenes/Root/Root.cs" id="1_66vvw"]
+[ext_resource type="Script" uid="uid://bxa7yaqut8dr7" path="res://Scenes/KludgeBox/NodeContainer.cs" id="2_3ssen"]
+[ext_resource type="Script" uid="uid://c286ld13u04i3" path="res://Scenes/Root/RootPackedScenes.cs" id="3_rt2b8"]
+[ext_resource type="PackedScene" uid="uid://7yywjdawo4yu" path="res://Scenes/Game/Game.tscn" id="4_0qtfh"]
+[ext_resource type="PackedScene" uid="uid://t2ls4ub3hyoe" path="res://Scenes/Screen/MainMenu/MainMenu.tscn" id="4_rt2b8"]
+[ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="5_0qtfh"]
+
+[node name="Root" type="Node2D"]
+script = ExtResource("1_66vvw")
+
+[node name="MainSceneContainer" type="Node2D" parent="."]
+script = ExtResource("2_3ssen")
+
+[node name="LoadingScreenContainer" type="CanvasLayer" parent="."]
+script = ExtResource("2_3ssen")
+
+[node name="PackedScenes" type="Node" parent="."]
+script = ExtResource("3_rt2b8")
+Game = ExtResource("4_0qtfh")
+MainMenu = ExtResource("4_rt2b8")
+LoadingScreen = ExtResource("5_0qtfh")
