@@ -4,6 +4,7 @@ using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 using NeonWarfare.Scenes.NeonTemp.Service;
+using NeonWarfare.Scenes.NeonTemp.Stats;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
 
@@ -34,7 +35,7 @@ public class SimpleStatusEffect : AbstractStatusEffect
             Character = character;
             foreach (var modifier in Modifiers)
             {
-                character.Stats.GetContainer().AddStatModifier(modifier);
+                character.Stats.AddStatModifier(modifier);
             }
         }
 
@@ -42,7 +43,7 @@ public class SimpleStatusEffect : AbstractStatusEffect
         {
             foreach (var modifier in Modifiers)
             {
-                character.Stats.GetContainer().RemoveStatModifier(modifier);
+                character.Stats.RemoveStatModifier(modifier);
             }
         }
 

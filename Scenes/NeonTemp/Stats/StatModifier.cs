@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+namespace NeonWarfare.Scenes.NeonTemp.Stats;
 
 public partial class StatModifier<TStat> : ObservableObject
 {

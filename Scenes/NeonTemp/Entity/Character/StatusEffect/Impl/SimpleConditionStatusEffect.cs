@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 using NeonWarfare.Scenes.NeonTemp.Service;
+using NeonWarfare.Scenes.NeonTemp.Stats;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
 

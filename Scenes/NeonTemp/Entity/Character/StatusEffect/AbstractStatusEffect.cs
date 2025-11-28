@@ -1,5 +1,4 @@
-﻿using System;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
+﻿using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 

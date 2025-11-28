@@ -2,7 +2,8 @@
 
 public enum CharacterStat {
     MaxHp, // hp
-    RegenHp, // hp/sec
+    RegenHp, // hp/sec [0;..]
+    DrainHp, // hp/sec [0;..]
     Armor, // hp
         
     MovementSpeed, // px/sec

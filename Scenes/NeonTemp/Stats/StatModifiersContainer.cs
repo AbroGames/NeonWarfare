@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+namespace NeonWarfare.Scenes.NeonTemp.Stats;
 
 public class StatModifiersContainer<TStat>
 {
@@ -26,14 +26,14 @@ public class StatModifiersContainer<TStat>
         return _statsModifiers.Remove(statModifier);
     }
 
-    public double CalculateStat(TStat stat, double baseValue)
+    public double GetStat(TStat stat, double baseValue = 0)
     {
-        double additiveValue = GetValue(stat, StatModifier<TStat>.ModifierType.Additive);
-        double multiplicativeValue = GetValue(stat, StatModifier<TStat>.ModifierType.Multiplicative);
+        double additiveValue = GetStatValue(stat, StatModifier<TStat>.ModifierType.Additive);
+        double multiplicativeValue = GetStatValue(stat, StatModifier<TStat>.ModifierType.Multiplicative);
         return (baseValue + additiveValue) * multiplicativeValue;
     }
 
-    public double GetValue(TStat stat, StatModifier<TStat>.ModifierType type)
+    public double GetStatValue(TStat stat, StatModifier<TStat>.ModifierType type)
     {
         if (_needToInvalidateCache.Contains((stat, type))) RecalculateCache(stat, type);
         return GetCacheInfo(type).Dictionary.GetValueOrDefault(stat, GetCacheInfo(type).DefaultValue);

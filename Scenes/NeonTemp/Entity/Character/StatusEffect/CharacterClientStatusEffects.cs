@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Godot;
 using MessagePack;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
 using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;

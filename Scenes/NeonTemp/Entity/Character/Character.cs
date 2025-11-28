@@ -1,11 +1,10 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
-using Serilog;
+using NeonWarfare.Scenes.NeonTemp.Stats;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character;
 
