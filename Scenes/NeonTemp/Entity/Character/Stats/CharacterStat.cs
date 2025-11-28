@@ -1,6 +1,6 @@
 ﻿namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 
-public enum Stat {
+public enum CharacterStat {
     MaxHp, // hp
     RegenHp, // hp/sec
     Armor, // hp

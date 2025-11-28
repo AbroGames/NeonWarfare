@@ -15,10 +15,10 @@ public class SimpleStatusEffect : AbstractStatusEffect
         public override IAddingStatusEffectPolicy AddingPolicy { get; }
         
         protected Character Character;
-        protected readonly List<StatModifier> Modifiers = new();
+        protected readonly List<StatModifier<CharacterStat>> Modifiers = new();
         
         public SimpleStatusEffect(string id, string displayName, string iconName,
-            IAddingStatusEffectPolicy addingPolicy, ICollection<StatModifier> modifiers)
+            IAddingStatusEffectPolicy addingPolicy, ICollection<StatModifier<CharacterStat>> modifiers)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
@@ -53,12 +53,12 @@ public class SimpleStatusEffect : AbstractStatusEffect
             return new Client(Id, DisplayName, IconName);
         }
 
-        public static SimpleStatusEffect Create(string id, StatModifier modifier)
+        public static SimpleStatusEffect Create(string id, StatModifier<CharacterStat> modifier)
         {
             return new Builder().Id(id).Modifiers(modifier).Build();
         }
         
-        public static SimpleStatusEffect Create(string id, List<StatModifier> modifiers)
+        public static SimpleStatusEffect Create(string id, List<StatModifier<CharacterStat>> modifiers)
         {
             return new Builder().Id(id).Modifiers(modifiers).Build();
         }
@@ -85,7 +85,7 @@ public class SimpleStatusEffect : AbstractStatusEffect
             private string _displayName;
             private string _iconName;
             private IAddingStatusEffectPolicy _addingPolicy;
-            private readonly List<StatModifier> _modifiers = new();
+            private readonly List<StatModifier<CharacterStat>> _modifiers = new();
 
             public Builder Id(string id)
             {
@@ -111,13 +111,13 @@ public class SimpleStatusEffect : AbstractStatusEffect
                 return this;
             }
             
-            public Builder Modifiers(StatModifier modifier)
+            public Builder Modifiers(StatModifier<CharacterStat> modifier)
             {
                 _modifiers.Add(modifier);
                 return this;
             }
 
-            public Builder Modifiers(List<StatModifier> modifiers)
+            public Builder Modifiers(List<StatModifier<CharacterStat>> modifiers)
             {
                 _modifiers.AddRange(modifiers);
                 return this;

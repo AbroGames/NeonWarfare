@@ -11,7 +11,7 @@ public class SimpleConditionStatusEffect : SimpleStatusEffect
         protected readonly Func<Character, SimpleConditionStatusEffect, double, bool> IsFinishCondition;
         
         public SimpleConditionStatusEffect(string id, string displayName, string iconName,
-            IAddingStatusEffectPolicy addingPolicy, ICollection<StatModifier> modifiers, 
+            IAddingStatusEffectPolicy addingPolicy, ICollection<StatModifier<CharacterStat>> modifiers, 
             Func<Character, SimpleConditionStatusEffect, double, bool> isFinishCondition)
             : base(id,  displayName, iconName, addingPolicy, modifiers)
         {
@@ -24,13 +24,13 @@ public class SimpleConditionStatusEffect : SimpleStatusEffect
         }
         
         public static SimpleConditionStatusEffect Create(string id,
-            Func<Character, SimpleConditionStatusEffect, double, bool> isFinishCondition, StatModifier modifier)
+            Func<Character, SimpleConditionStatusEffect, double, bool> isFinishCondition, StatModifier<CharacterStat> modifier)
         {
             return new Builder().Id(id).Modifiers(modifier).IsFinishCondition(isFinishCondition).Build();
         }
         
         public static SimpleConditionStatusEffect Create(string id,
-            Func<Character, SimpleConditionStatusEffect, double, bool> isFinishCondition, List<StatModifier> modifiers)
+            Func<Character, SimpleConditionStatusEffect, double, bool> isFinishCondition, List<StatModifier<CharacterStat>> modifiers)
         {
             return new Builder().Id(id).Modifiers(modifiers).IsFinishCondition(isFinishCondition).Build();
         }
@@ -41,7 +41,7 @@ public class SimpleConditionStatusEffect : SimpleStatusEffect
             private string _displayName;
             private string _iconName;
             private IAddingStatusEffectPolicy _addingPolicy;
-            private readonly List<StatModifier> _modifiers = new();
+            private readonly List<StatModifier<CharacterStat>> _modifiers = new();
             private Func<Character, SimpleConditionStatusEffect, double, bool> _isFinishCondition;
 
             public Builder Id(string id)
@@ -68,13 +68,13 @@ public class SimpleConditionStatusEffect : SimpleStatusEffect
                 return this;
             }
             
-            public Builder Modifiers(StatModifier modifier)
+            public Builder Modifiers(StatModifier<CharacterStat> modifier)
             {
                 _modifiers.Add(modifier);
                 return this;
             }
 
-            public Builder Modifiers(List<StatModifier> modifiers)
+            public Builder Modifiers(List<StatModifier<CharacterStat>> modifiers)
             {
                 _modifiers.AddRange(modifiers);
                 return this;

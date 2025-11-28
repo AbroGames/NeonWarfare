@@ -4,50 +4,50 @@ using System.Linq;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 
-public class StatModifiersContainer
+public class StatModifiersContainer<TStat>
 {
-    private readonly HashSet<StatModifier> _statsModifiers = new();
+    private readonly HashSet<StatModifier<TStat>> _statsModifiers = new();
     
-    private readonly Dictionary<Stat, double> _cacheAdditive = new();
-    private readonly Dictionary<Stat, double> _cacheMultiplicative = new();
-    private readonly HashSet<(Stat, StatModifier.ModifierType)> _needToInvalidateCache = new();
+    private readonly Dictionary<TStat, double> _cacheAdditive = new();
+    private readonly Dictionary<TStat, double> _cacheMultiplicative = new();
+    private readonly HashSet<(TStat, StatModifier<TStat>.ModifierType)> _needToInvalidateCache = new();
     
-    public void AddStatModifier(StatModifier statModifier)
+    public void AddStatModifier(StatModifier<TStat> statModifier)
     {
         AddTaskToInvalidateCache(statModifier);
-        statModifier.PropertyChanged += (stat, _) => AddTaskToInvalidateCache((StatModifier) stat);
+        statModifier.PropertyChanged += (stat, _) => AddTaskToInvalidateCache((StatModifier<TStat>) stat);
         
         _statsModifiers.Add(statModifier);
     }
     
-    public bool RemoveStatModifier(StatModifier statModifier)
+    public bool RemoveStatModifier(StatModifier<TStat> statModifier)
     {
         AddTaskToInvalidateCache(statModifier);
         return _statsModifiers.Remove(statModifier);
     }
 
-    public double CalculateStat(Stat stat, double baseValue)
+    public double CalculateStat(TStat stat, double baseValue)
     {
-        double additiveValue = GetValue(stat, StatModifier.ModifierType.Additive);
-        double multiplicativeValue = GetValue(stat, StatModifier.ModifierType.Multiplicative);
+        double additiveValue = GetValue(stat, StatModifier<TStat>.ModifierType.Additive);
+        double multiplicativeValue = GetValue(stat, StatModifier<TStat>.ModifierType.Multiplicative);
         return (baseValue + additiveValue) * multiplicativeValue;
     }
 
-    public double GetValue(Stat stat, StatModifier.ModifierType type)
+    public double GetValue(TStat stat, StatModifier<TStat>.ModifierType type)
     {
         if (_needToInvalidateCache.Contains((stat, type))) RecalculateCache(stat, type);
         return GetCacheInfo(type).Dictionary.GetValueOrDefault(stat, GetCacheInfo(type).DefaultValue);
     }
     
-    private void AddTaskToInvalidateCache(StatModifier statModifier)
+    private void AddTaskToInvalidateCache(StatModifier<TStat> statModifier)
     {
         _needToInvalidateCache.Add((statModifier.Stat, statModifier.Type));
     }
 
-    private void RecalculateCache(Stat stat, StatModifier.ModifierType type)
+    private void RecalculateCache(TStat stat, StatModifier<TStat>.ModifierType type)
     {
         GetCacheInfo(type).Dictionary[stat] = _statsModifiers
-            .Where(sm => sm.Stat == stat)
+            .Where(sm => sm.Stat.Equals(stat))
             .Where(sm => sm.Type == type)
             .Select(sm => sm.Value)
             .Aggregate(GetCacheInfo(type).DefaultValue, GetCacheInfo(type).Operation);
@@ -56,17 +56,17 @@ public class StatModifiersContainer
     }
     
     private record CacheInfo( 
-        Dictionary<Stat, double> Dictionary, 
+        Dictionary<TStat, double> Dictionary, 
         Func<double, double, double> Operation, 
         double DefaultValue);
     
-    private CacheInfo GetCacheInfo(StatModifier.ModifierType type)
+    private CacheInfo GetCacheInfo(StatModifier<TStat>.ModifierType type)
     {
         return type switch
         {
-            StatModifier.ModifierType.Additive => 
+            StatModifier<TStat>.ModifierType.Additive => 
                 new CacheInfo(_cacheAdditive, (d1, d2) => d1 + d2, 0),
-            StatModifier.ModifierType.Multiplicative => 
+            StatModifier<TStat>.ModifierType.Multiplicative => 
                 new CacheInfo(_cacheMultiplicative, (d1, d2) => d1 * d2, 1),
             _ => throw new ArgumentException("Unknown ModifierType: " + type)
         };

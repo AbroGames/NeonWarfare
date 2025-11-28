@@ -16,13 +16,12 @@ public partial class Character : RigidBody2D
     [Child] public Area2D HitBox { get; private set; }
 
     public CharacterController Controller { get; private set; }
-    public CharacterStats Stats { get; private set; }
+    public CharacterStatsNode Stats { get; private set; }
     public CharacterStatusEffects StatusEffects { get; private set; }
     public CharacterClientStatusEffects ClientStatusEffects { get; private set; }
     
     public Vector2 Vec;
     public PlayerController PlayerController;
-    [Logger] private ILogger _log;
     
     public float MaxSpeed = 200.0f;
     public float Acceleration = 10.0f;
@@ -35,7 +34,6 @@ public partial class Character : RigidBody2D
         Di.Process(this);
         
         Controller = new(this);
-        Stats = new(this);
         Net.DoServer(() => StatusEffects = new CharacterStatusEffects(this));
         Net.DoClient(() => ClientStatusEffects = new CharacterClientStatusEffects(this));
         
@@ -50,7 +48,7 @@ public partial class Character : RigidBody2D
             ExplodeFromMouse();
             
             if (PlayerController != null) StatusEffects.AddStatusEffect(SimpleTempStatusEffect.Create("test-1", 2,
-                StatModifier.CreateAdditive(Stat.MaxHp, 100)));
+                StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MaxHp, 100)));
         }
     }
 
