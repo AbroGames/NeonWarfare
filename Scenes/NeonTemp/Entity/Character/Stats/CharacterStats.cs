@@ -110,6 +110,7 @@ public class CharacterStats
     public double RegenHp => GetStat(CharacterStat.RegenHp);
     public double DrainHp => GetStat(CharacterStat.DrainHp);
     public double Armor => GetStat(CharacterStat.Armor);
+    public double ArmorAbsorption => GetStat(CharacterStat.ArmorAbsorption);
     public double MovementSpeed => GetStat(CharacterStat.MovementSpeed);
     public double RotationSpeed => GetStat(CharacterStat.RotationSpeed);
     public double Mass => GetStat(CharacterStat.Mass);

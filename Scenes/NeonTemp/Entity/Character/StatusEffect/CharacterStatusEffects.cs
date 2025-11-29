@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KludgeBox.DI.Requests.LoggerInjection;
 using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 using NeonWarfare.Scenes.NeonTemp.Service;
-using Serilog;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 
@@ -16,7 +14,6 @@ public class CharacterStatusEffects
 
     private readonly Character _character;
     private readonly CharacterSynchronizer _synchronizer;
-    [Logger] private ILogger _log;
 
     public CharacterStatusEffects(Character character, CharacterSynchronizer synchronizer)
     {

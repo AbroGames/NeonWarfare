@@ -1,6 +1,4 @@
-﻿using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
-using Serilog;
+﻿using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 
@@ -8,7 +6,6 @@ public class CharacterStatsClient
 {    
     private readonly Character _character;
     private readonly CharacterSynchronizer _synchronizer;
-    [Logger] private ILogger _log;
 
     public CharacterStatsClient(Character character, CharacterSynchronizer synchronizer)
     {

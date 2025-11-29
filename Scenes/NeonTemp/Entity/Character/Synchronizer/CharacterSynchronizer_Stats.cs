@@ -18,7 +18,7 @@ public partial class CharacterSynchronizer
     
     [Export] [Sync(Always)] private Dictionary<CharacterStat, double> _statsValues = new();
     
-    private void InitPostReady_Stats()
+    private void OnReady_Stats()
     {
         _stats = _character.Stats;
         _statsClient = _character.StatsClient;
@@ -35,7 +35,7 @@ public partial class CharacterSynchronizer
     }
     
     public void Stats_OnDamage(double value, double newHp) => Rpc(MethodName.Stats_OnDamageRpc, value, newHp);
-    [Rpc(CallLocal = true)]
+    [Rpc(CallLocal = true, TransferChannel = Consts.TransferChannel.StatsHp)]
     private void Stats_OnDamageRpc(double value, double newHp)
     {
         StatsHp = newHp;
@@ -43,7 +43,7 @@ public partial class CharacterSynchronizer
     }
     
     public void Stats_OnHeal(double value, double newHp, double newDutyHp) => Rpc(MethodName.Stats_OnHealRpc, value, newHp, newDutyHp);
-    [Rpc(CallLocal = true)]
+    [Rpc(CallLocal = true, TransferChannel = Consts.TransferChannel.StatsHp)]
     private void Stats_OnHealRpc(double value, double newHp, double newDutyHp)
     {
         StatsHp = newHp;

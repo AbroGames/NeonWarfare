@@ -9,7 +9,7 @@ public partial class CharacterSynchronizer
     private CharacterStatusEffects _statusEffects;
     private CharacterStatusEffectsClient _statusEffectsClient;
 
-    private void InitPostReady_StatusEffects()
+    private void OnReady_StatusEffects()
     {
         _statusEffects = _character.StatusEffects;
         _statusEffectsClient = _character.StatusEffectsClient;

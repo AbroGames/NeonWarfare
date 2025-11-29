@@ -1,10 +1,6 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character;
 

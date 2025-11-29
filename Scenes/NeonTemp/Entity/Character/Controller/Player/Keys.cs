@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
 public static class Keys
 {
