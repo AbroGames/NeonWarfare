@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://ci2dn8dnt3kav"]
+[gd_scene load_steps=6 format=3 uid="uid://ci2dn8dnt3kav"]
 
 [ext_resource type="Script" uid="uid://ceorfjqpj4rxn" path="res://Scenes/NeonTemp/Entity/Character/Character.cs" id="1_kp28h"]
 [ext_resource type="Texture2D" uid="uid://c3rvwl1ge5xcy" path="res://Assets/Textures/Entities/Character/Player.svg" id="2_lhpld"]
+[ext_resource type="Script" uid="uid://dv0r2yj8m580h" path="res://Scenes/NeonTemp/Entity/Character/Synchronizer/CharacterSynchronizer.cs" id="3_5fjuf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kp28h"]
 radius = 14.0
@@ -24,3 +25,6 @@ shape = SubResource("CircleShape2D_kp28h")
 
 [node name="HitBoxShape" type="CollisionShape2D" parent="HitBox"]
 shape = SubResource("RectangleShape2D_5fjuf")
+
+[node name="Synchronizer" type="Node" parent="."]
+script = ExtResource("3_5fjuf")

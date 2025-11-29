@@ -1,21 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using KludgeBox.DI.Requests.LoggerInjection;
 using MessagePack;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 using NeonWarfare.Scenes.NeonTemp.Service;
+using Serilog;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 
-//TODO Синхронизация по сети? Через Rpc, сделать класс нодой? Но слишком много дочерних нод будет. Rpc в родительском partial Character
-public class CharacterStatusEffects(Character character) 
+public class CharacterStatusEffects
 {
-    private Dictionary<string, List<AbstractStatusEffect>> _statusEffectsById = new();
-    private Dictionary<AbstractStatusEffect, int> _clientIdByStatusEffects = new();
+    private readonly Dictionary<string, List<AbstractStatusEffect>> _statusEffectsById = new();
+    private readonly Dictionary<AbstractStatusEffect, int> _clientIdByStatusEffects = new();
     private int _nextClientId = 1;
+
+    private readonly Character _character;
+    private readonly CharacterSynchronizer _synchronizer;
+    [Logger] private ILogger _log;
+
+    public CharacterStatusEffects(Character character, CharacterSynchronizer synchronizer)
+    {
+        Di.Process(this);
+        
+        _character = character;
+        _synchronizer = synchronizer;
+    }
 
     public void AddStatusEffect(AbstractStatusEffect newStatusEffect)
     {
         newStatusEffect.AddingPolicy.OnAdd(
-            character,
+            _character,
             newStatusEffect,
             GetReadOnlyStatusEffects,
             _statusEffectsById.GetValueOrDefault(newStatusEffect.Id, []),
@@ -55,7 +69,7 @@ public class CharacterStatusEffects(Character character)
         _statusEffectsById[newStatusEffect.Id].Add(newStatusEffect);
 
         SendAddStatusEffectToClient(newStatusEffect);
-        newStatusEffect.OnApplied(character);
+        newStatusEffect.OnApplied(_character);
     }
     
     private void RemoveStatusEffectOnServerAndClient(AbstractStatusEffect oldStatusEffect)
@@ -68,7 +82,7 @@ public class CharacterStatusEffects(Character character)
         
         
         SendRemoveStatusEffectToClient(oldStatusEffect);
-        oldStatusEffect.OnRemoved(character);
+        oldStatusEffect.OnRemoved(_character);
     }
 
     private Dictionary<string, IReadOnlyCollection<AbstractStatusEffect>> GetReadOnlyStatusEffects()
@@ -87,7 +101,7 @@ public class CharacterStatusEffects(Character character)
         int typeId = StatusEffectTypesStorageService.Instance.GetId(newClientStatusEffect.GetType());
         byte[] payload = MessagePackSerializer.Serialize(newClientStatusEffect.GetType(), newClientStatusEffect);
         
-        character.StatusEffect_OnClientApply(clientId, typeId, payload);
+        _synchronizer.StatusEffect_OnClientApply(clientId, typeId, payload);
     }
     
     private void SendRemoveStatusEffectToClient(AbstractStatusEffect oldStatusEffect)
@@ -95,6 +109,6 @@ public class CharacterStatusEffects(Character character)
         int clientId = _clientIdByStatusEffects[oldStatusEffect];
         _clientIdByStatusEffects.Remove(oldStatusEffect);
         
-        character.StatusEffect_OnClientRemove(clientId);
+        _synchronizer.StatusEffect_OnClientRemove(clientId);
     }
 }

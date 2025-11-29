@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using KludgeBox.Core.Cooldown;
+using KludgeBox.Core.Stats;
 using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 using NeonWarfare.Scenes.NeonTemp.Service;
-using NeonWarfare.Scenes.NeonTemp.Stats;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
 

@@ -1,51 +1,59 @@
 ﻿using System;
-using Godot;
-using Godot.Collections;
+using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.LoggerInjection;
-using KludgeBox.DI.Requests.ParentInjection;
-using KludgeBox.Godot.Nodes.MpSync;
-using NeonWarfare.Scenes.NeonTemp.Stats;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 using Serilog;
-using static Godot.SceneReplicationConfig.ReplicationMode;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 
-public partial class CharacterStatsNode : Node
+public class CharacterStats
 {
-    
-    [Sync(Always)] public bool IsDead { get; private set; }
-    [Sync(Always)] public double Hp { get; private set; }
-    [Sync] public double DutyHp { get; private set; }
-    
-    [Sync(Always)] private Dictionary<CharacterStat, double> _statsValuesSynchronizer = new();
+    public bool IsDead { get; private set; }
+    public double Hp { get; private set; }
+    public double DutyHp { get; private set; }
     private StatModifiersContainer<CharacterStat> _statModifiersContainer;
     
-    [Parent] private Character _character;
+    private readonly Character _character;
+    private readonly CharacterSynchronizer _synchronizer;
     [Logger] private ILogger _log;
 
-    public override void _Ready()
+    public CharacterStats(Character character, CharacterSynchronizer synchronizer)
     {
         Di.Process(this);
-        Net.DoServer(() => _statModifiersContainer = new());
+        
+        _character = character;
+        _synchronizer = synchronizer;
     }
     
-    /// <param name="value">Hp will be decrease for this value</param>
+    /// <param name="value">Hp will be decreased for this value</param>
     public void Damage(double value)
     {
-        if (value < 0) _log.Error(new Exception(), "Damage value must be positive: {damage}", value);
+        if (value < 0)
+        {
+            _log.Error(new Exception(), "Damage value must be positive: {damage}", value);
+            return;
+        }
         if (IsDead) return;
         
-        //TODO rpc-event fot CharacterClientStatsNode ? And heal/kill/res
         Hp -= value;
+        _synchronizer.Stats_OnDamage(value, Hp);
         if (Hp <= 0) Kill();
     }
     
-    /// <param name="value">Hp will be increase for this value</param>
+    /// <param name="value">Hp will be increased for this value</param>
     /// <param name="maxHpMultBonus"><c>MaxHp</c> for this heal will be <c>MaxHp*(1+maxHpMultBonus)</c></param>
     public void Heal(double value, double maxHpMultBonus = 0)
     {
-        if (value < 0) _log.Error(new Exception(), "Heal value must be positive: {heal}", value);
-        if (maxHpMultBonus < 0) _log.Error(new Exception(), "Heal must has positive MaxHpMultBonus: {maxHpMultBonus}", maxHpMultBonus);
+        if (value < 0)
+        {
+            _log.Error(new Exception(), "Heal value must be positive: {heal}", value);
+            return;
+        }
+        if (maxHpMultBonus < 0)
+        {
+            _log.Error(new Exception(), "Heal must has positive MaxHpMultBonus: {maxHpMultBonus}", maxHpMultBonus);
+            return;
+        }
         if (IsDead) return;
         
         double canDecreaseDuty = Math.Min(DutyHp, value);
@@ -56,30 +64,26 @@ public partial class CharacterStatsNode : Node
         double maxHpWithBonus = MaxHp * (1 + maxHpMultBonus);
         double canDecreaseShortageUnderMaxHp = Math.Min(Math.Max(maxHpWithBonus - Hp, 0), value);
         Hp += canDecreaseShortageUnderMaxHp;
-        value -= canDecreaseShortageUnderMaxHp;
+        
+        _synchronizer.Stats_OnHeal(canDecreaseDuty + canDecreaseShortageUnderMaxHp, Hp, DutyHp);
     }
 
     public void Kill()
     {
         if (IsDead) return;
         IsDead = true;
+        _synchronizer.Stats_OnKill();
     }
 
     public void Resurrect()
     {
         if (!IsDead) return;
         IsDead = false;
-    }
-    
-    public double GetStat(CharacterStat stat)
-    {
-        return Net.IsServer() ? 
-            _statModifiersContainer.GetStat(stat) :
-            _statsValuesSynchronizer[stat];
+        _synchronizer.Stats_OnResurrect();
     }
 
-    #region _PhysicsProcess methods
-    public override void _PhysicsProcess(double delta)
+    #region PhysicsProcess methods
+    public void OnPhysicsProcess(double delta)
     {
         RegenDrainProcess(delta);
         UpdateStatsValues();
@@ -96,7 +100,7 @@ public partial class CharacterStatsNode : Node
     {
         foreach (CharacterStat stat in Enum.GetValues<CharacterStat>())
         {
-            _statsValuesSynchronizer[stat] = GetStat(stat);
+            _synchronizer.Stats_Update(stat, GetStat(stat));
         }
     }
     #endregion
@@ -121,6 +125,7 @@ public partial class CharacterStatsNode : Node
     #region Proxy methods for StatModifiersContainer
     public void AddStatModifier(StatModifier<CharacterStat> statModifier) => _statModifiersContainer.AddStatModifier(statModifier);
     public bool RemoveStatModifier(StatModifier<CharacterStat> statModifier) => _statModifiersContainer.RemoveStatModifier(statModifier);
+    public double GetStat(CharacterStat stat, double baseValue = 0) => _statModifiersContainer.GetStat(stat, baseValue);
     public double GetStatValue(CharacterStat stat, StatModifier<CharacterStat>.ModifierType type) => _statModifiersContainer.GetStatValue(stat, type);
     #endregion
 }

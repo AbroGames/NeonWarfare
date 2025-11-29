@@ -1,15 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using KludgeBox.DI.Requests.LoggerInjection;
 using MessagePack;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 using NeonWarfare.Scenes.NeonTemp.Service;
+using Serilog;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 
-public class CharacterClientStatusEffects(Character character)
+public class CharacterStatusEffectsClient
 {
     private readonly Dictionary<int, AbstractClientStatusEffect> _clientStatusEffectByClientId = new();
 
-    public void AddStatusEffect(int clientId, int typeId, byte[] payload)
+    private readonly Character _character;
+    private readonly CharacterSynchronizer _synchronizer;
+    [Logger] private ILogger _log;
+
+    public CharacterStatusEffectsClient(Character character, CharacterSynchronizer synchronizer)
+    {
+        Di.Process(this);
+        
+        _character = character;
+        _synchronizer = synchronizer;
+    }
+    
+    public void OnAddStatusEffect(int clientId, int typeId, byte[] payload)
     {
         if (_clientStatusEffectByClientId.ContainsKey(clientId))
         {
@@ -19,14 +34,14 @@ public class CharacterClientStatusEffects(Character character)
         Type targetType = StatusEffectTypesStorageService.Instance.GetType(typeId);
         var clientStatusEffect = (AbstractClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
         _clientStatusEffectByClientId[clientId] = clientStatusEffect;
-        clientStatusEffect.OnClientApplied(character);
+        clientStatusEffect!.OnClientApplied(_character);
     }
     
-    public void RemoveStatusEffect(int clientId)
+    public void OnRemoveStatusEffect(int clientId)
     {
         if (_clientStatusEffectByClientId.Remove(clientId, out var clientStatusEffect))
         {
-            clientStatusEffect.OnClientRemoved(character);
+            clientStatusEffect.OnClientRemoved(_character);
         }
     }
     
