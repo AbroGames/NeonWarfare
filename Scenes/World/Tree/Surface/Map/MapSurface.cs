@@ -13,7 +13,7 @@ public partial class MapSurface : Node2D
         AddCharacter(350, 250, Vec2(-1, 0));
         AddCharacter(450, 250, Vec2(-1, 0));
         
-        Character player = AddCharacter(0, 250, Vec2(0, 0));
+        CharacterPhysicsTest player = AddCharacter(0, 250, Vec2(0, 0));
         player.PlayerController = new PlayerController();
         player.Mass = 1;
         player.Acceleration = 25;
@@ -23,10 +23,10 @@ public partial class MapSurface : Node2D
         AddWall(400, 400).Scale = Vec2(1, 4);
     }
 
-    public Character AddCharacter(float x, float y, Vector2 vec)
+    public CharacterPhysicsTest AddCharacter(float x, float y, Vector2 vec)
     {
-        PackedScene characterPs = GD.Load<PackedScene>("res://Scenes/NeonTemp/Entity/Character/Character.tscn");
-        Character character = characterPs.Instantiate<Character>();
+        PackedScene characterPs = GD.Load<PackedScene>("res://Scenes/NeonTemp/Entity/Character/CharacterPhysicsTest.tscn");
+        CharacterPhysicsTest character = characterPs.Instantiate<CharacterPhysicsTest>();
         character.Position = Vec2(x, y);
         character.Vec = vec;
         this.AddChildWithUniqueName(character, "Character");
