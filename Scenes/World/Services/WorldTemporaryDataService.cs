@@ -15,7 +15,7 @@ public partial class WorldTemporaryDataService : Node
     /// <summary>
     /// List of current connected players.
     /// </summary>
-    [Export] [Sync] public Godot.Collections.Dictionary<int, string> PlayerNickByPeerId = new();
+    [Export] [Sync] public Godot.Collections.Dictionary<long, string> PlayerNickByPeerId = new();
     
     public override void _Ready()
     {

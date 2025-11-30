@@ -23,12 +23,17 @@ public class CharacterController
     
     public void OnPhysicsProcess(double delta)
     {
-        CurrentController.OnPhysicsProcess(delta, _character, _controlBlockerHandler);
+        CurrentController.OnPhysicsProcess(delta, _character, _synchronizer, _controlBlockerHandler);
     }
 
     public void OnUnhandledInput(InputEvent @event, Action setAsHandled)
     {
-        CurrentController.OnUnhandledInput(@event, setAsHandled, _character, _controlBlockerHandler);
+        CurrentController.OnUnhandledInput(@event, setAsHandled, _character, _synchronizer, _controlBlockerHandler);
+    }
+
+    public void OnReceivedMovement(IController.MovementData movementData)
+    {
+        CurrentController.OnReceivedMovement(_character, _synchronizer, movementData);
     }
     
     public void SetController(IController controller)
@@ -51,5 +56,11 @@ public class CharacterController
     {
         _controlBlockerHandler.RemoveBlock(controlBlocker);
         if (syncToClient) _synchronizer.Controller_RemoveBlock(controlBlocker);
+    }
+
+    public void Teleport(Vector2 position, bool syncToClient = true)
+    {
+        _character.Position = position;
+        if (syncToClient) _synchronizer.Controller_Teleport(position);
     }
 }

@@ -1,25 +1,37 @@
-﻿using System;
-using Godot;
+﻿using Godot;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
 
-public class AiController : IController
+public class AiController : PlayerController
 {
 
     private IAiControllerLogic _logic;
 
     public AiController(IAiControllerLogic logic)
     {
+        Di.Process(this);
+        
         _logic = logic;
     }
 
-    public void OnPhysicsProcess(double delta, Character character, ControlBlockerHandler controlBlockerHandler)
+    protected override Vector2 GetMovementInput(Character character)
     {
-        throw new NotImplementedException();
+        return Services.Rand.UnitVector * 0.3f;
+    }
+    
+    protected override Vector2 GetGlobalRotatePosition(Character character)
+    {
+        return character.Position + Services.Rand.UnitVector * 10;
     }
 
-    public void OnUnhandledInput(InputEvent @event, Action setAsHandled, Character character, ControlBlockerHandler controlBlockerHandler)
+    protected override double GetMovementSpeed(Character character)
     {
-        throw new NotImplementedException();
+        return character.Stats.MovementSpeed;
+    }
+    
+    protected override double GetRotationSpeed(Character character)
+    {
+        return character.Stats.RotationSpeed;
     }
 }

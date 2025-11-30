@@ -13,4 +13,5 @@ public partial class WorldPackedScenes : AbstractStorage
     
     [ExportGroup("Map")]
     [Export] [NotNull] public PackedScene MapPoint { get; private set; }
+    [Export] [NotNull] public PackedScene Character { get; private set; }
 }
