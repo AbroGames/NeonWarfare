@@ -1,6 +1,7 @@
 ﻿using System;
 using Godot;
 using Godot.Collections;
+using KludgeBox.Core;
 using KludgeBox.Godot.Nodes.MpSync;
 using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
@@ -22,13 +23,13 @@ public partial class CharacterSynchronizer
 
     public void Controller_OnChange(long peerId, IController controller)
     {
-        int typeId = TypesStorageService.Instance.GetId(controller.GetType());
+        int typeId = Services.TypesStorage.GetId(controller.GetType());
         RpcId(peerId, MethodName.Controller_OnChangeRpc, typeId);
     }
     [Rpc(CallLocal = false)]
     private void Controller_OnChangeRpc(int typeId)
     {
-        Type targetType = TypesStorageService.Instance.GetType(typeId);
+        Type targetType = Services.TypesStorage.GetType(typeId);
         IController controller = Activator.CreateInstance(targetType) as IController;
         _controller.SetController(controller);
     }

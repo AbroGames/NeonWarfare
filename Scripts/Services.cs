@@ -1,4 +1,5 @@
-﻿using NeonWarfare.Scripts.Service;
+﻿using System.Reflection;
+using NeonWarfare.Scripts.Service;
 using NeonWarfare.Scripts.Service.Settings;
 using KludgeBox.Core;
 using KludgeBox.Core.Random;
@@ -18,6 +19,7 @@ public static class Services
     public static readonly MathService Math = new MathService();
     public static readonly StringCompressionService StringCompression = new StringCompressionService();
     public static readonly NodeTreeService NodeTree = new NodeTreeService();
+    public static readonly TypesStorageService TypesStorage = new TypesStorageService();
     
     // Services from game, but extended KludgeBox services
     public static readonly CmdArgsService CmdArgs = new CmdArgsService();
