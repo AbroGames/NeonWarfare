@@ -15,22 +15,22 @@ public class CharacterStatsClient
         _synchronizer = synchronizer;
     }
 
-    public void OnDamage(double value, double newHp)
+    public void OnDamage(Character damager, double value, double absorbByArmor, double newHp)
     {
         
     }
     
-    public void OnHeal(double value, double newHp, double newDutyHp)
+    public void OnHeal(Character healer, double value, double newHp, double newDutyHp)
     {
         
     }
     
-    public void OnKill()
+    public void OnKill(Character killer)
     {
         
     }
 
-    public void OnResurrect()
+    public void OnResurrect(Character resurrector)
     {
         
     }

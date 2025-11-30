@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
@@ -8,6 +9,7 @@ namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 
 public class CharacterStatusEffects
 {
+    public ReadOnlyDictionary<string, List<AbstractStatusEffect>> StatusEffectsById => new(_statusEffectsById);
     private readonly Dictionary<string, List<AbstractStatusEffect>> _statusEffectsById = new();
     private readonly Dictionary<AbstractStatusEffect, int> _clientIdByStatusEffects = new();
     private int _nextClientId = 1;
@@ -23,20 +25,21 @@ public class CharacterStatusEffects
         _synchronizer = synchronizer;
     }
 
-    public void AddStatusEffect(AbstractStatusEffect newStatusEffect)
+    public void AddStatusEffect(AbstractStatusEffect newStatusEffect, Character author)
     {
         newStatusEffect.AddingPolicy.OnAdd(
             _character,
+            author,
             newStatusEffect,
             GetReadOnlyStatusEffects,
             _statusEffectsById.GetValueOrDefault(newStatusEffect.Id, []),
-            AddStatusEffectOnServerAndClient,
-            RemoveStatusEffectOnServerAndClient);
+            AddStatusEffectAndSync,
+            RemoveStatusEffectAndSync);
     }
     
     public void RemoveStatusEffect(AbstractStatusEffect oldStatusEffect)
     {
-        RemoveStatusEffectOnServerAndClient(oldStatusEffect);
+        RemoveStatusEffectAndSync(oldStatusEffect);
     }
 
     public void OnPhysicsProcess(double delta)
@@ -53,11 +56,11 @@ public class CharacterStatusEffects
 
         foreach (AbstractStatusEffect statusEffect in forRemove)
         {
-            RemoveStatusEffectOnServerAndClient(statusEffect);
+            RemoveStatusEffectAndSync(statusEffect);
         }
     }
 
-    private void AddStatusEffectOnServerAndClient(AbstractStatusEffect newStatusEffect)
+    private void AddStatusEffectAndSync(AbstractStatusEffect newStatusEffect, Character author)
     {
         if (!_statusEffectsById.ContainsKey(newStatusEffect.Id))
         {
@@ -66,10 +69,10 @@ public class CharacterStatusEffects
         _statusEffectsById[newStatusEffect.Id].Add(newStatusEffect);
 
         SendAddStatusEffectToClient(newStatusEffect);
-        newStatusEffect.OnApplied(_character);
+        newStatusEffect.OnApplied(_character, author);
     }
     
-    private void RemoveStatusEffectOnServerAndClient(AbstractStatusEffect oldStatusEffect)
+    private void RemoveStatusEffectAndSync(AbstractStatusEffect oldStatusEffect)
     {
         if (!_statusEffectsById.ContainsKey(oldStatusEffect.Id))
         {
@@ -95,10 +98,7 @@ public class CharacterStatusEffects
         _clientIdByStatusEffects[newStatusEffect] = clientId;
 
         AbstractClientStatusEffect newClientStatusEffect = newStatusEffect.GetClientStatusEffect();
-        int typeId = StatusEffectTypesStorageService.Instance.GetId(newClientStatusEffect.GetType());
-        byte[] payload = MessagePackSerializer.Serialize(newClientStatusEffect.GetType(), newClientStatusEffect);
-        
-        _synchronizer.StatusEffect_OnClientApply(clientId, typeId, payload);
+        _synchronizer.StatusEffects_OnClientApply(clientId, newClientStatusEffect);
     }
     
     private void SendRemoveStatusEffectToClient(AbstractStatusEffect oldStatusEffect)
@@ -106,6 +106,6 @@ public class CharacterStatusEffects
         int clientId = _clientIdByStatusEffects[oldStatusEffect];
         _clientIdByStatusEffects.Remove(oldStatusEffect);
         
-        _synchronizer.StatusEffect_OnClientRemove(clientId);
+        _synchronizer.StatusEffects_OnClientRemove(clientId);
     }
 }

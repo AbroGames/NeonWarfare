@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 using NeonWarfare.Scenes.NeonTemp.Service;
@@ -8,6 +9,7 @@ namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 
 public class CharacterStatusEffectsClient
 {
+    public ReadOnlyDictionary<int, AbstractClientStatusEffect> StatusEffectByClientId => new(_clientStatusEffectByClientId);
     private readonly Dictionary<int, AbstractClientStatusEffect> _clientStatusEffectByClientId = new();
 
     private readonly Character _character;
@@ -21,15 +23,13 @@ public class CharacterStatusEffectsClient
         _synchronizer = synchronizer;
     }
     
-    public void OnAddStatusEffect(int clientId, int typeId, byte[] payload)
+    public void OnAddStatusEffect(int clientId, AbstractClientStatusEffect clientStatusEffect)
     {
         if (_clientStatusEffectByClientId.ContainsKey(clientId))
         {
             throw new ArgumentException($"Client {clientId} has already been added");
         }
         
-        Type targetType = StatusEffectTypesStorageService.Instance.GetType(typeId);
-        var clientStatusEffect = (AbstractClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
         _clientStatusEffectByClientId[clientId] = clientStatusEffect;
         clientStatusEffect!.OnClientApplied(_character);
     }

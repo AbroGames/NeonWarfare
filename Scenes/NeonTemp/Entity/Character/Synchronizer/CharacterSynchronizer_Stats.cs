@@ -18,7 +18,7 @@ public partial class CharacterSynchronizer
     
     [Export] [Sync(Always)] private Dictionary<CharacterStat, double> _statsValues = new();
     
-    private void OnReady_Stats()
+    private void Stats_OnReady()
     {
         _stats = _character.Stats;
         _statsClient = _character.StatsClient;
@@ -34,36 +34,42 @@ public partial class CharacterSynchronizer
         return _statsValues[stat];
     }
     
-    public void Stats_OnDamage(double value, double newHp) => Rpc(MethodName.Stats_OnDamageRpc, value, newHp);
+    public void Stats_OnDamage(Character damager, double value, double absorbByArmor, double newHp) => 
+        Rpc(MethodName.Stats_OnDamageRpc, damager.GetPath().ToString(), value, absorbByArmor, newHp);
     [Rpc(CallLocal = true, TransferChannel = Consts.TransferChannel.StatsHp)]
-    private void Stats_OnDamageRpc(double value, double newHp)
+    private void Stats_OnDamageRpc(string damager, double value, double absorbByArmor, double newHp)
     {
         StatsHp = newHp;
-        _statsClient.OnDamage(value, newHp);
+        _statsClient.OnDamage(GetNodeOrNull<Character>(damager), value, absorbByArmor, newHp);
     }
     
-    public void Stats_OnHeal(double value, double newHp, double newDutyHp) => Rpc(MethodName.Stats_OnHealRpc, value, newHp, newDutyHp);
+    public void Stats_OnHeal(Character healer, double value, double newHp, double newDutyHp) => 
+        Rpc(MethodName.Stats_OnHealRpc, healer.GetPath().ToString(), value, newHp, newDutyHp);
     [Rpc(CallLocal = true, TransferChannel = Consts.TransferChannel.StatsHp)]
-    private void Stats_OnHealRpc(double value, double newHp, double newDutyHp)
+    private void Stats_OnHealRpc(string healer, double value, double newHp, double newDutyHp)
     {
         StatsHp = newHp;
         StatsDutyHp = newDutyHp;
-        _statsClient.OnHeal(value, newHp, newDutyHp);
+        _statsClient.OnHeal(GetNodeOrNull<Character>(healer), value, newHp, newDutyHp);
     } 
     
-    public void Stats_OnKill() => Rpc(MethodName.Stats_OnKillRpc);
+    public void Stats_OnKill(Character killer) => 
+        Rpc(killer.GetPath().ToString(), MethodName.Stats_OnKillRpc);
     [Rpc(CallLocal = true)]
-    private void Stats_OnKillRpc()
+    private void Stats_OnKillRpc(string killer)
     {
         StatsIsDead = true;
-        _statsClient.OnKill();
+        StatsHp = 0;
+        _statsClient.OnKill(GetNodeOrNull<Character>(killer));
     }
 
-    public void Stats_OnResurrect() => Rpc(MethodName.Stats_OnResurrectRpc);
+    public void Stats_OnResurrect(Character resurrector) => 
+        Rpc(resurrector.GetPath().ToString(), MethodName.Stats_OnResurrectRpc);
     [Rpc(CallLocal = true)]
-    private void Stats_OnResurrectRpc()
+    private void Stats_OnResurrectRpc(string resurrector)
     {
         StatsIsDead = false;
-        _statsClient.OnResurrect();
+        StatsHp = 0;
+        _statsClient.OnResurrect(GetNodeOrNull<Character>(resurrector));
     }
 }

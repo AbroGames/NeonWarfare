@@ -1,5 +1,8 @@
-﻿using Godot;
+﻿using System;
+using Godot;
+using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
+using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
@@ -9,19 +12,27 @@ public partial class CharacterSynchronizer
     private CharacterStatusEffects _statusEffects;
     private CharacterStatusEffectsClient _statusEffectsClient;
 
-    private void OnReady_StatusEffects()
+    private void StatusEffects_OnReady()
     {
         _statusEffects = _character.StatusEffects;
         _statusEffectsClient = _character.StatusEffectsClient;
     }
-    
-    public void StatusEffect_OnClientApply(int clientId, int typeId, byte[] payload) => 
-        Rpc(MethodName.StatusEffect_OnClientApplyRpc, clientId, typeId, payload);
-    [Rpc(CallLocal = true)]
-    private void StatusEffect_OnClientApplyRpc(int clientId, int typeId, byte[] payload) => 
-        _statusEffectsClient.OnAddStatusEffect(clientId, typeId, payload);
 
-    public void StatusEffect_OnClientRemove(int clientId) => Rpc(MethodName.StatusEffect_OnClientRemoveRpc, clientId);
+    public void StatusEffects_OnClientApply(int clientId, AbstractClientStatusEffect clientStatusEffect)
+    {
+        int typeId = TypesStorageService.Instance.GetId(clientStatusEffect.GetType());
+        byte[] payload = MessagePackSerializer.Serialize(clientStatusEffect.GetType(), clientStatusEffect);
+        Rpc(MethodName.StatusEffects_OnClientApplyRpc, clientId, typeId, payload);
+    }
     [Rpc(CallLocal = true)]
-    private void StatusEffect_OnClientRemoveRpc(int clientId) => _statusEffectsClient.OnRemoveStatusEffect(clientId);
+    private void StatusEffects_OnClientApplyRpc(int clientId, int typeId, byte[] payload)
+    {
+        Type targetType = TypesStorageService.Instance.GetType(typeId);
+        var clientStatusEffect = (AbstractClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
+        _statusEffectsClient.OnAddStatusEffect(clientId, clientStatusEffect);
+    }
+    
+    public void StatusEffects_OnClientRemove(int clientId) => Rpc(MethodName.StatusEffects_OnClientRemoveRpc, clientId);
+    [Rpc(CallLocal = true)]
+    private void StatusEffects_OnClientRemoveRpc(int clientId) => _statusEffectsClient.OnRemoveStatusEffect(clientId);
 }
