@@ -11,10 +11,10 @@ public partial class CharacterSynchronizer
     private CharacterStatusEffects _statusEffects;
     private CharacterStatusEffectsClient _statusEffectsClient;
 
-    private void StatusEffects_OnReady()
+    private void StatusEffects_InitPostReady(Character character)
     {
-        _statusEffects = _character.StatusEffects;
-        _statusEffectsClient = _character.StatusEffectsClient;
+        _statusEffects = character.StatusEffects;
+        _statusEffectsClient = character.StatusEffectsClient;
     }
 
     public void StatusEffects_OnClientApply(int clientId, AbstractClientStatusEffect clientStatusEffect)
@@ -26,6 +26,8 @@ public partial class CharacterSynchronizer
     [Rpc(CallLocal = true)]
     private void StatusEffects_OnClientApplyRpc(int clientId, int typeId, byte[] payload)
     {
+        if (!Net.IsClient()) return;
+        
         Type targetType = Services.TypesStorage.GetType(typeId);
         var clientStatusEffect = (AbstractClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
         _statusEffectsClient.OnAddStatusEffect(clientId, clientStatusEffect);
@@ -33,5 +35,9 @@ public partial class CharacterSynchronizer
     
     public void StatusEffects_OnClientRemove(int clientId) => Rpc(MethodName.StatusEffects_OnClientRemoveRpc, clientId);
     [Rpc(CallLocal = true)]
-    private void StatusEffects_OnClientRemoveRpc(int clientId) => _statusEffectsClient.OnRemoveStatusEffect(clientId);
+    private void StatusEffects_OnClientRemoveRpc(int clientId)
+    {
+        if (!Net.IsClient()) return;
+        _statusEffectsClient.OnRemoveStatusEffect(clientId);
+    }
 }

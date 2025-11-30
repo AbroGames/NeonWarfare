@@ -1,8 +1,5 @@
 ﻿using Godot;
-using Godot.Collections;
-using KludgeBox.Godot.Nodes.MpSync;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
-using static Godot.SceneReplicationConfig.ReplicationMode;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
@@ -12,44 +9,39 @@ public partial class CharacterSynchronizer
     private CharacterStats _stats;
     private CharacterStatsClient _statsClient;
     
-    public bool StatsIsDead { get; private set; }
-    public double StatsHp { get; private set; }
-    public double StatsDutyHp { get; private set; }
-    
-    [Export] [Sync(Always)] private Dictionary<CharacterStat, double> _statsValues = new();
-    
-    private void Stats_OnReady()
+    private void Stats_InitPostReady(Character character)
     {
-        _stats = _character.Stats;
-        _statsClient = _character.StatsClient;
+        _stats = character.Stats;
+        _statsClient = character.StatsClient;
     }
-
-    public void Stats_Update(CharacterStat stat, double value)
+    
+    public void Stats_OnStatUpdate(CharacterStat stat, double additive, double multiplicative) => 
+        Rpc(MethodName.Stats_OnStatUpdateRpc, (int) stat, additive, multiplicative);
+    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsCache)]
+    private void Stats_OnStatUpdateRpc(int stat, double additive, double multiplicative)
     {
-        _statsValues[stat] = value;
-    }
-
-    public double Stats_GetStat(CharacterStat stat)
-    {
-        return _statsValues[stat];
+        if (!Net.IsClient()) return;
+        _statsClient.OnStatUpdate((CharacterStat) stat, additive, multiplicative);
     }
     
     public void Stats_OnDamage(Character damager, double value, double absorbByArmor, double newHp) => 
         Rpc(MethodName.Stats_OnDamageRpc, damager.GetPath().ToString(), value, absorbByArmor, newHp);
-    [Rpc(CallLocal = true, TransferChannel = Consts.TransferChannel.StatsHp)]
+    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsHp)]
     private void Stats_OnDamageRpc(string damager, double value, double absorbByArmor, double newHp)
     {
-        StatsHp = newHp;
+        if (!Net.IsClient()) return;
+        _statsClient.Hp = newHp;
         _statsClient.OnDamage(GetNodeOrNull<Character>(damager), value, absorbByArmor, newHp);
     }
     
     public void Stats_OnHeal(Character healer, double value, double newHp, double newDutyHp) => 
         Rpc(MethodName.Stats_OnHealRpc, healer.GetPath().ToString(), value, newHp, newDutyHp);
-    [Rpc(CallLocal = true, TransferChannel = Consts.TransferChannel.StatsHp)]
+    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsHp)]
     private void Stats_OnHealRpc(string healer, double value, double newHp, double newDutyHp)
     {
-        StatsHp = newHp;
-        StatsDutyHp = newDutyHp;
+        if (!Net.IsClient()) return;
+        _statsClient.Hp = newHp;
+        _statsClient.DutyHp = newDutyHp;
         _statsClient.OnHeal(GetNodeOrNull<Character>(healer), value, newHp, newDutyHp);
     } 
     
@@ -58,8 +50,9 @@ public partial class CharacterSynchronizer
     [Rpc(CallLocal = true)]
     private void Stats_OnKillRpc(string killer)
     {
-        StatsIsDead = true;
-        StatsHp = 0;
+        if (!Net.IsClient()) return;
+        _statsClient.IsDead = true;
+        _statsClient.Hp = 0;
         _statsClient.OnKill(GetNodeOrNull<Character>(killer));
     }
 
@@ -68,8 +61,9 @@ public partial class CharacterSynchronizer
     [Rpc(CallLocal = true)]
     private void Stats_OnResurrectRpc(string resurrector)
     {
-        StatsIsDead = false;
-        StatsHp = 0;
+        if (!Net.IsClient()) return;
+        _statsClient.IsDead = false;
+        _statsClient.Hp = 0;
         _statsClient.OnResurrect(GetNodeOrNull<Character>(resurrector));
     }
 }

@@ -102,7 +102,6 @@ public class CharacterStats
     public void OnPhysicsProcess(double delta)
     {
         RegenProcess(delta);
-        UpdateStatsValues();
     }
 
     private void RegenProcess(double deltaTime)
@@ -110,14 +109,6 @@ public class CharacterStats
         double deltaHp = RegenHp * deltaTime;
         // Check and don't heal if nothing for healing. It is network optimization.
         if (deltaHp > 0 && DutyHp + Mathf.Max(MaxHp-Hp, 0) > 0) Heal(_character, deltaHp);
-    }
-    
-    private void UpdateStatsValues()
-    {
-        foreach (CharacterStat stat in Enum.GetValues<CharacterStat>())
-        {
-            _synchronizer.Stats_Update(stat, GetRawStat(stat));
-        }
     }
     #endregion
 
@@ -138,9 +129,27 @@ public class CharacterStats
     public double SkillCritModifier => Mathf.Max(GetRawStat(CharacterStat.SkillCritModifier), 0);
     #endregion
     
-    #region Proxy methods for StatModifiersContainer
-    public void AddStatModifier(StatModifier<CharacterStat> statModifier) => _statModifiersContainer.AddStatModifier(statModifier);
-    public bool RemoveStatModifier(StatModifier<CharacterStat> statModifier) => _statModifiersContainer.RemoveStatModifier(statModifier);
+    #region Proxy methods with sync for StatModifiersContainer
+    public void AddStatModifier(StatModifier<CharacterStat> statModifier)
+    {
+        _statModifiersContainer.AddStatModifier(statModifier);
+        SyncStat(statModifier.Stat);
+    }
+
+    public bool RemoveStatModifier(StatModifier<CharacterStat> statModifier)
+    {
+        bool removed = _statModifiersContainer.RemoveStatModifier(statModifier);
+        if (removed) SyncStat(statModifier.Stat);
+        return removed;
+    }
+
+    private void SyncStat(CharacterStat stat)
+    {
+        double updatedAdditive = GetRawStatValue(stat, StatModifier<CharacterStat>.ModifierType.Additive);
+        double updatedMultiplicative = GetRawStatValue(stat, StatModifier<CharacterStat>.ModifierType.Multiplicative);
+        _synchronizer.Stats_OnStatUpdate(stat, updatedAdditive, updatedMultiplicative);
+    }
+    
     public double GetRawStatValue(CharacterStat stat, StatModifier<CharacterStat>.ModifierType type) => _statModifiersContainer.GetStatValue(stat, type);
     public double GetRawStat(CharacterStat stat, double baseValue = 0) => _statModifiersContainer.GetStat(stat, baseValue);
     #endregion
