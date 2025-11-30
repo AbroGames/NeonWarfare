@@ -6,7 +6,7 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 using NeonWarfare.Scenes.NeonTemp.Service;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.BaseImpl;
 
 public class SimpleStatusEffect : AbstractStatusEffect
     {
@@ -16,6 +16,7 @@ public class SimpleStatusEffect : AbstractStatusEffect
         public override IAddingStatusEffectPolicy AddingPolicy { get; }
         
         protected Character Character;
+        protected Character Author;
         protected readonly List<StatModifier<CharacterStat>> Modifiers = new();
         
         public SimpleStatusEffect(string id, string displayName, string iconName,
@@ -30,9 +31,10 @@ public class SimpleStatusEffect : AbstractStatusEffect
             Modifiers.AddRange(modifiers);
         }
         
-        public override void OnApplied(Character character)
+        public override void OnApplied(Character character, Character author)
         {
             Character = character;
+            Author = author;
             foreach (var modifier in Modifiers)
             {
                 character.Stats.AddStatModifier(modifier);

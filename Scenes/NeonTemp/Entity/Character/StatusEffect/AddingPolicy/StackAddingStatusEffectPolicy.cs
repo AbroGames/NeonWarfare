@@ -7,12 +7,13 @@ public class StackAddingStatusEffectPolicy : IAddingStatusEffectPolicy
 {
     public void OnAdd(
         Character character, 
+        Character author, 
         AbstractStatusEffect newStatusEffect,
         Func<Dictionary<string, IReadOnlyCollection<AbstractStatusEffect>>> allCurrentStatusEffectsGetter,
         IReadOnlyCollection<AbstractStatusEffect> currentStatusEffectsById,
-        Action<AbstractStatusEffect> addStatusEffectFunc, 
+        Action<AbstractStatusEffect, Character> addStatusEffectFunc, 
         Action<AbstractStatusEffect> removeStatusEffectFunc)
     {
-        addStatusEffectFunc(newStatusEffect);
+        addStatusEffectFunc(newStatusEffect, author);
     }
 }

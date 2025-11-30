@@ -8,7 +8,7 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 using NeonWarfare.Scenes.NeonTemp.Service;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.BaseImpl;
 
 public class SimpleTempStatusEffect : SimpleStatusEffect
 {
@@ -23,9 +23,9 @@ public class SimpleTempStatusEffect : SimpleStatusEffect
         Cooldown = new(time, false, false, () => IsFinished = true);
     }
 
-    public override void OnApplied(Character character)
+    public override void OnApplied(Character character, Character author)
     {
-        base.OnApplied(character);
+        base.OnApplied(character, author);
         Cooldown.Start();
     }
 
@@ -143,15 +143,16 @@ public class SimpleTempStatusEffect : SimpleStatusEffect
     {
         public void OnAdd(
             Character character, 
+            Character author, 
             AbstractStatusEffect newStatusEffect,
             Func<Dictionary<string, IReadOnlyCollection<AbstractStatusEffect>>> allCurrentStatusEffectsGetter,
             IReadOnlyCollection<AbstractStatusEffect> currentStatusEffectsById,
-            Action<AbstractStatusEffect> addStatusEffectFunc, 
+            Action<AbstractStatusEffect, Character> addStatusEffectFunc, 
             Action<AbstractStatusEffect> removeStatusEffectFunc)
         {
             if (currentStatusEffectsById.Count == 0)
             {
-                addStatusEffectFunc(newStatusEffect);
+                addStatusEffectFunc(newStatusEffect, author);
                 return;
             }
         
@@ -170,7 +171,7 @@ public class SimpleTempStatusEffect : SimpleStatusEffect
                     if (currentStatusEffect.Cooldown.TimeLeft < newTempStatusEffect.Cooldown.TimeLeft)
                     {
                         removeStatusEffectFunc(currentStatusEffect);
-                        addStatusEffectFunc(newTempStatusEffect);
+                        addStatusEffectFunc(newTempStatusEffect, author);
                     }
                 }
                 else

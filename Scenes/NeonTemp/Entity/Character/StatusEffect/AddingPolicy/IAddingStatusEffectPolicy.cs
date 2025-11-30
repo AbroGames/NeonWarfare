@@ -7,9 +7,10 @@ public interface IAddingStatusEffectPolicy
 {
     public void OnAdd(
         Character character, 
+        Character author, 
         AbstractStatusEffect newStatusEffect,
         Func<Dictionary<string, IReadOnlyCollection<AbstractStatusEffect>>> allCurrentStatusEffectsGetter,
         IReadOnlyCollection<AbstractStatusEffect> currentStatusEffectsById,
-        Action<AbstractStatusEffect> addStatusEffectFunc, 
+        Action<AbstractStatusEffect, Character> addStatusEffectFunc, 
         Action<AbstractStatusEffect> removeStatusEffectFunc);
 }

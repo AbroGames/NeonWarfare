@@ -5,7 +5,7 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.AddingPolicy;
 using NeonWarfare.Scenes.NeonTemp.Service;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.Impl;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect.BaseImpl;
 
 public class SimpleConditionStatusEffect : SimpleStatusEffect
     {
