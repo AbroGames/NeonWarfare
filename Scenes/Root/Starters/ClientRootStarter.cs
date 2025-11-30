@@ -1,5 +1,5 @@
-﻿using NeonWarfare.Scripts.Content.LoadingScreen;
-using KludgeBox.DI.Requests.LoggerInjection;
+﻿using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scripts.Content.LoadingScreen;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Root.Starters;

@@ -1,5 +1,7 @@
 ﻿using System;
 using Godot;
+using KludgeBox.DI.Requests.ChildInjection;
+using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.World.Data;
 using NeonWarfare.Scenes.World.Data.MapPoint;
 using NeonWarfare.Scenes.World.PackedScenes;
@@ -7,8 +9,6 @@ using NeonWarfare.Scenes.World.Services;
 using NeonWarfare.Scenes.World.Services.PersistenceFactory;
 using NeonWarfare.Scenes.World.Tree;
 using NeonWarfare.Scenes.World.Tree.Entity.Building;
-using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 using WorldStartStopService = NeonWarfare.Scenes.World.Services.StartStop.WorldStartStopService;
 

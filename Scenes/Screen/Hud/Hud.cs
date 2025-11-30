@@ -1,9 +1,8 @@
 ﻿using Godot;
-using NeonWarfare.Scenes.Game;
-using NeonWarfare.Scripts.Content.LoadingScreen;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
-using KludgeBox.DI.Requests.NotNullCheck;
+using NeonWarfare.Scenes.Game;
+using NeonWarfare.Scripts.Content.LoadingScreen;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.Hud;

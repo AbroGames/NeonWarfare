@@ -2,7 +2,6 @@
 using Godot;
 using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
-using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 

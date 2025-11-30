@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using KludgeBox.Core.Cooldown;
 using KludgeBox.Core.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;

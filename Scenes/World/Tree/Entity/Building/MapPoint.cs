@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
+using KludgeBox.DI.Requests.ParentInjection;
+using KludgeBox.Godot.Nodes.MpSync;
 using NeonWarfare.Scenes.World.Data.MapPoint;
 using NeonWarfare.Scenes.World.Services.PersistenceFactory;
 using NeonWarfare.Scenes.World.Services.StartStop;
-using KludgeBox.DI.Requests.ParentInjection;
-using KludgeBox.Godot.Nodes.MpSync;
 using static Godot.SceneReplicationConfig.ReplicationMode;
 
 namespace NeonWarfare.Scenes.World.Tree.Entity.Building;

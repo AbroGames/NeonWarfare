@@ -1,12 +1,8 @@
 using Godot;
 using KludgeBox.Core.Stats;
-using NeonWarfare.Scenes.NeonTemp;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Server;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
-using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.World.Tree.Surface.Map;
 

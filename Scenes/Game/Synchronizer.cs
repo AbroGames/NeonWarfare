@@ -1,8 +1,8 @@
 ﻿using System;
 using Godot;
+using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.World.Data.Player;
 using NeonWarfare.Scripts.Service.Settings;
-using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game;

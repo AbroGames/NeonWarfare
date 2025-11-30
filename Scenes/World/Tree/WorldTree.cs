@@ -3,11 +3,8 @@ using System.Linq;
 using Godot;
 using Godot.Collections;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
-using KludgeBox.DI.Requests.NotNullCheck;
 using KludgeBox.DI.Requests.ParentInjection;
 using KludgeBox.Godot.Nodes.MpSync;
-using Serilog;
 using BattleSurface = NeonWarfare.Scenes.World.Tree.Surface.Battle.BattleSurface;
 using MapSurface = NeonWarfare.Scenes.World.Tree.Surface.Map.MapSurface;
 

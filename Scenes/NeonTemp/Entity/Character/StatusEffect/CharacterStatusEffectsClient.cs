@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using MessagePack;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
-using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 

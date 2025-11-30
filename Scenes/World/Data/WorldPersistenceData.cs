@@ -1,8 +1,8 @@
 ﻿using Godot;
+using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.World.Data.General;
 using NeonWarfare.Scenes.World.Data.MapPoint;
 using NeonWarfare.Scenes.World.Data.Player;
-using KludgeBox.DI.Requests.ChildInjection;
 
 namespace NeonWarfare.Scenes.World.Data;
 

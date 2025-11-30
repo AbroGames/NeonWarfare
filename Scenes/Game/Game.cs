@@ -1,9 +1,8 @@
 ﻿using Godot;
+using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scripts.Service.Settings;
-using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.NotNullCheck;
 using NodeContainer = NeonWarfare.Scenes.KludgeBox.NodeContainer;
 
 namespace NeonWarfare.Scenes.Game;
