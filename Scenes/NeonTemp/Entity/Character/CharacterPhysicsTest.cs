@@ -12,7 +12,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
     [Child] public Area2D HitBox { get; private set; }
     
     public Vector2 Vec;
-    public PlayerController PlayerController;
+    public bool Controlled = false;
     
     public float MaxSpeed = 200.0f;
     public float Acceleration = 10.0f;
@@ -46,7 +46,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
     {
         float delta = state.Step;
-        Vector2 input = PlayerController?.GetMovementInput() ?? Vec;
+        Vector2 input = Controlled ? GetMovementInput() : Vec;
         Vector2 targetVelocity = input * MaxSpeed;
         Vector2 currentVelocity = state.LinearVelocity;
         //float acceleration = input == Vector2.Zero ? Friction : Acceleration;
@@ -66,10 +66,9 @@ public partial class CharacterPhysicsTest : RigidBody2D
         }
     }
     
-    private Vector2 GetMovementInSecondFromInput()
+    private Vector2 GetMovementInput()
     {
-        Vector2 input = PlayerController.GetMovementInput();
-        return input * MaxSpeed;
+        return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
     }
     
     private void ExplodeFromMouse()

@@ -11,7 +11,8 @@ public partial class CharacterSynchronizer : Node
     {
         Di.Process(this);
         
-        OnReady_StatusEffects();
-        OnReady_Stats();
+        StatusEffects_OnReady();
+        Stats_OnReady();
+        Controller_OnReady();
     }
 }

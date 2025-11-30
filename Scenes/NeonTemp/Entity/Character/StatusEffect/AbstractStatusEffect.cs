@@ -9,9 +9,9 @@ public abstract class AbstractStatusEffect
     public abstract string IconName { get; }
     public abstract IAddingStatusEffectPolicy AddingPolicy { get; }
         
-    public virtual bool IsFinished { get; protected set; } = false;
+    public bool IsFinished { get; protected set; } = false;
         
-    public abstract void OnApplied(Character character);
+    public abstract void OnApplied(Character character, Character author);
     public abstract void OnRemoved(Character character);
     public abstract void OnPhysicsProcess(double delta);
 

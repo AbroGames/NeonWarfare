@@ -1,28 +1,38 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
-public class PlayerController : ICharacterController
+public class PlayerController : IController
 {
 
-    public readonly ControlBlockerHandler ControlBlockerHandler = new();
-
-    public bool IsActionPressed(StringName action)
+    public void OnPhysicsProcess(double delta, Character character, ControlBlockerHandler controlBlockerHandler)
     {
-        //TODO Разделить на keyboard / mouse. Проверку isBlocked(). И в идеале не просто кнопку проверять, а действие (чтобы боты могли так скиллы юзать)
-        return Input.IsActionPressed(action);
-        //TODO При dead просто не надо опрашивать контроллер. Использовать _unhandledInput + Input.IsActionPressed для скиллов зажатых. Везде _unhandledInput? Но надо проверить отлов released при свернутом окне.
+        if (!controlBlockerHandler.IsMovementBlocked())
+        {
+            character.MoveAndCollide(GetMovementInput() * (float) (character.Stats.MovementSpeed * delta));
+        }
+        
+        if (!controlBlockerHandler.IsRotatingBlocked())
+        {
+            character.RotateToTarget(character.GetGlobalMousePosition(), character.Stats.RotationSpeed, delta);
+        }
+
+        //TODO Here or in OnUnhandledInput
+        if (!controlBlockerHandler.IsSkillsBlocked())
+        {
+            //TODO Input.IsActionPressed(action);
+        }
     }
 
-    public Vector2? GetMousePosition(CanvasItem canvas)
+    //TODO Надо проверить отлов released при свернутом окне.
+    public void OnUnhandledInput(InputEvent @event, Action setAsHandled, Character character, ControlBlockerHandler controlBlockerHandler)
     {
-        if (ControlBlockerHandler.IsMouseKeyBlocked()) return null;
-        return canvas.GetLocalMousePosition();
+        
     }
     
-    public Vector2 GetMovementInput()
+    private Vector2 GetMovementInput()
     {
-        if (ControlBlockerHandler.IsKeyboardKeyBlocked()) return Vector2.Zero;
         return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
     }
 }

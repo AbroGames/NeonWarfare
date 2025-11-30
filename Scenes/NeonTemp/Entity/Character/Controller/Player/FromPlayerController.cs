@@ -1,18 +1,11 @@
 ﻿using System;
 using Godot;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
-public class AiController : IController
+public class FromPlayerController : IController
 {
-
-    private IAiControllerLogic _logic;
-
-    public AiController(IAiControllerLogic logic)
-    {
-        _logic = logic;
-    }
-
+    
     public void OnPhysicsProcess(double delta, Character character, ControlBlockerHandler controlBlockerHandler)
     {
         throw new NotImplementedException();

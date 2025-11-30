@@ -1,6 +1,10 @@
+using System.Reflection.Metadata;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Server;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
@@ -12,13 +16,13 @@ public partial class Character : RigidBody2D
     
     [Child] public Sprite2D Sprite { get; private set; }
     [Child] public Area2D HitBox { get; private set; }
-
-    public ICharacterController Controller { get; private set; }
     
     public CharacterStats Stats { get; private set; }
     public CharacterStatsClient StatsClient { get; private set; }
     public CharacterStatusEffects StatusEffects { get; private set; }
     public CharacterStatusEffectsClient StatusEffectsClient { get; private set; }
+
+    public CharacterController Controller { get; private set; }
     
     public override void _Ready()
     {
@@ -31,13 +35,23 @@ public partial class Character : RigidBody2D
         Net.DoServerClient(
             () => StatusEffects = new CharacterStatusEffects(this, synchronizer),
             () => StatusEffectsClient = new CharacterStatusEffectsClient(this, synchronizer));
+        Net.DoServerNotServer(
+            () => Controller = new CharacterController(this, synchronizer, new AiController(new AiObserveControllerLogic())),
+            () => Controller = new CharacterController(this, synchronizer, new FromServerController()));
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        Stats.OnPhysicsProcess(delta);
-        StatsClient.OnPhysicsProcess(delta);
-        StatusEffects.OnPhysicsProcess(delta);
-        StatusEffectsClient.OnPhysicsProcess(delta);
+        Stats?.OnPhysicsProcess(delta);
+        StatsClient?.OnPhysicsProcess(delta);
+        StatusEffects?.OnPhysicsProcess(delta);
+        StatusEffectsClient?.OnPhysicsProcess(delta);
+        
+        Controller.OnPhysicsProcess(delta);
+    }
+    
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        Controller.OnUnhandledInput(@event, GetViewport().SetInputAsHandled);
     }
 }

@@ -1,8 +1,12 @@
 using Godot;
+using KludgeBox.Core.Stats;
 using NeonWarfare.Scenes.NeonTemp;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Server;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.World.Tree.Surface.Map;
 
@@ -21,7 +25,7 @@ public partial class MapSurface : Node2D
         AddPhysicCharacter(450, 250, Vec2(-1, 0));
         
         CharacterPhysicsTest player = AddPhysicCharacter(0, 250, Vec2(0, 0));
-        player.PlayerController = new PlayerController();
+        player.Controlled = true;
         player.Mass = 1;
         player.Acceleration = 25;
         
@@ -33,7 +37,9 @@ public partial class MapSurface : Node2D
     public void ReadyCharacterTest()
     {
         Character player = AddCharacter(250, 250);
-        //player.PlayerController = new PlayerController();
+        player.Controller.SetController(new PlayerController());
+        player.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MovementSpeed, 200));
+        player.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.RotationSpeed, 360));
         
         AddWall(300, 300);
         AddWall(350, 350);
