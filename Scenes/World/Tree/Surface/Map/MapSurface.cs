@@ -39,10 +39,8 @@ public partial class MapSurface : Node2D
         AddPhysicCharacter(350, 250, Vec2(-1, 0));
         AddPhysicCharacter(450, 250, Vec2(-1, 0));
         
-        CharacterPhysicsTest player = AddPhysicCharacter(0, 250, Vec2(0, 0));
+        CharacterPhysicsTest player = AddPhysicCharacter(0, 450, Vec2(0, 0));
         player.Controlled = true;
-        player.Mass = 1;
-        player.Acceleration = 25;
     }
     
     public CharacterPhysicsTest AddPhysicCharacter(float x, float y, Vector2 vec)
