@@ -1,6 +1,8 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
+using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
+using Serilog;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character;
 
@@ -16,14 +18,24 @@ public partial class CharacterPhysicsTest : RigidBody2D
     
     public float MaxSpeed = 200.0f;
     public float Acceleration = 10.0f;
-    //public float Friction = 150.0f;
+    public float Friction = 150.0f;
     
     private float ControlThreshold => MaxSpeed * 1.1f;
+    [Logger] private ILogger _log;
     
     public override void _Ready()
     {
+        Di.Process(this);
         //ApplyCentralForce(Vec);
         //ApplyCentralImpulse(Vec);
+    }
+
+    private void LogForPlayer(float f) => LogForPlayer(f.ToString());
+    private void LogForPlayer(double d) => LogForPlayer(d.ToString());
+    private void LogForPlayer(Vector2 v) => LogForPlayer(v.ToString());
+    private void LogForPlayer(string str)
+    {
+        if (Controlled) _log.Warning("{str}", str);
     }
 
     public override void _Input(InputEvent @event)
@@ -41,30 +53,38 @@ public partial class CharacterPhysicsTest : RigidBody2D
 
         //MoveAndCollide(Velocity * (float) delta);
         //MoveAndSlide();
-    }
-
-    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
-    {
-        float delta = state.Step;
+        
         Vector2 input = Controlled ? GetMovementInput() : Vec;
         Vector2 targetVelocity = input * MaxSpeed;
-        Vector2 currentVelocity = state.LinearVelocity;
-        //float acceleration = input == Vector2.Zero ? Friction : Acceleration;
-        float lerpWeight = Acceleration * delta;
-        //if (PlayerController != null) _log.Information(lerpWeight.ToString());
-        lerpWeight = Mathf.Clamp(lerpWeight, 0, 1);
-
-        if (currentVelocity.Length() < ControlThreshold)
-        {
-            state.LinearVelocity = currentVelocity.Lerp(targetVelocity, /*lerpWeight*/ 0.85f);
-        }
-        else
-        {
-            //Коммент про LinearDump настройку в ProjectSettings.physics/2d/default_linear_damp (advanced settings)
-            //Сейчас разная дистанция/время отталкивания в зависимости от изначального направления движения. Если ты в полете начал идти против взрыва -- ничего не происходит.
-            //state.ApplyCentralForce(input * Acceleration * 10f); 
-        }
+        Vector2 currentVelocity = LinearVelocity;
+        
+        ApplyCentralForce(input * 10);
+        
+        LogForPlayer(LinearVelocity);
     }
+
+    // public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+    // {
+    //     float delta = state.Step;
+    //     Vector2 input = Controlled ? GetMovementInput() : Vec;
+    //     Vector2 targetVelocity = input * MaxSpeed;
+    //     Vector2 currentVelocity = state.LinearVelocity;
+    //     //float acceleration = input == Vector2.Zero ? Friction : Acceleration;
+    //     float lerpWeight = Acceleration * delta;
+    //     //if (PlayerController != null) _log.Information(lerpWeight.ToString());
+    //     lerpWeight = Mathf.Clamp(lerpWeight, 0, 1);
+    //
+    //     if (currentVelocity.Length() < ControlThreshold)
+    //     {
+    //         state.LinearVelocity = currentVelocity.Lerp(targetVelocity, /*lerpWeight*/ 0.1f);
+    //     }
+    //     else
+    //     {
+    //         //Коммент про LinearDump настройку в ProjectSettings.physics/2d/default_linear_damp (advanced settings)
+    //         //Сейчас разная дистанция/время отталкивания в зависимости от изначального направления движения. Если ты в полете начал идти против взрыва -- ничего не происходит.
+    //         //state.ApplyCentralForce(input * Acceleration * 10f); 
+    //     }
+    // }
     
     private Vector2 GetMovementInput()
     {

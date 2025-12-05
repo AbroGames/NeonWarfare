@@ -15,7 +15,7 @@ public partial class MapSurface : Node2D
     public override void _Ready()
     {
         Di.Process(this);
-        //ReadyPhysicTest();
+        ReadyPhysicTest();
         
         AddWall(300, 300);
         AddWall(350, 350);

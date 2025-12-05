@@ -70,7 +70,7 @@ public partial class Synchronizer : Node
             _world.Data.Players.AddPlayer(playerData);
         }
 
-        _world.Tree.MapSurface.AddPlayerCharacter(connectedClientId);
+        //_world.Tree.MapSurface.AddPlayerCharacter(connectedClientId);
         
         EndSyncOnClient(connectedClientId, _world.Data.Serializer.SerializeWorldData());
     }
