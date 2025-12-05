@@ -74,7 +74,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
         Vector2 airFrictionForce = -LinearVelocity.Normalized() * (LinearVelocity.LengthSquared() * AirFriction); // Мб не ^2, а ^4, т.к. аркадафффф
         Vector2 frictionForce = groundFrictionForce + airFrictionForce;
         Vector2 deltaVelocityByFrictionForce = frictionForce * (float) (delta / Mass);
-        Vector2 resultVelocity = CalculateTerminalVelocity(input, Force, MaxSpeed, GroundFriction, AirFriction);
+        Vector2 resultVelocity = CalculateTerminalVelocity(input, Force, Mass, GroundFriction, AirFriction);
 
         //if (deltaVelocityByFrictionForce.Length() > currentVelocity.Length())
         //{
