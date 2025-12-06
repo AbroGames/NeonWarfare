@@ -16,9 +16,9 @@ public partial class CharacterPhysicsTest : RigidBody2D
     public Vector2 Vec;
     public bool Controlled = false;
     
-    public float MaxSpeed = 200.0f;
-    public float Acceleration = 10.0f;
-    public float Friction = 150.0f;
+    public float MaxSpeed = 400.0f;
+    public float Acceleration = 400.0f;
+    public float Friction = 1f;
     
     private float ControlThreshold => MaxSpeed * 1.1f;
     [Logger] private ILogger _log;
@@ -48,19 +48,83 @@ public partial class CharacterPhysicsTest : RigidBody2D
 
     public override void _PhysicsProcess(double delta)
     {
-        //MoveAndCollide(GetMovementInSecondFromInput() * (float) delta);
-        //Velocity = GetMovementInSecondFromInput(); MoveAndSlide();
-
-        //MoveAndCollide(Velocity * (float) delta);
-        //MoveAndSlide();
+        var dt = (float)delta;
         
         Vector2 input = Controlled ? GetMovementInput() : Vec;
         Vector2 targetVelocity = input * MaxSpeed;
         Vector2 currentVelocity = LinearVelocity;
+        Vector2 velocityDifference = targetVelocity - currentVelocity;
+        Vector2 wishDirection = velocityDifference.Normalized();
+        bool hasInput = input != Vector2.Zero;
         
-        ApplyCentralForce(input * 10);
+        float currentSpeed = currentVelocity.Length();
+        float targetSpeed = targetVelocity.Length();
+        float currentSpeedInWishDirection = currentVelocity.Dot(wishDirection);
+        float speedNeededToReachTargetSpeed = targetSpeed - currentSpeedInWishDirection;
         
-        LogForPlayer(LinearVelocity);
+        float accelerationForceScalar = Acceleration * Mass;
+        float forceNeededToReachTargetSpeed = speedNeededToReachTargetSpeed * Mass / dt;
+        forceNeededToReachTargetSpeed = Mathf.Min(forceNeededToReachTargetSpeed, accelerationForceScalar);
+        float smoothingFactor = 0.75f;
+        
+        if (hasInput)
+        {
+            if (currentSpeedInWishDirection < MaxSpeed)
+            {
+                float forceToApply;
+                if (forceNeededToReachTargetSpeed < accelerationForceScalar)
+                {
+                    forceToApply = forceNeededToReachTargetSpeed * smoothingFactor;
+                }
+                else
+                {
+                    forceToApply = accelerationForceScalar;
+                }
+                
+                ApplyCentralImpulse(wishDirection * forceToApply * dt);
+            }
+        }
+        else
+        {
+            float forceToApply;
+            if (forceNeededToReachTargetSpeed < accelerationForceScalar)
+            {
+                forceToApply = forceNeededToReachTargetSpeed * smoothingFactor;
+            }
+            else
+            {
+                forceToApply = accelerationForceScalar;
+            }
+                
+            ApplyCentralImpulse(wishDirection * forceToApply * dt);
+        }
+        
+        var completeStopThreshold = Acceleration * dt * 0.95f;
+        if (currentSpeed <= completeStopThreshold)
+        {
+            //LinearVelocity = Vector2.Zero;
+        }
+        
+        if (currentSpeedInWishDirection > MaxSpeed)
+        {
+            
+        }
+        //ApplyCentralForce(input * 10);
+        
+        LogForPlayer($"Speed: {currentSpeed:N1}\n" +
+                     $"Speed in wish direction: {currentSpeedInWishDirection:N1}\n" +
+                     $"wishDirection: {wishDirection.ToString("N1")}\n" +
+                     $"Acceleration: {Acceleration:N1}\n" +
+                     $"accelerationForceScalar: {accelerationForceScalar:N1}\n" +
+                     $"forceNeededToReachTargetSpeed: {forceNeededToReachTargetSpeed:N1}\n");
+        /*LogForPlayer($"{LinearVelocity.Length():N1}\n" +
+                     $"currentVelocity: {currentVelocity.ToString("N1")}\n" +
+                     $"targetVelocity: {targetVelocity.ToString("N1")}\n" +
+                     $"wishDirection: {wishDirection.ToString("N1")}\n" +
+                     //$"addSpeedTillCap: {addSpeedTillCap:N1}\n" +
+                     $"currentSpeedInWishDirection: {currentSpeedInWishDirection:N1}\n" +
+                     $"accelerationForceScalar: {accelerationForceScalar:N1}\n" +
+                     $"Acceleration: {Acceleration:N1}");*/
     }
 
     // public override void _IntegrateForces(PhysicsDirectBodyState2D state)
