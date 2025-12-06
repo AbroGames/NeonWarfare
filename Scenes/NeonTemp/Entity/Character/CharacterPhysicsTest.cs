@@ -15,6 +15,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
     
     public Vector2 Vec;
     public bool Controlled = false;
+    public string LogId = null;
     
     public float MaxSpeed = 200.0f;
     public float Acceleration = 10.0f;
@@ -34,7 +35,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
     private void LogForPlayer(Vector2 v) => LogForPlayer(v.ToString());
     private void LogForPlayer(string str)
     {
-        if (Controlled) _log.Warning("{str}", str);
+        if (LogId != null) _log.Warning("{id}: {str}", LogId, str);
     }
 
     private string N1(Vector2 vec)
@@ -56,159 +57,151 @@ public partial class CharacterPhysicsTest : RigidBody2D
     
     //TODO При 5000, 500, 0.05 и 1 получаем MaxSpeed = 300. Надо найти значения Force и NewMass для диапазона скоростей 150-450.
     public float Force = 5000.0f;
-    public float GroundFriction = 500.0f;
-    public float AirFriction = 0.05f;
-    public float NewMass = 1f;
+    public float GroundFriction = 2000.0f;
+    public float AirFriction = 0.04f;
     
     //TODO Потестить изменение Force и Силу затухания (линейно и квадрат)
     public float ExplosionRadius = 300;
-    public float MaxExplosionForce = 20000;
-
-    public override void _PhysicsProcess(double delta)
-    {
-        //MoveAndCollide(GetMovementInSecondFromInput() * (float) delta);
-        //Velocity = GetMovementInSecondFromInput(); MoveAndSlide();
-
-        //MoveAndCollide(Velocity * (float) delta);
-        //MoveAndSlide();
-        
-        if (Controlled) _log.Information("");
-        
-        Vector2 input = Controlled ? GetMovementInput() : Vec;
-        Vector2 targetVelocity = input * MaxSpeed;
-        Vector2 currentVelocity = LinearVelocity;
-        //Vector2 frictionForce = Force * (-LinearVelocity / MaxSpeed);
-        
-        
-        Mass = NewMass;
-        Vector2 engineForce = input * Force;
-        Vector2 groundFrictionForce = -LinearVelocity.Normalized() * Mass * GroundFriction;
-        Vector2 airFrictionForce = -LinearVelocity.Normalized() * (LinearVelocity.LengthSquared() * AirFriction); // Мб не ^2, а ^4, т.к. аркада
-        Vector2 frictionForce = groundFrictionForce + airFrictionForce;
-        Vector2 maxVelocity = CalculateTerminalVelocity(new Vector2(1, 0), Force, Mass, GroundFriction, AirFriction);
-        
-        
-        // 1. Calculate the force required to stop the object completely in exactly this frame.
-        // Formula: F = m * a = m * (v / t)
-        // We use the magnitude because we only care about the force limit, direction is handled by friction itself.
-        float maxStoppingForce = currentVelocity.Length() * Mass / (float)delta;
-
-        // 2. Check if our calculated friction (e.g. from explosion speed) exceeds this limit.
-        // Using LengthSquared for performance optimization.
-        if (frictionForce.LengthSquared() > maxStoppingForce * maxStoppingForce)
-        {
-            // 3. Clamp the friction.
-            // We keep the original direction of friction, but limit its power to maxStoppingForce.
-            frictionForce = frictionForce.Normalized() * maxStoppingForce;
-            if (Controlled) _log.Information($"FIX FRICTION: {frictionForce.Length()}");
-        }
-        
-        
-        if (input == Vector2.Zero)
-        {
-            // 1. Считаем полную силу, необходимую для остановки ровно за этот кадр (dt).
-            // F = m * a  =>  F = m * (0 - V) / dt
-            Vector2 totalForceToStop = -(LinearVelocity * Mass) / (float)delta;
-
-            // 2. Часть этой работы уже делает трение (frictionForce).
-            // Двигателю нужно компенсировать только разницу.
-            // totalForce = engineForce + frictionForce  =>  engineForce = totalForce - frictionForce
-            Vector2 requiredEngineForce = totalForceToStop - frictionForce;
-
-            // 3. Проверяем, хватает ли нам мощности двигателя ("Force"), 
-            // чтобы выдать такую "идеальную" силу.
-            float maxForceSq = Force * Force;
+    public float MaxExplosionForce = 2000;
     
-            if (requiredEngineForce.LengthSquared() > maxForceSq)
-            {
-                // Слишком быстро едем. Двигатель не может остановить мгновенно.
-                // Прикладываем МАКСИМАЛЬНУЮ силу в нужную сторону (тормозим "в пол").
-                engineForce = requiredEngineForce.Normalized() * Force;
-            }
-            else
-            {
-                // Мы уже почти стоим. Сила, нужная для остановки, меньше макс. мощности.
-                // Прикладываем ровно столько, сколько нужно для идеального нуля.
-                engineForce = requiredEngineForce;
-                if (maxVelocity.Length() * 1.1f < LinearVelocity.Length())
-                {
-                    if (Controlled) _log.Information($"TOO MUCH CUT: {Force} {Mass}");
-                }
-            }
-        }
-        
-        Vector2 resultForce = engineForce + groundFrictionForce; //TODO КОСТЫЛЬ, ЧТОБЫ НЕ УЧИТЫВАТЬ airFrictionForce
-        
-        
-        if (maxVelocity.Length() * 1.1f < LinearVelocity.Length())
-        {
-            //resultForce *= 0.1f; //TODO ВЕРНУТЬ? Ведь проблема не в этом была, а в сопротивлении воздуха
-        }
-
-        _frictionForce = frictionForce;
-        _lastVelocity = currentVelocity;
-        _lastPosition = Position;
-        
-        ApplyCentralForce(resultForce);
-        if (Controlled) _log.Information(
-            $"Position: {N1(Position)}, " +
-            $"Velocity: {currentVelocity.Length()}, " +
-            $"Max Velocity: {maxVelocity.Length()}, " +
-            $"Force: {N1(resultForce)}, " +
-            $"Engine Force: {N1(engineForce)}, " +
-            $"Ground Force: {N1(groundFrictionForce)}, " +
-            $"Air Force: {N1(airFrictionForce)}");
-    }
-
-    private Vector2 _frictionForce;
-    private Vector2 _lastVelocity;
-    private Vector2 _lastPosition;
+    private Vector2 _lastPredictionVelocity = Vector2.Zero;
     
     public override void _IntegrateForces(PhysicsDirectBodyState2D state)
     {
-        //if (Controlled) _log.Information($"Current: {N1(state.LinearVelocity)}, Last: {N1(_lastVelocity)}");
-        //if (Controlled) _log.Information($"Sum: {state.LinearVelocity.Normalized() + _lastVelocity.Normalized()}");
-        //if (Controlled) _log.Information($"Position: {N1(Position)}");
-        if (_lastVelocity != Vector2.Zero && state.LinearVelocity.Normalized() + _lastVelocity.Normalized() == Vector2.Zero) 
-        {
-            //ApplyImpulse(-state.LinearVelocity);
-            //state.LinearVelocity = Vector2.Zero;
-            //Position = _lastPosition;
-            if (Controlled) _log.Information($"ZERO");
-        }
+        if (LogId != null) _log.Information($"");
+        Vector2 input = Controlled ? GetMovementInput() : Vec;
         
-        // AIR FRICTION АНАЛИТИЧЕСКИ:
-        float speed = LinearVelocity.Length();
-        if (speed > 0.001f) // Чтобы не делить 0
-        {
-            // k_over_m = AirFriction / Mass  (если AirFriction не умножен на массу)
-            // Если используешь Способ 1, то просто k = AirFriction
-            float k = AirFriction; 
-    
-            // Магия математики: точное значение скорости после сопротивления воздуха за время delta
-            float newSpeed = speed / (1.0f + (k / Mass) * speed * (float) state.Step);
-    
-            // Применяем новое значение скорости, сохраняя направление
-            if (Controlled) _log.Information($"AIR FRICTION: {LinearVelocity.Length()} -> {newSpeed}");
-            LinearVelocity = LinearVelocity.Normalized() * newSpeed;
-        }
-        
+        PhysicsPrediction prediction = CalculateAnalyticMotion(
+            _lastPredictionVelocity,
+            input,
+            Force,
+            Mass,
+            GroundFriction,
+            AirFriction, // Важно: сюда передавать "чистый" коэффициент, без умножения на V^2
+            state.Step // это delta внутри IntegrateForces
+        );
+
+        // Применяем сразу финальные значения
+        _lastPredictionVelocity = prediction.NewVelocity;
+        state.LinearVelocity = prediction.PositionOffset / state.Step;
+
+        if (LogId != null)
+            _log.Information($"{LogId} - " +
+                $"Position: {N1(Position)}, " +
+                $"Position Offset: {N1(prediction.PositionOffset)}, " +
+                $"Velocity: {LinearVelocity.Length()}, " + 
+                $"Prediction Velocity: {_lastPredictionVelocity.Length()}, ");
         
         float maxSpeed = 1000.0f; // Максимально разумная скорость для вашей игры
         if (state.LinearVelocity.LengthSquared() > maxSpeed * maxSpeed)
         {
             //state.LinearVelocity = state.LinearVelocity.Normalized() * maxSpeed; //TODO ВЕРНУТЬ
-            if (Controlled) _log.Information($"MAX SPEED");
+            if (LogId != null) _log.Information($"{LogId} - " + $"MAX SPEED");
         }
     }
     
-    public float CalculateNeededForce(float targetSpeed, float mass)
+    public struct PhysicsPrediction
     {
-        float frictionGround = mass * GroundFriction;
-        float frictionAir = (targetSpeed * targetSpeed) * AirFriction;
-        return frictionGround + frictionAir;
+        public Vector2 NewVelocity;
+        public Vector2 PositionOffset; // Насколько сдвинемся за этот кадр
     }
+
+    public PhysicsPrediction CalculateAnalyticMotion(
+        Vector2 currentVelocity,
+        Vector2 input,
+        float force,
+        float mass,
+        float groundFriction,
+        float airFriction,
+        double delta)
+    {
+        float dt = (float)delta;
     
+        // --- ШАГ 1: Линейные силы (Векторное сложение) ---
+        // Здесь мы определяем, КУДА будет направлена скорость после работы мотора и трения земли.
+        
+        // 1. Сила мотора (вектор)
+        Vector2 engineForceVec = input * force;
+        
+        // 2. Сила трения земли (вектор против текущей скорости)
+        // Важно: рассчитываем "идеальное" трение, но ограничиваем его, чтобы не уйти назад (как обсуждали раньше)
+        Vector2 frictionDir = currentVelocity.LengthSquared() > 0.0001f ? -currentVelocity.Normalized() : Vector2.Zero;
+        Vector2 maxGroundFriction = frictionDir * (mass * groundFriction);
+        
+        // Импульс трения за кадр не должен превышать текущий импульс тела
+        Vector2 impulseLimit = -(currentVelocity * mass) / dt; 
+        
+        Vector2 appliedGroundFriction;
+        if (maxGroundFriction.LengthSquared() > impulseLimit.LengthSquared())
+        {
+            appliedGroundFriction = impulseLimit; // Полная остановка от трения
+        }
+        else
+        {
+            appliedGroundFriction = maxGroundFriction;
+        }
+
+        // 3. Промежуточная скорость (V_temp)
+        // Это скорость, которая БЫЛА БЫ, если бы не было воздуха.
+        // Тут меняется направление (дрифт).
+        Vector2 velocityTemp = currentVelocity + (engineForceVec + appliedGroundFriction) / mass * dt;
+        if (LogId != null)
+            _log.Information($"{LogId} - " +
+                             $"Temp Velocity: {velocityTemp.Length()}");
+
+
+        // --- ШАГ 2: Сопротивление воздуха (Аналитическое скалярное решение) ---
+        // Теперь мы берем длину V_temp и применяем к ней "неявный Эйлер" для квадратичного затухания.
+        
+        float tempSpeed = velocityTemp.Length();
+        
+        if (tempSpeed <= 0.0001f)
+        {
+            return new PhysicsPrediction { NewVelocity = Vector2.Zero, PositionOffset = Vector2.Zero };
+        }
+
+        // Решаем уравнение: v_new = v_temp - (k/m) * v_new^2 * dt
+        // Приводим к: A*x^2 + B*x + C = 0
+        float k = airFriction; // Коэффициент (без V^2, просто константа)
+        
+        float A = (k / mass) * dt;
+        float B = 1.0f;
+        float C = -tempSpeed; // Обратите внимание: минус tempSpeed
+
+        float finalSpeed = 0;
+
+        if (Mathf.IsZeroApprox(A))
+        {
+            finalSpeed = tempSpeed;
+        }
+        else
+        {
+            // Дискриминант: D = b^2 - 4ac
+            // C у нас отрицательное, значит -4ac будет положительным. Корни всегда есть.
+            float discriminant = B * B - 4 * A * C;
+            // Нам нужен положительный корень: (-B + sqrt(D)) / 2A
+            finalSpeed = (-B + Mathf.Sqrt(discriminant)) / (2 * A);
+        }
+        
+        if (LogId != null)
+            _log.Information($"{LogId} - " +
+                             $"Final Velocity: {finalSpeed}");
+
+        // --- ШАГ 3: Сборка результата ---
+        
+        // Берем направление от Векторного шага, а длину от Аналитического шага
+        Vector2 finalVelocity = velocityTemp.Normalized() * finalSpeed;
+
+        // Расчет позиции (метод трапеций для точности)
+        Vector2 positionOffset = (currentVelocity + finalVelocity) * 0.5f * dt;
+
+        return new PhysicsPrediction 
+        { 
+            NewVelocity = finalVelocity, 
+            PositionOffset = positionOffset 
+        };
+    }
+
     public Vector2 CalculateTerminalVelocity(Vector2 input, float force, float mass, float groundFriction, float airFriction)
     {
         // 1. Calculate the magnitude of the driving force
@@ -271,6 +264,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
         // 5. Применяем импульс
         Vector2 finalImpulse = direction * MaxExplosionForce * powerFactor;
         //LinearVelocity = Vector2.Zero; //Чтобы не учитывалась скорость от управления игроком. Но как учитывать скорость от других столкновений?
-        ApplyCentralImpulse(finalImpulse);
+        _lastPredictionVelocity += finalImpulse / Mass;
+        //ApplyCentralImpulse(finalImpulse);
     }
 }

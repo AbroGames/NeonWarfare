@@ -11,6 +11,7 @@ size = Vector2(23.25, 23.25)
 
 [node name="CharacterPhysicsTest" type="RigidBody2D"]
 lock_rotation = true
+custom_integrator = true
 script = ExtResource("1_0u2xx")
 
 [node name="Sprite" type="Sprite2D" parent="."]
