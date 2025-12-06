@@ -46,13 +46,23 @@ public partial class CharacterPhysicsTest : RigidBody2D
     {
         if (@event.IsActionReleased(Keys.AttackPrimary))
         {
-            ExplodeFromMouse();
+            ExplodeFromGlobalPosition(GetGlobalMousePosition());
+        }
+        if (@event.IsActionReleased(Keys.AttackSecondary))
+        {
+            ExplodeFromGlobalPosition(GlobalPosition + Vec2(-15, 0));
         }
     }
     
-    public float Force = 2000.0f;
+    //TODO При 5000, 500, 0.05 и 1 получаем MaxSpeed = 300. Надо найти значения Force и NewMass для диапазона скоростей 150-450.
+    public float Force = 5000.0f;
     public float GroundFriction = 500.0f;
-    public float AirFriction = 0.5f;
+    public float AirFriction = 0.05f;
+    public float NewMass = 1f;
+    
+    //TODO Потестить изменение Force и Силу затухания (линейно и квадрат)
+    public float ExplosionRadius = 300;
+    public float MaxExplosionForce = 20000;
 
     public override void _PhysicsProcess(double delta)
     {
@@ -69,20 +79,71 @@ public partial class CharacterPhysicsTest : RigidBody2D
         Vector2 currentVelocity = LinearVelocity;
         //Vector2 frictionForce = Force * (-LinearVelocity / MaxSpeed);
         
+        
+        Mass = NewMass;
         Vector2 engineForce = input * Force;
         Vector2 groundFrictionForce = -LinearVelocity.Normalized() * Mass * GroundFriction;
-        Vector2 airFrictionForce = -LinearVelocity.Normalized() * (LinearVelocity.LengthSquared() * AirFriction); // Мб не ^2, а ^4, т.к. аркадафффф
+        Vector2 airFrictionForce = -LinearVelocity.Normalized() * (LinearVelocity.LengthSquared() * AirFriction); // Мб не ^2, а ^4, т.к. аркада
         Vector2 frictionForce = groundFrictionForce + airFrictionForce;
-        Vector2 deltaVelocityByFrictionForce = frictionForce * (float) (delta / Mass);
-        Vector2 resultVelocity = CalculateTerminalVelocity(input, Force, Mass, GroundFriction, AirFriction);
-
-        //if (deltaVelocityByFrictionForce.Length() > currentVelocity.Length())
-        //{
-        //    frictionForce *= currentVelocity.Length() / deltaVelocityByFrictionForce.Length();
-        //    if (Controlled) _log.Information($"FIX FRICTION: {N1(frictionForce)}");
-        //}
+        Vector2 maxVelocity = CalculateTerminalVelocity(new Vector2(1, 0), Force, Mass, GroundFriction, AirFriction);
         
-        Vector2 resultForce = engineForce + frictionForce;
+        
+        // 1. Calculate the force required to stop the object completely in exactly this frame.
+        // Formula: F = m * a = m * (v / t)
+        // We use the magnitude because we only care about the force limit, direction is handled by friction itself.
+        float maxStoppingForce = currentVelocity.Length() * Mass / (float)delta;
+
+        // 2. Check if our calculated friction (e.g. from explosion speed) exceeds this limit.
+        // Using LengthSquared for performance optimization.
+        if (frictionForce.LengthSquared() > maxStoppingForce * maxStoppingForce)
+        {
+            // 3. Clamp the friction.
+            // We keep the original direction of friction, but limit its power to maxStoppingForce.
+            frictionForce = frictionForce.Normalized() * maxStoppingForce;
+            if (Controlled) _log.Information($"FIX FRICTION: {frictionForce.Length()}");
+        }
+        
+        
+        if (input == Vector2.Zero)
+        {
+            // 1. Считаем полную силу, необходимую для остановки ровно за этот кадр (dt).
+            // F = m * a  =>  F = m * (0 - V) / dt
+            Vector2 totalForceToStop = -(LinearVelocity * Mass) / (float)delta;
+
+            // 2. Часть этой работы уже делает трение (frictionForce).
+            // Двигателю нужно компенсировать только разницу.
+            // totalForce = engineForce + frictionForce  =>  engineForce = totalForce - frictionForce
+            Vector2 requiredEngineForce = totalForceToStop - frictionForce;
+
+            // 3. Проверяем, хватает ли нам мощности двигателя ("Force"), 
+            // чтобы выдать такую "идеальную" силу.
+            float maxForceSq = Force * Force;
+    
+            if (requiredEngineForce.LengthSquared() > maxForceSq)
+            {
+                // Слишком быстро едем. Двигатель не может остановить мгновенно.
+                // Прикладываем МАКСИМАЛЬНУЮ силу в нужную сторону (тормозим "в пол").
+                engineForce = requiredEngineForce.Normalized() * Force;
+            }
+            else
+            {
+                // Мы уже почти стоим. Сила, нужная для остановки, меньше макс. мощности.
+                // Прикладываем ровно столько, сколько нужно для идеального нуля.
+                engineForce = requiredEngineForce;
+                if (maxVelocity.Length() * 1.1f < LinearVelocity.Length())
+                {
+                    if (Controlled) _log.Information($"TOO MUCH CUT: {Force} {Mass}");
+                }
+            }
+        }
+        
+        Vector2 resultForce = engineForce + groundFrictionForce; //TODO КОСТЫЛЬ, ЧТОБЫ НЕ УЧИТЫВАТЬ airFrictionForce
+        
+        
+        if (maxVelocity.Length() * 1.1f < LinearVelocity.Length())
+        {
+            //resultForce *= 0.1f; //TODO ВЕРНУТЬ? Ведь проблема не в этом была, а в сопротивлении воздуха
+        }
 
         _frictionForce = frictionForce;
         _lastVelocity = currentVelocity;
@@ -92,7 +153,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
         if (Controlled) _log.Information(
             $"Position: {N1(Position)}, " +
             $"Velocity: {currentVelocity.Length()}, " +
-            $"Result Velocity: {resultVelocity.Length()}, " +
+            $"Max Velocity: {maxVelocity.Length()}, " +
             $"Force: {N1(resultForce)}, " +
             $"Engine Force: {N1(engineForce)}, " +
             $"Ground Force: {N1(groundFrictionForce)}, " +
@@ -115,6 +176,37 @@ public partial class CharacterPhysicsTest : RigidBody2D
             //Position = _lastPosition;
             if (Controlled) _log.Information($"ZERO");
         }
+        
+        // AIR FRICTION АНАЛИТИЧЕСКИ:
+        float speed = LinearVelocity.Length();
+        if (speed > 0.001f) // Чтобы не делить 0
+        {
+            // k_over_m = AirFriction / Mass  (если AirFriction не умножен на массу)
+            // Если используешь Способ 1, то просто k = AirFriction
+            float k = AirFriction; 
+    
+            // Магия математики: точное значение скорости после сопротивления воздуха за время delta
+            float newSpeed = speed / (1.0f + (k / Mass) * speed * (float) state.Step);
+    
+            // Применяем новое значение скорости, сохраняя направление
+            if (Controlled) _log.Information($"AIR FRICTION: {LinearVelocity.Length()} -> {newSpeed}");
+            LinearVelocity = LinearVelocity.Normalized() * newSpeed;
+        }
+        
+        
+        float maxSpeed = 1000.0f; // Максимально разумная скорость для вашей игры
+        if (state.LinearVelocity.LengthSquared() > maxSpeed * maxSpeed)
+        {
+            //state.LinearVelocity = state.LinearVelocity.Normalized() * maxSpeed; //TODO ВЕРНУТЬ
+            if (Controlled) _log.Information($"MAX SPEED");
+        }
+    }
+    
+    public float CalculateNeededForce(float targetSpeed, float mass)
+    {
+        float frictionGround = mass * GroundFriction;
+        float frictionAir = (targetSpeed * targetSpeed) * AirFriction;
+        return frictionGround + frictionAir;
     }
     
     public Vector2 CalculateTerminalVelocity(Vector2 input, float force, float mass, float groundFriction, float airFriction)
@@ -152,16 +244,12 @@ public partial class CharacterPhysicsTest : RigidBody2D
         return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
     }
     
-    private void ExplodeFromMouse()
+    private void ExplodeFromGlobalPosition(Vector2 explodePos)
     {
-        float ExplosionRadius = 150;
-        float MaxExplosionForce = 500;
-        
-        Vector2 mousePos = GetGlobalMousePosition();
         Vector2 myPos = GlobalPosition;
 
         // 1. Находим вектор от эпицентра (мыши) к объекту
-        Vector2 diff = myPos - mousePos;
+        Vector2 diff = myPos - explodePos;
     
         // 2. Считаем расстояние
         float distance = diff.Length();

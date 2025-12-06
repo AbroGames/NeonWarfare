@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.ParentInjection;
@@ -38,9 +39,30 @@ public partial class MapSurface : Node2D
         AddPhysicCharacter(250, 250, Vec2(1, 0));
         AddPhysicCharacter(350, 250, Vec2(-1, 0));
         AddPhysicCharacter(450, 250, Vec2(-1, 0));
+
+        CharacterPhysicsTest bot0 = AddPhysicCharacter(700, 200, Vec2(0, 0));
+        
+        CharacterPhysicsTest bot1 = AddPhysicCharacter(700, 250, Vec2(0, 0));
+        bot1.NewMass *= 5;
+        CharacterPhysicsTest bot2 = AddPhysicCharacter(700, 300, Vec2(0, 0));
+        bot2.NewMass /= 5;
+        CharacterPhysicsTest bot3 = AddPhysicCharacter(700, 350, Vec2(0, 0));
+        bot3.Force *= 5;
+        CharacterPhysicsTest bot4 = AddPhysicCharacter(700, 400, Vec2(0, 0));
+        bot4.Force /= 5;
+        CharacterPhysicsTest bot5 = AddPhysicCharacter(700, 450, Vec2(0, 0));
+        bot5.NewMass *= 5; bot5.Force *= 5;
+        CharacterPhysicsTest bot6 = AddPhysicCharacter(700, 500, Vec2(0, 0));
+        bot6.NewMass /= 5; bot6.Force /= 5;
+        CharacterPhysicsTest bot7 = AddPhysicCharacter(700, 550, Vec2(0, 0));
+        bot7.NewMass *= 5; bot7.Force /= 5;
+        CharacterPhysicsTest bot8 = AddPhysicCharacter(700, 600, Vec2(0, 0));
+        bot8.NewMass /= 5; bot8.Force *= 5;
+        
         
         CharacterPhysicsTest player = AddPhysicCharacter(0, 450, Vec2(0, 0));
         player.Controlled = true;
+        player.NewMass *= 1;
     }
     
     public CharacterPhysicsTest AddPhysicCharacter(float x, float y, Vector2 vec)
