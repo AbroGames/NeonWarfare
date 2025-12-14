@@ -46,6 +46,7 @@ public class EnemySpawner
     private void TrySpawnNextEnemy()
     {
         if (_spawnInCurrentUpdate >= MaxSpawnInOneUpdate) return;
+        while (_spawnTasks.Count > 0 && _spawnTasks.First().EnemySpawnTask.Count == 0) _spawnTasks.RemoveAt(0);
         if (_spawnTasks.Count == 0) return;
         _spawnInCurrentUpdate++;
 
