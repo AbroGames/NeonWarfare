@@ -13,15 +13,15 @@ public partial class NavigationService : Node2D
     /// Список стандартных размеров агентов поиска пути.
     /// </summary>
     /// <remarks>Чем их меньше, тем лучше для производительности при запекании карты путей. Допускается не более 32 различных размеров.</remarks>
-    public static readonly IReadOnlyList<int> UnitSizes = [5, 10, 20, 40, 80, 160];
-    public static int SmallestUnitSize => UnitSizes[0]; // Самый маленбкий размер в списке
-    public static int BiggestUnitSize => UnitSizes[^1]; // Самый большой размер в списке
+    public readonly IReadOnlyList<int> UnitSizes = [5, 10, 20, 40, 80, 160];
+    public int SmallestUnitSize => UnitSizes[0]; // Самый маленбкий размер в списке
+    public int BiggestUnitSize => UnitSizes[^1]; // Самый большой размер в списке
     
     private Dictionary<int, NavigationRegion2D> _regions = new ();
     
     private ILogger _log = LogFactory.GetForStatic<NavigationService>();
 
-    private IEnumerable<Vector2[]> _initialworldOutlines;
+    private IEnumerable<Vector2[]> _initialWorldOutlines;
     private IEnumerable<Vector2[]> _initialAdditionalObstacles;
     private Node _initialCollisionsParsingRoot;
     
@@ -32,10 +32,15 @@ public partial class NavigationService : Node2D
     /// </summary>
     /// <param name="worldOutlines">Координаты углов периметра игровых локаций</param>
     /// <param name="additionalObstacles">Массив полигонов для вырезания в карте путей "дырок", по которым нельзя ходить. Нужен для тонкой настройки карты путей.</param>
-    /// <param name="collisionsParsingRoot">Нода, начиная с которой будут ресурсивно парситься статичные тела. По умолчанию парсит прямо с корня сцены.</param>
+    /// <param name="collisionsParsingRoot">Нода, начиная с которой будут рекурсивно парситься статичные тела. По умолчанию парсит прямо с корня сцены.</param>
+    /// <remarks>
+    /// В <b>worldOutlines</b> можешь передать 4 угла квадрата карты типа [[vec2, vec2, vec2, vec2]]<br/>
+    /// <b>additionalObstacles</b> не обязательно, если ты хочешь сделать лишние дырки в карте путей<br/>
+    /// <b>collisionsParsingRoot</b> игра может вычислить сама, но для надежности передай сюда ссылку на корень мира
+    /// </remarks>
     public NavigationService(IEnumerable<Vector2[]> worldOutlines, IEnumerable<Vector2[]> additionalObstacles = null, Node collisionsParsingRoot = null)
     {
-        _initialworldOutlines = worldOutlines;
+        _initialWorldOutlines = worldOutlines;
         _initialAdditionalObstacles = additionalObstacles;
         _initialCollisionsParsingRoot = collisionsParsingRoot;
     }
@@ -50,8 +55,8 @@ public partial class NavigationService : Node2D
             AddChild(region);
         }
         
-        RebuildNavigation(_initialworldOutlines, _initialAdditionalObstacles, _initialCollisionsParsingRoot);
-        _initialworldOutlines = null;
+        RebuildNavigation(_initialWorldOutlines, _initialAdditionalObstacles, _initialCollisionsParsingRoot);
+        _initialWorldOutlines = null;
         _initialAdditionalObstacles = null;
         _initialCollisionsParsingRoot = null;
     }
