@@ -67,48 +67,9 @@ public partial class CharacterPhysicsTest : RigidBody2D
         forceNeededToReachTargetSpeed = Mathf.Min(forceNeededToReachTargetSpeed, accelerationForceScalar);
         float smoothingFactor = 0.75f;
         
-        if (hasInput)
-        {
-            if (currentSpeedInWishDirection < MaxSpeed)
-            {
-                float forceToApply;
-                if (forceNeededToReachTargetSpeed < accelerationForceScalar)
-                {
-                    forceToApply = forceNeededToReachTargetSpeed * smoothingFactor;
-                }
-                else
-                {
-                    forceToApply = accelerationForceScalar;
-                }
-                
-                ApplyCentralImpulse(wishDirection * forceToApply * dt);
-            }
-        }
-        else
-        {
-            float forceToApply;
-            if (forceNeededToReachTargetSpeed < accelerationForceScalar)
-            {
-                forceToApply = forceNeededToReachTargetSpeed * smoothingFactor;
-            }
-            else
-            {
-                forceToApply = accelerationForceScalar;
-            }
-                
-            ApplyCentralImpulse(wishDirection * forceToApply * dt);
-        }
         
-        var completeStopThreshold = Acceleration * dt * 0.95f;
-        if (currentSpeed <= completeStopThreshold)
-        {
-            //LinearVelocity = Vector2.Zero;
-        }
         
-        if (currentSpeedInWishDirection > MaxSpeed)
-        {
-            
-        }
+        
         //ApplyCentralForce(input * 10);
         
         LogForPlayer($"Speed: {currentSpeed:N1}\n" +
