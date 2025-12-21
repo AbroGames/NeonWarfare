@@ -12,6 +12,7 @@ size = Vector2(23.25, 23.25)
 
 [node name="Character" type="RigidBody2D"]
 lock_rotation = true
+custom_integrator = true
 script = ExtResource("1_kp28h")
 
 [node name="Sprite" type="Sprite2D" parent="."]

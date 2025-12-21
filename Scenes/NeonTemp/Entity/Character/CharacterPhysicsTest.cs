@@ -106,6 +106,20 @@ public partial class CharacterPhysicsTest : RigidBody2D
         public Vector2 PositionOffset; // Насколько сдвинемся за этот кадр
     }
 
+    /// <summary>
+    /// Здесь аналитический расчет сил, вместо ApplyCentralForce. Т.к. в ApplyCentralForce сила применяется на 16/33 мс, и может быть чрезмерна.
+    /// Например, трение воздуха за эти 33 мс остановит игрока и даже отправит его в обратную сторону.
+    /// Старые формулы для расчета, в текущем методе реализованы они же, но аналитически и с максимальной точностью:
+    /// Vector2 engineForce = input * Force;
+    /// Vector2 groundFrictionForce = -LinearVelocity.Normalized() * Mass * GroundFriction;
+    /// Vector2 airFrictionForce = -LinearVelocity.Normalized() * (LinearVelocity.LengthSquared() * AirFriction); // Мб не ^2, а ^4, т.к. аркада
+    /// Vector2 frictionForce = groundFrictionForce + airFrictionForce;
+    /// ApplyCentralForce(engineForce + frictionForce);
+    /// Также тут были костыли, про то, что при input = Vector.Zero мы применяем engineForce против двидения (помогаем остановиться быстрее)
+    /// И в последнем степе применяем идеально выверенное engineForce для остановки в ноль.
+    /// Если потребуется восстановить как всё выглядело, то можно посмотреть коммит db459685 on 06.12.2025 at 19:24
+    /// В этом коммите обычный метод приложения сил был заменен на аналитический, а также включена опция custom_integrator, вместо ванильног расчета
+    /// </summary>
     public PhysicsPrediction CalculateAnalyticMotion(
         Vector2 currentVelocity,
         Vector2 input,
