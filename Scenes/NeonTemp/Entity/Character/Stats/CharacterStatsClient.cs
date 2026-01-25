@@ -71,6 +71,7 @@ public class CharacterStatsClient
     public double RegenHp => Mathf.Max(GetRawStat(CharacterStat.RegenHp), 0);
     public double Armor => Mathf.Max(GetRawStat(CharacterStat.Armor), 0);
     public double ArmorAbsorption => Mathf.Clamp(GetRawStat(CharacterStat.ArmorAbsorption), 0, 1);
+    public double ReceivingHeal(double baseValue) => Mathf.Max(GetRawStat(CharacterStat.ReceivingHeal, baseValue), 0);
     public double MovementSpeed => Mathf.Max(GetRawStat(CharacterStat.MovementSpeed), 0);
     public double RotationSpeed => Mathf.Max(GetRawStat(CharacterStat.RotationSpeed), 0);
     public double Mass => Mathf.Max(GetRawStat(CharacterStat.Mass), 0.1);
