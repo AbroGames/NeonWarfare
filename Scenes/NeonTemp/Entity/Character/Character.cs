@@ -1,8 +1,6 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Remote;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
@@ -35,7 +33,7 @@ public partial class Character : RigidBody2D
             () => StatusEffects = new CharacterStatusEffects(this, synchronizer),
             () => StatusEffectsClient = new CharacterStatusEffectsClient(this, synchronizer));
         Net.DoServerNotServer(
-            () => Controller = new CharacterController(this, synchronizer, new AiController(new AiObserveControllerLogic())),
+            () => Controller = new CharacterController(this, synchronizer),
             () => Controller = new CharacterController(this, synchronizer, new RemoteController()));
 
         synchronizer.InitPostReady(this);
