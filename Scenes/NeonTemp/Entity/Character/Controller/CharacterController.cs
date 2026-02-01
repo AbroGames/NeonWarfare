@@ -4,6 +4,11 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 
+/// <summary>
+/// Этот класс не имеет клиентской версии <c>CharacterControllerClient</c>.<br/>
+/// Т.к. источником данных может выступать как <c>CharacterController</c> на стороне сервера, так и на стороне клиента.<br/>
+/// Поэтому части методов необходимо иметь параметр <c>syncToClient</c>, чтобы избежать циклической синхронизации.
+/// </summary>
 public class CharacterController
 {
     public IController CurrentController { get; private set; }
