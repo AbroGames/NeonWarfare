@@ -3,6 +3,8 @@ using Godot;
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.ParentInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Remote;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
@@ -16,7 +18,7 @@ public partial class MapSurface : Node2D
     public override void _Ready()
     {
         Di.Process(this);
-        ReadyPhysicTest();
+        //ReadyPhysicTest();
         
         AddWall(300, 300);
         AddWall(350, 350);
@@ -86,6 +88,7 @@ public partial class MapSurface : Node2D
         player.Controller.SetControllerToClient(peerId, new PlayerController());
         
         Character bot = AddCharacter(450, 250);
+        bot.Controller.SetController(new AiController(new AiObserveControllerLogic()));
     }
     
     public Character AddCharacter(float x, float y)
