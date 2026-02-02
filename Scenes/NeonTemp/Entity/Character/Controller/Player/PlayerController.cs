@@ -8,6 +8,8 @@ namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
 public class PlayerController : IController
 {
+    private readonly PhysicsCalculator _physicsCalculator = new();
+    
     private long _nextOrderId;
     [Logger] private ILogger _log;
 
@@ -18,27 +20,35 @@ public class PlayerController : IController
 
     public void OnPhysicsProcess(double delta, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler)
     {
-        Vector2 movementInSec = Vec2();
-        if (!controlBlockerHandler.IsMovementBlocked())
-        {
-            movementInSec = GetMovementInput(character) * (float) GetMovementSpeed(character);
-            character.MoveAndCollide(movementInSec * (float) delta);
-        }
-        
-        if (!controlBlockerHandler.IsRotatingBlocked())
-        {
-            character.RotateToTarget(GetGlobalRotatePosition(character), GetRotationSpeed(character), delta);
-        }
-
         //TODO Here or in OnUnhandledInput
         if (!controlBlockerHandler.IsSkillsBlocked())
         {
             //TODO Input.IsActionPressed(action);
         }
+    }
+
+    public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler, Vector2? teleportTask)
+    {
+        if (teleportTask.HasValue)
+        {
+            state.Transform = new Transform2D(state.Transform.Rotation, teleportTask.Value);
+            //TODO По хорошему мы должны отправить новый SendMovement, но из-за ненадежности передачи и этого не достаточно
+            //TODO В идеале мы должны при отправке команды телепорта отправить последний _nextOrderId, чтобы все пакеты со старыми корами гарантировано заигнорились
+            return;
+        }
+        
+        Vector2 movementInput = controlBlockerHandler.IsMovementBlocked() ? Vector2.Zero : GetMovementInput(character);
+        _physicsCalculator.OnIntegrateForces(state, character, movementInput);
+        Vector2 movementInSec = _physicsCalculator.LastPredictionVelocity;
+        
+        if (!controlBlockerHandler.IsRotatingBlocked())
+        {
+            character.RotateToTarget(GetGlobalRotatePosition(character), GetRotationSpeed(character), state.Step);
+        }
         
         synchronizer.Controller_SendMovement(new IController.MovementData(
             orderId: _nextOrderId++,
-            positionX: character.Position.X,
+            positionX: character.Position.X, //TODO Сравнить это значение с полученным значение из _physicsCalculator, если отчаются, то попробовать поменять на _physicsCalculator
             positionY: character.Position.Y,
             rotation: character.Rotation,
             movementX: movementInSec.X,
@@ -55,6 +65,11 @@ public class PlayerController : IController
     {
         _log.Error("Method {method} is not valid in {class}", nameof(OnReceivedMovement), GetType().Name);
     }
+
+    public void OnImpulse(Character character, Vector2 impulse)
+    {
+        _physicsCalculator.AddImpulse(impulse, character.Mass);
+    }
     
     protected virtual Vector2 GetMovementInput(Character character)
     {
@@ -66,6 +81,7 @@ public class PlayerController : IController
         return character.GetGlobalMousePosition();
     }
 
+    //TODO Переделать в GetForce
     protected virtual double GetMovementSpeed(Character character)
     {
         return character.StatsClient.MovementSpeed;

@@ -98,6 +98,14 @@ public partial class MapSurface : Node2D
         character.Position = Vec2(x, y);
         this.AddChildWithUniqueName(character, "Character");
         
+        
+        // Телепорт необходим, чтобы клиент при спауне не отправил на сервер координаты (0;0) через контроллер и не сбрасывал позицию на сервере
+        // Отправка координат (0;0) происходит из-за того, что для Character отключен синк Position в MultiplayerSynchronizer
+        // Для ботов это позволяет избежать рывка с коориднат (0;0) при спавне
+        
+        //TODO Сейчас дергается бот на клиенте при спавне! Он летит из (0;0). Надо либо вернуть обратно эту функцию на просто установку Character.Position,
+        //TODO либо подебажить как в обоих реализациях работает телепорт по среди игры, а не только в момент спауна (для этого на кнопку Тест 1 ищет Character игрока/бота в мире и телепортируем его на фиксированную позицию) 
+        //TODO Подсказка: игрок имеет имя Character-1-3, а бот Character-1-4
         character.Controller.Teleport(character.Position);
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MovementSpeed, 200));
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.RotationSpeed, 360));

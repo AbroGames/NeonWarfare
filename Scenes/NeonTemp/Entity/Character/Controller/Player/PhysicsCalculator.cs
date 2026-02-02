@@ -1,96 +1,46 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Godot;
-using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
-using Serilog;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 
-//TODO After test del this class and associated scene, del trash from MapSurface
-//TODO Потом протестить в MapSurface старую сцену с тестовыми манекенами, но на новых нодах
-public partial class CharacterPhysicsTest : RigidBody2D
+public class PhysicsCalculator
 {
     
-    [Child] public Sprite2D Sprite { get; private set; }
-    [Child] public Area2D HitBox { get; private set; }
-    
-    public Vector2 Vec;
-    public bool Controlled = false;
-    public string LogId = null;
-    
-    public float MaxSpeed = 200.0f;
-    public float Acceleration = 10.0f;
-    
-    private float ControlThreshold => MaxSpeed * 1.1f;
-    [Logger] private ILogger _log;
-    
-    public override void _Ready()
-    {
-        Di.Process(this);
-    }
-
-    public override void _Input(InputEvent @event)
-    {
-        if (@event.IsActionReleased(Keys.AttackPrimary))
-        {
-            ExplodeFromGlobalPosition(GetGlobalMousePosition());
-        }
-        if (@event.IsActionReleased(Keys.AttackSecondary))
-        {
-            ExplodeFromGlobalPosition(GlobalPosition + Vec2(-15, 0));
-        }
-    }
-    
     //TODO При 5000, 500, 0.05 и 1 получаем MaxSpeed = 300. Надо найти значения Force и NewMass для диапазона скоростей 150-450.
-    public float Force = 5000.0f;
-    public float GroundFriction = 2000.0f;
-    public float AirFriction = 0.04f;
+    //TODO Использовать CalculateTerminalVelocity для расчётов без тестов
     
-    //TODO Потестить изменение Force и Силу затухания (линейно и квадрат)
-    public float ExplosionRadius = 300;
-    public float MaxExplosionForce = 2000;
+    //TODO По сравнению со старым управлением, это ощущается очень резиновым, будто на льду 
+    //TODO Но изменение AirFriction как будто не помогает, влияет только на Макс скорость.
+    //TODO Ну и в целом если я смогу добиться быстрой остановки управлением, то перестанут работать взрывы.
+    //TODO Мб всё таки сделать костыль который при превышении макс скорости режет управление на 50-90% ? Типа ты не касаешься земли.
+    //TODO Или удаляет GroundFriction совсем. А в обычной ситуации завысить его.
+    private readonly float _force = 5000.0f; //TODO Вычислять динамически
+    private const float GroundFriction = 2000.0f;
+    private const float AirFriction = 0.04f;
+    private const float MaxSpeed = 1000.0f; // Максимально разумная скорость для вашей игры
+
+    public Vector2 LastPredictionVelocity { get; private set; } = Vector2.Zero;
     
-    private Vector2 _lastPredictionVelocity = Vector2.Zero;
-    
-    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+    public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, Vector2 movementInput)
     {
-        // if (LogId != null) _log.Information($"");
-        Vector2 input = Controlled ? GetMovementInput() : Vec;
-        
         PhysicsPrediction prediction = CalculateAnalyticMotion(
-            _lastPredictionVelocity,
-            input,
-            Force,
-            Mass,
+            LastPredictionVelocity,
+            movementInput,
+            _force,
+            character.Mass,
             GroundFriction,
             AirFriction, // Важно: сюда передавать "чистый" коэффициент, без умножения на V^2
             state.Step // это delta внутри IntegrateForces
         );
-
-        // Применяем сразу финальные значения
-        _lastPredictionVelocity = prediction.NewVelocity;
-        state.LinearVelocity = prediction.PositionOffset / state.Step;
-
-        // if (LogId != null)
-        //     _log.Information($"{LogId} - " +
-        //         $"Position: {N1(Position)}, " +
-        //         $"Position Offset: {N1(prediction.PositionOffset)}, " +
-        //         $"Velocity: {LinearVelocity.Length()}, " + 
-        //         $"Prediction Velocity: {_lastPredictionVelocity.Length()}, ");
         
-        float maxSpeed = 1000.0f; // Максимально разумная скорость для вашей игры
-        if (state.LinearVelocity.LengthSquared() > maxSpeed * maxSpeed)
+        // Применяем сразу финальные значения
+        LastPredictionVelocity = prediction.NewVelocity;
+        state.LinearVelocity = prediction.PositionOffset / state.Step; // Деление, потому что LinearVelocity хранит скорость в секунду, а PositionOffset за кадр
+        
+        if (state.LinearVelocity.LengthSquared() > MaxSpeed * MaxSpeed)
         {
-            //state.LinearVelocity = state.LinearVelocity.Normalized() * maxSpeed; //TODO ВЕРНУТЬ
-            if (LogId != null) _log.Information($"{LogId} - " + $"MAX SPEED");
+            //state.LinearVelocity = state.LinearVelocity.Normalized() * MaxSpeed; //TODO ВЕРНУТЬ
         }
-    }
-    
-    public struct PhysicsPrediction
-    {
-        public Vector2 NewVelocity;
-        public Vector2 PositionOffset; // Насколько сдвинемся за этот кадр
     }
 
     /// <summary>
@@ -110,7 +60,7 @@ public partial class CharacterPhysicsTest : RigidBody2D
     /// В этом коммите обычный метод приложения сил был заменен на аналитический, а также включена опция custom_integrator, вместо ванильного расчета.
     /// </summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public PhysicsPrediction CalculateAnalyticMotion(
+    private PhysicsPrediction CalculateAnalyticMotion(
         Vector2 currentVelocity,
         Vector2 input,
         float force,
@@ -148,10 +98,6 @@ public partial class CharacterPhysicsTest : RigidBody2D
         // Это скорость, которая БЫЛА БЫ, если бы не было воздуха.
         // Тут меняется направление (дрифт).
         Vector2 velocityTemp = currentVelocity + (engineForceVec + appliedGroundFriction) / mass * delta;
-        // if (LogId != null)
-        //     _log.Information($"{LogId} - " +
-        //                      $"Temp Velocity: {velocityTemp.Length()}");
-
 
         // --- ШАГ 2: Сопротивление воздуха (Аналитическое скалярное решение) ---
         // Теперь мы берем длину V_temp и применяем к ней "неявный Эйлер" для квадратичного затухания.
@@ -185,10 +131,6 @@ public partial class CharacterPhysicsTest : RigidBody2D
             // Нам нужен положительный корень: (-B + sqrt(D)) / 2A
             finalSpeed = (-B + Mathf.Sqrt(discriminant)) / (2 * A);
         }
-        
-        // if (LogId != null)
-        //     _log.Information($"{LogId} - " +
-        //                      $"Final Velocity: {finalSpeed}");
 
         // --- ШАГ 3: Сборка результата ---
         
@@ -205,7 +147,16 @@ public partial class CharacterPhysicsTest : RigidBody2D
         };
     }
 
-    public Vector2 CalculateTerminalVelocity(Vector2 input, float force, float mass, float groundFriction, float airFriction)
+    public void AddImpulse(Vector2 impulse, float mass)
+    {
+        LastPredictionVelocity += impulse / mass;
+    }
+
+    /// <summary>
+    /// Метод не используется в игре. Нужен для расчёта финальной скорости при балансе параметров физики.
+    /// Так же его можно использовать для расчёта MaxSpeed в характеристиках игрока
+    /// </summary>
+    private Vector2 CalculateTerminalVelocity(Vector2 input, float force, float mass, float groundFriction, float airFriction)
     {
         // 1. Calculate the magnitude of the driving force
         float engineForceMag = input.Length() * force;
@@ -235,41 +186,9 @@ public partial class CharacterPhysicsTest : RigidBody2D
         return input.Normalized() * terminalSpeed;
     }
     
-    private Vector2 GetMovementInput()
+    private struct PhysicsPrediction
     {
-        return Input.GetVector(Keys.Left, Keys.Right, Keys.Up, Keys.Down);
-    }
-    
-    //TODO Перенести взрыв в новую систему, хотя бы для теста!
-    //TODO Инициировать взрыв кликом на клиенте, но взрыв рассчитывается на сервере и импульс добавляется на сервере, а на клиент только синкается.
-    private void ExplodeFromGlobalPosition(Vector2 explodePos)
-    {
-        Vector2 myPos = GlobalPosition;
-
-        // 1. Находим вектор от эпицентра (мыши) к объекту
-        Vector2 diff = myPos - explodePos;
-    
-        // 2. Считаем расстояние
-        float distance = diff.Length();
-
-        // Если мы за пределами радиуса взрыва — игнорируем
-        if (distance >= ExplosionRadius) return;
-
-        // 3. Вычисляем направление (нормализуем вектор)
-        Vector2 direction = diff.Normalized();
-
-        // 4. Считаем силу затухания (Linear Falloff)
-        // distance / ExplosionRadius дает число от 0 до 1 (где 1 — это край)
-        // Мы вычитаем это из 1, чтобы получить: 1 в центре, 0 на краю
-        float powerFactor = 1.0f - (distance / ExplosionRadius);
-    
-        // Квадратичное затухание (более реалистичный взрыв)
-        //powerFactor = powerFactor * powerFactor; 
-
-        // 5. Применяем импульс
-        Vector2 finalImpulse = direction * MaxExplosionForce * powerFactor;
-        //LinearVelocity = Vector2.Zero; //Чтобы не учитывалась скорость от управления игроком. Но как учитывать скорость от других столкновений?
-        _lastPredictionVelocity += finalImpulse / Mass;
-        //ApplyCentralImpulse(finalImpulse);
+        public Vector2 NewVelocity;
+        public Vector2 PositionOffset; // Насколько сдвинемся за этот кадр
     }
 }
