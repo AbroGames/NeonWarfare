@@ -48,7 +48,12 @@ public partial class Character : RigidBody2D
         
         Controller.OnPhysicsProcess(delta);
     }
-    
+
+    public override void _IntegrateForces(PhysicsDirectBodyState2D state)
+    {
+        Controller.OnIntegrateForces(state);
+    }
+
     public override void _UnhandledInput(InputEvent @event)
     {
         Controller.OnUnhandledInput(@event, GetViewport().SetInputAsHandled);

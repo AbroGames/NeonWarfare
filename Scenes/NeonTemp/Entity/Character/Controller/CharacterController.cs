@@ -13,6 +13,7 @@ public class CharacterController
 {
     public IController CurrentController { get; private set; }
     private readonly ControlBlockerHandler _controlBlockerHandler = new();
+    private Vector2? _teleportTask;
     
     private readonly Character _character;
     private readonly CharacterSynchronizer _synchronizer;
@@ -29,6 +30,12 @@ public class CharacterController
     public void OnPhysicsProcess(double delta)
     {
         CurrentController.OnPhysicsProcess(delta, _character, _synchronizer, _controlBlockerHandler);
+    }
+    
+    public void OnIntegrateForces(PhysicsDirectBodyState2D state)
+    {
+        CurrentController.OnIntegrateForces(state, _character, _synchronizer, _controlBlockerHandler, _teleportTask);
+        _teleportTask = null;
     }
 
     public void OnUnhandledInput(InputEvent @event, Action setAsHandled)
@@ -51,6 +58,8 @@ public class CharacterController
         _synchronizer.Controller_OnChange(peerId, controller);
     }
     
+    //TODO Переделать эти методы в серверный AddBlock, который вызывает на клиенте и на сервере OnAddBlock? Не забыть коммент к OnAddBlock, что его нельзя вызывать напрямую.
+    //TODO Или можно? Всё-таки меню открывается на клиенте только, сервер не участвует. Переименовать в AddBlockLocal? 
     public void AddBlock(ControlBlocker controlBlocker, bool syncToClient = true)
     {
         _controlBlockerHandler.AddBlock(controlBlocker);
@@ -62,10 +71,19 @@ public class CharacterController
         _controlBlockerHandler.RemoveBlock(controlBlocker);
         if (syncToClient) _synchronizer.Controller_RemoveBlock(controlBlocker);
     }
+    
+    public void AddImpulse(Vector2 impulse, bool syncToClient = true)
+    {
+        CurrentController.OnImpulse(_character, impulse);
+        if (syncToClient) _synchronizer.Controller_AddImpulse(impulse);
+    }
 
+    /// <summary>
+    /// Следует использовать этот метод для безопасного телепортирования без ломания физики.<br/>
+    /// </summary>
     public void Teleport(Vector2 position, bool syncToClient = true)
     {
-        _character.Position = position;
+        _teleportTask = position;
         if (syncToClient) _synchronizer.Controller_Teleport(position);
     }
 }
