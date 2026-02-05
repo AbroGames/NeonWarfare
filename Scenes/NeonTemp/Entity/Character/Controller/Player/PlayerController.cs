@@ -31,8 +31,13 @@ public class PlayerController : IController
     {
         if (teleportTask.HasValue)
         {
+            character.Position = teleportTask.Value;
             state.Transform = new Transform2D(state.Transform.Rotation, teleportTask.Value);
+            state.LinearVelocity = Vector2.Zero;
+            //TODO Телепорт таск дублируется. Вынести куда-то? И сделать параметр teleportTask в функции OnPhysicsProcess в интерфейсе тоже
             //TODO По хорошему мы должны отправить новый SendMovement, но из-за ненадежности передачи и этого не достаточно
+            //TODO А зачем вообще этот метод на клиенте? Пусть в обычном порядке выполнится логика телепорта из DistanceForTeleport ветки
+            //TODO Надо при спауне юнитов по хорошему? Т.к. спаун по надежному каналу и там же телепорт. В коммент это всё.
             //TODO В идеале мы должны при отправке команды телепорта отправить последний _nextOrderId, чтобы все пакеты со старыми корами гарантировано заигнорились
             return;
         }
