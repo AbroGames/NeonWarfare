@@ -5,8 +5,8 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 
 /// <summary>
-/// Этот класс не имеет клиентской версии <c>CharacterControllerClient</c>.<br/>
-/// Т.к. источником данных может выступать как <c>CharacterController</c> на стороне сервера, так и на стороне клиента.<br/>
+/// Этот класс не имеет клиентской версии <c>CharacterControllerClient</c>,
+/// т.к. источником данных может выступать как <c>CharacterController</c> на стороне сервера, так и на стороне клиента.<br/>
 /// Поэтому части методов необходимо иметь параметр <c>syncToClient</c>, чтобы избежать циклической синхронизации.
 /// </summary>
 public class CharacterController
@@ -75,6 +75,13 @@ public class CharacterController
         if (syncToClient) _synchronizer.Controller_RemoveBlock(controlBlocker);
     }
     
+    /// <summary>
+    /// Импульс всегда инициируется с сервера. Например, при помощи взрыва.<br/>
+    /// Если клиент получил данные о взрыве (учитывая пинг), то значит получил и данные о новой позиции юнита.<br/>
+    /// Поэтому реализовывать этот метод на юнитах, неуправляемых клиентом, не требуется.<br/>
+    /// Однако метод всё ещё должен быть RPC, чтобы сервер мог вызывать его на клиенте у юнита,
+    /// управляемого клиентом (например, сам игрок), и тот на клиенте применил к себе импульс.
+    /// </summary>
     public void AddImpulse(Vector2 impulse, bool syncToClient = true)
     {
         CurrentController.OnImpulse(_character, impulse);
@@ -82,7 +89,7 @@ public class CharacterController
     }
 
     /// <summary>
-    /// Следует использовать этот метод для безопасного телепортирования без ломания физики.<br/>
+    /// Следует использовать этот метод для безопасного телепорта без ломания физики.
     /// </summary>
     public void Teleport(Vector2 position, bool syncToClient = true)
     {
