@@ -22,8 +22,6 @@ public partial class MapSurface : Node2D
         AddWall(300, 300);
         AddWall(350, 350);
         AddWall(400, 400).Scale = Vec2(1, 4);
-
-        ReadyPhysicTest();
     }
     
     public Node2D AddWall(float x, float y)
@@ -64,20 +62,17 @@ public partial class MapSurface : Node2D
         bot8.Mass /= 5; bot8.Controller.ForceCoef *= 5;
     }
     
-    public CharacterPhysicsTest AddPhysicCharacter(float x, float y, Vector2 vec)
-    {
-        PackedScene characterPs = GD.Load<PackedScene>("res://Scenes/NeonTemp/Entity/Character/CharacterPhysicsTest.tscn");
-        CharacterPhysicsTest character = characterPs.Instantiate<CharacterPhysicsTest>();
-        character.Position = Vec2(x, y);
-        character.Vec = vec;
-        this.AddChildWithUniqueName(character, "PhysicCharacter");
-        return character;
-    }
-    
     // --------------------------------------------------------
     
+    private bool _botsWasCreated = false;
     public void AddPlayerCharacter(long peerId)
     {
+        if (!_botsWasCreated)
+        {
+            ReadyPhysicTest();
+            _botsWasCreated = true;
+        }
+        
         Character player = AddCharacter(250, 250);
         //TODO В синглплеерной игре порядок имеет значение?
         player.Controller.SetController(new RemoteController());
@@ -108,7 +103,11 @@ public partial class MapSurface : Node2D
         //TODO Сейчас дергается бот на клиенте при спавне! Он летит из (0;0). Надо либо вернуть обратно эту функцию на просто установку Character.Position,
         //TODO либо подебажить как в обоих реализациях работает телепорт по среди игры, а не только в момент спауна (для этого на кнопку Тест 1 ищет Character игрока/бота в мире и телепортируем его на фиксированную позицию) 
         //TODO Подсказка: игрок имеет имя Character-1-3, а бот Character-1-4
-        character.Controller.Teleport(character.Position);
+        
+        //TODO В доку: для избежания появления юнита на кадр в корах 0;0 и для следов (интерполяции) при телепорте, мы в Ready отключаем интерполяцию на 1 кадр, а Position синхроним через MpSync при спавне
+        //TODO Но это +1 нода, так что возможно стоит спавнить юнитов, передавая коры при спавне, через RPC (но тогда мы не увидим других игроков при подключении??!)
+        //TODO или через MpSpawner.SpawnFunction + MpSpawner.Spawn в byte[] через сериализатор (протестить как работает синк при подключении игрока по ходу игры), код тут https://gemini.google.com/app/21c0306cc9a7fccb
+        //character.Controller.Teleport(character.Position);
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MovementSpeed, 200));
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.RotationSpeed, 360));
         return character;

@@ -18,15 +18,6 @@ public class PlayerController : IController
         Di.Process(this);
     }
 
-    public void OnPhysicsProcess(double delta, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler)
-    {
-        //TODO Here or in OnUnhandledInput
-        if (!controlBlockerHandler.IsSkillsBlocked())
-        {
-            //TODO Input.IsActionPressed(action);
-        }
-    }
-
     public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler, Vector2? teleportTask)
     {
         if (teleportTask.HasValue)
@@ -34,6 +25,7 @@ public class PlayerController : IController
             character.Position = teleportTask.Value;
             state.Transform = new Transform2D(state.Transform.Rotation, teleportTask.Value);
             state.LinearVelocity = Vector2.Zero;
+            character.ResetPhysicsInterpolation();
             //TODO Телепорт таск дублируется. Вынести куда-то? И сделать параметр teleportTask в функции OnPhysicsProcess в интерфейсе тоже
             //TODO По хорошему мы должны отправить новый SendMovement, но из-за ненадежности передачи и этого не достаточно
             //TODO А зачем вообще этот метод на клиенте? Пусть в обычном порядке выполнится логика телепорта из DistanceForTeleport ветки
@@ -59,18 +51,32 @@ public class PlayerController : IController
             movementX: movementInSec.X,
             movementY: movementInSec.Y));
     }
+    
+    public void OnPhysicsProcess(double delta, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler)
+    {
+        //TODO Здесь или в OnUnhandledInput
+        if (!controlBlockerHandler.IsSkillsBlocked())
+        {
+            //TODO Input.IsActionPressed(action);
+        }
+    }
 
-    //TODO Надо проверить отлов released при свернутом окне.
     public void OnUnhandledInput(InputEvent @event, Action setAsHandled, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler)
     {
-        
+        //TODO Надо проверить отлов released при свернутом окне. Вроде Released ивента нет, и мышка вообще не работает (мб Hud её перехватывает, или надо прям в игрока кликать)
+        //GD.Print(@event.AsText());
+        //GD.Print(@event.IsActionPressed(Keys.AttackPrimary));
+        //GD.Print(@event.IsActionReleased(Keys.AttackPrimary));
+        //GD.Print(@event.IsActionPressed(Keys.Up));
+        //GD.Print(@event.IsActionReleased(Keys.Up));
     }
     
     public void OnReceivedMovement(Character character, CharacterSynchronizer synchronizer, IController.MovementData movementData)
     {
-        _log.Error("Method {method} is not valid in {class}", nameof(OnReceivedMovement), GetType().Name);
+        _log.Error("Method {method} is not valid in {class} on node {node}", 
+            nameof(OnReceivedMovement), GetType().Name, character.GetName());
     }
-
+    
     public void OnImpulse(Character character, Vector2 impulse)
     {
         _physicsCalculator.AddImpulse(impulse, character.Mass);

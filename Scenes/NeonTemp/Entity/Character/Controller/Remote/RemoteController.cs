@@ -14,17 +14,14 @@ public class RemoteController : IController
     private readonly ManualCooldown _cooldownFromLastMovementDataUpdate = new(InertiaTime);
     private IController.MovementData? _lastMovementData;
     
-    public void OnPhysicsProcess(double delta, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler) { } //TODO Запихнуть пустые реализации в интерфейс, кроме импульса
-    
     public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler, Vector2? teleportTask)
     {
-        //TODO Мб поменять IntegrateForces для клиента на обычный MoveAndCollide? Но только для клиента-игрока что ли, а на сервере сделать отдельный RemoteController, который полноценно симулирует игрока
-        //TODO Сейчас вроде норм производительность, мб уже не надо. Осталось затестить только толпу врагов, которые кдут в одн точку.
         if (teleportTask.HasValue)
         {
             character.Position = teleportTask.Value;
             state.Transform = new Transform2D(state.Transform.Rotation, teleportTask.Value);
             state.LinearVelocity = Vector2.Zero;
+            character.ResetPhysicsInterpolation();
             return;
         }
         
@@ -66,12 +63,11 @@ public class RemoteController : IController
         _cooldownFromLastMovementDataUpdate.Restart();
     }
     
-    public void OnUnhandledInput(InputEvent @event, Action setAsHandled, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler) { }
-    
     /// <summary>
     /// Импульс всегда инициируется с сервера. Например, при помощи взрыва.<br/>
     /// Если мы получили данные о взрыве (учитывая пинг), то мы получили и данные о новой позиции юнита.
     /// Поэтому реализовывать этот метод не требуется.
     /// </summary>
+    //TODO Убрать тогда RPC метод OnImpulse? И вообще из общего интерфейса этот метод мб? (Если можно)
     public void OnImpulse(Character character, Vector2 impulse) { }
 }
