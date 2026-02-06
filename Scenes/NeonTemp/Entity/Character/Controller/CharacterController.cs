@@ -17,6 +17,9 @@ public class CharacterController
     
     private readonly Character _character;
     private readonly CharacterSynchronizer _synchronizer;
+    
+    //TODO del
+    public float ForceCoef = 1f;
 
     public CharacterController(Character character, CharacterSynchronizer synchronizer, IController controller = null)
     {

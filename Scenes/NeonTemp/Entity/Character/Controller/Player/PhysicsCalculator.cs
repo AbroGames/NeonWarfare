@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Godot;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
@@ -14,6 +15,7 @@ public class PhysicsCalculator
     //TODO Ну и в целом если я смогу добиться быстрой остановки управлением, то перестанут работать взрывы.
     //TODO Мб всё таки сделать костыль который при превышении макс скорости режет управление на 50-90% ? Типа ты не касаешься земли.
     //TODO Или удаляет GroundFriction совсем. А в обычной ситуации завысить его.
+    //TODO Можно через функцию аналогично максимальной скорости рассчитать текущий лаг при развороте, и посчитать для других значений: лаг при развороте, макс скорость, дистанцию отбрасывания, макс. скорость при отбрасывании 
     private readonly float _force = 5000.0f; //TODO Вычислять динамически
     private const float GroundFriction = 2000.0f;
     private const float AirFriction = 0.04f;
@@ -21,12 +23,17 @@ public class PhysicsCalculator
 
     public Vector2 LastPredictionVelocity { get; private set; } = Vector2.Zero;
     
+    //TODO Насколько эта функция быстрая? Стоит оптимизировать? Нагрузка на сервер 20-60% TPS, на клиент 3-15% TPS при кол-ве юнитов 10-300
+    //TODO Как будто просчёт коллизий должен быть абсолютно одинаковым и там и там, почему сервер потребляет больше?
+    //TODO Потому что на сервере юниты пытаются ехать, а на клиент они передают нулевую скорость?
+    //TODO Но для 300 стоячих юнитов нагрузка на сервер тоже выше: 33% против 14%. При этом каждые 2-4 секунды прыжок до 70%. Для 10 юнитов нагрузка одинаковая: 4%.
+    //TODO Надо подебажить и попрофайлить, попытаться понять в чём дело.
     public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, Vector2 movementInput)
     {
         PhysicsPrediction prediction = CalculateAnalyticMotion(
             LastPredictionVelocity,
             movementInput,
-            _force,
+            _force * character.Controller.ForceCoef,
             character.Mass,
             GroundFriction,
             AirFriction, // Важно: сюда передавать "чистый" коэффициент, без умножения на V^2
@@ -137,7 +144,8 @@ public class PhysicsCalculator
         // Берем направление от Векторного шага, а длину от Аналитического шага
         Vector2 finalVelocity = velocityTemp.Normalized() * finalSpeed;
 
-        // Расчет позиции (метод трапеций для точности)
+        // Расчет позиции (метод трапеций для точности, т.к. при линейном изменении скорости,
+        // можем считать, расстояние будет пройдено со средней скоростью между начальной и конечной)
         Vector2 positionOffset = (currentVelocity + finalVelocity) * 0.5f * delta;
 
         return new PhysicsPrediction 
@@ -188,7 +196,7 @@ public class PhysicsCalculator
     
     private struct PhysicsPrediction
     {
-        public Vector2 NewVelocity;
-        public Vector2 PositionOffset; // Насколько сдвинемся за этот кадр
+        public Vector2 NewVelocity; // Скорость на новой позиции в конце кадра
+        public Vector2 PositionOffset; // Расстояние, на которое сдвинемся за этот кадр
     }
 }
