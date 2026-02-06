@@ -9,6 +9,7 @@ namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
 /// т.к. источником данных может выступать как <c>CharacterController</c> на стороне сервера, так и на стороне клиента.<br/>
 /// Поэтому части методов необходимо иметь параметр <c>syncToClient</c>, чтобы избежать циклической синхронизации.
 /// </summary>
+//TODO Очень много сложностей с AddImpulse, с AddBlock, с SetController в одиночной игре (подробней в MapSurface). Может всё-таки попробовать разбить на два класса? Или хотя бы сделать Фасад для сервера и клиента.
 public class CharacterController
 {
     public IController CurrentController { get; private set; }

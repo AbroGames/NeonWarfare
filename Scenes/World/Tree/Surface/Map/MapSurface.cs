@@ -96,10 +96,6 @@ public partial class MapSurface : Node2D
         character.Position = Vec2(x, y);
         this.AddChildWithUniqueName(character, "Character");
 
-        // Телепорт необходим, чтобы клиент при спауне не отправил на сервер координаты (0;0) через контроллер и не сбрасывал позицию на сервере
-        // Отправка координат (0;0) происходит из-за того, что для Character отключен синк Position в MultiplayerSynchronizer
-        // Для ботов это позволяет избежать рывка с коориднат (0;0) при спавне
-
         //TODO Сейчас дергается бот на клиенте при спавне! Он летит из (0;0). Надо либо вернуть обратно эту функцию на просто установку Character.Position,
         //TODO либо подебажить как в обоих реализациях работает телепорт по среди игры, а не только в момент спауна (для этого на кнопку Тест 1 ищет Character игрока/бота в мире и телепортируем его на фиксированную позицию) 
         //TODO Подсказка: игрок имеет имя Character-1-3, а бот Character-1-4
@@ -107,7 +103,6 @@ public partial class MapSurface : Node2D
         //TODO В доку: для избежания появления юнита на кадр в корах 0;0 и для следов (интерполяции) при телепорте, мы в Ready отключаем интерполяцию на 1 кадр, а Position синхроним через MpSync при спавне
         //TODO Но это +1 нода, так что возможно стоит спавнить юнитов, передавая коры при спавне, через RPC (но тогда мы не увидим других игроков при подключении??!)
         //TODO или через MpSpawner.SpawnFunction + MpSpawner.Spawn в byte[] через сериализатор (протестить как работает синк при подключении игрока по ходу игры), код тут https://gemini.google.com/app/21c0306cc9a7fccb
-        //character.Controller.Teleport(character.Position);
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MovementSpeed, 200));
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.RotationSpeed, 360));
         return character;

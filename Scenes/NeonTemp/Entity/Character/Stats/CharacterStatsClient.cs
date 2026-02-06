@@ -29,24 +29,28 @@ public class CharacterStatsClient
 
     public void OnDamage(Character damager, double value, double absorbByArmor, double newHp)
     {
-        
+        Hp = newHp;
     }
     
     public void OnHeal(Character healer, double value, double newHp, double newDutyHp)
     {
-        
+        Hp = newHp;
+        DutyHp = newDutyHp;
     }
     
     public void OnKill(Character killer)
     {
-        
+        IsDead = true;
+        Hp = 0;
     }
 
     public void OnResurrect(Character resurrector)
     {
-        
+        IsDead = false;
+        Hp = 0;
     }
 
+    //TODO Коммент по логике работы, чем это отличается от CharacterStats
     public void OnStatUpdate(CharacterStat stat, double additive, double multiplicative)
     {
         if (_addedStats.TryGetValue(stat, out var addedStat))
@@ -84,6 +88,7 @@ public class CharacterStatsClient
     public double SkillCritModifier => Mathf.Max(GetRawStat(CharacterStat.SkillCritModifier), 0);
     #endregion
     
+    //TODO CharacterSynchronizer?? Он не вызывает эти методы. Аналогичные методы есть в CharacterStats
     #region Proxy methods for CharacterSynchronizer
     public double GetRawStatValue(CharacterStat stat, StatModifier<CharacterStat>.ModifierType type) => _statModifiersContainer.GetStatValue(stat, type);
     public double GetRawStat(CharacterStat stat, double baseValue = 0) => _statModifiersContainer.GetStat(stat, baseValue);

@@ -30,6 +30,16 @@ public class PhysicsCalculator
     //TODO Надо подебажить и попрофайлить, попытаться понять в чём дело.
     public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, Vector2 movementInput)
     {
+        //TODO Из-за того, что клиент и сервер считают физику только чатси юнитов, масса как будто больше не работает при таранах и ничего не делает. Force по прежнему работает.
+        //TODO На большой скорости (например, текущие настройки) игрок проскакивает сквозь врага. Скорее всего из-за того, что игрок у себя таранит врага, но на сервере враг таранится медленней и у игрока происходит телепорт врага в старую позицию.
+        //TODO Потенциально может помочь увеличение дистанции ТП, но это негативно повлияет на все остальные кейсы рассинхрона.
+        //TODO Создать задачу и потестить. Понять что делать с физикой. Мб не нужен Force параметр игроку, а только конечная скорость, которая преобразуется в Force.
+        // if (Net.IsClient())
+        // {
+        //     character.Mass = 10;
+        //     character.Controller.ForceCoef = 5;
+        // }
+        
         PhysicsPrediction prediction = CalculateAnalyticMotion(
             LastPredictionVelocity,
             movementInput,
@@ -91,15 +101,9 @@ public class PhysicsCalculator
         // Импульс трения за кадр не должен превышать текущий импульс тела
         Vector2 impulseLimit = -(currentVelocity * mass) / delta; 
         
-        Vector2 appliedGroundFriction;
-        if (maxGroundFriction.LengthSquared() > impulseLimit.LengthSquared())
-        {
-            appliedGroundFriction = impulseLimit; // Полная остановка от трения
-        }
-        else
-        {
-            appliedGroundFriction = maxGroundFriction;
-        }
+        Vector2 appliedGroundFriction = maxGroundFriction.LengthSquared() > impulseLimit.LengthSquared() ? 
+            impulseLimit : // Полная остановка от трения
+            maxGroundFriction;
 
         // 3. Промежуточная скорость (V_temp)
         // Это скорость, которая БЫЛА БЫ, если бы не было воздуха.
