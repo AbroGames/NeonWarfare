@@ -2,14 +2,14 @@
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 
-public class AiBattleControllerLogic : IAiControllerLogic
+public class AiMoveControllerLogic : IAiControllerLogic
 {
 
-    public Vector2 Direction = Vec2(0, 0);
+    public Vector2 TargetPosition = Vec2(0, 0);
     
     public Vector2 GetMovementInput(Character character)
     {
-        return Direction;
+        return (TargetPosition - character.Position).Normalized();
     }
 
     public Vector2 GetGlobalRotatePosition(Character character)

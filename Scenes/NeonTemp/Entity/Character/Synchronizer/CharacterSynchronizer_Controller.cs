@@ -59,6 +59,14 @@ public partial class CharacterSynchronizer
     {
         _controller.Teleport(position, false);
     }
+    
+    public void Controller_AddImpulse(Vector2 impulse) => 
+        Rpc(MethodName.Controller_AddImpulseRpc, impulse);
+    [Rpc(CallLocal = false)]
+    private void Controller_AddImpulseRpc(Vector2 impulse)
+    {
+        _controller.AddImpulse(impulse, false);
+    }
 
     public void Controller_SendMovement(IController.MovementData movementData) => 
         Rpc(MethodName.Controller_SendMovementRpc, MessagePackSerializer.Serialize(movementData));

@@ -15,6 +15,7 @@ public partial class CharacterSynchronizer
         _statsClient = character.StatsClient;
     }
     
+    //TODO В доку, что здесь не должно быть никакой логики кроме сетевой
     public void Stats_OnStatUpdate(CharacterStat stat, double additive, double multiplicative) => 
         Rpc(MethodName.Stats_OnStatUpdateRpc, (int) stat, additive, multiplicative);
     [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsCache)]
@@ -30,7 +31,6 @@ public partial class CharacterSynchronizer
     private void Stats_OnDamageRpc(string damager, double value, double absorbByArmor, double newHp)
     {
         if (!Net.IsClient()) return;
-        _statsClient.Hp = newHp;
         _statsClient.OnDamage(GetNodeOrNull<Character>(damager), value, absorbByArmor, newHp);
     }
     
@@ -40,8 +40,6 @@ public partial class CharacterSynchronizer
     private void Stats_OnHealRpc(string healer, double value, double newHp, double newDutyHp)
     {
         if (!Net.IsClient()) return;
-        _statsClient.Hp = newHp;
-        _statsClient.DutyHp = newDutyHp;
         _statsClient.OnHeal(GetNodeOrNull<Character>(healer), value, newHp, newDutyHp);
     } 
     
@@ -51,8 +49,6 @@ public partial class CharacterSynchronizer
     private void Stats_OnKillRpc(string killer)
     {
         if (!Net.IsClient()) return;
-        _statsClient.IsDead = true;
-        _statsClient.Hp = 0;
         _statsClient.OnKill(GetNodeOrNull<Character>(killer));
     }
 
@@ -62,8 +58,6 @@ public partial class CharacterSynchronizer
     private void Stats_OnResurrectRpc(string resurrector)
     {
         if (!Net.IsClient()) return;
-        _statsClient.IsDead = false;
-        _statsClient.Hp = 0;
         _statsClient.OnResurrect(GetNodeOrNull<Character>(resurrector));
     }
 }

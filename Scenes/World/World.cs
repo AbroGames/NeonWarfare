@@ -2,6 +2,9 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.World.Data;
 using NeonWarfare.Scenes.World.Data.MapPoint;
 using NeonWarfare.Scenes.World.PackedScenes;
@@ -43,11 +46,17 @@ public partial class World : Node2D
     {
         _log.Warning("Test 1 RPC called");
         
-        Tree.MapSurface.AddChildWithUniqueName(Factory.Create<MapPoint, MapPointData>(data =>
+        //TODO del
+        Tree.MapSurface.AddBotCharacter(100, 100, new AiBattleControllerLogic
+        {
+            Direction = Vector2.Right
+        });
+        
+        /*Tree.MapSurface.AddChildWithUniqueName(Factory.Create<MapPoint, MapPointData>(data =>
         {
             data.PositionX = Random.Shared.Next(0, 600);
             data.PositionY = Random.Shared.Next(0, 600);
-        }), "MapPoint");
+        }), "MapPoint");*/
     }
     
     public void Test2() => RpcId(ServerId, MethodName.Test2Rpc);
@@ -55,6 +64,12 @@ public partial class World : Node2D
     private void Test2Rpc()
     {
         _log.Warning("Test 2 RPC called");
+        
+        //TODO del
+        Tree.MapSurface.AddBotCharacter(1000, 100, new AiBattleControllerLogic
+        {
+            Direction = Vector2.Left
+        });
     }
     
     public void Test3() => RpcId(ServerId, MethodName.Test3Rpc);
@@ -62,6 +77,15 @@ public partial class World : Node2D
     private void Test3Rpc()
     {
         _log.Warning("Test 3 RPC called");
+
+        //TODO del
+        for (int i = 0; i < 50; i++)
+        {
+            Tree.MapSurface.AddBotCharacter(500, 500, new AiMoveControllerLogic
+            {
+                TargetPosition = new Vector2(500, 500)
+            });
+        }
     }
     
     //TODO Переделать на нормальный метод запроса сохранения с клиента на сервер, с проверкой прав

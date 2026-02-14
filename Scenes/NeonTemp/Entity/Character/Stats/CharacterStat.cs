@@ -6,6 +6,7 @@ public enum CharacterStat {
     
     Armor, // hp (damage limit)
     ArmorAbsorption, // [0;1] percent
+    ReceivingHeal, // hp 
         
     MovementSpeed, // px/sec
     RotationSpeed, // deg/sec

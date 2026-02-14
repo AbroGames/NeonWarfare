@@ -25,6 +25,7 @@ public static class Keys
     public static readonly StringName AbilityAdvanced = "KeyAbilityAdvanced";
     
     // UI
+    //TODO Вынести куда-то? Оставить здесь только действия связанные с управлением Character-ом?
     public static readonly StringName Chat = "KeyChat";
     public static readonly StringName Enter = "KeyEnter";
     public static readonly StringName Cancel = "KeyCancel";

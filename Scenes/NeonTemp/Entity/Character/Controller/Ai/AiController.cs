@@ -17,21 +17,21 @@ public class AiController : PlayerController
 
     protected override Vector2 GetMovementInput(Character character)
     {
-        return Services.Rand.UnitVector * 0.3f;
+        return _logic.GetMovementInput(character);
     }
     
     protected override Vector2 GetGlobalRotatePosition(Character character)
     {
-        return character.Position + Services.Rand.UnitVector * 10;
+        return _logic.GetGlobalRotatePosition(character);
     }
 
     protected override double GetMovementSpeed(Character character)
     {
-        return character.Stats.MovementSpeed;
+        return _logic.GetMovementSpeed(character);
     }
     
     protected override double GetRotationSpeed(Character character)
     {
-        return character.Stats.RotationSpeed;
+        return _logic.GetRotationSpeed(character);
     }
 }
