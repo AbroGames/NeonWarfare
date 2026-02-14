@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using KludgeBox.Reflection.Access;
 using static MessagePack.MessagePackSerializer;
 
 namespace NeonWarfare.Scenes.World.Data;
@@ -12,9 +12,9 @@ public class WorldDataSerializer(WorldPersistenceData worldData)
     {
         Dictionary<string, byte[]> map = new();
 
-        ProcessSerializableMembers((member, serializable) =>
+        ProcessSerializableMembers((memberAccessor, serializable) =>
         {
-            map[member.Name] = serializable.SerializeStorage();
+            map[memberAccessor.Member.Name] = serializable.SerializeStorage();
         });
 
         return Serialize(map);
@@ -24,45 +24,26 @@ public class WorldDataSerializer(WorldPersistenceData worldData)
     {
         Dictionary<string, byte[]> map = Deserialize<Dictionary<string, byte[]>>(worldDataBytes);
 
-        ProcessSerializableMembers((member, serializable) =>
+        ProcessSerializableMembers((memberAccessor, serializable) =>
         {
-            if (map.ContainsKey(member.Name))
+            if (map.ContainsKey(memberAccessor.Member.Name))
             {
-                serializable.DeserializeStorage(map[member.Name]);
+                serializable.DeserializeStorage(map[memberAccessor.Member.Name]);
                 serializable.SetAllPropertyListeners();
             }
         });
     }
-    
-    private IEnumerable<MemberInfo> GetAllMembers(Type type)
-    {
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-        return type.GetMembers(bindingFlags);
-    }
 
-    private void ProcessSerializableMembers(Action<MemberInfo, ISerializableStorage> action)
+    private void ProcessSerializableMembers(Action<IMemberAccessor, ISerializableStorage> action)
     {
-        foreach (var member in GetAllMembers(worldData.GetType()))
+        var memberAccessors = Scripts.Services.MembersScanner.ScanMembers(worldData.GetType());
+        foreach (var memberAccessor in memberAccessors)
         {
-            var value = GetMemberValue(member, worldData);
+            var value = memberAccessor.GetValue(worldData);
             if (value is ISerializableStorage serializable)
             {
-                action(member, serializable);
+                action(memberAccessor, serializable);
             }
         }
-    }
-    
-    private object GetMemberValue(MemberInfo member, object target)
-    {
-        if (member is PropertyInfo prop && prop.CanRead && prop.CanWrite)
-        {
-            return prop.GetValue(target);
-        }
-        if (member is FieldInfo field)
-        {
-            return field.GetValue(target);
-        }
-
-        return null;
     }
 }
