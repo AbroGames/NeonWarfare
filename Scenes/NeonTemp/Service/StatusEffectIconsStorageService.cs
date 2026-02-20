@@ -3,7 +3,7 @@
 //TODO В сервисы, где остальные сервисы GodotTemplate
 public class StatusEffectIconsStorageService
 {
-    public static string DefaultSimpleStatusEffect = "DefaultSimpleStatusEffect";
-    public static string DefaultSimpleTempStatusEffect = "DefaultSimpleTempStatusEffect";
-    public static string DefaultSimpleConditionStatusEffect = "DefaultSimpleConditionStatusEffect";
+    public const string DefaultSimpleStatusEffect = "DefaultSimpleStatusEffect";
+    public const string DefaultSimpleTempStatusEffect = "DefaultSimpleTempStatusEffect";
+    public const string DefaultSimpleConditionStatusEffect = "DefaultSimpleConditionStatusEffect";
 }

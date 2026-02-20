@@ -27,6 +27,9 @@ public class CharacterStatsClient
         _synchronizer = synchronizer;
     }
 
+    //TODO Передавать сюда или в какой-то ивент (но зачем дублировать?) направление урона (направление снаряда или направление взрыва)
+    // Координаты не нужны, т.к. точка урона всегда будет на границе коллайдера и можно вычислить её по направлению.
+    // В идеале проверку на факт урона (получаемый и наносимый) вообще на клиенте делать, а расчёты цифр на сервере, и тогда ничего не надо передавать
     public void OnDamage(Character damager, double value, double absorbByArmor, double newHp)
     {
         Hp = newHp;
@@ -88,7 +91,7 @@ public class CharacterStatsClient
     public double SkillCritModifier => Mathf.Max(GetRawStat(CharacterStat.SkillCritModifier), 0);
     #endregion
     
-    //TODO CharacterSynchronizer?? Он не вызывает эти методы. Аналогичные методы есть в CharacterStats
+    //TODO "for CharacterSynchronizer"?? Он не вызывает эти методы. Аналогичные методы есть в CharacterStats
     #region Proxy methods for CharacterSynchronizer
     public double GetRawStatValue(CharacterStat stat, StatModifier<CharacterStat>.ModifierType type) => _statModifiersContainer.GetStatValue(stat, type);
     public double GetRawStat(CharacterStat stat, double baseValue = 0) => _statModifiersContainer.GetStat(stat, baseValue);
