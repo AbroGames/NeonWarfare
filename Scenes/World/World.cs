@@ -1,17 +1,13 @@
-﻿using System;
-using Godot;
+﻿using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.World.Data;
-using NeonWarfare.Scenes.World.Data.MapPoint;
 using NeonWarfare.Scenes.World.PackedScenes;
 using NeonWarfare.Scenes.World.Services;
 using NeonWarfare.Scenes.World.Services.PersistenceFactory;
 using NeonWarfare.Scenes.World.Tree;
-using NeonWarfare.Scenes.World.Tree.Entity.Building;
 using Serilog;
 using WorldStartStopService = NeonWarfare.Scenes.World.Services.StartStop.WorldStartStopService;
 
@@ -66,10 +62,12 @@ public partial class World : Node2D
         _log.Warning("Test 2 RPC called");
         
         //TODO del
-        Tree.MapSurface.AddBotCharacter(1000, 100, new AiBattleControllerLogic
+        Character bot = Tree.MapSurface.AddBotCharacter(1000, 100, new AiBattleControllerLogic
         {
             Direction = Vector2.Left
         });
+        bot.Mass *= 10;
+        bot.Controller.ForceCoef *= 4;
     }
     
     public void Test3() => RpcId(ServerId, MethodName.Test3Rpc);
