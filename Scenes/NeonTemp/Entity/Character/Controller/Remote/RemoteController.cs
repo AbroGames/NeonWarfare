@@ -1,5 +1,4 @@
-﻿using System;
-using Godot;
+﻿using Godot;
 using KludgeBox.Core.Cooldown;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
