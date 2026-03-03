@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
+namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects;
 
 public class CharacterStatusEffectsClient
 {
-    public ReadOnlyDictionary<int, AbstractClientStatusEffect> StatusEffectByClientId => new(_clientStatusEffectByClientId);
-    private readonly Dictionary<int, AbstractClientStatusEffect> _clientStatusEffectByClientId = new();
+    public ReadOnlyDictionary<int, ClientStatusEffect> StatusEffectByClientId => new(_clientStatusEffectByClientId);
+    private readonly Dictionary<int, ClientStatusEffect> _clientStatusEffectByClientId = new();
 
     private readonly Character _character;
     private readonly CharacterSynchronizer _synchronizer;
@@ -21,7 +21,7 @@ public class CharacterStatusEffectsClient
         _synchronizer = synchronizer;
     }
     
-    public void OnAddStatusEffect(int clientId, AbstractClientStatusEffect clientStatusEffect)
+    public void OnAddStatusEffect(int clientId, ClientStatusEffect clientStatusEffect)
     {
         if (_clientStatusEffectByClientId.ContainsKey(clientId))
         {
@@ -42,7 +42,7 @@ public class CharacterStatusEffectsClient
     
     public void OnPhysicsProcess(double delta)
     {
-        foreach (AbstractClientStatusEffect statusEffect in _clientStatusEffectByClientId.Values)
+        foreach (ClientStatusEffect statusEffect in _clientStatusEffectByClientId.Values)
         {
             statusEffect.OnClientPhysicsProcess(delta);
         }
