@@ -44,7 +44,7 @@ public partial class CharacterSynchronizer
     } 
     
     public void Stats_OnKill(Character killer) => 
-        Rpc(killer.GetPath().ToString(), MethodName.Stats_OnKillRpc);
+        Rpc(MethodName.Stats_OnKillRpc, killer.GetPath().ToString());
     [Rpc(CallLocal = true)]
     private void Stats_OnKillRpc(string killer)
     {
@@ -53,7 +53,7 @@ public partial class CharacterSynchronizer
     }
 
     public void Stats_OnResurrect(Character resurrector) => 
-        Rpc(resurrector.GetPath().ToString(), MethodName.Stats_OnResurrectRpc);
+        Rpc(MethodName.Stats_OnResurrectRpc, resurrector.GetPath().ToString());
     [Rpc(CallLocal = true)]
     private void Stats_OnResurrectRpc(string resurrector)
     {

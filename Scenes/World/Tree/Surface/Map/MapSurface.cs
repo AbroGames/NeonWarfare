@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Remote;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.Impl;
 
 namespace NeonWarfare.Scenes.World.Tree.Surface.Map;
 
@@ -76,6 +77,11 @@ public partial class MapSurface : Node2D
         //TODO В синглплеерной игре порядок имеет значение?
         player.Controller.SetController(new RemoteController());
         player.Controller.SetControllerToClient(peerId, new PlayerController());
+
+        player.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MaxHp, 100));
+        player.Stats.Heal(player, player.Stats.MaxHp);
+        //var effect = new PoisonStatusEffect.Builder().Id("Poison").Time(100).PoisonTime(1).PoisonValue(10).Build();
+        //player.StatusEffects.AddStatusEffect(effect, player);
         
         //Character bot = AddCharacter(450, 250);
         //bot.Controller.SetController(new AiController(new AiObserveControllerLogic()));
