@@ -1,5 +1,5 @@
 ﻿using Godot;
-using NeonWarfare.Scenes.World.Services;
+using NeonWarfare.Scenes.World.Service;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
 
