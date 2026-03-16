@@ -4,7 +4,7 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Network;
 
-public partial class Network : Node
+public partial class Network(Node multiplayerRoot) : Node
 {
 
     public static readonly int MaxSyncPacketSize = 1350 * 100;
@@ -17,6 +17,10 @@ public partial class Network : Node
     public override void _Ready()
     {
         Di.Process(this);
+        
+        // Setup new Multiplayer object for guaranteed removing all old links and lambdas to old Multiplayer
+        // This multiplayer link to node Game (multiplayerRoot) and will be removed after move to MainMenu
+        GetTree().SetMultiplayer(new SceneMultiplayer(), multiplayerRoot.GetPath());
         
         Api = GetMultiplayer();
         Api.ConnectedToServer += ConnectedToServerEvent;
@@ -38,11 +42,11 @@ public partial class Network : Node
     {
         if (!StateMachine.CanInitialize)
         {
-            _log.Error($"Can't initialize network in current state: {StateMachine.CurrentState}");
+            _log.Error("Can't initialize network in current state: {state}", StateMachine.CurrentState);
             return Error.AlreadyInUse;
         }
         
-        _log.Information($"Connecting to the server at {host}:{port}");
+        _log.Information("Connecting to the server at {host}:{port}", host, port);
 
         StateMachine.SetState(NetworkStateMachine.State.Connecting);
         var peer = new ENetMultiplayerPeer();
@@ -51,7 +55,7 @@ public partial class Network : Node
 		
         if (error != Error.Ok)
         {
-            _log.Error($"Failed to connect to the server: {error}");
+            _log.Error("Failed to connect to the server: {error}", error);
         }
         return error; 
     }
@@ -70,11 +74,11 @@ public partial class Network : Node
     {
         if (!StateMachine.CanInitialize)
         {
-            _log.Error($"Can't initialize network in current state: {StateMachine.CurrentState}");
+            _log.Error("Can't initialize network in current state: {state}", StateMachine.CurrentState);
             return Error.AlreadyInUse;
         }
         
-        _log.Information($"Starting server on port {port}");
+        _log.Information("Starting server on port {port}", port);
         
         StateMachine.SetState(NetworkStateMachine.State.Hosting);
         var peer = new ENetMultiplayerPeer();
@@ -89,7 +93,7 @@ public partial class Network : Node
         }
         else
         {
-            _log.Error($"Failed to start server: {error}");
+            _log.Error("Failed to start server: {error}", error);
         }
         
         return error;
@@ -99,7 +103,7 @@ public partial class Network : Node
     {
         if (!StateMachine.IsServer)
         {
-            _log.Error($"Can't open server in current state: {StateMachine.CurrentState}");
+            _log.Error("Can't open server in current state: {state}", StateMachine.CurrentState);
             return;
         }
         
@@ -118,9 +122,12 @@ public partial class Network : Node
             _log.Information("Shutting down network...");
 
             Api.MultiplayerPeer.RefuseNewConnections = true;
-            foreach (var peer in Api.GetPeers())
+            if (StateMachine.IsServer)
             {
-                Api.MultiplayerPeer.DisconnectPeer(peer);
+                foreach (var peer in Api.GetPeers())
+                {
+                    Api.MultiplayerPeer.DisconnectPeer(peer);
+                }
             }
             Api.MultiplayerPeer.Close();
             Api.MultiplayerPeer = new OfflineMultiplayerPeer();
@@ -133,7 +140,7 @@ public partial class Network : Node
     private void ConnectedToServerEvent()
     {
         StateMachine.SetState(NetworkStateMachine.State.Connected);
-        _log.Information($"Connected to the server successfully. My peer id: {Api.GetUniqueId()}");
+        _log.Information("Connected to the server successfully. My peer id: {id}", Api.GetUniqueId());
     }
 
     private void ConnectionFailedEvent()
@@ -154,11 +161,11 @@ public partial class Network : Node
     
     private void PeerConnectedEvent(long id)
     {
-        _log.Debug($"Network peer connected: {id}");
+        _log.Information("Network peer connected: {id}", id);
     }
     
     private void PeerDisconnectedEvent(long id)
     {
-        _log.Debug($"Network peer disconnected: {id}");
+        _log.Information("Network peer disconnected: {id}", id);
     }
 }

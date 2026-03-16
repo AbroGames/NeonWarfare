@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://oioixqldjyt1"]
+[gd_scene format=3 uid="uid://oioixqldjyt1"]
 
 [ext_resource type="Script" uid="uid://d3dhctucbogs0" path="res://Scenes/Screen/MainMenu/Pages/Settings/MainMenuSettingsPage.cs" id="1_q7ooi"]
 
-[node name="MainMenuSettingsPage" type="Control"]
+[node name="MainMenuSettingsPage" type="Control" unique_id=1914381625]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_q7ooi")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1747378046]
 custom_minimum_size = Vector2(400, 150)
 layout_mode = 1
 anchors_preset = 8
@@ -27,29 +27,37 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1823891548]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="NickLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="NickLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=2103718003]
 layout_mode = 2
-text = "Nick:"
+text = "SETTING_MENU__NICK"
 
-[node name="NickTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="NickTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer" unique_id=477216821]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ColorLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="ColorLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=889190456]
 layout_mode = 2
-text = "Color:"
+text = "SETTING_MENU__COLOR"
 
-[node name="ColorTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="ColorTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer" unique_id=845883721]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="SaveReturnButton" type="Button" parent="VBoxContainer"]
+[node name="LanguageLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1255857508]
+layout_mode = 2
+text = "SETTING_MENU__LANGUAGE"
+
+[node name="LanguageOptionButton" type="OptionButton" parent="VBoxContainer/HBoxContainer" unique_id=1708316424]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SaveReturnButton" type="Button" parent="VBoxContainer" unique_id=131771098]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Save and return"
+text = "SETTING_MENU__SAVE_BUTTON"

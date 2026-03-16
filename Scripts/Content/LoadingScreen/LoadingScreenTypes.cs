@@ -6,20 +6,20 @@ public static class LoadingScreenTypes
 {
     public enum Type
     {
+        Loading,
         Connecting, 
-        WaitingSyncing, 
-        Loading
+        WaitingSyncing
     }
 
-    private static readonly Dictionary<Type, string> LoadingScreenTextByType = new()
+    private static readonly Dictionary<Type, string> LoadingScreenTextKeyByType = new()
     {
-        { Type.Connecting, "Connecting to server" },
-        { Type.Loading, "Loading" },
-        { Type.WaitingSyncing, "Wait for the synchronization ends" }
+        { Type.Loading, "LOADING_SCREEN__LOADING" },
+        { Type.Connecting, "LOADING_SCREEN__CONNECTING" },
+        { Type.WaitingSyncing, "LOADING_SCREEN__WAITING_SYNCING" }
     };
 
     public static string GetLoadingScreenText(Type loadingScreenType)
     {
-        return LoadingScreenTextByType[loadingScreenType];
+        return Services.I18N.Tr(LoadingScreenTextKeyByType[loadingScreenType]);
     }
 }

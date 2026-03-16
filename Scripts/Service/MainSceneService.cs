@@ -1,18 +1,20 @@
 ﻿using Godot;
 using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Starters;
-using MainMenu = NeonWarfare.Scenes.Screen.MainMenu.MainMenu;
+using NeonWarfare.Scenes.KludgeBox;
+using NeonWarfare.Scenes.Screen.MainMenu;
+using NeonWarfare.Scenes.Screen.MainMenu.Pages.Message;
 
 namespace NeonWarfare.Scripts.Service;
 
 public class MainSceneService
 {
     
-    private Scenes.KludgeBox.NodeContainer _mainSceneContainer;
+    private NodeContainer _mainSceneContainer;
     private PackedScene _gamePackedScene;
     private PackedScene _mainMenuPackedScene;
 
-    public void Init(Scenes.KludgeBox.NodeContainer mainSceneContainer, PackedScene gamePackedScene, PackedScene mainMenuPackedScene)
+    public void Init(NodeContainer mainSceneContainer, PackedScene gamePackedScene, PackedScene mainMenuPackedScene)
     {
         _mainSceneContainer = mainSceneContainer;
         _gamePackedScene = gamePackedScene;
@@ -24,14 +26,24 @@ public class MainSceneService
         MainMenu mainMenu = _mainMenuPackedScene.Instantiate<MainMenu>();
         _mainSceneContainer.ChangeStoredNode(mainMenu);
     }
+
+    public void StartMainMenu(string message)
+    {
+        StartMainMenu();
+        MainMenu mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
+        
+        // We must call this section after adding MainMenu to tree, because otherwise we can't access mainMenu.PackedScenes field
+        mainMenu.ChangeMenuPage(mainMenu.PackedScenes.Message);
+        mainMenu.MenuContainer.GetCurrentStoredNode<MainMenuMessagePage>().MessageLabel.Text = message;
+    }
     
-    public void StartSingleplayerGame()
+    public void StartSingleplayerGame(string saveFileName = null)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new SingleplayerGameStarter());
+        game.Init(new SingleplayerGameStarter(saveFileName));
     }
     
     public void ConnectToMultiplayerGame(string host = null, int? port = null)
@@ -81,13 +93,8 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid));
-        
+        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, !gameRender));
         Services.LoadingScreen.Clear();
-        if (!gameRender.HasValue || !gameRender.Value)
-        {
-            //TODO Show GUI with stats
-        }
     }
 
     public bool MainSceneIsMainMenu()
@@ -102,7 +109,8 @@ public class MainSceneService
     
     public void Shutdown()
     {
-        _mainSceneContainer.GetTree().Root.PropagateNotification((int) Node.NotificationExitTree); // Notify all nodes about game closing
-        _mainSceneContainer.GetTree().Quit();
+        Callable.From(() => { 
+            _mainSceneContainer.GetTree().Quit();
+        }).CallDeferred();
     }
 }

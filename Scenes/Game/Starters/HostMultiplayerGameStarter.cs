@@ -1,12 +1,15 @@
 ﻿using Godot;
-using KludgeBox.Godot.Nodes.Process;
 using NeonWarfare.Scripts.Content.LoadingScreen;
-using NeonWarfare.Scripts.Service.Settings;
+using Humanizer;
+using KludgeBox.Godot.Nodes.Process;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class HostMultiplayerGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null) : BaseGameStarter
+public class HostMultiplayerGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? serverHud = null) : BaseGameStarter
 {
+    
+    private const string HostingFailedMessage = "Failed to start server: {0}";
+    
     public override void Init(Game game)
     {
         base.Init(game);
@@ -21,35 +24,27 @@ public class HostMultiplayerGameStarter(int? port = null, string saveFileName = 
             game.AddChild(clientDeadChecker);
         }
         
-        PlayerSettings playerSettings = Services.PlayerSettings.GetPlayerSettings();
-        World.World world = game.AddWorld();
-        Synchronizer synchronizer = game.AddSynchronizer(playerSettings);
-        game.AddHud(); //Net.DoClient(() => game.AddHud()); //TODO Вернуть!
         Network.Network network = game.AddNetwork();
+        World.World world = game.AddWorld();
+        Net.DoClient(() => game.AddHud());
+
+        if (serverHud.HasValue && serverHud.Value)
+        {
+            world.SetVisible(false);
+            game.AddServerHud();
+        }
         
         Error error = network.HostServer(port ?? DefaultPort, true);
         if (error != Error.Ok)
         {
-            Net.DoClient(HostFailedEventOnClient);
+            Net.DoClient(() => HostingFailedEventOnClient(error));
             return;
         }
 
-        if (saveFileName == null)
-        {
-            world.StartStopService.StartNewGame(adminNickname);
-        }
-        else
-        {
-            world.StartStopService.LoadGame(saveFileName, adminNickname);
-        }
+        ServerStartWorld(world, saveFileName, adminNickname);
         network.OpenServer();
-        Net.DoClient(synchronizer.StartSyncOnClient);
+        Net.DoClient(() => ClientStartWorld(world));
     }
-    
-    private void HostFailedEventOnClient()
-    {
-        Services.MainScene.StartMainMenu();
-        //TODO Show error in menu (it is client). Log already has error.
-        Services.LoadingScreen.Clear();
-    }
+
+    private void HostingFailedEventOnClient(Error error) => GoToMenuAndShowError(HostingFailedMessage.FormatWith(error));
 }

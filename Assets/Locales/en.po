@@ -1,0 +1,106 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GodotTemplate\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
+msgstr "Start singleplayer"
+
+msgid "MAIN_MENU__CREATE_SERVER_BUTTON"
+msgstr "Create server"
+
+msgid "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
+msgstr "Connect to server"
+
+msgid "MAIN_MENU__SETTINGS_BUTTON"
+msgstr "Settings"
+
+msgid "MAIN_MENU__EXIT_BUTTON"
+msgstr "Exit"
+
+msgid "SINGLEPLAYER_MENU__SAVE_NAME"
+msgstr "Save name:"
+
+msgid "SINGLEPLAYER_MENU__START_BUTTON"
+msgstr "Start game"
+
+msgid "CONNECT_MENU__HOST"
+msgstr "Host:"
+
+msgid "CONNECT_MENU__PORT"
+msgstr "Port:"
+
+msgid "CONNECT_MENU__CONNECT_BUTTON"
+msgstr "Connect to server"
+
+msgid "HOST_MENU__PORT"
+msgstr "Port:"
+
+msgid "HOST_MENU__SAVE_NAME"
+msgstr "Save Name:"
+
+msgid "HOST_MENU__DEDICATED"
+msgstr "Dedicated?"
+
+msgid "HOST_MENU__CREATE_BUTTON"
+msgstr "Create server"
+
+msgid "SETTING_MENU__NICK"
+msgstr "Nick:"
+
+msgid "SETTING_MENU__COLOR"
+msgstr "Color:"
+
+msgid "SETTING_MENU__LANGUAGE"
+msgstr "Language:"
+
+msgid "SETTING_MENU__SAVE_BUTTON"
+msgstr "Save and return"
+
+msgid "MESSAGE_MENU__OK_BUTTON"
+msgstr "Ok"
+
+msgid "MESSAGE_MENU__DEFAULT_ERROR"
+msgstr "Unknown error"
+
+msgid "HUD__CHAT_PLACEHOLDER"
+msgstr "Type a message or command starting with /"
+
+msgid "HUD__CHAT_SEND_BUTTON"
+msgstr "Send"
+
+msgid "HUD__SAVE_BUTTON"
+msgstr "Save"
+
+msgid "HUD__SAVE_FILENAME_PLACEHOLDER"
+msgstr "Filename"
+
+msgid "HUD__EXIT_BUTTON"
+msgstr "Exit"
+
+msgid "HUD__TEST_1_BUTTON"
+msgstr "Test 1"
+
+msgid "HUD__TEST_2_BUTTON"
+msgstr "Test 2"
+
+msgid "HUD__TEST_3_BUTTON"
+msgstr "Test 3"
+
+msgid "HUD__LOG_BUTTON"
+msgstr "Log"
+
+msgid "LOADING_SCREEN__CONNECTING"
+msgstr "Connecting to server"
+
+msgid "LOADING_SCREEN__LOADING"
+msgstr "Loading"
+
+msgid "LOADING_SCREEN__WAITING_SYNCING"
+msgstr "Wait for the synchronization ends"
