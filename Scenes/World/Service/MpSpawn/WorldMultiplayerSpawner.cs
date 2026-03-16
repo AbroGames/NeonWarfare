@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Godot;
-using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 using KludgeBox.Godot.Nodes;
+using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 
 namespace NeonWarfare.Scenes.World.Service.MpSpawn;
 

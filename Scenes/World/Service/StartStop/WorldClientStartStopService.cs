@@ -1,11 +1,11 @@
 ﻿using System;
 using Godot;
-using NeonWarfare.Scenes.World.Service.Performance;
-using NeonWarfare.Scripts.Content.LoadingScreen;
-using NeonWarfare.Scripts.Service.Settings;
 using Humanizer;
 using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.DI.Requests.SceneServiceInjection;
+using NeonWarfare.Scenes.World.Service.Performance;
+using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Service.Settings;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.Service.StartStop;

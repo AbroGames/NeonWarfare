@@ -7,7 +7,6 @@ using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Remote;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.Impl;
 
 namespace NeonWarfare.Scenes.World.Tree.Surface.Map;
 

@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Reflection;
-using NeonWarfare.Scripts.Content.CmdArgs;
 using KludgeBox.Core;
 using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.Logging;
+using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Root.Starters;

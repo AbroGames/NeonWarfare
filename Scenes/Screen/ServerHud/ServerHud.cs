@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using NeonWarfare.Scenes.World.Service.Performance;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scenes.World.Service.Performance;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;

@@ -1,7 +1,7 @@
 ﻿using Godot;
+using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Screen.MainMenu.Pages;
-using KludgeBox.DI.Requests.ChildInjection;
 
 namespace NeonWarfare.Scenes.Screen.MainMenu;
 

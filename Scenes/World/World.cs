@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
+using KludgeBox.DI.Requests.ChildInjection;
+using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.ClientScenes;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 using NeonWarfare.Scenes.World.Service;
+using NeonWarfare.Scenes.World.Service.Chat;
 using NeonWarfare.Scenes.World.Service.Command;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
 using NeonWarfare.Scenes.World.Service.Performance;
 using NeonWarfare.Scenes.World.Service.PersistenceFactory;
 using NeonWarfare.Scenes.World.Service.StartStop;
 using NeonWarfare.Scenes.World.Tree;
-using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
-using NeonWarfare.Scenes.World.Service.Chat;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World;

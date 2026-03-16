@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
@@ -14,7 +15,6 @@ using NeonWarfare.Scenes.World.Service.Performance;
 using NeonWarfare.Scenes.World.Service.PersistenceFactory;
 using NeonWarfare.Scenes.World.Service.StartStop;
 using NeonWarfare.Scenes.World.Tree;
-using KludgeBox.DI.Requests.SceneServiceInjection;
 
 namespace NeonWarfare.Scenes.World.Service;
 

@@ -1,5 +1,5 @@
-﻿using NeonWarfare.Scripts.Content.CmdArgs;
-using KludgeBox.DI.Requests.LoggerInjection;
+﻿using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Root.Starters;

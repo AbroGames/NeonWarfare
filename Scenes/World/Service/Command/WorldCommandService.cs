@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Godot;
-using NeonWarfare.Scenes.World.Service.Chat;
-using NeonWarfare.Scenes.World.Service.Command.Impl;
 using Humanizer;
 using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.DI.Requests.ParentInjection;
 using KludgeBox.DI.Requests.SceneServiceInjection;
+using NeonWarfare.Scenes.World.Service.Chat;
+using NeonWarfare.Scenes.World.Service.Command.Impl;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.Service.Command;

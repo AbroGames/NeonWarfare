@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects;

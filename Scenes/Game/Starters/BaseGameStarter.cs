@@ -1,4 +1,4 @@
-﻿using System; 
+﻿using System;
 using NeonWarfare.Scripts.Service;
 
 namespace NeonWarfare.Scenes.Game.Starters;

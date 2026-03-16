@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using KludgeBox.DI.Requests.ChildInjection;
+using KludgeBox.DI.Requests.SceneServiceInjection;
+using KludgeBox.Godot.Nodes.MpSync;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 using NeonWarfare.Scenes.World.Service;
 using NeonWarfare.Scenes.World.Tree.Surface.Battle;
 using NeonWarfare.Scenes.World.Tree.Surface.Map;
-using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.SceneServiceInjection;
-using KludgeBox.Godot.Nodes.MpSync;
 
 namespace NeonWarfare.Scenes.World.Tree;
 

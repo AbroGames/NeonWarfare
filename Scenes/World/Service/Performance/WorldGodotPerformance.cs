@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
 using Godot;
+using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Tree;
 using NeonWarfare.Scenes.World.Tree.Surface.Battle;
-using KludgeBox.DI.Requests.SceneServiceInjection;
 using GPerf = Godot.Performance;
 
 namespace NeonWarfare.Scenes.World.Service.Performance;

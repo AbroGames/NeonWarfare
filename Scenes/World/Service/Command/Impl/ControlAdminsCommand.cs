@@ -1,5 +1,5 @@
-﻿using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
-using Humanizer;
+﻿using Humanizer;
+using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 
 namespace NeonWarfare.Scenes.World.Service.Command.Impl;
 

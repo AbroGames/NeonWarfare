@@ -1,7 +1,7 @@
 ﻿using Godot;
-using NeonWarfare.Scripts.Content.LoadingScreen;
 using Humanizer;
 using KludgeBox.Godot.Nodes.Process;
+using NeonWarfare.Scripts.Content.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
