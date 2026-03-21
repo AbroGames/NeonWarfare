@@ -23,6 +23,10 @@ config/icon="uid://dxpvi08dfney4"
 
 project/assembly_name="NeonWarfare"
 
+[gui]
+
+theme/custom="uid://cky2ixgrcrnlo"
+
 [input]
 
 KeyUp={
