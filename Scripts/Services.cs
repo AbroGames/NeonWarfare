@@ -31,7 +31,8 @@ public static class Services
     public static readonly ProcessService Process = new ProcessService();
     public static readonly LoadingScreenService LoadingScreen = new LoadingScreenService();
     public static readonly MainSceneService MainScene = new MainSceneService();
-    public static readonly PlayerSettingsService PlayerSettings = new PlayerSettingsService();
+    public static readonly GameSettingsService GameSettings = new();
+    public static readonly IPlayerSettingsService PlayerSettings = GameSettings;
     
     public static class Global
     {

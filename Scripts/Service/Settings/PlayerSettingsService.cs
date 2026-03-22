@@ -3,7 +3,7 @@ using Godot;
 
 namespace NeonWarfare.Scripts.Service.Settings;
 
-public class PlayerSettingsService
+public class PlayerSettingsService : IPlayerSettingsService
 {
 
     private readonly string _playerSettingsPath = "user://player-settings.json";
