@@ -27,6 +27,18 @@ fill = 1
 fill_from = Vector2(0.51794875, 0.53162396)
 fill_to = Vector2(1, 0.5148148)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ao86q"]
+bg_color = Color(0.0627451, 0.23529412, 0.10980392, 0.45882353)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.37187693, 0.5518929, 0.41456476, 0.5019608)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+corner_detail = 1
+
 [sub_resource type="LabelSettings" id="LabelSettings_gu8fo"]
 font_size = 14
 font_color = Color(1, 1, 1, 0.20784314)
@@ -100,6 +112,14 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 2
 
+[node name="ResumeButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2054832041]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ao86q")
+text = "Resume"
+
+[node name="Separator2" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1814827603]
+layout_mode = 2
+
 [node name="StartSingleplayerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2065167447]
 layout_mode = 2
 size_flags_vertical = 3
@@ -127,7 +147,7 @@ text = "Settings"
 layout_mode = 2
 alignment = 2
 
-[node name="Label" type="Label" parent="ScreenSplit/InfoContainer" unique_id=1381857683]
+[node name="Version" type="Label" parent="ScreenSplit/InfoContainer" unique_id=1381857683]
 layout_mode = 2
 text = "v0.0.1-pre-alpha-dev-please-help-me"
 label_settings = SubResource("LabelSettings_gu8fo")

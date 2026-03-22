@@ -77,9 +77,4 @@ public class GameSettingsService : IPlayerSettingsService
     {
         _temporalNick = nick;
     }
-
-    public void DisableFastGameResumePreservation()
-    {
-        FastResumeEnabled = false;
-    }
 }
