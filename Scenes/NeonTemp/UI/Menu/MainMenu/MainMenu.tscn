@@ -1,11 +1,10 @@
 [gd_scene format=3 uid="uid://bc3xvgd0paknf"]
 
-[ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/ContextScenes.cs" id="1_0lnop"]
+[ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/PagesScenes.cs" id="1_0lnop"]
+[ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/MainMenu.cs" id="1_likqx"]
 [ext_resource type="Script" uid="uid://blkpfb6j3vq2h" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Constelllations.cs" id="2_3p65v"]
-[ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/NeonTemp/UI/Menu/ContextSystem/ContextContainer.cs" id="2_lvm34"]
-[ext_resource type="Shader" uid="uid://c5h1gpm7fvwlp" path="res://Assets/Shaders/Glow.gdshader" id="4_gu8fo"]
-[ext_resource type="Script" uid="uid://vqjbgpswrg7h" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Contexts/Main/MainContext.cs" id="4_h4gti"]
-[ext_resource type="FontFile" uid="uid://b5er7c05q6qkh" path="res://Assets/Fonts/ProstoOne.ttf" id="5_ax2lt"]
+[ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/NeonTemp/UI/Menu/PagesSystem/PageContainer.cs" id="4_likqx"]
+[ext_resource type="Script" uid="uid://qhy7jvyw25hd" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Host/HostPage.cs" id="5_h4gti"]
 
 [sub_resource type="Gradient" id="Gradient_gu8fo"]
 offsets = PackedFloat32Array(0, 0.55108696)
@@ -16,36 +15,13 @@ gradient = SubResource("Gradient_gu8fo")
 fill_from = Vector2(0.4974359, 0)
 fill_to = Vector2(0.50769234, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_3p65v"]
-font = ExtResource("5_ax2lt")
-font_size = 72
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_h4gti"]
-shader = ExtResource("4_gu8fo")
-shader_parameter/size = 3.5
-shader_parameter/power = 0.25
-shader_parameter/brightness = 1.0
-shader_parameter/hdr_threshold = 0.01
-
-[sub_resource type="Gradient" id="Gradient_h4gti"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.17934783, 1)
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.8745098, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_ax2lt"]
-gradient = SubResource("Gradient_h4gti")
-width = 256
-fill = 1
-fill_from = Vector2(0.51794875, 0.53162396)
-fill_to = Vector2(1, 0.5148148)
-
-[sub_resource type="LabelSettings" id="LabelSettings_gu8fo"]
-font_size = 14
-font_color = Color(1, 1, 1, 0.20784314)
+[sub_resource type="LabelSettings" id="LabelSettings_h4gti"]
+font_size = 32
 
 [node name="MainMenu" type="Node" unique_id=910496385]
+script = ExtResource("1_likqx")
 
-[node name="ContextScenes" type="Node" parent="." unique_id=494853123]
+[node name="PagesScenes" type="Node" parent="." unique_id=494853123]
 script = ExtResource("1_0lnop")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=613968459]
@@ -69,112 +45,111 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ContextContainer" type="Control" parent="Control" unique_id=398025544]
+[node name="PageContainer" type="Control" parent="Control" unique_id=398025544]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_lvm34")
+script = ExtResource("4_likqx")
 
-[node name="MainContext" type="Control" parent="Control/ContextContainer" unique_id=111025173]
+[node name="HostPage" type="Control" parent="Control/PageContainer" unique_id=800262695]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_h4gti")
+script = ExtResource("5_h4gti")
 
-[node name="ScreenSplit" type="VBoxContainer" parent="Control/ContextContainer/MainContext" unique_id=1650926257]
+[node name="MarginContainer" type="MarginContainer" parent="Control/PageContainer/HostPage" unique_id=1224444588]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="TitleContainer" type="VBoxContainer" parent="Control/ContextContainer/MainContext/ScreenSplit" unique_id=2097327832]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.75
-alignment = 1
-
-[node name="Control" type="Control" parent="Control/ContextContainer/MainContext/ScreenSplit/TitleContainer" unique_id=1747905920]
+[node name="PanelContainer" type="PanelContainer" parent="Control/PageContainer/HostPage/MarginContainer" unique_id=629774593]
+custom_minimum_size = Vector2(850, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="NeonWarfare" type="Label" parent="Control/ContextContainer/MainContext/ScreenSplit/TitleContainer/Control" unique_id=1719480236]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -336.0
-offset_top = -45.0
-offset_right = 336.0
-offset_bottom = 45.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(1.3, 1)
-pivot_offset_ratio = Vector2(0.5, 0)
-size_flags_horizontal = 4
-text = "NEON WARFARE"
-label_settings = SubResource("LabelSettings_3p65v")
+[node name="MarginContainer" type="MarginContainer" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer" unique_id=1296300071]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
-[node name="TextureRect" type="TextureRect" parent="Control/ContextContainer/MainContext/ScreenSplit/TitleContainer/Control/NeonWarfare" unique_id=1799101870]
-material = SubResource("ShaderMaterial_h4gti")
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -800.5
-offset_top = -92.5
-offset_right = 800.5
-offset_bottom = 92.5
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("GradientTexture2D_ax2lt")
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer" unique_id=2072650773]
+layout_mode = 2
 
-[node name="ControlsContainer" type="VBoxContainer" parent="Control/ContextContainer/MainContext/ScreenSplit" unique_id=1863740008]
-custom_minimum_size = Vector2(300, 0)
+[node name="Label" type="Label" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=972462519]
+layout_mode = 2
+text = "SERVER CREATION"
+label_settings = SubResource("LabelSettings_h4gti")
+horizontal_alignment = 1
+
+[node name="Separator" type="Control" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2045931963]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="InputsContainer" type="VBoxContainer" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1816407324]
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 2
 
-[node name="StartSingleplayerButton" type="Button" parent="Control/ContextContainer/MainContext/ScreenSplit/ControlsContainer" unique_id=616379626]
+[node name="PortContainer" type="HBoxContainer" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=1271149532]
 layout_mode = 2
-size_flags_vertical = 3
-text = "Start singleplayer "
 
-[node name="CreateServerButton" type="Button" parent="Control/ContextContainer/MainContext/ScreenSplit/ControlsContainer" unique_id=384550919]
+[node name="PortLabel" type="Label" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1706892161]
 layout_mode = 2
+text = "Port:"
+
+[node name="PortSpinBox" type="SpinBox" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1867409879]
+layout_mode = 2
+max_value = 65535.0
+value = 25566.0
+custom_arrow_step = 1.0
+custom_arrow_round = true
+
+[node name="SaveNameContainer" type="HBoxContainer" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=539220110]
+layout_mode = 2
+
+[node name="SaveNameLabel" type="Label" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer" unique_id=428729046]
+layout_mode = 2
+text = "Save Name:"
+
+[node name="SaveNameTextEdit" type="TextEdit" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer" unique_id=1463715503]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="IsDedicatedCheckButton" type="CheckButton" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=114005117]
+layout_mode = 2
+text = "As dedicated server"
+
+[node name="Separator" type="Control" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=1051055764]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=1685972393]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="CreateServerButton" type="Button" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=966290771]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
 text = "Create server"
 
-[node name="ConnectToServerButton" type="Button" parent="Control/ContextContainer/MainContext/ScreenSplit/ControlsContainer" unique_id=997596083]
+[node name="CancelButton" type="Button" parent="Control/PageContainer/HostPage/MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=749686325]
+custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-size_flags_vertical = 3
-text = "Connect to server"
-
-[node name="Separator" type="Label" parent="Control/ContextContainer/MainContext/ScreenSplit/ControlsContainer" unique_id=1672762213]
-layout_mode = 2
-
-[node name="SettingsButton" type="Button" parent="Control/ContextContainer/MainContext/ScreenSplit/ControlsContainer" unique_id=695767871]
-layout_mode = 2
-size_flags_vertical = 3
-text = "Settings"
-
-[node name="InfoContainer" type="HBoxContainer" parent="Control/ContextContainer/MainContext/ScreenSplit" unique_id=552486924]
-layout_mode = 2
-alignment = 2
-
-[node name="Label" type="Label" parent="Control/ContextContainer/MainContext/ScreenSplit/InfoContainer" unique_id=896655651]
-layout_mode = 2
-text = "v0.0.1-pre-alpha-dev-please-help-me"
-label_settings = SubResource("LabelSettings_gu8fo")
+text = "Cancel"

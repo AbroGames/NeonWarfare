@@ -3,18 +3,18 @@ using Godot;
 
 namespace Kludgeful.Main.ContextSystem;
 
-public abstract partial class Context : Control, IContext
+public abstract partial class Page : Control, IPage
 {
-    public IContext Parent { get; private set; }
-    public IContext Child { get; private set; }
+    public IPage Parent { get; private set; }
+    public IPage Child { get; private set; }
     
     public bool IsTop => Child is null;
     public bool IsRoot => Parent is null;
 
-    protected Action<IContext> GoNext { get; set; }
+    protected Action<IPage> GoNext { get; set; }
     protected Action GoBack { get; set; }
 
-    public void PushChild(IContext next)
+    public void PushChild(IPage next)
     {
         if (Child is not null)
             return;
@@ -22,7 +22,7 @@ public abstract partial class Context : Control, IContext
         Child = next;
     }
 
-    public void SetParent(IContext parent)
+    public void SetParent(IPage parent)
     {
         if (Parent is not null)
             return;
@@ -30,10 +30,10 @@ public abstract partial class Context : Control, IContext
         Parent = parent;
     }
 
-    public virtual void OnHidden(IContext nextToShow){}
+    public virtual void OnHidden(IPage nextToShow){}
 
-    public virtual void OnShown(IContext previousSeen){}
-    public void Setup(Action goBack, Action<IContext> next)
+    public virtual void OnShown(IPage previousSeen){}
+    public void Setup(Action goBack, Action<IPage> next)
     {
         GoBack = goBack;
         GoNext = next;
@@ -59,7 +59,7 @@ public abstract partial class Context : Control, IContext
 
     private void Pop()
     {
-        if (Parent.Child == this && Parent is Context nextContextNode)
+        if (Parent.Child == this && Parent is Page nextContextNode)
         {
             nextContextNode.Child = null;
         }

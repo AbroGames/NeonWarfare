@@ -4,36 +4,36 @@ using Serilog;
 
 namespace Kludgeful.Main.ContextSystem;
 
-public partial class ContextContainer : Control
+public partial class PageContainer : Control
 {
     [Logger] private ILogger _logger;
     
-    public IContext RootContext { get; private set; }
-    public IContext CurrentContext { get; private set; }
+    public IPage RootPage { get; private set; }
+    public IPage CurrentPage { get; private set; }
 
     public override void _Ready()
     {
         Di.Process(this);
     }
 
-    public void SetRootContext(IContext context)
+    public void SetRootPage(IPage page)
     {
-        if (CurrentContext is not null)
+        if (CurrentPage is not null)
         {
             _logger.Error("Attempt to set root context more than once for {containerPath}", GetPath());
             return;
         }
         
-        CurrentContext = context;
-        RootContext = context;
-        AddChild(context as Node);
-        SetupContext(context);
+        CurrentPage = page;
+        RootPage = page;
+        AddChild(page as Node);
+        SetupPage(page);
     }
 
-    public void PushContext(IContext nextContext)
+    public void PushPage(IPage nextPage)
     {
-        var parentContext = CurrentContext;
-        if (!nextContext.IsTop)
+        var parentContext = CurrentPage;
+        if (!nextPage.IsTop)
         {
             _logger.Error("Attempt to push next context that contains child context at {containerPath}", GetPath());
             return;
@@ -41,24 +41,24 @@ public partial class ContextContainer : Control
         
         for (var ctx = parentContext; ctx != null; ctx = ctx.Parent)
         {
-            if (ctx == nextContext)
+            if (ctx == nextPage)
             {
                 _logger.Error("Loop detected: trying to push a context that already exists in the chain at {containerPath}", GetPath());
                 return;
             }
         }
         
-        if (CurrentContext is Node currentContextNode)
+        if (CurrentPage is Node currentContextNode)
         {
             RemoveChild(currentContextNode);
-            parentContext.PushChild(nextContext);
-            parentContext.OnHidden(nextContext);
-            nextContext.SetParent(parentContext);
+            parentContext.PushChild(nextPage);
+            parentContext.OnHidden(nextPage);
+            nextPage.SetParent(parentContext);
             
-            AddChild(nextContext as Node);
-            SetupContext(nextContext);
-            nextContext.OnShown(parentContext);
-            CurrentContext = nextContext;
+            AddChild(nextPage as Node);
+            SetupPage(nextPage);
+            nextPage.OnShown(parentContext);
+            CurrentPage = nextPage;
         }
         else
         {
@@ -66,16 +66,16 @@ public partial class ContextContainer : Control
         }
     }
 
-    public IContext PopContext()
+    public IPage PopPage()
     {
-        if (CurrentContext.IsRoot)
+        if (CurrentPage.IsRoot)
         {
             _logger.Warning("Attempt to pop root context at {containerPath}", GetPath());
-            return CurrentContext;
+            return CurrentPage;
         }
         
-        var parentContext = CurrentContext.Parent;
-        var childContext = CurrentContext;
+        var parentContext = CurrentPage.Parent;
+        var childContext = CurrentPage;
         
         RemoveChild(childContext as Node);
         childContext.OnHidden(parentContext);
@@ -83,13 +83,13 @@ public partial class ContextContainer : Control
         AddChild(parentContext as Node);
         parentContext.OnShown(childContext);
         childContext.Close();
-        CurrentContext = parentContext;
+        CurrentPage = parentContext;
         
         return parentContext;
     }
 
-    private void SetupContext(IContext context)
+    private void SetupPage(IPage page)
     {
-        context.Setup(() => PopContext(), PushContext);
+        page.Setup(() => PopPage(), PushPage);
     }
 }
