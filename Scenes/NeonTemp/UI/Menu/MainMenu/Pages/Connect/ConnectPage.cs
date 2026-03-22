@@ -18,7 +18,7 @@ public partial class ConnectPage : MainMenuPage
         PortSpinBox.Value = Services.GameSettings.Settings.LastConnectedPort;
         
         ConnectToServerButton.Pressed += ParseAndConnectToServer;
-        CancelButton.Pressed += GoBack;
+        CancelButton.Pressed += () => GoBack();
     }
 
     private void ParseAndConnectToServer()

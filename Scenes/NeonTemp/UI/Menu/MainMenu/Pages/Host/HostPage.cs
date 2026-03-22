@@ -19,7 +19,7 @@ public partial class HostPage : MainMenuPage
     {
         Di.Process(this);
         CreateServerButton.Pressed += ParseAndStartServer;
-        CancelButton.Pressed += GoBack;
+        CancelButton.Pressed += () => GoBack();
 
         PortSpinBox.Value = Services.GameSettings.Settings.LastHostedPort;
         SaveNameTextEdit.Text = Services.GameSettings.Settings.LastHostedSaveName;
