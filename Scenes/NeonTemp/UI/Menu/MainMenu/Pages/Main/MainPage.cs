@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
@@ -14,6 +15,9 @@ public partial class MainPage : MainMenuPage
 	[Child] public Button CreateServerButton { get; private set; }
 	[Child] public Button ConnectToServerButton { get; private set; }
 	[Child] public Button SettingsButton { get; private set; }
+	[Child] public Button QuitButton { get; private set; }
+
+	private Action _resumeAction = null;
 
 	public override void _EnterTree()
 	{
@@ -23,6 +27,7 @@ public partial class MainPage : MainMenuPage
 	public override void _Ready()
 	{
 		Di.Process(this);
+		ResumeButton.Pressed += RunResumeAction;
 		StartSingleplayerButton.Pressed += () =>
 		{
 			Services.GameSettings.PreserveSingleplayerGame();
@@ -31,8 +36,14 @@ public partial class MainPage : MainMenuPage
 		CreateServerButton.Pressed += () => GoNext(PagesScenes.CreateServer.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
 		ConnectToServerButton.Pressed += () => GoNext(PagesScenes.ConnectionPage.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
 		SettingsButton.Pressed += () => GoNext(PagesScenes.SettingsPage.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
+		QuitButton.Pressed += () => Services.MainScene.Shutdown();
 
 		ConfigureResumeButton();
+	}
+
+	private void RunResumeAction()
+	{
+		_resumeAction?.Invoke();
 	}
 	
 	private void ConfigureResumeButton()
@@ -48,7 +59,7 @@ public partial class MainPage : MainMenuPage
 			if (availableResume is ResumableGame.RunSingleplayer)
 			{
 				ResumeButton.Text = "Run: Singleplayer";
-				ResumeButton.Pressed += () => Services.MainScene.StartSingleplayerGame();
+				_resumeAction = () => Services.MainScene.StartSingleplayerGame();
 			}
 
 			if (availableResume is ResumableGame.ConnectToServer)
@@ -56,7 +67,7 @@ public partial class MainPage : MainMenuPage
 				var port = Services.GameSettings.Settings.LastConnectedPort;
 				var host = Services.GameSettings.Settings.LastConnectedHost;
 				ResumeButton.Text = $"Connect to: {host}:{port}";
-				ResumeButton.Pressed += () => Services.MainScene.ConnectToMultiplayerGame(host, port);
+				_resumeAction = () => Services.MainScene.ConnectToMultiplayerGame(host, port);
 			}
 
 			if (availableResume is ResumableGame.CreateServer)
@@ -64,8 +75,8 @@ public partial class MainPage : MainMenuPage
 				var save = Services.GameSettings.Settings.LastHostedSaveName;
 				var port  = Services.GameSettings.Settings.LastHostedPort;
 				var asDedicated = Services.GameSettings.Settings.LastHostedIsDedicated;
-				ResumeButton.Text = $"Create{(asDedicated ? " Dedicated" : "")} Server: {save}:{port}";
-				ResumeButton.Pressed += () => Services.MainScene.HostMultiplayerGameAsClient(port, save, asDedicated);
+				ResumeButton.Text = $"Create{(asDedicated ? " Dedicated" : "")} Server: {save}@{port}";
+				_resumeAction = () => Services.MainScene.HostMultiplayerGameAsClient(port, save, asDedicated);
 			}
 		}
 	}
