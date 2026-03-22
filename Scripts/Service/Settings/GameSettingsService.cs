@@ -7,7 +7,32 @@ public class GameSettingsService : IPlayerSettingsService
 {
     private readonly string _gameSettingsPath = "user://game-settings.json";
     public GameSettings Settings { get; private set; }
-    private string _temporalNick = null; 
+    public bool FastResumeEnabled { get; private set; } = true;
+    
+    private string _temporalNick = null;
+
+    public void PreserveSingleplayerGame()
+    {
+        if (!FastResumeEnabled) return;
+        Settings.FastResumeAvailable = ResumableGame.RunSingleplayer;
+    }
+
+    public void PreserveConnectionToServer(string host, int port)
+    {
+        if (!FastResumeEnabled) return;
+        Settings.FastResumeAvailable = ResumableGame.ConnectToServer;
+        Settings.LastConnectedHost = host;
+        Settings.LastConnectedPort = port;
+    }
+
+    public void PreserveServerCreation(int port, string saveName, bool asDedicated)
+    {
+        if (!FastResumeEnabled) return;
+        Settings.FastResumeAvailable = ResumableGame.CreateServer;
+        Settings.LastHostedIsDedicated = asDedicated;
+        Settings.LastHostedPort = port;
+        Settings.LastHostedSaveName = saveName;
+    }
     
     public void Init()
     {
@@ -51,5 +76,10 @@ public class GameSettingsService : IPlayerSettingsService
     public void SetNickTemporarily(string nick)
     {
         _temporalNick = nick;
+    }
+
+    public void DisableFastGameResumePreservation()
+    {
+        FastResumeEnabled = false;
     }
 }

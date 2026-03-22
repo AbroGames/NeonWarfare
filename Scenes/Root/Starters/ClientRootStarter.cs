@@ -19,6 +19,8 @@ public class ClientRootStarter : BaseRootStarter
         Services.PlayerSettings.Init();
         if (Services.CmdArgs.Client.Nick != null)
         {
+	        // Этот экземпляр игры - вспомогательный
+	        Services.GameSettings.DisableFastGameResumePreservation();
 	        Services.PlayerSettings.SetNickTemporarily(Services.CmdArgs.Client.Nick);
         }
     }
@@ -31,10 +33,12 @@ public class ClientRootStarter : BaseRootStarter
 
         if (Services.CmdArgs.Client.AutoStart)
         {
+	        Services.GameSettings.DisableFastGameResumePreservation();
 	        Services.MainScene.StartSingleplayerGame();
         } 
         else if (Services.CmdArgs.Client.AutoConnect)
         {
+	        Services.GameSettings.DisableFastGameResumePreservation();
 	        Services.MainScene.ConnectToMultiplayerGame(Services.CmdArgs.Client.AutoConnectIp, Services.CmdArgs.Client.AutoConnectPort);
         }
         else

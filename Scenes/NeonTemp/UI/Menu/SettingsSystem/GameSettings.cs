@@ -25,4 +25,5 @@ public partial class GameSettings : GameSettingsBase
     
     [Hide] public int LastHostedPort { get; set; } = BaseGameStarter.DefaultPort;
     [Hide] public bool LastHostedIsDedicated { get; set; } = false;
+    [Hide] public string LastHostedSaveName { get; set; }
 }

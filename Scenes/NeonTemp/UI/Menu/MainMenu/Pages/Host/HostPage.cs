@@ -2,6 +2,7 @@ using Godot;
 using System;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
+using Kludgeful.Main.SettingsSystem;
 using NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu;
 using Serilog;
 

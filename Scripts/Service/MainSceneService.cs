@@ -31,6 +31,7 @@ public class MainSceneService
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
+        Services.GameSettings.PreserveSingleplayerGame();
         
         game.Init(new SingleplayerGameStarter());
     }
@@ -40,6 +41,8 @@ public class MainSceneService
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
+        var restoredPort = port ?? BaseGameStarter.DefaultPort;
+        Services.GameSettings.PreserveConnectionToServer(host, restoredPort);
         
         game.Init(new ConnectToMultiplayerGameStarter(host, port));
     }
@@ -57,8 +60,11 @@ public class MainSceneService
         _mainSceneContainer.ChangeStoredNode(game);
 
         string adminNickname = Services.PlayerSettings.GetPlayerSettings().Nick;
+        var asDedicated = createDedicatedServerProcess ?? false;
+        var restoredPort = port ?? BaseGameStarter.DefaultPort;
+        Services.GameSettings.PreserveServerCreation(restoredPort, saveFileName, asDedicated);
         
-        if (createDedicatedServerProcess ?? false)
+        if (asDedicated)
         {
             game.Init(new HostDedicatedServerAndConnectGameStarter(port, saveFileName, adminNickname, true));
         }

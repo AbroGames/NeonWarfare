@@ -20,6 +20,11 @@ public class HostMultiplayerGameStarter(int? port = null, string saveFileName = 
                 pid => $"Parent process {pid} is dead. Shutdown server.");
             game.AddChild(clientDeadChecker);
         }
+        else
+        {
+            // Вызов происходит здесь, потому что только тут мы уверены, что выделенный сервер запущен не из игры.
+            Services.GameSettings.DisableFastGameResumePreservation();
+        }
         
         PlayerSettings playerSettings = Services.PlayerSettings.GetPlayerSettings();
         World.World world = game.AddWorld();
