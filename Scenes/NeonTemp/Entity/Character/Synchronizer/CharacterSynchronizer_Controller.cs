@@ -19,13 +19,13 @@ public partial class CharacterSynchronizer
 
     public void Controller_OnChange(long peerId, IController controller)
     {
-        int typeId = Services.TypesStorage.GetId(controller.GetType());
+        int typeId = Services.TypesMapping.GetId(controller.GetType());
         RpcId(peerId, MethodName.Controller_OnChangeRpc, typeId);
     }
     [Rpc(CallLocal = true)]
     private void Controller_OnChangeRpc(int typeId)
     {
-        Type targetType = Services.TypesStorage.GetType(typeId);
+        Type targetType = Services.TypesMapping.GetType(typeId);
         IController controller = Activator.CreateInstance(targetType) as IController;
         _controller.SetController(controller);
     }

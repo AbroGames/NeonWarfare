@@ -20,7 +20,7 @@ public abstract class BaseRootStarter
         Services.CmdArgs.LogCmdArgs();
         
         _log.Information("Initializing base...");
-        Services.TypesStorage.AddTypes(Assembly.GetExecutingAssembly().GetTypes().ToList());
+        Services.TypesMapping.AddTypes(Assembly.GetExecutingAssembly().GetTypes().ToList());
         Services.Net.Init(root, Services.CmdArgs.IsDedicatedServer);
         Services.LoadingScreen.Init(root.LoadingScreenContainer, root.PackedScenes.LoadingScreen);
         Services.MainScene.Init(root.MainSceneContainer, root.PackedScenes.Game, root.PackedScenes.MainMenu);

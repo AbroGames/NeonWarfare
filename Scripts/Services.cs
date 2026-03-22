@@ -19,7 +19,8 @@ public static class Services
     public static readonly MathService Math = new MathService();
     public static readonly StringCompressionService StringCompression = new StringCompressionService();
     public static readonly NodeTreeService NodeTree = new NodeTreeService();
-    public static readonly TypesStorageService TypesStorage = new TypesStorageService();
+    public static readonly TypesMappingService TypesMapping = new();
+    public static readonly AssemblyCacheService AssemblyCache = new();
     public static MembersScanner MembersScanner => Di.MembersScanner;
     
     // Services from game, but extended KludgeBox services
