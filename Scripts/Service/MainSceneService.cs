@@ -22,7 +22,7 @@ public class MainSceneService
     
     public void StartMainMenu()
     {
-        MainMenu mainMenu = _mainMenuPackedScene.Instantiate<MainMenu>();
+        var mainMenu = _mainMenuPackedScene.Instantiate();
         _mainSceneContainer.ChangeStoredNode(mainMenu);
     }
     
