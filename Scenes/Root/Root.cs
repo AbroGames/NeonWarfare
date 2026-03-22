@@ -50,8 +50,6 @@ public partial class Root : Node2D
         _rootStarterManager.Start();
     }
     
-    
-
 
     public override void _Process(double delta)
     {

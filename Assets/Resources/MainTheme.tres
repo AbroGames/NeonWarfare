@@ -1,6 +1,6 @@
 [gd_resource type="Theme" format=3 uid="uid://cky2ixgrcrnlo"]
 
-[ext_resource type="FontFile" uid="uid://cv56ruhrnrkm" path="res://Assets/Fonts/ProstoOne.ttf" id="1_gu0d2"]
+[ext_resource type="FontFile" uid="uid://b5er7c05q6qkh" path="res://Assets/Fonts/ProstoOne.ttf" id="1_gu0d2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gu0d2"]
 bg_color = Color(0.079486854, 0.11842371, 0.16333213, 1)
