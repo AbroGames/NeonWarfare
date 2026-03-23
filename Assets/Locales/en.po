@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GodotTemplate\n"
+"Project-Id-Version: NeonWarfare\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: en\n"
