@@ -12,7 +12,7 @@ public class NetworkStateMachine
     public bool IsClient => _state == State.Connecting || _state == State.Connected;
     public bool IsServer => _state == State.Hosting || _state == State.Hosted;
     
-    public event Action<State> StateChanged;
+    public event Action<State> StateChangedEvent;
     
     private State _state = State.NotInitialized;
 
@@ -21,7 +21,7 @@ public class NetworkStateMachine
         if (_state != newState)
         {
             _state = newState;
-            StateChanged?.Invoke(_state);
+            StateChangedEvent?.Invoke(_state);
         }
     }
 

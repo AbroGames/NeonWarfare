@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GodotTemplate\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
+msgstr "Одиночная игра"
+
+msgid "MAIN_MENU__CREATE_SERVER_BUTTON"
+msgstr "Создать сервер"
+
+msgid "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
+msgstr "Подключиться к серверу"
+
+msgid "MAIN_MENU__SETTINGS_BUTTON"
+msgstr "Настройки"
+
+msgid "MAIN_MENU__EXIT_BUTTON"
+msgstr "Выход"
+
+msgid "SINGLEPLAYER_MENU__SAVE_NAME"
+msgstr "Имя сохранения:"
+
+msgid "SINGLEPLAYER_MENU__START_BUTTON"
+msgstr "Начать игру"
+
+msgid "CONNECT_MENU__HOST"
+msgstr "Хост:"
+
+msgid "CONNECT_MENU__PORT"
+msgstr "Порт:"
+
+msgid "CONNECT_MENU__CONNECT_BUTTON"
+msgstr "Подключиться к серверу"
+
+msgid "HOST_MENU__PORT"
+msgstr "Порт:"
+
+msgid "HOST_MENU__SAVE_NAME"
+msgstr "Имя сохранения:"
+
+msgid "HOST_MENU__DEDICATED"
+msgstr "Новое окно?"
+
+msgid "HOST_MENU__CREATE_BUTTON"
+msgstr "Создать сервер"
+
+msgid "SETTING_MENU__NICK"
+msgstr "Ник:"
+
+msgid "SETTING_MENU__COLOR"
+msgstr "Цвет:"
+
+msgid "SETTING_MENU__LANGUAGE"
+msgstr "Язык:"
+
+msgid "SETTING_MENU__SAVE_BUTTON"
+msgstr "Сохранить и выйти"
+
+msgid "MESSAGE_MENU__OK_BUTTON"
+msgstr "Ок"
+
+msgid "MESSAGE_MENU__DEFAULT_ERROR"
+msgstr "Неизвестная ошибка"
+
+msgid "HUD__CHAT_PLACEHOLDER"
+msgstr "Введите сообщение или команду, начиная с /"
+
+msgid "HUD__CHAT_SEND_BUTTON"
+msgstr "Отправить"
+
+msgid "HUD__SAVE_BUTTON"
+msgstr "Сохранить"
+
+msgid "HUD__SAVE_FILENAME_PLACEHOLDER"
+msgstr "Имя сохранения"
+
+msgid "HUD__EXIT_BUTTON"
+msgstr "Выйти"
+
+msgid "HUD__TEST_1_BUTTON"
+msgstr "Тест 1"
+
+msgid "HUD__TEST_2_BUTTON"
+msgstr "Тест 2"
+
+msgid "HUD__TEST_3_BUTTON"
+msgstr "Тест 3"
+
+msgid "HUD__LOG_BUTTON"
+msgstr "Лог"
+
+msgid "LOADING_SCREEN__LOADING"
+msgstr "Загрузка"
+
+msgid "LOADING_SCREEN__CONNECTING"
+msgstr "Подключение к серверу"
+
+msgid "LOADING_SCREEN__WAITING_SYNCING"
+msgstr "Ожидаение окончания синхронизации"

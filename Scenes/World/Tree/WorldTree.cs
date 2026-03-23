@@ -3,10 +3,12 @@ using System.Linq;
 using Godot;
 using Godot.Collections;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.ParentInjection;
+using KludgeBox.DI.Requests.SceneServiceInjection;
 using KludgeBox.Godot.Nodes.MpSync;
-using BattleSurface = NeonWarfare.Scenes.World.Tree.Surface.Battle.BattleSurface;
-using MapSurface = NeonWarfare.Scenes.World.Tree.Surface.Map.MapSurface;
+using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
+using NeonWarfare.Scenes.World.Service;
+using NeonWarfare.Scenes.World.Tree.Surface.Battle;
+using NeonWarfare.Scenes.World.Tree.Surface.Map;
 
 namespace NeonWarfare.Scenes.World.Tree;
 
@@ -18,7 +20,8 @@ public partial class WorldTree : Node2D
     public List<BattleSurface> BattleSurfaces => _battleSurfacesNames.Select(name => GetNodeOrNull<BattleSurface>(name)).ToList();
     [Export] [Sync] private Array<string> _battleSurfacesNames = new();
     
-    [Parent] private World _world;
+    [SceneService] private SyncedPackedScenes _syncedPackedScenes;
+    [SceneService] private WorldMultiplayerSpawnerService _multiplayerSpawner;
 
     public override void _Ready()
     {
@@ -27,10 +30,10 @@ public partial class WorldTree : Node2D
     
     public BattleSurface AddBattleSurface()
     {
-        BattleSurface battleSurface = _world.WorldPackedScenes.BattleSurface.Instantiate<BattleSurface>();
+        BattleSurface battleSurface = _syncedPackedScenes.BattleSurface.Instantiate<BattleSurface>();
         this.AddChildWithUniqueName(battleSurface, "BattleSurface");
         _battleSurfacesNames.Add(battleSurface.Name);
-        _world.MultiplayerSpawnerService.AddSpawnerToNode(battleSurface);
+        _multiplayerSpawner.AddSpawnerToNode(battleSurface);
         return battleSurface;
     }
 }

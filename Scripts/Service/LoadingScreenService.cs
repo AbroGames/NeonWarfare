@@ -1,24 +1,25 @@
 ﻿using Godot;
+using NeonWarfare.Scenes.KludgeBox;
+using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scripts.Content.LoadingScreen;
-using LoadingScreenNode = NeonWarfare.Scenes.Screen.LoadingScreen.LoadingScreen;
 
 namespace NeonWarfare.Scripts.Service;
 
 public class LoadingScreenService
 {
     
-    private Scenes.KludgeBox.NodeContainer _loadingScreenContainer;
+    private NodeContainer _loadingScreenContainer;
     private PackedScene _loadingScreenPackedScene;
 
-    public void Init(Scenes.KludgeBox.NodeContainer loadingScreenContainer, PackedScene loadingScreenPackedScene)
+    public void Init(NodeContainer loadingScreenContainer, PackedScene loadingScreenPackedScene)
     {
         _loadingScreenContainer = loadingScreenContainer;
         _loadingScreenPackedScene = loadingScreenPackedScene;
     }
     
-    public LoadingScreenNode SetLoadingScreen(string text)
+    public LoadingScreen SetLoadingScreen(string text)
     {
-        LoadingScreenNode loadingScreen = _loadingScreenPackedScene.Instantiate<LoadingScreenNode>().InitPreReady();
+        LoadingScreen loadingScreen = _loadingScreenPackedScene.Instantiate<LoadingScreen>().InitPreReady();
         if (text != null)
         {
             loadingScreen.SetText(text);
@@ -28,7 +29,7 @@ public class LoadingScreenService
         return loadingScreen;
     }
     
-    public LoadingScreenNode SetLoadingScreen(LoadingScreenTypes.Type loadingScreenType)
+    public LoadingScreen SetLoadingScreen(LoadingScreenTypes.Type loadingScreenType)
     {
         return SetLoadingScreen(LoadingScreenTypes.GetLoadingScreenText(loadingScreenType));
     }

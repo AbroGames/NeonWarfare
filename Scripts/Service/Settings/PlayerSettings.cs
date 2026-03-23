@@ -2,4 +2,4 @@
 
 namespace NeonWarfare.Scripts.Service.Settings;
 
-public record PlayerSettings(string Nick, Color Color);
+public record PlayerSettings(string Nick, Color Color, string Language);

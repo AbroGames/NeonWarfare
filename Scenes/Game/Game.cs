@@ -1,21 +1,20 @@
 ﻿using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Game.Starters;
+using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Screen.Hud;
-using NeonWarfare.Scripts.Service.Settings;
-using NodeContainer = NeonWarfare.Scenes.KludgeBox.NodeContainer;
+using NeonWarfare.Scenes.Screen.ServerHud;
 
 namespace NeonWarfare.Scenes.Game;
 
 public partial class Game : Node2D
 {
 
-    [Child] public NodeContainer WorldContainer { get; set; }
-    [Child] public NodeContainer HudContainer { get; set; }
-    [Child] public GamePackedScenes PackedScenes { get; set; }
+    [Child] private NodeContainer WorldContainer { get; set; }
+    [Child] private NodeContainer HudContainer { get; set; }
+    [Child] private GamePackedScenes PackedScenes { get; set; }
 
     private Network.Network _network;
-    private Synchronizer _synchronizer;
 
     public override void _Ready()
     {
@@ -38,25 +37,25 @@ public partial class Game : Node2D
     public Hud AddHud()
     {
         Hud hud = PackedScenes.Hud.Instantiate<Hud>()
-            .InitPreReady(WorldContainer.GetCurrentStoredNode<World.World>(), _synchronizer);
+            .InitPreReady(WorldContainer.GetCurrentStoredNode<World.World>());
         hud.SetName("Hud");
         HudContainer.ChangeStoredNode(hud);
         return hud;
     }
-
-    public Synchronizer AddSynchronizer(PlayerSettings playerSettings)
+    
+    public ServerHud AddServerHud()
     {
-        _synchronizer?.QueueFree();
-        _synchronizer = new Synchronizer()
-            .InitPreReady(WorldContainer.GetCurrentStoredNode<World.World>(), playerSettings);
-        this.AddChildWithName(_synchronizer, "Synchronizer");
-        return _synchronizer;
+        ServerHud serverHud = PackedScenes.ServerHud.Instantiate<ServerHud>()
+            .InitPreReady(WorldContainer.GetCurrentStoredNode<World.World>());
+        serverHud.SetName("ServerHud");
+        HudContainer.ChangeStoredNode(serverHud);
+        return serverHud;
     }
 
     public Network.Network AddNetwork()
     {
         _network?.QueueFree();
-        _network = new Network.Network();
+        _network = new Network.Network(this);
         this.AddChildWithName(_network, "Network");
         return _network;
     }

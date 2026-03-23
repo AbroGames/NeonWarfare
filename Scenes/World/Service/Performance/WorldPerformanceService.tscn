@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://biptteqr0dt30"]
+
+[ext_resource type="Script" uid="uid://brvvl85t7ap0w" path="res://Scenes/World/Service/Performance/WorldGodotPerformance.cs" id="1_gvkqi"]
+[ext_resource type="Script" uid="uid://cr23gy71mges6" path="res://Scenes/World/Service/Performance/WorldPerformanceService.cs" id="1_pd84j"]
+[ext_resource type="Script" uid="uid://dde2sb8hswjet" path="res://Scenes/World/Service/Performance/WorldPingPerformance.cs" id="2_xrnxi"]
+[ext_resource type="Script" uid="uid://dn1l7ih1iqkdj" path="res://Scenes/World/Service/Performance/WorldSharpPerformance.cs" id="3_eeij6"]
+[ext_resource type="Script" uid="uid://kqg8lim4e1hr" path="res://Scenes/World/Service/Performance/WorldENetPerformance.cs" id="4_3ky4y"]
+
+[node name="PerformanceService" type="Node" unique_id=743159716]
+script = ExtResource("1_pd84j")
+
+[node name="Godot" type="Node" parent="." unique_id=1932635961]
+script = ExtResource("1_gvkqi")
+
+[node name="Sharp" type="Node" parent="." unique_id=306264548]
+script = ExtResource("3_eeij6")
+
+[node name="ENet" type="Node" parent="." unique_id=578457627]
+script = ExtResource("4_3ky4y")
+
+[node name="Ping" type="Node" parent="." unique_id=1834461521]
+script = ExtResource("2_xrnxi")

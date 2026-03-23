@@ -1,4 +1,5 @@
 ﻿using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scripts.Content.CmdArgs;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using Serilog;
 
@@ -7,35 +8,42 @@ namespace NeonWarfare.Scenes.Root.Starters;
 public class ClientRootStarter : BaseRootStarter
 {
 
+	private ClientArgs _clientArgs;
 	[Logger] private ILogger _log;
 	
-    public override void Init(Root root)
+    public override void Init(RootData rootData)
     {
-	    base.Init(root);
+	    base.Init(rootData);
         _log.Information("Initializing Client...");
         
-        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
+        _clientArgs = ClientArgs.GetFromCmd(CmdArgsService);
+        
+        Services.Net.Init(rootData.SceneTree, false);
         
         Services.PlayerSettings.Init();
-        if (Services.CmdArgs.Client.Nick != null)
+        if (_clientArgs.Nick != null)
         {
-	        Services.PlayerSettings.SetNickTemporarily(Services.CmdArgs.Client.Nick);
+	        Services.PlayerSettings.SetNickTemporarily(_clientArgs.Nick);
         }
+        Services.I18N.SetCurrentLocale(Services.PlayerSettings.GetPlayerSettings().Language);
+        
+        // Activate loading screen after setting up locale
+        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
     }
 
-    public override void Start(Root root)
+    public override void Start(RootData rootData)
     {
-	    base.Start(root);
+	    base.Start(rootData);
         _log.Information("Starting Client...");
 
 
-        if (Services.CmdArgs.Client.AutoStart)
+        if (_clientArgs.AutoStart)
         {
 	        Services.MainScene.StartSingleplayerGame();
         } 
-        else if (Services.CmdArgs.Client.AutoConnect)
+        else if (_clientArgs.AutoConnect)
         {
-	        Services.MainScene.ConnectToMultiplayerGame(Services.CmdArgs.Client.AutoConnectIp, Services.CmdArgs.Client.AutoConnectPort);
+	        Services.MainScene.ConnectToMultiplayerGame(_clientArgs.AutoConnectIp, _clientArgs.AutoConnectPort);
         }
         else
         {
