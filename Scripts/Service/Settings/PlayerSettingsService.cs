@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Godot;
+using KludgeBox.Godot.Services;
 
 namespace NeonWarfare.Scripts.Service.Settings;
 
@@ -10,6 +11,7 @@ public class PlayerSettingsService : IPlayerSettingsService
     
     private string _nick = "Player";
     private Color _color = new Color(1, 1, 1);
+    private string _language = I18NService.DefaultLocale;
 
     private string _temporalNick = null; 
 
@@ -20,13 +22,14 @@ public class PlayerSettingsService : IPlayerSettingsService
 
     public PlayerSettings GetPlayerSettings()
     {
-        return new PlayerSettings(_temporalNick ?? _nick, _color);
+        return new PlayerSettings(_temporalNick ?? _nick, _color, _language);
     }
 
     public void SetPlayerSettings(PlayerSettings playerSettings)
     {
         _nick = playerSettings.Nick;
         _color = playerSettings.Color;
+        _language = playerSettings.Language;
         Save();
     }
 
@@ -39,6 +42,12 @@ public class PlayerSettingsService : IPlayerSettingsService
     public void SetColor(Color color)
     {
         _color = color;
+        Save();
+    }
+
+    public void SetLanguage(string language)
+    {
+        _language = language;
         Save();
     }
 

@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://de3uhhcoffddv"]
+[gd_scene format=3 uid="uid://de3uhhcoffddv"]
 
 [ext_resource type="Script" uid="uid://diyoqlci6ihjx" path="res://Scenes/Screen/MainMenu/Pages/CreateServer/MainMenuHostPage.cs" id="1_6mkmj"]
 
-[node name="MainMenuHostPage" type="Control"]
+[node name="MainMenuHostPage" type="Control" unique_id=2146672053]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6mkmj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=23814607]
 custom_minimum_size = Vector2(400, 150)
 layout_mode = 1
 anchors_preset = 8
@@ -27,36 +27,36 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=309102483]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PortLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="PortLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=900520610]
 layout_mode = 2
-text = "Port:"
+text = "HOST_MENU__PORT"
 
-[node name="PortTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="PortTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer" unique_id=135510167]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="SaveNameLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="SaveNameLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=214524053]
 layout_mode = 2
-text = "Save Name:"
+text = "HOST_MENU__SAVE_NAME"
 
-[node name="SaveNameTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="SaveNameTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer" unique_id=153682693]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="DedicatedLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="DedicatedLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=100068759]
 layout_mode = 2
-text = "Dedicated?"
+text = "HOST_MENU__DEDICATED"
 
-[node name="IsDedicatedCheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer"]
+[node name="IsDedicatedCheckBox" type="CheckBox" parent="VBoxContainer/HBoxContainer" unique_id=546034410]
 layout_mode = 2
 
-[node name="CreateServerButton" type="Button" parent="VBoxContainer"]
+[node name="CreateServerButton" type="Button" parent="VBoxContainer" unique_id=135920392]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Create server"
+text = "HOST_MENU__CREATE_BUTTON"

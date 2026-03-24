@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using KludgeBox.DI.Requests.ParentInjection;
+using KludgeBox.DI.Requests.SceneServiceInjection;
 using KludgeBox.Godot.Nodes.MpSync;
-using NeonWarfare.Scenes.World.Data.MapPoint;
-using NeonWarfare.Scenes.World.Services.PersistenceFactory;
-using NeonWarfare.Scenes.World.Services.StartStop;
+using NeonWarfare.Scenes.World.Data.PersistenceData;
+using NeonWarfare.Scenes.World.Data.PersistenceData.MapPoint;
+using NeonWarfare.Scenes.World.Service.PersistenceFactory;
+using NeonWarfare.Scenes.World.Service.StartStop;
 using static Godot.SceneReplicationConfig.ReplicationMode;
 
 namespace NeonWarfare.Scenes.World.Tree.Entity.Building;
@@ -16,14 +17,18 @@ public partial class MapPoint : Node2D
     public MapPointData Data { get; private set; } 
 
     [Export] [Sync(Never)] private long _id;
-    [Parent(true)] private World _world; 
+    [SceneService] private WorldPersistenceData _persistenceData; 
     
     public override void _EnterTree()
     {
         Di.Process(this);
         
-        // Init on client side
-        if (Data == null) InitPreReady(_world.Data.MapPoint.MapPointById[_id]);
+        // Init on client side while client in the game
+        // We need second condition, because when client is connecting to the game, Persistence data not synced yet
+        if (Data == null && _persistenceData.MapPoint.MapPointById.TryGetValue(_id, out var data))
+        {
+            InitPreReady(data);
+        }
     }
 
     private void InitPreReady(MapPointData data)
@@ -52,8 +57,8 @@ public partial class MapPoint : Node2D
 
         public void InitFactory(World world)
         {
-            _scene = world.WorldPackedScenes.MapPoint;
-            _storage = world.Data.MapPoint;
+            _scene = world.SyncedPackedScenes.MapPoint;
+            _storage = world.PersistenceData.MapPoint;
         }
 
         public MapPoint Create(Action<MapPointData> init)
@@ -77,9 +82,9 @@ public partial class MapPoint : Node2D
 
         public void Create(World world)
         {
-            foreach (MapPointData mapPointData in world.Data.MapPoint.MapPointById.Values)
+            foreach (MapPointData mapPointData in world.PersistenceData.MapPoint.MapPointById.Values)
             {
-                MapPoint mapPoint = world.WorldPackedScenes.MapPoint.Instantiate<MapPoint>();
+                MapPoint mapPoint = world.SyncedPackedScenes.MapPoint.Instantiate<MapPoint>();
                 world.Tree.MapSurface.AddChildWithUniqueName(mapPoint, "MapPoint");
                 _mapPointById.Add(mapPointData.Id, mapPoint);
             }
@@ -87,7 +92,7 @@ public partial class MapPoint : Node2D
 
         public void Init(World world)
         {
-            foreach (MapPointData mapPointData in world.Data.MapPoint.MapPointById.Values)
+            foreach (MapPointData mapPointData in world.PersistenceData.MapPoint.MapPointById.Values)
             {
                 MapPoint mapPoint = _mapPointById[mapPointData.Id];
                 mapPoint.InitPreReady(mapPointData);

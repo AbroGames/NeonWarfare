@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dfyy367ppdtvj"]
+[gd_scene format=3 uid="uid://dfyy367ppdtvj"]
 
 [ext_resource type="Script" uid="uid://bcgb3a18gu14e" path="res://Scenes/Screen/MainMenu/Pages/ConnectToServer/MainMenuConnectPage.cs" id="1_7pl3e"]
 
-[node name="MainMenuConnectPage" type="Control"]
+[node name="MainMenuConnectPage" type="Control" unique_id=839310306]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7pl3e")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1656119650]
 custom_minimum_size = Vector2(400, 150)
 layout_mode = 1
 anchors_preset = 8
@@ -27,29 +27,29 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1613739759]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HostLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="HostLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1284825300]
 layout_mode = 2
-text = "Host:"
+text = "CONNECT_MENU__HOST"
 
-[node name="HostTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="HostTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer" unique_id=540736086]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="PortLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+[node name="PortLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1539584357]
 layout_mode = 2
-text = "Port:"
+text = "CONNECT_MENU__PORT"
 
-[node name="PortTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="PortTextEdit" type="TextEdit" parent="VBoxContainer/HBoxContainer" unique_id=1336193026]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ConnectToServerButton" type="Button" parent="VBoxContainer"]
+[node name="ConnectToServerButton" type="Button" parent="VBoxContainer" unique_id=1135300563]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Connect to server"
+text = "CONNECT_MENU__CONNECT_BUTTON"

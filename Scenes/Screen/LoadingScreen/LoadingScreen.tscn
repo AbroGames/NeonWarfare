@@ -1,11 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://cuy77qqautv4t"]
+[gd_scene format=3 uid="uid://cuy77qqautv4t"]
 
 [ext_resource type="FontFile" uid="uid://cir5jadbcsm8f" path="res://Assets/Fonts/Play-Regular.ttf" id="1_bmt3c"]
 [ext_resource type="Script" uid="uid://cfbq3x02d4qu6" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.cs" id="1_tw8yx"]
 [ext_resource type="Script" uid="uid://8nybyap1nsv6" path="res://Scenes/Screen/LoadingScreen/LoadingAnimHandle.cs" id="2_jp6vp"]
-[ext_resource type="Texture2D" uid="uid://cpblsfrr1dlie" path="res://Assets/Textures/LoadingScreen/LoadingPartThin.svg" id="3_k8283"]
-[ext_resource type="Texture2D" uid="uid://dg44fv67r5jpp" path="res://Assets/Textures/LoadingScreen/LoadingPartFat.svg" id="4_67v6a"]
-[ext_resource type="Texture2D" uid="uid://bl84qgojuj6td" path="res://Assets/Textures/LoadingScreen/Dot.svg" id="5_icwjq"]
+[ext_resource type="Texture2D" uid="uid://cpblsfrr1dlie" path="res://Assets/Textures/Hud/LoadingScreen/LoadingPartThin.svg" id="3_k8283"]
+[ext_resource type="Texture2D" uid="uid://dg44fv67r5jpp" path="res://Assets/Textures/Hud/LoadingScreen/LoadingPartFat.svg" id="4_67v6a"]
+[ext_resource type="Texture2D" uid="uid://bl84qgojuj6td" path="res://Assets/Textures/Hud/LoadingScreen/Dot.svg" id="5_icwjq"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l4l47"]
 font = ExtResource("1_bmt3c")
@@ -21,10 +21,10 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, -0.934066), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(0.926316, -0.956044), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[node name="LoadingScreen" type="CanvasLayer"]
+[node name="LoadingScreen" type="CanvasLayer" unique_id=527282087]
 script = ExtResource("1_tw8yx")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=2138581471]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +32,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="Control"]
+[node name="ColorRect" type="ColorRect" parent="Control" unique_id=395029687]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,7 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control" unique_id=1770090131]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -55,32 +55,32 @@ offset_bottom = 22.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LoadingLabel" type="Label" parent="Control/VBoxContainer"]
+[node name="LoadingLabel" type="Label" parent="Control/VBoxContainer" unique_id=143196910]
 layout_mode = 2
-text = "Loading"
+text = "LOADING_SCREEN__LOADING"
 label_settings = SubResource("LabelSettings_l4l47")
 horizontal_alignment = 1
 uppercase = true
 
-[node name="Anim" type="Control" parent="Control/VBoxContainer"]
+[node name="Anim" type="Control" parent="Control/VBoxContainer" unique_id=236469827]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="LoadingHandle" type="Node2D" parent="Control/VBoxContainer/Anim"]
+[node name="LoadingHandle" type="Node2D" parent="Control/VBoxContainer/Anim" unique_id=1306099584]
 position = Vector2(0, 60)
 script = ExtResource("2_jp6vp")
 ThickRotationSpeedCurve = SubResource("Curve_we0hx")
 ThinRotationSpeedCurve = SubResource("Curve_sjuhh")
 
-[node name="ThinPart" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle"]
+[node name="ThinPart" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle" unique_id=554261377]
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("3_k8283")
 
-[node name="ThickPart" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle"]
+[node name="ThickPart" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle" unique_id=1942623852]
 scale = Vector2(0.035, 0.035)
 texture = ExtResource("4_67v6a")
 
-[node name="Dot" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle"]
+[node name="Dot" type="Sprite2D" parent="Control/VBoxContainer/Anim/LoadingHandle" unique_id=1313157029]
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("5_icwjq")

@@ -52,24 +52,21 @@ public partial class CharacterSynchronizer
         _controller.RemoveBlock(controlBlock, false);
     }
     
-    public void Controller_Teleport(Vector2 position) => 
-        Rpc(MethodName.Controller_TeleportRpc, position);
+    public void Controller_Teleport(Vector2 position) => Rpc(MethodName.Controller_TeleportRpc, position);
     [Rpc(CallLocal = false)]
     private void Controller_TeleportRpc(Vector2 position)
     {
         _controller.Teleport(position, false);
     }
     
-    public void Controller_AddImpulse(Vector2 impulse) => 
-        Rpc(MethodName.Controller_AddImpulseRpc, impulse);
+    public void Controller_AddImpulse(Vector2 impulse) => Rpc(MethodName.Controller_AddImpulseRpc, impulse);
     [Rpc(CallLocal = false)]
     private void Controller_AddImpulseRpc(Vector2 impulse)
     {
         _controller.AddImpulse(impulse, false);
     }
 
-    public void Controller_SendMovement(IController.MovementData movementData) => 
-        Rpc(MethodName.Controller_SendMovementRpc, MessagePackSerializer.Serialize(movementData));
+    public void Controller_SendMovement(IController.MovementData movementData) => Rpc(MethodName.Controller_SendMovementRpc, MessagePackSerializer.Serialize(movementData));
     [Rpc(AnyPeer, CallLocal = false, TransferMode = Unreliable)]
     private void Controller_SendMovementRpc(byte[] movementDataBytes)
     {

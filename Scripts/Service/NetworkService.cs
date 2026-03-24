@@ -1,16 +1,16 @@
-﻿using NeonWarfare.Scenes.Root;
+﻿using Godot;
 
 namespace NeonWarfare.Scripts.Service;
 
 public class NetworkService : KludgeBox.Godot.Services.NetworkService
 {
 
-    private Root _root;
+    private SceneTree _rootSceneTree;
     private bool _isDedicatedServer;
     
-    public void Init(Root root, bool isDedicatedServer)
+    public void Init(SceneTree rootSceneTree, bool isDedicatedServer)
     {
-        _root = root;
+        _rootSceneTree = rootSceneTree;
         _isDedicatedServer = isDedicatedServer;
     }
 
@@ -21,6 +21,6 @@ public class NetworkService : KludgeBox.Godot.Services.NetworkService
 
     public override bool IsServer()
     {
-        return _root.GetTree().GetMultiplayer().IsServer();
+        return _rootSceneTree.GetMultiplayer().IsServer();
     }
 }

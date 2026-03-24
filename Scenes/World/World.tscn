@@ -1,39 +1,73 @@
-[gd_scene load_steps=11 format=3 uid="uid://bpjqlqsxaute2"]
+[gd_scene format=3 uid="uid://bpjqlqsxaute2"]
 
 [ext_resource type="Script" uid="uid://dtpndmeabtt07" path="res://Scenes/World/World.cs" id="1_0nbjp"]
-[ext_resource type="PackedScene" uid="uid://baeir4xp6kjyd" path="res://Scenes/World/MpSpawn/WorldMultiplayerSpawner.tscn" id="2_ouhkt"]
-[ext_resource type="PackedScene" uid="uid://ba3apeajydxl6" path="res://Scenes/World/PackedScenes/WorldPackedScenes.tscn" id="2_xf6vi"]
-[ext_resource type="PackedScene" uid="uid://bic2y3aefedxr" path="res://Scenes/World/Data/WorldPersistenceData.tscn" id="3_5jr8x"]
+[ext_resource type="PackedScene" uid="uid://baeir4xp6kjyd" path="res://Scenes/World/Service/MpSpawn/WorldMultiplayerSpawner.tscn" id="2_ouhkt"]
+[ext_resource type="PackedScene" uid="uid://ba3apeajydxl6" path="res://Scenes/World/Scenes/SyncedScenes/SyncedPackedScenes.tscn" id="2_xf6vi"]
+[ext_resource type="PackedScene" uid="uid://bic2y3aefedxr" path="res://Scenes/World/Data/PersistenceData/WorldPersistenceData.tscn" id="3_5jr8x"]
 [ext_resource type="PackedScene" uid="uid://c8mpkavrkvkxh" path="res://Scenes/World/Tree/WorldTree.tscn" id="3_hveh7"]
-[ext_resource type="Script" uid="uid://b1sdp82lmtr2r" path="res://Scenes/World/Services/PersistenceFactory/PersistenceNodesFactoryService.cs" id="4_kuxid"]
-[ext_resource type="Script" uid="uid://b1lvv7kolowbi" path="res://Scenes/World/Services/WorldTemporaryDataService.cs" id="4_p7pgw"]
-[ext_resource type="Script" uid="uid://dup0k3cek5wg" path="res://Scenes/World/Services/WorldMultiplayerSpawnerService.cs" id="6_87yka"]
-[ext_resource type="Script" uid="uid://fbb6ibpssx62" path="res://Scenes/World/Services/StartStop/WorldStartStopService.cs" id="6_p7pgw"]
-[ext_resource type="PackedScene" uid="uid://buxateh143bl3" path="res://Scenes/World/PackedScenes/ClientPackedScenes.tscn" id="9_p7pgw"]
+[ext_resource type="Script" uid="uid://b1sdp82lmtr2r" path="res://Scenes/World/Service/PersistenceFactory/PersistenceNodesFactoryService.cs" id="4_kuxid"]
+[ext_resource type="Script" uid="uid://b1lvv7kolowbi" path="res://Scenes/World/Data/TemporaryData/WorldTemporaryData.cs" id="4_x5sp8"]
+[ext_resource type="Script" uid="uid://dup0k3cek5wg" path="res://Scenes/World/Service/WorldMultiplayerSpawnerService.cs" id="6_87yka"]
+[ext_resource type="Script" uid="uid://dphgcbar3udj1" path="res://Scenes/World/Service/WorldSynchronizerService.cs" id="7_ng1ea"]
+[ext_resource type="Script" uid="uid://fbb6ibpssx62" path="res://Scenes/World/Service/StartStop/WorldServerStartStopService.cs" id="8_30wmc"]
+[ext_resource type="Script" uid="uid://qyoo2ficvvsa" path="res://Scenes/World/Service/StartStop/WorldClientStartStopService.cs" id="9_nfd2q"]
+[ext_resource type="PackedScene" uid="uid://buxateh143bl3" path="res://Scenes/World/Scenes/ClientScenes/ClientPackedScenes.tscn" id="9_p7pgw"]
+[ext_resource type="Script" uid="uid://ecnv5a1mg0fu" path="res://Scenes/World/Service/WorldDataSaveLoadService.cs" id="10_x5sp8"]
+[ext_resource type="Script" uid="uid://xg00p1epx55n" path="res://Scenes/World/Service/DataSerializer/WorldDataSerializerService.cs" id="11_lp0bp"]
+[ext_resource type="PackedScene" uid="uid://biptteqr0dt30" path="res://Scenes/World/Service/Performance/WorldPerformanceService.tscn" id="12_0phyg"]
+[ext_resource type="Script" uid="uid://dm8kr1s86wu7q" path="res://Scenes/World/Service/WorldFacadeService.cs" id="12_lp0bp"]
+[ext_resource type="Script" uid="uid://dtv76e7pfc4w8" path="res://Scenes/World/Service/Chat/WorldChatService.cs" id="14_liy54"]
+[ext_resource type="Script" uid="uid://cjus2vroiwp63" path="res://Scenes/World/Service/Command/WorldCommandService.cs" id="15_c1bjq"]
 
-[node name="World" type="Node2D"]
+[node name="World" type="Node2D" unique_id=943238609]
 script = ExtResource("1_0nbjp")
 
-[node name="Tree" parent="." instance=ExtResource("3_hveh7")]
+[node name="Tree" parent="." unique_id=1512671490 instance=ExtResource("3_hveh7")]
 
-[node name="Data" parent="." instance=ExtResource("3_5jr8x")]
+[node name="PersistenceData" parent="." unique_id=841660118 instance=ExtResource("3_5jr8x")]
 
-[node name="Factory" type="Node" parent="."]
+[node name="TemporaryData" type="Node" parent="." unique_id=1505366897]
+script = ExtResource("4_x5sp8")
+MainAdminNick = null
+PlayerNickByPeerId = null
+
+[node name="FactoryService" type="Node" parent="." unique_id=1851041012]
 script = ExtResource("4_kuxid")
 
-[node name="TemporaryDataService" type="Node" parent="."]
-script = ExtResource("4_p7pgw")
-
-[node name="StartStopService" type="Node" parent="."]
-script = ExtResource("6_p7pgw")
-
-[node name="MultiplayerSpawnerService" type="Node" parent="."]
+[node name="MultiplayerSpawnerService" type="Node" parent="." unique_id=1768346598]
 script = ExtResource("6_87yka")
 WorldMultiplayerSpawnerPackedScene = ExtResource("2_ouhkt")
 
-[node name="WorldPackedScenes" parent="." instance=ExtResource("2_xf6vi")]
+[node name="ServerStartStopService" type="Node" parent="." unique_id=1732706405]
+script = ExtResource("8_30wmc")
 
-[node name="ClientPackedScenes" parent="." instance=ExtResource("9_p7pgw")]
+[node name="ClientStartStopService" type="Node" parent="." unique_id=1465394900]
+script = ExtResource("9_nfd2q")
 
-[node name="Tree-MultiplayerSpawner" parent="." instance=ExtResource("2_ouhkt")]
+[node name="SynchronizerService" type="Node" parent="." unique_id=1144656672]
+script = ExtResource("7_ng1ea")
+
+[node name="DataSaveLoadService" type="Node" parent="." unique_id=1442151575]
+script = ExtResource("10_x5sp8")
+
+[node name="DataSerializerService" type="Node" parent="." unique_id=145867701]
+script = ExtResource("11_lp0bp")
+
+[node name="PerformanceService" parent="." unique_id=743159716 instance=ExtResource("12_0phyg")]
+
+[node name="ChatService" type="Node" parent="." unique_id=1828481289]
+script = ExtResource("14_liy54")
+
+[node name="CommandService" type="Node" parent="." unique_id=673940175]
+script = ExtResource("15_c1bjq")
+
+[node name="FacadeService" type="Node" parent="." unique_id=200665927]
+script = ExtResource("12_lp0bp")
+
+[node name="SyncedPackedScenes" parent="." unique_id=1365667924 instance=ExtResource("2_xf6vi")]
+
+[node name="ClientPackedScenes" parent="." unique_id=1308608789 instance=ExtResource("9_p7pgw")]
+
+[node name="Tree-MultiplayerSpawner" parent="." unique_id=1958817782 instance=ExtResource("2_ouhkt")]
 spawn_path = NodePath("../Tree")
+_selfSync = null

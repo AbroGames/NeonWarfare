@@ -1,0 +1,102 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: NeonWarfare\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
+msgstr ""
+
+msgid "MAIN_MENU__CREATE_SERVER_BUTTON"
+msgstr ""
+
+msgid "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
+msgstr ""
+
+msgid "MAIN_MENU__SETTINGS_BUTTON"
+msgstr ""
+
+msgid "MAIN_MENU__EXIT_BUTTON"
+msgstr ""
+
+msgid "SINGLEPLAYER_MENU__SAVE_NAME"
+msgstr ""
+
+msgid "SINGLEPLAYER_MENU__START_BUTTON"
+msgstr ""
+
+msgid "CONNECT_MENU__HOST"
+msgstr ""
+
+msgid "CONNECT_MENU__PORT"
+msgstr ""
+
+msgid "CONNECT_MENU__CONNECT_BUTTON"
+msgstr ""
+
+msgid "HOST_MENU__PORT"
+msgstr ""
+
+msgid "HOST_MENU__SAVE_NAME"
+msgstr ""
+
+msgid "HOST_MENU__DEDICATED"
+msgstr ""
+
+msgid "HOST_MENU__CREATE_BUTTON"
+msgstr ""
+
+msgid "SETTING_MENU__NICK"
+msgstr ""
+
+msgid "SETTING_MENU__COLOR"
+msgstr ""
+
+msgid "SETTING_MENU__LANGUAGE"
+msgstr ""
+
+msgid "SETTING_MENU__SAVE_BUTTON"
+msgstr ""
+
+msgid "MESSAGE_MENU__OK_BUTTON"
+msgstr ""
+
+msgid "MESSAGE_MENU__DEFAULT_ERROR"
+msgstr ""
+
+msgid "HUD__CHAT_PLACEHOLDER"
+msgstr ""
+
+msgid "HUD__CHAT_SEND_BUTTON"
+msgstr ""
+
+msgid "HUD__SAVE_BUTTON"
+msgstr ""
+
+msgid "HUD__SAVE_FILENAME_PLACEHOLDER"
+msgstr ""
+
+msgid "HUD__EXIT_BUTTON"
+msgstr ""
+
+msgid "HUD__TEST_1_BUTTON"
+msgstr ""
+
+msgid "HUD__TEST_2_BUTTON"
+msgstr ""
+
+msgid "HUD__TEST_3_BUTTON"
+msgstr ""
+
+msgid "HUD__LOG_BUTTON"
+msgstr ""
+
+msgid "LOADING_SCREEN__CONNECTING"
+msgstr ""
+
+msgid "LOADING_SCREEN__LOADING"
+msgstr ""
+
+msgid "LOADING_SCREEN__WAITING_SYNCING"
+msgstr ""

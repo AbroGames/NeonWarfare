@@ -1,5 +1,5 @@
 using Godot;
-using NeonWarfare.Scripts.Service.CmdArgs;
+using NeonWarfare.Scripts.Content.CmdArgs;
 
 namespace NeonWarfare.Scripts.Service;
 
@@ -13,7 +13,16 @@ public class ProcessService
     
     public int StartNewDedicatedServerApplication(int port, string saveFileName, string adminNickname, bool showWindow)
     {
-        DedicatedServerArgs dedicatedServerArgs = new DedicatedServerArgs(!showWindow, port, saveFileName, adminNickname, OS.GetProcessId(), false, false);
+        CommonArgs commonArgs = new CommonArgs(
+            false); // Dedicated server never uses Godot console
+        DedicatedServerArgs dedicatedServerArgs = new DedicatedServerArgs(
+            commonArgs,
+            !showWindow, 
+            port, 
+            saveFileName, 
+            adminNickname, 
+            OS.GetProcessId(), 
+            false); // Can be changed to true only for debug reasons
 
         return StartNewApplication(dedicatedServerArgs.GetArrayToStartDedicatedServer());
     }

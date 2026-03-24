@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Godot;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;

@@ -6,6 +6,7 @@ using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.Root.Starters;
 using Serilog;
 using NodeContainer = NeonWarfare.Scenes.KludgeBox.NodeContainer;
+using NeonWarfare.Scenes.KludgeBox;
 
 namespace NeonWarfare.Scenes.Root;
 
@@ -41,7 +42,8 @@ public partial class Root : Node2D
 
     private void Init()
     {
-        _rootStarterManager = new RootStarterManager(this);
+        RootData rootData = new RootData(MainSceneContainer, LoadingScreenContainer, PackedScenes, GetTree());
+        _rootStarterManager = new RootStarterManager(rootData);
         _rootStarterManager.Init();
     }
 

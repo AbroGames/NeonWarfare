@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 using MessagePack;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffect;
+using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
 
@@ -17,7 +17,7 @@ public partial class CharacterSynchronizer
         _statusEffectsClient = character.StatusEffectsClient;
     }
 
-    public void StatusEffects_OnClientApply(int clientId, AbstractClientStatusEffect clientStatusEffect)
+    public void StatusEffects_OnClientApply(int clientId, ClientStatusEffect clientStatusEffect)
     {
         int typeId = Services.TypesMapping.GetId(clientStatusEffect.GetType());
         byte[] payload = MessagePackSerializer.Serialize(clientStatusEffect.GetType(), clientStatusEffect);
@@ -29,7 +29,7 @@ public partial class CharacterSynchronizer
         if (!Net.IsClient()) return;
         
         Type targetType = Services.TypesMapping.GetType(typeId);
-        var clientStatusEffect = (AbstractClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
+        var clientStatusEffect = (ClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
         _statusEffectsClient.OnAddStatusEffect(clientId, clientStatusEffect);
     }
     

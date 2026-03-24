@@ -60,6 +60,10 @@ KeyAttackSecondary={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://Assets/Locales/en.po", "res://Assets/Locales/ru.po")
+
 [physics]
 
 common/physics_ticks_per_second=30
