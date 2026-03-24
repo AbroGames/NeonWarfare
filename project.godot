@@ -23,6 +23,10 @@ config/icon="uid://dxpvi08dfney4"
 
 project/assembly_name="NeonWarfare"
 
+[gui]
+
+theme/custom="uid://cky2ixgrcrnlo"
+
 [input]
 
 KeyUp={
@@ -67,3 +71,7 @@ common/physics_ticks_per_second=30
 2d/default_gravity_vector=Vector2(0, 0)
 2d/default_linear_damp=0.0
 common/physics_interpolation=true
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(0.032967977, 0.032967996, 0.032967962, 1)

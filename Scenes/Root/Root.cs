@@ -1,16 +1,19 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
+using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Root.Starters;
+using Serilog;
 
 namespace NeonWarfare.Scenes.Root;
 
 public partial class Root : Node2D
 {
-    
-    [Child] private NodeContainer MainSceneContainer { get; set; }
-    [Child] private NodeContainer LoadingScreenContainer { get; set; }
-    [Child] private RootPackedScenes PackedScenes { get; set; }
+    [Child] public NodeContainer MainSceneContainer { get; set; }
+    [Child] public NodeContainer LoadingScreenContainer { get; set; }
+    [Child] public RootPackedScenes PackedScenes { get; set; }
 
     private RootStarterManager _rootStarterManager;
     

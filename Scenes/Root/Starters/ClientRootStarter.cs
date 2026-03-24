@@ -19,6 +19,7 @@ public class ClientRootStarter : BaseRootStarter
         _clientArgs = ClientArgs.GetFromCmd(CmdArgsService);
         
         Services.Net.Init(rootData.SceneTree, false);
+        Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
         
         Services.PlayerSettings.Init();
         if (_clientArgs.Nick != null)
