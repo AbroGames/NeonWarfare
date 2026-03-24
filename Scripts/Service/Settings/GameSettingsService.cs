@@ -10,9 +10,10 @@ public class GameSettingsService : IPlayerSettingsService
     
     private string _temporalNick = null;
 
-    public void PreserveSingleplayerGame()
+    public void PreserveSingleplayerGame(string saveName)
     {
         Settings.FastResumeAvailable = ResumableGame.RunSingleplayer;
+        Settings.LastSingleplayerSaveName = saveName;
         SaveSettings();
     }
 
@@ -57,12 +58,13 @@ public class GameSettingsService : IPlayerSettingsService
             using var file = FileAccess.Open(_gameSettingsPath, FileAccess.ModeFlags.Read);
             var text = file.GetAsText();
             Settings = GameSettingsBase.Deserialize(text);
+            Settings.Validate();
         }
     }
 
     public PlayerSettings GetPlayerSettings()
     {
-        return new PlayerSettings(_temporalNick ?? Settings.PlayerName, Settings.PlayerColor);
+        return new PlayerSettings(_temporalNick ?? Settings.PlayerName, Settings.PlayerColor, Settings.GameLocale);
     }
 
     public void SetPlayerSettings(PlayerSettings playerSettings)

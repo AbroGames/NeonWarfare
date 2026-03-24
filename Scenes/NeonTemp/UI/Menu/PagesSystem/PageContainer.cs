@@ -6,7 +6,7 @@ namespace Kludgeful.Main.ContextSystem;
 
 public partial class PageContainer : Control
 {
-    [Logger] private ILogger _logger;
+    [Logger] private ILogger _log;
     
     public IPage RootPage { get; private set; }
     public IPage CurrentPage { get; private set; }
@@ -20,7 +20,7 @@ public partial class PageContainer : Control
     {
         if (CurrentPage is not null)
         {
-            _logger.Error("Attempt to set root context more than once for {containerPath}", GetPath());
+            _log.Error("Attempt to set root context more than once for {containerPath}", GetPath());
             return;
         }
         
@@ -35,7 +35,7 @@ public partial class PageContainer : Control
         var parentContext = CurrentPage;
         if (!nextPage.IsTop)
         {
-            _logger.Error("Attempt to push next context that contains child context at {containerPath}", GetPath());
+            _log.Error("Attempt to push next context that contains child context at {containerPath}", GetPath());
             return;
         }
         
@@ -43,7 +43,7 @@ public partial class PageContainer : Control
         {
             if (ctx == nextPage)
             {
-                _logger.Error("Loop detected: trying to push a context that already exists in the chain at {containerPath}", GetPath());
+                _log.Error("Loop detected: trying to push a context that already exists in the chain at {containerPath}", GetPath());
                 return;
             }
         }
@@ -62,7 +62,7 @@ public partial class PageContainer : Control
         }
         else
         {
-            _logger.Error("Current context somehow is not a Node at {containerPath}", GetPath());
+            _log.Error("Current context somehow is not a Node at {containerPath}", GetPath());
         }
     }
 
@@ -70,7 +70,7 @@ public partial class PageContainer : Control
     {
         if (CurrentPage.IsRoot)
         {
-            _logger.Warning("Attempt to pop root context at {containerPath}", GetPath());
+            _log.Warning("Attempt to pop root context at {containerPath}", GetPath());
             return CurrentPage;
         }
         

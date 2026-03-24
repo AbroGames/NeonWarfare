@@ -8,7 +8,7 @@ using Serilog;
 
 public partial class HostPage : MainMenuPage
 {
-    [Logger] private ILogger _logger;
+    [Logger] private ILogger _log;
     [Child] public SpinBox PortSpinBox { get; private set; }
     [Child] public TextEdit SaveNameTextEdit { get; private set; }
     [Child] public CheckButton IsDedicatedCheckButton { get; private set; }

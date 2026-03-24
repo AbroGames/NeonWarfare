@@ -27,6 +27,7 @@ public class MainSceneService
         _mainSceneContainer.ChangeStoredNode(mainMenu);
     }
 
+    // TODO: сделать страничку с сообщением (я уже забыл об этом прямо во время написания этого коммента)
     public void StartMainMenu(string message)
     {
         StartMainMenu();
@@ -51,7 +52,6 @@ public class MainSceneService
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
-        var restoredPort = port ?? BaseGameStarter.DefaultPort;
         
         game.Init(new ConnectToMultiplayerGameStarter(host, port));
     }
@@ -102,6 +102,7 @@ public class MainSceneService
     public bool MainSceneIsMainMenu()
     {
         return _mainSceneContainer.GetCurrentStoredNode<Node>() is Scenes.NeonTemp.UI.Menu.MainMenu.MainMenu or MainMenu;
+        // TODO: подчистить остатки старого меню
     }
 
     public bool MainSceneIsGame()

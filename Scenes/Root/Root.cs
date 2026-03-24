@@ -12,7 +12,7 @@ namespace NeonWarfare.Scenes.Root;
 
 public partial class Root : Node2D
 {
-    [Logger] private ILogger _logger;
+    [Logger] private ILogger _log;
     // values were picked empirically and need testing on other screen resolutions
     // TODO: KeyJ: test this on a resolution larger than my 1920x1080
     private readonly List<(int expectedWindowHeight, float scaleFactor)> _scaleFactorMappings =
@@ -77,7 +77,7 @@ public partial class Root : Node2D
 
         if (!_currentScale.IsEqualApprox(newScale))
         {
-            _logger.Information("Adjusting scale for window size {sizeX}x{sizeY} to {newScale}", size.X, size.Y, newScale);
+            _log.Information("Adjusting scale for window size {sizeX}x{sizeY} to {newScale}", size.X, size.Y, newScale);
             _currentScale = newScale;
             GetTree().Root.ContentScaleFactor = newScale;
         }

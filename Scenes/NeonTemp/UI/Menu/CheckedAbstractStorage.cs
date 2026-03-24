@@ -6,7 +6,6 @@ namespace Kludgeful.Main;
 
 public abstract partial class CheckedAbstractStorage : AbstractStorage
 {
-    [Logger] ILogger _logger;
     public override void _PreReady()
     {
         Di.Process(this);

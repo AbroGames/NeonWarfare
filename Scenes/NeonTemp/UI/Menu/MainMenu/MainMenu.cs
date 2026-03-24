@@ -11,7 +11,6 @@ public partial class MainMenu : Node
 {
     [Child(By.Type)] public PageContainer PageContainer { get; private set; }
     [Child(By.Type)] public PagesScenes PagesScenes { get; private set; }
-    [Logger] private ILogger _logger;
 
     public override void _Ready()
     {

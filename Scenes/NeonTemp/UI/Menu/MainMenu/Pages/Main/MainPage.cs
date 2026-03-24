@@ -9,7 +9,6 @@ namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Main;
 
 public partial class MainPage : MainMenuPage
 {
-	[Logger] private ILogger _logger;
 	[Child] public Button ResumeButton { get; private set; }
 	[Child] public Button StartSingleplayerButton { get; private set; }
 	[Child] public Button CreateServerButton { get; private set; }
@@ -30,7 +29,7 @@ public partial class MainPage : MainMenuPage
 		ResumeButton.Pressed += RunResumeAction;
 		StartSingleplayerButton.Pressed += () =>
 		{
-			Services.GameSettings.PreserveSingleplayerGame();
+			Services.GameSettings.PreserveSingleplayerGame(null);
 			Services.MainScene.StartSingleplayerGame();
 		};
 		CreateServerButton.Pressed += () => GoNext(PagesScenes.CreateServer.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));

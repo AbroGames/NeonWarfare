@@ -42,11 +42,6 @@ public abstract class GameSettingsBase
 
     public void SetVisibleSettings(IReadOnlyList<Setting> settings)
     {
-        /*var accessors = GameSettingsInternals.VisibleAccessors.ToDictionary(accessor => accessor.Member.Name, accessor => accessor);
-        foreach (var setting in settings)
-        {
-            accessors[setting.Name].SetValue(this, setting.Value);
-        }*/
         foreach (var setting in settings)
         {
             setting.Apply();

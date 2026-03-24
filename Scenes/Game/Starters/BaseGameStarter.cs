@@ -5,9 +5,9 @@ namespace NeonWarfare.Scenes.Game.Starters;
 
 public abstract class BaseGameStarter
 {
-    protected const string Localhost = "127.0.0.1";
-    public const string DefaultHost = Localhost;
-    public const int DefaultPort = 25566;
+    protected const string Localhost = Consts.Localhost;
+    protected const string DefaultHost = Consts.DefaultHost;
+    protected const int DefaultPort = Consts.DefaultPort;
 
     public virtual void Init(Game game) { }
 

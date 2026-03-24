@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System;
+using Godot;
+using KludgeBox.Godot.Services;
 using NeonWarfare.Scenes.Game.Starters;
 
 namespace Kludgeful.Main.SettingsSystem;
@@ -13,17 +15,27 @@ public enum ResumableGame
 public partial class GameSettings : GameSettingsBase
 {
     [Hint("Name of the player in the multiplayer")]
-    public string PlayerName { get; set; } = "No Name";
+    public string PlayerName { get; set; } = Consts.DefaultPlayerName;
     
     [Hint("Color of the player character")]
     public Color PlayerColor { get; set; } = Colors.GreenYellow;
 
+
+    [Hide] public string GameLocale { get; set; } = I18NService.DefaultLocale;
     [Hide] public ResumableGame FastResumeAvailable { get; set; } = ResumableGame.None;
     
-    [Hide] public string LastConnectedHost { get; set; } = BaseGameStarter.DefaultHost;
-    [Hide] public int LastConnectedPort { get; set; } = BaseGameStarter.DefaultPort;
+    [Hide] public string LastSingleplayerSaveName { get; set; }
     
-    [Hide] public int LastHostedPort { get; set; } = BaseGameStarter.DefaultPort;
+    [Hide] public string LastConnectedHost { get; set; }
+    [Hide] public int LastConnectedPort { get; set; } = Consts.DefaultPort;
+    
+    [Hide] public int LastHostedPort { get; set; } = Consts.DefaultPort;
     [Hide] public bool LastHostedIsDedicated { get; set; } = false;
     [Hide] public string LastHostedSaveName { get; set; }
+
+    public void Validate()
+    {
+        GameLocale ??=  I18NService.DefaultLocale;
+        PlayerName ??= Consts.DefaultPlayerName;
+    }
 }

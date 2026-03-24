@@ -11,7 +11,6 @@ using Serilog;
 
 public partial class SettingsPage : MainMenuPage
 {
-    [Logger] private ILogger _logger;
     [Child] public Button SaveButton { get; private set; }
     [Child] public Button CancelButton { get; private set; }
     [Child] public VBoxContainer SettingsContainer { get; private set; }
