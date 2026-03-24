@@ -21,6 +21,7 @@ public static class Services
     public static readonly TypesMappingService TypesMapping = new();
     public static readonly AssemblyCacheService AssemblyCache = new();
     public static readonly I18NService I18N = new();
+    public static readonly AutoScalingService AutoScaling = new();
     public static MembersScanner MembersScanner => Di.MembersScanner;
     
     // Services from game, but extended KludgeBox services
