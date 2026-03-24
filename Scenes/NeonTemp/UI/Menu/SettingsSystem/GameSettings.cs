@@ -12,6 +12,7 @@ public enum ResumableGame
     CreateServer,
     ConnectToServer,
 }
+
 public partial class GameSettings : GameSettingsBase
 {
     [Hint("Name of the player in the multiplayer")]
@@ -21,7 +22,7 @@ public partial class GameSettings : GameSettingsBase
     public Color PlayerColor { get; set; } = Colors.GreenYellow;
 
 
-    [Hide] public string GameLocale { get; set; } = I18NService.DefaultLocale;
+    [Hide] public string GameLocale { get; set; } = Services.I18N.GetUserOsLocaleInfoOrDefault().Code;
     [Hide] public ResumableGame FastResumeAvailable { get; set; } = ResumableGame.None;
     
     [Hide] public string LastSingleplayerSaveName { get; set; }
@@ -30,12 +31,12 @@ public partial class GameSettings : GameSettingsBase
     [Hide] public int LastConnectedPort { get; set; } = Consts.DefaultPort;
     
     [Hide] public int LastHostedPort { get; set; } = Consts.DefaultPort;
-    [Hide] public bool LastHostedIsDedicated { get; set; } = false;
+    [Hide] public bool LastHostedIsDedicated { get; set; }
     [Hide] public string LastHostedSaveName { get; set; }
 
     public void Validate()
     {
-        GameLocale ??=  I18NService.DefaultLocale;
+        GameLocale ??= Services.I18N.GetUserOsLocaleInfoOrDefault().Code;
         PlayerName ??= Consts.DefaultPlayerName;
     }
 }
