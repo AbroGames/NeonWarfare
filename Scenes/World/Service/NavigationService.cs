@@ -144,7 +144,7 @@ public partial class NavigationService : Node2D
         {
             unitSize = UnitSizes.First(size => size >= rawSize);
         }
-        catch (InvalidOperationException e)
+        catch (InvalidOperationException)
         {
             _log.Error("Unable to map raw size of {rawSize} to any of existing ones: [{SmallestUnitSize} ... {BiggestUnitSize}]", 
                 $"{rawSize:N2}", SmallestUnitSize, BiggestUnitSize);

@@ -69,9 +69,8 @@ public class MainSceneService
         _mainSceneContainer.ChangeStoredNode(game);
 
         string adminNickname = Services.PlayerSettings.GetPlayerSettings().Nick;
-        var asDedicated = createDedicatedServerProcess ?? false;
         
-        if (asDedicated)
+        if (createDedicatedServerProcess ?? false)
         {
             game.Init(new HostDedicatedServerAndConnectGameStarter(port, saveFileName, adminNickname, true));
         }

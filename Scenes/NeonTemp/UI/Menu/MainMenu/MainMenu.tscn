@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/PagesScenes.cs" id="1_0lnop"]
 [ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/MainMenu.cs" id="1_likqx"]
-[ext_resource type="Script" uid="uid://blkpfb6j3vq2h" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Constelllations.cs" id="2_3p65v"]
 [ext_resource type="PackedScene" uid="uid://t53rgkpwod2e" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Main/MainPage.tscn" id="3_lc56h"]
 [ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/NeonTemp/UI/Menu/PagesSystem/PageContainer.cs" id="4_likqx"]
 [ext_resource type="PackedScene" uid="uid://cu0ciyqyf0m7d" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Host/HostPage.tscn" id="5_36rd5"]
@@ -35,11 +34,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_h4gti")
-
-[node name="Background" type="Node2D" parent="." unique_id=1228972724]
-
-[node name="Constelllations" type="Node2D" parent="Background" unique_id=1848518754]
-script = ExtResource("2_3p65v")
 
 [node name="Control" type="Control" parent="." unique_id=1988893568]
 layout_mode = 3

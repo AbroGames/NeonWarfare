@@ -1,5 +1,6 @@
 using Godot;
 using Kludgeful.Main;
+using CheckedAbstractStorage = NeonWarfare.Scenes.KludgeBox.CheckedAbstractStorage;
 
 namespace ReVectorSurvivors.States.MainMenuState;
 
