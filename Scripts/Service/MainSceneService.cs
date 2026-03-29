@@ -23,10 +23,11 @@ public class MainSceneService
     
     public void StartMainMenu()
     {
-        MainMenu mainMenu = _mainMenuPackedScene.Instantiate<MainMenu>();
+        var mainMenu = _mainMenuPackedScene.Instantiate();
         _mainSceneContainer.ChangeStoredNode(mainMenu);
     }
 
+    // TODO: сделать страничку с сообщением (я уже забыл об этом прямо во время написания этого коммента)
     public void StartMainMenu(string message)
     {
         StartMainMenu();
@@ -99,7 +100,8 @@ public class MainSceneService
 
     public bool MainSceneIsMainMenu()
     {
-        return _mainSceneContainer.GetCurrentStoredNode<Node>() is MainMenu;
+        return _mainSceneContainer.GetCurrentStoredNode<Node>() is Scenes.NeonTemp.UI.Menu.MainMenu.MainMenu or MainMenu;
+        // TODO: подчистить остатки старого меню
     }
 
     public bool MainSceneIsGame()

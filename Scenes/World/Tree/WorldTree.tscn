@@ -4,12 +4,11 @@
 [ext_resource type="PackedScene" uid="uid://wdbyyryght8p" path="res://Scenes/World/Tree/Surface/Map/MapSurface.tscn" id="2_pydqr"]
 [ext_resource type="PackedScene" uid="uid://baeir4xp6kjyd" path="res://Scenes/World/Service/MpSpawn/WorldMultiplayerSpawner.tscn" id="3_p4e4v"]
 
-[node name="Tree" type="Node2D"]
+[node name="Tree" type="Node2D" unique_id=2068167502]
 script = ExtResource("1_y5brc")
 _battleSurfacesNames = null
 
-[node name="MapSurface" parent="." instance=ExtResource("2_pydqr")]
+[node name="MapSurface" parent="." unique_id=527179637 instance=ExtResource("2_pydqr")]
 
-[node name="MapSurface-MultiplayerSpawner" parent="." instance=ExtResource("3_p4e4v")]
+[node name="MapSurface-MultiplayerSpawner" parent="." unique_id=83544621 instance=ExtResource("3_p4e4v")]
 spawn_path = NodePath("../MapSurface")
-_selfSync = null

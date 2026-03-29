@@ -21,6 +21,7 @@ public static class Services
     public static readonly TypesMappingService TypesMapping = new();
     public static readonly AssemblyCacheService AssemblyCache = new();
     public static readonly I18NService I18N = new();
+    public static readonly AutoScalingService AutoScaling = new();
     public static MembersScanner MembersScanner => Di.MembersScanner;
     
     // Services from game, but extended KludgeBox services
@@ -30,7 +31,9 @@ public static class Services
     public static readonly ProcessService Process = new();
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
-    public static readonly PlayerSettingsService PlayerSettings = new();
+    public static readonly GameSettingsService GameSettings = new();
+    // TODO: Жижа, сделай красиво
+    public static readonly IPlayerSettingsService PlayerSettings = GameSettings;
     public static readonly SaveLoadService SaveLoad = new();
     
     public static class Global

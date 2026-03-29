@@ -1,0 +1,171 @@
+[gd_scene format=3 uid="uid://t53rgkpwod2e"]
+
+[ext_resource type="Script" uid="uid://vqjbgpswrg7h" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Main/MainPage.cs" id="1_ao86q"]
+[ext_resource type="FontFile" uid="uid://b5er7c05q6qkh" path="res://Assets/Fonts/ProstoOne.ttf" id="2_085l4"]
+[ext_resource type="Shader" path="res://Assets/Shaders/Glow.gdshader" id="3_sv7yf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_3p65v"]
+font = ExtResource("2_085l4")
+font_size = 72
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h4gti"]
+shader = ExtResource("3_sv7yf")
+shader_parameter/size = 3.5
+shader_parameter/power = 0.25
+shader_parameter/brightness = 1.0
+shader_parameter/hdr_threshold = 0.01
+
+[sub_resource type="Gradient" id="Gradient_h4gti"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.17934783, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.8745098, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ax2lt"]
+gradient = SubResource("Gradient_h4gti")
+width = 256
+fill = 1
+fill_from = Vector2(0.51794875, 0.53162396)
+fill_to = Vector2(1, 0.5148148)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ao86q"]
+bg_color = Color(0.0627451, 0.23529412, 0.10980392, 0.45882353)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.37187693, 0.5518929, 0.41456476, 0.5019608)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_085l4"]
+bg_color = Color(0.28805152, 0.15813419, 0.0853188, 0.45882353)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.6475512, 0.45317674, 0.3175526, 0.5019608)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+corner_detail = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_gu8fo"]
+font_size = 14
+font_color = Color(1, 1, 1, 0.20784314)
+
+[node name="MainPage" type="Control" unique_id=1463431211]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ao86q")
+
+[node name="ScreenSplit" type="VBoxContainer" parent="." unique_id=358022420]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleContainer" type="VBoxContainer" parent="ScreenSplit" unique_id=2014795867]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.75
+alignment = 1
+
+[node name="Control" type="Control" parent="ScreenSplit/TitleContainer" unique_id=1946147381]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="NeonWarfare" type="Label" parent="ScreenSplit/TitleContainer/Control" unique_id=1879073753]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -336.0
+offset_top = -45.0
+offset_right = 336.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.3, 1)
+pivot_offset_ratio = Vector2(0.5, 0)
+size_flags_horizontal = 4
+text = "NEON WARFARE"
+label_settings = SubResource("LabelSettings_3p65v")
+
+[node name="TextureRect" type="TextureRect" parent="ScreenSplit/TitleContainer/Control/NeonWarfare" unique_id=2074713134]
+material = SubResource("ShaderMaterial_h4gti")
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -800.5
+offset_top = -92.5
+offset_right = 800.5
+offset_bottom = 92.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_ax2lt")
+
+[node name="ControlsContainer" type="VBoxContainer" parent="ScreenSplit" unique_id=721790362]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 2
+
+[node name="ResumeButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2054832041]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ao86q")
+text = "Resume"
+
+[node name="Separator2" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1814827603]
+layout_mode = 2
+
+[node name="StartSingleplayerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2065167447]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Start singleplayer "
+
+[node name="CreateServerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=269197810]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Create server"
+
+[node name="ConnectToServerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=316229896]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Connect to server"
+
+[node name="Separator" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1153997288]
+layout_mode = 2
+
+[node name="SettingsButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=1668013026]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Settings"
+
+[node name="QuitButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=1218976550]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_085l4")
+text = "Quit"
+
+[node name="InfoContainer" type="HBoxContainer" parent="ScreenSplit" unique_id=810617367]
+layout_mode = 2
+alignment = 2
+
+[node name="Version" type="Label" parent="ScreenSplit/InfoContainer" unique_id=1381857683]
+layout_mode = 2
+text = "v0.0.1-pre-alpha-dev-please-help-me"
+label_settings = SubResource("LabelSettings_gu8fo")

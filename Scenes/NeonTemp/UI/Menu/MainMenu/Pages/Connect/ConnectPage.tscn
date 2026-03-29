@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://bk5pn3b7flte1"]
+
+[ext_resource type="Script" uid="uid://c277rbvonjjls" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Connect/ConnectPage.cs" id="1_jvb8v"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7cqim"]
+font_size = 32
+
+[node name="ConnectPage" type="Control" unique_id=177104631]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jvb8v")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1592965322]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=1031904954]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer" unique_id=1757775298]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer" unique_id=133917724]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=444372117]
+layout_mode = 2
+text = "CONNECT TO SERVER"
+label_settings = SubResource("LabelSettings_7cqim")
+horizontal_alignment = 1
+
+[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=92713599]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="InputsContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=473908242]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="HostContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=919266550]
+layout_mode = 2
+
+[node name="HostLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/HostContainer" unique_id=352782075]
+layout_mode = 2
+text = "Host:"
+
+[node name="HostLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/HostContainer" unique_id=1758436070]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+placeholder_text = "host name"
+
+[node name="PortContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=2054228007]
+layout_mode = 2
+
+[node name="PortLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1512315796]
+layout_mode = 2
+text = "Port:"
+
+[node name="PortSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1341089181]
+layout_mode = 2
+max_value = 65535.0
+value = 25566.0
+custom_arrow_step = 1.0
+custom_arrow_round = true
+
+[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=725896925]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=73852097]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ConnectToServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1325343709]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "Connect to server"
+
+[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1560158072]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "Cancel"

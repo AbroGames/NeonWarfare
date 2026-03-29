@@ -8,7 +8,12 @@ public partial class WorldMultiplayerSpawnerService : Node
 {
     
     [Export] [NotNull] public PackedScene WorldMultiplayerSpawnerPackedScene { get; private set; }
-    
+
+    public override void _Ready()
+    {
+        Di.Process(this);
+    }
+
     /// <summary>
     /// You can use this method, if <c>observableNode</c> <b>already in scene tree</b>.<br/>
     /// If <c>observableNode</c> not in scene tree yet, you must use <c>AddSpawnerToNode(Node observableNode, Node parentNode)</c>.
