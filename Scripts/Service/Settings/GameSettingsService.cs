@@ -64,13 +64,13 @@ public class GameSettingsService : IPlayerSettingsService
 
     public PlayerSettings GetPlayerSettings()
     {
-        return new PlayerSettings(_temporalNick ?? Settings.PlayerName, Settings.PlayerColor, Settings.GameLocale);
+        return new PlayerSettings(_temporalNick ?? Settings.PlayerName, Settings.PlayerColor, Settings.GameLocale); //TODO GameLocale -- это настройка игрока разве? Кажется игры
     }
 
     public void SetPlayerSettings(PlayerSettings playerSettings)
     {
         Settings.PlayerColor = playerSettings.Color;
-        Settings.PlayerName = playerSettings.Nick;
+        Settings.PlayerName = playerSettings.Nick; //TODO Здесь не хватает GameLocale
         SaveSettings();
     }
 

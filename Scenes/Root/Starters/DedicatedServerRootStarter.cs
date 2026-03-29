@@ -17,7 +17,7 @@ public class DedicatedServerRootStarter : BaseRootStarter
         
         _dedicatedServerArgs = DedicatedServerArgs.GetFromCmd(CmdArgsService);
         
-        Services.Net.Init(rootData.SceneTree, true);
+        Services.Net.Init(true);
         rootData.SceneTree.Root.Title = $"[SERVER] {rootData.SceneTree.Root.Title}";
     }
 

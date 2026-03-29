@@ -18,6 +18,8 @@ public partial class Network(Node multiplayerRoot) : Node
     {
         Di.Process(this);
         
+        Net.SetGameNetwork(this);
+        
         // Setup new Multiplayer object for guaranteed removing all old links and lambdas to old Multiplayer
         // This multiplayer link to node Game (multiplayerRoot) and will be removed after move to MainMenu
         GetTree().SetMultiplayer(new SceneMultiplayer(), multiplayerRoot.GetPath());
@@ -117,6 +119,8 @@ public partial class Network(Node multiplayerRoot) : Node
     
     private void Shutdown()
     {
+        Net.RemoveGameNetwork();
+        
         if (Api.HasMultiplayerPeer() && Api.GetMultiplayerPeer() is not OfflineMultiplayerPeer)
         {
             _log.Information("Shutting down network...");
