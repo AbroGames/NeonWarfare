@@ -32,7 +32,6 @@ public static class Services
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
     public static readonly GameSettingsService GameSettings = new();
-    // TODO: Жижа, сделай красиво
     public static readonly IPlayerSettingsService PlayerSettings = GameSettings;
     public static readonly SaveLoadService SaveLoad = new();
     
