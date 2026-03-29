@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.Json;
 using KludgeBox.Reflection.Access;
-using ReVectorSurvivors;
 
 namespace Kludgeful.Main.SettingsSystem;
 

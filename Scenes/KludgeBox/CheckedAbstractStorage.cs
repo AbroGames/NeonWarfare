@@ -1,11 +1,16 @@
-﻿using AbstractStorage = KludgeBox.Godot.Nodes.AbstractStorage;
+﻿using KludgeBox.DI;
 
 namespace NeonWarfare.Scenes.KludgeBox;
 
-public abstract partial class CheckedAbstractStorage : AbstractStorage
+/// <summary>
+/// Storage with auto calling <c>Di.Process(this)</c>.<br/>
+/// <br/>
+/// <b>You must add [NotNull] to every field that requires validation.</b>
+/// </summary>
+public abstract partial class CheckedAbstractStorage : global::KludgeBox.Godot.Nodes.CheckedAbstractStorage
 {
-    public override void _PreReady()
+    public override DependencyInjector GetDi()
     {
-        Di.Process(this);
+        return Di;
     }
 }

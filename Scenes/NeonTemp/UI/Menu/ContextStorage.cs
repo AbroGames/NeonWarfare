@@ -1,12 +1,12 @@
 using Godot;
-using Kludgeful.Main;
-using CheckedAbstractStorage = NeonWarfare.Scenes.KludgeBox.CheckedAbstractStorage;
+using KludgeBox.DI.Requests.NotNullCheck;
+using NeonWarfare.Scenes.KludgeBox;
 
-namespace ReVectorSurvivors.States.MainMenuState;
+namespace NeonWarfare.Scenes.NeonTemp.UI.Menu;
 
 public partial class ContextStorage : CheckedAbstractStorage
 {
-    [Export] public PackedScene MainContext { get; private set; }
-    [Export] public PackedScene SettingsContext { get; private set; }
-    [Export] public PackedScene ConnectionContext { get; private set; }
+    [Export] [NotNull] public PackedScene MainContext { get; private set; }
+    [Export] [NotNull] public PackedScene SettingsContext { get; private set; }
+    [Export] [NotNull] public PackedScene ConnectionContext { get; private set; }
 }
