@@ -1,13 +1,9 @@
-using Godot;
-using System;
 using System.Collections.Generic;
-using KludgeBox.DI.Requests;
+using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
-using Kludgeful.Main.SettingsSystem;
-using NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu;
-using NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Settings;
-using Serilog;
+using NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
+
+namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Settings;
 
 public partial class SettingsPage : MainMenuPage
 {

@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace Kludgeful.Main.ContextSystem;
+namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.PagesSystem;
 
 public abstract partial class Page : Control, IPage
 {

@@ -1,9 +1,7 @@
 using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
-using Kludgeful.Main.SettingsSystem;
-using Serilog;
+using NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
 
 namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Main;
 

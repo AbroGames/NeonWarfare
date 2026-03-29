@@ -1,5 +1,5 @@
 using Godot;
-using Kludgeful.Main.SettingsSystem;
+using NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
 
 namespace NeonWarfare.Scripts.Service.Settings;
 

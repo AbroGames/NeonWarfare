@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kludgeful.Main.SettingsSystem;
+namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class HideAttribute : Attribute;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kludgeful.Main.ContextSystem;
+namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.PagesSystem;
 
 public interface IPage
 {

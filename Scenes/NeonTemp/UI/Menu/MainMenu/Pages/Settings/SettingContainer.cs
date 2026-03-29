@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using Godot;
-using Kludgeful.Main.SettingsSystem;
-using Vector2 = Godot.Vector2;
+using NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
 
 namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Settings;
 

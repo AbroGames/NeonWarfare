@@ -1,9 +1,6 @@
-﻿using System;
-using Godot;
-using KludgeBox.Godot.Services;
-using NeonWarfare.Scenes.Game.Starters;
+﻿using Godot;
 
-namespace Kludgeful.Main.SettingsSystem;
+namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
 
 public enum ResumableGame
 {

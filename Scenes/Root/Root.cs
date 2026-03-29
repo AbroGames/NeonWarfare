@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Root.Starters;
-using Serilog;
 
 namespace NeonWarfare.Scenes.Root;
 
