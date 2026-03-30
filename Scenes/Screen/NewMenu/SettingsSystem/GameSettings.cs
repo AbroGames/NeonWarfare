@@ -13,9 +13,11 @@ public enum ResumableGame
 
 public partial class GameSettings : GameSettingsBase
 {
+    [Name("SETTING_MENU__NICK")]
     [Hint("Name of the player in the multiplayer")]
     public string PlayerName { get; set; } = Consts.DefaultPlayerName;
     
+    [Name("SETTING_MENU__COLOR")]
     [Hint("Color of the player character")]
     public Color PlayerColor { get; set; } = Colors.GreenYellow;
 

@@ -30,9 +30,9 @@ public partial class MainPage : MainMenuPage
 			Services.GameSettings.PreserveSingleplayerGame(null);
 			Services.MainScene.StartSingleplayerGame();
 		};
-		CreateServerButton.Pressed += () => GoNext(PagesScenes.CreateServer.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
-		ConnectToServerButton.Pressed += () => GoNext(PagesScenes.ConnectionPage.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
-		SettingsButton.Pressed += () => GoNext(PagesScenes.SettingsPage.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
+		CreateServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateServerPageScene).WithAvailablePages(PagesProvider));
+		ConnectToServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.ConnectionPageScene).WithAvailablePages(PagesProvider));
+		SettingsButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SettingsPageScene).WithAvailablePages(PagesProvider));
 		QuitButton.Pressed += () => Services.MainScene.Shutdown();
 
 		ConfigureResumeButton();

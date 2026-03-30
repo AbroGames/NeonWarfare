@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bc3xvgd0paknf"]
 
-[ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/Screen/NewMenu/MainMenu/PagesScenes.cs" id="1_0lnop"]
 [ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/Screen/NewMenu/MainMenu/MainMenu.cs" id="1_likqx"]
+[ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/Screen/NewMenu/MainMenu/PagesProvider.cs" id="2_l4fos"]
 [ext_resource type="PackedScene" uid="uid://t53rgkpwod2e" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Main/MainPage.tscn" id="3_lc56h"]
 [ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/Screen/NewMenu/PagesSystem/PageContainer.cs" id="4_likqx"]
 [ext_resource type="PackedScene" uid="uid://cu0ciyqyf0m7d" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Host/HostPage.tscn" id="5_36rd5"]
@@ -21,13 +21,13 @@ fill_to = Vector2(0.50769234, 1)
 [node name="MainMenu" type="Node" unique_id=910496385]
 script = ExtResource("1_likqx")
 
-[node name="PagesScenes" type="Node" parent="." unique_id=494853123]
-script = ExtResource("1_0lnop")
-MainPage = ExtResource("3_lc56h")
-SettingsPage = ExtResource("5_h4gti")
-ConnectionPage = ExtResource("5_lc56h")
-CreateServer = ExtResource("5_36rd5")
-MessagePage = ExtResource("8_6kuw2")
+[node name="PagesProvider" type="Node" parent="." unique_id=494853123]
+script = ExtResource("2_l4fos")
+MainPageScene = ExtResource("3_lc56h")
+SettingsPageScene = ExtResource("5_h4gti")
+ConnectionPageScene = ExtResource("5_lc56h")
+CreateServerPageScene = ExtResource("5_36rd5")
+MessagePageScene = ExtResource("8_6kuw2")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=613968459]
 anchors_preset = 15

@@ -136,17 +136,17 @@ layout_mode = 2
 [node name="StartSingleplayerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2065167447]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Start singleplayer "
+text = "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 
 [node name="CreateServerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=269197810]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Create server"
+text = "MAIN_MENU__CREATE_SERVER_BUTTON"
 
 [node name="ConnectToServerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=316229896]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Connect to server"
+text = "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
 
 [node name="Separator" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1153997288]
 layout_mode = 2
@@ -154,12 +154,12 @@ layout_mode = 2
 [node name="SettingsButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=1668013026]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Settings"
+text = "MAIN_MENU__SETTINGS_BUTTON"
 
 [node name="QuitButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=1218976550]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_085l4")
-text = "Quit"
+text = "MAIN_MENU__EXIT_BUTTON"
 
 [node name="InfoContainer" type="HBoxContainer" parent="ScreenSplit" unique_id=810617367]
 layout_mode = 2

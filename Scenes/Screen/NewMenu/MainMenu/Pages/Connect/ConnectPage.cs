@@ -23,7 +23,13 @@ public partial class ConnectPage : MainMenuPage
 
     private void ParseAndConnectToServer()
     {
-        string host = HostLineEdit.Text.Length != 0 ? HostLineEdit.Text : null;
+        
+        string host = String.IsNullOrWhiteSpace(HostLineEdit.Text) ? null : HostLineEdit.Text.Trim();
+        if (host is null)
+        {
+            GoNext(PagesProvider.PrepareMessagePage(Tr("CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR")));
+        }
+        
         int port = (int) PortSpinBox.Value;
         Services.GameSettings.PreserveConnectionToServer(host, port);
         Services.MainScene.ConnectToMultiplayerGame(host, port);

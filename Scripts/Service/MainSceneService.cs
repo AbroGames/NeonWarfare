@@ -2,8 +2,10 @@
 using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.KludgeBox;
-using NeonWarfare.Scenes.Screen.MainMenu;
-using NeonWarfare.Scenes.Screen.MainMenu.Pages.Message;
+using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
+
+//using NeonWarfare.Scenes.Screen.MainMenu;
+//using NeonWarfare.Scenes.Screen.MainMenu.Pages.Message;
 
 namespace NeonWarfare.Scripts.Service;
 
@@ -30,11 +32,10 @@ public class MainSceneService
     public void StartMainMenu(string message)
     {
         StartMainMenu();
-        MainMenu mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
+        var mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
         
         // We must call this section after adding MainMenu to tree, because otherwise we can't access mainMenu.PackedScenes field
-        mainMenu.ChangeMenuPage(mainMenu.PackedScenes.Message);
-        mainMenu.MenuContainer.GetCurrentStoredNode<MainMenuMessagePage>().MessageLabel.Text = message;
+        mainMenu.PushPage(mainMenu.PagesProvider.PrepareMessagePage(message));
     }
     
     public void StartSingleplayerGame(string saveFileName = null)
@@ -99,7 +100,7 @@ public class MainSceneService
 
     public bool MainSceneIsMainMenu()
     {
-        return _mainSceneContainer.GetCurrentStoredNode<Node>() is Scenes.Screen.NewMenu.MainMenu.MainMenu or MainMenu;
+        return _mainSceneContainer.GetCurrentStoredNode<Node>() is MainMenu;
     }
 
     public bool MainSceneIsGame()

@@ -61,7 +61,7 @@ layout_mode = 2
 
 [node name="HostLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/HostContainer" unique_id=352782075]
 layout_mode = 2
-text = "Host:"
+text = "CONNECT_MENU__HOST"
 
 [node name="HostLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/HostContainer" unique_id=1758436070]
 custom_minimum_size = Vector2(350, 0)
@@ -73,7 +73,7 @@ layout_mode = 2
 
 [node name="PortLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1512315796]
 layout_mode = 2
-text = "Port:"
+text = "CONNECT_MENU__PORT"
 
 [node name="PortSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1341089181]
 layout_mode = 2
@@ -93,7 +93,7 @@ size_flags_horizontal = 4
 [node name="ConnectToServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1325343709]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Connect to server"
+text = "CONNECT_MENU__CONNECT_BUTTON"
 
 [node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1560158072]
 custom_minimum_size = Vector2(200, 50)

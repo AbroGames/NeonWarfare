@@ -4,10 +4,18 @@ namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
 public partial class MainMenuPage : Page
 {
-    protected PagesScenes PagesScenes;
-    public MainMenuPage WithAvailablePages(PagesScenes availablePages)
+    protected PagesProvider PagesProvider;
+    public void SetPagesProvider(PagesProvider availablePages)
     {
-        PagesScenes = availablePages;
-        return this;
+        PagesProvider = availablePages;
+    }
+}
+
+public static class MainMenuPageExtensions
+{
+    public static TMainMenuPage WithAvailablePages<TMainMenuPage>(this TMainMenuPage page, PagesProvider pagesProvider) where TMainMenuPage : MainMenuPage
+    {
+        page.SetPagesProvider(pagesProvider);
+        return page;
     }
 }
