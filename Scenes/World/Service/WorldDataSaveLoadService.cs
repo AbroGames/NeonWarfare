@@ -38,13 +38,13 @@ public partial class WorldDataSaveLoadService : Node
             return;
         }
 
-        if (string.IsNullOrEmpty(saveFileName))
+        if (String.IsNullOrEmpty(saveFileName))
         {
             SaveReject(peerId, SaveFilenameMustBeNotEmptyErrorMessage);
             return;
         }
 
-        String currentSaveFileName = _persistenceData.General.GeneralData.SaveFileName;
+        string currentSaveFileName = _persistenceData.General.GeneralData.SaveFileName;
         try
         {
             _persistenceData.General.GeneralData.SaveFileName = saveFileName;
