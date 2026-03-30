@@ -30,8 +30,8 @@ public class SaveLoadService
             .Where(filename => filename.EndsWith(SaveExtension))
             .Select(filename => (
                 Name: filename,
-                Size: FileAccess.GetModifiedTime(SaveDirPath + filename)))
-            .OrderByDescending(file => file.Size)
+                Time: FileAccess.GetModifiedTime(SaveDirPath + filename)))
+            .OrderByDescending(file => file.Time)
             .Select(file => System.IO.Path.GetFileNameWithoutExtension(file.Name))
             .ToList();
     }
