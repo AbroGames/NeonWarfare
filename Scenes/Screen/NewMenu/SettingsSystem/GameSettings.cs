@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
@@ -23,8 +24,8 @@ public partial class GameSettings : GameSettingsBase
     [Hide] public ResumableGame FastResumeAvailable { get; set; } = ResumableGame.None;
     
     [Hide] public string LastSingleplayerSaveName { get; set; }
-    
-    [Hide] public string LastConnectedHost { get; set; }
+
+    [Hide] public string LastConnectedHost { get; set; } = String.Empty;
     [Hide] public int LastConnectedPort { get; set; } = Consts.DefaultPort;
     
     [Hide] public int LastHostedPort { get; set; } = Consts.DefaultPort;
