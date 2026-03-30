@@ -26,7 +26,7 @@ public partial class LanguageSelectionPage : MainMenuPage
     {
         foreach (var locale in Services.I18N.Locales)
         {
-            var radioButton = new CheckButton();
+            var radioButton = new CheckBox();
             radioButton.ButtonGroup = _buttonGroup;
             radioButton.Text = $"{locale.Name} ({locale.Code})";
             radioButton.Pressed += () => ApplyLanguage(locale.Code);
