@@ -26,11 +26,7 @@ public partial class MainPage : MainMenuPage
 	{
 		Di.Process(this);
 		ResumeButton.Pressed += RunResumeAction;
-		StartSingleplayerButton.Pressed += () =>
-		{
-			Services.GameSettings.PreserveSingleplayerGame(null);
-			Services.MainScene.StartSingleplayerGame();
-		};
+		StartSingleplayerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SingleplayerPage));
 		CreateServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateServerPageScene));
 		ConnectToServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.ConnectionPageScene));
 		SettingsButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SettingsPageScene));
@@ -57,7 +53,7 @@ public partial class MainPage : MainMenuPage
 			ResumeButton.Visible = true;
 			if (availableResume is ResumableGame.RunSingleplayer)
 			{
-				ResumeButton.Text = "Run: Singleplayer";
+				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__SINGLEPLAYER")}: {Services.GameSettings.Settings.LastSingleplayerSaveName}";
 				_resumeAction = () => Services.MainScene.StartSingleplayerGame();
 			}
 
@@ -65,7 +61,7 @@ public partial class MainPage : MainMenuPage
 			{
 				var port = Services.GameSettings.Settings.LastConnectedPort;
 				var host = Services.GameSettings.Settings.LastConnectedHost;
-				ResumeButton.Text = $"Connect to: {host}:{port}";
+				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__CONNECT")}: {host}:{port}";
 				_resumeAction = () => Services.MainScene.ConnectToMultiplayerGame(host, port);
 			}
 
@@ -74,7 +70,7 @@ public partial class MainPage : MainMenuPage
 				var save = Services.GameSettings.Settings.LastHostedSaveName;
 				var port  = Services.GameSettings.Settings.LastHostedPort;
 				var asDedicated = Services.GameSettings.Settings.LastHostedIsDedicated;
-				ResumeButton.Text = $"Create{(asDedicated ? " Dedicated" : "")} Server: {save}@{port}";
+				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__HOST")}: {save}@{port}";
 				_resumeAction = () => Services.MainScene.HostMultiplayerGameAsClient(port, save, asDedicated);
 			}
 		}

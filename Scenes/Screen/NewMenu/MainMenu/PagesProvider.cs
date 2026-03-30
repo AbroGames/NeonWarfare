@@ -13,6 +13,7 @@ public partial class PagesProvider : CheckedAbstractStorage
 	[Export] [NotNull] public PackedScene CreateServerPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene MessagePageScene { get; private set; }
 	[Export] [NotNull] public PackedScene LanguageSelectionPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene SingleplayerPage { get; private set; }
 	
 	public Pages.Message.MessagePage PrepareMessagePage(string message)
 	{
