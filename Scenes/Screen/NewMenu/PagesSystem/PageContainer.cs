@@ -55,8 +55,8 @@ public partial class PageContainer : Control
             parentContext.OnHidden(nextPage);
             nextPage.SetParent(parentContext);
             
-            AddChild(nextPage as Node);
             SetupPage(nextPage);
+            AddChild(nextPage as Node);
             nextPage.OnShown(parentContext);
             CurrentPage = nextPage;
         }
