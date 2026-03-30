@@ -26,14 +26,13 @@ public class PlayerSettingsService : IPlayerSettingsService
 
     public PlayerSettings GetPlayerSettings()
     {
-        return new PlayerSettings(_temporalNick ?? _nick, _color, _language);
+        return new PlayerSettings(_temporalNick ?? _nick, _color);
     }
 
     public void SetPlayerSettings(PlayerSettings playerSettings)
     {
         _nick ??= playerSettings.Nick;
         _color = playerSettings.Color;
-        _language ??= playerSettings.Language;
         
         Save();
     }
