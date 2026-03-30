@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cb6u7jijt1nxy"
-path="res://.godot/imported/MainMenu.png-5857489c893791f6d9fe11596b0b8805.ctex"
+uid="uid://bvgadgdc45h1x"
+path="res://.godot/imported/Heal.png-4932b4eb2a88f753e6c8b84ad3653fc3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Achievements/MainMenu.png"
-dest_files=["res://.godot/imported/MainMenu.png-5857489c893791f6d9fe11596b0b8805.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Skills/Heal.png"
+dest_files=["res://.godot/imported/Heal.png-4932b4eb2a88f753e6c8b84ad3653fc3.ctex"]
 
 [params]
 

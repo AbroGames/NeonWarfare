@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bl84qgojuj6td"
-path="res://.godot/imported/Dot.svg-de1aaab4fae06b630bae63245e7795f1.ctex"
+uid="uid://bjvq28tv5sfy2"
+path="res://.godot/imported/MainMenuBackgroundGrid.png-c6f39a61dfd886e3039e1ab68fbccc35.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/LoadingScreen/Dot.svg"
-dest_files=["res://.godot/imported/Dot.svg-de1aaab4fae06b630bae63245e7795f1.ctex"]
+source_file="res://Assets/Textures/UI/MainMenu/MainMenuBackgroundGrid.png"
+dest_files=["res://.godot/imported/MainMenuBackgroundGrid.png-c6f39a61dfd886e3039e1ab68fbccc35.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

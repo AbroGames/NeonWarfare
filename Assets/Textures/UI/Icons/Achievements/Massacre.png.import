@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dxpvi08dfney4"
-path="res://.godot/imported/AppIcon.svg-b04fab7f4325e72b6245d4f02cde88dd.ctex"
+uid="uid://cly3h7mf81sy0"
+path="res://.godot/imported/Massacre.png-d765e3439892558a7d9bc439bccaaa0d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/AppIcon.svg"
-dest_files=["res://.godot/imported/AppIcon.svg-b04fab7f4325e72b6245d4f02cde88dd.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Achievements/Massacre.png"
+dest_files=["res://.godot/imported/Massacre.png-d765e3439892558a7d9bc439bccaaa0d.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

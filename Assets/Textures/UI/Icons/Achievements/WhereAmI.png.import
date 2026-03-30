@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lceonxq4n5cx"
-path="res://.godot/imported/Ninja.png-c4b4bbf44cb56ebf7b9c0144b3baa901.ctex"
+uid="uid://1hotdojihote"
+path="res://.godot/imported/WhereAmI.png-1c78652f5353a8ad2e66de2f3654cd5f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Achievements/Ninja.png"
-dest_files=["res://.godot/imported/Ninja.png-c4b4bbf44cb56ebf7b9c0144b3baa901.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Achievements/WhereAmI.png"
+dest_files=["res://.godot/imported/WhereAmI.png-1c78652f5353a8ad2e66de2f3654cd5f.ctex"]
 
 [params]
 

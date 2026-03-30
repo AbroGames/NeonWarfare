@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpblsfrr1dlie"
-path="res://.godot/imported/LoadingPartThin.svg-b10e0fde81b292903534ada46250c22d.ctex"
+uid="uid://bl84qgojuj6td"
+path="res://.godot/imported/Dot.svg-d32d3932cc6263e7aed1b473cee80f8d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/LoadingScreen/LoadingPartThin.svg"
-dest_files=["res://.godot/imported/LoadingPartThin.svg-b10e0fde81b292903534ada46250c22d.ctex"]
+source_file="res://Assets/Textures/UI/LoadingScreen/Dot.svg"
+dest_files=["res://.godot/imported/Dot.svg-d32d3932cc6263e7aed1b473cee80f8d.ctex"]
 
 [params]
 

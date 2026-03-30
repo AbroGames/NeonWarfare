@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpp4g6yxlns61"
-path="res://.godot/imported/Resurrect.png-5453d49b222e906e5ab1c6be33085eb2.ctex"
+uid="uid://djip1j4cak85v"
+path="res://.godot/imported/MainMenuBackground.png-2c1995823984bbfaea5b05cd2f58855e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Skills/Resurrect.png"
-dest_files=["res://.godot/imported/Resurrect.png-5453d49b222e906e5ab1c6be33085eb2.ctex"]
+source_file="res://Assets/Textures/UI/MainMenu/MainMenuBackground.png"
+dest_files=["res://.godot/imported/MainMenuBackground.png-2c1995823984bbfaea5b05cd2f58855e.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dg44fv67r5jpp"
-path="res://.godot/imported/LoadingPartFat.svg-ee33cb3d562419b48ee72ecbf73e9170.ctex"
+uid="uid://dpp4g6yxlns61"
+path="res://.godot/imported/Resurrect.png-69a331acd466426faee63c4211099cfd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/LoadingScreen/LoadingPartFat.svg"
-dest_files=["res://.godot/imported/LoadingPartFat.svg-ee33cb3d562419b48ee72ecbf73e9170.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Skills/Resurrect.png"
+dest_files=["res://.godot/imported/Resurrect.png-69a331acd466426faee63c4211099cfd.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

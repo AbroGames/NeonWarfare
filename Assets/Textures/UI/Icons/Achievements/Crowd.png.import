@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://jsal8ngbhk50"
-path="res://.godot/imported/MyBad.png-64363d722576b7c47aebbd3c3698dfd3.ctex"
+uid="uid://cc7h7ty1dodes"
+path="res://.godot/imported/Crowd.png-da009999d344125409b4ff3e84df1ce9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Achievements/MyBad.png"
-dest_files=["res://.godot/imported/MyBad.png-64363d722576b7c47aebbd3c3698dfd3.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Achievements/Crowd.png"
+dest_files=["res://.godot/imported/Crowd.png-da009999d344125409b4ff3e84df1ce9.ctex"]
 
 [params]
 

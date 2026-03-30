@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://1hotdojihote"
-path="res://.godot/imported/WhereAmI.png-8408b62d7057a946fe21b22b7dce8cf7.ctex"
+uid="uid://cpblsfrr1dlie"
+path="res://.godot/imported/LoadingPartThin.svg-067994f24bd5319b1b4af1e29a4cf25c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Achievements/WhereAmI.png"
-dest_files=["res://.godot/imported/WhereAmI.png-8408b62d7057a946fe21b22b7dce8cf7.ctex"]
+source_file="res://Assets/Textures/UI/LoadingScreen/LoadingPartThin.svg"
+dest_files=["res://.godot/imported/LoadingPartThin.svg-067994f24bd5319b1b4af1e29a4cf25c.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

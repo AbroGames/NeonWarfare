@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvn6vp8rnm8fb"
-path="res://.godot/imported/IconBorder.png-ce42b4cda8ac36d7fd31ba18273f0cf3.ctex"
+uid="uid://d35ii8gj1dvsb"
+path="res://.godot/imported/Buddy.png-74ced78668367ecf61569ba5f2116029.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/IconBorder.png"
-dest_files=["res://.godot/imported/IconBorder.png-ce42b4cda8ac36d7fd31ba18273f0cf3.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Achievements/Buddy.png"
+dest_files=["res://.godot/imported/Buddy.png-74ced78668367ecf61569ba5f2116029.ctex"]
 
 [params]
 

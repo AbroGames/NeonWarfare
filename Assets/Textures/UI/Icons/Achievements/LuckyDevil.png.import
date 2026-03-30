@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpsnhobbvjylm"
-path="res://.godot/imported/LuckyDevil.png-8155ea7c6040a65654a25fd8bf41d1d3.ctex"
+path="res://.godot/imported/LuckyDevil.png-ab20639c6de011886e0d3fc7449d06bc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Achievements/LuckyDevil.png"
-dest_files=["res://.godot/imported/LuckyDevil.png-8155ea7c6040a65654a25fd8bf41d1d3.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Achievements/LuckyDevil.png"
+dest_files=["res://.godot/imported/LuckyDevil.png-ab20639c6de011886e0d3fc7449d06bc.ctex"]
 
 [params]
 

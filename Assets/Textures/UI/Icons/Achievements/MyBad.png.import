@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2lllhqi2pwm0"
-path="res://.godot/imported/AdvancedSurvival.png-8b360c18f7defb27eb6823ffc5620f6f.ctex"
+uid="uid://jsal8ngbhk50"
+path="res://.godot/imported/MyBad.png-72dc45d214e50dc23fea0b006534565a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/Hud/Icons/Achievements/AdvancedSurvival.png"
-dest_files=["res://.godot/imported/AdvancedSurvival.png-8b360c18f7defb27eb6823ffc5620f6f.ctex"]
+source_file="res://Assets/Textures/UI/Icons/Achievements/MyBad.png"
+dest_files=["res://.godot/imported/MyBad.png-72dc45d214e50dc23fea0b006534565a.ctex"]
 
 [params]
 
