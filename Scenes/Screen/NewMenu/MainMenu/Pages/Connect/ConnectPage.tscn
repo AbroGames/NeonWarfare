@@ -44,7 +44,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=444372117]
 layout_mode = 2
-text = "CONNECT TO SERVER"
+text = "CONNECT_MENU__TITLE"
 label_settings = SubResource("LabelSettings_7cqim")
 horizontal_alignment = 1
 
@@ -98,4 +98,4 @@ text = "CONNECT_MENU__CONNECT_BUTTON"
 [node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1560158072]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Cancel"
+text = "GENERIC_MENU__CANCEL_BUTTON"

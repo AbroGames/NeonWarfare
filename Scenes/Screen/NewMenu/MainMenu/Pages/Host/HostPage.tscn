@@ -44,7 +44,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1310098914]
 layout_mode = 2
-text = "SERVER CREATION"
+text = "HOST_MENU__TITLE"
 label_settings = SubResource("LabelSettings_h4gti")
 horizontal_alignment = 1
 
@@ -103,4 +103,4 @@ text = "HOST_MENU__CREATE_BUTTON"
 [node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=664684594]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Cancel"
+text = "GENERIC_MENU__CANCEL_BUTTON"

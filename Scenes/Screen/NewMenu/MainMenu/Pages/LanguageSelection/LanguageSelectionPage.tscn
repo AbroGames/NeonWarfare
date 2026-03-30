@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://cd5qyq67teome"]
+
+[ext_resource type="Script" uid="uid://dm5qlr282x1li" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/LanguageSelection/LanguageSelectionPage.cs" id="1_gvjgl"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6kuw2"]
+font_size = 32
+
+[node name="LanguageSelectionPage" type="Control" unique_id=1300345673]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gvjgl")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2137515106]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=1891710407]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer" unique_id=1410454139]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer" unique_id=1977310477]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1588129008]
+layout_mode = 2
+text = "LANGUAGE_SELECTION_MENU__TITLE"
+label_settings = SubResource("LabelSettings_6kuw2")
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=279459344]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer" unique_id=281156635]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="LanguagesListContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/MarginContainer" unique_id=1289370451]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1411671855]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=1249651064]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="SaveButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=374681399]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "GENERIC_MENU__SAVE_BUTTON"
+
+[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1963673815]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "GENERIC_MENU__CANCEL_BUTTON"
