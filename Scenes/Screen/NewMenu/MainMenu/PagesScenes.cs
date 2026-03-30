@@ -10,4 +10,5 @@ public partial class PagesScenes : CheckedAbstractStorage
 	[Export] [NotNull] public PackedScene SettingsPage { get; private set; }
 	[Export] [NotNull] public PackedScene ConnectionPage { get; private set; }
 	[Export] [NotNull] public PackedScene CreateServer { get; private set; }
+	[Export] [NotNull] public PackedScene MessagePage { get; private set; }
 }
