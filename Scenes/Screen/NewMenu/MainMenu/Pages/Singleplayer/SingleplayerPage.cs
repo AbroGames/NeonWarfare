@@ -9,6 +9,13 @@ public partial class SingleplayerPage : MainMenuPage
     [Child] public Button CancelButton { get; private set; }
     [Child] public LineEdit SaveNameLineEdit { get; private set; }
     [Child] public VBoxContainer SavesListContainer { get; private set; }
+    [Child] public TabContainer TabContainer { get; private set; }
+    [Child] public HBoxContainer SaveNameContainer { get; private set; }
+    
+    private string _selectedSaveName;
+
+    private const int NewGameTabId = 0;
+    private const int LoadGameTabId = 1;
     
     public override void _Ready()
     {
@@ -16,9 +23,22 @@ public partial class SingleplayerPage : MainMenuPage
         
         StartButton.Pressed += OnStart;
         CancelButton.Pressed += OnCancel;
+        TabContainer.TabChanged += OnSwitchingTabs;
 
-        SaveNameLineEdit.Text = Services.GameSettings.Settings.LastSingleplayerSaveName ?? "";
+        _selectedSaveName = Services.GameSettings.Settings.LastSingleplayerSaveName ?? "";
+        SaveNameLineEdit.Text = _selectedSaveName;
+        
         PopulateSavesList();
+        if (!String.IsNullOrWhiteSpace(_selectedSaveName))
+        {
+            TabContainer.SetCurrentTab(LoadGameTabId);
+        }
+        else
+        {
+            TabContainer.SetCurrentTab(NewGameTabId);
+        }
+
+        TabContainer.DeselectEnabled = false;
     }
 
     private void PopulateSavesList()
@@ -30,6 +50,22 @@ public partial class SingleplayerPage : MainMenuPage
             button.Text = save;
             button.Pressed += () => SaveNameLineEdit.Text = save;
             SavesListContainer.AddChild(button);
+        }
+    }
+
+    private void OnSwitchingTabs(long tabId)
+    {
+        // NOTE: Пока что мы просто меняем видимость поля ввода имени сохранения. В будущем, если захотим сразу давать имена новым сохранениям, вернем поле на постоянку.
+        if (tabId == NewGameTabId)
+        {
+            SaveNameContainer.Hide();
+            _selectedSaveName = SaveNameLineEdit.Text;
+            SaveNameLineEdit.Text  = String.Empty;
+        }
+        else if (tabId == LoadGameTabId)
+        {
+            SaveNameContainer.Show();
+            SaveNameLineEdit.Text = _selectedSaveName;
         }
     }
 
