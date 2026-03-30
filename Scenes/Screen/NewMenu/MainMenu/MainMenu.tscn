@@ -51,3 +51,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_likqx")
+
+[node name="MessagePage" type="Control" parent="Control/PageContainer" unique_id=1308562900]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/PageContainer/MessagePage" unique_id=402669768]
+custom_minimum_size = Vector2(700, 350)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/PageContainer/MessagePage/PanelContainer" unique_id=1967065827]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/PageContainer/MessagePage/PanelContainer/MarginContainer" unique_id=160975549]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="MessageLabel" type="Label" parent="Control/PageContainer/MessagePage/PanelContainer/MarginContainer/VBoxContainer" unique_id=1441970014]
+layout_mode = 2
+text = "MESSAGE_MENU__DEFAULT_ERROR"
+horizontal_alignment = 1
+
+[node name="Separator" type="Label" parent="Control/PageContainer/MessagePage/PanelContainer/MarginContainer/VBoxContainer" unique_id=1405532944]
+layout_mode = 2
+
+[node name="OkButton" type="Button" parent="Control/PageContainer/MessagePage/PanelContainer/MarginContainer/VBoxContainer" unique_id=55207983]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "MESSAGE_MENU__OK_BUTTON"
