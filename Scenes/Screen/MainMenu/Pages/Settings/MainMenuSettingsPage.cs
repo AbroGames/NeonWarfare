@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Godot.Services;
 using NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
-using NeonWarfare.Scripts.Service.Settings;
+using GameSettings = NeonWarfare.Scripts.Service.Settings.GameSettings;
 
 namespace NeonWarfare.Scenes.Screen.MainMenu.Pages.Settings;
 
@@ -18,7 +18,7 @@ public partial class MainMenuSettingsPage : MainMenuPage
     {
         Di.Process(this);
 
-        GameSettings settings = Services.GameSettings.Settings;
+        MenuGameSettings settings = Services.GameSettings.Settings;
         NickTextEdit.Text = settings.PlayerName;
         ColorTextEdit.Text = settings.PlayerColor.ToHtml(false);
         LanguageOptionButton.Text = Services.I18N.GetLocaleInfoByCode(settings.GameLocale).Name;
@@ -38,7 +38,7 @@ public partial class MainMenuSettingsPage : MainMenuPage
         Color color = Color.FromHtml(ColorTextEdit.Text);
         string locale = GetLocaleCodeFromOptionButton();
         
-        Services.PlayerSettings.SetPlayerSettings(new PlayerSettings(nick, color));
+        Services.PlayerSettings.SetPlayerSettings(new GameSettings(nick, color));
         Services.I18N.SetCurrentLocale(locale);
         ChangeMenuPage(PackedScenes.Main);
     }

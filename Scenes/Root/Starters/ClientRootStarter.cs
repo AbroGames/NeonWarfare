@@ -21,12 +21,12 @@ public class ClientRootStarter : BaseRootStarter
         Services.Net.Init(false);
         Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
         
-        Services.PlayerSettings.Init();
+        Services.GameSettings.Init();
         if (_clientArgs.Nick != null)
         {
-	        Services.PlayerSettings.SetNickTemporarily(_clientArgs.Nick);
+	        Services.GameSettings.SetNickTemporarily(_clientArgs.Nick);
         }
-        Services.I18N.SetCurrentLocale(Services.GameSettings.Settings.GameLocale);
+        Services.I18N.SetCurrentLocale(Services.GameSettings.GetSettings().Locale);
         
         // Activate loading screen after setting up locale
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);

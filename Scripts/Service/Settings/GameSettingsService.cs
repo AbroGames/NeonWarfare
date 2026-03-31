@@ -1,81 +1,87 @@
+﻿using System.Text.Json;
 using Godot;
-using NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 namespace NeonWarfare.Scripts.Service.Settings;
 
-public class GameSettingsService : IPlayerSettingsService
+public class GameSettingsService
 {
-    private readonly string _gameSettingsPath = "user://game-settings.json";
-    public GameSettings Settings { get; private set; }
-    
-    private string _temporalNick = null;
 
-    public void PreserveSingleplayerGame(string saveName)
-    {
-        Settings.FastResumeAvailable = ResumableGame.RunSingleplayer;
-        Settings.LastSingleplayerSaveName = saveName;
-        SaveSettings();
-    }
+    private const string GameSettingsPath = "user://game-settings.json";
 
-    public void PreserveConnectionToServer(string host, int port)
-    {
-        Settings.FastResumeAvailable = ResumableGame.ConnectToServer;
-        Settings.LastConnectedHost = host;
-        Settings.LastConnectedPort = port;
-        SaveSettings();
-    }
+    private GameSettings _settings;
+    private string _temporalNick; 
 
-    public void PreserveServerCreation(int port, string saveName, bool asDedicated)
-    {
-        Settings.FastResumeAvailable = ResumableGame.CreateServer;
-        Settings.LastHostedIsDedicated = asDedicated;
-        Settings.LastHostedPort = port;
-        Settings.LastHostedSaveName = saveName;
-        SaveSettings();
-    }
-    
     public void Init()
     {
+        // Set default values (here, because we must do it only in Init method, not early)
+        _settings = GameSettings.GetDefault();
         LoadSettings();
     }
-    
-    public void SaveSettings()
-    {
-        using var file = FileAccess.Open(_gameSettingsPath, FileAccess.ModeFlags.Write);
-        var text = Settings.Serialize();
-        file.StoreString(text);
-    }
 
-    private void LoadSettings()
+    public GameSettings GetSettings()
     {
-        if (!FileAccess.FileExists(_gameSettingsPath))
+        return _settings with
         {
-            Settings = new GameSettings();
-            SaveSettings();
-        }
-        else
-        {
-            using var file = FileAccess.Open(_gameSettingsPath, FileAccess.ModeFlags.Read);
-            var text = file.GetAsText();
-            Settings = GameSettings.Deserialize(text);
-            Settings.Validate();
-        }
+            PlayerNick = _temporalNick ?? _settings.PlayerNick
+        };
     }
 
-    public PlayerSettings GetPlayerSettings()
+    public void SetSettings(GameSettings gameSettings)
     {
-        return new PlayerSettings(_temporalNick ?? Settings.PlayerName, Settings.PlayerColor);
-    }
-
-    public void SetPlayerSettings(PlayerSettings playerSettings)
-    {
-        Settings.PlayerColor = playerSettings.Color;
-        Settings.PlayerName = playerSettings.Nick;
+        _settings = gameSettings;
         SaveSettings();
     }
 
     public void SetNickTemporarily(string nick)
     {
         _temporalNick = nick;
+    }
+    
+    //public void PreserveSingleplayerGame(string saveName)
+    //{
+    //    Settings.FastResumeAvailable = GameSettings.ResumableGame.RunSingleplayer;
+    //    Settings.LastSingleplayerSaveName = saveName;
+    //    SaveSettings();
+    //}
+//
+    //public void PreserveConnectionToServer(string host, int port)
+    //{
+    //    Settings.FastResumeAvailable = GameSettings.ResumableGame.ConnectToServer;
+    //    Settings.LastConnectedHost = host;
+    //    Settings.LastConnectedPort = port;
+    //    SaveSettings();
+    //}
+//
+    //public void PreserveServerCreation(int port, string saveName, bool asDedicated)
+    //{
+    //    Settings.FastResumeAvailable = GameSettings.ResumableGame.CreateServer;
+    //    Settings.LastHostedIsDedicated = asDedicated;
+    //    Settings.LastHostedPort = port;
+    //    Settings.LastHostedSaveName = saveName;
+    //    SaveSettings();
+    //}
+
+    private void SaveSettings()
+    {
+        using var file = FileAccess.Open(GameSettingsPath, FileAccess.ModeFlags.Write);
+        string json = JsonSerializer.Serialize(GetSettings());
+        file.StoreString(json);
+        file.Close();
+    }
+
+    private void LoadSettings()
+    {
+        if (!FileAccess.FileExists(GameSettingsPath))
+        {
+            SaveSettings();
+            return;
+        }
+        
+        using var file = FileAccess.Open(GameSettingsPath, FileAccess.ModeFlags.Read);
+        string json = file.GetAsText();
+        file.Close();
+        
+        GameSettings gameSettings = JsonSerializer.Deserialize<GameSettings>(json);
+        SetSettings(gameSettings);
     }
 }

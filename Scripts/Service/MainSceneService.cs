@@ -4,7 +4,6 @@ using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
-
 namespace NeonWarfare.Scripts.Service;
 
 public class MainSceneService
@@ -66,7 +65,7 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
 
-        string adminNickname = Services.PlayerSettings.GetPlayerSettings().Nick;
+        string adminNickname = Services.GameSettings.GetSettings().PlayerNick;
         
         if (createDedicatedServerProcess ?? false)
         {

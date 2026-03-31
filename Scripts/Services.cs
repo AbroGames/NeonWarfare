@@ -32,7 +32,7 @@ public static class Services
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
     public static readonly GameSettingsService GameSettings = new();
-    public static readonly IPlayerSettingsService PlayerSettings = GameSettings;
+    public static readonly MenuGameSettingsService MenuGameSettings = new();
     public static readonly SaveLoadService SaveLoad = new();
     public static readonly IconsStorageService IconsStorage = new();
     

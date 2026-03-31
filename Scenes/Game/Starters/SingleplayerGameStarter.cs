@@ -11,11 +11,11 @@ public class SingleplayerGameStarter(string saveFileName = null) : BaseGameStart
         base.Init(game);
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
-        PlayerSettings playerSettings = Services.PlayerSettings.GetPlayerSettings();
+        GameSettings gameSettings = Services.GameSettings.GetSettings();
         World.World world = game.AddWorld();
         game.AddHud();
         
-        ServerStartWorld(world, saveFileName, playerSettings.Nick);
+        ServerStartWorld(world, saveFileName, gameSettings.PlayerNick);
         ClientStartWorld(world);
     }
 }
