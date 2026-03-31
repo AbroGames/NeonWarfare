@@ -4,8 +4,6 @@ using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
-//using NeonWarfare.Scenes.Screen.MainMenu;
-//using NeonWarfare.Scenes.Screen.MainMenu.Pages.Message;
 
 namespace NeonWarfare.Scripts.Service;
 
@@ -34,7 +32,7 @@ public class MainSceneService
         StartMainMenu();
         var mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
         
-        // We must call this section after adding MainMenu to tree, because otherwise we can't access mainMenu.PackedScenes field
+        // We must call this section after adding MainMenu to tree, because otherwise we can't access mainMenu.PagesProvider property
         mainMenu.PushPage(mainMenu.PagesProvider.PrepareMessagePage(message));
     }
     
