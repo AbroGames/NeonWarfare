@@ -15,12 +15,7 @@ public record GameSettings(
             PlayerNick: "Player",
             PlayerColor: new Color(1, 1, 1),
             Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code,
-            LastGame: new ResumableGame(
-                Type: ResumableGame.ResumableType.None,
-                SaveName: null,
-                Host: null,
-                Port: null,
-                IsDedicated: false)
+            LastGame: ResumableGame.GetNone()
         );
     }
 
@@ -28,8 +23,8 @@ public record GameSettings(
         ResumableGame.ResumableType Type,
         string SaveName,
         string Host,
-        string Port,
-        bool IsDedicated
+        int? Port,
+        bool? IsDedicated
     )
     {
         public enum ResumableType
@@ -38,6 +33,46 @@ public record GameSettings(
             RunSingleplayer,
             CreateServer,
             ConnectToServer,
+        }
+        
+        public static ResumableGame GetNone()
+        {
+            return new ResumableGame(
+                Type: ResumableType.None,
+                SaveName: null,
+                Host: null,
+                Port: null,
+                IsDedicated: null);
+        }
+
+        public static ResumableGame GetSingleplayer(string saveName)
+        {
+            return GetNone() with
+            {
+                Type = ResumableType.RunSingleplayer,
+                SaveName = saveName,
+            };
+        }
+        
+        public static ResumableGame GetCreateServer(string saveName, int port, bool isDedicated)
+        {
+            return GetNone() with
+            {
+                Type = ResumableType.CreateServer,
+                SaveName = saveName,
+                Port = port,
+                IsDedicated = isDedicated
+            };
+        }
+        
+        public static ResumableGame GetConnectToServer(string host, int port)
+        {
+            return GetNone() with
+            {
+                Type = ResumableType.ConnectToServer,
+                Host = host,
+                Port = port
+            };
         }
     }
 }
