@@ -37,29 +37,15 @@ public class GameSettingsService
         _temporalNick = nick;
     }
     
-    //public void PreserveSingleplayerGame(string saveName)
-    //{
-    //    Settings.FastResumeAvailable = GameSettings.ResumableGame.RunSingleplayer;
-    //    Settings.LastSingleplayerSaveName = saveName;
-    //    SaveSettings();
-    //}
-//
-    //public void PreserveConnectionToServer(string host, int port)
-    //{
-    //    Settings.FastResumeAvailable = GameSettings.ResumableGame.ConnectToServer;
-    //    Settings.LastConnectedHost = host;
-    //    Settings.LastConnectedPort = port;
-    //    SaveSettings();
-    //}
-//
-    //public void PreserveServerCreation(int port, string saveName, bool asDedicated)
-    //{
-    //    Settings.FastResumeAvailable = GameSettings.ResumableGame.CreateServer;
-    //    Settings.LastHostedIsDedicated = asDedicated;
-    //    Settings.LastHostedPort = port;
-    //    Settings.LastHostedSaveName = saveName;
-    //    SaveSettings();
-    //}
+    public void SetLastGame(GameSettings.ResumableGame lastGame)
+    {
+        SetSettings(_settings with { LastGame = lastGame });
+    }
+    
+    public void SetLastGameSaveName(string saveName)
+    {
+        SetSettings(_settings with { LastGame = _settings.LastGame with { SaveName = saveName } });
+    }
 
     private void SaveSettings()
     {

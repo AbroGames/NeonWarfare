@@ -35,7 +35,8 @@ public class MenuGameSettingsService
         return new GameSettings(
             PlayerNick: menuGameSettings.PlayerName,
             PlayerColor: menuGameSettings.PlayerColor,
-            Locale: Services.GameSettings.GetSettings().Locale
+            Locale: Services.GameSettings.GetSettings().Locale,
+            LastGame: Services.GameSettings.GetSettings().LastGame
         );
     }
 }

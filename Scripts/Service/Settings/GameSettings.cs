@@ -5,31 +5,39 @@ namespace NeonWarfare.Scripts.Service.Settings;
 public record GameSettings(
     string PlayerNick,
     Color PlayerColor,
-    string Locale
+    string Locale,
+    GameSettings.ResumableGame LastGame
 )
 {
     public static GameSettings GetDefault()
     {
-        return new (
+        return new(
             PlayerNick: "Player",
             PlayerColor: new Color(1, 1, 1),
-            Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code
+            Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code,
+            LastGame: new ResumableGame(
+                Type: ResumableGame.ResumableType.None,
+                SaveName: null,
+                Host: null,
+                Port: null,
+                IsDedicated: false)
         );
     }
-    
-    public enum ResumableGame
+
+    public record ResumableGame(
+        ResumableGame.ResumableType Type,
+        string SaveName,
+        string Host,
+        string Port,
+        bool IsDedicated
+    )
     {
-        None,
-        RunSingleplayer,
-        CreateServer,
-        ConnectToServer,
+        public enum ResumableType
+        {
+            None,
+            RunSingleplayer,
+            CreateServer,
+            ConnectToServer,
+        }
     }
 }
-    
-//[Hide] public ResumableGame FastResumeAvailable { get; set; } = ResumableGame.None;
-//    
-//[Hide] public string LastSingleplayerSaveName { get; set; }
-//[Hide] public string LastConnectedHost { get; set; } = String.Empty;
-//[Hide] public int LastHostedPort { get; set; } = Consts.DefaultPort;
-//[Hide] public bool LastHostedIsDedicated { get; set; }
-//[Hide] public string GameLocale { get; set; } = Services.I18N.GetUserOsLocaleInfoOrDefault().Code;
