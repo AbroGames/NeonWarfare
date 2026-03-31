@@ -39,8 +39,12 @@ public partial class LanguageSelectionPage : MainMenuPage
     
     private void OnSave()
     {
-        Services.GameSettings.Settings.GameLocale = Services.I18N.GetCurrentLocaleInfo().Code;
-        Services.GameSettings.SaveSettings();
+        Services.GameSettings.SetSettings(
+                Services.GameSettings.GetSettings() with
+                {
+                    Locale = Services.I18N.GetCurrentLocaleInfo().Code
+                });
+        
         GoBack();
     }
 
