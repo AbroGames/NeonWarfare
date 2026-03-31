@@ -11,11 +11,17 @@ public partial class SettingsPage : MainMenuPage
     [Child] public Button CancelButton { get; private set; }
     [Child] public VBoxContainer SettingsContainer { get; private set; }
     
+    private MenuGameSettings _preservedSettings;
+    private MenuGameSettings _draftSettings;
+    
     private IReadOnlyList<Setting> _settings;
 
     public override void _Ready()
     {
         Di.Process(this);
+
+        _preservedSettings = Services.MenuGameSettings.GetSettings();
+        _draftSettings = Services.MenuGameSettings.GetSettings();
         
         SaveButton.Pressed += OnSave;
         CancelButton.Pressed += OnCancel;
@@ -25,7 +31,7 @@ public partial class SettingsPage : MainMenuPage
 
     private void PopulateSettings()
     {
-        _settings = Services.GameSettings.Settings.GetVisibleSettings();
+        _settings = _draftSettings.GetVisibleSettings();
         foreach (var setting in _settings)
         {
             var settingContainer = new SettingContainer(setting);
@@ -35,13 +41,14 @@ public partial class SettingsPage : MainMenuPage
 
     private void OnSave()
     {
-        Services.GameSettings.Settings.SetVisibleSettings(_settings);
-        Services.GameSettings.SaveSettings();
+        _draftSettings.SetVisibleSettings(_settings);
+        Services.MenuGameSettings.ApplyAndSaveSettings(_draftSettings);
         GoBack();
     }
 
     private void OnCancel()
     {
+        Services.MenuGameSettings.ApplyAndSaveSettings(_preservedSettings);
         GoBack();
     }
 }
