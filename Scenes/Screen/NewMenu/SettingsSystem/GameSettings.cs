@@ -11,7 +11,7 @@ public enum ResumableGame
     ConnectToServer,
 }
 
-public partial class GameSettings : GameSettingsBase
+public partial class GameSettings
 {
     [Name("SETTING_MENU__NICK")]
     [Hint("SETTING_MENU__NICK_HINT")]

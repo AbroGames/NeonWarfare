@@ -57,7 +57,7 @@ public class GameSettingsService : IPlayerSettingsService
         {
             using var file = FileAccess.Open(_gameSettingsPath, FileAccess.ModeFlags.Read);
             var text = file.GetAsText();
-            Settings = GameSettingsBase.Deserialize(text);
+            Settings = GameSettings.Deserialize(text);
             Settings.Validate();
         }
     }

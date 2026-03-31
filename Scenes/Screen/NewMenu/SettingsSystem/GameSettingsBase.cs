@@ -5,11 +5,11 @@ using KludgeBox.Reflection.Access;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
-public abstract class GameSettingsBase
+public partial class GameSettings
 {
     public static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerOptions.Default) { WriteIndented = true };
 
-    static GameSettingsBase()
+    static GameSettings()
     {
         JsonSerializerOptions.Converters.Add(new ColorJsonConverter());
     }
@@ -25,7 +25,7 @@ public abstract class GameSettingsBase
         return Deserialize<GameSettings>(json);
     }
     
-    public static TType Deserialize<TType>(string json) where TType : GameSettingsBase
+    public static TType Deserialize<TType>(string json) where TType : GameSettings
     {
         return JsonSerializer.Deserialize<TType>(json, JsonSerializerOptions);
     }
