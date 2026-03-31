@@ -19,7 +19,8 @@ public static class Consts
         StatsCache
     }
     
-    public const string DefaultHost = "127.0.0.1";
+    public const string Localhost = "127.0.0.1";
+    public const string DefaultHost = Localhost;
     public const int DefaultPort = 25566;
     
     public static readonly AutoScalingService.AutoScalingSettings AutoScalingSettings = new(

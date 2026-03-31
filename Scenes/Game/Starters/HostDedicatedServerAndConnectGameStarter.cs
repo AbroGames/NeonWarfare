@@ -3,7 +3,7 @@
 namespace NeonWarfare.Scenes.Game.Starters;
 
 public class HostDedicatedServerAndConnectGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, bool? showWindow = null) : 
-    ConnectToMultiplayerGameStarter(DefaultHost, port)
+    ConnectToMultiplayerGameStarter(Consts.Localhost, port)
 {
     private readonly int? _port = port;
 
