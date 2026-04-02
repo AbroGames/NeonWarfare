@@ -5,7 +5,7 @@ using NeonWarfare.Scripts.Content.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class HostMultiplayerGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? serverHud = null) : BaseGameStarter
+public class HostMultiplayerGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? serverHud = true, bool? worldRender = true) : BaseGameStarter
 {
     
     private const string HostingFailedMessage = "Failed to start server: {0}";
@@ -30,8 +30,11 @@ public class HostMultiplayerGameStarter(int? port = null, string saveFileName = 
 
         if (serverHud.HasValue && serverHud.Value)
         {
-            world.SetVisible(false);
             game.AddServerHud();
+        }
+        if (worldRender.HasValue && !worldRender.Value)
+        {
+            world.SetVisible(false);
         }
         
         Error error = network.HostServer(port ?? DefaultPort, true);

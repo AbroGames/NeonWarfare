@@ -2,9 +2,6 @@
 
 [ext_resource type="Script" uid="uid://d0la0x6cxbgkf" path="res://Scenes/Screen/ServerHud/ServerHud.cs" id="1_keqeh"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_keqeh"]
-bg_color = Color(0.29803923, 0.29803923, 0.29803923, 1)
-
 [node name="ServerHud" type="Control" unique_id=1360128661]
 layout_mode = 3
 anchors_preset = 15
@@ -13,15 +10,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_keqeh")
-
-[node name="BackgroundPanel" type="Panel" parent="." unique_id=373891011]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_keqeh")
 
 [node name="InfoLabel" type="Label" parent="." unique_id=1962801442]
 layout_mode = 0

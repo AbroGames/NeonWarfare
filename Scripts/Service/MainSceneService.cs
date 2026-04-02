@@ -86,14 +86,14 @@ public class MainSceneService
     /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
     /// <param name="adminNickname">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client, use the PID of the client process.</param>
-    /// <param name="gameRender">Show not the GUI, but the game scene</param>
-    public void HostMultiplayerGameAsDedicatedServer(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? gameRender = null)
+    /// <param name="worldRender">Show not the GUI, but the game scene</param>
+    public void HostMultiplayerGameAsDedicatedServer(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? worldRender = null)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, !gameRender));
+        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, true, worldRender));
         Services.LoadingScreen.Clear();
     }
 
