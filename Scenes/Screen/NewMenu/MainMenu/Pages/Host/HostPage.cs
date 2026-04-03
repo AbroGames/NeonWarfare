@@ -1,5 +1,7 @@
+using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
+using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Host;
 
@@ -17,9 +19,9 @@ public partial class HostPage : MainMenuPage
         CreateServerButton.Pressed += ParseAndStartServer;
         CancelButton.Pressed += () => GoBack();
 
-        PortSpinBox.Value = Services.GameSettings.Settings.LastHostedPort;
-        SaveNameTextEdit.Text = Services.GameSettings.Settings.LastHostedSaveName;
-        IsDedicatedCheckButton.ButtonPressed = Services.GameSettings.Settings.LastHostedIsDedicated;
+        PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
+        SaveNameTextEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
+        IsDedicatedCheckButton.ButtonPressed = Services.GameSettings.GetSettings().LastGame.IsDedicated ?? false;
     }
     
     private void ParseAndStartServer()
@@ -27,7 +29,8 @@ public partial class HostPage : MainMenuPage
         int port = (int)PortSpinBox.Value;
         string saveFileName = SaveNameTextEdit.Text.Length != 0 ? SaveNameTextEdit.Text : null;
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        Services.GameSettings.PreserveServerCreation(port, saveFileName, isDedicated);
+        // TODO: СЖИЖЕНЫИ
+        Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.CreateServer, saveFileName, null, port, isDedicated));
         Services.MainScene.HostMultiplayerGameAsClient(port, saveFileName, isDedicated);
     }
 }

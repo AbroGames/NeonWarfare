@@ -1,6 +1,7 @@
 ﻿using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
+using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Connect;
 
@@ -14,8 +15,8 @@ public partial class ConnectPage : MainMenuPage
     public override void _Ready()
     {
         Di.Process(this);
-        HostLineEdit.Text = Services.GameSettings.Settings.LastConnectedHost ?? String.Empty;
-        PortSpinBox.Value = Services.GameSettings.Settings.LastConnectedPort;
+        HostLineEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
+        PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
         
         ConnectToServerButton.Pressed += ParseAndConnectToServer;
         CancelButton.Pressed += () => GoBack();
@@ -31,7 +32,8 @@ public partial class ConnectPage : MainMenuPage
         }
         
         int port = (int) PortSpinBox.Value;
-        Services.GameSettings.PreserveConnectionToServer(host, port);
+        // TODO: СЖИЖЕНЫИ
+        Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.ConnectToServer, null?, host, port, null?));
         Services.MainScene.ConnectToMultiplayerGame(host, port);
     }
 }

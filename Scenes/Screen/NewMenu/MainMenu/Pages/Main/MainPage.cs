@@ -2,6 +2,7 @@ using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
+using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Main;
 
@@ -43,33 +44,33 @@ public partial class MainPage : MainMenuPage
 	
 	private void ConfigureResumeButton()
 	{
-		var availableResume = Services.GameSettings.Settings.FastResumeAvailable;
-		if (availableResume is ResumableGame.None)
+		var availableResume = Services.GameSettings.GetSettings().LastGame.Type;
+		if (availableResume is GameSettings.ResumableGame.ResumableType.None)
 		{
 			ResumeButton.Visible = false;
 		}
 		else
 		{
 			ResumeButton.Visible = true;
-			if (availableResume is ResumableGame.RunSingleplayer)
+			if (availableResume is GameSettings.ResumableGame.ResumableType.RunSingleplayer)
 			{
-				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__SINGLEPLAYER")}: {Services.GameSettings.Settings.LastSingleplayerSaveName}";
+				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__SINGLEPLAYER")}: {Services.GameSettings.GetSettings().LastGame.SaveName}";
 				_resumeAction = () => Services.MainScene.StartSingleplayerGame();
 			}
 
-			if (availableResume is ResumableGame.ConnectToServer)
+			if (availableResume is GameSettings.ResumableGame.ResumableType.ConnectToServer)
 			{
-				var port = Services.GameSettings.Settings.LastConnectedPort;
-				var host = Services.GameSettings.Settings.LastConnectedHost;
+				var port = Services.GameSettings.GetSettings().LastGame.Port;
+				var host = Services.GameSettings.GetSettings().LastGame.Host;
 				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__CONNECT")}: {host}:{port}";
 				_resumeAction = () => Services.MainScene.ConnectToMultiplayerGame(host, port);
 			}
 
-			if (availableResume is ResumableGame.CreateServer)
+			if (availableResume is GameSettings.ResumableGame.ResumableType.CreateServer)
 			{
-				var save = Services.GameSettings.Settings.LastHostedSaveName;
-				var port  = Services.GameSettings.Settings.LastHostedPort;
-				var asDedicated = Services.GameSettings.Settings.LastHostedIsDedicated;
+				var save = Services.GameSettings.GetSettings().LastGame.Host;
+				var port  = Services.GameSettings.GetSettings().LastGame.Port;
+				var asDedicated = Services.GameSettings.GetSettings().LastGame.IsDedicated;
 				ResumeButton.Text = $"{Tr("MAIN_MENU__RESUME_BUTTON__HOST")}: {save}@{port}";
 				_resumeAction = () => Services.MainScene.HostMultiplayerGameAsClient(port, save, asDedicated);
 			}

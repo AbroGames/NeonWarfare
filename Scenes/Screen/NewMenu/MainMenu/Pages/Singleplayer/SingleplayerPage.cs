@@ -2,6 +2,7 @@ using Godot;
 using System;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
+using NeonWarfare.Scripts.Service.Settings;
 
 public partial class SingleplayerPage : MainMenuPage
 {
@@ -25,7 +26,7 @@ public partial class SingleplayerPage : MainMenuPage
         CancelButton.Pressed += OnCancel;
         TabContainer.TabChanged += OnSwitchingTabs;
 
-        _selectedSaveName = Services.GameSettings.Settings.LastSingleplayerSaveName ?? "";
+        _selectedSaveName = Services.GameSettings.GetSettings().LastGame.SaveName ?? String.Empty;
         SaveNameLineEdit.Text = _selectedSaveName;
         
         PopulateSavesList();
@@ -72,7 +73,8 @@ public partial class SingleplayerPage : MainMenuPage
     private void OnStart()
     {
         string saveFileName = !String.IsNullOrWhiteSpace(SaveNameLineEdit.Text) ? SaveNameLineEdit.Text : null;
-        Services.GameSettings.PreserveSingleplayerGame(saveFileName);
+        // TODO: СЖИЖЕНЫИ
+        Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.RunSingleplayer, saveFileName, null?, null?, null?));
         Services.MainScene.StartSingleplayerGame(saveFileName);
     }
     
