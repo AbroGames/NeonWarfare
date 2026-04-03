@@ -14,7 +14,7 @@ public partial class WorldTemporaryData : Node
     /// <summary>
     /// List of current connected players.
     /// </summary>
-    [Export] [Sync] public Dictionary<long, string> PlayerNickByPeerId = new();
+    [Export] [Sync] public Dictionary<long, string> PlayerUidByPeerId = new();
     
     public override void _Ready()
     {

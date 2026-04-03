@@ -1,0 +1,147 @@
+[gd_scene format=3 uid="uid://dvjv8ekp6q4c2"]
+
+[ext_resource type="Script" uid="uid://gp3emiou27io" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Singleplayer/SingleplayerPage.cs" id="1_ycyww"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_3biw6"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_ycyww"]
+font_size = 20
+
+[node name="SingleplayerPage" type="Control" unique_id=543057158]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ycyww")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2021225001]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=1900115057]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer" unique_id=1858530687]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer" unique_id=1070040754]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=850390629]
+layout_mode = 2
+text = "SINGLEPLAYER_MENU__TITLE"
+label_settings = SubResource("LabelSettings_3biw6")
+horizontal_alignment = 1
+
+[node name="SaveNameContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=594174963]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/SaveNameContainer" unique_id=857893536]
+layout_mode = 2
+text = "SINGLEPLAYER_MENU__SAVE_NAME"
+
+[node name="SaveNameLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/SaveNameContainer" unique_id=1647442496]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1072503365]
+layout_mode = 2
+size_flags_vertical = 3
+deselect_enabled = true
+tab_0/title = "SINGLEPLAYER_MENU__NEW_TAB"
+tab_1/title = "SINGLEPLAYER_MENU__LOAD_TAB"
+
+[node name="NewGameTab" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=784475374]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 0
+metadata/_tab_name = "SINGLEPLAYER_MENU__NEW_TAB"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/NewGameTab" unique_id=41536972]
+layout_mode = 2
+
+[node name="LoadGameTab" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer" unique_id=1738391518]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+metadata/_tab_index = 1
+metadata/_tab_name = "SINGLEPLAYER_MENU__LOAD_TAB"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab" unique_id=170806016]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TabTitle" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab/VBoxContainer" unique_id=365033111]
+layout_mode = 2
+text = "SINGLEPLAYER_MENU__LOAD_TAB"
+label_settings = SubResource("LabelSettings_ycyww")
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab/VBoxContainer" unique_id=1832268803]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab/VBoxContainer/PanelContainer" unique_id=1970331417]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab/VBoxContainer/PanelContainer/MarginContainer" unique_id=300103861]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab/VBoxContainer/PanelContainer/MarginContainer/ScrollContainer" unique_id=1291310788]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="SavesListContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/LoadGameTab/VBoxContainer/PanelContainer/MarginContainer/ScrollContainer/MarginContainer" unique_id=905988946]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1721919932]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=1796271378]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="StartButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=608874757]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "SINGLEPLAYER_MENU__START_BUTTON"
+
+[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1909801057]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "GENERIC_MENU__CANCEL_BUTTON"

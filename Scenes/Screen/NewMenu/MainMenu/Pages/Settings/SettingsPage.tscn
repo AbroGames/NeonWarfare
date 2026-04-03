@@ -31,20 +31,27 @@ custom_minimum_size = Vector2(850, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer" unique_id=2055201156]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer" unique_id=1067043510]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer" unique_id=2055201156]
 layout_mode = 2
 
-[node name="Settings" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1870229384]
+[node name="Settings" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1870229384]
 layout_mode = 2
-text = "SETTINGS"
+text = "SETTING_MENU__TITLE"
 label_settings = SubResource("LabelSettings_h4gti")
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=1803078200]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1803078200]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/VBoxContainer/ScrollContainer" unique_id=1056140094]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1056140094]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -53,23 +60,23 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="SettingsContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/ScrollContainer/MarginContainer" unique_id=692035059]
+[node name="SettingsContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/MarginContainer" unique_id=692035059]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/VBoxContainer" unique_id=2116685992]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2116685992]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/VBoxContainer/MarginContainer" unique_id=875395059]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer" unique_id=875395059]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="SaveButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=434189318]
+[node name="SaveButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=434189318]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Save"
+text = "SETTING_MENU__SAVE_BUTTON"
 
-[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=158735921]
+[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=158735921]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Cancel"
+text = "GENERIC_MENU__CANCEL_BUTTON"

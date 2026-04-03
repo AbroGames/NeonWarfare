@@ -44,7 +44,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1310098914]
 layout_mode = 2
-text = "SERVER CREATION"
+text = "HOST_MENU__TITLE"
 label_settings = SubResource("LabelSettings_h4gti")
 horizontal_alignment = 1
 
@@ -61,7 +61,7 @@ layout_mode = 2
 
 [node name="PortLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1044437610]
 layout_mode = 2
-text = "Port:"
+text = "HOST_MENU__PORT"
 
 [node name="PortSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=603578285]
 layout_mode = 2
@@ -75,7 +75,7 @@ layout_mode = 2
 
 [node name="SaveNameLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer" unique_id=1459579568]
 layout_mode = 2
-text = "Save Name:"
+text = "HOST_MENU__SAVE_NAME"
 
 [node name="SaveNameTextEdit" type="TextEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer" unique_id=363389272]
 custom_minimum_size = Vector2(200, 0)
@@ -85,7 +85,7 @@ size_flags_vertical = 3
 
 [node name="IsDedicatedCheckButton" type="CheckButton" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=766284305]
 layout_mode = 2
-text = "As dedicated server"
+text = "HOST_MENU__DEDICATED"
 
 [node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=145933220]
 custom_minimum_size = Vector2(0, 20)
@@ -98,9 +98,9 @@ size_flags_horizontal = 4
 [node name="CreateServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1948269138]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Create server"
+text = "HOST_MENU__CREATE_BUTTON"
 
 [node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=664684594]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-text = "Cancel"
+text = "GENERIC_MENU__CANCEL_BUTTON"

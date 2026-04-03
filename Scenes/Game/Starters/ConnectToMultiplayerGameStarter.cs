@@ -1,17 +1,21 @@
 ﻿using Godot;
 using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class ConnectToMultiplayerGameStarter(string host = null, int? port = null) : BaseGameStarter
+public class ConnectToMultiplayerGameStarter(
+    string host,
+    int? port,
+    bool mustSetLastGame
+    ) : BaseGameStarter
 {
     
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
-    
+
     public override void Init(Game game)
     {
-        base.Init(game);
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting);
         
         Network.Network network = game.AddNetwork();
@@ -29,7 +33,13 @@ public class ConnectToMultiplayerGameStarter(string host = null, int? port = nul
         game.GetMultiplayer().ConnectedToServer += ConnectedToServerEvent;
         game.GetMultiplayer().ConnectionFailed += ConnectionFailedEvent;
         game.GetMultiplayer().ServerDisconnected += ServerDisconnectedEvent;
-        
+
+        if (mustSetLastGame)
+        {
+            var lastGame = ResumableGame.GetConnectToServer(host ?? DefaultHost, port ?? DefaultPort);
+            SetLastGame(lastGame);
+        }
+
         Error error = network.ConnectToServer(host ?? DefaultHost, port ?? DefaultPort);
         if (error != Error.Ok)
         {

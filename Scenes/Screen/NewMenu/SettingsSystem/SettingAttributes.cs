@@ -3,6 +3,17 @@
 namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class NameAttribute : Attribute
+{
+    public string Name { get; }
+
+    public NameAttribute(string name)
+    {
+        Name = name;
+    }
+}
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class HideAttribute : Attribute;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]

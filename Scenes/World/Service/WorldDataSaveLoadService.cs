@@ -15,7 +15,8 @@ public partial class WorldDataSaveLoadService : Node
     private const string SaveFilenameMustBeNotEmptyErrorMessage = "Filename for saving must be not empty";
     private const string NotRightsForSaveErrorMessage = "You don't have the rights for saving";
 
-    public event Action<string> SaveRejectedEvent;
+    public event Action<string> SaveRejectedClientEvent;
+    public event Action<string> SaveSuccessServerEvent;
     
     [SceneService] private WorldPersistenceData _persistenceData;
     [SceneService] private WorldDataSerializerService _serializerService;
@@ -38,18 +39,17 @@ public partial class WorldDataSaveLoadService : Node
             return;
         }
 
-        if (string.IsNullOrEmpty(saveFileName))
+        if (String.IsNullOrEmpty(saveFileName))
         {
             SaveReject(peerId, SaveFilenameMustBeNotEmptyErrorMessage);
             return;
         }
 
-        String currentSaveFileName = _persistenceData.General.GeneralData.SaveFileName;
+        string currentSaveFileName = _persistenceData.General.GeneralData.SaveFileName;
         try
         {
             _persistenceData.General.GeneralData.SaveFileName = saveFileName;
-            byte[] data = TrySerializeWorldData();
-            Services.SaveLoad.SaveToDisk(data, saveFileName);
+            SerializeAndSaveToDisk();
         }
         catch (SaveLoadService.SaveException saveException)
         {
@@ -63,19 +63,28 @@ public partial class WorldDataSaveLoadService : Node
     [Rpc(CallLocal = true)]
     private void SaveRejectRpc(string errorMessage)
     {
-        SaveRejectedEvent?.Invoke(errorMessage);
+        SaveRejectedClientEvent?.Invoke(errorMessage);
     }
     
-    public void AutoSave()
+    public void TryAutoSave()
     {
-        byte[] data = TrySerializeWorldData();
-        Services.SaveLoad.SaveToDisk(data, Services.SaveLoad.AutoSaveName);
+        if (!Services.GameSettings.GetSettings().AutoSaveEnabled) return;
+
+        SerializeAndSaveToDisk();
     }
 
     public void Load(string saveFileName)
     {
         byte[] data = Services.SaveLoad.LoadFromDisk(saveFileName);
         TryDeserializeWorldData(data);
+    }
+
+    private void SerializeAndSaveToDisk()
+    {
+        string saveFileName = _persistenceData.General.GeneralData.SaveFileName;
+        byte[] data = TrySerializeWorldData();
+        Services.SaveLoad.SaveToDisk(data, saveFileName);
+        SaveSuccessServerEvent?.Invoke(saveFileName);
     }
     
     private byte[] TrySerializeWorldData()

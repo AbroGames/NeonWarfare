@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Godot;
 using KludgeBox.Core.Cooldown;
@@ -84,16 +85,21 @@ public partial class WorldENetPerformance : Node
 
             // Per-peer statistics
             _infoByPeerId.Clear();
-            foreach (int peerId in Multiplayer.GetPeers())
+            foreach (var peerData in GetConnectedPeers(peer))
             {
-                ENetPacketPeer clientPeer = peer.GetPeer(peerId);
-                if (clientPeer != null)
-                {
-                    double ping = clientPeer.GetStatistic(ENetPacketPeer.PeerStatistic.RoundTripTime);
-                    double packetLoss = clientPeer.GetStatistic(ENetPacketPeer.PeerStatistic.PacketLoss) / ENetPacketPeer.PacketLossScale * 100;
-                    _infoByPeerId[peerId] = new PeerInfo(ping, packetLoss);
-                }
+                double ping = peerData.eNetPacketPeer.GetStatistic(ENetPacketPeer.PeerStatistic.RoundTripTime);
+                double packetLoss = peerData.eNetPacketPeer.GetStatistic(ENetPacketPeer.PeerStatistic.PacketLoss) / ENetPacketPeer.PacketLossScale * 100;
+                _infoByPeerId[peerData.peerId] = new PeerInfo(ping, packetLoss);
             }
         }
+    }
+
+    private List<(int peerId, ENetPacketPeer eNetPacketPeer)> GetConnectedPeers(ENetMultiplayerPeer peer)
+    {
+        int[] peerIds = Net.IsServer() ? Multiplayer.GetPeers() : [ServerId];
+        return peerIds
+            .Select(peerId => (peerId, peer.GetPeer(peerId)))
+            .Where(peerData => peerData.Item2 != null)
+            .ToList();
     }
 }

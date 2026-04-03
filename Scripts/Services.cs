@@ -1,9 +1,10 @@
-﻿using KludgeBox.Core;
+using KludgeBox.Core;
 using KludgeBox.Core.Random;
 using KludgeBox.DI;
 using KludgeBox.Godot.Services;
 using KludgeBox.Reflection.Access;
 using NeonWarfare.Scripts.Service;
+using NeonWarfare.Scripts.Service.ResumableGame;
 using NeonWarfare.Scripts.Service.Settings;
 using NetworkService = NeonWarfare.Scripts.Service.NetworkService;
 
@@ -32,7 +33,8 @@ public static class Services
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
     public static readonly GameSettingsService GameSettings = new();
-    public static readonly IPlayerSettingsService PlayerSettings = GameSettings;
+    public static readonly MenuGameSettingsService MenuGameSettings = new();
+    public static readonly ResumableGameService LastGame = new();
     public static readonly SaveLoadService SaveLoad = new();
     public static readonly IconsStorageService IconsStorage = new();
     

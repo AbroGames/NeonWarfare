@@ -41,6 +41,7 @@ public partial class ServerHud : Control
     public override void _Ready()
     {
         Di.Process(this);
+        
         Test1Button.Pressed += () => { _world.Test1(); };
         Test2Button.Pressed += () => { _world.Test2(); };
         Test3Button.Pressed += () => { _world.Test3(); };
@@ -63,8 +64,8 @@ public partial class ServerHud : Control
     private String GetPlayersENetInfo()
     {
         WorldENetPerformance.PeerInfo defaultPeerInfo = new WorldENetPerformance.PeerInfo(0, 0);
-        IEnumerable<String> playersInfo = _world.TemporaryData.PlayerNickByPeerId
-            .Select(kv => $"{kv.Value} ({kv.Key}): " + 
+        IEnumerable<String> playersInfo = _world.TemporaryData.PlayerUidByPeerId
+            .Select(kv => $"{_world.FacadeService.GetPlayerData(kv.Key).Nick} (uid: {kv.Value}, peerId: {kv.Key}): " + 
                           $"ping {_world.PerformanceService.ENet.InfoByPeerId.GetValueOrDefault((int) kv.Key, defaultPeerInfo).Ping} ms, " + 
                           $"packet loss {_world.PerformanceService.ENet.InfoByPeerId.GetValueOrDefault((int) kv.Key, defaultPeerInfo).PacketLoss:N2}%");
         return "Players:\n" + string.Join("\n", playersInfo);

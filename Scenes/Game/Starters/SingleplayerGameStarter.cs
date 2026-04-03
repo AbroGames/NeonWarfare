@@ -1,21 +1,27 @@
 ﻿using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Service.ResumableGame;
 using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class SingleplayerGameStarter(string saveFileName = null) : BaseGameStarter
+public class SingleplayerGameStarter(
+    string saveFileName
+    ) : BaseGameStarter
 {
     
     public override void Init(Game game)
     {
-        base.Init(game);
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
-        PlayerSettings playerSettings = Services.PlayerSettings.GetPlayerSettings();
+        GameSettings gameSettings = Services.GameSettings.GetSettings();
         World.World world = game.AddWorld();
         game.AddHud();
         
-        ServerStartWorld(world, saveFileName, playerSettings.Nick);
+        var lastGame = ResumableGame.GetSingleplayer(saveFileName);
+        SetLastGame(lastGame);
+        AddLastGameUpdaterToSaveEvent(world, lastGame);
+        
+        ServerStartWorld(world, saveFileName, gameSettings.PlayerUid);
         ClientStartWorld(world);
     }
 }

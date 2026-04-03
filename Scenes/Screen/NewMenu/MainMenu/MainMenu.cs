@@ -7,12 +7,16 @@ namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
 public partial class MainMenu : Node
 {
-    [Child(By.Type)] public PageContainer PageContainer { get; private set; }
-    [Child(By.Type)] public PagesScenes PagesScenes { get; private set; }
+    public IPage CurrentPage => _pageContainer.CurrentPage;
+    [Child(By.Type)] private PageContainer _pageContainer { get; set; }
+    [Child(By.Type)] public PagesProvider PagesProvider { get; private set; }
 
     public override void _Ready()
     {
         Di.Process(this);
-        PageContainer.SetRootPage(PagesScenes.MainPage.Instantiate<MainMenuPage>().WithAvailablePages(PagesScenes));
+        _pageContainer.SetRootPage(PagesProvider.MainPageScene.Instantiate<MainMenuPage>().WithAvailablePages(PagesProvider));
     }
+    
+    public void PushPage(IPage page) => _pageContainer.PushPage(page);
+    public IPage PopPage() => _pageContainer.PopPage();
 }

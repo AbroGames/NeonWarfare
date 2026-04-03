@@ -2,17 +2,26 @@
 using Humanizer;
 using KludgeBox.Godot.Nodes.Process;
 using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class HostMultiplayerGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? serverHud = true, bool? worldRender = true) : BaseGameStarter
+public class HostMultiplayerGameStarter(
+    string saveFileName,
+    int? port,
+    string adminUid,
+    int? parentPid,
+    bool serverHudRender,
+    bool worldRender,
+    bool mustSetLastGame,
+    bool startedAsDedicated
+    ) : BaseGameStarter
 {
     
     private const string HostingFailedMessage = "Failed to start server: {0}";
     
     public override void Init(Game game)
     {
-        base.Init(game);
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         if (parentPid.HasValue)
@@ -28,15 +37,21 @@ public class HostMultiplayerGameStarter(int? port = null, string saveFileName = 
         World.World world = game.AddWorld();
         Net.DoClient(() => game.AddHud());
 
-        if (serverHud.HasValue && serverHud.Value)
+        if (serverHudRender)
         {
             game.AddServerHud();
         }
-        if (worldRender.HasValue && !worldRender.Value)
+        if (!worldRender)
         {
             world.SetVisible(false);
         }
-        
+        if (mustSetLastGame)
+        {
+            var lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, startedAsDedicated);
+            SetLastGame(lastGame);
+            AddLastGameUpdaterToSaveEvent(world, lastGame);
+        }
+
         Error error = network.HostServer(port ?? DefaultPort, true);
         if (error != Error.Ok)
         {
@@ -44,7 +59,7 @@ public class HostMultiplayerGameStarter(int? port = null, string saveFileName = 
             return;
         }
 
-        ServerStartWorld(world, saveFileName, adminNickname);
+        ServerStartWorld(world, saveFileName, adminUid);
         network.OpenServer();
         Net.DoClient(() => ClientStartWorld(world));
     }

@@ -17,7 +17,7 @@ public record Setting
     public Setting(IMemberAccessor source, object target)
     {
         Member = source;
-        Name = source.Member.Name.Humanize().Titleize();
+        Name = source.Member.GetCustomAttribute<NameAttribute>()?.Name ?? source.Member.Name.Humanize().Titleize();
         Hint = source.Member.GetCustomAttribute<HintAttribute>()?.Hint;
         Value = source.GetValue(target);
         Type = source.ValueType;

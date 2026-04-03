@@ -14,8 +14,15 @@ public partial class ConnectPage : MainMenuPage
     public override void _Ready()
     {
         Di.Process(this);
-        HostLineEdit.Text = Services.GameSettings.Settings.LastConnectedHost ?? String.Empty;
-        PortSpinBox.Value = Services.GameSettings.Settings.LastConnectedPort;
+        //TODO: Сильные сомнения, что так корректно использовать. У нас может быть порт от режима создания сервера,
+        // а хоста не будет, потому что ты никогда никуда не подключался. Я бы просто дефолтные значения оставлял во всех менюшках.
+        // Зеленая кнопка и так уже есть, этого достаточно, остальное мне кажется будет мешать чаще. Если юзер не нажал на зеленую кнопку, а зашел в меню конретное,
+        // то видимо у него не стандартный кейс.
+        // Было:
+        // HostLineEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
+        // PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
+        HostLineEdit.Text = String.Empty;
+        PortSpinBox.Value = Consts.DefaultPort;
         
         ConnectToServerButton.Pressed += ParseAndConnectToServer;
         CancelButton.Pressed += () => GoBack();
@@ -23,9 +30,16 @@ public partial class ConnectPage : MainMenuPage
 
     private void ParseAndConnectToServer()
     {
-        string host = HostLineEdit.Text.Length != 0 ? HostLineEdit.Text : null;
+        
+        string host = String.IsNullOrWhiteSpace(HostLineEdit.Text) ? null : HostLineEdit.Text.Trim();
+        if (host is null)
+        {
+            GoNext(PagesProvider.PrepareMessagePage(Tr("CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR")));
+        }
+        
         int port = (int) PortSpinBox.Value;
-        Services.GameSettings.PreserveConnectionToServer(host, port);
-        Services.MainScene.ConnectToMultiplayerGame(host, port);
+        // TODO: СЖИЖЕНЫИ
+        //Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.ConnectToServer, null?, host, port, null?));
+        //Services.MainScene.ConnectToMultiplayerGame(host, port);
     }
 }

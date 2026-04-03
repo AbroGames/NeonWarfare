@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
@@ -12,10 +13,11 @@ public class SaveLoadService
     
     public class SaveException(string message, Exception innerException = null) : Exception(message, innerException);
     public class LoadException(string message, Exception innerException = null) : Exception(message, innerException);
+    public readonly record struct SaveFileInfo(string FileName, ulong ModifiedTime);
     
-    public readonly string SaveDirPath = "user://saves/";
-    public readonly string SaveExtension = ".bin";
-    public readonly string AutoSaveName = "auto";
+    private const string SaveDirPath = "user://saves/";
+    private const string SaveExtension = ".bin";
+    private const string NewSaveNameFormat = "yyyy-MM-dd_HH-mm";
 
     [Logger] ILogger _log;
     
@@ -23,16 +25,20 @@ public class SaveLoadService
     {
         Di.Process(this);
     }
+
+    public string GenNewSaveFileName()
+    {
+        return DateTime.Now.ToString(NewSaveNameFormat, CultureInfo.InvariantCulture);
+    }
     
-    public List<string> GetAllSaveFiles()
+    public List<SaveFileInfo> GetAllSaveFiles()
     {
         return DirAccess.GetFilesAt(SaveDirPath)
             .Where(filename => filename.EndsWith(SaveExtension))
-            .Select(filename => (
-                Name: filename,
-                Size: FileAccess.GetModifiedTime(SaveDirPath + filename)))
-            .OrderByDescending(file => file.Size)
-            .Select(file => System.IO.Path.GetFileNameWithoutExtension(file.Name))
+            .Select(filename => new SaveFileInfo(
+                FileName: System.IO.Path.GetFileNameWithoutExtension(filename),
+                ModifiedTime: FileAccess.GetModifiedTime(SaveDirPath + filename)))
+            .OrderByDescending(file => file.ModifiedTime)
             .ToList();
     }
 

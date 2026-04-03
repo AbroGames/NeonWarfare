@@ -5,11 +5,11 @@ using KludgeBox.Reflection.Access;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
-public abstract class GameSettingsBase
+public partial class MenuGameSettings
 {
     public static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerOptions.Default) { WriteIndented = true };
 
-    static GameSettingsBase()
+    static MenuGameSettings()
     {
         JsonSerializerOptions.Converters.Add(new ColorJsonConverter());
     }
@@ -20,12 +20,12 @@ public abstract class GameSettingsBase
         return JsonSerializer.Serialize(this, GetType(), JsonSerializerOptions);
     }
 
-    public static GameSettings Deserialize(string json)
+    public static MenuGameSettings Deserialize(string json)
     {
-        return Deserialize<GameSettings>(json);
+        return Deserialize<MenuGameSettings>(json);
     }
     
-    public static TType Deserialize<TType>(string json) where TType : GameSettingsBase
+    public static TType Deserialize<TType>(string json) where TType : MenuGameSettings
     {
         return JsonSerializer.Deserialize<TType>(json, JsonSerializerOptions);
     }
@@ -56,7 +56,7 @@ file static class GameSettingsInternals
         {
             if (_visibleAccessors is null)
             {
-                _visibleAccessors = Services.MembersScanner.ScanMembers(typeof(GameSettings))
+                _visibleAccessors = Services.MembersScanner.ScanMembers(typeof(MenuGameSettings))
                     .Where(accessor => accessor.IsPublic)
                     .Where(accessor => !accessor.HasAttribute<HideAttribute>())
                     .ToList();

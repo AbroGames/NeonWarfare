@@ -2,8 +2,7 @@
 using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.KludgeBox;
-using NeonWarfare.Scenes.Screen.MainMenu;
-using NeonWarfare.Scenes.Screen.MainMenu.Pages.Message;
+using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
 namespace NeonWarfare.Scripts.Service;
 
@@ -30,14 +29,13 @@ public class MainSceneService
     public void StartMainMenu(string message)
     {
         StartMainMenu();
-        MainMenu mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
+        var mainMenu = _mainSceneContainer.GetCurrentStoredNode<MainMenu>();
         
-        // We must call this section after adding MainMenu to tree, because otherwise we can't access mainMenu.PackedScenes field
-        mainMenu.ChangeMenuPage(mainMenu.PackedScenes.Message);
-        mainMenu.MenuContainer.GetCurrentStoredNode<MainMenuMessagePage>().MessageLabel.Text = message;
+        // We must call this section after adding MainMenu to tree, because otherwise we can't access mainMenu.PagesProvider property
+        mainMenu.PushPage(mainMenu.PagesProvider.PrepareMessagePage(message));
     }
     
-    public void StartSingleplayerGame(string saveFileName = null)
+    public void StartSingleplayerGame(string saveFileName)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -52,54 +50,58 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new ConnectToMultiplayerGameStarter(host, port));
+        game.Init(new ConnectToMultiplayerGameStarter(host, port, true));
     }
     
     /// <summary>
     /// Start new server and connect to them. Use in client process.
     /// </summary>
-    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
+    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="createDedicatedServerProcess">If true, create a new OS process running a dedicated server, and have this process connect to it as a client.</param>
-    public void HostMultiplayerGameAsClient(int? port = null, string saveFileName = null, bool? createDedicatedServerProcess = null)
+    public void HostMultiplayerGameAsClient(string saveFileName, int? port = null, bool createDedicatedServerProcess = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
 
-        string adminNickname = Services.PlayerSettings.GetPlayerSettings().Nick;
+        string adminUid = Services.GameSettings.GetSettings().PlayerUid;
         
-        if (createDedicatedServerProcess ?? false)
+        if (createDedicatedServerProcess)
         {
-            game.Init(new HostDedicatedServerAndConnectGameStarter(port, saveFileName, adminNickname, true));
+            game.Init(new HostDedicatedServerAndConnectGameStarter(saveFileName, port, adminUid, true));
         }
         else
         {
-            game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname));
+            game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminUid, null,false, true, true, false));
         }
     }
     
     /// <summary>
     /// Start new server. Use in dedicated server process.
     /// </summary>
-    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
-    /// <param name="adminNickname">This user can manage the server</param>
+    /// <param name="port">Port number on which the server will listen.</param>
+    /// <param name="adminUid">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client, use the PID of the client process.</param>
-    /// <param name="worldRender">Show not the GUI, but the game scene</param>
-    public void HostMultiplayerGameAsDedicatedServer(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? worldRender = null)
+    /// <param name="noHudRender">Don't show ServerHud. Could be use in dedicated server for show only world game scene.</param>
+    /// <param name="worldRender">Show game scene behind gui. Could be disabled in dedicated server for show only ServerHud.</param>
+    public void HostMultiplayerGameAsDedicatedServer(string saveFileName, int? port = null, string adminUid = null, int? parentPid = null, bool noHudRender = false, bool worldRender = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, true, worldRender));
+        // Don't set LastGame in dedicated server started from console
+        bool mustSetLastGame = parentPid.HasValue;
+        
+        game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminUid, parentPid, !noHudRender, worldRender, mustSetLastGame, true));
         Services.LoadingScreen.Clear();
     }
 
     public bool MainSceneIsMainMenu()
     {
-        return _mainSceneContainer.GetCurrentStoredNode<Node>() is Scenes.Screen.NewMenu.MainMenu.MainMenu or MainMenu;
+        return _mainSceneContainer.GetCurrentStoredNode<Node>() is MainMenu;
     }
 
     public bool MainSceneIsGame()

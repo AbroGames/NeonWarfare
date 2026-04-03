@@ -20,13 +20,14 @@ public class ClientRootStarter : BaseRootStarter
         
         Services.Net.Init(false);
         Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
+        Services.LastGame.Init();
         
-        Services.PlayerSettings.Init();
-        if (_clientArgs.Nick != null)
-        {
-	        Services.PlayerSettings.SetNickTemporarily(_clientArgs.Nick);
-        }
-        Services.I18N.SetCurrentLocale(Services.PlayerSettings.GetPlayerSettings().Language);
+        Services.GameSettings.Init();
+        if (_clientArgs.Nick != null) Services.GameSettings.SetNickTemporarily(_clientArgs.Nick);
+        if (_clientArgs.Uid != null) Services.GameSettings.SetUidTemporarily(_clientArgs.Uid);
+        
+        // Set locale only after loading GameSettings
+        Services.I18N.SetCurrentLocale(Services.GameSettings.GetSettings().Locale);
         
         // Activate loading screen after setting up locale
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
@@ -40,7 +41,7 @@ public class ClientRootStarter : BaseRootStarter
 
         if (_clientArgs.AutoStart)
         {
-	        Services.MainScene.StartSingleplayerGame();
+	        Services.MainScene.StartSingleplayerGame(Services.SaveLoad.GenNewSaveFileName());
         } 
         else if (_clientArgs.AutoConnect)
         {

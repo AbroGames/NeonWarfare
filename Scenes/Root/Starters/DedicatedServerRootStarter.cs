@@ -18,6 +18,8 @@ public class DedicatedServerRootStarter : BaseRootStarter
         _dedicatedServerArgs = DedicatedServerArgs.GetFromCmd(CmdArgsService);
         
         Services.Net.Init(true);
+        Services.LastGame.Init();
+        
         rootData.SceneTree.Root.Title = $"[SERVER] {rootData.SceneTree.Root.Title}";
     }
 
@@ -27,10 +29,11 @@ public class DedicatedServerRootStarter : BaseRootStarter
         _log.Information("Starting DedicatedServer...");
 
         Services.MainScene.HostMultiplayerGameAsDedicatedServer(
-            _dedicatedServerArgs.Port,
             _dedicatedServerArgs.SaveFileName,
+            _dedicatedServerArgs.Port,
             _dedicatedServerArgs.Admin,
             _dedicatedServerArgs.ParentPid,
-            _dedicatedServerArgs.IsRender);
+            _dedicatedServerArgs.IsNoHud,
+            _dedicatedServerArgs.IsWorldRender);
     }
 }

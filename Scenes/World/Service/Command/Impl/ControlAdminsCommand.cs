@@ -1,4 +1,5 @@
-﻿using Humanizer;
+﻿using System.Linq;
+using Humanizer;
 using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 
 namespace NeonWarfare.Scenes.World.Service.Command.Impl;
@@ -14,6 +15,7 @@ public class ControlAdminsCommand : ICommandProcessor
     private const string RequireParamErrorMessage = "Command '{0}' require param: '" + AddAdminParam + "' or '" + RemoveAdminParam + "'.";
     private const string RequireNickErrorMessage = "Command '{0}' require nick after param '" + AddAdminParam + "' or '" + RemoveAdminParam + "'.";
     private const string PlayerNotFoundErrorMessage = "Player '{0}' not found.";
+    private const string ManyPlayersFoundedErrorMessage = "Many players have nick '{0}'.";
     private const string AlwaysAdminErrorMessage = "Player '{0}' always admin.";
     private const string AlwaysNotAdminErrorMessage = "Player '{0}' always not admin.";
     
@@ -37,15 +39,22 @@ public class ControlAdminsCommand : ICommandProcessor
         
         string action = paramsArray[0].ToLower();
         string nick = paramsArray[1];
+        int playersWithNick = world.PersistenceData.Players.PlayerByUid.Values
+            .Count(playerData => playerData.Nick.Equals(nick));
 
         if (action != AddAdminParam && action != RemoveAdminParam)
         {
             SendMessage(RequireParamErrorMessage.FormatWith(GetCommand()), senderId, world);
             return;
         }
-        if (!world.PersistenceData.Players.PlayerByNick.ContainsKey(nick))
+        if (playersWithNick == 0)
         {
             SendMessage(PlayerNotFoundErrorMessage.FormatWith(nick), senderId, world);
+            return;
+        }
+        if (playersWithNick > 1)
+        {
+            SendMessage(ManyPlayersFoundedErrorMessage.FormatWith(nick), senderId, world);
             return;
         }
 
@@ -63,7 +72,8 @@ public class ControlAdminsCommand : ICommandProcessor
 
     private void AddAdmin(string nick, int senderId, World world)
     {
-        PlayerData playerData = world.PersistenceData.Players.PlayerByNick[nick];
+        PlayerData playerData = world.PersistenceData.Players.PlayerByUid.Values
+            .First(playerData => playerData.Nick.Equals(nick));
         if (playerData.IsAdmin)
         {
             SendMessage(AlwaysAdminErrorMessage.FormatWith(nick), senderId, world);
@@ -76,7 +86,8 @@ public class ControlAdminsCommand : ICommandProcessor
     
     private void RemoveAdmin(string nick, int senderId, World world)
     {
-        PlayerData playerData = world.PersistenceData.Players.PlayerByNick[nick];
+        PlayerData playerData = world.PersistenceData.Players.PlayerByUid.Values
+            .First(playerData => playerData.Nick.Equals(nick));
         if (!playerData.IsAdmin)
         {
             SendMessage(AlwaysNotAdminErrorMessage.FormatWith(nick), senderId, world);

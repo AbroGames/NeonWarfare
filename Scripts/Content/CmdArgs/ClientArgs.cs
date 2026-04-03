@@ -6,13 +6,15 @@ public readonly record struct ClientArgs(
     bool AutoConnect,
     string AutoConnectIp,
     int? AutoConnectPort,
-    string Nick)
+    string Nick,
+    string Uid)
 {
     public static readonly string AutoStartFlag = "--auto-start";
     public static readonly string AutoConnectFlag = "--auto-connect";
     public static readonly string AutoConnectIpFlag = "--auto-connect-ip";
     public static readonly string AutoConnectPortFlag = "--auto-connect-port";
     public static readonly string NickFlag = "--nick";
+    public static readonly string UidFlag = "--uid";
     
     public static ClientArgs GetFromCmd(KludgeBox.Core.CmdArgsService argsService)
     {
@@ -22,7 +24,8 @@ public readonly record struct ClientArgs(
             argsService.ContainsInCmdArgs(AutoConnectFlag),
             argsService.GetStringFromCmdArgs(AutoConnectIpFlag),
             argsService.GetIntFromCmdArgs(AutoConnectPortFlag),
-            argsService.GetStringFromCmdArgs(NickFlag)
+            argsService.GetStringFromCmdArgs(NickFlag),
+            argsService.GetStringFromCmdArgs(UidFlag)
         );
     }
 }

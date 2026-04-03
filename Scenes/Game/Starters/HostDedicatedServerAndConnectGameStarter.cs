@@ -1,25 +1,36 @@
 ﻿using KludgeBox.Godot.Nodes.Process;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class HostDedicatedServerAndConnectGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, bool? showWindow = null) : 
-    ConnectToMultiplayerGameStarter(DefaultHost, port)
+public class HostDedicatedServerAndConnectGameStarter(
+    string saveFileName,
+    int? port,
+    string adminUid,
+    bool showWindow
+    ) : ConnectToMultiplayerGameStarter(Localhost, port, false)
 {
     private readonly int? _port = port;
 
     public override void Init(Game game)
     {
         int dedicatedServerPid = Services.Process.StartNewDedicatedServerApplication(
-            _port ?? DefaultPort, 
             saveFileName,
-            adminNickname, 
-            showWindow ?? true);
+            _port ?? DefaultPort,
+            adminUid,
+            showWindow);
         
         ProcessShutdowner dedicatedServerShutdowner = new ProcessShutdowner(
             dedicatedServerPid,
             pid => $"Kill server process: {pid}."); 
-        game.AddChild(dedicatedServerShutdowner); 
+        game.AddChild(dedicatedServerShutdowner);
+
+        // Try to connect to new hosted server, don't save connect as last game
+        // Flag 'SetLastGame = false' was set in constructor
+        base.Init(game); 
         
-        base.Init(game); // Try to connect to new hosted server
+        // This starter always start from menu, so we must set LastGame  
+        var lastGame = ResumableGame.GetCreateServer(saveFileName, _port ?? DefaultPort, true);
+        SetLastGame(lastGame);
     }
 }

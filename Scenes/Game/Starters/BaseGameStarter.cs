@@ -1,26 +1,43 @@
 ﻿using System;
 using NeonWarfare.Scripts.Service;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
 public abstract class BaseGameStarter
 {
+    protected const string Localhost = Consts.Localhost;
     protected const string DefaultHost = Consts.DefaultHost;
     protected const int DefaultPort = Consts.DefaultPort;
 
-    public virtual void Init(Game game) { }
+    public abstract void Init(Game game);
 
-    protected void ServerStartWorld(World.World world, string saveFileName, string adminNickname)
+    protected void SetLastGame(ResumableGame lastGame)
     {
-        if (saveFileName == null)
+        Services.LastGame.SetLastGame(lastGame);
+    }
+
+    protected void AddLastGameUpdaterToSaveEvent(World.World world, ResumableGame lastGame)
+    {
+        world.DataSaveLoadService.SaveSuccessServerEvent += saveName =>
         {
-            world.ServerStartStopService.StartNewGame(adminNickname);
+            Services.LastGame.SetLastGame(lastGame with { SaveName = saveName });
+        };
+    }
+    
+    protected void ServerStartWorld(World.World world, string saveFileName, string adminUid)
+    {
+        if (saveFileName == null) throw new ArgumentNullException(nameof(saveFileName));
+
+        if (!Services.SaveLoad.CheckFileExists(saveFileName))
+        {
+            world.ServerStartStopService.StartNewGame(saveFileName, adminUid);
         }
         else
         {
             try
             {
-                world.ServerStartStopService.LoadGame(saveFileName, adminNickname);
+                world.ServerStartStopService.LoadGame(saveFileName, adminUid);
             }
             catch (SaveLoadService.LoadException loadException)
             {

@@ -32,25 +32,25 @@ public partial class WorldServerStartStopService : Node
         Di.Process(this);
     }
 
-    public void StartNewGame(string adminNickname = null)
+    public void StartNewGame(string saveFileName, string adminUid)
     {
         if (!Net.IsServer()) throw new InvalidOperationException("Can only be executed on the server");
         
-        CommonServerInit(adminNickname);
-        NewGameServerInit();
+        CommonServerInit(adminUid);
+        NewGameServerInit(saveFileName);
         EndCommonServerInit();
     }
     
-    public void LoadGame(string saveFileName, string adminNickname = null)
+    public void LoadGame(string saveFileName, string adminUid)
     {
         if (!Net.IsServer()) throw new InvalidOperationException("Can only be executed on the server");
         
-        CommonServerInit(adminNickname);
+        CommonServerInit(adminUid);
         LoadServerInit(saveFileName);
         EndCommonServerInit();
     }
 
-    private void CommonServerInit(string adminNickname = null)
+    private void CommonServerInit(string adminUid)
     {
         _log.Information("World starting...");
         
@@ -59,12 +59,12 @@ public partial class WorldServerStartStopService : Node
         // otherwise we can have memory leak for this function
         void PeerDisconnectedEvent(long id)
         {
-            _temporaryData.PlayerNickByPeerId.Remove((int) id);
+            _temporaryData.PlayerUidByPeerId.Remove((int) id);
         }
         GetMultiplayer().PeerDisconnected += PeerDisconnectedEvent;
         
         // Init WorldSynchronizerService
-        _synchronizerService.InitOnServer(adminNickname);
+        _synchronizerService.InitOnServer(adminUid);
         
         // Init command system
         _commandService.InitOnServer();
@@ -75,9 +75,10 @@ public partial class WorldServerStartStopService : Node
         AddChild(worldServerShutdowner);
     }
 
-    private void NewGameServerInit()
+    private void NewGameServerInit(string saveFileName)
     {
-        
+        // Set savaFileName for future saving or auto-saving
+        _persistenceData.General.GeneralData.SaveFileName = saveFileName;
     }
 
     private void LoadServerInit(string saveFileName)
