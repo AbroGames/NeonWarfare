@@ -5,6 +5,7 @@ using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
+using NeonWarfare.Scenes.World.Service.Character;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
 using Serilog;
 
@@ -25,10 +26,13 @@ public partial class WorldSynchronizerService : Node
     public event Action SyncStartedOnClientEvent;
     public event Action SyncEndedOnClientEvent;
     public event Action<string> SyncRejectOnClientEvent;
+    
+    public event Action<int> SyncEndedOnServerEvent;
 
     [SceneService] private WorldPersistenceData _persistenceData;
     [SceneService] private WorldTemporaryData _temporaryData;
     [SceneService] private WorldDataSerializerService _dataSerializerService;
+    [SceneService] private WorldPlayerService _playerService;
     [Logger] private ILogger _log;
 
     public override void _Ready()
@@ -80,8 +84,6 @@ public partial class WorldSynchronizerService : Node
         playerData.IsAdmin |= nick.Equals(_temporaryData.MainAdminNick);
         _log.Information("Player data from peer {peer} was synced", connectedClientId);
         
-        GetParent<World>().Tree.MapSurface.AddPlayerCharacter(connectedClientId); //TODO Временное непродуманное решение.
-        
         _log.Information("Sending serialized world data to peer {peer}", connectedClientId);
         EndSyncOnClient(connectedClientId, _dataSerializerService.SerializeWorldData());
     }
@@ -92,6 +94,9 @@ public partial class WorldSynchronizerService : Node
     {
         _log.Information("Received serialized world data from server");
         _dataSerializerService.DeserializeWorldData(serializableData);
+        EndSyncOnServer();
+        _log.Information("Syncing complete successfully");
+        
         SyncEndedOnClientEvent?.Invoke();
     }
     
@@ -101,5 +106,16 @@ public partial class WorldSynchronizerService : Node
     {
         _log.Error("Syncing with the server was rejected with error: {error}", errorMessage);
         SyncRejectOnClientEvent?.Invoke(errorMessage);
+    }
+    
+    private void EndSyncOnServer() => RpcId(ServerId, MethodName.EndSyncOnServerRpc);
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)] 
+    private void EndSyncOnServerRpc()
+    {
+        int connectedClientId = GetMultiplayer().GetRemoteSenderId();
+        _log.Information("Syncing peer {peer} completed successfully", connectedClientId );
+        
+        _playerService.SpawnPlayer(connectedClientId);
+        SyncEndedOnServerEvent?.Invoke(connectedClientId);
     }
 }
