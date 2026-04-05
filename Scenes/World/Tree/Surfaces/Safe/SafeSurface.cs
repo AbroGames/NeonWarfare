@@ -1,12 +1,6 @@
 using Godot;
-using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.ParentInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Remote;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 
 namespace NeonWarfare.Scenes.World.Tree.Surfaces.Safe;
 
