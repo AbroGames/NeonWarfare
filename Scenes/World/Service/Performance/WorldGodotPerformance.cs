@@ -65,6 +65,6 @@ public partial class WorldGodotPerformance : Node
 
     private int GetSurfacesChildCount()
     {
-        return _tree.Surface.GetChildCount();
+        return _tree.Surface == null ? 0 : _tree.Surface.GetChildCount();
     }
 }

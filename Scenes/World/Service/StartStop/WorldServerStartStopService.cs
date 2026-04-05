@@ -84,6 +84,7 @@ public partial class WorldServerStartStopService : Node
 
     private void EndCommonServerInit()
     {
+        _tree.SetSafeSurface();
         _tree.Surface.InitOnServer();//TODO временно для теста
     }
 }
