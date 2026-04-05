@@ -10,12 +10,11 @@ using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.ClientScenes;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 using NeonWarfare.Scenes.World.Service;
-using NeonWarfare.Scenes.World.Service.Character;
+using NeonWarfare.Scenes.World.Service.Characters;
 using NeonWarfare.Scenes.World.Service.Chat;
 using NeonWarfare.Scenes.World.Service.Command;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
 using NeonWarfare.Scenes.World.Service.Performance;
-using NeonWarfare.Scenes.World.Service.PersistenceFactory;
 using NeonWarfare.Scenes.World.Service.StartStop;
 using NeonWarfare.Scenes.World.Tree;
 using Serilog;
@@ -34,7 +33,6 @@ public partial class World : Node2D, IServiceProvider
     [Child] public WorldPersistenceData PersistenceData { get; private set; }
     [Child] public WorldTemporaryData TemporaryData { get; private set; }
     
-    [Child] public PersistenceNodesFactoryService FactoryService { get; private set; }
     [Child] public WorldMultiplayerSpawnerService MultiplayerSpawnerService { get; private set; }
     [Child] public WorldServerStartStopService ServerStartStopService { get; private set; }
     [Child] public WorldClientStartStopService ClientStartStopService { get; private set; }
@@ -63,7 +61,6 @@ public partial class World : Node2D, IServiceProvider
         AddService(PersistenceData);
         AddService(TemporaryData);
         
-        AddService(FactoryService);
         AddService(MultiplayerSpawnerService);
         AddService(ServerStartStopService);
         AddService(ClientStartStopService);
@@ -105,7 +102,7 @@ public partial class World : Node2D, IServiceProvider
     {
         _log.Warning("Test 1 RPC called");
         
-        Tree.MapSurface.AddBotCharacter(100, 100, new AiBattleControllerLogic
+        EnemyService.AddBotCharacter(100, 100, new AiBattleControllerLogic
         {
             Direction = Vector2.Right
         });
@@ -123,7 +120,7 @@ public partial class World : Node2D, IServiceProvider
     {
         _log.Warning("Test 2 RPC called");
         
-        Character bot = Tree.MapSurface.AddBotCharacter(1000, 100, new AiBattleControllerLogic
+        Character bot = EnemyService.AddBotCharacter(1000, 100, new AiBattleControllerLogic
         {
             Direction = Vector2.Left
         });
@@ -139,7 +136,7 @@ public partial class World : Node2D, IServiceProvider
         
         for (int i = 0; i < 50; i++)
         {
-            Tree.MapSurface.AddBotCharacter(500, 500, new AiMoveControllerLogic
+            EnemyService.AddBotCharacter(500, 500, new AiMoveControllerLogic
             {
                 TargetPosition = new Vector2(500, 500)
             });

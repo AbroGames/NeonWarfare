@@ -5,7 +5,7 @@ using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
-using NeonWarfare.Scenes.World.Service.Character;
+using NeonWarfare.Scenes.World.Service.Characters;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
 using Serilog;
 

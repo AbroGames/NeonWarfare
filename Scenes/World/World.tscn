@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://ba3apeajydxl6" path="res://Scenes/World/Scenes/SyncedScenes/SyncedPackedScenes.tscn" id="2_xf6vi"]
 [ext_resource type="PackedScene" uid="uid://bic2y3aefedxr" path="res://Scenes/World/Data/PersistenceData/WorldPersistenceData.tscn" id="3_5jr8x"]
 [ext_resource type="PackedScene" uid="uid://c8mpkavrkvkxh" path="res://Scenes/World/Tree/WorldTree.tscn" id="3_hveh7"]
-[ext_resource type="Script" uid="uid://b1sdp82lmtr2r" path="res://Scenes/World/Service/PersistenceFactory/PersistenceNodesFactoryService.cs" id="4_kuxid"]
 [ext_resource type="Script" uid="uid://b1lvv7kolowbi" path="res://Scenes/World/Data/TemporaryData/WorldTemporaryData.cs" id="4_x5sp8"]
 [ext_resource type="Script" uid="uid://dup0k3cek5wg" path="res://Scenes/World/Service/WorldMultiplayerSpawnerService.cs" id="6_87yka"]
 [ext_resource type="Script" uid="uid://dphgcbar3udj1" path="res://Scenes/World/Service/WorldSynchronizerService.cs" id="7_ng1ea"]
@@ -18,8 +17,8 @@
 [ext_resource type="Script" uid="uid://dm8kr1s86wu7q" path="res://Scenes/World/Service/WorldFacadeService.cs" id="12_lp0bp"]
 [ext_resource type="Script" uid="uid://dtv76e7pfc4w8" path="res://Scenes/World/Service/Chat/WorldChatService.cs" id="14_liy54"]
 [ext_resource type="Script" uid="uid://cjus2vroiwp63" path="res://Scenes/World/Service/Command/WorldCommandService.cs" id="15_c1bjq"]
-[ext_resource type="Script" uid="uid://bpmso4fqwg64i" path="res://Scenes/World/Service/Character/WorldPlayerService.cs" id="17_7n4rk"]
-[ext_resource type="Script" uid="uid://d1qvwedkroahn" path="res://Scenes/World/Service/Character/WorldEnemyService.cs" id="18_jclsg"]
+[ext_resource type="Script" uid="uid://bpmso4fqwg64i" path="res://Scenes/World/Service/Characters/WorldPlayerService.cs" id="17_7n4rk"]
+[ext_resource type="Script" uid="uid://d1qvwedkroahn" path="res://Scenes/World/Service/Characters/WorldEnemyService.cs" id="18_jclsg"]
 
 [node name="World" type="Node2D" unique_id=943238609]
 script = ExtResource("1_0nbjp")
@@ -30,11 +29,6 @@ script = ExtResource("1_0nbjp")
 
 [node name="TemporaryData" type="Node" parent="." unique_id=1505366897]
 script = ExtResource("4_x5sp8")
-MainAdminNick = null
-PlayerNickByPeerId = null
-
-[node name="FactoryService" type="Node" parent="." unique_id=1851041012]
-script = ExtResource("4_kuxid")
 
 [node name="MultiplayerSpawnerService" type="Node" parent="." unique_id=1768346598]
 script = ExtResource("6_87yka")
@@ -78,4 +72,3 @@ script = ExtResource("18_jclsg")
 
 [node name="Tree-MultiplayerSpawner" parent="." unique_id=1958817782 instance=ExtResource("2_ouhkt")]
 spawn_path = NodePath("../Tree")
-_selfSync = null

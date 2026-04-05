@@ -1,10 +1,10 @@
-﻿namespace NeonWarfare.Scenes.World.Service.Character;
+﻿namespace NeonWarfare.Scenes.World.Service.Characters;
 
 public partial class WorldPlayerService : WorldCharacterService
 {
     
     public void SpawnPlayer(int peerId)
     {
-        Tree.MapSurface.AddPlayerCharacter(peerId);
+        AddPlayerCharacter(peerId);
     }
 }
