@@ -18,6 +18,8 @@
 [ext_resource type="Script" uid="uid://dm8kr1s86wu7q" path="res://Scenes/World/Service/WorldFacadeService.cs" id="12_lp0bp"]
 [ext_resource type="Script" uid="uid://dtv76e7pfc4w8" path="res://Scenes/World/Service/Chat/WorldChatService.cs" id="14_liy54"]
 [ext_resource type="Script" uid="uid://cjus2vroiwp63" path="res://Scenes/World/Service/Command/WorldCommandService.cs" id="15_c1bjq"]
+[ext_resource type="Script" uid="uid://bpmso4fqwg64i" path="res://Scenes/World/Service/Character/WorldPlayerService.cs" id="17_7n4rk"]
+[ext_resource type="Script" uid="uid://d1qvwedkroahn" path="res://Scenes/World/Service/Character/WorldEnemyService.cs" id="18_jclsg"]
 
 [node name="World" type="Node2D" unique_id=943238609]
 script = ExtResource("1_0nbjp")
@@ -63,6 +65,12 @@ script = ExtResource("15_c1bjq")
 
 [node name="FacadeService" type="Node" parent="." unique_id=200665927]
 script = ExtResource("12_lp0bp")
+
+[node name="PlayerService" type="Node" parent="." unique_id=693737930]
+script = ExtResource("17_7n4rk")
+
+[node name="EnemyService" type="Node" parent="." unique_id=84493581]
+script = ExtResource("18_jclsg")
 
 [node name="SyncedPackedScenes" parent="." unique_id=1365667924 instance=ExtResource("2_xf6vi")]
 

@@ -8,6 +8,7 @@ using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.ClientScenes;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
+using NeonWarfare.Scenes.World.Service.Character;
 using NeonWarfare.Scenes.World.Service.Chat;
 using NeonWarfare.Scenes.World.Service.Command;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
@@ -35,6 +36,9 @@ public partial class WorldFacadeService : Node
     [SceneService] private WorldPerformanceService _performanceService;
     [SceneService] private WorldChatService _chatService;
     [SceneService] private WorldCommandService _commandService;
+    
+    [SceneService] private WorldPlayerService _playerService;
+    [SceneService] private WorldEnemyService _enemyService;
     
     [SceneService] private SyncedPackedScenes _syncedPackedScenes;
     [SceneService] private ClientPackedScenes _clientPackedScenes;

@@ -10,6 +10,7 @@ using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.ClientScenes;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 using NeonWarfare.Scenes.World.Service;
+using NeonWarfare.Scenes.World.Service.Character;
 using NeonWarfare.Scenes.World.Service.Chat;
 using NeonWarfare.Scenes.World.Service.Command;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
@@ -45,6 +46,9 @@ public partial class World : Node2D, IServiceProvider
     [Child] public WorldCommandService CommandService { get; private set; }
     [Child] public WorldFacadeService FacadeService { get; private set; }
     
+    [Child] public WorldPlayerService PlayerService { get; private set; }
+    [Child] public WorldEnemyService EnemyService { get; private set; }
+    
     [Child] public SyncedPackedScenes SyncedPackedScenes { get; private set; }
     [Child] public ClientPackedScenes ClientPackedScenes { get; private set; }
     
@@ -70,6 +74,9 @@ public partial class World : Node2D, IServiceProvider
         AddService(ChatService);
         AddService(CommandService);
         AddService(FacadeService);
+        
+        AddService(PlayerService);
+        AddService(EnemyService);
         
         AddService(SyncedPackedScenes);
         AddService(ClientPackedScenes);
