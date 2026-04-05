@@ -3,7 +3,6 @@ using System.Text;
 using Godot;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Tree;
-using NeonWarfare.Scenes.World.Tree.Surface.Battle;
 using GPerf = Godot.Performance;
 
 namespace NeonWarfare.Scenes.World.Service.Performance;
@@ -66,11 +65,6 @@ public partial class WorldGodotPerformance : Node
 
     private int GetSurfacesChildCount()
     {
-        // Using for-loop instead of LINQ, because otherwise we take memory leak.
-        // Also, it is decrease work for GC.
-        int count = _tree.MapSurface.GetChildCount();
-        foreach (BattleSurface battleSurface in _tree.BattleSurfaces) count += battleSurface.GetChildCount();
-        
-        return count;
+        return _tree.Surface.GetChildCount();
     }
 }

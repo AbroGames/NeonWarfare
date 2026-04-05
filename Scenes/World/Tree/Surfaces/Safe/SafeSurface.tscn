@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://wdbyyryght8p"]
+
+[ext_resource type="Script" uid="uid://b7itbaxmvo1l6" path="res://Scenes/World/Tree/Surface/Safe/SafeSurface.cs" id="1_bavog"]
+
+[node name="MapSurface" type="Node2D" unique_id=1425315416]
+script = ExtResource("1_bavog")

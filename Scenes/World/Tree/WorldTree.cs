@@ -7,18 +7,15 @@ using KludgeBox.DI.Requests.SceneServiceInjection;
 using KludgeBox.Godot.Nodes.MpSync;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 using NeonWarfare.Scenes.World.Service;
-using NeonWarfare.Scenes.World.Tree.Surface.Battle;
-using NeonWarfare.Scenes.World.Tree.Surface.Map;
+using NeonWarfare.Scenes.World.Tree.Surfaces;
+using NeonWarfare.Scenes.World.Tree.Surfaces.Battle;
 
 namespace NeonWarfare.Scenes.World.Tree;
 
 public partial class WorldTree : Node2D
 {
 
-    [Child] public MapSurface MapSurface  { get; private set; }
-    
-    public List<BattleSurface> BattleSurfaces => _battleSurfacesNames.Select(name => GetNodeOrNull<BattleSurface>(name)).ToList();
-    [Export] [Sync] private Array<string> _battleSurfacesNames = new();
+    [Child] public Surface Surface  { get; private set; }
     
     [SceneService] private SyncedPackedScenes _syncedPackedScenes;
     [SceneService] private WorldMultiplayerSpawnerService _multiplayerSpawner;
@@ -30,10 +27,12 @@ public partial class WorldTree : Node2D
     
     public BattleSurface AddBattleSurface()
     {
-        BattleSurface battleSurface = _syncedPackedScenes.BattleSurface.Instantiate<BattleSurface>();
-        this.AddChildWithUniqueName(battleSurface, "BattleSurface");
-        _battleSurfacesNames.Add(battleSurface.Name);
-        _multiplayerSpawner.AddSpawnerToNode(battleSurface);
-        return battleSurface;
+        //BattleSurface battleSurface = _syncedPackedScenes.BattleSurface.Instantiate<BattleSurface>();
+        //this.AddChildWithUniqueName(battleSurface, "BattleSurface");
+        //_battleSurfacesNames.Add(battleSurface.Name);
+        //_multiplayerSpawner.AddSpawnerToNode(battleSurface);
+        //return battleSurface;
+
+        return null; //TODO Surface changes logic, удалить из tscn ноды дефолтные, создавать в ready
     }
 }

@@ -6,6 +6,7 @@ using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Service.Command;
+using NeonWarfare.Scenes.World.Tree;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.Service.StartStop;
@@ -15,10 +16,14 @@ public partial class WorldServerStartStopService : Node
 {
     
     [Parent] private World _world;
+    
+    [SceneService] private WorldTree _tree;
     [SceneService] private WorldPersistenceData _persistenceData;
     [SceneService] private WorldTemporaryData _temporaryData;
+    
     [SceneService] private WorldDataSaveLoadService _dataSaveLoadService;
     [SceneService] private WorldCommandService _commandService;
+    
     [Logger] private ILogger _log;
 
     public override void _Ready()
@@ -32,6 +37,7 @@ public partial class WorldServerStartStopService : Node
         
         CommonServerInit(adminNickname);
         NewGameServerInit();
+        EndCommonServerInit();
     }
     
     public void LoadGame(string saveFileName, string adminNickname = null)
@@ -40,6 +46,7 @@ public partial class WorldServerStartStopService : Node
         
         CommonServerInit(adminNickname);
         LoadServerInit(saveFileName);
+        EndCommonServerInit();
     }
 
     private void CommonServerInit(string adminNickname = null)
@@ -73,8 +80,10 @@ public partial class WorldServerStartStopService : Node
     private void LoadServerInit(string saveFileName)
     {
         _dataSaveLoadService.Load(saveFileName);
-        
-        // We use this class very rarely, so we don't need to save it as class field
-        new WorldTreeLoader().RunAllLoaders(_world);
+    }
+
+    private void EndCommonServerInit()
+    {
+        _tree.Surface.InitOnServer();//TODO временно для теста
     }
 }
