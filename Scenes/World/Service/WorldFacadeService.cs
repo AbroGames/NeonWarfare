@@ -8,12 +8,11 @@ using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.ClientScenes;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
-using NeonWarfare.Scenes.World.Service.Character;
+using NeonWarfare.Scenes.World.Service.Characters;
 using NeonWarfare.Scenes.World.Service.Chat;
 using NeonWarfare.Scenes.World.Service.Command;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
 using NeonWarfare.Scenes.World.Service.Performance;
-using NeonWarfare.Scenes.World.Service.PersistenceFactory;
 using NeonWarfare.Scenes.World.Service.StartStop;
 using NeonWarfare.Scenes.World.Tree;
 
@@ -26,7 +25,6 @@ public partial class WorldFacadeService : Node
     [SceneService] private WorldPersistenceData _persistenceData;
     [SceneService] private WorldTemporaryData _temporaryData;
     
-    [SceneService] private PersistenceNodesFactoryService _factoryService;
     [SceneService] private WorldMultiplayerSpawnerService _multiplayerSpawnerService;
     [SceneService] private WorldServerStartStopService _serverStartStopService;
     [SceneService] private WorldClientStartStopService _clientStartStopService;
