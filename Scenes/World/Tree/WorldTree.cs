@@ -27,8 +27,10 @@ public partial class WorldTree : Node2D
         
         SafeSurface safeSurface = _syncedPackedScenes.SafeSurface.Instantiate<SafeSurface>();
         this.AddChildWithUniqueName(safeSurface, "SafeSurface");
-        Surface = safeSurface;
         _multiplayerSpawner.AddSpawnerToNode(safeSurface);
+        Surface = safeSurface;
+        Surface.InitOnServer();
+        
         return safeSurface;
     }
     
@@ -38,8 +40,20 @@ public partial class WorldTree : Node2D
         
         BattleSurface battleSurface = _syncedPackedScenes.BattleSurface.Instantiate<BattleSurface>();
         this.AddChildWithUniqueName(battleSurface, "BattleSurface");
-        Surface = battleSurface;
         _multiplayerSpawner.AddSpawnerToNode(battleSurface);
+        Surface = battleSurface;
+        Surface.InitOnServer();
+        
         return battleSurface;
+    }
+
+    public SafeSurface GetSafeSurfaceOrNull()
+    {
+        return Surface as SafeSurface;
+    }
+    
+    public BattleSurface GetBattleSurfaceOrNull()
+    {
+        return Surface as BattleSurface;
     }
 }
