@@ -34,10 +34,23 @@ public partial class WorldSynchronizerService : Node
     [SceneService] private WorldDataSerializerService _dataSerializerService;
     [SceneService] private WorldPlayerService _playerService;
     [Logger] private ILogger _log;
+    
+    /// <summary>
+    /// Hoster nick, or nick from cmd param in dedicated server.<br/>
+    /// <c>Player.IsAdmin</c> in <c>WorldPersistenceData</c> for this player automatically will change to true.<br/>
+    /// If next application start will be with <c>MainAdminNick = null</c>, then <c>Player.IsAdmin</c>
+    /// in <c>WorldPersistenceData</c> still be true.<br/>
+    /// </summary>
+    private string _adminNickname;
 
     public override void _Ready()
     {
         Di.Process(this);
+    }
+
+    public void InitOnServer(string adminNickname = null)
+    {
+        _adminNickname = adminNickname;
     }
 
     public void StartSyncOnClient(string nick, Color color)
@@ -81,7 +94,7 @@ public partial class WorldSynchronizerService : Node
             });
         }
         PlayerData playerData = _persistenceData.Players.PlayerByNick[nick];
-        playerData.IsAdmin |= nick.Equals(_temporaryData.MainAdminNick);
+        playerData.IsAdmin |= nick.Equals(_adminNickname);
         _log.Information("Player data from peer {peer} was synced", connectedClientId);
         
         _log.Information("Sending serialized world data to peer {peer}", connectedClientId);
