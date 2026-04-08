@@ -2,10 +2,6 @@
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai.Impl;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Remote;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
@@ -26,32 +22,8 @@ public partial class WorldCharacterService : Node
     {
         Di.Process(this);
     }
-    
-    public void AddPlayerCharacter(long peerId)
-    {
-        
-        Character player = AddCharacter(250, 250);
-        //TODO В синглплеерной игре порядок имеет значение?
-        player.Controller.SetController(new RemoteController());
-        player.Controller.SetControllerToClient(peerId, new PlayerController());
 
-        player.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MaxHp, 100));
-        player.Stats.Heal(player, player.Stats.MaxHp);
-        //var effect = new PoisonStatusEffect.Builder().Id("Poison").Time(100).PoisonTime(1).PoisonValue(10).Build();
-        //player.StatusEffects.AddStatusEffect(effect, player);
-        
-        //Character bot = AddCharacter(450, 250);
-        //bot.Controller.SetController(new AiController(new AiObserveControllerLogic()));
-    }
-
-    public Character AddBotCharacter(float x, float y, IAiControllerLogic aiLogic = null)
-    {
-        Character bot = AddCharacter(x, y);
-        bot.Controller.SetController(new AiController(aiLogic ?? new AiBattleControllerLogic()));
-        return bot;
-    }
-
-    public Character AddCharacter(float x, float y)
+    protected Character AddCharacter(float x, float y)
     {
         Character character = SyncedPackedScenes.Character.Instantiate<Character>();
         character.Position = Vec2(x, y);
