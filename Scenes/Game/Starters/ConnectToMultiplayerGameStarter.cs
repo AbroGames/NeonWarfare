@@ -3,13 +3,15 @@ using NeonWarfare.Scripts.Content.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class ConnectToMultiplayerGameStarter(string host = null, int? port = null, bool? mustSetLastGame = null) : BaseGameStarter
+public class ConnectToMultiplayerGameStarter(
+    string host,
+    int? port,
+    bool mustSetLastGame
+    ) : BaseGameStarter
 {
     
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
-    
-    protected bool? MustSetLastGame = mustSetLastGame;
 
     public override void Init(Game game)
     {
@@ -31,9 +33,9 @@ public class ConnectToMultiplayerGameStarter(string host = null, int? port = nul
         game.GetMultiplayer().ConnectionFailed += ConnectionFailedEvent;
         game.GetMultiplayer().ServerDisconnected += ServerDisconnectedEvent;
 
-        if (MustSetLastGame.HasValue && MustSetLastGame.Value)
+        if (mustSetLastGame)
         {
-            var lastGame = ResumableGame.GetConnectToServer(host, port ?? 0);
+            var lastGame = ResumableGame.GetConnectToServer(host ?? DefaultHost, port ?? DefaultPort);
             SetLastGame(lastGame);
         }
 

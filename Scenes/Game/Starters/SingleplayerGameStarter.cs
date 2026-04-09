@@ -3,7 +3,9 @@ using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class SingleplayerGameStarter(string saveFileName = null) : BaseGameStarter
+public class SingleplayerGameStarter(
+    string saveFileName
+    ) : BaseGameStarter
 {
     
     public override void Init(Game game)

@@ -5,7 +5,16 @@ using NeonWarfare.Scripts.Content.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class HostMultiplayerGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? serverHudRender = false, bool? worldRender = true, bool? mustSetLastGame = null, bool? startedAsDedicated = null) : BaseGameStarter
+public class HostMultiplayerGameStarter(
+    string saveFileName,
+    int? port,
+    string adminNickname,
+    int? parentPid,
+    bool serverHudRender,
+    bool worldRender,
+    bool mustSetLastGame,
+    bool startedAsDedicated
+    ) : BaseGameStarter
 {
     
     private const string HostingFailedMessage = "Failed to start server: {0}";
@@ -27,19 +36,17 @@ public class HostMultiplayerGameStarter(int? port = null, string saveFileName = 
         World.World world = game.AddWorld();
         Net.DoClient(() => game.AddHud());
 
-        if (serverHudRender.HasValue && serverHudRender.Value)
+        if (serverHudRender)
         {
             game.AddServerHud();
         }
-        if (worldRender.HasValue && !worldRender.Value)
+        if (!worldRender)
         {
             world.SetVisible(false);
         }
-
-        
-        if (mustSetLastGame.HasValue && mustSetLastGame.Value)
+        if (mustSetLastGame)
         {
-            var lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? 0, startedAsDedicated ?? false);
+            var lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, startedAsDedicated);
             SetLastGame(lastGame);
             AddLastGameUpdaterToSaveEvent(world, lastGame);
         }

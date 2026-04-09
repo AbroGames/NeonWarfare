@@ -2,17 +2,22 @@
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class HostDedicatedServerAndConnectGameStarter(int? port = null, string saveFileName = null, string adminNickname = null, bool? showWindow = null) : ConnectToMultiplayerGameStarter(Localhost, port, false)
+public class HostDedicatedServerAndConnectGameStarter(
+    string saveFileName,
+    int? port,
+    string adminNickname,
+    bool showWindow
+    ) : ConnectToMultiplayerGameStarter(Localhost, port, false)
 {
     private readonly int? _port = port;
 
     public override void Init(Game game)
     {
         int dedicatedServerPid = Services.Process.StartNewDedicatedServerApplication(
-            _port ?? DefaultPort, 
             saveFileName,
+            _port ?? DefaultPort,
             adminNickname, 
-            showWindow ?? true);
+            showWindow);
         
         ProcessShutdowner dedicatedServerShutdowner = new ProcessShutdowner(
             dedicatedServerPid,
@@ -24,7 +29,7 @@ public class HostDedicatedServerAndConnectGameStarter(int? port = null, string s
         base.Init(game); 
         
         // This starter always start from menu, so we set LastGame  
-        var lastGame = ResumableGame.GetCreateServer(saveFileName, _port ?? 0, true);
+        var lastGame = ResumableGame.GetCreateServer(saveFileName, _port ?? DefaultPort, true);
         SetLastGame(lastGame);
     }
 }

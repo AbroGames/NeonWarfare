@@ -35,7 +35,7 @@ public class MainSceneService
         mainMenu.PushPage(mainMenu.PagesProvider.PrepareMessagePage(message));
     }
     
-    public void StartSingleplayerGame(string saveFileName = null)
+    public void StartSingleplayerGame(string saveFileName)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -50,16 +50,16 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new ConnectToMultiplayerGameStarter(host, port));
+        game.Init(new ConnectToMultiplayerGameStarter(host, port, true));
     }
     
     /// <summary>
     /// Start new server and connect to them. Use in client process.
     /// </summary>
-    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
+    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="createDedicatedServerProcess">If true, create a new OS process running a dedicated server, and have this process connect to it as a client.</param>
-    public void HostMultiplayerGameAsClient(int? port = null, string saveFileName = null, bool? createDedicatedServerProcess = null)
+    public void HostMultiplayerGameAsClient(string saveFileName, int? port = null, bool createDedicatedServerProcess = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -67,25 +67,25 @@ public class MainSceneService
 
         string adminNickname = Services.GameSettings.GetSettings().PlayerNick;
         
-        if (createDedicatedServerProcess ?? false)
+        if (createDedicatedServerProcess)
         {
-            game.Init(new HostDedicatedServerAndConnectGameStarter(port, saveFileName, adminNickname, true));
+            game.Init(new HostDedicatedServerAndConnectGameStarter(saveFileName, port, adminNickname, true));
         }
         else
         {
-            game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname));
+            game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminNickname, null,false, true, true, false));
         }
     }
     
     /// <summary>
     /// Start new server. Use in dedicated server process.
     /// </summary>
-    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
+    /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="adminNickname">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client, use the PID of the client process.</param>
-    /// <param name="worldRender">Show not the GUI, but the game scene</param>
-    public void HostMultiplayerGameAsDedicatedServer(int? port = null, string saveFileName = null, string adminNickname = null, int? parentPid = null, bool? worldRender = null)
+    /// <param name="worldRender">Show game scene behind gui. Can be disabled in dedicated server for show only ServerHud.</param>
+    public void HostMultiplayerGameAsDedicatedServer(string saveFileName, int? port = null, string adminNickname = null, int? parentPid = null, bool worldRender = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -94,8 +94,29 @@ public class MainSceneService
         // Don't set LastGame in dedicated server started from console
         bool mustSetLastGame = parentPid.HasValue;
         
-        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, true, worldRender, mustSetLastGame, true));
+        game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminNickname, parentPid, true, worldRender, mustSetLastGame, true));
         Services.LoadingScreen.Clear();
+    }
+    
+    public void StartResumableGame(ResumableGame game)
+    {
+        switch (game.Type)
+        { 
+            case ResumableGame.ResumableType.RunSingleplayer: 
+                StartSingleplayerGame(game.SaveName);
+                break;
+            case ResumableGame.ResumableType.ConnectToServer: 
+                ConnectToMultiplayerGame(game.Host, game.Port);
+                break;
+            case ResumableGame.ResumableType.CreateServer: 
+                HostMultiplayerGameAsClient(game.SaveName, game.Port, game.IsDedicated!.Value);
+                break;
+        }
+    }
+    
+    public void StartLastGame()
+    {
+        StartResumableGame(Services.GameSettings.GetSettings().LastGame);
     }
 
     public bool MainSceneIsMainMenu()
