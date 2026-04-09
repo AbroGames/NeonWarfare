@@ -3,15 +3,16 @@ using NeonWarfare.Scripts.Content.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
-public class ConnectToMultiplayerGameStarter(string host = null, int? port = null) : BaseGameStarter
+public class ConnectToMultiplayerGameStarter(string host = null, int? port = null, bool? mustSetLastGame = null) : BaseGameStarter
 {
     
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
     
+    protected bool? MustSetLastGame = mustSetLastGame;
+
     public override void Init(Game game)
     {
-        base.Init(game);
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting);
         
         Network.Network network = game.AddNetwork();
@@ -29,7 +30,13 @@ public class ConnectToMultiplayerGameStarter(string host = null, int? port = nul
         game.GetMultiplayer().ConnectedToServer += ConnectedToServerEvent;
         game.GetMultiplayer().ConnectionFailed += ConnectionFailedEvent;
         game.GetMultiplayer().ServerDisconnected += ServerDisconnectedEvent;
-        
+
+        if (MustSetLastGame.HasValue && MustSetLastGame.Value)
+        {
+            var lastGame = ResumableGame.GetConnectToServer(host, port ?? 0);
+            SetLastGame(lastGame);
+        }
+
         Error error = network.ConnectToServer(host ?? DefaultHost, port ?? DefaultPort);
         if (error != Error.Ok)
         {

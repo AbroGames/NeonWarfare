@@ -8,12 +8,15 @@ public class SingleplayerGameStarter(string saveFileName = null) : BaseGameStart
     
     public override void Init(Game game)
     {
-        base.Init(game);
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         GameSettings gameSettings = Services.GameSettings.GetSettings();
         World.World world = game.AddWorld();
         game.AddHud();
+        
+        var lastGame = ResumableGame.GetSingleplayer(saveFileName);
+        SetLastGame(lastGame);
+        AddLastGameUpdaterToSaveEvent(world, lastGame);
         
         ServerStartWorld(world, saveFileName, gameSettings.PlayerNick);
         ClientStartWorld(world);

@@ -91,7 +91,10 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, true, worldRender));
+        // Don't set LastGame in dedicated server started from console
+        bool mustSetLastGame = parentPid.HasValue;
+        
+        game.Init(new HostMultiplayerGameStarter(port, saveFileName, adminNickname, parentPid, true, worldRender, mustSetLastGame, true));
         Services.LoadingScreen.Clear();
     }
 
