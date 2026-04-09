@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://bpih66ljivhva" path="res://Scenes/World/Scenes/SyncedScenes/SyncedPackedScenes.cs" id="1_1ie7d"]
 [ext_resource type="PackedScene" uid="uid://wdbyyryght8p" path="res://Scenes/World/Tree/Surfaces/Safe/SafeSurface.tscn" id="2_3q5g2"]
 [ext_resource type="PackedScene" uid="uid://bqwjclof66q86" path="res://Scenes/World/Tree/Surfaces/Battle/BattleSurface.tscn" id="3_wuo5u"]
-[ext_resource type="PackedScene" uid="uid://ci2dn8dnt3kav" path="res://Scenes/Entity/Character/Character.tscn" id="5_6viwk"]
-[ext_resource type="PackedScene" uid="uid://cosu2yptj35os" path="res://Scenes/Entity/Wall/Wall.tscn" id="5_8nu84"]
+[ext_resource type="PackedScene" uid="uid://ci2dn8dnt3kav" path="res://Scenes/Entity/Characters/Character.tscn" id="5_6viwk"]
+[ext_resource type="PackedScene" uid="uid://cosu2yptj35os" path="res://Scenes/Entity/Walls/Wall.tscn" id="5_8nu84"]
 
 [node name="SyncedPackedScenes" type="Node" unique_id=258823033]
 script = ExtResource("1_1ie7d")

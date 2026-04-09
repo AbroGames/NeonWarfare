@@ -1,6 +1,6 @@
-﻿using NeonWarfare.Scenes.Entity.Character;
-using NeonWarfare.Scenes.Entity.Character.Controller.Ai;
-using NeonWarfare.Scenes.Entity.Character.Controller.Ai.Impl;
+﻿using NeonWarfare.Scenes.Entity.Characters;
+using NeonWarfare.Scenes.Entity.Characters.Controller.Ai;
+using NeonWarfare.Scenes.Entity.Characters.Controller.Ai.Impl;
 
 namespace NeonWarfare.Scenes.World.Service.Characters;
 

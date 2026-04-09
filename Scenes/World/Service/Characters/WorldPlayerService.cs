@@ -1,8 +1,8 @@
 ﻿using KludgeBox.Core.Stats;
-using NeonWarfare.Scenes.Entity.Character;
-using NeonWarfare.Scenes.Entity.Character.Controller.Player;
-using NeonWarfare.Scenes.Entity.Character.Controller.Remote;
-using NeonWarfare.Scenes.Entity.Character.Stats;
+using NeonWarfare.Scenes.Entity.Characters;
+using NeonWarfare.Scenes.Entity.Characters.Controller.Player;
+using NeonWarfare.Scenes.Entity.Characters.Controller.Remote;
+using NeonWarfare.Scenes.Entity.Characters.Stats;
 
 namespace NeonWarfare.Scenes.World.Service.Characters;
 

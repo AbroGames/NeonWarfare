@@ -1,5 +1,5 @@
 using Godot;
-using NeonWarfare.Scenes.Entity.Character;
+using NeonWarfare.Scenes.Entity.Characters;
 
 namespace NeonWarfare.Scenes.World.Tree.Surfaces.Safe;
 

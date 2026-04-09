@@ -1,8 +1,8 @@
 ﻿using Godot;
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.SceneServiceInjection;
-using NeonWarfare.Scenes.Entity.Character;
-using NeonWarfare.Scenes.Entity.Character.Stats;
+using NeonWarfare.Scenes.Entity.Characters;
+using NeonWarfare.Scenes.Entity.Characters.Stats;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;

@@ -1,0 +1,43 @@
+﻿using System;
+using Godot;
+using MessagePack;
+using NeonWarfare.Scenes.Entity.Characters.StatusEffects;
+
+namespace NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+
+public partial class CharacterSynchronizer
+{
+
+    private CharacterStatusEffects _statusEffects;
+    private CharacterStatusEffectsClient _statusEffectsClient;
+
+    private void StatusEffects_InitPostReady(Character character)
+    {
+        _statusEffects = character.StatusEffects;
+        _statusEffectsClient = character.StatusEffectsClient;
+    }
+
+    public void StatusEffects_OnClientApply(int clientId, ClientStatusEffect clientStatusEffect)
+    {
+        int typeId = Services.TypesMapping.GetId(clientStatusEffect.GetType());
+        byte[] payload = MessagePackSerializer.Serialize(clientStatusEffect.GetType(), clientStatusEffect);
+        Rpc(MethodName.StatusEffects_OnClientApplyRpc, clientId, typeId, payload);
+    }
+    [Rpc(CallLocal = true)]
+    private void StatusEffects_OnClientApplyRpc(int clientId, int typeId, byte[] payload)
+    {
+        if (!Net.IsClient()) return;
+        
+        Type targetType = Services.TypesMapping.GetType(typeId);
+        var clientStatusEffect = (ClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
+        _statusEffectsClient.OnAddStatusEffect(clientId, clientStatusEffect);
+    }
+    
+    public void StatusEffects_OnClientRemove(int clientId) => Rpc(MethodName.StatusEffects_OnClientRemoveRpc, clientId);
+    [Rpc(CallLocal = true)]
+    private void StatusEffects_OnClientRemoveRpc(int clientId)
+    {
+        if (!Net.IsClient()) return;
+        _statusEffectsClient.OnRemoveStatusEffect(clientId);
+    }
+}
