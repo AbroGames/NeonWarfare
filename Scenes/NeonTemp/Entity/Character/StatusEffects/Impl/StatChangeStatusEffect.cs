@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using KludgeBox.Core.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
 using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.AddingPolicy;
-using NeonWarfare.Scenes.NeonTemp.Service;
 
 namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.Impl;
 
@@ -121,7 +120,7 @@ public class StatChangeStatusEffect : StatusEffect
                 _tags,
                 _displayName ?? _id,
                 _description ?? _id,
-                _iconName ?? StatusEffectIconsStorageService.DefaultStatusEffect,
+                _iconName ?? Services.IconsStorage.StatusEffect.Default,
                 _type,
                 _isVisual,
                 _addingPolicy ?? new LimitByIdAddingPolicy(),
