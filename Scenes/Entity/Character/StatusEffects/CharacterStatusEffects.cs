@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+using NeonWarfare.Scenes.Entity.Character.Synchronizer;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects;
+namespace NeonWarfare.Scenes.Entity.Character.StatusEffects;
 
 public class CharacterStatusEffects
 {

@@ -1,7 +1,7 @@
 ﻿using Godot;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+using NeonWarfare.Scenes.Entity.Character.Stats;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+namespace NeonWarfare.Scenes.Entity.Character.Synchronizer;
 
 public partial class CharacterSynchronizer
 {

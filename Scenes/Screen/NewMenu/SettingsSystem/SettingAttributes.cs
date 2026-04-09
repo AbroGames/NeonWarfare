@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
+namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class HideAttribute : Attribute;

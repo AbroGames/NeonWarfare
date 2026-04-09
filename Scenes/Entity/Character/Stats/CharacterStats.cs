@@ -2,11 +2,11 @@
 using Godot;
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+using NeonWarfare.Scenes.Entity.Character.Controller;
+using NeonWarfare.Scenes.Entity.Character.Synchronizer;
 using Serilog;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+namespace NeonWarfare.Scenes.Entity.Character.Stats;
 
 public class CharacterStats
 {

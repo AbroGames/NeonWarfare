@@ -1,6 +1,6 @@
-﻿using NeonWarfare.Scenes.NeonTemp.UI.Menu.PagesSystem;
+﻿using NeonWarfare.Scenes.Screen.NewMenu.PagesSystem;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu;
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
 public partial class MainMenuPage : Page
 {

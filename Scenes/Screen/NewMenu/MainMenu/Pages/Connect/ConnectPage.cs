@@ -2,7 +2,7 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Connect;
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Connect;
 
 public partial class ConnectPage : MainMenuPage
 {

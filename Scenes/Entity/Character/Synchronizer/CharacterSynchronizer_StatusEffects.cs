@@ -1,9 +1,9 @@
 ﻿using System;
 using Godot;
 using MessagePack;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects;
+using NeonWarfare.Scenes.Entity.Character.StatusEffects;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+namespace NeonWarfare.Scenes.Entity.Character.Synchronizer;
 
 public partial class CharacterSynchronizer
 {

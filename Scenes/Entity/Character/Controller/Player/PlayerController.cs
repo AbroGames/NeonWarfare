@@ -1,10 +1,10 @@
 ﻿using System;
 using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+using NeonWarfare.Scenes.Entity.Character.Synchronizer;
 using Serilog;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
+namespace NeonWarfare.Scenes.Entity.Character.Controller.Player;
 
 public class PlayerController : IController
 {

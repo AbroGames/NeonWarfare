@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
 using NeonWarfare.Scenes.KludgeBox;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu;
+namespace NeonWarfare.Scenes.Screen.NewMenu;
 
 public partial class ContextStorage : CheckedAbstractStorage
 {

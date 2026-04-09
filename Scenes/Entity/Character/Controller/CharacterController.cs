@@ -1,8 +1,8 @@
 ﻿using System;
 using Godot;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Synchronizer;
+using NeonWarfare.Scenes.Entity.Character.Synchronizer;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
+namespace NeonWarfare.Scenes.Entity.Character.Controller;
 
 /// <summary>
 /// Этот класс не имеет клиентской версии <c>CharacterControllerClient</c>,

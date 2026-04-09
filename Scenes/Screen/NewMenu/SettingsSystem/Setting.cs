@@ -3,7 +3,7 @@ using System.Reflection;
 using Humanizer;
 using KludgeBox.Reflection.Access;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
+namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 public record Setting
 {

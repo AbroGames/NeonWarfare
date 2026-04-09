@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using KludgeBox.Core.Cooldown;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.AddingPolicy;
+using NeonWarfare.Scenes.Entity.Character.StatusEffects.AddingPolicy;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.Impl;
+namespace NeonWarfare.Scenes.Entity.Character.StatusEffects.Impl;
 
 public class PoisonStatusEffect : StatusEffect
 {

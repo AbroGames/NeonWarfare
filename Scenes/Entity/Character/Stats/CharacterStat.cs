@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Stats;
+﻿namespace NeonWarfare.Scenes.Entity.Character.Stats;
 
 public enum CharacterStat {
     MaxHp, // hp

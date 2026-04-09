@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.PagesSystem;
+namespace NeonWarfare.Scenes.Screen.NewMenu.PagesSystem;
 
 public interface IPage
 {

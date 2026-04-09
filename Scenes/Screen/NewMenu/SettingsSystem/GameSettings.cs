@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
+namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 public enum ResumableGame
 {

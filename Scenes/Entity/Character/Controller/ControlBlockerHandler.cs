@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
+namespace NeonWarfare.Scenes.Entity.Character.Controller;
 
 public class ControlBlockerHandler
 {

@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.PagesSystem;
+namespace NeonWarfare.Scenes.Screen.NewMenu.PagesSystem;
 
 public abstract partial class Page : Control, IPage
 {

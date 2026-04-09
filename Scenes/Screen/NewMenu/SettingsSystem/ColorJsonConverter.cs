@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Godot;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
+namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 public class ColorJsonConverter : JsonConverter<Color>
 {

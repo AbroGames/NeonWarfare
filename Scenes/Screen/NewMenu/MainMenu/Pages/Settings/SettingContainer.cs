@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Godot;
-using NeonWarfare.Scenes.NeonTemp.UI.Menu.SettingsSystem;
+using NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Settings;
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Settings;
 
 public partial class SettingContainer : PanelContainer
 {

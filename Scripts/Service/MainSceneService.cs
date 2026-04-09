@@ -99,7 +99,7 @@ public class MainSceneService
 
     public bool MainSceneIsMainMenu()
     {
-        return _mainSceneContainer.GetCurrentStoredNode<Node>() is Scenes.NeonTemp.UI.Menu.MainMenu.MainMenu or MainMenu;
+        return _mainSceneContainer.GetCurrentStoredNode<Node>() is Scenes.Screen.NewMenu.MainMenu.MainMenu or MainMenu;
     }
 
     public bool MainSceneIsGame()

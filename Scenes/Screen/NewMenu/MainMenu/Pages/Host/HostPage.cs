@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.NeonTemp.UI.Menu.MainMenu.Pages.Host;
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Host;
 
 public partial class HostPage : MainMenuPage
 {

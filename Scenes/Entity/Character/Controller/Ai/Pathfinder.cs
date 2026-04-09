@@ -1,7 +1,7 @@
 ﻿using Godot;
 using NeonWarfare.Scenes.World.Service;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
+namespace NeonWarfare.Scenes.Entity.Character.Controller.Ai;
 
 public record PathfindingData(float CharacterRadius, float MaxMovementSpeed);
 

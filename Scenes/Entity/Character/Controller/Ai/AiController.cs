@@ -1,7 +1,7 @@
 ﻿using Godot;
-using NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Player;
+using NeonWarfare.Scenes.Entity.Character.Controller.Player;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller.Ai;
+namespace NeonWarfare.Scenes.Entity.Character.Controller.Ai;
 
 public class AiController : PlayerController
 {

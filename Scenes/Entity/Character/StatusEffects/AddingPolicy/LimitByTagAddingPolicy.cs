@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.StatusEffects.AddingPolicy;
+namespace NeonWarfare.Scenes.Entity.Character.StatusEffects.AddingPolicy;
 
 public class LimitByTagAddingPolicy(string tagForLimit, int limit = 1) : IAddingStatusEffectPolicy
 {

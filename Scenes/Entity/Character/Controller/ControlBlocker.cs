@@ -1,7 +1,7 @@
 ﻿using System;
 using MessagePack;
 
-namespace NeonWarfare.Scenes.NeonTemp.Entity.Character.Controller;
+namespace NeonWarfare.Scenes.Entity.Character.Controller;
 
 [MessagePackObject(AllowPrivate = true)]
 public partial class ControlBlocker : IEquatable<ControlBlocker>
