@@ -11,7 +11,7 @@ namespace NeonWarfare.Scenes.World.Tree;
 public partial class WorldTree : Node2D
 {
 
-    public Surface Surface  { get; private set; }
+    public Surface Surface { get; private set; }
     
     [SceneService] private SyncedPackedScenes _syncedPackedScenes;
     [SceneService] private WorldMultiplayerSpawnerService _multiplayerSpawner;
@@ -19,6 +19,10 @@ public partial class WorldTree : Node2D
     public override void _Ready()
     {
         Di.Process(this);
+        
+        // Init default surface as placeholder for avoid NullException in other services.
+        // Surface will be init again as new node in server init section 
+        Surface = _syncedPackedScenes.SafeSurface.Instantiate<SafeSurface>();
     }
 
     public SafeSurface SetSafeSurface()
@@ -29,7 +33,7 @@ public partial class WorldTree : Node2D
         this.AddChildWithUniqueName(safeSurface, "SafeSurface");
         _multiplayerSpawner.AddSpawnerToNode(safeSurface);
         Surface = safeSurface;
-        Surface.InitOnServer();
+        safeSurface.InitOnServer();
         
         return safeSurface;
     }
@@ -42,7 +46,7 @@ public partial class WorldTree : Node2D
         this.AddChildWithUniqueName(battleSurface, "BattleSurface");
         _multiplayerSpawner.AddSpawnerToNode(battleSurface);
         Surface = battleSurface;
-        Surface.InitOnServer();
+        battleSurface.InitOnServer();
         
         return battleSurface;
     }
