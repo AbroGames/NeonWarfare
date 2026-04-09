@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://c286ld13u04i3" path="res://Scenes/Root/RootPackedScenes.cs" id="3_rt2b8"]
 [ext_resource type="PackedScene" uid="uid://7yywjdawo4yu" path="res://Scenes/Game/Game.tscn" id="4_0qtfh"]
 [ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="5_0qtfh"]
-[ext_resource type="PackedScene" uid="uid://bc3xvgd0paknf" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/MainMenu.tscn" id="5_sawrf"]
+[ext_resource type="PackedScene" uid="uid://bc3xvgd0paknf" path="res://Scenes/Screen/NewMenu/MainMenu/MainMenu.tscn" id="5_sawrf"]
 
 [node name="Root" type="Node2D" unique_id=561708531]
 script = ExtResource("1_66vvw")

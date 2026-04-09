@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://bc3xvgd0paknf"]
 
-[ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/PagesScenes.cs" id="1_0lnop"]
-[ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/MainMenu.cs" id="1_likqx"]
-[ext_resource type="PackedScene" uid="uid://t53rgkpwod2e" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Main/MainPage.tscn" id="3_lc56h"]
-[ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/NeonTemp/UI/Menu/PagesSystem/PageContainer.cs" id="4_likqx"]
-[ext_resource type="PackedScene" uid="uid://cu0ciyqyf0m7d" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Host/HostPage.tscn" id="5_36rd5"]
-[ext_resource type="PackedScene" uid="uid://mifj75iiskji" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Settings/SettingsPage.tscn" id="5_h4gti"]
-[ext_resource type="PackedScene" uid="uid://bk5pn3b7flte1" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Connect/ConnectPage.tscn" id="5_lc56h"]
+[ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/Screen/NewMenu/MainMenu/PagesScenes.cs" id="1_0lnop"]
+[ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/Screen/NewMenu/MainMenu/MainMenu.cs" id="1_likqx"]
+[ext_resource type="PackedScene" uid="uid://t53rgkpwod2e" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Main/MainPage.tscn" id="3_lc56h"]
+[ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/Screen/NewMenu/PagesSystem/PageContainer.cs" id="4_likqx"]
+[ext_resource type="PackedScene" uid="uid://cu0ciyqyf0m7d" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Host/HostPage.tscn" id="5_36rd5"]
+[ext_resource type="PackedScene" uid="uid://mifj75iiskji" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Settings/SettingsPage.tscn" id="5_h4gti"]
+[ext_resource type="PackedScene" uid="uid://bk5pn3b7flte1" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Connect/ConnectPage.tscn" id="5_lc56h"]
 
 [sub_resource type="Gradient" id="Gradient_gu8fo"]
 offsets = PackedFloat32Array(0, 0.55108696)

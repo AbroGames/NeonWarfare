@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bk5pn3b7flte1"]
 
-[ext_resource type="Script" uid="uid://c277rbvonjjls" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Connect/ConnectPage.cs" id="1_jvb8v"]
+[ext_resource type="Script" uid="uid://c277rbvonjjls" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Connect/ConnectPage.cs" id="1_jvb8v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_7cqim"]
 font_size = 32

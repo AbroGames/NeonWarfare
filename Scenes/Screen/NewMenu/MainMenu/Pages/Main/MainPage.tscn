@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://t53rgkpwod2e"]
 
-[ext_resource type="Script" uid="uid://vqjbgpswrg7h" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Main/MainPage.cs" id="1_ao86q"]
+[ext_resource type="Script" uid="uid://vqjbgpswrg7h" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Main/MainPage.cs" id="1_ao86q"]
 [ext_resource type="FontFile" uid="uid://b5er7c05q6qkh" path="res://Assets/Fonts/ProstoOne.ttf" id="2_085l4"]
-[ext_resource type="Shader" path="res://Assets/Shaders/Glow.gdshader" id="3_sv7yf"]
+[ext_resource type="Shader" uid="uid://c5h1gpm7fvwlp" path="res://Assets/Shaders/Glow.gdshader" id="3_sv7yf"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_3p65v"]
 font = ExtResource("2_085l4")

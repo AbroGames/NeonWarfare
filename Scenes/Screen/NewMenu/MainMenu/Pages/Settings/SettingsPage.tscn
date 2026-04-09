@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://mifj75iiskji"]
 
-[ext_resource type="Script" uid="uid://dacljewaam0xa" path="res://Scenes/NeonTemp/UI/Menu/MainMenu/Pages/Settings/SettingsPage.cs" id="1_tfxyu"]
+[ext_resource type="Script" uid="uid://dacljewaam0xa" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Settings/SettingsPage.cs" id="1_tfxyu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_h4gti"]
 font_size = 32
