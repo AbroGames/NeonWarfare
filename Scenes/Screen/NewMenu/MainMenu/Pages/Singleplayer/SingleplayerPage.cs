@@ -74,8 +74,8 @@ public partial class SingleplayerPage : MainMenuPage
     {
         string saveFileName = !String.IsNullOrWhiteSpace(SaveNameLineEdit.Text) ? SaveNameLineEdit.Text : null;
         // TODO: СЖИЖЕНЫИ
-        Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.RunSingleplayer, saveFileName, null?, null?, null?));
-        Services.MainScene.StartSingleplayerGame(saveFileName);
+        //Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.RunSingleplayer, saveFileName, null?, null?, null?));
+        //Services.MainScene.StartSingleplayerGame(saveFileName);
     }
     
     private void OnCancel()

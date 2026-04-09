@@ -36,16 +36,6 @@ public class GameSettingsService
     {
         _temporalNick = nick;
     }
-    
-    public void SetLastGame(GameSettings.ResumableGame lastGame)
-    {
-        SetSettings(_settings with { LastGame = lastGame });
-    }
-    
-    public void SetLastGameSaveName(string saveName)
-    {
-        SetSettings(_settings with { LastGame = _settings.LastGame with { SaveName = saveName } });
-    }
 
     private void SaveSettings()
     {
