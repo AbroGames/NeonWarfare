@@ -43,6 +43,8 @@ public abstract class BaseGameStarter
     
     protected void ServerStartWorld(World.World world, string saveFileName, string adminNickname)
     {
+        saveFileName ??= Services.SaveLoad.GenNewSaveFileName();
+
         if (!Services.SaveLoad.CheckFileExists(saveFileName))
         {
             world.ServerStartStopService.StartNewGame(adminNickname);
