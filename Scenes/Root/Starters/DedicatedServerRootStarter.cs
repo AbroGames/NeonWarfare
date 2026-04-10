@@ -27,10 +27,11 @@ public class DedicatedServerRootStarter : BaseRootStarter
         _log.Information("Starting DedicatedServer...");
 
         Services.MainScene.HostMultiplayerGameAsDedicatedServer(
-            _dedicatedServerArgs.Port,
             _dedicatedServerArgs.SaveFileName,
+            _dedicatedServerArgs.Port,
             _dedicatedServerArgs.Admin,
             _dedicatedServerArgs.ParentPid,
-            _dedicatedServerArgs.IsRender);
+            _dedicatedServerArgs.IsNoHud,
+            _dedicatedServerArgs.IsWorldRender);
     }
 }

@@ -9,7 +9,8 @@ public readonly record struct DedicatedServerArgs(
     string SaveFileName, 
     string Admin, 
     int? ParentPid, 
-    bool IsRender)
+    bool IsNoHud,
+    bool IsWorldRender)
 {
     public static readonly string DedicatedServerFlag = "--server";
     
@@ -18,7 +19,8 @@ public readonly record struct DedicatedServerArgs(
     public static readonly string SaveFileNameParam = "--savefile";
     public static readonly string AdminParam = "--admin";
     public static readonly string ParentPidParam = "--parent-pid";
-    public static readonly string RenderParam = "--render";
+    public static readonly string NoHudParam = "--no-hud";
+    public static readonly string WorldRenderParam = "--world-render";
     
     public static DedicatedServerArgs GetFromCmd(KludgeBox.Core.CmdArgsService argsService)
     {
@@ -29,7 +31,8 @@ public readonly record struct DedicatedServerArgs(
             argsService.GetStringFromCmdArgs(SaveFileNameParam),
             argsService.GetStringFromCmdArgs(AdminParam),
             argsService.GetIntFromCmdArgs(ParentPidParam),
-            argsService.ContainsInCmdArgs(RenderParam)
+            argsService.ContainsInCmdArgs(NoHudParam),
+            argsService.ContainsInCmdArgs(WorldRenderParam)
         );
     }
 
@@ -44,7 +47,8 @@ public readonly record struct DedicatedServerArgs(
         if (SaveFileName != null) listParams.AddRange([SaveFileNameParam, SaveFileName]);
         if (Admin != null) listParams.AddRange([AdminParam, Admin]);
         if (ParentPid.HasValue) listParams.AddRange([ParentPidParam, ParentPid.ToString()]);
-        if (IsRender) listParams.Add(RenderParam);
+        if (IsNoHud) listParams.Add(NoHudParam);
+        if (IsWorldRender) listParams.Add(WorldRenderParam);
         if (CommonArgs.GodotLogPush) listParams.Add(CommonArgs.GodotLogPushParam);
 
         return listParams.ToArray();
