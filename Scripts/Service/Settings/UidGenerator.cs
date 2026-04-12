@@ -5,7 +5,7 @@ namespace GodotTemplate.Scripts.Service.Settings;
 public class UidGenerator
 {
     private const string DefaultAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    private string _alphabet;
+    private readonly string _alphabet;
 
     public UidGenerator(string alphabet = DefaultAlphabet)
     {
