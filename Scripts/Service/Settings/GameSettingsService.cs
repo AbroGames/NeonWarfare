@@ -57,7 +57,6 @@ public class GameSettingsService
         string json = file.GetAsText();
         file.Close();
         
-        GameSettings gameSettings = JsonSerializer.Deserialize<GameSettings>(json);
-        SetSettings(gameSettings);
+        _settings = JsonSerializer.Deserialize<GameSettings>(json);
     }
 }
