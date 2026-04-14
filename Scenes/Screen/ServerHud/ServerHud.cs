@@ -41,6 +41,7 @@ public partial class ServerHud : Control
     public override void _Ready()
     {
         Di.Process(this);
+        
         Test1Button.Pressed += () => { _world.Test1(); };
         Test2Button.Pressed += () => { _world.Test2(); };
         Test3Button.Pressed += () => { _world.Test3(); };

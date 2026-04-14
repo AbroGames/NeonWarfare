@@ -9,6 +9,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "MAIN_MENU__START_LAST_GAME_BUTTON"
+msgstr "Resume last game"
+
 msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 msgstr "Start singleplayer"
 
