@@ -12,18 +12,16 @@ public abstract class BaseGameStarter
 
     protected void SetLastGame(ResumableGame lastGame)
     {
-        Services.GameSettings.SetSettings(Services.GameSettings.GetSettings() with { LastGame = lastGame });
+        Services.LastGame.SetLastGame(lastGame);
     }
 
     protected void AddLastGameUpdaterToSaveEvent(World.World world, ResumableGame lastGame)
     {
         world.DataSaveLoadService.SaveSuccessServerEvent += saveName =>
         {
-            Services.GameSettings.SetSettings(Services.GameSettings.GetSettings() 
-                with { LastGame = lastGame with { SaveName = saveName } });
+            Services.LastGame.SetLastGame(lastGame with { SaveName = saveName });
         };
         //TODO надо проверить утечки памяти потом! И/или сделать авто-отвязку.
-        //TODO Сразу реализовать обязательный выбор имени сохранения для игры при старте? Дефолтный забитый вариант: дата и время (без секунд)
         //TODO В HostMultiplayerGameStarter четкие флаги: ServerHud (его же в параметры дедика как no-hud), SetLastGame
         //TODO Убрать все ? = null из конструкторов стартеров, в MainScene постараться тоже убрать
         //TODO Сделать кнопку

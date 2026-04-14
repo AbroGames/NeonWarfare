@@ -6,7 +6,8 @@ public record GameSettings(
     string PlayerUid,
     string PlayerNick,
     Color PlayerColor,
-    string Locale
+    string Locale,
+    bool AutoSaveEnabled
 )
 {
     public static GameSettings GetDefault()
@@ -15,7 +16,8 @@ public record GameSettings(
             PlayerUid: new UidGenerator().Generate(),
             PlayerNick: "Player",
             PlayerColor: new Color(1, 1, 1),
-            Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code
+            Locale: Services.I18N.GetUserOsLocaleInfoOrDefault().Code,
+            AutoSaveEnabled: true
         );
     }
 }

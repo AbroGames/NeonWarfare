@@ -1,4 +1,4 @@
-﻿using KludgeBox.Core;
+using KludgeBox.Core;
 using KludgeBox.Core.Random;
 using KludgeBox.DI;
 using KludgeBox.Godot.Services;
@@ -33,6 +33,7 @@ public static class Services
     public static readonly MainSceneService MainScene = new();
     public static readonly GameSettingsService GameSettings = new();
     public static readonly MenuGameSettingsService MenuGameSettings = new();
+    public static readonly ResumableGameService LastGame = new();
     public static readonly SaveLoadService SaveLoad = new();
     public static readonly IconsStorageService IconsStorage = new();
     

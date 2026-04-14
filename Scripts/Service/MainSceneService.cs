@@ -98,27 +98,6 @@ public class MainSceneService
         game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminNickname, parentPid, !noHudRender, worldRender, mustSetLastGame, true));
         Services.LoadingScreen.Clear();
     }
-    
-    public void StartResumableGame(ResumableGame game)
-    {
-        switch (game.Type)
-        { 
-            case ResumableGame.ResumableType.RunSingleplayer: 
-                StartSingleplayerGame(game.SaveName);
-                break;
-            case ResumableGame.ResumableType.ConnectToServer: 
-                ConnectToMultiplayerGame(game.Host, game.Port);
-                break;
-            case ResumableGame.ResumableType.CreateServer: 
-                HostMultiplayerGameAsClient(game.SaveName, game.Port, game.IsDedicated!.Value);
-                break;
-        }
-    }
-    
-    public void StartLastGame()
-    {
-        StartResumableGame(Services.GameSettings.GetSettings().LastGame);
-    }
 
     public bool MainSceneIsMainMenu()
     {

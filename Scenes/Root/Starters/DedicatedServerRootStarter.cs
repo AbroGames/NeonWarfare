@@ -18,6 +18,8 @@ public class DedicatedServerRootStarter : BaseRootStarter
         _dedicatedServerArgs = DedicatedServerArgs.GetFromCmd(CmdArgsService);
         
         Services.Net.Init(true);
+        Services.LastGame.Init();
+        
         rootData.SceneTree.Root.Title = $"[SERVER] {rootData.SceneTree.Root.Title}";
     }
 

@@ -1,4 +1,4 @@
-﻿namespace GodotTemplate.Scripts.Service.Settings;
+﻿namespace GodotTemplate.Scripts.Service.ResumableGame;
 
 public record ResumableGame(
     ResumableGame.ResumableType Type,

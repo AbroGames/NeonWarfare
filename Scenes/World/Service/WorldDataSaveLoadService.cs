@@ -1,5 +1,12 @@
 ﻿using System;
 using Godot;
+<<<<<<< HEAD
+=======
+using GodotTemplate.Scenes.World.Data.PersistenceData;
+using GodotTemplate.Scenes.World.Service.DataSerializer;
+using GodotTemplate.Scripts.Service;
+using GodotTemplate.Scripts.Service.Settings;
+>>>>>>> 3c70d1ea (Refactoring AutoSave process)
 using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData;
@@ -49,9 +56,7 @@ public partial class WorldDataSaveLoadService : Node
         try
         {
             _persistenceData.General.GeneralData.SaveFileName = saveFileName;
-            byte[] data = TrySerializeWorldData();
-            Services.SaveLoad.SaveToDisk(data, saveFileName);
-            SaveSuccessServerEvent?.Invoke(saveFileName);
+            SerializeAndSaveToDisk();
         }
         catch (SaveLoadService.SaveException saveException)
         {
@@ -68,16 +73,25 @@ public partial class WorldDataSaveLoadService : Node
         SaveRejectedClientEvent?.Invoke(errorMessage);
     }
     
-    public void AutoSave()
+    public void TryAutoSave()
     {
-        byte[] data = TrySerializeWorldData();
-        Services.SaveLoad.SaveToDisk(data, Services.SaveLoad.AutoSaveName);
+        if (!Services.GameSettings.GetSettings().AutoSaveEnabled) return;
+
+        SerializeAndSaveToDisk();
     }
 
     public void Load(string saveFileName)
     {
         byte[] data = Services.SaveLoad.LoadFromDisk(saveFileName);
         TryDeserializeWorldData(data);
+    }
+
+    private void SerializeAndSaveToDisk()
+    {
+        string saveFileName = _persistenceData.General.GeneralData.SaveFileName;
+        byte[] data = TrySerializeWorldData();
+        Services.SaveLoad.SaveToDisk(data, saveFileName);
+        SaveSuccessServerEvent?.Invoke(saveFileName);
     }
     
     private byte[] TrySerializeWorldData()

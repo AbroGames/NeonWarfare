@@ -37,7 +37,7 @@ public partial class WorldServerShutdowner : Node
     private void ServerShutdown()
     {
         _log.Information("World stoping...");
-        _dataSaveLoadService.AutoSave();
+        _dataSaveLoadService.TryAutoSave();
         _shutdownActions?.Invoke();
     }
 }

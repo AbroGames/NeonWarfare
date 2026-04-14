@@ -17,7 +17,6 @@ public class SaveLoadService
     
     public readonly string SaveDirPath = "user://saves/";
     public readonly string SaveExtension = ".bin";
-    public readonly string AutoSaveName = "auto";
     public readonly string NewSaveNameFormat = "yyyy-MM-dd_HH:mm";
 
     [Logger] ILogger _log;
