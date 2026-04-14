@@ -21,13 +21,6 @@ public abstract class BaseGameStarter
         {
             Services.LastGame.SetLastGame(lastGame with { SaveName = saveName });
         };
-        //TODO надо проверить утечки памяти потом! И/или сделать авто-отвязку.
-        //TODO В HostMultiplayerGameStarter четкие флаги: ServerHud (его же в параметры дедика как no-hud), SetLastGame
-        //TODO Убрать все ? = null из конструкторов стартеров, в MainScene постараться тоже убрать
-        //TODO Сделать кнопку
-        //TODO Скопировать ResumableGame (отдельный файл) из неонки, скопировать логику из MainSceneService 
-        //TODO Коммент <param name="worldRender">Show not the GUI, but the game scene</param>  !!!!! and serverHudRender!
-        //TODO Передавать на фронт в списке сейвов дату последнего изменения файла
         //TODO Перенести в неонку все изменения с 9 апреля
         //TODO Поменять во всех скриптах запуска флаги на world-render, uid
         
@@ -45,7 +38,7 @@ public abstract class BaseGameStarter
 
         if (!Services.SaveLoad.CheckFileExists(saveFileName))
         {
-            world.ServerStartStopService.StartNewGame(adminNickname);
+            world.ServerStartStopService.StartNewGame(saveFileName, adminNickname);
         }
         else
         {

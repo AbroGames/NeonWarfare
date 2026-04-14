@@ -15,9 +15,9 @@ public class SaveLoadService
     public class LoadException(string message, Exception innerException = null) : Exception(message, innerException);
     public readonly record struct SaveFileInfo(string FileName, ulong ModifiedTime);
     
-    public readonly string SaveDirPath = "user://saves/";
-    public readonly string SaveExtension = ".bin";
-    public readonly string NewSaveNameFormat = "yyyy-MM-dd_HH:mm";
+    private const string SaveDirPath = "user://saves/";
+    private const string SaveExtension = ".bin";
+    private const string NewSaveNameFormat = "yyyy-MM-dd_HH-mm";
 
     [Logger] ILogger _log;
     
