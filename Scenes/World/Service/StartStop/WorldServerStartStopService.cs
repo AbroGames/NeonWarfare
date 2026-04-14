@@ -59,7 +59,7 @@ public partial class WorldServerStartStopService : Node
         // otherwise we can have memory leak for this function
         void PeerDisconnectedEvent(long id)
         {
-            _temporaryData.PlayerNickByPeerId.Remove((int) id);
+            _temporaryData.PlayerUidByPeerId.Remove((int) id);
         }
         GetMultiplayer().PeerDisconnected += PeerDisconnectedEvent;
         

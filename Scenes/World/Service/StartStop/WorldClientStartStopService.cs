@@ -35,7 +35,7 @@ public partial class WorldClientStartStopService : Node
             errorMessage => goToMenuAndShowErrorAction.Invoke(SyncRejectedMessage.FormatWith(errorMessage));
         
         GameSettings gameSettings = Services.GameSettings.GetSettings();
-        _synchronizerService.StartSyncOnClient(gameSettings.PlayerNick, gameSettings.PlayerColor);
+        _synchronizerService.StartSyncOnClient(gameSettings.PlayerUid, gameSettings.PlayerNick, gameSettings.PlayerColor);
     }
     
     private void OnSyncStarted()

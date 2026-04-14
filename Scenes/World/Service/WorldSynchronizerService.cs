@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.DI.Requests.SceneServiceInjection;
@@ -19,9 +20,10 @@ public partial class WorldSynchronizerService : Node
 {
     private const int NicknameMinLength = 3;
     private const int NicknameMaxLength = 25;
+    private const string UidAlreadyUsedErrorMessage = "Player with the same uid already online";
     private static readonly string LengthOfNicknameErrorMessage = $"Length of nickname must be between {NicknameMinLength} and {NicknameMaxLength} characters";
-    private const string NicknameAlreadyUsedErrorMessage = "Nickname is already used";
     private const string NicknameContainsSpaceErrorMessage = "Nickname contains space";
+    private const string ColorValueErrorMessage = "Your color is too dark";
     
     public event Action SyncStartedOnClientEvent;
     public event Action SyncEndedOnClientEvent;
@@ -53,24 +55,24 @@ public partial class WorldSynchronizerService : Node
         _adminNickname = adminNickname;
     }
 
-    public void StartSyncOnClient(string nick, Color color)
+    public void StartSyncOnClient(string uid, string nick, Color color)
     {
-        _log.Information("Starting sync with server as '{nick}'", nick);
+        _log.Information("Starting sync with server as '{nick}' (uid: {uid})", nick, uid);
         SyncStartedOnClientEvent?.Invoke();
-        NewClientInitOnServer(nick, color);
+        NewClientInitOnServer(uid, nick, color);
     }
 
-    private void NewClientInitOnServer(string nick, Color color) => RpcId(ServerId, MethodName.NewClientInitOnServerRpc, nick, color);
+    private void NewClientInitOnServer(string uid, string nick, Color color) => RpcId(ServerId, MethodName.NewClientInitOnServerRpc, uid, nick, color);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)] 
-    private void NewClientInitOnServerRpc(string nick, Color color)
+    private void NewClientInitOnServerRpc(string uid, string nick, Color color)
     {
         int connectedClientId = GetMultiplayer().GetRemoteSenderId();
-        _log.Information("Peer {peer} attempting to sync using nick '{nick}'", connectedClientId, nick);
-
-        if (_temporaryData.PlayerNickByPeerId.Values.Contains(nick))
+        _log.Information("Peer {peer} attempting to sync as '{nick}' (uid: {uid})", connectedClientId, nick, uid);
+        
+        if (_temporaryData.PlayerUidByPeerId.Values.Contains(uid))
         {
-            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, NicknameAlreadyUsedErrorMessage);
-            RejectSyncOnClient(connectedClientId, NicknameAlreadyUsedErrorMessage);
+            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, UidAlreadyUsedErrorMessage);
+            RejectSyncOnClient(connectedClientId, UidAlreadyUsedErrorMessage);
         }
         if (nick.Length < NicknameMinLength || nick.Length > NicknameMaxLength)
         {
@@ -82,18 +84,24 @@ public partial class WorldSynchronizerService : Node
             _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, NicknameContainsSpaceErrorMessage);
             RejectSyncOnClient(connectedClientId, NicknameContainsSpaceErrorMessage);
         }
+        if (color.Luminance < 0.2)
+        {
+            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, ColorValueErrorMessage);
+            RejectSyncOnClient(connectedClientId, ColorValueErrorMessage);
+        }
         
-        _temporaryData.PlayerNickByPeerId.Add(connectedClientId, nick);
+        _temporaryData.PlayerUidByPeerId.Add(connectedClientId, uid);
 
-        if (!_persistenceData.Players.PlayerByNick.ContainsKey(nick))
+        if (!_persistenceData.Players.PlayerByUid.ContainsKey(uid))
         {
             _persistenceData.Players.AddPlayer(new PlayerData
             {
+                Uid = uid,
                 Nick = nick,
                 Color = color
             });
         }
-        PlayerData playerData = _persistenceData.Players.PlayerByNick[nick];
+        PlayerData playerData = _persistenceData.Players.PlayerByUid[uid];
         playerData.IsAdmin |= nick.Equals(_adminNickname);
         _log.Information("Player data from peer {peer} was synced", connectedClientId);
         

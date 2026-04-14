@@ -53,23 +53,23 @@ public partial class WorldFacadeService : Node
 
     public PlayerData GetPlayerData(long peerId)
     {
-        String playerNick = _temporaryData.PlayerNickByPeerId.GetValueOrDefault(peerId, null);
-        if (playerNick == null) return null;
+        String playerUid = _temporaryData.PlayerUidByPeerId.GetValueOrDefault(peerId, null);
+        if (playerUid == null) return null;
         
-        return _persistenceData.Players.PlayerByNick.GetValueOrDefault(playerNick, null);
+        return _persistenceData.Players.PlayerByUid.GetValueOrDefault(playerUid, null);
     }
 
     public List<PlayerData> GetOnlinePlayers()
     {
-        return _persistenceData.Players.PlayerByNick.Values
-            .Where(playerData => _temporaryData.PlayerNickByPeerId.Values.Contains(playerData.Nick))
+        return _persistenceData.Players.PlayerByUid.Values
+            .Where(playerData => _temporaryData.PlayerUidByPeerId.Values.Contains(playerData.Uid))
             .ToList();
     }
     
     public List<PlayerData> GetOfflinePlayers()
     {
-        return _persistenceData.Players.PlayerByNick.Values
-            .Where(playerData => !_temporaryData.PlayerNickByPeerId.Values.Contains(playerData.Nick))
+        return _persistenceData.Players.PlayerByUid.Values
+            .Where(playerData => !_temporaryData.PlayerUidByPeerId.Values.Contains(playerData.Uid))
             .ToList();
     }
 

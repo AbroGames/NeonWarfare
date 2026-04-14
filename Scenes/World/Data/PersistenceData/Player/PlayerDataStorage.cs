@@ -13,10 +13,10 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
     [MessagePackObject]
     public record InnerStorage
     {
-        [Key(0)] public Dictionary<string, PlayerData> PlayerByNick = new();
+        [Key(0)] public Dictionary<string, PlayerData> PlayerByUid = new();
     }
     
-    public IReadOnlyDictionary<string, PlayerData> PlayerByNick => new ReadOnlyDictionary<string, PlayerData>(_innerStorage.PlayerByNick);
+    public IReadOnlyDictionary<string, PlayerData> PlayerByUid => new ReadOnlyDictionary<string, PlayerData>(_innerStorage.PlayerByUid);
     private InnerStorage _innerStorage = new();
 
     public void AddPlayer(PlayerData player)
@@ -30,7 +30,7 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
 
     private void AddPlayerLocal(PlayerData player)
     {
-        _innerStorage.PlayerByNick[player.Nick] = player;
+        _innerStorage.PlayerByUid[player.Uid] = player;
         SetPropertyListener(player);
     }
 
@@ -39,12 +39,12 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
         player.PropertyChanged += (p, _) => UpdatePlayer((PlayerData) p);
     }
     
-    public void RemovePlayer(PlayerData player) => RemovePlayer(player.Nick);
-    public void RemovePlayer(string nick) => Rpc(MethodName.RemovePlayerRpc, nick);
+    public void RemovePlayer(PlayerData player) => RemovePlayer(player.Uid);
+    public void RemovePlayer(string uid) => Rpc(MethodName.RemovePlayerRpc, uid);
     [Rpc(CallLocal = true)]
-    private void RemovePlayerRpc(string nick)
+    private void RemovePlayerRpc(string uid)
     {
-        _innerStorage.PlayerByNick.Remove(nick);
+        _innerStorage.PlayerByUid.Remove(uid);
     }
     
     private void UpdatePlayer(PlayerData player) => Rpc(MethodName.UpdatePlayerRpc, Serialize(player));
@@ -67,6 +67,6 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
     
     public void SetAllPropertyListeners()
     {
-        foreach (PlayerData player in _innerStorage.PlayerByNick.Values) SetPropertyListener(player);
+        foreach (PlayerData player in _innerStorage.PlayerByUid.Values) SetPropertyListener(player);
     }
 }
