@@ -5,7 +5,7 @@ namespace NeonWarfare.Scenes.Game.Starters;
 public class HostDedicatedServerAndConnectGameStarter(
     string saveFileName,
     int? port,
-    string adminNickname,
+    string adminUid,
     bool showWindow
     ) : ConnectToMultiplayerGameStarter(Localhost, port, false)
 {
@@ -16,7 +16,7 @@ public class HostDedicatedServerAndConnectGameStarter(
         int dedicatedServerPid = Services.Process.StartNewDedicatedServerApplication(
             saveFileName,
             _port ?? DefaultPort,
-            adminNickname, 
+            adminUid,
             showWindow);
         
         ProcessShutdowner dedicatedServerShutdowner = new ProcessShutdowner(

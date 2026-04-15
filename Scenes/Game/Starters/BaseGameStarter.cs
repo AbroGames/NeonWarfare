@@ -21,30 +21,21 @@ public abstract class BaseGameStarter
         {
             Services.LastGame.SetLastGame(lastGame with { SaveName = saveName });
         };
-        //TODO Перенести в неонку все изменения с 9 апреля
-        //TODO Поменять во всех скриптах запуска флаги на world-render, uid
-        
-        //TODO Делать только в неонке? Но потом uid можно заменить на стим будет, так что выглядит полезно
-        //TODO uid UUIDv4? Без timestamp 
-        //TODO uid вместо ника игрока на сервере как ключ мапы, команда для передачи PlayerData к новому игроку
-        //TODO uid в настройки, флаг cmd для смены uid, комманда сервера для перепривязки игрока к новому uid
-        //TODO логирование при синке и т.п. вместе с ником в скобках uid
-        //TODO Убрать валидацию на дубликат ников
     }
     
-    protected void ServerStartWorld(World.World world, string saveFileName, string adminNickname)
+    protected void ServerStartWorld(World.World world, string saveFileName, string adminUid)
     {
         saveFileName ??= Services.SaveLoad.GenNewSaveFileName();
 
         if (!Services.SaveLoad.CheckFileExists(saveFileName))
         {
-            world.ServerStartStopService.StartNewGame(saveFileName, adminNickname);
+            world.ServerStartStopService.StartNewGame(saveFileName, adminUid);
         }
         else
         {
             try
             {
-                world.ServerStartStopService.LoadGame(saveFileName, adminNickname);
+                world.ServerStartStopService.LoadGame(saveFileName, adminUid);
             }
             catch (SaveLoadService.LoadException loadException)
             {

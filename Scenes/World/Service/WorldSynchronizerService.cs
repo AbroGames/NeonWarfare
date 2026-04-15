@@ -13,7 +13,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.World.Service;
 
 /// <summary>
-/// Use for send player data (like nick, color etc.) to server.<br/>
+/// Use for send player data (like uid, nick, color etc.) to server.<br/>
 /// Use in multiplayer and singleplayer games for init player info.
 /// </summary>
 public partial class WorldSynchronizerService : Node
@@ -38,21 +38,21 @@ public partial class WorldSynchronizerService : Node
     [Logger] private ILogger _log;
     
     /// <summary>
-    /// Hoster nick, or nick from cmd param in dedicated server.<br/>
+    /// Hoster uid, or uid from cmd param in dedicated server.<br/>
     /// <c>Player.IsAdmin</c> in <c>WorldPersistenceData</c> for this player automatically will change to true.<br/>
-    /// If next application start will be with <c>MainAdminNick = null</c>, then <c>Player.IsAdmin</c>
+    /// If next application start will be with <c>AdminUid = null</c>, then <c>Player.IsAdmin</c>
     /// in <c>WorldPersistenceData</c> still be true.<br/>
     /// </summary>
-    private string _adminNickname;
+    private string _adminUid;
 
     public override void _Ready()
     {
         Di.Process(this);
     }
 
-    public void InitOnServer(string adminNickname = null)
+    public void InitOnServer(string adminUid = null)
     {
-        _adminNickname = adminNickname;
+        _adminUid = adminUid;
     }
 
     public void StartSyncOnClient(string uid, string nick, Color color)
@@ -102,7 +102,7 @@ public partial class WorldSynchronizerService : Node
             });
         }
         PlayerData playerData = _persistenceData.Players.PlayerByUid[uid];
-        playerData.IsAdmin |= nick.Equals(_adminNickname);
+        playerData.IsAdmin |= uid.Equals(_adminUid);
         _log.Information("Player data from peer {peer} was synced", connectedClientId);
         
         _log.Information("Sending serialized world data to peer {peer}", connectedClientId);

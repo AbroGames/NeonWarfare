@@ -11,7 +11,7 @@ public class ProcessService
         return OS.CreateInstance(arguments);
     }
     
-    public int StartNewDedicatedServerApplication(string saveFileName, int port, string adminNickname, bool showWindow)
+    public int StartNewDedicatedServerApplication(string saveFileName, int port, string adminUid, bool showWindow)
     {
         CommonArgs commonArgs = new CommonArgs(
             false); // Dedicated server never uses Godot console
@@ -20,17 +20,11 @@ public class ProcessService
             !showWindow, 
             port, 
             saveFileName, 
-            adminNickname, 
+            adminUid, 
             OS.GetProcessId(), 
             false,
             false);
 
         return StartNewApplication(dedicatedServerArgs.GetArrayToStartDedicatedServer());
-    }
-    
-    public int StartNewClientApplicationAndAutoConnect(string ip, int port)
-    {
-        string[] clientParams = [ClientArgs.AutoConnectIpFlag, ip, ClientArgs.AutoConnectPortFlag, port.ToString()];
-        return StartNewApplication(clientParams);
     }
 }

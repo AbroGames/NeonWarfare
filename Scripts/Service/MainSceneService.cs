@@ -65,15 +65,15 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
 
-        string adminNickname = Services.GameSettings.GetSettings().PlayerNick;
+        string adminUid = Services.GameSettings.GetSettings().PlayerUid;
         
         if (createDedicatedServerProcess)
         {
-            game.Init(new HostDedicatedServerAndConnectGameStarter(saveFileName, port, adminNickname, true));
+            game.Init(new HostDedicatedServerAndConnectGameStarter(saveFileName, port, adminUid, true));
         }
         else
         {
-            game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminNickname, null,false, true, true, false));
+            game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminUid, null,false, true, true, false));
         }
     }
     
@@ -82,11 +82,11 @@ public class MainSceneService
     /// </summary>
     /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
     /// <param name="port">Port number on which the server will listen.</param>
-    /// <param name="adminNickname">This user can manage the server</param>
+    /// <param name="adminUid">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client, use the PID of the client process.</param>
     /// <param name="noHudRender">Don't show ServerHud. Could be use in dedicated server for show only world game scene.</param>
     /// <param name="worldRender">Show game scene behind gui. Could be disabled in dedicated server for show only ServerHud.</param>
-    public void HostMultiplayerGameAsDedicatedServer(string saveFileName, int? port = null, string adminNickname = null, int? parentPid = null, bool noHudRender = false, bool worldRender = false)
+    public void HostMultiplayerGameAsDedicatedServer(string saveFileName, int? port = null, string adminUid = null, int? parentPid = null, bool noHudRender = false, bool worldRender = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -95,7 +95,7 @@ public class MainSceneService
         // Don't set LastGame in dedicated server started from console
         bool mustSetLastGame = parentPid.HasValue;
         
-        game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminNickname, parentPid, !noHudRender, worldRender, mustSetLastGame, true));
+        game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminUid, parentPid, !noHudRender, worldRender, mustSetLastGame, true));
         Services.LoadingScreen.Clear();
     }
 
