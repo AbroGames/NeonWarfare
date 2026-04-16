@@ -9,6 +9,7 @@ public class GameSettingsService
     private const string GameSettingsPath = "user://game-settings.json";
 
     private GameSettings _settings;
+    private string _temporalUid; 
     private string _temporalNick; 
 
     public void Init()
@@ -22,6 +23,7 @@ public class GameSettingsService
     {
         return _settings with
         {
+            PlayerUid = _temporalUid ?? _settings.PlayerUid,
             PlayerNick = _temporalNick ?? _settings.PlayerNick
         };
     }
@@ -30,6 +32,11 @@ public class GameSettingsService
     {
         _settings = gameSettings;
         SaveSettings();
+    }
+    
+    public void SetUidTemporarily(string uid)
+    {
+        _temporalUid = uid;
     }
 
     public void SetNickTemporarily(string nick)

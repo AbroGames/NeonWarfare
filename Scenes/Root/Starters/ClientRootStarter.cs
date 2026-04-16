@@ -27,6 +27,10 @@ public class ClientRootStarter : BaseRootStarter
         {
 	        Services.GameSettings.SetNickTemporarily(_clientArgs.Nick);
         }
+        if (_clientArgs.Uid != null)
+        {
+	        Services.GameSettings.SetUidTemporarily(_clientArgs.Uid);
+        }
         Services.I18N.SetCurrentLocale(Services.GameSettings.GetSettings().Locale);
         
         // Activate loading screen after setting up locale
