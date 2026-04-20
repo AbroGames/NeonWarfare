@@ -1,8 +1,8 @@
 ﻿using Godot;
-using GodotTemplate.Scripts.Service.ResumableGame;
 using Humanizer;
 using KludgeBox.Godot.Nodes.Process;
 using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

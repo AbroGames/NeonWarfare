@@ -1,7 +1,8 @@
-using Godot;
 using System;
+using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
+
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Singleplayer;
 
 public partial class SingleplayerPage : MainMenuPage
 {
@@ -82,5 +83,3 @@ public partial class SingleplayerPage : MainMenuPage
         GoBack();
     }
 }
-
-

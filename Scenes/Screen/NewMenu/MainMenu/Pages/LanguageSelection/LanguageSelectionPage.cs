@@ -1,6 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
+
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.LanguageSelection;
 
 public partial class LanguageSelectionPage : MainMenuPage
 {
@@ -40,10 +41,10 @@ public partial class LanguageSelectionPage : MainMenuPage
     private void OnSave()
     {
         Services.GameSettings.SetSettings(
-                Services.GameSettings.GetSettings() with
-                {
-                    Locale = Services.I18N.GetCurrentLocaleInfo().Code
-                });
+            Services.GameSettings.GetSettings() with
+            {
+                Locale = Services.I18N.GetCurrentLocaleInfo().Code
+            });
         
         GoBack();
     }

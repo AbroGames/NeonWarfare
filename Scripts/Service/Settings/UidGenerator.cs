@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace GodotTemplate.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.Service.Settings;
 
 public class UidGenerator
 {

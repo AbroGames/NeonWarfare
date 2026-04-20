@@ -1,5 +1,5 @@
-﻿using GodotTemplate.Scripts.Service.ResumableGame;
-using KludgeBox.Godot.Nodes.Process;
+﻿using KludgeBox.Godot.Nodes.Process;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

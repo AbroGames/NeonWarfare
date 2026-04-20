@@ -1,7 +1,6 @@
 using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Host;
 

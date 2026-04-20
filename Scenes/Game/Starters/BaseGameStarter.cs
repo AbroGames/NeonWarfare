@@ -1,6 +1,6 @@
 ﻿using System;
-using GodotTemplate.Scripts.Service.ResumableGame;
 using NeonWarfare.Scripts.Service;
+using NeonWarfare.Scripts.Service.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

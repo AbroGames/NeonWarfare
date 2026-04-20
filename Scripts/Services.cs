@@ -1,10 +1,10 @@
-using GodotTemplate.Scripts.Service.ResumableGame;
 using KludgeBox.Core;
 using KludgeBox.Core.Random;
 using KludgeBox.DI;
 using KludgeBox.Godot.Services;
 using KludgeBox.Reflection.Access;
 using NeonWarfare.Scripts.Service;
+using NeonWarfare.Scripts.Service.ResumableGame;
 using NeonWarfare.Scripts.Service.Settings;
 using NetworkService = NeonWarfare.Scripts.Service.NetworkService;
 

@@ -1,5 +1,4 @@
 ﻿using Godot;
-using GodotTemplate.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scripts.Service.Settings;
 
