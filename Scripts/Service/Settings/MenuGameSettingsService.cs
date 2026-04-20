@@ -33,10 +33,11 @@ public class MenuGameSettingsService
     private GameSettings Convert(MenuGameSettings menuGameSettings)
     {
         return new GameSettings(
+            PlayerUid: Services.GameSettings.GetSettings().PlayerUid, //TODO: добавить эти параметры в MenuGameSettings?
             PlayerNick: menuGameSettings.PlayerName,
             PlayerColor: menuGameSettings.PlayerColor,
             Locale: Services.GameSettings.GetSettings().Locale,
-            LastGame: Services.GameSettings.GetSettings().LastGame
+            AutoSaveEnabled: Services.GameSettings.GetSettings().AutoSaveEnabled
         );
     }
 }

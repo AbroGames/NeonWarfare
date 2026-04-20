@@ -23,7 +23,7 @@ public partial class Surface : Node2D
 
     public virtual void InitOnServer()
     {
-        foreach (int peerId in TemporaryData.PlayerNickByPeerId.Keys)
+        foreach (int peerId in TemporaryData.PlayerUidByPeerId.Keys)
         {
             PlayerService.SpawnPlayer(peerId);
         }

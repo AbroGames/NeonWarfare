@@ -1,7 +1,6 @@
 ﻿using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Connect;
 
@@ -15,8 +14,15 @@ public partial class ConnectPage : MainMenuPage
     public override void _Ready()
     {
         Di.Process(this);
-        HostLineEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
-        PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
+        //TODO: Сильные сомнения, что так корректно использовать. У нас может быть порт от режима создания сервера,
+        // а хоста не будет, потому что ты никогда никуда не подключался. Я бы просто дефолтные значения оставлял во всех менюшках.
+        // Зеленая кнопка и так уже есть, этого достаточно, остальное мне кажется будет мешать чаще. Если юзер не нажал на зеленую кнопку, а зашел в меню конретное,
+        // то видимо у него не стандартный кейс.
+        // Было:
+        // HostLineEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
+        // PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
+        HostLineEdit.Text = String.Empty;
+        PortSpinBox.Value = Consts.DefaultPort;
         
         ConnectToServerButton.Pressed += ParseAndConnectToServer;
         CancelButton.Pressed += () => GoBack();

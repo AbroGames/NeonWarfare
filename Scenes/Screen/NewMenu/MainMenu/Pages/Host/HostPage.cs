@@ -18,19 +18,21 @@ public partial class HostPage : MainMenuPage
         Di.Process(this);
         CreateServerButton.Pressed += ParseAndStartServer;
         CancelButton.Pressed += () => GoBack();
-
-        PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
-        SaveNameTextEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
-        IsDedicatedCheckButton.ButtonPressed = Services.GameSettings.GetSettings().LastGame.IsDedicated ?? false;
+        //TODO: Аналогично комменту из страницы коннекта.
+        // Было:
+        // PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
+        // SaveNameTextEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
+        // IsDedicatedCheckButton.ButtonPressed = Services.GameSettings.GetSettings().LastGame.IsDedicated ?? false;
+        PortSpinBox.Value = Consts.DefaultPort;
+        SaveNameTextEdit.Text = String.Empty;
+        IsDedicatedCheckButton.ButtonPressed = false;
     }
     
     private void ParseAndStartServer()
     {
-        int port = (int)PortSpinBox.Value;
+        int port = (int) PortSpinBox.Value;
         string saveFileName = SaveNameTextEdit.Text.Length != 0 ? SaveNameTextEdit.Text : null;
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        // TODO: СЖИЖЕНЫИ
-        Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.CreateServer, saveFileName, null, port, isDedicated));
-        Services.MainScene.HostMultiplayerGameAsClient(port, saveFileName, isDedicated);
+        Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated);
     }
 }

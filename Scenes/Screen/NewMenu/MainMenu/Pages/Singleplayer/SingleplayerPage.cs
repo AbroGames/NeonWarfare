@@ -2,7 +2,6 @@ using Godot;
 using System;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
-using NeonWarfare.Scripts.Service.Settings;
 
 public partial class SingleplayerPage : MainMenuPage
 {
@@ -26,7 +25,7 @@ public partial class SingleplayerPage : MainMenuPage
         CancelButton.Pressed += OnCancel;
         TabContainer.TabChanged += OnSwitchingTabs;
 
-        _selectedSaveName = Services.GameSettings.GetSettings().LastGame.SaveName ?? String.Empty;
+        _selectedSaveName = ""; //TODO: А почему не просто самый последний по времени сейв? Они отсортированы по времени уже. Было так: Services.GameSettings.GetSettings().LastGame.SaveName ?? String.Empty;
         SaveNameLineEdit.Text = _selectedSaveName;
         
         PopulateSavesList();
@@ -48,8 +47,8 @@ public partial class SingleplayerPage : MainMenuPage
         foreach (var save in saves)
         {
             var button = new Button();
-            button.Text = save;
-            button.Pressed += () => SaveNameLineEdit.Text = save;
+            button.Text = save.FileName; //TODO: Отображать и время изменения файла
+            button.Pressed += () => SaveNameLineEdit.Text = save.FileName;
             SavesListContainer.AddChild(button);
         }
     }
