@@ -1,4 +1,5 @@
-﻿using NeonWarfare.Scripts.Content.LoadingScreen;
+﻿using GodotTemplate.Scripts.Service.ResumableGame;
+using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.Service.Settings;
 
 namespace NeonWarfare.Scenes.Game.Starters;

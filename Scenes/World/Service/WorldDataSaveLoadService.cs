@@ -1,12 +1,5 @@
 ﻿using System;
 using Godot;
-<<<<<<< HEAD
-=======
-using GodotTemplate.Scenes.World.Data.PersistenceData;
-using GodotTemplate.Scenes.World.Service.DataSerializer;
-using GodotTemplate.Scripts.Service;
-using GodotTemplate.Scripts.Service.Settings;
->>>>>>> 3c70d1ea (Refactoring AutoSave process)
 using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData;

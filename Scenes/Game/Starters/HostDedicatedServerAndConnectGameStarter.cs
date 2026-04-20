@@ -1,4 +1,5 @@
-﻿using KludgeBox.Godot.Nodes.Process;
+﻿using GodotTemplate.Scripts.Service.ResumableGame;
+using KludgeBox.Godot.Nodes.Process;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
@@ -7,7 +8,7 @@ public class HostDedicatedServerAndConnectGameStarter(
     int? port,
     string adminUid,
     bool showWindow
-    ) : ConnectToMultiplayerGameStarter(Localhost, port, false)
+    ) : ConnectToMultiplayerGameStarter(Consts.Localhost, port, false)
 {
     private readonly int? _port = port;
 

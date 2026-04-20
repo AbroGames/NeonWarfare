@@ -1,4 +1,5 @@
 ﻿using Godot;
+using GodotTemplate.Scripts.Service.ResumableGame;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 
 namespace NeonWarfare.Scenes.Game.Starters;

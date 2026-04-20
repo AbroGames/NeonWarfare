@@ -1,3 +1,4 @@
+using GodotTemplate.Scripts.Service.ResumableGame;
 using KludgeBox.Core;
 using KludgeBox.Core.Random;
 using KludgeBox.DI;
