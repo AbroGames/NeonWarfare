@@ -6,6 +6,7 @@ namespace NeonWarfare.Scenes.Game.Starters;
 
 public abstract class BaseGameStarter
 {
+    protected const string Localhost = Consts.Localhost;
     protected const string DefaultHost = Consts.DefaultHost;
     protected const int DefaultPort = Consts.DefaultPort;
 
@@ -26,7 +27,7 @@ public abstract class BaseGameStarter
     
     protected void ServerStartWorld(World.World world, string saveFileName, string adminUid)
     {
-        saveFileName ??= Services.SaveLoad.GenNewSaveFileName();
+        if (saveFileName == null) throw new ArgumentNullException(nameof(saveFileName));
 
         if (!Services.SaveLoad.CheckFileExists(saveFileName))
         {

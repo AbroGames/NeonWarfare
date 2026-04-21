@@ -8,7 +8,7 @@ public class HostDedicatedServerAndConnectGameStarter(
     int? port,
     string adminUid,
     bool showWindow
-    ) : ConnectToMultiplayerGameStarter(Consts.Localhost, port, false)
+    ) : ConnectToMultiplayerGameStarter(Localhost, port, false)
 {
     private readonly int? _port = port;
 
@@ -26,10 +26,10 @@ public class HostDedicatedServerAndConnectGameStarter(
         game.AddChild(dedicatedServerShutdowner);
 
         // Try to connect to new hosted server, don't save connect as last game
-        // Flag SetLastGame = false was set in constructor
+        // Flag 'SetLastGame = false' was set in constructor
         base.Init(game); 
         
-        // This starter always start from menu, so we set LastGame  
+        // This starter always start from menu, so we must set LastGame  
         var lastGame = ResumableGame.GetCreateServer(saveFileName, _port ?? DefaultPort, true);
         SetLastGame(lastGame);
     }
