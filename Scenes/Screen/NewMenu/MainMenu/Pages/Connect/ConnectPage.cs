@@ -38,8 +38,6 @@ public partial class ConnectPage : MainMenuPage
         }
         
         int port = (int) PortSpinBox.Value;
-        // TODO: СЖИЖЕНЫИ
-        //Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.ConnectToServer, null?, host, port, null?));
-        //Services.MainScene.ConnectToMultiplayerGame(host, port);
+        Services.MainScene.ConnectToMultiplayerGame(host, port);
     }
 }

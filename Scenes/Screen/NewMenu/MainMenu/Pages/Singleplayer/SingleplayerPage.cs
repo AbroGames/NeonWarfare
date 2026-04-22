@@ -56,7 +56,7 @@ public partial class SingleplayerPage : MainMenuPage
 
     private void OnSwitchingTabs(long tabId)
     {
-        // NOTE: Пока что мы просто меняем видимость поля ввода имени сохранения. В будущем, если захотим сразу давать имена новым сохранениям, вернем поле на постоянку.
+        //TODO: я хз что это значит, но возможно мы уже хотим // NOTE: Пока что мы просто меняем видимость поля ввода имени сохранения. В будущем, если захотим сразу давать имена новым сохранениям, вернем поле на постоянку.
         if (tabId == NewGameTabId)
         {
             SaveNameContainer.Hide();
@@ -72,10 +72,8 @@ public partial class SingleplayerPage : MainMenuPage
 
     private void OnStart()
     {
-        string saveFileName = !String.IsNullOrWhiteSpace(SaveNameLineEdit.Text) ? SaveNameLineEdit.Text : null;
-        // TODO: СЖИЖЕНЫИ
-        //Services.GameSettings.SetLastGame(new GameSettings.ResumableGame(GameSettings.ResumableGame.ResumableType.RunSingleplayer, saveFileName, null?, null?, null?));
-        //Services.MainScene.StartSingleplayerGame(saveFileName);
+        string saveFileName = !String.IsNullOrWhiteSpace(SaveNameLineEdit.Text) ? SaveNameLineEdit.Text : null; //TODO: null больше недопустимое значение, обязательно должно быть передано име файла. Например Services.SaveLoad.GenNewSaveFileName()
+        Services.MainScene.StartSingleplayerGame(saveFileName);
     }
     
     private void OnCancel()
