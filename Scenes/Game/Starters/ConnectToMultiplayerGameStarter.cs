@@ -16,6 +16,8 @@ public class ConnectToMultiplayerGameStarter(
 
     public override void Init(Game game)
     {
+        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
+        
         Network.Network network = game.AddNetwork();
         World.World world = game.AddWorld();
         game.AddHud();
@@ -27,14 +29,6 @@ public class ConnectToMultiplayerGameStarter(
             ClientStartWorld(world);
             game.GetMultiplayer().ConnectedToServer -= ConnectedToServerEvent;
         }
-
-        void CancelConnect()
-        {
-            Services.MainScene.StartMainMenu();
-            Services.LoadingScreen.Clear();
-        }
-
-        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, CancelConnect);
 
         game.GetMultiplayer().ConnectedToServer += ConnectedToServerEvent;
         game.GetMultiplayer().ConnectionFailed += ConnectionFailedEvent;

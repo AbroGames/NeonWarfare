@@ -63,4 +63,15 @@ public abstract class BaseGameStarter
         Services.MainScene.StartMainMenu(message);
         Services.LoadingScreen.Clear();
     }
+    
+    /// <summary>
+    /// This method calls only on client.<br/>
+    /// </summary>
+    protected void GoToMenu()
+    {
+        if (!Net.IsClient()) throw new InvalidOperationException("Can only be executed on the client");
+        
+        Services.MainScene.StartMainMenu();
+        Services.LoadingScreen.Clear();
+    }
 }
