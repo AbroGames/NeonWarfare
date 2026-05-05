@@ -19,6 +19,10 @@ public class DedicatedServerRootStarter : BaseRootStarter
         
         Services.Net.Init(true);
         Services.LastGame.Init();
+        Services.DedicatedServerSettings.Init();
+        
+        // Set locale only after loading ServerSettings
+        Services.I18N.SetCurrentLocale(Services.DedicatedServerSettings.GetSettings().Locale);
         
         rootData.SceneTree.Root.Title = $"[SERVER] {rootData.SceneTree.Root.Title}";
     }

@@ -68,7 +68,7 @@ public partial class WorldDataSaveLoadService : Node
     
     public void TryAutoSave()
     {
-        if (!Services.GameSettings.GetSettings().AutoSaveEnabled) return;
+        if (!Services.SaveLoad.IsAutoSaveEnabled()) return;
 
         SerializeAndSaveToDisk();
     }

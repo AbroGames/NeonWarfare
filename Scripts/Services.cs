@@ -33,6 +33,7 @@ public static class Services
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
     public static readonly GameSettingsService GameSettings = new();
+    public static readonly DedicatedServerSettingsService DedicatedServerSettings = new();
     public static readonly MenuGameSettingsService MenuGameSettings = new();
     public static readonly ResumableGameService LastGame = new();
     public static readonly SaveLoadService SaveLoad = new();

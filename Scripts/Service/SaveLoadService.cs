@@ -26,6 +26,13 @@ public class SaveLoadService
         Di.Process(this);
     }
 
+    public bool IsAutoSaveEnabled()
+    {
+        return Services.Net.IsClient()
+            ? Services.GameSettings.GetSettings().AutoSaveEnabled
+            : Services.DedicatedServerSettings.GetSettings().AutoSaveEnabled;
+    }
+
     public string GenNewSaveFileName()
     {
         return DateTime.Now.ToString(NewSaveNameFormat, CultureInfo.InvariantCulture);
