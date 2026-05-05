@@ -56,7 +56,7 @@ public class MainSceneService
     /// <summary>
     /// Start new server and connect to them. Use in client process.
     /// </summary>
-    /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
+    /// <param name="saveFileName">Name of the save file in folder with saves, required non-null</param>
     /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="createDedicatedServerProcess">If true, create a new OS process running a dedicated server, and have this process connect to it as a client.</param>
     public void HostMultiplayerGameAsClient(string saveFileName, int? port = null, bool createDedicatedServerProcess = false)
@@ -80,7 +80,7 @@ public class MainSceneService
     /// <summary>
     /// Start new server. Use in dedicated server process.
     /// </summary>
-    /// <param name="saveFileName">Name of the save file in folder with saves. Null for start new game.</param>
+    /// <param name="saveFileName">Name of the save file in folder with saves, required non-null</param>
     /// <param name="port">Port number on which the server will listen.</param>
     /// <param name="adminUid">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client, use the PID of the client process.</param>

@@ -12,7 +12,7 @@ public partial class WorldPlayerService : WorldCharacterService
     public void SpawnPlayer(int peerId)
     {
         Character player = AddCharacter(250, 250);
-        //TODO В синглплеерной игре порядок имеет значение?
+        //TODO В синглплеерной игре порядок имеет значение? Как защитить от неверного порядка?
         player.Controller.SetController(new RemoteController());
         player.Controller.SetControllerToClient(peerId, new PlayerController());
 
