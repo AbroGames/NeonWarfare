@@ -54,11 +54,11 @@ public class MainSceneService
     }
     
     /// <summary>
-    /// Start new server and connect to them. Use in client process.
+    /// Start a new server and connect to them. Use in the client process.
     /// </summary>
-    /// <param name="saveFileName">Name of the save file in folder with saves, required non-null</param>
-    /// <param name="port">Port number on which the server will listen.</param>
-    /// <param name="createDedicatedServerProcess">If true, create a new OS process running a dedicated server, and have this process connect to it as a client.</param>
+    /// <param name="saveFileName">Name of the save file in the folder with saves, required non-null</param>
+    /// <param name="port">Port number on which the server will listen to.</param>
+    /// <param name="createDedicatedServerProcess">If true, create a new OS process running a dedicated server and have this process connect to it as a client.</param>
     public void HostMultiplayerGameAsClient(string saveFileName, int? port = null, bool createDedicatedServerProcess = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
@@ -78,14 +78,14 @@ public class MainSceneService
     }
     
     /// <summary>
-    /// Start new server. Use in dedicated server process.
+    /// Start a new server. Use in the dedicated server process.
     /// </summary>
-    /// <param name="saveFileName">Name of the save file in folder with saves, required non-null</param>
-    /// <param name="port">Port number on which the server will listen.</param>
+    /// <param name="saveFileName">Name of the save file in the folder with saves, required non-null</param>
+    /// <param name="port">Port number on which the server will listen to.</param>
     /// <param name="adminUid">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client, use the PID of the client process.</param>
-    /// <param name="noHudRender">Don't show ServerHud. Could be use in dedicated server for show only world game scene.</param>
-    /// <param name="worldRender">Show game scene behind gui. Could be disabled in dedicated server for show only ServerHud.</param>
+    /// <param name="noHudRender">Don't show ServerHud. Could be used in a dedicated server to show only the world game scene.</param>
+    /// <param name="worldRender">Show the game scene behind gui. Could be disabled in a dedicated server to show only the ServerHud.</param>
     public void HostMultiplayerGameAsDedicatedServer(string saveFileName, int? port = null, string adminUid = null, int? parentPid = null, bool noHudRender = false, bool worldRender = false)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
