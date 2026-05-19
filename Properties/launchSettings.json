@@ -6,16 +6,22 @@
       "commandLineArgs": "--path \"./\"",
       "workingDirectory": "."
     },
-    "Auto-start": {
+    "Auto-start (new game)": {
       "commandName": "Executable",
       "executablePath": "%GODOT_EXE%",
       "commandLineArgs": "--path \"./\" --auto-start",
       "workingDirectory": "."
     },
+    "Auto-start (saved game)": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_EXE%",
+      "commandLineArgs": "--path \"./\" --auto-start --auto-start-savefile test",
+      "workingDirectory": "."
+    },
     "Server": {
       "commandName": "Executable",
       "executablePath": "%GODOT_EXE%",
-      "commandLineArgs": "--path \"./\" --server",
+      "commandLineArgs": "--path \"./\" --server --world-render",
       "workingDirectory": "."
     },
     "Autoconnect (1)": {
