@@ -41,7 +41,7 @@ public class ClientRootStarter : BaseRootStarter
 
         if (_clientArgs.AutoStart)
         {
-	        Services.MainScene.StartSingleplayerGame(Services.SaveLoad.GenNewSaveFileName());
+	        Services.MainScene.StartSingleplayerGame(_clientArgs.AutoStartSaveFileName ?? Services.SaveLoad.GenNewSaveFileName());
         } 
         else if (_clientArgs.AutoConnect)
         {
