@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
@@ -26,7 +27,7 @@ public partial class SingleplayerPage : MainMenuPage
         CancelButton.Pressed += OnCancel;
         TabContainer.TabChanged += OnSwitchingTabs;
 
-        _selectedSaveName = ""; //TODO: А почему не просто самый последний по времени сейв? Они отсортированы по времени уже. Было так: Services.GameSettings.GetSettings().LastGame.SaveName ?? String.Empty;
+        _selectedSaveName = Services.SaveLoad.GetAllSaveFiles().FirstOrDefault().FileName ?? String.Empty;
         SaveNameLineEdit.Text = _selectedSaveName;
         
         PopulateSavesList();
@@ -48,7 +49,7 @@ public partial class SingleplayerPage : MainMenuPage
         foreach (var save in saves)
         {
             var button = new Button();
-            button.Text = save.FileName; //TODO: Отображать и время изменения файла
+            button.Text = $"{save.FileName} ({DateTimeOffset.FromUnixTimeSeconds((long)save.ModifiedTime).ToLocalTime():yyyy-MM-dd HH:mm})";
             button.Pressed += () => SaveNameLineEdit.Text = save.FileName;
             SavesListContainer.AddChild(button);
         }
@@ -56,23 +57,19 @@ public partial class SingleplayerPage : MainMenuPage
 
     private void OnSwitchingTabs(long tabId)
     {
-        //TODO: я хз что это значит, но возможно мы уже хотим // NOTE: Пока что мы просто меняем видимость поля ввода имени сохранения. В будущем, если захотим сразу давать имена новым сохранениям, вернем поле на постоянку.
-        if (tabId == NewGameTabId)
+        // Save name input stays visible for both new game and load game flows.
+        SaveNameContainer.Show();
+        if (tabId == LoadGameTabId && !String.IsNullOrWhiteSpace(_selectedSaveName))
         {
-            SaveNameContainer.Hide();
-            _selectedSaveName = SaveNameLineEdit.Text;
-            SaveNameLineEdit.Text  = String.Empty;
-        }
-        else if (tabId == LoadGameTabId)
-        {
-            SaveNameContainer.Show();
             SaveNameLineEdit.Text = _selectedSaveName;
         }
     }
 
     private void OnStart()
     {
-        string saveFileName = !String.IsNullOrWhiteSpace(SaveNameLineEdit.Text) ? SaveNameLineEdit.Text : null; //TODO: null больше недопустимое значение, обязательно должно быть передано име файла. Например Services.SaveLoad.GenNewSaveFileName()
+        string saveFileName = String.IsNullOrWhiteSpace(SaveNameLineEdit.Text)
+            ? Services.SaveLoad.GenNewSaveFileName()
+            : SaveNameLineEdit.Text.Trim();
         Services.MainScene.StartSingleplayerGame(saveFileName);
     }
     

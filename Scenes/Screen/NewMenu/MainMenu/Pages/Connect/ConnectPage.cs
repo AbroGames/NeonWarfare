@@ -14,13 +14,6 @@ public partial class ConnectPage : MainMenuPage
     public override void _Ready()
     {
         Di.Process(this);
-        //TODO: Сильные сомнения, что так корректно использовать. У нас может быть порт от режима создания сервера,
-        // а хоста не будет, потому что ты никогда никуда не подключался. Я бы просто дефолтные значения оставлял во всех менюшках.
-        // Зеленая кнопка и так уже есть, этого достаточно, остальное мне кажется будет мешать чаще. Если юзер не нажал на зеленую кнопку, а зашел в меню конретное,
-        // то видимо у него не стандартный кейс.
-        // Было:
-        // HostLineEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
-        // PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
         HostLineEdit.Text = String.Empty;
         PortSpinBox.Value = Consts.DefaultPort;
         
@@ -30,11 +23,11 @@ public partial class ConnectPage : MainMenuPage
 
     private void ParseAndConnectToServer()
     {
-        
         string host = String.IsNullOrWhiteSpace(HostLineEdit.Text) ? null : HostLineEdit.Text.Trim();
         if (host is null)
         {
             GoNext(PagesProvider.PrepareMessagePage(Tr("CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR")));
+            return;
         }
         
         int port = (int) PortSpinBox.Value;

@@ -17,11 +17,6 @@ public partial class HostPage : MainMenuPage
         Di.Process(this);
         CreateServerButton.Pressed += ParseAndStartServer;
         CancelButton.Pressed += () => GoBack();
-        //TODO: Аналогично комменту из страницы коннекта.
-        // Было:
-        // PortSpinBox.Value = Services.GameSettings.GetSettings().LastGame.Port ?? Consts.DefaultPort;
-        // SaveNameTextEdit.Text = Services.GameSettings.GetSettings().LastGame.Host ?? String.Empty;
-        // IsDedicatedCheckButton.ButtonPressed = Services.GameSettings.GetSettings().LastGame.IsDedicated ?? false;
         PortSpinBox.Value = Consts.DefaultPort;
         SaveNameTextEdit.Text = String.Empty;
         IsDedicatedCheckButton.ButtonPressed = false;
@@ -30,7 +25,9 @@ public partial class HostPage : MainMenuPage
     private void ParseAndStartServer()
     {
         int port = (int) PortSpinBox.Value;
-        string saveFileName = SaveNameTextEdit.Text.Length != 0 ? SaveNameTextEdit.Text : null;
+        string saveFileName = String.IsNullOrWhiteSpace(SaveNameTextEdit.Text)
+            ? Services.SaveLoad.GenNewSaveFileName()
+            : SaveNameTextEdit.Text.Trim();
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
         Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated);
     }
