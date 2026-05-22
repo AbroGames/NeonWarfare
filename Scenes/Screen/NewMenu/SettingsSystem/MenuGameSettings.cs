@@ -13,12 +13,22 @@ public partial class MenuGameSettings
     [Hint("SETTING_MENU__COLOR_HINT")]
     public Color PlayerColor { get; set; } = GameSettings.GetDefault().PlayerColor;
 
+    [Name("SETTING_MENU__PLAYER_UID")]
+    [Hint("SETTING_MENU__PLAYER_UID_HINT")]
+    public string PlayerUid { get; set; } = GameSettings.GetDefault().PlayerUid;
+    
+    [Name("SETTING_MENU__AUTOSAVE")]
+    [Hint("SETTING_MENU__AUTOSAVE_HINT")]
+    public bool AutoSaveEnabled { get; set; } = GameSettings.GetDefault().AutoSaveEnabled;
+
     public MenuGameSettings() {}
 
-    public MenuGameSettings(string playerName, Color playerColor)
+    public MenuGameSettings(string playerName, Color playerColor, string playerUid, bool autoSaveEnabled)
     {
         PlayerName = playerName;
         PlayerColor = playerColor;
+        PlayerUid = playerUid;
+        AutoSaveEnabled = autoSaveEnabled;
     }
 
     public void Validate()

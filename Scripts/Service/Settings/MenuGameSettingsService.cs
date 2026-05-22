@@ -26,18 +26,20 @@ public class MenuGameSettingsService
     {
         return new MenuGameSettings(
             playerName: gameSettings.PlayerNick,
-            playerColor: gameSettings.PlayerColor
+            playerColor: gameSettings.PlayerColor,
+            playerUid: gameSettings.PlayerUid,
+            autoSaveEnabled: gameSettings.AutoSaveEnabled
         );
     }
 
     private GameSettings Convert(MenuGameSettings menuGameSettings)
     {
         return new GameSettings(
-            PlayerUid: Services.GameSettings.GetSettings().PlayerUid, //TODO: добавить эти параметры в MenuGameSettings? По идее они должны настраиваться.
+            PlayerUid: menuGameSettings.PlayerUid,
             PlayerNick: menuGameSettings.PlayerName,
             PlayerColor: menuGameSettings.PlayerColor,
             Locale: Services.GameSettings.GetSettings().Locale,
-            AutoSaveEnabled: Services.GameSettings.GetSettings().AutoSaveEnabled //TODO: добавить эти параметры в MenuGameSettings? По идее они должны настраиваться.
+            AutoSaveEnabled: menuGameSettings.AutoSaveEnabled
         );
     }
 }
