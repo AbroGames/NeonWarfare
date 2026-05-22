@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -17,7 +18,7 @@ public class LoadingScreenService
         _loadingScreenPackedScene = loadingScreenPackedScene;
     }
     
-    public LoadingScreen SetLoadingScreen(string text)
+    public LoadingScreen SetLoadingScreen(string text, Action cancelAction = null)
     {
         LoadingScreen loadingScreen = _loadingScreenPackedScene.Instantiate<LoadingScreen>().InitPreReady();
         if (text != null)
@@ -25,13 +26,14 @@ public class LoadingScreenService
             loadingScreen.SetText(text);
         }
 
+        loadingScreen.SetCancelAction(cancelAction);
         _loadingScreenContainer.ChangeStoredNode(loadingScreen);
         return loadingScreen;
     }
     
-    public LoadingScreen SetLoadingScreen(LoadingScreenTypes.Type loadingScreenType)
+    public LoadingScreen SetLoadingScreen(LoadingScreenTypes.Type loadingScreenType, Action cancelAction = null)
     {
-        return SetLoadingScreen(LoadingScreenTypes.GetLoadingScreenText(loadingScreenType));
+        return SetLoadingScreen(LoadingScreenTypes.GetLoadingScreenText(loadingScreenType), cancelAction);
     }
 	
     public void Clear()
