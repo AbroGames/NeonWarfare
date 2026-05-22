@@ -23,6 +23,15 @@ msgstr ""
 msgid "MAIN_MENU__EXIT_BUTTON"
 msgstr ""
 
+msgid "MAIN_MENU__RESUME_BUTTON__SINGLEPLAYER"
+msgstr ""
+
+msgid "MAIN_MENU__RESUME_BUTTON__CONNECT"
+msgstr ""
+
+msgid "MAIN_MENU__RESUME_BUTTON__HOST"
+msgstr ""
+
 msgid "SINGLEPLAYER_MENU__SAVE_NAME"
 msgstr ""
 
@@ -36,6 +45,9 @@ msgid "CONNECT_MENU__PORT"
 msgstr ""
 
 msgid "CONNECT_MENU__CONNECT_BUTTON"
+msgstr ""
+
+msgid "CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR"
 msgstr ""
 
 msgid "HOST_MENU__PORT"
@@ -54,6 +66,24 @@ msgid "SETTING_MENU__NICK"
 msgstr ""
 
 msgid "SETTING_MENU__COLOR"
+msgstr ""
+
+msgid "SETTING_MENU__NICK_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__COLOR_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__PLAYER_UID"
+msgstr ""
+
+msgid "SETTING_MENU__PLAYER_UID_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__AUTOSAVE"
+msgstr ""
+
+msgid "SETTING_MENU__AUTOSAVE_HINT"
 msgstr ""
 
 msgid "SETTING_MENU__LANGUAGE"
@@ -102,4 +132,34 @@ msgid "LOADING_SCREEN__LOADING"
 msgstr ""
 
 msgid "LOADING_SCREEN__WAITING_SYNCING"
+msgstr ""
+
+msgid "MAIN_MENU__TITLE"
+msgstr ""
+
+msgid "SINGLEPLAYER_MENU__TITLE"
+msgstr ""
+
+msgid "SINGLEPLAYER_MENU__NEW_TAB"
+msgstr ""
+
+msgid "SINGLEPLAYER_MENU__LOAD_TAB"
+msgstr ""
+
+msgid "CONNECT_MENU__TITLE"
+msgstr ""
+
+msgid "HOST_MENU__TITLE"
+msgstr ""
+
+msgid "SETTING_MENU__TITLE"
+msgstr ""
+
+msgid "GENERIC_MENU__CANCEL_BUTTON"
+msgstr ""
+
+msgid "GENERIC_MENU__SAVE_BUTTON"
+msgstr ""
+
+msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr ""

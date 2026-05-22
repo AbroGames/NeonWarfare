@@ -27,6 +27,15 @@ msgstr "Settings"
 msgid "MAIN_MENU__EXIT_BUTTON"
 msgstr "Exit"
 
+msgid "MAIN_MENU__RESUME_BUTTON__SINGLEPLAYER"
+msgstr "Resume singleplayer"
+
+msgid "MAIN_MENU__RESUME_BUTTON__CONNECT"
+msgstr "Resume connection"
+
+msgid "MAIN_MENU__RESUME_BUTTON__HOST"
+msgstr "Resume hosting"
+
 msgid "SINGLEPLAYER_MENU__SAVE_NAME"
 msgstr "Save name:"
 
@@ -41,6 +50,9 @@ msgstr "Port:"
 
 msgid "CONNECT_MENU__CONNECT_BUTTON"
 msgstr "Connect to server"
+
+msgid "CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR"
+msgstr "Host address is not specified"
 
 msgid "HOST_MENU__PORT"
 msgstr "Port:"
@@ -59,6 +71,24 @@ msgstr "Nick:"
 
 msgid "SETTING_MENU__COLOR"
 msgstr "Color:"
+
+msgid "SETTING_MENU__NICK_HINT"
+msgstr "Your nickname displayed to other players"
+
+msgid "SETTING_MENU__COLOR_HINT"
+msgstr "Your character color"
+
+msgid "SETTING_MENU__PLAYER_UID"
+msgstr "Player UID:"
+
+msgid "SETTING_MENU__PLAYER_UID_HINT"
+msgstr "Unique player identifier"
+
+msgid "SETTING_MENU__AUTOSAVE"
+msgstr "Autosave:"
+
+msgid "SETTING_MENU__AUTOSAVE_HINT"
+msgstr "Automatically save the game"
 
 msgid "SETTING_MENU__LANGUAGE"
 msgstr "Language:"
@@ -107,3 +137,33 @@ msgstr "Loading"
 
 msgid "LOADING_SCREEN__WAITING_SYNCING"
 msgstr "Wait for the synchronization ends"
+
+msgid "MAIN_MENU__TITLE"
+msgstr "Main Menu"
+
+msgid "SINGLEPLAYER_MENU__TITLE"
+msgstr "Singleplayer"
+
+msgid "SINGLEPLAYER_MENU__NEW_TAB"
+msgstr "New Game"
+
+msgid "SINGLEPLAYER_MENU__LOAD_TAB"
+msgstr "Load Game"
+
+msgid "CONNECT_MENU__TITLE"
+msgstr "Connect to Server"
+
+msgid "HOST_MENU__TITLE"
+msgstr "Create Server"
+
+msgid "SETTING_MENU__TITLE"
+msgstr "Settings"
+
+msgid "GENERIC_MENU__CANCEL_BUTTON"
+msgstr "Cancel"
+
+msgid "GENERIC_MENU__SAVE_BUTTON"
+msgstr "Save"
+
+msgid "LANGUAGE_SELECTION_MENU__TITLE"
+msgstr "Language"

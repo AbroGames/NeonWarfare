@@ -28,6 +28,15 @@ msgstr "Настройки"
 msgid "MAIN_MENU__EXIT_BUTTON"
 msgstr "Выход"
 
+msgid "MAIN_MENU__RESUME_BUTTON__SINGLEPLAYER"
+msgstr "Возобновить одиночную игру"
+
+msgid "MAIN_MENU__RESUME_BUTTON__CONNECT"
+msgstr "Возобновить подключение"
+
+msgid "MAIN_MENU__RESUME_BUTTON__HOST"
+msgstr "Возобновить размещение сервера"
+
 msgid "SINGLEPLAYER_MENU__SAVE_NAME"
 msgstr "Имя сохранения:"
 
@@ -42,6 +51,9 @@ msgstr "Порт:"
 
 msgid "CONNECT_MENU__CONNECT_BUTTON"
 msgstr "Подключиться к серверу"
+
+msgid "CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR"
+msgstr "Адрес хоста не указан"
 
 msgid "HOST_MENU__PORT"
 msgstr "Порт:"
@@ -60,6 +72,24 @@ msgstr "Ник:"
 
 msgid "SETTING_MENU__COLOR"
 msgstr "Цвет:"
+
+msgid "SETTING_MENU__NICK_HINT"
+msgstr "Ваш ник, отображаемый другим игрокам"
+
+msgid "SETTING_MENU__COLOR_HINT"
+msgstr "Цвет вашего персонажа"
+
+msgid "SETTING_MENU__PLAYER_UID"
+msgstr "ID игрока:"
+
+msgid "SETTING_MENU__PLAYER_UID_HINT"
+msgstr "Уникальный идентификатор игрока"
+
+msgid "SETTING_MENU__AUTOSAVE"
+msgstr "Автосохранение:"
+
+msgid "SETTING_MENU__AUTOSAVE_HINT"
+msgstr "Автоматически сохранять игру"
 
 msgid "SETTING_MENU__LANGUAGE"
 msgstr "Язык:"
@@ -108,3 +138,33 @@ msgstr "Подключение к серверу"
 
 msgid "LOADING_SCREEN__WAITING_SYNCING"
 msgstr "Ожидаение окончания синхронизации"
+
+msgid "MAIN_MENU__TITLE"
+msgstr "Главное меню"
+
+msgid "SINGLEPLAYER_MENU__TITLE"
+msgstr "Одиночная игра"
+
+msgid "SINGLEPLAYER_MENU__NEW_TAB"
+msgstr "Новая игра"
+
+msgid "SINGLEPLAYER_MENU__LOAD_TAB"
+msgstr "Загрузить игру"
+
+msgid "CONNECT_MENU__TITLE"
+msgstr "Подключиться к серверу"
+
+msgid "HOST_MENU__TITLE"
+msgstr "Создать сервер"
+
+msgid "SETTING_MENU__TITLE"
+msgstr "Настройки"
+
+msgid "GENERIC_MENU__CANCEL_BUTTON"
+msgstr "Отмена"
+
+msgid "GENERIC_MENU__SAVE_BUTTON"
+msgstr "Сохранить"
+
+msgid "LANGUAGE_SELECTION_MENU__TITLE"
+msgstr "Язык"
