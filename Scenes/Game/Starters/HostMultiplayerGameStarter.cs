@@ -18,6 +18,7 @@ public class HostMultiplayerGameStarter(
     ) : BaseGameStarter
 {
     
+    // TODO Localization debt: these player-visible messages bypass Tr(KEY) and have no keys in
     private const string HostingFailedMessage = "Failed to start server: {0}";
     
     public override void Init(Game game)

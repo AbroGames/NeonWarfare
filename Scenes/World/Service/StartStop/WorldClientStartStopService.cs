@@ -13,6 +13,7 @@ namespace NeonWarfare.Scenes.World.Service.StartStop;
 public partial class WorldClientStartStopService : Node
 {
     
+    // TODO Localization debt: these player-visible messages bypass Tr(KEY) and have no keys in
     private const string SyncRejectedMessage = "Synchronization with the server was rejected: {0}";
     
     [SceneService] private WorldSynchronizerService _synchronizerService;

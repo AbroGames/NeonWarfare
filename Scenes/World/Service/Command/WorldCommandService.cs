@@ -16,6 +16,7 @@ namespace NeonWarfare.Scenes.World.Service.Command;
 public partial class WorldCommandService : Node
 {
 
+    // TODO Localization debt: these player-visible messages bypass Tr(KEY) and have no keys in
     private const string RequireAdminMessage = "Command '{0}' requires admin status.";
     
     public IReadOnlyDictionary<string, ICommandProcessor> CommandProcessorByCommand => _commandProcessorByCommand;
