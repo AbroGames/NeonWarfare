@@ -20,7 +20,7 @@ public partial class WorldSynchronizerService : Node
     private const int NicknameMinLength = 3;
     private const int NicknameMaxLength = 25;
     
-    // TODO Localization debt: these player-visible messages bypass Tr(KEY) and have no keys in
+    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string UidAlreadyUsedErrorMessage = "Player with the same uid already online";
     private static readonly string LengthOfNicknameErrorMessage = $"Length of nickname must be between {NicknameMinLength} and {NicknameMaxLength} characters";
     private const string NicknameContainsSpaceErrorMessage = "Nickname contains space";

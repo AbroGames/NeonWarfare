@@ -11,7 +11,7 @@ public class ConnectToMultiplayerGameStarter(
     ) : BaseGameStarter
 {
     
-    // TODO Localization debt: these player-visible messages bypass Tr(KEY) and have no keys in
+    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
 
