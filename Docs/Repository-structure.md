@@ -34,6 +34,12 @@ Scripts/                      Код без сцен
 ├── Consts.cs                 Глобальные константы
 └── GlobalUsings.cs           Здесь задаём global using и global using static
 
+Tests/                        Тесты xUnit v3
+├── NeonWarfare.Tests/        Отдельный проект, движок не запускают
+│   ├── Infrastructure/       Хелперы для всех тестов
+│   └── Docs/                 Тесты на проверку документации
+└── .gdignore                 Godot не смотрел в эту папку, т.к. здесь только юнит-тесты
+
 Properties/
 └── launchSettings.json       Профили быстрого запуска игры в разных режимах (Rider их видит сам)
 Docs/                         Документация, на все файлы есть ссылки из README.md
