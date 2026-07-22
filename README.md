@@ -42,6 +42,7 @@ Neon Warfare — кооперативный top-down буллет-хелл на 
 | [Структура репозитория](Docs/Repository-structure.md) | Что лежит в каждой папке |
 | [Стек и зависимости](Docs/Stack.md) | Версии Godot и .NET, библиотеки, где искать исходники KludgeBox |
 | [Быстрый старт](Docs/Quick-start.md) | Настройка окружения, профили запуска Rider |
+| [Тестирование](Docs/Testing.md) | Подход к тестам, `dotnet test`, что уже покрыто |
 
 ---
 
@@ -62,6 +63,7 @@ Neon Warfare — кооперативный top-down буллет-хелл на 
 | Код ведёт себя по-разному в одиночке и в сети | [Сеть](Docs/Arch/Networking.md) (`IsServer` / `IsClient`) → [Поток запуска](Docs/Arch/Startup-flow.md) |
 | Не находится объявление типа (`NodeContainer`, `[Sync]`, `StatModifiersContainer<T>`) | [Стек](Docs/Stack.md) — исходников KludgeBox в репозитории нет, путь к ним в ENV `KLUDGEBOX_SRC` |
 | Поднять сервер и клиента для проверки | [Быстрый старт](Docs/Quick-start.md) → [Параметры командной строки](Docs/Cli-args.md) |
+| Добавить тест или понять, что вообще тестируется | [Тестирование](Docs/Testing.md) |
 
 ---
 
@@ -84,4 +86,3 @@ Neon Warfare — кооперативный top-down буллет-хелл на 
 | [Scripts/Consts.cs](Scripts/Consts.cs) | Глобальные константы, `Consts.TransferChannel` |
 | [Scripts/Content/CmdArgs/](Scripts/Content/CmdArgs/) | `CommonArgs`, `ClientArgs`, `DedicatedServerArgs` |
 | [Properties/launchSettings.json](Properties/launchSettings.json), [.run/](.run/) | Профили запуска Rider и Multi-Launch |
- 
