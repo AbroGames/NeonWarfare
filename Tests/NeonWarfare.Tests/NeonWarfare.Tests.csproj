@@ -1,0 +1,37 @@
+<!-- Plain Microsoft.NET.Sdk, not Godot.NET.Sdk: the tests never start the engine and must not pull in
+     GodotSharp, which cannot initialize outside a Godot process. -->
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!-- Same TFM as the game project: both live in one solution, and later the tests may
+             reference its pure (non-Godot) classes without multi-targeting. -->
+        <TargetFramework>net10.0</TargetFramework>
+
+        <!-- xunit.v3 builds a self-contained test host (Microsoft.Testing.Platform). With a library
+             OutputType the project still compiles, but no tests are discovered or run. -->
+        <OutputType>Exe</OutputType>
+
+        <!-- New code with no legacy, so the nullable context and implicit usings are on. This does
+             not affect the game project: the "new global usings only in Scripts/GlobalUsings.cs"
+             rule from Docs/Code-style.md applies to NeonWarfare.csproj. -->
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- The framework itself: [Fact]/[Theory] and Assert. -->
+        <PackageReference Include="xunit.v3" Version="3.2.2" />
+        <!-- VSTest adapter: without it neither `dotnet test` nor the Rider runner discovers
+             xunit.v3 tests. -->
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+        <!-- VSTest host: sets IsTestProject and enables the `dotnet test` target. -->
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The tests read repository files (Docs/, README.md), but their working directory is
+             bin/<config>/<tfm>/. The root is baked into the assembly at compile time: walking up
+             from AppContext.BaseDirectory is fragile because the output depth changes between
+             configurations. Read back by RepositoryPaths. -->
+        <AssemblyMetadata Include="RepositoryRoot" Value="$(MSBuildThisFileDirectory)..\..\" />
+    </ItemGroup>
+</Project>

@@ -30,4 +30,15 @@
         <None Include="Assets/**/*" />
         <None Include="Docs/**/*" />
     </ItemGroup>
+
+    <ItemGroup>
+        <!-- The project directory is the repository root, so the default Godot.NET.Sdk glob
+             (**/*.cs) also picks up Tests/**. Without this the game assembly would try to compile
+             the test sources and fail on xUnit types it does not reference. Tests are built by
+             Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj instead. -->
+        <Compile Remove="Tests/**" />
+        <!-- Same glob puts Tests/** (including its bin/obj) into None, cluttering the file tree in
+             Rider next to the Assets/** and Docs/** items included above on purpose. -->
+        <None Remove="Tests/**" />
+    </ItemGroup>
 </Project>
