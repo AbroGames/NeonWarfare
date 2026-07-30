@@ -1,32 +1,36 @@
-# Интерфейс
+# UI
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-## Главное меню: стек страниц
+## The main menu: the page stack
 
 `Scenes/Screen/NewMenu/`:
 
-* `PageContainer` — держит стек, умеет `SetRootPage` / `PushPage` / `PopPage`, ловит циклы;
-* `Page` / `IPage` — страница со связями `Parent`/`Child` и колбэками `OnShown` / `OnHidden` / `Close`;
-* `MainMenuPage` — база для страниц меню, получает `PagesProvider` через `WithAvailablePages(...)`;
-* `PagesProvider` — хранилище `PackedScene` всех страниц (Main, Settings, Connect, Host, Singleplayer,
-  Message, LanguageSelection); наследник `CheckedAbstractStorage`, ссылки проставляются в редакторе.
+* `PageContainer` — holds the stack, can do `SetRootPage` / `PushPage` / `PopPage`, catches cycles;
+* `Page` / `IPage` — a page with `Parent`/`Child` links and the `OnShown` / `OnHidden` / `Close`
+  callbacks;
+* `MainMenuPage` — the base for the menu pages, receives `PagesProvider` through
+  `WithAvailablePages(...)`;
+* `PagesProvider` — the `PackedScene` storage of all the pages (Main, Settings, Connect, Host,
+  Singleplayer, Message, LanguageSelection); a descendant of `CheckedAbstractStorage`, the references
+  are set in the editor.
 
-## Экран настроек
+## The settings screen
 
-Строится **из модели, а не вручную**. `MenuGameSettings`
-(`Scenes/Screen/NewMenu/SettingsSystem/`) описывает поля, а атрибуты `[Name]`, `[Hint]`, `[Hide]`,
-`[Range]`, `[Step]` управляют отображением. `GetVisibleSettings()` рефлексией собирает список
-`Setting`, по которому `SettingsPage` генерирует контролы.
+It is built **from a model, not by hand**. `MenuGameSettings`
+(`Scenes/Screen/NewMenu/SettingsSystem/`) describes the fields, and the `[Name]`, `[Hint]`, `[Hide]`,
+`[Range]`, `[Step]` attributes control the display. `GetVisibleSettings()` assembles a list of
+`Setting` by reflection, from which `SettingsPage` generates the controls.
 
-Чтобы добавить настройку, достаточно добавить поле в модель и разметить его атрибутами — руками
-трогать `SettingsPage` не нужно.
+To add a setting it is enough to add a field to the model and annotate it with attributes — there is
+no need to touch `SettingsPage` by hand.
 
-## Игровой HUD и экран загрузки
+## The in-game HUD and the loading screen
 
-`Hud` (клиент) и `ServerHud` (консоль сервера) — оба получают `World` через `InitPreReady(world)` **до**
-добавления в дерево, потому что он нужен им раньше `_Ready()`. Какой из двух создавать, решает стартер
-игры (см. [Поток запуска](Startup-flow.md)).
+`Hud` (the client) and `ServerHud` (the server console) — both receive the `World` through
+`InitPreReady(world)` **before** being added to the tree, because they need it earlier than
+`_Ready()`. Which of the two to create is decided by the game starter (see
+[Startup flow](Startup-flow.md)).
 
-Экран загрузки (`LoadingScreen`) живёт в отдельном `CanvasLayer` на самом верху и поддерживает
-опциональную кнопку отмены — ею пользуется подключение к серверу, чтобы можно было прервать ожидание.
+The loading screen (`LoadingScreen`) lives in a separate `CanvasLayer` at the very top and supports an
+optional cancel button — the connection to a server uses it, so that the wait can be interrupted.

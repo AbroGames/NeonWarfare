@@ -1,34 +1,35 @@
-# Чат и команды
+# Chat and commands
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-Сообщение идёт `клиент → сервер (TrySendNewMessageRpc) → перехватчики → рассылка`.
-Перехватчик `IChatMessageInterceptor` может «съесть» сообщение: так `ChatMessageCommandInterceptor`
-забирает всё, что начинается с `/`, и отдаёт в `WorldCommandService`.
+A message travels `client → server (TrySendNewMessageRpc) → interceptors → broadcast`.
+An `IChatMessageInterceptor` interceptor can "eat" a message: this is how
+`ChatMessageCommandInterceptor` takes everything that starts with `/` and hands it to
+`WorldCommandService`.
 
-Команды — классы, реализующие `ICommandProcessor` (`GetCommand`, `GetDescription`, `IsRequiringAdmin`,
-`ProcessCommand`). Они **регистрируются автоматически**: сервис на старте сканирует сборку и собирает
-все реализации. Чтобы добавить команду, достаточно создать наследника `ICommandProcessor`,
-предпочтительно в `Scenes/World/Service/Command/Impl/`.
+Commands are classes implementing `ICommandProcessor` (`GetCommand`, `GetDescription`,
+`IsRequiringAdmin`, `ProcessCommand`). They are **registered automatically**: at startup the service
+scans the assembly and collects all the implementations. To add a command it is enough to create a
+descendant of `ICommandProcessor`, preferably in `Scenes/World/Service/Command/Impl/`.
 
-Текущий набор:
+The current set:
 
-| Команда | Класс | Права |
+| Command | Class | Rights |
 |---|---|---|
-| `/help` | `HelpCommand` | все |
-| `/players` | `GetPlayersCommand` | все |
-| `/uids` | `GetUidsCommand` | все |
-| `/admins` | `GetAdminsCommand` | все |
-| `/admin {add\|remove} <nickname>` | `ControlAdminsCommand` | админ |
-| `/surface {safe\|battle}` | `ControlSurfaceCommand` | админ |
+| `/help` | `HelpCommand` | everyone |
+| `/players` | `GetPlayersCommand` | everyone |
+| `/uids` | `GetUidsCommand` | everyone |
+| `/admins` | `GetAdminsCommand` | everyone |
+| `/admin {add\|remove} <nickname>` | `ControlAdminsCommand` | admin |
+| `/surface {safe\|battle}` | `ControlSurfaceCommand` | admin |
 
-Отдельно стоит `NotFoundCommand` — заглушка для неизвестных команд. Она не имеет своего имени и
-вызывается, когда ни один `ICommandProcessor` не подошёл.
+`NotFoundCommand` stands apart — a stub for unknown commands. It has no name of its own and is called
+when no `ICommandProcessor` matched.
 
 > [!IMPORTANT]
-> Осознанное отклонение от [правил локализации](../Localization.md): ответы чат-команд не
-> локализовываются.
+> A deliberate deviation from the [localization rules](../Localization.md): chat command responses are
+> not localized.
 >
-> Команды — админский инструмент, к которому обращаются крайне редко, поэтому держать их тексты в
-> `Assets/Locales/*.po` не окупается. Сообщения пишутся по-английски обычными `private const string`
-> в начале класса, ключи для них не заводятся.
+> Commands are an admin tool that is used extremely rarely, so keeping their texts in
+> `Assets/Locales/*.po` does not pay off. The messages are written in English as ordinary
+> `private const string`s at the top of the class; no keys are created for them.

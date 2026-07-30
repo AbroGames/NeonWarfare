@@ -1,23 +1,24 @@
-# Завершение работы
+# Shutdown
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-* **Клиент** — `Services.MainScene.Shutdown()` → отложенный `SceneTree.Quit()`.
-* **Дочерний процесс сервера** — `ProcessShutdowner` (нода из KludgeBox,
-  `KludgeBox.Godot.Nodes.Process`) вешается на `Game` в
-  `HostDedicatedServerAndConnectGameStarter`. При уничтожении сцены `Game` он убивает процесс сервера
-  по сохранённому PID.
-* **Сервер, запущенный из клиента** — тому же процессу передан `--parent-pid`, и
-  `HostMultiplayerGameStarter` вешает на `Game` `ProcessDeadChecker` (тоже нода из KludgeBox). Он
-  периодически проверяет живость родителя и вызывает `MainScene.Shutdown()`, если клиент исчез из ОС.
-* **Сохранение мира** — `WorldServerShutdowner` ловит `NotificationExitTree` и вызывает
-  `TryAutoSave()`. Отдельная нода нужна потому, что после выхода из дерева `GetMultiplayer()` уже
-  `null`, а `Network` к этому моменту мог подменить peer на `OfflineMultiplayerPeer` — доверять им
-  нельзя.
+* **The client** — `Services.MainScene.Shutdown()` → a deferred `SceneTree.Quit()`.
+* **The server child process** — `ProcessShutdowner` (a node from KludgeBox,
+  `KludgeBox.Godot.Nodes.Process`) is attached to `Game` in
+  `HostDedicatedServerAndConnectGameStarter`. When the `Game` scene is destroyed, it kills the server
+  process by the stored PID.
+* **A server started from the client** — that same process was passed `--parent-pid`, and
+  `HostMultiplayerGameStarter` attaches a `ProcessDeadChecker` (also a node from KludgeBox) to `Game`.
+  It periodically checks whether the parent is alive and calls `MainScene.Shutdown()` if the client
+  has disappeared from the OS.
+* **Saving the world** — `WorldServerShutdowner` catches `NotificationExitTree` and calls
+  `TryAutoSave()`. A separate node is needed because after leaving the tree `GetMultiplayer()` is
+  already `null`, and by that moment `Network` might have swapped the peer for an
+  `OfflineMultiplayerPeer` — they cannot be trusted.
 
-Пара «клиент + вынесенный сервер» держится на двух нодах сразу и с двух сторон: `ProcessShutdowner`
-убивает сервер при нормальном закрытии клиента, `ProcessDeadChecker` — страховка на случай, когда
-клиент умер аварийно и убить никого не успел.
+The "client + out-of-process server" pair rests on two nodes at once and from two sides:
+`ProcessShutdowner` kills the server on a normal client shutdown, and `ProcessDeadChecker` is the
+safety net for the case where the client died abnormally and had no time to kill anyone.
 
-Автосохранение управляется настройкой `AutoSaveEnabled`: у клиента — в `GameSettings`, у выделенного
-сервера — в `DedicatedServerSettings` (см. [Данные и сохранения](Data-and-saves.md)).
+Autosave is controlled by the `AutoSaveEnabled` setting: on the client — in `GameSettings`, on the
+dedicated server — in `DedicatedServerSettings` (see [Data and saves](Data-and-saves.md)).

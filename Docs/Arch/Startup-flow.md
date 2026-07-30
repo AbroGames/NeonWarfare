@@ -1,220 +1,227 @@
-# Поток запуска
+# Startup flow
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-Запуск разнесён на два независимых уровня, и путать их нельзя:
+The startup is split into two independent levels, and they must not be confused:
 
-1. **RootStarter** — уровень **процесса**. Один на всё время жизни приложения. Решает, кто мы:
-   клиент или выделенный сервер.
-2. **GameStarter** — уровень **игровой сессии**. Создаётся заново на каждый вход в игру. Решает, как
-   поднять конкретную сессию: поднять ENet-сервер, подключиться ENet-клиентом или не трогать сеть.
+1. **RootStarter** — the **process** level. One for the whole lifetime of the application. It decides
+   who we are: a client or a dedicated server.
+2. **GameStarter** — the **game session** level. Created anew on every entry into the game. It
+   decides how to bring up a specific session: bring up an ENet server, connect as an ENet client, or
+   not touch the network at all.
 
-Аргументы командной строки разбираются **только** в RootStarter-ах, дальше едут обычными параметрами
-(см. [Параметры командной строки](../Cli-args.md)).
+The command-line arguments are parsed **only** in the RootStarters, and from there travel on as
+ordinary parameters (see [Command-line arguments](../Cli-args.md)).
 
-## Уровень 1: RootStarter
+## Level 1: RootStarter
 
-`Root._Ready()` вызывает `RootStarterManager.ChooseStarter()`, которая проверяет, есть ли `"--server"`
-в `OS.GetCmdlineArgs()`: если нет — выбирается `ClientRootStarter`, если есть —
+`Root._Ready()` calls `RootStarterManager.ChooseStarter()`, which checks whether `"--server"` is
+present in `OS.GetCmdlineArgs()`: if it is not — `ClientRootStarter` is chosen, if it is —
 `DedicatedServerRootStarter`.
 
-Далее в обоих случаях у выбранного стартера (`ClientRootStarter` / `DedicatedServerRootStarter`)
-вызываются два метода:
+After that, in both cases two methods are called on the chosen starter (`ClientRootStarter` /
+`DedicatedServerRootStarter`):
 
-* `Init()` — сперва общий `BaseRootStarter.Init()`: обработчик исключений, кэши, `LoadingScreenService`,
-  `I18N`. Затем специфичное для конкретного `*RootStarter.Init()`: `Net.Init()`, настройки, локаль,
-  автомасштаб UI.
-* `Start()` — запуск нужного сценария через `Services.MainScene.*`.
+* `Init()` — first the common `BaseRootStarter.Init()`: the exception handler, the caches,
+  `LoadingScreenService`, `I18N`. Then whatever is specific to the particular `*RootStarter.Init()`:
+  `Net.Init()`, the settings, the locale, UI auto-scaling.
+* `Start()` — launching the required scenario through `Services.MainScene.*`.
 
-`RootData` (контейнеры, `RootPackedScenes`, `SceneTree`) прокидывается в стартер
-параметром, глобального доступа к `Root` у стартера нет.
+`RootData` (the containers, `RootPackedScenes`, `SceneTree`) is passed into the starter as a
+parameter; the starter has no global access to `Root`.
 
-### Общая часть: `BaseRootStarter`
+### The common part: `BaseRootStarter`
 
-`Init()` одинаков для обеих ролей и идёт строго в этом порядке:
+`Init()` is the same for both roles and goes strictly in this order:
 
 1. `Di.Process(this)`.
-2. Разбор `CommonArgs`, включение дублирования логов в консоль Godot по `--godot-log-push`.
-3. `Services.ExceptionHandler` — глобальный обработчик необработанных исключений.
-4. Логирование полученных аргументов командной строки.
-5. `Services.AssemblyCache` + `Services.TypesMapping` — кэш сборки и маппинг типов. Без этого шага не
-   работают сканирования по сборке (например, автоподбор `ICommandProcessor`).
-6. `Services.LoadingScreen.Init(...)`, `Services.MainScene.Init(...)` — сервисам отдаются контейнеры
-   `Root` и прототипы сцен.
+2. Parsing `CommonArgs`, enabling log mirroring into the Godot console per `--godot-log-push`.
+3. `Services.ExceptionHandler` — the global handler for unhandled exceptions.
+4. Logging the command-line arguments that were received.
+5. `Services.AssemblyCache` + `Services.TypesMapping` — the assembly cache and the type mapping.
+   Without this step the assembly-wide scans do not work (for example, the automatic pickup of
+   `ICommandProcessor`).
+6. `Services.LoadingScreen.Init(...)`, `Services.MainScene.Init(...)` — the services are handed the
+   `Root` containers and the scene prototypes.
 7. `Services.I18N.Init(sceneTree)`.
 
-`Start()` в базе только пишет лог — весь сценарий запуска в наследниках.
+`Start()` in the base only writes a log entry — the whole startup scenario is in the descendants.
 
 ### `ClientRootStarter`
 
-Выбирается, когда `--server` **не** передан. Это обычный игровой процесс: и главное меню, и одиночная
-игра, и подключение к чужому серверу, и хост «изнутри клиента».
+Chosen when `--server` is **not** passed. This is the ordinary game process: the main menu, a
+single-player game, connecting to someone else's server, and hosting "from inside the client".
 
-`Init()` — после `base.Init()`:
+`Init()` — after `base.Init()`:
 
-| Шаг | Зачем |
+| Step | What for |
 |---|---|
-| `ClientArgs.GetFromCmd(...)` | Разбор клиентских флагов |
-| `Services.Net.Init(false)` | Процесс **не** выделенный сервер → `Net.IsClient()` всегда `true` |
-| `Services.AutoScaling.Init(...)` | Автомасштаб UI по `Consts.AutoScalingSettings` |
-| `Services.LastGame.Init()` | Чтение `resume-game.json` для кнопки «Продолжить» |
-| `Services.GameSettings.Init()` | Чтение `game-settings.json` |
-| `--nick` / `--uid` | Временный оверрайд ника и UID, **без записи** в файл настроек |
-| `Services.I18N.SetCurrentLocale(...)` | Локаль из `GameSettings` |
-| `Services.LoadingScreen.SetLoadingScreen(Loading)` | Первый показ экрана загрузки |
+| `ClientArgs.GetFromCmd(...)` | Parsing the client flags |
+| `Services.Net.Init(false)` | The process is **not** a dedicated server → `Net.IsClient()` is always `true` |
+| `Services.AutoScaling.Init(...)` | UI auto-scaling per `Consts.AutoScalingSettings` |
+| `Services.LastGame.Init()` | Reading `resume-game.json` for the "Continue" button |
+| `Services.GameSettings.Init()` | Reading `game-settings.json` |
+| `--nick` / `--uid` | A temporary override of the nickname and the UID, **without writing** to the settings file |
+| `Services.I18N.SetCurrentLocale(...)` | The locale from `GameSettings` |
+| `Services.LoadingScreen.SetLoadingScreen(Loading)` | The first showing of the loading screen |
 
-`Start()` — выбор сценария по флагам, ровно один из трёх:
+`Start()` — the scenario is chosen by the flags, exactly one of three:
 
-| Условие | Действие |
+| Condition | Action |
 |---|---|
-| `--auto-start` | `MainScene.StartSingleplayerGame(...)`. Имя сейва — из `--auto-start-savefile`, а если флага нет — сгенерированное `SaveLoad.GenNewSaveFileName()` |
+| `--auto-start` | `MainScene.StartSingleplayerGame(...)`. The save name comes from `--auto-start-savefile`, and if the flag is absent — a generated `SaveLoad.GenNewSaveFileName()` |
 | `--auto-connect` | `MainScene.ConnectToMultiplayerGame(--auto-connect-ip, --auto-connect-port)` |
-| иначе | `MainScene.StartMainMenu()` + `LoadingScreen.Clear()` |
+| otherwise | `MainScene.StartMainMenu()` + `LoadingScreen.Clear()` |
 
 ### `DedicatedServerRootStarter`
 
-Выбирается по флагу `--server`. Головного игрока в этом процессе нет.
+Chosen by the `--server` flag. There is no head player in this process.
 
-`Init()` — после `base.Init()`:
+`Init()` — after `base.Init()`:
 
-| Шаг | Зачем |
+| Step | What for |
 |---|---|
-| `DedicatedServerArgs.GetFromCmd(...)` | Разбор серверных флагов |
-| `Services.Net.Init(true)` | Процесс выделенный сервер → `Net.IsClient()` всегда `false` |
-| `Services.LastGame.Init()` | Чтение `resume-game.json` |
-| `Services.DedicatedServerSettings.Init()` | Чтение `dedicated-server-settings.json` |
-| `Services.I18N.SetCurrentLocale(...)` | Локаль из `DedicatedServerSettings`, **после** их загрузки |
-| Заголовок окна | Префикс `[SERVER]`, чтобы не путать окна при локальном тесте |
+| `DedicatedServerArgs.GetFromCmd(...)` | Parsing the server flags |
+| `Services.Net.Init(true)` | The process is a dedicated server → `Net.IsClient()` is always `false` |
+| `Services.LastGame.Init()` | Reading `resume-game.json` |
+| `Services.DedicatedServerSettings.Init()` | Reading `dedicated-server-settings.json` |
+| `Services.I18N.SetCurrentLocale(...)` | The locale from `DedicatedServerSettings`, **after** they are loaded |
+| The window title | The `[SERVER]` prefix, so that the windows are not confused during a local test |
 
-Отличия от клиента, о которых легко забыть: выделенный сервер **не** инициализирует
-`Services.GameSettings` и `Services.AutoScaling` и **не** показывает экран загрузки — ему нечего
-показывать игроку.
+The differences from the client that are easy to forget: the dedicated server does **not** initialize
+`Services.GameSettings` and `Services.AutoScaling` and does **not** show the loading screen — it has
+nothing to show a player.
 
-`Start()` — единственный сценарий: `MainScene.HostMultiplayerGameAsDedicatedServer(...)` с именем
-сейва из `--savefile` (или сгенерированным), портом, админским UID, `--parent-pid`, `--no-hud` и
+`Start()` — a single scenario: `MainScene.HostMultiplayerGameAsDedicatedServer(...)` with the save
+name from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, `--no-hud` and
 `--world-render`.
 
-## Уровень 2: GameStarter
+## Level 2: GameStarter
 
-`MainSceneService` создаёт сцену `Game`, кладёт её в `MainSceneContainer` и передаёт ей **стартер
-игры** — объект, который знает, как именно поднять эту сессию:
+`MainSceneService` creates the `Game` scene, puts it into `MainSceneContainer` and hands it a **game
+starter** — an object that knows exactly how to bring this session up:
 
-`Game.Init(BaseGameStarter starter)` вызывает `starter.Init(game)`, который последовательно
-выполняет:
+`Game.Init(BaseGameStarter starter)` calls `starter.Init(game)`, which sequentially performs:
 
-* `game.AddNetwork()` — создаёт `Network` (ENet + `SceneMultiplayer`).
-* `game.AddWorld()` — создаёт `World`.
+* `game.AddNetwork()` — creates `Network` (ENet + `SceneMultiplayer`).
+* `game.AddWorld()` — creates `World`.
 * `game.AddHud()` / `game.AddServerHud()`.
-* `ServerStartWorld()` — на сервере: `StartNewGame()` или `LoadGame()`.
-* `ClientStartWorld()` — на клиенте: `StartSyncWithServer()`.
+* `ServerStartWorld()` — on the server: `StartNewGame()` or `LoadGame()`.
+* `ClientStartWorld()` — on the client: `StartSyncWithServer()`.
 
-Точки входа в `Services.MainScene`, стартеры, которые за ними стоят, и когда каждый из них
-используется:
+The entry points in `Services.MainScene`, the starters behind them, and when each of them is used:
 
-| Стартер | Метод `MainSceneService` | Сеть / хост | Когда используется |
+| Starter | `MainSceneService` method | Network / host | When it is used |
 |---|---|---|---|
-| `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName)` | нет, `Network` не создаётся; процесс сам себе сервер | Одиночная игра из меню, `--auto-start` (+ `--auto-start-savefile`) |
-| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | ENet-сервер в этом же процессе | Хост «изнутри клиента» |
-| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | ENet-сервер в этом же процессе | Выделенный сервер (`--server`) |
-| `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | ENet-клиент, хост — удалённый процесс | Подключение к серверу из меню, `--auto-connect` |
-| `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | ENet-клиент + дочерний процесс-сервер | Хост с вынесенным сервером: поднимает второй процесс ОС |
+| `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName)` | none, `Network` is not created; the process is its own server | A single-player game from the menu, `--auto-start` (+ `--auto-start-savefile`) |
+| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | an ENet server in this same process | Hosting "from inside the client" |
+| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | an ENet server in this same process | A dedicated server (`--server`) |
+| `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | an ENet client, the host is a remote process | Connecting to a server from the menu, `--auto-connect` |
+| `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | an ENet client + a child server process | Hosting with an out-of-process server: brings up a second OS process |
 
-Кто из этих режимов и когда возвращает `true`/`false` из `Net.IsServer()` / `Net.IsClient()` — в
-[Сети](Networking.md#роли-процесса-isserver--isclient).
+Which of these modes returns `true`/`false` from `Net.IsServer()` / `Net.IsClient()` and when — in
+[Networking](Networking.md#process-roles-isserver--isclient).
 
-### Общая часть: `BaseGameStarter`
+### The common part: `BaseGameStarter`
 
-Четыре защищённых метода, которыми пользуются все стартеры:
+Four protected methods that all the starters use:
 
-* **`ServerStartWorld(world, saveFileName, adminUid)`** — серверный старт мира. `saveFileName`
-  обязателен (`null` → `ArgumentNullException`). Если файла сейва нет — `StartNewGame(...)`, если
-  есть — `LoadGame(...)`. `LoadException` при загрузке не роняет процесс: на клиенте она уводит в
-  меню с текстом ошибки.
-* **`ClientStartWorld(world)`** — клиентский старт: `ClientStartStopService.StartSyncWithServer(...)`,
-  то есть хендшейк из [Сеть](Networking.md).
-* **`SetLastGame(...)` / `AddLastGameUpdaterToSaveEvent(...)`** — запись сессии в `resume-game.json`.
-  Второй метод подписывается на `SaveSuccessServerEvent` и обновляет запись именем нового сейва, так
-  что «Продолжить» после ручного сохранения ведёт на актуальный файл.
-* **`GoToMenuAndShowError(message)` / `GoToMenu()`** — возврат в меню. Оба начинаются с проверки
-  `Net.IsClient()`: на выделенном сервере меню нет.
+* **`ServerStartWorld(world, saveFileName, adminUid)`** — the server-side world start. `saveFileName`
+  is mandatory (`null` → `ArgumentNullException`). If the save file does not exist —
+  `StartNewGame(...)`, if it does — `LoadGame(...)`. A `LoadException` during loading does not bring
+  the process down: on the client it takes you back to the menu with the error text.
+* **`ClientStartWorld(world)`** — the client-side start:
+  `ClientStartStopService.StartSyncWithServer(...)`, that is, the handshake from
+  [Networking](Networking.md).
+* **`SetLastGame(...)` / `AddLastGameUpdaterToSaveEvent(...)`** — writing the session into
+  `resume-game.json`. The second method subscribes to `SaveSuccessServerEvent` and updates the record
+  with the name of the new save, so that "Continue" after a manual save leads to the current file.
+* **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu. Both start with a
+  `Net.IsClient()` check: there is no menu on a dedicated server.
 
 ### 1. `SingleplayerGameStarter`
 
-Одиночная игра. **Сеть не создаётся вообще** — `AddNetwork()` не вызывается, `Network` в дереве нет.
-Процесс сам себе авторитет, `Net.IsServer()` возвращает `true`.
+A single-player game. **The network is not created at all** — `AddNetwork()` is not called, there is
+no `Network` in the tree. The process is its own authority, `Net.IsServer()` returns `true`.
 
-1. Экран загрузки `Loading`.
+1. The `Loading` loading screen.
 2. `AddWorld()`, `AddHud()`.
-3. `resume-game.json` — режим «одиночная игра» + подписка на успешное сохранение.
-4. `ServerStartWorld(...)`, где админский UID — `GameSettings.PlayerUid`: игрок админ в собственной игре.
-5. `ClientStartWorld(...)` — тот же хендшейк, что и в сетевой игре, просто локальный.
+3. `resume-game.json` — the "single-player game" mode + a subscription to a successful save.
+4. `ServerStartWorld(...)`, where the admin UID is `GameSettings.PlayerUid`: the player is an admin in
+   their own game.
+5. `ClientStartWorld(...)` — the same handshake as in a networked game, just local.
 
 ### 2. `HostMultiplayerGameStarter`
 
-Поднимает ENet-сервер **в этом же процессе**. Используется в двух совершенно разных случаях: хост
-«изнутри клиента» (`HostMultiplayerGameAsClient`) и выделенный сервер
-(`HostMultiplayerGameAsDedicatedServer`). Различия задаются флагами конструктора, а не отдельным
-классом.
+Brings up an ENet server **in this same process**. It is used in two completely different cases:
+hosting "from inside the client" (`HostMultiplayerGameAsClient`) and a dedicated server
+(`HostMultiplayerGameAsDedicatedServer`). The differences are set by constructor flags rather than by
+a separate class.
 
-Параметры конструктора: `saveFileName`, `port`, `adminUid`, `parentPid`, `serverHudRender`,
+Constructor parameters: `saveFileName`, `port`, `adminUid`, `parentPid`, `serverHudRender`,
 `worldRender`, `mustSetLastGame`, `startedAsDedicated`.
 
-1. Экран загрузки `Loading`.
-2. Если передан `parentPid` — на `Game` вешается `ProcessDeadChecker` (нода из KludgeBox), который
-   следит за родительским процессом и вызывает `MainScene.Shutdown()`, когда тот умирает. Так
-   дочерний сервер не остаётся висеть после закрытия клиента (см. [Завершение работы](Shutdown.md)).
-3. `AddNetwork()`, `AddWorld()`, `Net.DoClient(() => AddHud())` — HUD только там, где есть игрок.
-4. `serverHudRender` → `AddServerHud()`; `worldRender == false` → `world.SetVisible(false)`. Это и
-   есть флаги `--no-hud` и `--world-render`: выделенный сервер по умолчанию рисует консоль, а не мир.
-5. `mustSetLastGame` → запись в `resume-game.json`. У сервера, запущенного из консоли, её нет —
-   писать «продолжить» некому.
-6. `network.HostServer(port ?? 25566, true)`. Ошибка (например, занятый порт) → на клиенте уход в
-   меню с текстом, дальше стартер не идёт.
+1. The `Loading` loading screen.
+2. If `parentPid` is passed — a `ProcessDeadChecker` (a node from KludgeBox) is attached to `Game`; it
+   watches the parent process and calls `MainScene.Shutdown()` when the parent dies. This is how a
+   child server avoids being left hanging after the client is closed (see [Shutdown](Shutdown.md)).
+3. `AddNetwork()`, `AddWorld()`, `Net.DoClient(() => AddHud())` — the HUD only where there is a player.
+4. `serverHudRender` → `AddServerHud()`; `worldRender == false` → `world.SetVisible(false)`. These are
+   exactly the `--no-hud` and `--world-render` flags: by default a dedicated server draws the console,
+   not the world.
+5. `mustSetLastGame` → a write into `resume-game.json`. A server started from the console has none —
+   there is nobody to write a "continue" for.
+6. `network.HostServer(port ?? 25566, true)`. An error (for example, a busy port) → on the client, a
+   return to the menu with the text; the starter goes no further.
 7. `ServerStartWorld(...)` → `network.OpenServer()` → `Net.DoClient(() => ClientStartWorld(...))`.
 
 > [!IMPORTANT]
-> Порядок шага 7 обязателен: сервер открывается для входящих подключений **только после** того, как
-> мир поднят. Иначе клиент успеет постучаться в ещё не существующий мир.
+> The order of step 7 is mandatory: the server is opened for incoming connections **only after** the
+> world is up. Otherwise a client will manage to knock on a world that does not exist yet.
 
 ### 3. `ConnectToMultiplayerGameStarter`
 
-Подключение к чужому серверу. Единственный режим, в котором `Net.IsServer()` возвращает `false`.
+Connecting to someone else's server. The only mode in which `Net.IsServer()` returns `false`.
 
-Параметры: `host`, `port`, `mustSetLastGame`.
+Parameters: `host`, `port`, `mustSetLastGame`.
 
-1. Экран загрузки `Connecting` — с кнопкой отмены, по которой вызывается `GoToMenu()`.
-2. `AddNetwork()`, `AddWorld()`, `AddHud()`. Мир создаётся сразу, но **пустым**: его наполнит снимок
-   от сервера.
-3. Подписки на события `MultiplayerApi`:
+1. The `Connecting` loading screen — with a cancel button that calls `GoToMenu()`.
+2. `AddNetwork()`, `AddWorld()`, `AddHud()`. The world is created right away, but **empty**: the
+   snapshot from the server will fill it.
+3. Subscriptions to `MultiplayerApi` events:
    * `ConnectedToServer` → `ClientStartWorld(...)`;
-   * `ConnectionFailed` → в меню с «Connection to the server failed» (сервер не ответил за таймаут);
-   * `ServerDisconnected` → в меню с «Server disconnected» (может прилететь и через часы игры).
-4. `mustSetLastGame` → запись «подключение к серверу» в `resume-game.json`.
-5. `network.ConnectToServer(host ?? 127.0.0.1, port ?? 25566)`. Синхронная ошибка обрабатывается тем
-   же `ConnectionFailedEvent`.
+   * `ConnectionFailed` → to the menu with "Connection to the server failed" (the server did not
+     answer within the timeout);
+   * `ServerDisconnected` → to the menu with "Server disconnected" (this can arrive even hours into
+     the game).
+4. `mustSetLastGame` → a "connection to a server" write into `resume-game.json`.
+5. `network.ConnectToServer(host ?? 127.0.0.1, port ?? 25566)`. A synchronous error is handled by the
+   very same `ConnectionFailedEvent`.
 
 > [!IMPORTANT]
-> `ClientStartWorld` вызывается **по событию**, а не сразу: на момент `Init()` соединения ещё нет.
-> Обработчик `ConnectedToServer` написан локальной функцией и отписывается от события первым же
-> срабатыванием — иначе течёт `SynchronizerService` при возврате в меню
-> (см. [Соглашения по написанию кода](../Code-style.md)).
+> `ClientStartWorld` is called **on an event**, not immediately: at the time of `Init()` there is no
+> connection yet. The `ConnectedToServer` handler is written as a local function and unsubscribes from
+> the event on the very first firing — otherwise `SynchronizerService` leaks on the return to the menu
+> (see [Code style conventions](../Code-style.md)).
 
 ### 4. `HostDedicatedServerAndConnectGameStarter`
 
-Хост с вынесенным сервером: поднимает **второй процесс ОС** и подключается к нему как обычный клиент.
-Наследник `ConnectToMultiplayerGameStarter(Localhost, port, mustSetLastGame: false)`.
+Hosting with an out-of-process server: brings up a **second OS process** and connects to it as an
+ordinary client. A descendant of `ConnectToMultiplayerGameStarter(Localhost, port,
+mustSetLastGame: false)`.
 
-1. `Services.Process.StartNewDedicatedServerApplication(...)` запускает новый процесс с `--server`,
-   передавая ему `--port`, `--savefile`, `--admin` и **`--parent-pid` с PID текущего процесса**.
-   `--headless` ставится, когда окно сервера не запрошено; дублирование логов в консоль Godot
-   выделенному серверу не передаётся никогда.
-2. На `Game` вешается `ProcessShutdowner` (нода из KludgeBox) с PID сервера: при уничтожении `Game`
-   дочерний процесс будет убит.
-3. `base.Init(game)` — дальше это обычное подключение к `127.0.0.1`.
-4. Запись в `resume-game.json` — вручную, **после** `base.Init`, как «свой сервер». Именно поэтому в
-   конструктор базы передан `mustSetLastGame: false`: иначе база записала бы режим «подключение к
-   чужому серверу», и кнопка «Продолжить» перестала бы поднимать сервер.
+1. `Services.Process.StartNewDedicatedServerApplication(...)` launches a new process with `--server`,
+   passing it `--port`, `--savefile`, `--admin` and **`--parent-pid` with the PID of the current
+   process**. `--headless` is set when the server window is not requested; log mirroring into the
+   Godot console is never passed to the dedicated server.
+2. A `ProcessShutdowner` (a node from KludgeBox) with the server's PID is attached to `Game`: when
+   `Game` is destroyed, the child process will be killed.
+3. `base.Init(game)` — from here on this is an ordinary connection to `127.0.0.1`.
+4. The write into `resume-game.json` is done manually, **after** `base.Init`, as "own server". This is
+   exactly why `mustSetLastGame: false` was passed to the base constructor: otherwise the base would
+   have recorded the "connecting to someone else's server" mode, and the "Continue" button would stop
+   bringing up a server.
 
-Живучесть пары процессов держится на двух нодах сразу: `ProcessShutdowner` убивает сервер при
-нормальном закрытии клиента, `ProcessDeadChecker` на стороне сервера — страховка на случай, когда
-клиент умер аварийно и убить никого не успел.
+The survivability of the process pair rests on two nodes at once: `ProcessShutdowner` kills the server
+on a normal client shutdown, and `ProcessDeadChecker` on the server side is the safety net for the
+case where the client died abnormally and had no time to kill anyone.

@@ -1,47 +1,48 @@
-# Параметры командной строки
+# Command-line arguments
 
-[← README проекта](../README.md)
+[← Project README](../README.md)
 
-Аргументы описаны в `Scripts/Content/CmdArgs/` и разбираются **только** в `RootStarter`-ах, дальше
-передаются как обычные параметры (см. [Поток запуска](Arch/Startup-flow.md)).
-Читать `OS.GetCmdlineArgs()` из глубины кода нельзя.
+The arguments are described in `Scripts/Content/CmdArgs/` and are parsed **only** in the
+`RootStarter`s, and from there passed on as ordinary parameters (see
+[Startup flow](Arch/Startup-flow.md)).
+Reading `OS.GetCmdlineArgs()` from deep inside the code is not allowed.
 
-Первым идёт стандартный аргумент Godot `--path "./"` — он указывает на папку проекта и к аргументам
-игры отношения не имеет.
+The first one is Godot's standard `--path "./"` argument — it points at the project folder and has
+nothing to do with the game's arguments.
 
-**Общие** (`CommonArgs`):
+**Common** (`CommonArgs`):
 
-| Флаг | Описание |
+| Flag | Description |
 |---|---|
-| `--godot-log-push` | Дублировать логи Serilog в консоль Godot |
+| `--godot-log-push` | Mirror the Serilog logs into the Godot console |
 
-**Клиент** (`ClientArgs`):
+**Client** (`ClientArgs`):
 
-| Флаг | Описание |
+| Flag | Description |
 |---|---|
-| `--auto-start` | Сразу начать одиночную игру, минуя меню (если не передан `--auto-start-savefile`, то с новым файлом сохранения) |
-| `--auto-start-savefile <name>` | Имя файла сохранения для `--auto-start`; если файла нет — создаётся новая игра |
-| `--auto-connect` | Сразу подключиться к серверу, минуя меню (адрес и порт задаются другими флагами) |
-| `--auto-connect-ip <ip>` | Адрес сервера для автоподключения (если флаг не передан, то `127.0.0.1`) |
-| `--auto-connect-port <port>` | Порт для автоподключения (если флаг не передан, то `25566`) |
-| `--nick <nick>` | Временно (без записи в настройки) переопределить ник |
-| `--uid <uid>` | Временно (без записи в настройки) переопределить UID игрока |
+| `--auto-start` | Immediately start a single-player game, skipping the menu (if `--auto-start-savefile` is not passed, then with a new save file) |
+| `--auto-start-savefile <name>` | The save file name for `--auto-start`; if the file does not exist, a new game is created |
+| `--auto-connect` | Immediately connect to a server, skipping the menu (the address and port are set by other flags) |
+| `--auto-connect-ip <ip>` | The server address for auto-connection (if the flag is not passed, then `127.0.0.1`) |
+| `--auto-connect-port <port>` | The port for auto-connection (if the flag is not passed, then `25566`) |
+| `--nick <nick>` | Temporarily (without writing to the settings) override the nickname |
+| `--uid <uid>` | Temporarily (without writing to the settings) override the player UID |
 
-`--auto-start` и `--auto-connect` взаимоисключающие: если переданы оба, выигрывает `--auto-start`.
+`--auto-start` and `--auto-connect` are mutually exclusive: if both are passed, `--auto-start` wins.
 
-**Выделенный сервер** (`DedicatedServerArgs`):
+**Dedicated server** (`DedicatedServerArgs`):
 
-| Флаг | Описание |
+| Flag | Description |
 |---|---|
-| `--server` | Запустить процесс как выделенный сервер (выбор `DedicatedServerRootStarter`) |
-| `--headless` | Запуск без окна |
-| `--port <port>` | Порт, который слушает сервер (если флаг не передан, то `25566`) |
-| `--savefile <name>` | Имя файла сохранения; если файла нет — создаётся новая игра |
-| `--admin <uid>` | UID игрока, который получит права администратора |
-| `--parent-pid <pid>` | PID родительского процесса; сервер завершится, когда родитель умрёт |
-| `--no-hud` | Не отрисовывать `ServerHud` |
-| `--world-render` | Отрисовывать игровой мир (по умолчанию мир скрыт, видна только консоль сервера) |
+| `--server` | Run the process as a dedicated server (selects `DedicatedServerRootStarter`) |
+| `--headless` | Run without a window |
+| `--port <port>` | The port the server listens on (if the flag is not passed, then `25566`) |
+| `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
+| `--admin <uid>` | The UID of the player who will be granted administrator rights |
+| `--parent-pid <pid>` | The parent process PID; the server will shut down when the parent dies |
+| `--no-hud` | Do not render the `ServerHud` |
+| `--world-render` | Render the game world (by default the world is hidden and only the server console is visible) |
 
-Серверные флаги собираются обратно в командную строку методом
-`DedicatedServerArgs.GetArrayToStartDedicatedServer()` — именно им клиент запускает вынесенный сервер
-и передаёт ему `--parent-pid` со своим PID.
+The server flags are assembled back into a command line by the
+`DedicatedServerArgs.GetArrayToStartDedicatedServer()` method — this is exactly what the client uses
+to launch an out-of-process server, passing it `--parent-pid` with its own PID.

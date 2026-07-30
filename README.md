@@ -1,88 +1,89 @@
 # Neon Warfare
 
-Neon Warfare — кооперативный top-down буллет-хелл на Godot и C#, где каждая сессия короткая, но
-требует реальной слаженности между игроками: враги в бою каждый раз разные, и тактику нужно
-подбирать на ходу. Игра — инди-проект с бесплатной версией, запускается на Windows/Linux/macOS.
+Neon Warfare is a co-op top-down bullet hell built on Godot and C#, where every session is short but
+demands real coordination between players: the enemies in a fight are different every time, and the
+tactics have to be worked out on the fly. The game is an indie project with a free version, and runs
+on Windows/Linux/macOS.
 
 ---
 
-## Документация
+## Documentation
 
-Перед нетривиальной задачей нужный файл читается **целиком**.  
-Ключевые сущности в строках таблиц указаны намеренно,
-чтобы файл находился поиском по имени класса или атрибута.
+Before a non-trivial task, the file you need is read **in full**.  
+Key entities are named in the table rows deliberately,
+so that a file can be found by searching for a class or attribute name.
 
-### Фундамент — читать при любой задаче
+### Foundation — read for any task
 
-| Документ | Что внутри |
+| Document | What is inside |
 |---|---|
-| [Дерево сцен](Docs/Arch/Scene-tree.md) | Иерархия «контейнер → содержимое», `NodeContainer`, правило «вызовы вниз, события вверх», именование нод |
-| [Внедрение зависимостей](Docs/Arch/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Parent]`, `[SceneService]`, `[Logger]` |
-| [Соглашения по написанию кода](Docs/Code-style.md) | Пространства имён, пары RPC, сериализация, логирование, `double`/`float`, `.editorconfig` |
+| [Scene tree](Docs/Arch/Scene-tree.md) | The "container → contents" hierarchy, `NodeContainer`, the "calls go down, events go up" rule, node naming |
+| [Dependency injection](Docs/Arch/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Parent]`, `[SceneService]`, `[Logger]` |
+| [Code style conventions](Docs/Code-style.md) | Namespaces, RPC pairs, serialization, logging, `double`/`float`, `.editorconfig` |
 
-### Устройство по областям — читать, когда задача трогает эту область
+### Area-by-area design — read when the task touches that area
 
-| Документ | Читать, когда трогаешь |
+| Document | Read when you touch |
 |---|---|
-| [Сеть](Docs/Arch/Networking.md) | RPC, спавн, синхронизацию, рукопожатие клиента, `Net.IsServer()` / `IsClient()`, `DoServerClient` |
-| [Данные и сохранения](Docs/Arch/Data-and-saves.md) | `Persistence` / `Temporary`, формат сейвов, MessagePack, пути на Windows и Linux |
-| [Сервисы](Docs/Arch/Services.md) | Глобальные сервисы и сервисы мира, `Services.*` |
-| [Поток запуска](Docs/Arch/Startup-flow.md) | `RootStarter`, `GameStarter`, четыре режима игровой сессии |
-| [Завершение работы](Docs/Arch/Shutdown.md) | Автосохранение при выходе, убийство дочерних процессов |
-| [Сущности](Docs/Arch/Entities.md) | `Character` и его подсистемы: контроллеры, характеристики, статус-эффекты |
-| [Интерфейс](Docs/Arch/Ui.md) | Стек страниц меню, генерация экрана настроек, HUD, экран загрузки |
-| [Чат и команды](Docs/Arch/Chat-and-commands.md) | Чат, перехватчики `IChatMessageInterceptor`, чат-команды `ICommandProcessor` |
-| [Локализация](Docs/Localization.md) | Текст, видимый игроку: `Tr(KEY)`, `Assets/Locales/*.po`, `messages.pot`, выбор локали |
+| [Networking](Docs/Arch/Networking.md) | RPC, spawning, synchronization, the client handshake, `Net.IsServer()` / `IsClient()`, `DoServerClient` |
+| [Data and saves](Docs/Arch/Data-and-saves.md) | `Persistence` / `Temporary`, the save format, MessagePack, paths on Windows and Linux |
+| [Services](Docs/Arch/Services.md) | Global services and world services, `Services.*` |
+| [Startup flow](Docs/Arch/Startup-flow.md) | `RootStarter`, `GameStarter`, the four game session modes |
+| [Shutdown](Docs/Arch/Shutdown.md) | Autosave on exit, killing child processes |
+| [Entities](Docs/Arch/Entities.md) | `Character` and its subsystems: controllers, stats, status effects |
+| [UI](Docs/Arch/Ui.md) | The menu page stack, settings screen generation, HUD, loading screen |
+| [Chat and commands](Docs/Arch/Chat-and-commands.md) | Chat, `IChatMessageInterceptor` interceptors, `ICommandProcessor` chat commands |
+| [Localization](Docs/Localization.md) | Player-visible text: `Tr(KEY)`, `Assets/Locales/*.po`, `messages.pot`, locale selection |
 
-### Справочники и окружение — смотреть по мере надобности
+### References and environment — consult as needed
 
-| Документ | Что внутри |
+| Document | What is inside |
 |---|---|
-| [Параметры командной строки](Docs/Cli-args.md) | Все флаги, `Scripts/Content/CmdArgs/` |
-| [Структура репозитория](Docs/Repository-structure.md) | Что лежит в каждой папке |
-| [Стек и зависимости](Docs/Stack.md) | Версии Godot и .NET, библиотеки, где искать исходники KludgeBox |
-| [Быстрый старт](Docs/Quick-start.md) | Настройка окружения, профили запуска Rider |
-| [Тестирование](Docs/Testing.md) | Подход к тестам, `dotnet test`, что уже покрыто |
+| [Command-line arguments](Docs/Cli-args.md) | All flags, `Scripts/Content/CmdArgs/` |
+| [Repository structure](Docs/Repository-structure.md) | What lives in each folder |
+| [Stack and dependencies](Docs/Stack.md) | Godot and .NET versions, libraries, where to look for the KludgeBox sources |
+| [Quick start](Docs/Quick-start.md) | Environment setup, Rider run profiles |
+| [Testing](Docs/Testing.md) | The approach to tests, `dotnet test`, what is already covered |
 
 ---
 
-## Что читать под задачу
+## What to read for a task
 
-| Задача | Что читать |
+| Task | What to read |
 |---|---|
-| Добавить или изменить RPC | [Сеть](Docs/Arch/Networking.md) → [Соглашения](Docs/Code-style.md#rpc) |
-| Добавить поле, попадающее в сохранение | [Данные и сохранения](Docs/Arch/Data-and-saves.md) → [Сеть](Docs/Arch/Networking.md) (первичный снимок мира) |
-| Добавить сервис мира | [Сервисы](Docs/Arch/Services.md) → [Дерево сцен](Docs/Arch/Scene-tree.md) (именование нод без префикса `World`) → [DI](Docs/Arch/Dependency-injection.md) |
-| Добавить режим игровой сессии | [Поток запуска](Docs/Arch/Startup-flow.md) → [Сеть](Docs/Arch/Networking.md) (роли процесса) |
-| Добавить флаг командной строки | [Параметры командной строки](Docs/Cli-args.md) → [Поток запуска](Docs/Arch/Startup-flow.md) |
-| Добавить чат-команду | [Чат и команды](Docs/Arch/Chat-and-commands.md) |
-| Добавить страницу меню или настройку | [Интерфейс](Docs/Arch/Ui.md) → [Локализация](Docs/Localization.md) |
-| Добавить стат, статус-эффект, подсистему персонажа | [Сущности](Docs/Arch/Entities.md) → [Сеть](Docs/Arch/Networking.md) |
-| Добавить видимый игроку текст | [Локализация](Docs/Localization.md) |
-| `[Child]` / `[SceneService]` пришли `null` | [DI](Docs/Arch/Dependency-injection.md) → [Дерево сцен](Docs/Arch/Scene-tree.md) |
-| Код ведёт себя по-разному в одиночке и в сети | [Сеть](Docs/Arch/Networking.md) (`IsServer` / `IsClient`) → [Поток запуска](Docs/Arch/Startup-flow.md) |
-| Не находится объявление типа (`NodeContainer`, `[Sync]`, `StatModifiersContainer<T>`) | [Стек](Docs/Stack.md) — исходников KludgeBox в репозитории нет, путь к ним в ENV `KLUDGEBOX_SRC` |
-| Поднять сервер и клиента для проверки | [Быстрый старт](Docs/Quick-start.md) → [Параметры командной строки](Docs/Cli-args.md) |
-| Добавить тест или понять, что вообще тестируется | [Тестирование](Docs/Testing.md) |
+| Add or change an RPC | [Networking](Docs/Arch/Networking.md) → [Conventions](Docs/Code-style.md#rpc) |
+| Add a field that goes into the save | [Data and saves](Docs/Arch/Data-and-saves.md) → [Networking](Docs/Arch/Networking.md) (the initial world snapshot) |
+| Add a world service | [Services](Docs/Arch/Services.md) → [Scene tree](Docs/Arch/Scene-tree.md) (node naming without the `World` prefix) → [DI](Docs/Arch/Dependency-injection.md) |
+| Add a game session mode | [Startup flow](Docs/Arch/Startup-flow.md) → [Networking](Docs/Arch/Networking.md) (process roles) |
+| Add a command-line flag | [Command-line arguments](Docs/Cli-args.md) → [Startup flow](Docs/Arch/Startup-flow.md) |
+| Add a chat command | [Chat and commands](Docs/Arch/Chat-and-commands.md) |
+| Add a menu page or a setting | [UI](Docs/Arch/Ui.md) → [Localization](Docs/Localization.md) |
+| Add a stat, a status effect, a character subsystem | [Entities](Docs/Arch/Entities.md) → [Networking](Docs/Arch/Networking.md) |
+| Add player-visible text | [Localization](Docs/Localization.md) |
+| `[Child]` / `[SceneService]` came out `null` | [DI](Docs/Arch/Dependency-injection.md) → [Scene tree](Docs/Arch/Scene-tree.md) |
+| The code behaves differently in single-player and over the network | [Networking](Docs/Arch/Networking.md) (`IsServer` / `IsClient`) → [Startup flow](Docs/Arch/Startup-flow.md) |
+| A type declaration cannot be found (`NodeContainer`, `[Sync]`, `StatModifiersContainer<T>`) | [Stack](Docs/Stack.md) — the KludgeBox sources are not in the repository, the path to them is in the `KLUDGEBOX_SRC` ENV variable |
+| Bring up a server and a client to check something | [Quick start](Docs/Quick-start.md) → [Command-line arguments](Docs/Cli-args.md) |
+| Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) |
 
 ---
 
-## Точки входа в код
+## Code entry points
 
-| Путь | Что это |
+| Path | What it is |
 |---|---|
-| [Scenes/Root/Root.cs](Scenes/Root/Root.cs) | Точка входа процесса, живёт всю сессию приложения |
-| [Scenes/Game/Game.cs](Scenes/Game/Game.cs) | Одна игровая сессия: `Network`, `World`, `Hud` / `ServerHud`; создаётся заново на каждый вход в игру |
-| [Scenes/Game/Starters/](Scenes/Game/Starters/) | Четыре стартера игровой сессии |
-| [Scenes/World/World.cs](Scenes/World/World.cs) | Корень мира, `IServiceProvider`, реестр сервисов мира |
-| [Scenes/World/Service/](Scenes/World/Service/) | Сервисы мира |
-| [Scenes/World/Data/PersistenceData/WorldPersistenceData.cs](Scenes/World/Data/PersistenceData/WorldPersistenceData.cs) | Данные, попадающие в сохранение: `GeneralDataStorage`, `PlayerDataStorage` |
-| [Scenes/World/Data/TemporaryData/WorldTemporaryData.cs](Scenes/World/Data/TemporaryData/WorldTemporaryData.cs) | Данные текущей сессии, в сохранение не идут, синхронизируются через `[Sync]` |
-| [Scenes/World/Tree/WorldTree.cs](Scenes/World/Tree/WorldTree.cs) | Игровое дерево, переключение локаций: `SetSafeSurface()` / `SetBattleSurface()` |
-| [Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs](Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs) | Мирный хаб — первая из двух главных локаций |
-| [Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs](Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs) | Боевая зона — вторая из двух главных локаций |
-| [Scenes/Entity/Characters/Character.cs](Scenes/Entity/Characters/Character.cs) | Персонаж (`RigidBody2D`) и все его подсистемы |
-| [Scripts/Services.cs](Scripts/Services.cs) | Реестр глобальных сервисов |
-| [Scripts/Consts.cs](Scripts/Consts.cs) | Глобальные константы, `Consts.TransferChannel` |
+| [Scenes/Root/Root.cs](Scenes/Root/Root.cs) | The process entry point, lives for the whole application session |
+| [Scenes/Game/Game.cs](Scenes/Game/Game.cs) | A single game session: `Network`, `World`, `Hud` / `ServerHud`; created anew on every entry into the game |
+| [Scenes/Game/Starters/](Scenes/Game/Starters/) | The four game session starters |
+| [Scenes/World/World.cs](Scenes/World/World.cs) | The world root, `IServiceProvider`, the world service registry |
+| [Scenes/World/Service/](Scenes/World/Service/) | World services |
+| [Scenes/World/Data/PersistenceData/WorldPersistenceData.cs](Scenes/World/Data/PersistenceData/WorldPersistenceData.cs) | Data that goes into the save: `GeneralDataStorage`, `PlayerDataStorage` |
+| [Scenes/World/Data/TemporaryData/WorldTemporaryData.cs](Scenes/World/Data/TemporaryData/WorldTemporaryData.cs) | Data of the current session, does not go into the save, synchronized via `[Sync]` |
+| [Scenes/World/Tree/WorldTree.cs](Scenes/World/Tree/WorldTree.cs) | The game tree, switching locations: `SetSafeSurface()` / `SetBattleSurface()` |
+| [Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs](Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs) | The peaceful hub — the first of the two main locations |
+| [Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs](Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs) | The battle zone — the second of the two main locations |
+| [Scenes/Entity/Characters/Character.cs](Scenes/Entity/Characters/Character.cs) | The character (`RigidBody2D`) and all of its subsystems |
+| [Scripts/Services.cs](Scripts/Services.cs) | The global service registry |
+| [Scripts/Consts.cs](Scripts/Consts.cs) | Global constants, `Consts.TransferChannel` |
 | [Scripts/Content/CmdArgs/](Scripts/Content/CmdArgs/) | `CommonArgs`, `ClientArgs`, `DedicatedServerArgs` |
-| [Properties/launchSettings.json](Properties/launchSettings.json), [.run/](.run/) | Профили запуска Rider и Multi-Launch |
+| [Properties/launchSettings.json](Properties/launchSettings.json), [.run/](.run/) | Rider and Multi-Launch run profiles |

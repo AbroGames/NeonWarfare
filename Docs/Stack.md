@@ -1,43 +1,43 @@
-# Стек и зависимости
+# Stack and dependencies
 
-[← README проекта](../README.md)
+[← Project README](../README.md)
 
-* **Godot:** последняя версия, рендер `Forward+`.
-* **.NET:** последняя версия.
+* **Godot:** the latest version, `Forward+` renderer.
+* **.NET:** the latest version.
 
-Пакеты игрового проекта (`NeonWarfare.csproj`):
+Packages of the game project (`NeonWarfare.csproj`):
 
-| Пакет | Зачем |
+| Package | What for |
 |---|---|
-| `KludgeBox` | Внутренняя библиотека с общим переиспользуемым кодом: DI, логирование, утилитные ноды Godot, утилитные классы |
-| `CommunityToolkit.Mvvm` | Аннотация `[ObservableProperty]` для моделей данных |
-| `MessagePack` | Бинарная сериализация состояния мира для сохранений и для передачи по сети |
+| `KludgeBox` | An in-house library with shared reusable code: DI, logging, utility Godot nodes, utility classes |
+| `CommunityToolkit.Mvvm` | The `[ObservableProperty]` annotation for data models |
+| `MessagePack` | Binary serialization of the world state for saves and for transfer over the network |
 
-Пакеты тестового проекта (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`), подробнее — в
-[Тестировании](Testing.md):
+Packages of the test project (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`), more detail — in
+[Testing](Testing.md):
 
-| Пакет | Зачем |
+| Package | What for |
 |---|---|
-| `xunit.v3` | Фреймворк тестов: `[Fact]`, `[Theory]`, `Assert` |
-| `xunit.runner.visualstudio` | Адаптер VSTest — без него `dotnet test` и Rider не находят тесты |
-| `Microsoft.NET.Test.Sdk` | Хост VSTest, включает таргет `dotnet test` |
+| `xunit.v3` | The test framework: `[Fact]`, `[Theory]`, `Assert` |
+| `xunit.runner.visualstudio` | The VSTest adapter — without it `dotnet test` and Rider do not find the tests |
+| `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
 
-**Про KludgeBox.** Исходников библиотеки в этом репозитории нет — она подключается NuGet-пакетом,
-поэтому поиск по репозиторию не найдёт объявлений её типов (`NodeContainer`,
+**About KludgeBox.** The library's sources are not in this repository — it is referenced as a NuGet
+package, so searching the repository will not find declarations of its types (`NodeContainer`,
 `AbstractMultiplayerSpawner`, `ProcessShutdowner`, `ProcessDeadChecker`,
-`StatModifiersContainer<T>`, атрибут `[Sync]` и т.д.). Путь к исходному коду библиотеки сохранён в ENV
-в `KLUDGEBOX_SRC` — читать их нужно там.
+`StatModifiersContainer<T>`, the `[Sync]` attribute and so on). The path to the library's source code
+is stored in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
 
-Через KludgeBox приходят транзитивно и используются напрямую в коде:
+Coming in transitively through KludgeBox and used directly in the code:
 
-* **Serilog** — логирование (`[Logger] private ILogger _log`);
-* **Humanizer** — подстановка в шаблоны строк (`FormatWith(...)`).
+* **Serilog** — logging (`[Logger] private ILogger _log`);
+* **Humanizer** — substitution into string templates (`FormatWith(...)`).
 
-Из сборки подавлено предупреждение `CS0649` (`NoWarn` в `.csproj`): поля заполняет DI, а не
-конструктор, и компилятор считает их неиспользуемыми.
+The `CS0649` warning is suppressed for the build (`NoWarn` in `.csproj`): the fields are filled by DI
+rather than by a constructor, and the compiler considers them unused.
 
-В `NeonWarfare.csproj` есть `<Compile Remove="Tests/**" />`: каталог игрового проекта — это корень
-репозитория, поэтому дефолтный глоб `Godot.NET.Sdk` (`**/*.cs`) иначе затянул бы файлы тестов в
-игровую сборку, и та упала бы на типах xUnit. Тестовый проект собирается сам по себе; в
-`ExportDebug` и `ExportRelease` он из сборки solution исключён, чтобы редактор Godot и экспорт игры
-его не трогали.
+`NeonWarfare.csproj` contains `<Compile Remove="Tests/**" />`: the game project's directory is the
+repository root, so otherwise the default `Godot.NET.Sdk` glob (`**/*.cs`) would pull the test files
+into the game assembly, and it would fail on the xUnit types. The test project builds on its own; in
+`ExportDebug` and `ExportRelease` it is excluded from the solution build so that the Godot editor and
+the game export do not touch it.

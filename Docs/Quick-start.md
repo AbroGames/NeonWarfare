@@ -1,38 +1,38 @@
-# Быстрый старт
+# Quick start
 
-[← README проекта](../README.md)
+[← Project README](../README.md)
 
-## Окружение
+## Environment
 
-* Рекомендуется устанавливать и обновлять Godot через
-  [GodotUpdaterUI](https://github.com/AbroGames/GodotUpdaterUI/releases): это автоматически настроит
-  все ENV-переменные, которые используются в проекте в `launchSettings.json` — в первую очередь
-  `GODOT_EXE` (путь к исполняемому файлу Godot).
-* Чтобы в Godot настроить интеграцию с Rider, необходимо зайти в Editor → Editor Settings → Dotnet →
-  Editor. В списке External Editor выбрать JetBrains Rider и очистить значение Custom Exec Path Args.
+* It is recommended to install and update Godot through
+  [GodotUpdaterUI](https://github.com/AbroGames/GodotUpdaterUI/releases): this automatically sets up
+  all the ENV variables used by the project in `launchSettings.json` — first of all `GODOT_EXE` (the
+  path to the Godot executable).
+* To set up the Rider integration in Godot, go to Editor → Editor Settings → Dotnet → Editor. In the
+  External Editor list select JetBrains Rider and clear the Custom Exec Path Args value.
 
-## Профили запуска
+## Run profiles
 
-Для быстрого тестирования в `Properties/launchSettings.json` уже заведены конфигурации запуска. Rider
-подхватывает их автоматически.
+For quick testing, run configurations are already set up in `Properties/launchSettings.json`. Rider
+picks them up automatically.
 
-| Профиль | Аргументы | Что делает |
+| Profile | Arguments | What it does |
 |---|---|---|
-| `Client` | — | Обычный запуск клиента с главным меню |
-| `Auto-start (new game)` | `--auto-start` | Сразу одиночная игра с новым файлом сохранения, минуя меню |
-| `Auto-start (saved game)` | `--auto-start --auto-start-savefile test` | То же, но с сохранением `test`: первый запуск создаёт его, последующие — загружают |
-| `Server` | `--server --world-render` | Выделенный сервер с отрисовкой мира |
-| `Autoconnect (1)` | `--auto-connect --uid TestPlayer1 --nick TestPlayer1` | Клиент с автоподключением |
-| `Autoconnect (2)` | `--auto-connect --uid TestPlayer2 --nick TestPlayer2` | Второй клиент с автоподключением |
+| `Client` | — | A normal client launch with the main menu |
+| `Auto-start (new game)` | `--auto-start` | Straight into a single-player game with a new save file, skipping the menu |
+| `Auto-start (saved game)` | `--auto-start --auto-start-savefile test` | The same, but with the `test` save: the first run creates it, later ones load it |
+| `Server` | `--server --world-render` | A dedicated server with world rendering |
+| `Autoconnect (1)` | `--auto-connect --uid TestPlayer1 --nick TestPlayer1` | A client with auto-connection |
+| `Autoconnect (2)` | `--auto-connect --uid TestPlayer2 --nick TestPlayer2` | A second client with auto-connection |
 
-Все флаги описаны в [Параметрах командной строки](Cli-args.md).
+All the flags are described in [Command-line arguments](Cli-args.md).
 
-## Multi-Launch: сервер и клиенты одной кнопкой
+## Multi-Launch: server and clients with one button
 
-Чтобы одновременно поднять сервер и одного или двух клиентов, в репозиторий добавлены
-`Multi-Launch`-конфигурации Rider — файлы `.run/*.run.xml`:
+To bring up a server and one or two clients at the same time, Rider `Multi-Launch` configurations
+have been added to the repository — the `.run/*.run.xml` files:
 
-* Тип: `Multi-Launch`. Название: `Fast-test (1 client)`. Tasks: `Server, Autoconnect (1)`.
-* Тип: `Multi-Launch`. Название: `Fast-test (2 clients)`. Tasks: `Server, Autoconnect (1), Autoconnect (2)`.
+* Type: `Multi-Launch`. Name: `Fast-test (1 client)`. Tasks: `Server, Autoconnect (1)`.
+* Type: `Multi-Launch`. Name: `Fast-test (2 clients)`. Tasks: `Server, Autoconnect (1), Autoconnect (2)`.
 
-При правке `Properties/launchSettings.json` или `.run/` нужно синхронно править этот раздел.
+When editing `Properties/launchSettings.json` or `.run/`, this section must be edited in sync.

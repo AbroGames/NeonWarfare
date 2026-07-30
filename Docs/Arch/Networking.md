@@ -1,33 +1,33 @@
-# Сеть
+# Networking
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-Используется **штатный высокоуровневый мультиплеер Godot** (`SceneMultiplayer` + `ENetMultiplayerPeer`).
+The **stock Godot high-level multiplayer** is used (`SceneMultiplayer` + `ENetMultiplayerPeer`).
 
-## Основные узлы
+## Main nodes
 
-* **`Network`** ([Scenes/Game/Network/Network.cs](../../Scenes/Game/Network/Network.cs)) — обёртка над
-  `MultiplayerApi`. Создаёт новый `SceneMultiplayer`, привязанный к ноде `Game`, чтобы при выходе в
-  меню гарантированно отвалились все старые подписки. Отвечает за `ConnectToServer()`,
-  `HostServer()`, `OpenServer()` и корректный `Shutdown()`.
-* **`NetworkStateMachine`** — состояния `NotInitialized → Connecting/Hosting → Connected/Hosted →
-  Disconnected` и производные флаги (`IsClient`, `IsServer`, `IsActiveGameState`).
+* **`Network`** ([Scenes/Game/Network/Network.cs](../../Scenes/Game/Network/Network.cs)) — a wrapper
+  over `MultiplayerApi`. It creates a new `SceneMultiplayer` bound to the `Game` node, so that on
+  returning to the menu all the old subscriptions are guaranteed to fall away. It is responsible for
+  `ConnectToServer()`, `HostServer()`, `OpenServer()` and a correct `Shutdown()`.
+* **`NetworkStateMachine`** — the states `NotInitialized → Connecting/Hosting → Connected/Hosted →
+  Disconnected` and the derived flags (`IsClient`, `IsServer`, `IsActiveGameState`).
 
-## Роли процесса: `IsServer()` / `IsClient()`
+## Process roles: `IsServer()` / `IsClient()`
 
-| Режим | `Net.IsServer()` | `Net.IsClient()` |
+| Mode | `Net.IsServer()` | `Net.IsClient()` |
 |---|---|---|
-| Главное меню | `true` | `true` |
-| Одиночная игра | `true` | `true` |
-| Хост «изнутри клиента» | `true` | `true` |
-| Подключение к чужому серверу | `false` | `true` |
-| Выделенный сервер (`--server`) | `true` | `false` |
+| Main menu | `true` | `true` |
+| Single-player game | `true` | `true` |
+| Hosting "from inside the client" | `true` | `true` |
+| Connecting to someone else's server | `false` | `true` |
+| Dedicated server (`--server`) | `true` | `false` |
 
-В [Потоке запуска](Startup-flow.md) описано как создается каждый режим.
+The [Startup flow](Startup-flow.md) describes how each mode is created.
 
 ## RPC
 
-Основной способ обмена. Пара «публичная обёртка + приватный `*Rpc`»:
+The main means of exchange. A "public wrapper + private `*Rpc`" pair:
 
 ```csharp
 public void Save(string saveFileName) => RpcId(ServerId, MethodName.SaveRpc, saveFileName);
@@ -35,47 +35,49 @@ public void Save(string saveFileName) => RpcId(ServerId, MethodName.SaveRpc, sav
 private void SaveRpc(string saveFileName) { /* ... */ }
 ```
 
-Между функциями специально не добавляется пустая строка, т.к. публичный метод является просто удобным
-алиасом для приватного.
+A blank line between the functions is deliberately not added, since the public method is just a
+convenient alias for the private one.
 
-Режим указывается всегда явно. Полная памятка по написанию RPC — в
-[Соглашениях по написанию кода](../Code-style.md).
+The mode is always stated explicitly. The full cheat sheet for writing RPCs is in the
+[Code style conventions](../Code-style.md).
 
-## Спавн объектов
+## Spawning objects
 
-`WorldMultiplayerSpawnerService.AddSpawnerToNode(node)` вешает на ноду `WorldMultiplayerSpawner`
-(наследник `AbstractMultiplayerSpawner` из KludgeBox). Спавнер отслеживает ноду, к которой он был
-прикреплён, и при создании подноды на отслеживаемой ноде синхронизирует создание новой ноды по сети.
-Имя спавнеру даётся по шаблону `<имя ноды>-MultiplayerSpawner`, и он автоматически удаляется вместе с
-наблюдаемой нодой.  
-Исключение — спавнер для `Tree`, который лежит прямо в `World.tscn`, а не создается из кода.
+`WorldMultiplayerSpawnerService.AddSpawnerToNode(node)` attaches a `WorldMultiplayerSpawner` (a
+descendant of `AbstractMultiplayerSpawner` from KludgeBox) to a node. The spawner watches the node it
+was attached to, and when a sub-node is created on the watched node it synchronizes the creation of
+the new node over the network. The spawner is named after the `<node name>-MultiplayerSpawner`
+pattern, and it is deleted automatically together with the observed node.  
+The exception is the spawner for `Tree`, which sits right in `World.tscn` rather than being created
+from code.
 
-Спавнить можно только сцены, перечисленные в `SyncedPackedScenes`.
+Only the scenes listed in `SyncedPackedScenes` can be spawned.
 
-## Синхронизация полей
+## Field synchronization
 
-Атрибут `[Sync]` из `KludgeBox.Godot.Nodes.MpSync` (пример: `WorldTemporaryData.PlayerUidByPeerId`).
-Что синкать через `[Sync]`, а что складывать в снимок сохранения — в
-[Данных и сохранениях](Data-and-saves.md).
+The `[Sync]` attribute from `KludgeBox.Godot.Nodes.MpSync` (example:
+`WorldTemporaryData.PlayerUidByPeerId`). What to sync via `[Sync]` and what to put into the save
+snapshot is covered in [Data and saves](Data-and-saves.md).
 
-## Каналы передачи
+## Transfer channels
 
-`Consts.TransferChannel`: `Chat`, `StatsHp`, `StatsCache`. Указываются как
-`[Rpc(TransferChannel = (int) Consts.TransferChannel.X)]`, чтобы независимые потоки не ждали друг
-друга при потере сообщения.
+`Consts.TransferChannel`: `Chat`, `StatsHp`, `StatsCache`. They are specified as
+`[Rpc(TransferChannel = (int) Consts.TransferChannel.X)]` so that independent streams do not wait for
+each other when a message is lost.
 
-## Полезная нагрузка
+## Payload
 
-Примитивы Godot или `byte[]` от MessagePack; JSON по сети не ходит. Максимальный размер синк-пакета —
-`Network.MaxSyncPacketSize` = `1350 * 100` (около 135 КБ: сотня ENet-пакетов по MTU). В него должен
-влезать в том числе первичный снимок мира, который уходит клиенту одним вызовом.
+Godot primitives or `byte[]` from MessagePack; JSON does not travel over the network. The maximum
+sync packet size is `Network.MaxSyncPacketSize` = `1350 * 100` (about 135 KB: a hundred ENet packets
+of one MTU each). The initial world snapshot, which goes to the client in a single call, must also
+fit into it.
 
-## Подключение клиента
+## Client connection
 
-`WorldSynchronizerService`, одинаково для сетевой и одиночной игры: клиент вызывает
-`StartSyncOnClient(uid, nick, color)`, что уходит на сервер как `NewClientInitOnServerRpc` —
-валидация (uid, длина ника и т.д.), регистрация `PlayerData`, выдача админки. При отказе сервер
-шлёт `RejectSyncOnClientRpc(error)`, и клиент уходит в меню с сообщением. При успехе —
-`EndSyncOnClientRpc(byte[])` с всем `PersistenceData` одним снимком MessagePack. Клиент
-десериализует мир и отвечает `EndSyncOnServerRpc`, после чего сервер вызывает
-`WorldPlayerService.SpawnPlayer(peerId)`.
+`WorldSynchronizerService`, identically for a networked and a single-player game: the client calls
+`StartSyncOnClient(uid, nick, color)`, which goes to the server as `NewClientInitOnServerRpc` —
+validation (uid, nickname length and so on), registration of `PlayerData`, granting admin rights. On
+refusal the server sends `RejectSyncOnClientRpc(error)`, and the client goes back to the menu with a
+message. On success — `EndSyncOnClientRpc(byte[])` with all of `PersistenceData` in a single
+MessagePack snapshot. The client deserializes the world and replies with `EndSyncOnServerRpc`, after
+which the server calls `WorldPlayerService.SpawnPlayer(peerId)`.

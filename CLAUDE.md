@@ -1,39 +1,41 @@
 # CLAUDE.md
 
-Этот файл даёт Claude Code (claude.ai/code) инструкции по работе с кодом в этом репозитории.
+This file gives Claude Code (claude.ai/code) instructions for working with the code in this
+repository.
 
-Он намеренно краток: только **как собирать и проверять**. Вся документация — в `README.md`.
-Здесь она не дублируется.
+It is deliberately short: only **how to build and verify**. All documentation lives in `README.md`.
+It is not duplicated here.
 
-## Обязательное чтение
+## Required reading
 
-**[README.md](README.md) читать в начале работы.** Это единственный индекс документации: список
-всех файлов `Docs/`, таблица «задача → что читать под неё» и точки входа в код.
+**Read [README.md](README.md) at the start of work.** It is the single documentation index: the list
+of all `Docs/` files, the "task → what to read for it" table, and the code entry points.
 
-Перед нетривиальной задачей открывать по ссылкам из README нужный файл `Docs/` и читать его
-**целиком** — не по фрагментам из поиска. Пути регистрозависимы.
+Before a non-trivial task, follow the links from README, open the `Docs/` file you need and read it
+**in full** — not as fragments from a search. Paths are case-sensitive.
 
-**Меняешь архитектуру — обнови соответствующий файл в `Docs/`.** Он не генерируется из кода. Если
-изменение затрагивает список документов или точки входа — обнови и `README.md`.
+**If you change the architecture, update the corresponding file in `Docs/`.** It is not generated
+from the code. If the change affects the list of documents or the entry points — update `README.md`
+as well.
 
-## Команды
+## Commands
 
-Есть только юнит-тесты, не запускающие Godot. Всё, что живёт внутри дерева нод, проверяется компиляцией плюс
-ручным запуском игры.
+There are only unit tests, which do not launch Godot. Everything that lives inside the node tree is
+verified by compilation plus a manual run of the game.
 
 ```bash
-dotnet build                              # быстрая проверка компиляции (~3 с)
-dotnet test                               # юнит-тесты, в том числе проверки документации
-"$GODOT_EXE" --path "./"                  # обычный запуск игры
-"$GODOT_EXE" --path "./" --auto-start     # сразу в одиночную игру, минуя меню
-"$GODOT_EXE" --path "./" --server         # сразу запуск выделенного сервера
-"$GODOT_EXE" --path "./" --auto-connect   # сразу подключение к выделенному серверу
+dotnet build                              # quick compilation check (~3 s)
+dotnet test                               # unit tests, including documentation checks
+"$GODOT_EXE" --path "./"                  # normal game launch
+"$GODOT_EXE" --path "./" --auto-start     # straight into a single-player game, skipping the menu
+"$GODOT_EXE" --path "./" --server         # straight to launching a dedicated server
+"$GODOT_EXE" --path "./" --auto-connect   # straight to connecting to a dedicated server
 ```
 
-**Шум сборки, который не нужно исправлять:** `CS0649`, подавлен в `.csproj` (эти поля заполняются
-через DI, а не через конструктор).
+**Build noise that does not need fixing:** `CS0649`, suppressed in `.csproj` (these fields are
+filled through DI, not through a constructor).
 
-## Язык
+## Language
 
-Код и документация (комментарии, `Docs/`, `README.md`, идентификаторы, строковые ключи) — на
-английском. Ответы в чате, код-ревью и планы — на русском.
+Code and documentation (comments, `Docs/`, `README.md`, identifiers, string keys) — in English.
+Chat replies, code reviews and plans — in Russian.

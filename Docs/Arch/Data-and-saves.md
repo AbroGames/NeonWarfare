@@ -1,57 +1,58 @@
-# Данные и сохранения
+# Data and saves
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-Данные мира разделены на два узла и **не содержат логики** — только состояние и его синхронизацию:
+The world data is split into two nodes and **contains no logic** — only state and its
+synchronization:
 
-| Узел | Живёт | Синхронизация | Попадает в сохранение |
+| Node | Lives | Synchronization | Goes into the save |
 |---|---|---|---|
-| `WorldPersistenceData` | до конца игры | RPC внутри storage-классов + снимок при коннекте | Да |
-| `WorldTemporaryData` | до конца сессии | `[Sync]` | Нет |
+| `WorldPersistenceData` | until the end of the game | RPC inside the storage classes + a snapshot on connect | Yes |
+| `WorldTemporaryData` | until the end of the session | `[Sync]` | No |
 
-Это разные ноды, и выбор между ними делается осознанно: всё, что должно пережить перезапуск, идёт в
-`PersistenceData`, всё остальное — в `TemporaryData`.
+These are different nodes, and the choice between them is made deliberately: everything that has to
+survive a restart goes into `PersistenceData`, everything else — into `TemporaryData`.
 
-## Сериализация мира
+## World serialization
 
-`WorldPersistenceData` состоит из storage-нод (`GeneralDataStorage`, `PlayerDataStorage`), каждая из
-которых реализует `ISerializableStorage` (`SerializeStorage` / `DeserializeStorage` /
+`WorldPersistenceData` consists of storage nodes (`GeneralDataStorage`, `PlayerDataStorage`), each of
+which implements `ISerializableStorage` (`SerializeStorage` / `DeserializeStorage` /
 `SetAllPropertyListeners`).
 
-`WorldDataSerializerService` рефлексией (`Services.MembersScanner`) обходит все `ISerializableStorage`
-внутри `WorldPersistenceData` и собирает `Dictionary<string, byte[]>` → MessagePack. Тот же байтовый
-блоб используется и для сохранения на диск, и для первичной синхронизации нового клиента
-(см. [Сеть](Networking.md)).
+`WorldDataSerializerService` walks all the `ISerializableStorage` instances inside
+`WorldPersistenceData` by reflection (`Services.MembersScanner`) and assembles a
+`Dictionary<string, byte[]>` → MessagePack. The same byte blob is used both for saving to disk and
+for the initial synchronization of a new client (see [Networking](Networking.md)).
 
-## Модели
+## Models
 
-Сами модели (`PlayerData`, `GeneralData`) — это `ObservableObject` с `[ObservableProperty]` и ключами
-`[Key(N)]` MessagePack. Storage подписывается на `PropertyChanged` и автоматически рассылает изменение
-клиентам.
+The models themselves (`PlayerData`, `GeneralData`) are `ObservableObject`s with
+`[ObservableProperty]` and MessagePack `[Key(N)]` keys. The storage subscribes to `PropertyChanged`
+and automatically broadcasts the change to the clients.
 
 > [!IMPORTANT]
-> **Любая запись в свойство модели на сервере сама по себе сетевая.** Эти свойства нельзя использовать
-> как рабочие переменные в циклах: каждое присваивание порождает трафик.
+> **Any write to a model property on the server is a network operation in itself.** These properties
+> must not be used as working variables in loops: every assignment generates traffic.
 
-## Файлы
+## Files
 
-Все пользовательские файлы лежат в каталоге, на который Godot маппит `user://`. Каталог зависит от
-ОС и от названия проекта (`Neon Warfare`):
+All the user files live in the directory that Godot maps `user://` to. The directory depends on the
+OS and on the project name (`Neon Warfare`):
 
-| ОС | Путь |
+| OS | Path |
 |---|---|
 | Windows | `%APPDATA%\Godot\app_userdata\Neon Warfare\` |
 | Linux | `~/.local/share/godot/app_userdata/Neon Warfare/` |
 
-Сохранения: `user://saves/<name>.bin`, имя нового файла — `yyyy-MM-dd_HH-mm` (`SaveLoadService`).
-Автосохранение выполняется в `WorldServerShutdowner` при выходе из дерева и управляется настройкой
-`AutoSaveEnabled` (у клиента — `GameSettings`, у выделенного сервера — `DedicatedServerSettings`).
-Подробнее — в [Завершении работы](Shutdown.md).
+Saves: `user://saves/<name>.bin`, the name of a new file is `yyyy-MM-dd_HH-mm` (`SaveLoadService`).
+Autosave is performed in `WorldServerShutdowner` on leaving the tree and is controlled by the
+`AutoSaveEnabled` setting (on the client — `GameSettings`, on the dedicated server —
+`DedicatedServerSettings`). More detail — in [Shutdown](Shutdown.md).
 
-Прочие файлы в `user://` (JSON, `System.Text.Json`):
+Other files in `user://` (JSON, `System.Text.Json`):
 
-| Файл | Что хранит |
+| File | What it stores |
 |---|---|
-| `game-settings.json` | Настройки клиента |
-| `dedicated-server-settings.json` | Настройки выделенного сервера |
-| `resume-game.json` | Последняя сессия для кнопки «Продолжить» |
+| `game-settings.json` | Client settings |
+| `dedicated-server-settings.json` | Dedicated server settings |
+| `resume-game.json` | The last session for the "Continue" button |

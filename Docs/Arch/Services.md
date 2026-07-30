@@ -1,61 +1,60 @@
-# Сервисы
+# Services
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-## Глобальные сервисы
+## Global services
 
-Статический класс `Services` ([Scripts/Services.cs](../../Scripts/Services.cs)), доступен из любой
-точки. Часть приходит из KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling`,
-`AssemblyCache`, `TypesMapping`, `ExceptionHandler`, `StringCompression`, `MembersScanner` — последний
-проксирует `Di.MembersScanner`), часть — игровые:
+The static `Services` class ([Scripts/Services.cs](../../Scripts/Services.cs)), available from
+anywhere. Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling`,
+`AssemblyCache`, `TypesMapping`, `ExceptionHandler`, `StringCompression`, `MembersScanner` — the last
+one proxies `Di.MembersScanner`), some are game-specific:
 
-| Сервис | Класс | Назначение |
+| Service | Class | Purpose |
 |---|---|---|
-| `Services.Net` | `NetworkService` | Роль процесса (`IsClient`/`IsServer`), хелперы `DoClient`, `DoServerClient` |
-| `Services.MainScene` | `MainSceneService` | Переключение MainMenu ↔ Game, точки входа во все режимы, `Shutdown()` |
-| `Services.LoadingScreen` | `LoadingScreenService` | Показ / скрытие экрана загрузки |
-| `Services.GameSettings` | `GameSettingsService` | Настройки клиента + временные `--nick` / `--uid` |
-| `Services.DedicatedServerSettings` | `DedicatedServerSettingsService` | Настройки выделенного сервера |
-| `Services.MenuGameSettings` | `MenuGameSettingsService` | Мост между `GameSettings` и моделью экрана настроек |
-| `Services.SaveLoad` | `SaveLoadService` | Файлы сохранений, `SaveException` / `LoadException` |
-| `Services.LastGame` | `ResumableGameService` | Последняя сессия для кнопки «Продолжить» (`ResumableGame`) |
-| `Services.Process` | `ProcessService` | Запуск дочернего процесса выделенного сервера |
-| `Services.IconsStorage` | `IconsStorageService` | Идентификаторы иконок |
+| `Services.Net` | `NetworkService` | The process role (`IsClient`/`IsServer`), the `DoClient`, `DoServerClient` helpers |
+| `Services.MainScene` | `MainSceneService` | Switching MainMenu ↔ Game, the entry points into all the modes, `Shutdown()` |
+| `Services.LoadingScreen` | `LoadingScreenService` | Showing / hiding the loading screen |
+| `Services.GameSettings` | `GameSettingsService` | Client settings + the temporary `--nick` / `--uid` |
+| `Services.DedicatedServerSettings` | `DedicatedServerSettingsService` | Dedicated server settings |
+| `Services.MenuGameSettings` | `MenuGameSettingsService` | The bridge between `GameSettings` and the settings screen model |
+| `Services.SaveLoad` | `SaveLoadService` | Save files, `SaveException` / `LoadException` |
+| `Services.LastGame` | `ResumableGameService` | The last session for the "Continue" button (`ResumableGame`) |
+| `Services.Process` | `ProcessService` | Launching the dedicated server child process |
+| `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
 
-Имя поля в `Services` намеренно короче имени класса (`Services.SaveLoad` → `SaveLoadService`): суффикс
-`Service` в точке вызова был бы шумом.
+The field name in `Services` is deliberately shorter than the class name (`Services.SaveLoad` →
+`SaveLoadService`): the `Service` suffix would be noise at the call site.
 
-`Services.Di` и `Services.Net` дополнительно вынесены в `Services.Global` и подключены через
-`global using static` — поэтому в коде пишется просто `Di.Process(this)` и `Net.IsServer()`.
-Там же глобально доступны `Consts.Global` (`ServerId`, `BroadcastId`) и расширения Godot из KludgeBox
-(вектора, цвета, камера, ноды — отсюда, например, `Vec2(x, y)`) — см.
-[Scripts/GlobalUsings.cs](../../Scripts/GlobalUsings.cs). Новые глобальные импорты добавляются только
-туда.
+`Services.Di` and `Services.Net` are additionally exposed in `Services.Global` and pulled in through
+`global using static` — which is why the code simply says `Di.Process(this)` and `Net.IsServer()`.
+Also globally available there are `Consts.Global` (`ServerId`, `BroadcastId`) and the Godot extensions
+from KludgeBox (vectors, colors, camera, nodes — `Vec2(x, y)`, for example, comes from there) — see
+[Scripts/GlobalUsings.cs](../../Scripts/GlobalUsings.cs). New global imports are added only there.
 
-## Сервисы мира
+## World services
 
-Ноды-дети `World`. Сам `World` реализует `IServiceProvider` и в `_EnterTree()` регистрирует их в
-словаре по типу — до того, как у детей отработает `_Ready()`. Это и делает возможным инжект
-`[SceneService]` вверх по дереву.
+Child nodes of `World`. `World` itself implements `IServiceProvider` and registers them in a
+dictionary by type in `_EnterTree()` — before `_Ready()` runs on the children. This is exactly what
+makes the `[SceneService]` injection up the tree possible.
 
-| Сервис | Назначение |
+| Service | Purpose |
 |---|---|
-| `WorldServerStartStopService` | Серверный старт: новая игра / загрузка, инициализация синхронизатора и команд |
-| `WorldClientStartStopService` | Клиентский старт: синхронизация с сервером, экран загрузки, пинг |
-| `WorldSynchronizerService` | Handshake клиента, валидация игрока, первичная передача мира |
-| `WorldMultiplayerSpawnerService` | Навешивание `MultiplayerSpawner` на ноды |
-| `WorldDataSaveLoadService` | Сохранение / загрузка, права на сохранение, автосейв |
-| `WorldDataSerializerService` | (Де)сериализация `WorldPersistenceData` |
-| `WorldChatService` | Чат, история чата, перехватчики |
-| `WorldCommandService` | Чат-команды, автоподбор всех `ICommandProcessor` из сборки |
-| `WorldPlayerService` / `WorldEnemyService` | Спавн игроков и ботов (общая база `WorldCharacterService`) |
-| `WorldPerformanceService` | Godot / .NET / ENet / ping-метрики |
-| `WorldFacadeService` | Фасад для частых сводных запросов (данные игрока, онлайн/офлайн, `IsAdmin`) |
+| `WorldServerStartStopService` | The server-side start: new game / loading, initialization of the synchronizer and the commands |
+| `WorldClientStartStopService` | The client-side start: synchronization with the server, the loading screen, ping |
+| `WorldSynchronizerService` | The client handshake, player validation, the initial world transfer |
+| `WorldMultiplayerSpawnerService` | Attaching a `MultiplayerSpawner` to nodes |
+| `WorldDataSaveLoadService` | Saving / loading, save permissions, autosave |
+| `WorldDataSerializerService` | (De)serialization of `WorldPersistenceData` |
+| `WorldChatService` | Chat, chat history, interceptors |
+| `WorldCommandService` | Chat commands, automatic pickup of all `ICommandProcessor`s from the assembly |
+| `WorldPlayerService` / `WorldEnemyService` | Spawning players and bots (a shared base, `WorldCharacterService`) |
+| `WorldPerformanceService` | Godot / .NET / ENet / ping metrics |
+| `WorldFacadeService` | A facade for frequent aggregate queries (player data, online/offline, `IsAdmin`) |
 
 > [!NOTE]
-> `World` — хранилище сервисов. Каждый сервис может ссылаться на другие сервисы и является точкой
-> взаимодействия с системой: вызывая его метод, ты должен получить консистентное состояние всей
-> системы, а не только этого сервиса.
+> `World` is the service storage. Every service may reference other services and is a point of
+> interaction with the system: by calling its method you should get a consistent state of the whole
+> system, not just of that one service.
 
-Имена **нод** этих сервисов в `World.tscn` идут без префикса `World` (`ChatService`, а не
-`WorldChatService`) — см. [Дерево сцен](Scene-tree.md).
+The **node** names of these services in `World.tscn` go without the `World` prefix (`ChatService`, not
+`WorldChatService`) — see [Scene tree](Scene-tree.md).

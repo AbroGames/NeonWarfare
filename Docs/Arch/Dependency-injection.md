@@ -1,23 +1,24 @@
-# Внедрение зависимостей (DI)
+# Dependency injection (DI)
 
-[← README проекта](../../README.md)
+[← Project README](../../README.md)
 
-Используется DI из KludgeBox. Практически каждый класс первой строкой в `_Ready()` (или в конструкторе
-для не-нод) вызывает `Di.Process(this)`, после чего заполняются помеченные поля:
+The DI from KludgeBox is used. Practically every class calls `Di.Process(this)` as the first line in
+`_Ready()` (or in the constructor for non-nodes), after which the annotated fields are filled in:
 
-| Атрибут | Что инжектит |
+| Attribute | What it injects |
 |---|---|
-| `[Child]` | Дочернюю ноду по имени поля (или `[Child(By.Type)]` — по типу) |
-| `[Parent]` | Родительскую ноду нужного типа |
-| `[SceneService]` | Сервис из ближайшего `IServiceProvider` вверх по дереву (то есть из `World`) |
-| `[Logger]` | `Serilog.ILogger`, настроенный на текущий класс |
-| `[NotNull]` | Проверка, что `[Export]`-поле заполнено в редакторе (в `CheckedAbstractStorage`) |
+| `[Child]` | A child node by field name (or `[Child(By.Type)]` — by type) |
+| `[Parent]` | A parent node of the required type |
+| `[SceneService]` | A service from the nearest `IServiceProvider` up the tree (that is, from `World`) |
+| `[Logger]` | A `Serilog.ILogger` configured for the current class |
+| `[NotNull]` | A check that an `[Export]` field is filled in in the editor (in `CheckedAbstractStorage`) |
 
 > [!IMPORTANT]
-> Без `Di.Process(this)` все помеченные поля молча остаются `null` — компилятор этого не поймает.
-> `[Child]` матчится **по имени поля**, поэтому переименование поля требует переименования ноды в
-> сцене (и наоборот).
+> Without `Di.Process(this)` all the annotated fields silently stay `null` — the compiler will not
+> catch this. `[Child]` matches **by field name**, so renaming a field requires renaming the node in
+> the scene (and vice versa).
 
-`CheckedAbstractStorage` — база для всех хранилищ `PackedScene` (`RootPackedScenes`, `GamePackedScenes`,
-`SyncedPackedScenes`, `ClientPackedScenes`, `PagesProvider`). Ссылки на прототипы сцен настраиваются в
-редакторе Godot; получение любой сцены для инстанцирования начинается отсюда, а не с `GD.Load`.
+`CheckedAbstractStorage` is the base for all the `PackedScene` storages (`RootPackedScenes`,
+`GamePackedScenes`, `SyncedPackedScenes`, `ClientPackedScenes`, `PagesProvider`). The references to
+the scene prototypes are configured in the Godot editor; obtaining any scene for instantiation starts
+here, not with `GD.Load`.

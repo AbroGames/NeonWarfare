@@ -1,42 +1,42 @@
-# Локализация
+# Localization
 
-[← README проекта](../README.md)
+[← Project README](../README.md)
 
-Файлы перевода — `Assets/Locales/en.po` и `ru.po`, шаблон — `messages.pot`. Новый ключ добавляется во
-все три файла.
+The translation files are `Assets/Locales/en.po` and `ru.po`, the template is `messages.pot`. A new
+key is added to all three files.
 
-Ключи пишутся в `SCREAMING_SNAKE_CASE` и группируются по экрану двойным подчёркиванием:
+Keys are written in `SCREAMING_SNAKE_CASE` and grouped by screen with a double underscore:
 `MAIN_MENU__EXIT_BUTTON`, `HUD__CHAT_PLACEHOLDER`, `CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR`.
 
-## Как подставляется перевод
+## How a translation is substituted
 
-| Где текст | Что писать |
+| Where the text is | What to write |
 |---|---|
-| В сцене (`.tscn`) | Прямо ключ в поле текста — Godot подставит перевод сам |
-| В коде ноды | `Tr("KEY")` — метод `Node`, доступен без дополнительных зависимостей |
-| В коде вне ноды | `Services.I18N.Tr("KEY")` (пример: `LoadingScreenTypes`) |
+| In a scene (`.tscn`) | The key directly in the text field — Godot substitutes the translation itself |
+| In node code | `Tr("KEY")` — a `Node` method, available without extra dependencies |
+| In code outside a node | `Services.I18N.Tr("KEY")` (example: `LoadingScreenTypes`) |
 
-Большая часть текста живёт прямо в сценах; обращаться к `Tr(...)` из кода нужно только там, где строка
-собирается динамически.
+Most of the text lives right in the scenes; calling `Tr(...)` from code is only needed where the
+string is assembled dynamically.
 
 > [!NOTE]
-> **Ответы чат-команд не локализуются.**
+> **Chat command responses are not localized.**
 >
-> Речь про `Scenes/World/Service/Command/Impl/` целиком, плюс `RequireAdminMessage` в
-> `WorldCommandService`. Команды — админский инструмент, к которому обращаются крайне редко, поэтому
-> держать их тексты в `.po` не имеет смысла.
+> This covers all of `Scenes/World/Service/Command/Impl/`, plus `RequireAdminMessage` in
+> `WorldCommandService`. Commands are an admin tool that is used extremely rarely, so keeping their
+> texts in `.po` makes no sense.
 
-## Выбор локали
+## Locale selection
 
-Текущая локаль выставляется в `RootStarter` **после** загрузки настроек, но **до** первого показа
-экрана загрузки — иначе экран загрузки покажет ключи вместо текста
-(см. [Поток запуска](Arch/Startup-flow.md)).
+The current locale is set in `RootStarter` **after** the settings are loaded but **before** the
+loading screen is first shown — otherwise the loading screen will show keys instead of text
+(see [Startup flow](Arch/Startup-flow.md)).
 
-Локаль по умолчанию берётся из ОС (`Services.I18N.GetUserOsLocaleInfoOrDefault()`). Сменить язык в
-игре можно на странице `LanguageSelectionPage`.
+The default locale is taken from the OS (`Services.I18N.GetUserOsLocaleInfoOrDefault()`). The
+language can be changed in-game on the `LanguageSelectionPage` page.
 
-## Предпросмотр в редакторе
+## Preview in the editor
 
-Над сценой, в выпадающем меню «Вид → Предпросмотр перевода», можно выбрать языки, на которых будут
-отображаться сцены проекта в редакторе (на игру это не влияет). При отсутствии выбора языка (пункт
-«нет») будут показываться ключи локализации.
+Above the scene, in the "View → Preview Translation" drop-down menu, you can select the languages the
+project's scenes will be displayed in inside the editor (this does not affect the game). If no
+language is selected (the "none" item), the localization keys are shown.

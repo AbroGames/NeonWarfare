@@ -1,47 +1,47 @@
-# Структура репозитория
+# Repository structure
 
-[← README проекта](../README.md)
+[← Project README](../README.md)
 
 ```
-Assets/                       Любые файлы, кроме сцен (.tscn) и кода (.cs и .cs.uid)
-├── Fonts/                    Шрифты и лицензии к ним
-├── Locales/                  Шаблон локализации (.pot) и файлы локалей (.po)
-├── Resources/                Темы UI и другие нетиповые ресурсы
-├── Shaders/                  Шейдеры (.gdshader)
-└── Textures/                 Текстуры (.png и .svg) и их исходники (.psd)
+Assets/                       Any files except scenes (.tscn) and code (.cs and .cs.uid)
+├── Fonts/                    Fonts and their licenses
+├── Locales/                  The localization template (.pot) and the locale files (.po)
+├── Resources/                UI themes and other non-standard resources
+├── Shaders/                  Shaders (.gdshader)
+└── Textures/                 Textures (.png and .svg) and their sources (.psd)
 
-Scenes/                       Сцены (.tscn) и их обработчики (.cs) — лежат рядом, в одной папке
-├── Root/                     Точка входа приложения и стартеры клиента и сервера
-├── Game/                     Игровая сессия: обертка для сети и стартеры режимов игры
-├── World/                    Мир: один на игровую сессию, синхронизируется с сервера на клиент
-│   ├── Data/                 Данные мира
-│   │   ├── PersistenceData/  Данные, попадающие в сохранение (General, Player)
-│   │   └── TemporaryData/    Данные текущей сессии, не сохраняются
-│   ├── Scenes/               Прототипы сцен, доступных для спавна
-│   │   ├── ClientScenes/     Чисто клиентские (визуальные) сцены
-│   │   └── SyncedScenes/     Сцены, которые при спавне на сервере будут синхронизироваться на клиенты
-│   ├── Service/              Сервисы мира: чат, команды, персонажи, спавн, производительность, старт/стоп
-│   └── Tree/                 Текущая поверхность (локация) и игровые объекты на ней
-│       └── Surfaces/         Поверхности (локации): Safe, Battle
-├── Entity/                   Игровые объекты: персонажи (контроллеры, статы, эффекты), стены
-├── Screen/                   UI: главное меню, HUD, консоль сервера, экран загрузки
-└── KludgeBox/                Тонкие наследники нод KludgeBox
+Scenes/                       Scenes (.tscn) and their handlers (.cs) — kept next to each other, in one folder
+├── Root/                     The application entry point and the client and server starters
+├── Game/                     The game session: a wrapper for the network and the game mode starters
+├── World/                    The world: one per game session, synchronized from the server to the client
+│   ├── Data/                 World data
+│   │   ├── PersistenceData/  Data that goes into the save (General, Player)
+│   │   └── TemporaryData/    Data of the current session, not saved
+│   ├── Scenes/               Prototypes of the scenes available for spawning
+│   │   ├── ClientScenes/     Purely client-side (visual) scenes
+│   │   └── SyncedScenes/     Scenes that, when spawned on the server, will be synchronized to the clients
+│   ├── Service/              World services: chat, commands, characters, spawning, performance, start/stop
+│   └── Tree/                 The current surface (location) and the game objects on it
+│       └── Surfaces/         Surfaces (locations): Safe, Battle
+├── Entity/                   Game objects: characters (controllers, stats, effects), walls
+├── Screen/                   UI: the main menu, HUD, server console, loading screen
+└── KludgeBox/                Thin descendants of the KludgeBox nodes
 
-Scripts/                      Код без сцен
-├── Content/                  Характеристики игровых сущностей, типы экранов загрузки, параметры командной строки
-├── Service/                  Глобальные сервисы
-├── Services.cs               Реестр всех глобальных сервисов
-├── Consts.cs                 Глобальные константы
-└── GlobalUsings.cs           Здесь задаём global using и global using static
+Scripts/                      Code without scenes
+├── Content/                  Game entity stats, loading screen types, command-line arguments
+├── Service/                  Global services
+├── Services.cs               The registry of all global services
+├── Consts.cs                 Global constants
+└── GlobalUsings.cs           Here we declare global using and global using static
 
-Tests/                        Тесты xUnit v3
-├── NeonWarfare.Tests/        Отдельный проект, движок не запускают
-│   ├── Infrastructure/       Хелперы для всех тестов
-│   └── Docs/                 Тесты на проверку документации
-└── .gdignore                 Godot не смотрел в эту папку, т.к. здесь только юнит-тесты
+Tests/                        xUnit v3 tests
+├── NeonWarfare.Tests/        A separate project, does not launch the engine
+│   ├── Infrastructure/       Helpers for all the tests
+│   └── Docs/                 Tests that verify the documentation
+└── .gdignore                 So that Godot does not look into this folder, since there are only unit tests here
 
 Properties/
-└── launchSettings.json       Профили быстрого запуска игры в разных режимах (Rider их видит сам)
-Docs/                         Документация, на все файлы есть ссылки из README.md
-.run/                         Multi-Launch конфигурации Rider: сервер + один или два клиента разом
+└── launchSettings.json       Quick-launch profiles for the game in different modes (Rider sees them by itself)
+Docs/                         Documentation, every file is linked from README.md
+.run/                         Rider Multi-Launch configurations: server + one or two clients at once
 ```

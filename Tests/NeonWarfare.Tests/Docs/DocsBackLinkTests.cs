@@ -10,7 +10,7 @@ namespace NeonWarfare.Tests.Docs;
 /// </summary>
 public class DocsBackLinkTests
 {
-    private const string BackLinkTemplate = "[← README проекта]({Path})";
+    private const string BackLinkTemplate = "[← Project README]({Path})";
 
     [Theory]
     [MemberData(nameof(MarkdownFileSources.Docs), MemberType = typeof(MarkdownFileSources))]
