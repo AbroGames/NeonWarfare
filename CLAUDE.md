@@ -35,7 +35,13 @@ dotnet test                               # unit tests, including documentation 
 **Build noise that does not need fixing:** `CS0649`, suppressed in `.csproj` (these fields are
 filled through DI, not through a constructor).
 
+## Shared libraries
+
+The `KLUDGEBOX_SRC` environment variable points to the source code of `KludgeBox` — our own shared
+library used across several Godot projects.
+Consult it when you need to see how a `KludgeBox` API is implemented.
+
 ## Language
 
-Code and documentation (comments, `Docs/`, `README.md`, identifiers, string keys) — in English.
+Code and documentation (comments, `Docs/`, `README.md`, identifiers, string keys) — in English.  
 Chat replies, code reviews and plans — in Russian.
