@@ -17,22 +17,22 @@ so that a file can be found by searching for a class or attribute name.
 
 | Document | What is inside |
 |---|---|
-| [Scene tree](Docs/Arch/Scene-tree.md) | The "container → contents" hierarchy, `NodeContainer`, the "calls go down, events go up" rule, node naming |
-| [Dependency injection](Docs/Arch/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Parent]`, `[SceneService]`, `[Logger]` |
+| [Scene tree](Docs/Scene-tree.md) | The "container → contents" hierarchy, `NodeContainer`, the "calls go down, events go up" rule, node naming |
+| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Parent]`, `[SceneService]`, `[Logger]` |
 | [Code style conventions](Docs/Code-style.md) | Namespaces, RPC pairs, serialization, logging, `double`/`float`, `.editorconfig` |
 
 ### Area-by-area design — read when the task touches that area
 
 | Document | Read when you touch |
 |---|---|
-| [Networking](Docs/Arch/Networking.md) | RPC, spawning, synchronization, the client handshake, `Net.IsServer()` / `IsClient()`, `DoServerClient` |
-| [Data and saves](Docs/Arch/Data-and-saves.md) | `Persistence` / `Temporary`, the save format, MessagePack, paths on Windows and Linux |
-| [Services](Docs/Arch/Services.md) | Global services and world services, `Services.*` |
-| [Startup flow](Docs/Arch/Startup-flow.md) | `RootStarter`, `GameStarter`, the four game session modes |
-| [Shutdown](Docs/Arch/Shutdown.md) | Autosave on exit, killing child processes |
-| [Entities](Docs/Arch/Entities.md) | `Character` and its subsystems: controllers, stats, status effects |
-| [UI](Docs/Arch/Ui.md) | The menu page stack, settings screen generation, HUD, loading screen |
-| [Chat and commands](Docs/Arch/Chat-and-commands.md) | Chat, `IChatMessageInterceptor` interceptors, `ICommandProcessor` chat commands |
+| [Networking](Docs/Networking.md) | RPC, spawning, synchronization, the client handshake, `Net.IsServer()` / `IsClient()`, `DoServerClient` |
+| [Data and saves](Docs/Data-and-saves.md) | `Persistence` / `Temporary`, the save format, MessagePack, paths on Windows and Linux |
+| [Services](Docs/Services.md) | Global services and world services, `Services.*` |
+| [Startup flow](Docs/Startup-flow.md) | `RootStarter`, `GameStarter`, the four game session modes |
+| [Shutdown](Docs/Shutdown.md) | Autosave on exit, killing child processes |
+| [Entities](Docs/Entities.md) | `Character` and its subsystems: controllers, stats, status effects |
+| [UI](Docs/Ui.md) | The menu page stack, settings screen generation, HUD, loading screen |
+| [Chat and commands](Docs/Chat-and-commands.md) | Chat, `IChatMessageInterceptor` interceptors, `ICommandProcessor` chat commands |
 | [Localization](Docs/Localization.md) | Player-visible text: `Tr(KEY)`, `Assets/Locales/*.po`, `messages.pot`, locale selection |
 
 ### References and environment — consult as needed
@@ -51,17 +51,17 @@ so that a file can be found by searching for a class or attribute name.
 
 | Task | What to read |
 |---|---|
-| Add or change an RPC | [Networking](Docs/Arch/Networking.md) → [Conventions](Docs/Code-style.md#rpc) |
-| Add a field that goes into the save | [Data and saves](Docs/Arch/Data-and-saves.md) → [Networking](Docs/Arch/Networking.md) (the initial world snapshot) |
-| Add a world service | [Services](Docs/Arch/Services.md) → [Scene tree](Docs/Arch/Scene-tree.md) (node naming without the `World` prefix) → [DI](Docs/Arch/Dependency-injection.md) |
-| Add a game session mode | [Startup flow](Docs/Arch/Startup-flow.md) → [Networking](Docs/Arch/Networking.md) (process roles) |
-| Add a command-line flag | [Command-line arguments](Docs/Cli-args.md) → [Startup flow](Docs/Arch/Startup-flow.md) |
-| Add a chat command | [Chat and commands](Docs/Arch/Chat-and-commands.md) |
-| Add a menu page or a setting | [UI](Docs/Arch/Ui.md) → [Localization](Docs/Localization.md) |
-| Add a stat, a status effect, a character subsystem | [Entities](Docs/Arch/Entities.md) → [Networking](Docs/Arch/Networking.md) |
+| Add or change an RPC | [Networking](Docs/Networking.md) → [Conventions](Docs/Code-style.md#rpc) |
+| Add a field that goes into the save | [Data and saves](Docs/Data-and-saves.md) → [Networking](Docs/Networking.md) (the initial world snapshot) |
+| Add a world service | [Services](Docs/Services.md) → [Scene tree](Docs/Scene-tree.md) (node naming without the `World` prefix) → [DI](Docs/Dependency-injection.md) |
+| Add a game session mode | [Startup flow](Docs/Startup-flow.md) → [Networking](Docs/Networking.md) (process roles) |
+| Add a command-line flag | [Command-line arguments](Docs/Cli-args.md) → [Startup flow](Docs/Startup-flow.md) |
+| Add a chat command | [Chat and commands](Docs/Chat-and-commands.md) |
+| Add a menu page or a setting | [UI](Docs/Ui.md) → [Localization](Docs/Localization.md) |
+| Add a stat, a status effect, a character subsystem | [Entities](Docs/Entities.md) → [Networking](Docs/Networking.md) |
 | Add player-visible text | [Localization](Docs/Localization.md) |
-| `[Child]` / `[SceneService]` came out `null` | [DI](Docs/Arch/Dependency-injection.md) → [Scene tree](Docs/Arch/Scene-tree.md) |
-| The code behaves differently in single-player and over the network | [Networking](Docs/Arch/Networking.md) (`IsServer` / `IsClient`) → [Startup flow](Docs/Arch/Startup-flow.md) |
+| `[Child]` / `[SceneService]` came out `null` | [DI](Docs/Dependency-injection.md) → [Scene tree](Docs/Scene-tree.md) |
+| The code behaves differently in single-player and over the network | [Networking](Docs/Networking.md) (`IsServer` / `IsClient`) → [Startup flow](Docs/Startup-flow.md) |
 | A type declaration cannot be found (`NodeContainer`, `[Sync]`, `StatModifiersContainer<T>`) | [Stack](Docs/Stack.md) — the KludgeBox sources are not in the repository, the path to them is in the `KLUDGEBOX_SRC` ENV variable |
 | Bring up a server and a client to check something | [Quick start](Docs/Quick-start.md) → [Command-line arguments](Docs/Cli-args.md) |
 | Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) |

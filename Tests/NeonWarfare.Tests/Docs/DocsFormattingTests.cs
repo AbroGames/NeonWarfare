@@ -67,7 +67,7 @@ public class DocsFormattingTests
             string trailing = line[line.TrimEnd().Length..];
 
             // Exactly two spaces is a markdown hard line break and is used on purpose, for example
-            // in README.md, Docs/Arch/Scene-tree.md and Docs/Arch/Networking.md. Anything else —
+            // in README.md, Docs/Scene-tree.md and Docs/Networking.md. Anything else —
             // a lone space, three or more, or a tab — is an accident.
             if (trailing.Length != 0 && trailing != "  ")
             {
