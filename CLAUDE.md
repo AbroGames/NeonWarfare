@@ -8,15 +8,7 @@ It is not duplicated here.
 
 ## Required reading
 
-**Read [README.md](README.md) at the start of work.** It is the single documentation index: the list
-of all `Docs/` files, the "task → what to read for it" table, and the code entry points.
-
-Before a non-trivial task, follow the links from README, open the `Docs/` file you need and read it
-**in full** — not as fragments from a search. Paths are case-sensitive.
-
-**If you change the architecture, update the corresponding file in `Docs/`.** It is not generated
-from the code. If the change affects the list of documents or the entry points — update `README.md`
-as well.
+Read [README.md](README.md) at the start of work.
 
 ## Commands
 
@@ -25,7 +17,7 @@ verified by compilation plus a manual run of the game.
 
 ```bash
 dotnet build                              # quick compilation check (~3 s)
-dotnet test                               # unit tests, including documentation checks
+dotnet test                               # unit tests, including documentation and code-style checks
 "$GODOT_EXE" --path "./"                  # normal game launch
 "$GODOT_EXE" --path "./" --auto-start     # straight into a single-player game, skipping the menu
 "$GODOT_EXE" --path "./" --server         # straight to launching a dedicated server
