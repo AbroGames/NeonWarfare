@@ -63,8 +63,8 @@ These are exactly the mistakes the compiler does not catch — see
 
 **Pure logic without Godot.** Argument parsing from `Scripts/Content/CmdArgs/`
 ([Command-line arguments](Cli-args.md)), the `ICommandProcessor` chat commands
-([Chat and commands](Arch/Chat-and-commands.md)), the math of stats and status effects
-([Entities](Arch/Entities.md)) — as the logic gets moved out of the nodes into testable classes.
+([Chat and commands](Chat-and-commands.md)), the math of stats and status effects
+([Entities](Entities.md)) — as the logic gets moved out of the nodes into testable classes.
 
 **Environment synchronization.** `Properties/launchSettings.json` and `.run/*.run.xml` match the
 tables in [Quick start](Quick-start.md) — that invariant is written down there, but nobody checks it.

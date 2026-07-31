@@ -1,6 +1,6 @@
 # Chat and commands
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 A message travels `client → server (TrySendNewMessageRpc) → interceptors → broadcast`.
 An `IChatMessageInterceptor` interceptor can "eat" a message: this is how
@@ -27,7 +27,7 @@ The current set:
 when no `ICommandProcessor` matched.
 
 > [!IMPORTANT]
-> A deliberate deviation from the [localization rules](../Localization.md): chat command responses are
+> A deliberate deviation from the [localization rules](Localization.md): chat command responses are
 > not localized.
 >
 > Commands are an admin tool that is used extremely rarely, so keeping their texts in

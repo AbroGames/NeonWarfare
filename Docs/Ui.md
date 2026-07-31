@@ -1,6 +1,6 @@
 # UI
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 ## The main menu: the page stack
 

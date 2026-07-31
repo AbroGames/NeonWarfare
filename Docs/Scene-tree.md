@@ -1,6 +1,6 @@
 # Scene tree
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 The project is built as a strict "container → contents" hierarchy. Each level knows only about its
 own descendants; the contents are swapped through a `NodeContainer`.

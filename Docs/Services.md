@@ -1,10 +1,10 @@
 # Services
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 ## Global services
 
-The static `Services` class ([Scripts/Services.cs](../../Scripts/Services.cs)), available from
+The static `Services` class ([Scripts/Services.cs](../Scripts/Services.cs)), available from
 anywhere. Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling`,
 `AssemblyCache`, `TypesMapping`, `ExceptionHandler`, `StringCompression`, `MembersScanner` — the last
 one proxies `Di.MembersScanner`), some are game-specific:
@@ -29,7 +29,7 @@ The field name in `Services` is deliberately shorter than the class name (`Servi
 `global using static` — which is why the code simply says `Di.Process(this)` and `Net.IsServer()`.
 Also globally available there are `Consts.Global` (`ServerId`, `BroadcastId`) and the Godot extensions
 from KludgeBox (vectors, colors, camera, nodes — `Vec2(x, y)`, for example, comes from there) — see
-[Scripts/GlobalUsings.cs](../../Scripts/GlobalUsings.cs). New global imports are added only there.
+[Scripts/GlobalUsings.cs](../Scripts/GlobalUsings.cs). New global imports are added only there.
 
 ## World services
 

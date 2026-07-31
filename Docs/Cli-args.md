@@ -4,7 +4,7 @@
 
 The arguments are described in `Scripts/Content/CmdArgs/` and are parsed **only** in the
 `RootStarter`s, and from there passed on as ordinary parameters (see
-[Startup flow](Arch/Startup-flow.md)).
+[Startup flow](Startup-flow.md)).
 Reading `OS.GetCmdlineArgs()` from deep inside the code is not allowed.
 
 The first one is Godot's standard `--path "./"` argument — it points at the project folder and has

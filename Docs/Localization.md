@@ -30,7 +30,7 @@ string is assembled dynamically.
 
 The current locale is set in `RootStarter` **after** the settings are loaded but **before** the
 loading screen is first shown — otherwise the loading screen will show keys instead of text
-(see [Startup flow](Arch/Startup-flow.md)).
+(see [Startup flow](Startup-flow.md)).
 
 The default locale is taken from the OS (`Services.I18N.GetUserOsLocaleInfoOrDefault()`). The
 language can be changed in-game on the `LanguageSelectionPage` page.

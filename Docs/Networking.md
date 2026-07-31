@@ -1,12 +1,12 @@
 # Networking
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 The **stock Godot high-level multiplayer** is used (`SceneMultiplayer` + `ENetMultiplayerPeer`).
 
 ## Main nodes
 
-* **`Network`** ([Scenes/Game/Network/Network.cs](../../Scenes/Game/Network/Network.cs)) — a wrapper
+* **`Network`** ([Scenes/Game/Network/Network.cs](../Scenes/Game/Network/Network.cs)) — a wrapper
   over `MultiplayerApi`. It creates a new `SceneMultiplayer` bound to the `Game` node, so that on
   returning to the menu all the old subscriptions are guaranteed to fall away. It is responsible for
   `ConnectToServer()`, `HostServer()`, `OpenServer()` and a correct `Shutdown()`.
@@ -39,7 +39,7 @@ A blank line between the functions is deliberately not added, since the public m
 convenient alias for the private one.
 
 The mode is always stated explicitly. The full cheat sheet for writing RPCs is in the
-[Code style conventions](../Code-style.md).
+[Code style conventions](Code-style.md).
 
 ## Spawning objects
 

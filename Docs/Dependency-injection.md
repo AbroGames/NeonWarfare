@@ -1,6 +1,6 @@
 # Dependency injection (DI)
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 The DI from KludgeBox is used. Practically every class calls `Di.Process(this)` as the first line in
 `_Ready()` (or in the constructor for non-nodes), after which the annotated fields are filled in:

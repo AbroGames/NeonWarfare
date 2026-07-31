@@ -1,6 +1,6 @@
 # Shutdown
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 * **The client** — `Services.MainScene.Shutdown()` → a deferred `SceneTree.Quit()`.
 * **The server child process** — `ProcessShutdowner` (a node from KludgeBox,

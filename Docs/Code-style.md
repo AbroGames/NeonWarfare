@@ -14,7 +14,7 @@ A scene and its handler live in the same folder under the same name (`Hud.tscn` 
 
 * If dependency injection is required, write `Di.Process(this)` as the **first line** in `_Ready()`
   (or in the constructor for a non-node). Without it all `[Child]` / `[Parent]` / `[SceneService]` /
-  `[Logger]` will silently stay `null` — see [Dependency injection](Arch/Dependency-injection.md).
+  `[Logger]` will silently stay `null` — see [Dependency injection](Dependency-injection.md).
 * If a node needs data **before** `_Ready()`, use the `InitPreReady(...)` method, which returns
   `this`: `PackedScene.Instantiate<Hud>().InitPreReady(world)`. For initialization after readiness —
   `InitPostReady(...)`.
@@ -47,14 +47,14 @@ A scene and its handler live in the same folder under the same name (`Hud.tscn` 
 * Try to combine data into a single call (for example, the coordinates of several units at once)
   rather than sending an RPC per object.
 
-More detail — in [Networking](Arch/Networking.md).
+More detail — in [Networking](Networking.md).
 
 ## Serialization
 
 * Network and saves — **MessagePack** (`[MessagePackObject]`, `[Key(N)]`, `[IgnoreMember]`).
 * Settings files on disk — **JSON** (`System.Text.Json`).
 
-These two tools must not be confused: see [Data and saves](Arch/Data-and-saves.md).
+These two tools must not be confused: see [Data and saves](Data-and-saves.md).
 
 ## Data
 

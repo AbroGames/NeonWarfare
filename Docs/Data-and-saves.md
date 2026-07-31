@@ -1,6 +1,6 @@
 # Data and saves
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 The world data is split into two nodes and **contains no logic** — only state and its
 synchronization:

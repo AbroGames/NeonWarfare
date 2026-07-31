@@ -1,6 +1,6 @@
 # Startup flow
 
-[← Project README](../../README.md)
+[← Project README](../README.md)
 
 The startup is split into two independent levels, and they must not be confused:
 
@@ -11,7 +11,7 @@ The startup is split into two independent levels, and they must not be confused:
    not touch the network at all.
 
 The command-line arguments are parsed **only** in the RootStarters, and from there travel on as
-ordinary parameters (see [Command-line arguments](../Cli-args.md)).
+ordinary parameters (see [Command-line arguments](Cli-args.md)).
 
 ## Level 1: RootStarter
 
@@ -202,7 +202,7 @@ Parameters: `host`, `port`, `mustSetLastGame`.
 > `ClientStartWorld` is called **on an event**, not immediately: at the time of `Init()` there is no
 > connection yet. The `ConnectedToServer` handler is written as a local function and unsubscribes from
 > the event on the very first firing — otherwise `SynchronizerService` leaks on the return to the menu
-> (see [Code style conventions](../Code-style.md)).
+> (see [Code style conventions](Code-style.md)).
 
 ### 4. `HostDedicatedServerAndConnectGameStarter`
 
