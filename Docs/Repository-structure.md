@@ -37,11 +37,15 @@ Scripts/                      Code without scenes
 Tests/                        xUnit v3 tests
 ├── NeonWarfare.Tests/        A separate project, does not launch the engine
 │   ├── Infrastructure/       Helpers for all the tests
-│   └── Docs/                 Tests that verify the documentation
+│   ├── Docs/                 Tests that verify the documentation
+│   ├── Localization/         Tests over Assets/Locales/ and the keys used in the code
+│   ├── Conventions/          Static checks of the rules from Docs/Code-style.md and Docs/Cli-args.md
+│   └── Scenes/               Tests over the .tscn and .tres files
 └── .gdignore                 So that Godot does not look into this folder, since there are only unit tests here
 
 Properties/
 └── launchSettings.json       Quick-launch profiles for the game in different modes (Rider sees them by itself)
 Docs/                         Documentation, every file is linked from README.md
 .run/                         Rider Multi-Launch configurations: server + one or two clients at once
+.github/                      CI: build and unit tests on a push into master and on a pull request
 ```

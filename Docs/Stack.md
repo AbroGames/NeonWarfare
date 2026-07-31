@@ -21,6 +21,7 @@ Packages of the test project (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`
 | `xunit.v3` | The test framework: `[Fact]`, `[Theory]`, `Assert` |
 | `xunit.runner.visualstudio` | The VSTest adapter — without it `dotnet test` and Rider do not find the tests |
 | `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
+| `Microsoft.CodeAnalysis.CSharp` | The C# parser (Roslyn), convention tests check a syntax tree |
 
 **About KludgeBox.** The library's sources are not in this repository — it is referenced as a NuGet
 package, so searching the repository will not find declarations of its types (`NodeContainer`,

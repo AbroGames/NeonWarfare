@@ -9,8 +9,12 @@ on Windows/Linux/macOS.
 
 ## Documentation
 
+**If you change the architecture, update the corresponding file in `Docs/`.** It is not generated
+from the code. If the change affects the list of documents or the entry points — update `README.md`
+as well. Keep doc changes as compact as possible.
+
 Before a non-trivial task, the file you need is read **in full**.  
-Key entities are named in the table rows deliberately,
+Key entities are named in the table rows deliberately
 so that a file can be found by searching for a class or attribute name.
 
 ### Foundation — read for any task
