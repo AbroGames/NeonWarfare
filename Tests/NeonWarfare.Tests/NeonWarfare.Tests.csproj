@@ -25,6 +25,10 @@
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
         <!-- VSTest host: sets IsTestProject and enables the `dotnet test` target. -->
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+        <!-- The C# parser alone, used by the convention tests to read the game sources as syntax
+             trees instead of matching regexes against lines. It is not a reference to the game
+             project and pulls in no GodotSharp: nothing here is compiled or executed, only parsed. -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
     </ItemGroup>
 
     <ItemGroup>

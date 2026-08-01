@@ -9,19 +9,8 @@ namespace NeonWarfare.Tests.Infrastructure;
 public static class MarkdownFileSources
 {
     /// <summary>Every file under Docs/.</summary>
-    public static TheoryData<string> Docs => Build(RepositoryPaths.DocFiles());
+    public static TheoryData<string> Docs => RepositoryPaths.DocFiles().AsTheoryData();
 
     /// <summary>Every file under Docs/ plus README.md — the full scope of the doc checks.</summary>
-    public static TheoryData<string> DocsAndReadme => Build(RepositoryPaths.DocFilesAndReadme());
-
-    private static TheoryData<string> Build(IEnumerable<string> absolutePaths)
-    {
-        TheoryData<string> data = [];
-        foreach (string path in absolutePaths)
-        {
-            data.Add(RepositoryPaths.Relative(path));
-        }
-
-        return data;
-    }
+    public static TheoryData<string> DocsAndReadme => RepositoryPaths.DocFilesAndReadme().AsTheoryData();
 }
