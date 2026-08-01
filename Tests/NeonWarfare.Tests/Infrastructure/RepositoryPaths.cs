@@ -36,6 +36,12 @@ public static class RepositoryPaths
     /// <summary>The only place allowed to build a CmdArgsService and ask it for arguments.</summary>
     public static string RootStartersDirectory { get; } = Path.Combine(Root, "Scenes", "Root", "Starters");
 
+    /// <summary>The run profiles Rider picks up by itself — see Docs/Quick-start.md.</summary>
+    public static string LaunchSettingsPath { get; } = Path.Combine(Root, "Properties", "launchSettings.json");
+
+    /// <summary>Rider Multi-Launch configurations, each starting several launch profiles at once.</summary>
+    public static string RunConfigsDirectory { get; } = Path.Combine(Root, ".run");
+
     /// <summary>All documentation files, sorted, as absolute paths.</summary>
     public static IReadOnlyList<string> DocFiles() =>
         Directory.GetFiles(DocsDirectory, "*.md", SearchOption.AllDirectories)
@@ -71,6 +77,9 @@ public static class RepositoryPaths
 
     /// <summary>The files declaring the command-line arguments.</summary>
     public static IReadOnlyList<string> CmdArgsFiles() => Files([CmdArgsDirectory], "*.cs");
+
+    /// <summary>Every Multi-Launch configuration in .run/.</summary>
+    public static IReadOnlyList<string> RunConfigFiles() => Files([RunConfigsDirectory], "*.run.xml");
 
     /// <summary>True when <paramref name="absolutePath"/> is inside <paramref name="directory"/>.</summary>
     public static bool IsInside(string absolutePath, string directory) =>

@@ -26,6 +26,11 @@ public sealed class MarkdownDocument
     private static readonly Regex InlineLinkTextRegex =
         new(@"\[(?<text>[^\]]*)\]\([^)]*\)", RegexOptions.Compiled);
 
+    private static readonly Regex TableDelimiterCellRegex = new(@"^:?-+:?$", RegexOptions.Compiled);
+
+    private const string RaggedRowMessage =
+        "{Path}:{Line}: the table row has {Actual} cell(s), its header has {Expected}: '{Text}'.";
+
     private MarkdownDocument(string path, byte[] bytes, string text)
     {
         Path = path;
@@ -39,6 +44,7 @@ public sealed class MarkdownDocument
         Links = ParseLinks(path, sanitized);
         Headings = ParseHeadings(Lines, insideFence);
         HeadingSlugs = BuildSlugs(Headings);
+        Tables = ParseTables(path, Lines, sanitized, insideFence);
         IsFenced = insideFence;
     }
 
@@ -63,6 +69,58 @@ public sealed class MarkdownDocument
 
     /// <summary>GitHub-style anchors of all headings, including the <c>-1</c>, <c>-2</c> duplicates.</summary>
     public IReadOnlySet<string> HeadingSlugs { get; }
+
+    /// <summary>Every pipe table, in file order. Cell text keeps its markup — backticks included.</summary>
+    public IReadOnlyList<MarkdownTable> Tables { get; }
+
+    /// <summary>
+    /// The first table that follows the given heading, or null when the section has none. Looking the
+    /// table up by its heading rather than by its index keeps a check working when another table is
+    /// added elsewhere in the document.
+    /// </summary>
+    public MarkdownTable? TableUnder(string headingText)
+    {
+        (int start, int end) = Section(headingText);
+        return Tables.FirstOrDefault(table => table.Line > start && table.Line < end);
+    }
+
+    /// <summary>
+    /// The raw lines of the section under the given heading, the heading itself and fenced blocks
+    /// excluded. Empty when there is no such heading.
+    /// </summary>
+    public IEnumerable<string> LinesUnder(string headingText)
+    {
+        (int start, int end) = Section(headingText);
+        for (int line = start + 1; line < end; line++)
+        {
+            if (!IsFenced[line - 1])
+            {
+                yield return Lines[line - 1].TrimEnd('\r');
+            }
+        }
+    }
+
+    /// <summary>
+    /// The one-based line of the heading and of the first heading after it that is not nested inside
+    /// it — the half-open range the section occupies. <c>(0, 0)</c> when the heading is absent.
+    /// </summary>
+    private (int Start, int End) Section(string headingText)
+    {
+        MarkdownHeading? heading = Headings.FirstOrDefault(
+            candidate => string.Equals(candidate.Text, headingText, StringComparison.Ordinal));
+        if (heading is null)
+        {
+            return (0, 0);
+        }
+
+        int end = Headings
+            .Where(candidate => candidate.Line > heading.Line && candidate.Level <= heading.Level)
+            .Select(candidate => candidate.Line)
+            .DefaultIfEmpty(Lines.Length + 1)
+            .First();
+
+        return (heading.Line, end);
+    }
 
     public static MarkdownDocument Load(string path)
     {
@@ -189,6 +247,113 @@ public sealed class MarkdownDocument
         return headings;
     }
 
+    /// <summary>
+    /// Pipe tables. A table starts where a line with a pipe is followed by a delimiter row, and ends on
+    /// the first line without one. The rows are read from <paramref name="lines"/> but split at the
+    /// pipes of <paramref name="sanitized"/>, so a pipe inside an inline code span stays inside its
+    /// cell — and the cell keeps the backticks, which in these tables are the content itself.
+    /// </summary>
+    private static List<MarkdownTable> ParseTables(
+        string path, string[] lines, string[] sanitized, bool[] insideFence)
+    {
+        List<MarkdownTable> tables = [];
+
+        for (int i = 0; i + 1 < lines.Length; i++)
+        {
+            bool startsTable = !insideFence[i]
+                               && sanitized[i].Contains('|')
+                               && !insideFence[i + 1]
+                               && IsDelimiterRow(sanitized[i + 1]);
+            if (!startsTable)
+            {
+                continue;
+            }
+
+            IReadOnlyList<string> header = SplitCells(lines, sanitized, i);
+            List<IReadOnlyList<string>> rows = [];
+
+            int row = i + 2;
+            for (; row < lines.Length && !insideFence[row] && sanitized[row].Contains('|'); row++)
+            {
+                IReadOnlyList<string> cells = SplitCells(lines, sanitized, row);
+                if (cells.Count != header.Count)
+                {
+                    throw new InvalidOperationException(RaggedRowMessage
+                        .Replace("{Path}", RepositoryPaths.Relative(path))
+                        .Replace("{Line}", (row + 1).ToString())
+                        .Replace("{Actual}", cells.Count.ToString())
+                        .Replace("{Expected}", header.Count.ToString())
+                        .Replace("{Text}", lines[row].TrimEnd('\r')));
+                }
+
+                rows.Add(cells);
+            }
+
+            tables.Add(new MarkdownTable(i + 1, header, rows));
+            i = row - 1;
+        }
+
+        return tables;
+    }
+
+    /// <summary>A row of nothing but <c>---</c> cells, with the optional alignment colons.</summary>
+    private static bool IsDelimiterRow(string sanitized)
+    {
+        if (!sanitized.Contains('|'))
+        {
+            return false;
+        }
+
+        List<string> cells = DropOuterEmpties(sanitized.Split('|').Select(cell => cell.Trim()).ToList());
+        return cells.Count > 0 && cells.All(cell => TableDelimiterCellRegex.IsMatch(cell));
+    }
+
+    /// <summary>
+    /// Cells of one row. The text comes from <paramref name="lines"/> and keeps its markup; the split
+    /// points come from <paramref name="sanitized"/>, where inline code is blanked out, so a pipe
+    /// inside a code span never ends a cell. A pipe escaped with a backslash does not end one either —
+    /// Docs/Chat-and-commands.md writes <c>{add\|remove}</c> — and is left in the cell as written.
+    /// </summary>
+    private static List<string> SplitCells(string[] lines, string[] sanitized, int index)
+    {
+        string raw = lines[index].TrimEnd('\r');
+        List<string> cells = [];
+        int start = 0;
+
+        for (int i = 0; i < sanitized[index].Length; i++)
+        {
+            if (sanitized[index][i] != '|' || (i > 0 && raw[i - 1] == '\\'))
+            {
+                continue;
+            }
+
+            cells.Add(raw[start..i].Trim());
+            start = i + 1;
+        }
+
+        cells.Add(raw[start..].Trim());
+        return DropOuterEmpties(cells);
+    }
+
+    /// <summary>
+    /// The rows here are written with an outer pipe on both sides, which leaves an empty cell at each
+    /// end. GFM allows the outer pipes to be omitted, so the cells are dropped only when they are there.
+    /// </summary>
+    private static List<string> DropOuterEmpties(List<string> cells)
+    {
+        if (cells.Count > 0 && cells[0].Length == 0)
+        {
+            cells.RemoveAt(0);
+        }
+
+        if (cells.Count > 0 && cells[^1].Length == 0)
+        {
+            cells.RemoveAt(cells.Count - 1);
+        }
+
+        return cells;
+    }
+
     private static HashSet<string> BuildSlugs(IReadOnlyList<MarkdownHeading> headings)
     {
         HashSet<string> slugs = [];
@@ -208,3 +373,12 @@ public sealed class MarkdownDocument
 
 /// <summary>One ATX heading: its level, its raw text and its one-based line number.</summary>
 public sealed record MarkdownHeading(int Level, string Text, int Line);
+
+/// <summary>
+/// One pipe table: the one-based line of its header, the header cells and the body rows. Every row has
+/// as many cells as the header — <see cref="MarkdownDocument"/> refuses to read a ragged one.
+/// </summary>
+public sealed record MarkdownTable(
+    int Line,
+    IReadOnlyList<string> Header,
+    IReadOnlyList<IReadOnlyList<string>> Rows);

@@ -45,7 +45,8 @@ In Rider the tests are visible as usual: the test project is part of `NeonWarfar
   directory is `bin/<config>/<tfm>/`.
 * A file is read through the helper for its format, not with `File.ReadAllText`: `MarkdownDocument`
   for `Docs/`, `CSharpFile` for the game sources, `PoFile` for `Assets/Locales/`, `SceneFile` for
-  `.tscn` and `.tres`. `PoFile` and `SceneFile` throw on anything they were not written for instead of
+  `.tscn` and `.tres`, `LaunchSettingsFile` for `Properties/launchSettings.json`, `RunConfigFile` for
+  `.run/`. All of them except `MarkdownDocument` throw on anything they were not written for instead of
   skipping it, so a test can never quietly pass on a file it misread.
 * An exception to a rule is an explicit array of paths inside the test, with a comment saying why —
   never a silently skipped case. There are two: `Scripts/GlobalUsings.cs` declares no namespace, and
@@ -73,6 +74,13 @@ The process role is asked from `Net.*`, never from `GetMultiplayer()` and never 
 with a number. The command-line contract from [Command-line arguments](Cli-args.md) holds: flags are
 declared and parsed only in `Scripts/Content/CmdArgs/`, `CmdArgsService` is named only in the Root
 starters, and nobody reads `OS.GetCmdlineArgs()` on their own.
+
+**Launch profiles** — `Launch/`. The profiles of `Properties/launchSettings.json` and the Multi-Launch
+configurations of `.run/` agree with [Quick start](Quick-start.md) in both directions and in the same
+order: every profile has a table row carrying the arguments it really passes, every `.run/` file has a
+list item naming the tasks it really starts, and every task refers to a profile that exists. The last
+one is the reason for the rest: a task names its profile by a plain string, so renaming the profile
+leaves a configuration that Rider rejects only at the moment someone presses Run.
 
 **Scenes** — `Scenes/`. Every `res://` path in a `.tscn` or a `.tres` resolves to a file that exists,
 and the script of a root node is the `.cs` next to the scene under the same name. Godot resolves
