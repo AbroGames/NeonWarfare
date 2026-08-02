@@ -60,9 +60,9 @@ public abstract partial class AbstractMultiplayerSpawner : MultiplayerSpawner
 
     public override void _Ready()
     {
-        //Call Di.Process again, because IniPreReady calls only on server-side.
-        if (_log == null) Di.Process(this);
-        
+        //Call Di.Process again, because InitPreReady calls only on server-side.
+        Di.Process(this);
+
         foreach (var packedScene in GetPackedScenesForSpawn())
         {
             if (packedScene == null)
