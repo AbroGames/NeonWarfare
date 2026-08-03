@@ -1,0 +1,33 @@
+<!-- Plain Microsoft.NET.Sdk, like NeonWarfare.Tests. The smoke tests do launch the engine, but they do
+     it as an external process and never touch a game type, so GodotSharp must stay out of here. See
+     Docs/Smoke-testing.md for why there is no ProjectReference to NeonWarfare.csproj. -->
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!-- Same TFM as the game and the unit test project: all three live in one solution. -->
+        <TargetFramework>net10.0</TargetFramework>
+
+        <!-- xunit.v3 builds a self-contained test host (Microsoft.Testing.Platform). With a library
+             OutputType the project still compiles, but no tests are discovered or run. -->
+        <OutputType>Exe</OutputType>
+
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- The framework itself: [Fact]/[Theory] and Assert. -->
+        <PackageReference Include="xunit.v3" Version="3.2.2" />
+        <!-- VSTest adapter: without it neither `dotnet test` nor the Rider runner discovers
+             xunit.v3 tests. -->
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
+        <!-- VSTest host: sets IsTestProject and enables the `dotnet test` target. -->
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The game is launched against the repository directory, but the working directory of a
+             test run is bin/<config>/<tfm>/. The root is baked into the assembly at compile time, the
+             same way NeonWarfare.Tests does it. Read back by RepositoryRoot. -->
+        <AssemblyMetadata Include="RepositoryRoot" Value="$(MSBuildThisFileDirectory)..\..\" />
+    </ItemGroup>
+</Project>

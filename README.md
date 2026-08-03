@@ -48,6 +48,7 @@ so that a file can be found by searching for a class or attribute name.
 | [Stack and dependencies](Docs/Stack.md) | Godot and .NET versions, libraries, where to look for the KludgeBox sources |
 | [Quick start](Docs/Quick-start.md) | Environment setup, Rider run profiles |
 | [Testing](Docs/Testing.md) | The approach to tests, `dotnet test`, what is already covered |
+| [Smoke testing](Docs/Smoke-testing.md) | Launching the real game from a test, `GODOT_EXE`, what counts as a failure |
 
 ---
 
@@ -68,7 +69,7 @@ so that a file can be found by searching for a class or attribute name.
 | The code behaves differently in single-player and over the network | [Networking](Docs/Networking.md) (`IsServer` / `IsClient`) → [Startup flow](Docs/Startup-flow.md) |
 | A type declaration cannot be found (`NodeContainer`, `[Sync]`, `StatModifiersContainer<T>`) | [Stack](Docs/Stack.md) — the KludgeBox sources are not in the repository, the path to them is in the `KLUDGEBOX_SRC` ENV variable |
 | Bring up a server and a client to check something | [Quick start](Docs/Quick-start.md) → [Command-line arguments](Docs/Cli-args.md) |
-| Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) |
+| Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) → [Smoke testing](Docs/Smoke-testing.md) |
 
 ---
 

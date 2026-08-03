@@ -15,9 +15,9 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 * **Unit tests only.** Godot is never launched: the project is built with the plain
   `Microsoft.NET.Sdk` and does **not** reference `NeonWarfare.csproj`, which would pull in `GodotSharp`
   — and that does not initialize outside a Godot process.
-* Hence only two things are testable: **pure logic** and **repository invariants** (files,
-  documentation, locales, conventions). Everything inside the node tree is covered by the build and a
-  manual run — see [Quick start](Quick-start.md).
+* Hence only two things are testable here: **pure logic** and **repository invariants** (files,
+  documentation, locales, conventions). What lives inside the node tree is covered by the build, by the
+  [smoke tests](Smoke-testing.md) and by a manual run — see [Quick start](Quick-start.md).
 * **A test collects all violations into one list** instead of failing on the first —
   `Infrastructure/FailureReport`. A per-file check is a `[Theory]` with one file per case.
 * **Conventions are checked on a syntax tree, not on text** (`Microsoft.CodeAnalysis.CSharp` — a parser
@@ -81,7 +81,8 @@ structure tree is checked one way deliberately; the reverse would be a different
 
 `.github/workflows/build.yml` runs `dotnet restore`, `build`, `test` on every push into `master` and
 every pull request into it. Godot is not installed on the runner — `Godot.NET.Sdk` and `GodotSharp` come
-from NuGet, and the tests never start the engine.
+from NuGet, and the tests never start the engine. The `test` step names this project explicitly, so the
+[smoke tests](Smoke-testing.md) are compiled but not run.
 
 `RepositoryStatsTests` counts and asserts nothing; a verbose runner is what makes its output visible:
 
@@ -91,7 +92,10 @@ dotnet test --filter FullyQualifiedName~RepositoryStatsTests -l "console;verbosi
 
 ## What will not be here
 
-Integration tests that bring up Godot (headless launch, scene tree, server-plus-client networking): they
-need the engine to run the tests from inside its own process — a separate decision (gdUnit4 or an
-equivalent) and a separate project, not an extension of `NeonWarfare.Tests`. Network scenarios stay
-manual: a server plus at least one client, see [Quick start](Quick-start.md).
+Tests that run from **inside** the engine's own process and reach into the node tree: they need a
+separate decision (gdUnit4 or an equivalent) and a separate project, not an extension of
+`NeonWarfare.Tests`.
+
+Launching the game as an external process and reading its output is a different thing and does exist —
+[Smoke testing](Smoke-testing.md), a separate project that covers startup in several modes, including a
+server with two clients. Anything beyond starting up stays manual, see [Quick start](Quick-start.md).

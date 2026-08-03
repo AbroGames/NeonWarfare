@@ -22,6 +22,10 @@ Packages of the test project (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`
 | `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
 | `Microsoft.CodeAnalysis.CSharp` | The C# parser (Roslyn), convention tests check a syntax tree |
 
+The smoke test project (`Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csproj`) takes the same
+three xUnit packages and nothing else — it launches the game as an external process and needs no parser,
+see [Smoke testing](Smoke-testing.md).
+
 Coming in transitively through KludgeBox and used directly in the code: **Serilog** — logging
 (`[Logger] private ILogger _log`); **Humanizer** — substitution into string templates
 (`FormatWith(...)`).

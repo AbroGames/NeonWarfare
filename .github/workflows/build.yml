@@ -1,6 +1,8 @@
-# Builds both projects and runs the unit tests.
-# Godot is not installed here on purpose: Godot.NET.Sdk and GodotSharp come from NuGet, and the tests
-# never start the engine — see Docs/Testing.md.
+# Builds every project and runs the unit tests.
+# Godot is not installed here on purpose: Godot.NET.Sdk and GodotSharp come from NuGet, and the unit
+# tests never start the engine — see Docs/Testing.md.
+# The Test step names the unit test project explicitly, so the smoke tests are compiled but not run:
+# they do launch the engine, which this runner does not have — see Docs/Smoke-testing.md.
 
 name: .NET
 
@@ -26,4 +28,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj --no-build --verbosity normal
