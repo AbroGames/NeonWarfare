@@ -7,7 +7,7 @@ namespace NeonWarfare.Scenes.Game.Network;
 public partial class Network(Node multiplayerRoot) : Node
 {
 
-    public static readonly int MaxSyncPacketSize = 1350 * 100;
+    public static readonly int MaxSyncPacketSize = 1350 * 32;
     
     public MultiplayerApi Api { get; private set; }
     public NetworkStateMachine StateMachine { get; } = new();

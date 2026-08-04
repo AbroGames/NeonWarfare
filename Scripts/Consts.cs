@@ -14,6 +14,7 @@ public static class Consts
     
     public enum TransferChannel
     {
+        Default,
         Chat,
         StatsHp,
         StatsCache
