@@ -53,6 +53,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Docs/CliArgsDocTests` | Flag table of [Command-line arguments](Cli-args.md) ↔ `Scripts/Content/CmdArgs/` |
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj` |
 | `Docs/ServicesDocTests` | Both tables of [Services](Services.md) ↔ `Scripts/Services.cs` and `World*Service` |
+| `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.Tests/`, both ways |
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot` |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |

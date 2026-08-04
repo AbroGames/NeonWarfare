@@ -35,8 +35,11 @@ public static class RepositoryPaths
 
     public static string GameProjectPath { get; } = Path.Combine(Root, "NeonWarfare.csproj");
 
+    /// <summary>The test project root — Docs/Testing.md names its test classes relative to it.</summary>
+    public static string TestsDirectory { get; } = Path.Combine(Root, "Tests", "NeonWarfare.Tests");
+
     public static string TestProjectPath { get; } =
-        Path.Combine(Root, "Tests", "NeonWarfare.Tests", "NeonWarfare.Tests.csproj");
+        Path.Combine(TestsDirectory, "NeonWarfare.Tests.csproj");
 
     /// <summary>The registry of all global services.</summary>
     public static string ServicesPath { get; } = Path.Combine(Root, "Scripts", "Services.cs");
@@ -101,6 +104,17 @@ public static class RepositoryPaths
 
     /// <summary>Every Multi-Launch configuration in .run/.</summary>
     public static IReadOnlyList<string> RunConfigFiles() => Files([RunConfigsDirectory], "*.run.xml");
+
+    /// <summary>
+    /// Every hand-written test source file. <c>bin/</c> and <c>obj/</c> are skipped: the build output
+    /// holds generated sources — the xUnit entry point among them — that nobody wrote and nothing
+    /// documents.
+    /// </summary>
+    public static IReadOnlyList<string> TestFiles() =>
+        Files([TestsDirectory], "*.cs")
+            .Where(path => !IsInside(path, Path.Combine(TestsDirectory, "bin"))
+                           && !IsInside(path, Path.Combine(TestsDirectory, "obj")))
+            .ToList();
 
     /// <summary>The world service classes — every .cs under Scenes/World/Service, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
