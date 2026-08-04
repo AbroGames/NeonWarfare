@@ -11,6 +11,24 @@ public static class RepositoryPaths
 {
     private const string RepositoryRootMetadataKey = "RepositoryRoot";
 
+    /// <summary>
+    /// Directories that hold nothing hand-written: build output, the engine cache, VCS and IDE state.
+    /// They are skipped by name at any depth — bin/ and obj/ exist next to both .csproj files.
+    /// </summary>
+    private static readonly string[] GeneratedDirectories = ["bin", "obj", ".git", ".godot", ".idea", ".vs"];
+
+    /// <summary>
+    /// Extensions of every text file the repository owns — code, scenes, sidecars, locales, documentation
+    /// and the build and tooling configuration. Assets/Fonts/*.license is text too but comes from
+    /// outside and is left exactly as it was received, so its extension is not here.
+    /// </summary>
+    private static readonly HashSet<string> TextFileExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".cs", ".uid", ".import", ".tscn", ".tres", ".gdshader", ".po", ".pot", ".md",
+        ".csproj", ".sln", ".json", ".xml", ".yml", ".cfg", ".godot",
+        ".editorconfig", ".gitattributes", ".gitignore",
+    };
+
     private const string MissingMetadataMessage =
         "Assembly metadata '{Key}' is missing. It is set by an AssemblyMetadata item in " +
         "NeonWarfare.Tests.csproj — tests cannot locate the repository without it.";
@@ -129,6 +147,15 @@ public static class RepositoryPaths
     /// <summary>The import settings of the assets Godot converts on load — that is where their uid is.</summary>
     public static IReadOnlyList<string> ImportFiles() => Files([AssetsDirectory], "*.import");
 
+    /// <summary>
+    /// Every text file of the repository, whatever its format — the scope of the checks that look at
+    /// the bytes of a file rather than at what is written in it. Unlike the other sources here this one
+    /// walks the whole tree instead of naming directories, so a new folder is covered from the day it
+    /// appears; what keeps the build output out is <see cref="GeneratedDirectories"/>.
+    /// </summary>
+    public static IReadOnlyList<string> TextFiles() =>
+        TextFilesUnder(Root).OrderBy(path => path, StringComparer.Ordinal).ToList();
+
     /// <summary>True when <paramref name="absolutePath"/> is inside <paramref name="directory"/>.</summary>
     public static bool IsInside(string absolutePath, string directory) =>
         Path.GetFullPath(absolutePath).StartsWith(
@@ -150,6 +177,31 @@ public static class RepositoryPaths
             .Select(Path.GetFullPath)
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
+
+    /// <summary>Text files of one directory and of everything below it, unsorted.</summary>
+    private static IEnumerable<string> TextFilesUnder(string directory)
+    {
+        foreach (string file in Directory.GetFiles(directory))
+        {
+            if (TextFileExtensions.Contains(Path.GetExtension(file)))
+            {
+                yield return Path.GetFullPath(file);
+            }
+        }
+
+        foreach (string child in Directory.GetDirectories(directory))
+        {
+            if (GeneratedDirectories.Contains(Path.GetFileName(child)))
+            {
+                continue;
+            }
+
+            foreach (string file in TextFilesUnder(child))
+            {
+                yield return file;
+            }
+        }
+    }
 
     private static string ReadRoot()
     {
