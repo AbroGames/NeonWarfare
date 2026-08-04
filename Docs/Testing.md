@@ -71,6 +71,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Scenes/SceneResourceTests` | Every `res://` path resolves; a root node's script is the `.cs` beside the scene |
 | `Scenes/UidReferenceTests` | `ext_resource` uids resolve, agree with `path=`, are unique; `project.godot` uids resolve |
 | `Scenes/SidecarFileTests` | Every `.cs` has its `.cs.uid`; no `.uid` or `.import` outlived its file |
+| `Repository/RepositoryStatsTests` | Nothing — prints the size of the repository |
 
 Godot loads by `uid://` and treats `path=` as a hint, so a stale path survives a rename unnoticed —
 hence both sides are checked. `CLAUDE.md` is not scanned: it has no markdown links by design. The
@@ -81,6 +82,14 @@ structure tree is checked one way deliberately; the reverse would be a different
 `.github/workflows/build.yml` runs `dotnet restore`, `build`, `test` on every push into `master` and
 every pull request into it. Godot is not installed on the runner — `Godot.NET.Sdk` and `GodotSharp` come
 from NuGet, and the tests never start the engine.
+
+## Repository size
+
+Counts, no assertions. A verbose runner is what makes the output visible:
+
+```bash
+dotnet test --filter FullyQualifiedName~RepositoryStatsTests -l "console;verbosity=detailed"
+```
 
 ## What will not be here
 

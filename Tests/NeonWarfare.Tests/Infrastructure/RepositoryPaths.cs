@@ -39,6 +39,12 @@ public static class RepositoryPaths
 
     public static string DocsDirectory { get; } = Path.Combine(Root, "Docs");
 
+    /// <summary>
+    /// The working notes kept next to the documentation. Unlike Docs/ it is not part of the repository
+    /// contract and may simply not be there — every reader of it must handle its absence.
+    /// </summary>
+    public static string BrainDirectory { get; } = Path.Combine(Root, "brain");
+
     /// <summary>The two directories that hold every hand-written game source file.</summary>
     public static IReadOnlyList<string> SourceDirectories { get; } =
         [Path.Combine(Root, "Scenes"), Path.Combine(Root, "Scripts")];
@@ -154,7 +160,19 @@ public static class RepositoryPaths
     /// appears; what keeps the build output out is <see cref="GeneratedDirectories"/>.
     /// </summary>
     public static IReadOnlyList<string> TextFiles() =>
-        TextFilesUnder(Root).OrderBy(path => path, StringComparer.Ordinal).ToList();
+        AllFiles().Where(path => TextFileExtensions.Contains(Path.GetExtension(path))).ToList();
+
+    /// <summary>
+    /// Every file the repository owns, whatever its format — text and binary alike, with the same
+    /// <see cref="GeneratedDirectories"/> left out. <see cref="TextFiles"/> is this list filtered by
+    /// extension; this one is what "how large is the project" is counted from.
+    /// </summary>
+    public static IReadOnlyList<string> AllFiles() =>
+        FilesUnder(Root).OrderBy(path => path, StringComparer.Ordinal).ToList();
+
+    /// <summary>Every file of one directory and of everything below it, sorted, absolute.</summary>
+    public static IReadOnlyList<string> AllFilesUnder(string directory) =>
+        FilesUnder(directory).OrderBy(path => path, StringComparer.Ordinal).ToList();
 
     /// <summary>True when <paramref name="absolutePath"/> is inside <paramref name="directory"/>.</summary>
     public static bool IsInside(string absolutePath, string directory) =>
@@ -178,15 +196,17 @@ public static class RepositoryPaths
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-    /// <summary>Text files of one directory and of everything below it, unsorted.</summary>
-    private static IEnumerable<string> TextFilesUnder(string directory)
+    /// <summary>Files of one directory and of everything below it, unsorted.</summary>
+    private static IEnumerable<string> FilesUnder(string directory)
     {
+        if (!Directory.Exists(directory))
+        {
+            yield break;
+        }
+
         foreach (string file in Directory.GetFiles(directory))
         {
-            if (TextFileExtensions.Contains(Path.GetExtension(file)))
-            {
-                yield return Path.GetFullPath(file);
-            }
+            yield return Path.GetFullPath(file);
         }
 
         foreach (string child in Directory.GetDirectories(directory))
@@ -196,7 +216,7 @@ public static class RepositoryPaths
                 continue;
             }
 
-            foreach (string file in TextFilesUnder(child))
+            foreach (string file in FilesUnder(child))
             {
                 yield return file;
             }
