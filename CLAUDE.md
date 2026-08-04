@@ -8,7 +8,9 @@ It is not duplicated here.
 
 ## Required reading
 
-Read [README.md](README.md) at the start of work.
+**IT IS FIRST ACTION, NO EXCEPTIONS**  
+The first tool call of the session must be reading README.md — before any
+search, build or edit.
 
 ## Commands
 
