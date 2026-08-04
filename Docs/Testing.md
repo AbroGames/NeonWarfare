@@ -37,8 +37,9 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   `.uid` sidecar for code and shaders, the header of a `.tscn` / `.tres`, or the `.import` of a
   converted asset.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Four exist: `Scripts/GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
-  line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service).
+  skip. Five exist: `Scripts/GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
+  `NotFoundCommand` (no command name of its own).
 
 ## What is covered now
 
@@ -54,6 +55,9 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj` |
 | `Docs/ServicesDocTests` | Both tables of [Services](Services.md) ↔ `Scripts/Services.cs` and `World*Service` |
 | `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.Tests/`, both ways |
+| `Docs/SmokeTestingDocTests` | Scenario table of [Smoke testing](Smoke-testing.md) ↔ the tests of `Tests/NeonWarfare.SmokeTests/` |
+| `Docs/ChatCommandsDocTests` | Command table of [Chat and commands](Chat-and-commands.md) ↔ the `ICommandProcessor` classes: name and rights |
+| `Docs/NetworkingDocTests` | Channel table of [Networking](Networking.md) ↔ `Consts.TransferChannel`, order included |
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot` |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |

@@ -56,10 +56,16 @@ snapshot is covered in [Data and saves](Data-and-saves.md).
 
 ## Transfer channels
 
-`Consts.TransferChannel`: `Chat`, `StatsHp`, `StatsCache`. They are specified as
-`[Rpc(TransferChannel = (int) Consts.TransferChannel.X)]` so that independent streams do not wait for
-each other when a message is lost. The enum starts with `Default` — Godot's channel 0, which carries
-all the remaining traffic; it is there so that none of our channels lands on it.
+`Consts.TransferChannel` is written as `[Rpc(TransferChannel = (int) Consts.TransferChannel.X)]` so
+that independent streams do not wait for each other when a message is lost. The rows are in
+declaration order — the position of a channel is its number.
+
+| Channel | What goes through it |
+|---|---|
+| `Default` | Godot's channel 0: every RPC without an explicit channel, `SceneMultiplayer` replication included. Declared first so that none of our channels lands on it |
+| `Chat` | Chat messages and the commands sent as chat — `WorldChatService` |
+| `StatsHp` | Damage and heal events — `CharacterSynchronizer_Stats` |
+| `StatsCache` | Stat modifier updates for the client-side stat cache — `CharacterSynchronizer_Stats` |
 
 ## Payload
 

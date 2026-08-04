@@ -65,11 +65,28 @@ public static class RepositoryPaths
     public static string TestProjectPath { get; } =
         Path.Combine(TestsDirectory, "NeonWarfare.Tests.csproj");
 
+    /// <summary>
+    /// The smoke test project — a separate project that launches the engine, see Docs/Smoke-testing.md.
+    /// Its scenarios are documented there rather than in Docs/Testing.md, so it is kept apart from
+    /// <see cref="TestsDirectory"/> everywhere.
+    /// </summary>
+    public static string SmokeTestsDirectory { get; } = Path.Combine(Root, "Tests", "NeonWarfare.SmokeTests");
+
+    public static string SmokeTestProjectPath { get; } =
+        Path.Combine(SmokeTestsDirectory, "NeonWarfare.SmokeTests.csproj");
+
     /// <summary>The registry of all global services.</summary>
     public static string ServicesPath { get; } = Path.Combine(Root, "Scripts", "Services.cs");
 
     /// <summary>The world services — child nodes of World, one class per service.</summary>
     public static string WorldServiceDirectory { get; } = Path.Combine(Root, "Scenes", "World", "Service");
+
+    /// <summary>The chat commands: ICommandProcessor and its implementations, one class per command.</summary>
+    public static string CommandProcessorDirectory { get; } =
+        Path.Combine(WorldServiceDirectory, "Command");
+
+    /// <summary>The only place that declares a transfer channel — Consts.TransferChannel.</summary>
+    public static string ConstsPath { get; } = Path.Combine(Root, "Scripts", "Consts.cs");
 
     /// <summary>The only place that names an input action.</summary>
     public static string InputActionsPath { get; } =
@@ -140,8 +157,23 @@ public static class RepositoryPaths
                            && !IsInside(path, Path.Combine(TestsDirectory, "obj")))
             .ToList();
 
+    /// <summary>
+    /// Every hand-written smoke test source file, with the same <c>bin/</c> and <c>obj/</c> left out as
+    /// in <see cref="TestFiles"/>. Kept separate from it: the two projects are documented by two
+    /// different files, and neither table may claim the other's tests.
+    /// </summary>
+    public static IReadOnlyList<string> SmokeTestFiles() =>
+        Files([SmokeTestsDirectory], "*.cs")
+            .Where(path => !IsInside(path, Path.Combine(SmokeTestsDirectory, "bin"))
+                           && !IsInside(path, Path.Combine(SmokeTestsDirectory, "obj")))
+            .ToList();
+
     /// <summary>The world service classes — every .cs under Scenes/World/Service, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
+
+    /// <summary>The chat command classes — ICommandProcessor and every implementation of it.</summary>
+    public static IReadOnlyList<string> CommandProcessorFiles() =>
+        Files([CommandProcessorDirectory], "*.cs");
 
     /// <summary>
     /// Every <c>.uid</c> sidecar Godot keeps next to a file it cannot store a uid inside — a .cs or a
