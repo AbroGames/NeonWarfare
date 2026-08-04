@@ -41,6 +41,7 @@ Tests/                        xUnit v3 tests
 │   ├── Localization/         Tests over Assets/Locales/ and the keys used in the code
 │   ├── Conventions/          Static checks of the rules from Docs/Code-style.md and Docs/Cli-args.md
 │   ├── Launch/               Tests over Properties/launchSettings.json and .run/
+│   ├── Repository/           Repository-wide statistics (file and line counts), printed for information
 │   └── Scenes/               Tests over the .tscn and .tres files
 └── .gdignore                 So that Godot does not look into this folder, since there are only unit tests here
 

@@ -53,14 +53,3 @@ assembly; inside `World.tscn` it would be noise (`World/WorldChatService`).
 
 The practical consequence: **renaming a property in `World.cs` breaks the injection** until the node
 in `World.tscn` is renamed too, and vice versa. The compiler does not catch this.
-
-## The spawner on `Tree`
-
-Spawners for the surfaces are attached from code (`WorldTree.SetSafeSurface()` /
-`SetBattleSurface()` → `WorldMultiplayerSpawnerService.AddSpawnerToNode(...)`), and they are named
-after the `<node name>-MultiplayerSpawner` pattern.
-
-The `Tree` node itself is an exception: it exists in `World.tscn` from the very start, and there is
-simply no moment at which a service could attach a spawner to it. That is why its spawner
-(`Tree-MultiplayerSpawner`, `spawn_path = "../Tree"`) is put right into the scene, by hand, following
-the same naming pattern.
