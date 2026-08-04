@@ -4,10 +4,10 @@
 
 ## Global services
 
-The static `Services` class ([Scripts/Services.cs](../Scripts/Services.cs)), available from
-anywhere. Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling`,
-`AssemblyCache`, `TypesMapping`, `ExceptionHandler`, `StringCompression`, `MembersScanner` — the last
-one proxies `Di.MembersScanner`), some are game-specific:
+The static `Services` class ([Scripts/Services.cs](../Scripts/Services.cs)), available from anywhere.
+Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling`, `AssemblyCache`,
+`TypesMapping`, `ExceptionHandler`, `StringCompression`, `MembersScanner` — the last one proxies
+`Di.MembersScanner`), some are game-specific:
 
 | Service | Class | Purpose |
 |---|---|---|
@@ -26,16 +26,16 @@ The field name in `Services` is deliberately shorter than the class name (`Servi
 `SaveLoadService`): the `Service` suffix would be noise at the call site.
 
 `Services.Di` and `Services.Net` are additionally exposed in `Services.Global` and pulled in through
-`global using static` — which is why the code simply says `Di.Process(this)` and `Net.IsServer()`.
-Also globally available there are `Consts.Global` (`ServerId`, `BroadcastId`) and the Godot extensions
-from KludgeBox (vectors, colors, camera, nodes — `Vec2(x, y)`, for example, comes from there) — see
+`global using static` — which is why the code simply says `Di.Process(this)` and `Net.IsServer()`. Also
+globally available there are `Consts.Global` (`ServerId`, `BroadcastId`) and the Godot extensions from
+KludgeBox (vectors, colors, camera, nodes — `Vec2(x, y)`, for example, comes from there) — see
 [Scripts/GlobalUsings.cs](../Scripts/GlobalUsings.cs). New global imports are added only there.
 
 ## World services
 
-Child nodes of `World`. `World` itself implements `IServiceProvider` and registers them in a
-dictionary by type in `_EnterTree()` — before `_Ready()` runs on the children. This is exactly what
-makes the `[SceneService]` injection up the tree possible.
+Child nodes of `World`. `World` itself implements `IServiceProvider` and registers them in a dictionary
+by type in `_EnterTree()` — before `_Ready()` runs on the children. This is exactly what makes the
+`[SceneService]` injection up the tree possible.
 
 | Service | Purpose |
 |---|---|

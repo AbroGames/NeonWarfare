@@ -2,10 +2,9 @@
 
 [← Project README](../README.md)
 
-The arguments are described in `Scripts/Content/CmdArgs/` and are parsed **only** in the
-`RootStarter`s, and from there passed on as ordinary parameters (see
-[Startup flow](Startup-flow.md)).
-Reading `OS.GetCmdlineArgs()` from deep inside the code is not allowed.
+The arguments are described in `Scripts/Content/CmdArgs/` and are parsed **only** in the `RootStarter`s,
+and from there passed on as ordinary parameters (see [Startup flow](Startup-flow.md)). Reading
+`OS.GetCmdlineArgs()` from deep inside the code is not allowed.
 
 The first one is Godot's standard `--path "./"` argument — it points at the project folder and has
 nothing to do with the game's arguments.
@@ -43,6 +42,6 @@ nothing to do with the game's arguments.
 | `--no-hud` | Do not render the `ServerHud` |
 | `--world-render` | Render the game world (by default the world is hidden and only the server console is visible) |
 
-The server flags are assembled back into a command line by the
-`DedicatedServerArgs.GetArrayToStartDedicatedServer()` method — this is exactly what the client uses
-to launch an out-of-process server, passing it `--parent-pid` with its own PID.
+The server flags are assembled back into a command line by
+`DedicatedServerArgs.GetArrayToStartDedicatedServer()` — this is exactly what the client uses to launch
+an out-of-process server, passing it `--parent-pid` with its own PID.

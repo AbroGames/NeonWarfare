@@ -2,8 +2,7 @@
 
 [← Project README](../README.md)
 
-* **Godot:** the latest version, `Forward+` renderer.
-* **.NET:** the latest version.
+**Godot:** the latest version, `Forward+` renderer. **.NET:** the latest version.
 
 Packages of the game project (`NeonWarfare.csproj`):
 
@@ -23,22 +22,20 @@ Packages of the test project (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`
 | `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
 | `Microsoft.CodeAnalysis.CSharp` | The C# parser (Roslyn), convention tests check a syntax tree |
 
+Coming in transitively through KludgeBox and used directly in the code: **Serilog** — logging
+(`[Logger] private ILogger _log`); **Humanizer** — substitution into string templates
+(`FormatWith(...)`).
+
 **About KludgeBox.** The library's sources are not in this repository — it is referenced as a NuGet
 package, so searching the repository will not find declarations of its types (`NodeContainer`,
-`AbstractMultiplayerSpawner`, `ProcessShutdowner`, `ProcessDeadChecker`,
-`StatModifiersContainer<T>`, the `[Sync]` attribute and so on). The path to the library's source code
-is stored in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
+`AbstractMultiplayerSpawner`, `ProcessShutdowner`, `ProcessDeadChecker`, `StatModifiersContainer<T>`,
+the `[Sync]` attribute and so on). The path to the library's source code is stored in the
+`KLUDGEBOX_SRC` ENV variable — that is where they should be read.
 
-Coming in transitively through KludgeBox and used directly in the code:
-
-* **Serilog** — logging (`[Logger] private ILogger _log`);
-* **Humanizer** — substitution into string templates (`FormatWith(...)`).
-
-The `CS0649` warning is suppressed for the build (`NoWarn` in `.csproj`): the fields are filled by DI
-rather than by a constructor, and the compiler considers them unused.
-
-`NeonWarfare.csproj` contains `<Compile Remove="Tests/**" />`: the game project's directory is the
-repository root, so otherwise the default `Godot.NET.Sdk` glob (`**/*.cs`) would pull the test files
-into the game assembly, and it would fail on the xUnit types. The test project builds on its own; in
-`ExportDebug` and `ExportRelease` it is excluded from the solution build so that the Godot editor and
-the game export do not touch it.
+Two build details. The `CS0649` warning is suppressed (`NoWarn` in `.csproj`): the fields are filled by
+DI rather than by a constructor, and the compiler considers them unused. And `NeonWarfare.csproj`
+contains `<Compile Remove="Tests/**" />`: the game project's directory is the repository root, so
+otherwise the default `Godot.NET.Sdk` glob (`**/*.cs`) would pull the test files into the game assembly,
+and it would fail on the xUnit types. The test project builds on its own; in `ExportDebug` and
+`ExportRelease` it is excluded from the solution build so that the Godot editor and the game export do
+not touch it.

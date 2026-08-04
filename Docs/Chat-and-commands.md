@@ -2,10 +2,9 @@
 
 [← Project README](../README.md)
 
-A message travels `client → server (TrySendNewMessageRpc) → interceptors → broadcast`.
-An `IChatMessageInterceptor` interceptor can "eat" a message: this is how
-`ChatMessageCommandInterceptor` takes everything that starts with `/` and hands it to
-`WorldCommandService`.
+A message travels `client → server (TrySendNewMessageRpc) → interceptors → broadcast`. An
+`IChatMessageInterceptor` interceptor can "eat" a message: this is how `ChatMessageCommandInterceptor`
+takes everything that starts with `/` and hands it to `WorldCommandService`.
 
 Commands are classes implementing `ICommandProcessor` (`GetCommand`, `GetDescription`,
 `IsRequiringAdmin`, `ProcessCommand`). They are **registered automatically**: at startup the service
@@ -27,9 +26,6 @@ The current set:
 when no `ICommandProcessor` matched.
 
 > [!IMPORTANT]
-> A deliberate deviation from the [localization rules](Localization.md): chat command responses are
-> not localized.
->
-> Commands are an admin tool that is used extremely rarely, so keeping their texts in
-> `Assets/Locales/*.po` does not pay off. The messages are written in English as ordinary
-> `private const string`s at the top of the class; no keys are created for them.
+> A deliberate deviation from the [localization rules](Localization.md): command responses are **not**
+> localized — a rarely used admin tool does not pay for keys in `Assets/Locales/*.po`. They are written
+> in English as ordinary `private const string`s at the top of the class.

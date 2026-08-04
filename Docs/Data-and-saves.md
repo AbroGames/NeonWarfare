@@ -2,8 +2,7 @@
 
 [← Project README](../README.md)
 
-The world data is split into two nodes and **contains no logic** — only state and its
-synchronization:
+The world data is split into two nodes and **contains no logic** — only state and its synchronization:
 
 | Node | Lives | Synchronization | Goes into the save |
 |---|---|---|---|
@@ -21,14 +20,14 @@ which implements `ISerializableStorage` (`SerializeStorage` / `DeserializeStorag
 
 `WorldDataSerializerService` walks all the `ISerializableStorage` instances inside
 `WorldPersistenceData` by reflection (`Services.MembersScanner`) and assembles a
-`Dictionary<string, byte[]>` → MessagePack. The same byte blob is used both for saving to disk and
-for the initial synchronization of a new client (see [Networking](Networking.md)).
+`Dictionary<string, byte[]>` → MessagePack. The same byte blob is used both for saving to disk and for
+the initial synchronization of a new client (see [Networking](Networking.md)).
 
 ## Models
 
-The models themselves (`PlayerData`, `GeneralData`) are `ObservableObject`s with
-`[ObservableProperty]` and MessagePack `[Key(N)]` keys. The storage subscribes to `PropertyChanged`
-and automatically broadcasts the change to the clients.
+The models themselves (`PlayerData`, `GeneralData`) are `ObservableObject`s with `[ObservableProperty]`
+and MessagePack `[Key(N)]` keys. The storage subscribes to `PropertyChanged` and automatically
+broadcasts the change to the clients.
 
 > [!IMPORTANT]
 > **Any write to a model property on the server is a network operation in itself.** These properties
@@ -36,8 +35,8 @@ and automatically broadcasts the change to the clients.
 
 ## Files
 
-All the user files live in the directory that Godot maps `user://` to. The directory depends on the
-OS and on the project name (`Neon Warfare`):
+All the user files live in the directory that Godot maps `user://` to. The directory depends on the OS
+and on the project name (`Neon Warfare`):
 
 | OS | Path |
 |---|---|
@@ -45,9 +44,8 @@ OS and on the project name (`Neon Warfare`):
 | Linux | `~/.local/share/godot/app_userdata/Neon Warfare/` |
 
 Saves: `user://saves/<name>.bin`, the name of a new file is `yyyy-MM-dd_HH-mm` (`SaveLoadService`).
-Autosave is performed in `WorldServerShutdowner` on leaving the tree and is controlled by the
-`AutoSaveEnabled` setting (on the client — `GameSettings`, on the dedicated server —
-`DedicatedServerSettings`). More detail — in [Shutdown](Shutdown.md).
+Autosave happens in `WorldServerShutdowner` on leaving the tree, under the `AutoSaveEnabled` setting —
+see [Shutdown](Shutdown.md).
 
 Other files in `user://` (JSON, `System.Text.Json`):
 
