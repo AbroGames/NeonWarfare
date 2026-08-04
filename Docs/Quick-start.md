@@ -10,6 +10,8 @@
   the Godot executable).
 * To set up the Rider integration in Godot, go to Editor → Editor Settings → Dotnet → Editor. In the
   External Editor list select JetBrains Rider and clear the Custom Exec Path Args value.
+* After moving a file, fix its namespace with Rider's Adjust Namespaces.
+* Clean the code up with Reformat and Cleanup Code on the project.
 
 ## Run profiles
 

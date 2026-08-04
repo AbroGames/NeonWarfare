@@ -58,13 +58,15 @@ snapshot is covered in [Data and saves](Data-and-saves.md).
 
 `Consts.TransferChannel`: `Chat`, `StatsHp`, `StatsCache`. They are specified as
 `[Rpc(TransferChannel = (int) Consts.TransferChannel.X)]` so that independent streams do not wait for
-each other when a message is lost.
+each other when a message is lost. The enum starts with `Default` — Godot's channel 0, which carries
+all the remaining traffic; it is there so that none of our channels lands on it.
 
 ## Payload
 
 Godot primitives or `byte[]` from MessagePack; JSON does not travel over the network. The maximum sync
-packet size is `Network.MaxSyncPacketSize` = `1350 * 100` (about 135 KB: a hundred ENet packets of one
-MTU each). The initial world snapshot, which goes to the client in a single call, must also fit into it.
+packet size is `Network.MaxSyncPacketSize` = `1350 * 32` (about 43 KB: 32 ENet packets of one MTU
+each). It limits `SceneMultiplayer` replication only — the size of an RPC is not capped, so the
+initial world snapshot, which goes to the client in a single call, is not affected by it.
 
 ## Client connection
 

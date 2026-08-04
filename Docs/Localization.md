@@ -18,6 +18,15 @@ double underscore: `MAIN_MENU__EXIT_BUTTON`, `HUD__CHAT_PLACEHOLDER`,
 Most of the text lives right in the scenes; calling `Tr(...)` from code is only needed where the string
 is assembled dynamically.
 
+## Locale files
+
+```bash
+msginit --locale=ru --input=messages.pot --output=ru.po --no-translator   # a new locale
+msgmerge --update --backup=none en.po messages.pot                       # pull the new keys in
+```
+
+A new `.po` is then registered in the Godot project settings, under Localization → Translations.
+
 > [!NOTE]
 > **Chat command responses are not localized.**
 >

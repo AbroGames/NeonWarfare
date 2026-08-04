@@ -56,5 +56,9 @@ by type in `_EnterTree()` — before `_Ready()` runs on the children. This is ex
 > interaction with the system: by calling its method you should get a consistent state of the whole
 > system, not just of that one service.
 
+Adding a service means three edits at once, and nothing but a run will tell you that one was missed:
+a field in `World.cs`, an entry in the list in `World._EnterTree()`, and a node in `World.tscn` with
+the script attached and **named exactly like the field**.
+
 The **node** names of these services in `World.tscn` go without the `World` prefix (`ChatService`, not
 `WorldChatService`) — see [Scene tree](Scene-tree.md).

@@ -28,7 +28,7 @@ Scenes/                       Scenes (.tscn) and their handlers (.cs) — kept n
 └── KludgeBox/                Thin descendants of the KludgeBox nodes
 
 Scripts/                      Code without scenes
-├── Content/                  Game entity stats, loading screen types, command-line arguments
+├── Content/                  Game entity stats, loading screen types, cmd args; no reading or processing logic
 ├── Service/                  Global services
 ├── Services.cs               The registry of all global services
 ├── Consts.cs                 Global constants

@@ -36,7 +36,10 @@ World (Node2D, IServiceProvider)                   The game world and all of its
 
 The control flow rule: **calls go down the tree, events (`event` / signals) go up.** The parent knows
 about its children, the child does not know about its parent (the exception is an explicit `[Parent]`
-injection in the world services).
+injection in the world services). So `World` knows nothing about `Hud` and talks to it through events
+only: not one of `World`'s own tasks needs the `Hud`.
+
+The question to ask before adding a link: *does class X need class Y to do its own job?*
 
 ## Node naming
 
