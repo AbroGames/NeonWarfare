@@ -8,6 +8,12 @@ public class GameSettingsService
 
     private const string GameSettingsPath = "user://game-settings.json";
 
+    // Color is a Godot struct whose R/G/B/A are fields, which System.Text.Json skips by default.
+    // Without the converter it writes only the computed properties (R8, H, OkHslH, ...), whose
+    // setters then overwrite each other on read and produce a wrong color.
+    private static readonly JsonSerializerOptions JsonOptions =
+        new(JsonSerializerOptions.Default) { Converters = { new ColorJsonConverter() } };
+
     private GameSettings _settings;
     private string _temporalUid; 
     private string _temporalNick; 
@@ -47,7 +53,7 @@ public class GameSettingsService
     private void SaveSettings()
     {
         using var file = FileAccess.Open(GameSettingsPath, FileAccess.ModeFlags.Write);
-        string json = JsonSerializer.Serialize(GetSettings());
+        string json = JsonSerializer.Serialize(GetSettings(), JsonOptions);
         file.StoreString(json);
         file.Close();
     }
@@ -64,6 +70,7 @@ public class GameSettingsService
         string json = file.GetAsText();
         file.Close();
         
-        _settings = JsonSerializer.Deserialize<GameSettings>(json);
+        // Keep the defaults from Init if the file turned out to be empty or malformed.
+        _settings = JsonSerializer.Deserialize<GameSettings>(json, JsonOptions) ?? _settings;
     }
 }
