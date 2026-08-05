@@ -46,7 +46,8 @@ descendant of `AbstractMultiplayerSpawner` from KludgeBox) to a node. The spawne
 synchronizes over the network every sub-node created on it; it is named after the
 `<node name>-MultiplayerSpawner` pattern and is deleted automatically together with the observed node.
 The exception is the spawner for `Tree`, which sits right in `World.tscn` rather than being created from
-code. Only the scenes listed in `SyncedPackedScenes` can be spawned.
+code. Only the scenes listed in `SyncedPackedScenes` can be spawned. A spawner also hands the nodes it
+already tracks to a peer that connects later — see [Client connection](#client-connection).
 
 ## Field synchronization
 
@@ -76,10 +77,84 @@ initial world snapshot, which goes to the client in a single call, is not affect
 
 ## Client connection
 
-`WorldSynchronizerService`, identically for a networked and a single-player game. The client calls
-`StartSyncOnClient(uid, nick, color)`, which reaches the server as `NewClientInitOnServerRpc`:
-validation (uid, nickname length and so on), registration of `PlayerData`, granting admin rights. On
-refusal the server sends `RejectSyncOnClientRpc(error)` and the client goes back to the menu with a
-message; on success — `EndSyncOnClientRpc(byte[])` with all of `PersistenceData` in a single MessagePack
-snapshot. The client deserializes the world and replies with `EndSyncOnServerRpc`, after which the
-server calls `WorldPlayerService.SpawnPlayer(peerId)`.
+The handshake lives in `WorldSynchronizerService` and runs identically for a networked and a
+single-player game — in single player there is no `Network` node at all, and `RpcId(ServerId, …)` plus
+`CallLocal = true` make every step execute in place.
+
+### Before the connection
+
+The `World` and all of its sub-entities are built by the game starter, before the peers meet:
+
+* **Server** ([HostMultiplayerGameStarter](../Scenes/Game/Starters/HostMultiplayerGameStarter.cs)) —
+  `AddNetwork()`, `AddWorld()`, then `HostServer(port, refuseNewConnections: true)`: the port is open
+  but closed for business. Only afterwards comes `ServerStartWorld()` → `StartNewGame()` / `LoadGame()`
+  → `Tree.SetSafeSurface()`, which creates the `SafeSurface`, hangs a `SafeSurface-MultiplayerSpawner`
+  on it and fills it with walls and bots. The last step is `OpenServer()`, so a client can only get in
+  once the world is fully assembled.
+* **Client** ([ConnectToMultiplayerGameStarter](../Scenes/Game/Starters/ConnectToMultiplayerGameStarter.cs))
+  — `AddNetwork()`, `AddWorld()`, `AddHud()` and only then `ConnectToServer()`. The `World` is the same
+  scene with the same services, but empty: `WorldTree._Ready()` only makes a placeholder `Surface`
+  outside the tree so that other services do not get a `null`, and the real one arrives from the server.
+
+On both sides `World._EnterTree()` registers the services, `WorldTemporaryData._Ready()` → `Di.Process`
+attaches an `AttributeMultiplayerSynchronizer` built from the `[Sync]` fields, and the
+`Tree-MultiplayerSpawner` comes from `World.tscn` itself.
+
+### The handshake
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Connecting client
+    participant S as Server
+    participant O as Other clients
+
+    Note over S: AddNetwork(), AddWorld(): services, TemporaryData<br/>+ its synchronizer, Tree-MultiplayerSpawner
+    S->>S: HostServer(port, refuseNewConnections: true)
+    S->>S: StartNewGame() / LoadGame()
+    Note over S: Tree.SetSafeSurface(): SafeSurface,<br/>SafeSurface-MultiplayerSpawner, walls, bots
+    S->>S: OpenServer(): RefuseNewConnections = false
+
+    Note over C: AddNetwork(), AddWorld(), AddHud():<br/>the same empty World, loading screen Connecting
+    C->>S: ENet connect
+    S-->>O: PeerConnected(newPeerId)
+    S-->>C: ConnectedToServer
+
+    par Spawner replication, starts right after the ENet handshake
+        S-->>C: MultiplayerSpawner: SafeSurface + its spawner, walls, bots, other players
+    and Handshake RPC
+        C->>S: NewClientInitOnServerRpc(uid, nick, color)
+        alt validation failed
+            S-->>C: RejectSyncOnClientRpc(error)
+            Note over C: back to the main menu with the message
+        else accepted
+            S->>S: PlayerUidByPeerId[peerId] = uid, PlayerData, IsAdmin
+            Note over S: the [Sync] change below leaves on the next<br/>synchronizer tick, not ordered against the RPCs
+            S-->>C: MultiplayerSynchronizer: PlayerUidByPeerId
+            S-->>O: MultiplayerSynchronizer: PlayerUidByPeerId
+            S-->>C: EndSyncOnClientRpc(PersistenceData snapshot)
+            C->>C: DeserializeWorldData()
+            C->>S: EndSyncOnServerRpc()
+            Note over C: SyncEndedOnClientEvent:<br/>Ping.Start(), loading screen cleared
+            S->>S: WorldPlayerService.SpawnPlayer(peerId)
+            S-->>C: MultiplayerSpawner: the new Character
+            S-->>O: MultiplayerSpawner: the new Character
+            S-->>C: Controller_OnChangeRpc(PlayerController), owner only
+        end
+    end
+```
+
+### What runs beside the handshake
+
+Two of the streams on the diagram are not driven by our RPCs, which is why the order between them and
+`EndSyncOnClientRpc` is not guaranteed:
+
+* **`MultiplayerSpawner`.** As soon as the peer is registered, every spawner sends the new client the
+  nodes it already tracks — the `SafeSurface` (together with its own spawner, since the spawner scene
+  is spawnable itself), the walls, the bots and the characters of the players already in the game. The
+  character of the connecting player is created later, in `SpawnPlayer(peerId)`, and reaches everyone
+  the same way. The personal `PlayerController` goes to the owner alone — `SetControllerToClient` is an
+  `RpcId`, for the rest the character stays on a `RemoteController`.
+* **`[Sync]` `WorldTemporaryData`.** The synchronizer exists on both sides from the moment the `World`
+  is created; the value travels when the server changes `PlayerUidByPeerId` inside
+  `NewClientInitOnServerRpc`, on the next tick of the synchronizer and to every client at once.
