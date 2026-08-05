@@ -15,10 +15,8 @@ namespace NeonWarfare.Tests.Infrastructure;
 /// </summary>
 public sealed class CSharpFile
 {
-    private const string ParseErrorMessage =
-        "{Path}: the file did not parse as C#. Either the file is broken, or the language moved ahead " +
-        "of the Microsoft.CodeAnalysis.CSharp version in NeonWarfare.Tests.csproj — bump the package. " +
-        "Errors:\n{Errors}";
+    /// <summary>The attributes xUnit discovers a test method by.</summary>
+    private static readonly string[] TestMethodAttributes = ["Fact", "Theory"];
 
     /// <summary>
     /// Latest, not a pinned version: the game project follows the SDK, so pinning here would start
@@ -144,6 +142,22 @@ public sealed class CSharpFile
             _ => [],
         };
 
+    /// <summary>
+    /// A method xUnit would run: one carrying <c>[Fact]</c> or <c>[Theory]</c>. Both doc tests that
+    /// take stock of the suite ask this, and they must agree on the answer.
+    /// </summary>
+    public static bool IsTestMethod(MethodDeclarationSyntax method) =>
+        method.AttributeLists
+            .SelectMany(list => list.Attributes)
+            .Any(attribute => TestMethodAttributes.Contains(AttributeName(attribute)));
+
+    /// <summary>
+    /// A type that holds at least one test. Infrastructure/ holds helpers that run no tests, and
+    /// listing them as coverage would say something untrue.
+    /// </summary>
+    public static bool DeclaresTestMethod(TypeDeclarationSyntax declaration) =>
+        declaration.Members.OfType<MethodDeclarationSyntax>().Any(IsTestMethod);
+
     /// <summary>The called method's name, whatever the call is qualified with.</summary>
     public static string CalledName(InvocationExpressionSyntax invocation) =>
         invocation.Expression switch
@@ -165,9 +179,11 @@ public sealed class CSharpFile
         // there — a test running on it would pass while checking nothing.
         if (errors.Count > 0)
         {
-            throw new InvalidOperationException(ParseErrorMessage
-                .Replace("{Path}", RepositoryPaths.Relative(path))
-                .Replace("{Errors}", string.Join("\n", errors.Select(error => error.ToString()))));
+            throw new InvalidOperationException(
+                $"{RepositoryPaths.Relative(path)}: the file did not parse as C#. Either the file is " +
+                $"broken, or the language moved ahead of the Microsoft.CodeAnalysis.CSharp version in " +
+                $"NeonWarfare.Tests.csproj — bump the package. Errors:\n" +
+                string.Join("\n", errors.Select(error => error.ToString())));
         }
 
         return new CSharpFile(path, tree.GetRoot());

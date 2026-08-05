@@ -14,19 +14,25 @@ namespace NeonWarfare.Tests.Conventions;
 /// </summary>
 public class FileEncodingTests
 {
-    //TODO: todo-tests.md says how to turn it on and how to convert the repository.
-    [Theory(Skip = "The BOM question is open — see todo-tests.md, 'UTF-8 BOM in .cs'.")]
-    [MemberData(nameof(RepositoryFileSources.TextFiles), MemberType = typeof(RepositoryFileSources))]
+    /// <summary>
+    /// Off, not deleted. Godot writes the .cs.uid sidecars with a BOM and rewrites them whenever it
+    /// reopens the project, so turning this on means either converting the repository and having the
+    /// editor undo it, or exempting the sidecars — which is most of what the check would cover. The
+    /// decision is open; the check is kept so that turning it on is one attribute away.
+    /// </summary>
+    [Theory(Skip = "Godot rewrites the .cs.uid sidecars with a BOM — see the comment above.")]
+    [MemberData(nameof(FileSources.TextFiles), MemberType = typeof(FileSources))]
     public void File_IsUtf8WithoutBom(string relativePath)
     {
         byte[] bytes = File.ReadAllBytes(RepositoryPaths.Absolute(relativePath));
-        bool hasBom = bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
 
-        Assert.False(hasBom, $"{relativePath}: UTF-8 BOM found, .editorconfig requires charset = utf-8");
+        Assert.False(
+            TextFile.HasBom(bytes),
+            $"{relativePath}: UTF-8 BOM found, .editorconfig requires charset = utf-8");
     }
 
     [Theory]
-    [MemberData(nameof(RepositoryFileSources.TextFiles), MemberType = typeof(RepositoryFileSources))]
+    [MemberData(nameof(FileSources.TextFiles), MemberType = typeof(FileSources))]
     public void File_UsesLineFeedOnly(string relativePath)
     {
         string[] lines = File.ReadAllText(RepositoryPaths.Absolute(relativePath)).Split('\n');

@@ -31,7 +31,7 @@ public class UidReferenceTests
     }
 
     [Theory]
-    [MemberData(nameof(GameFileSources.Resources), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Resources), MemberType = typeof(FileSources))]
     public void ExternalResourceUids_ResolveToAFile(string relativePath)
     {
         SceneFile scene = SceneFile.Load(RepositoryPaths.Absolute(relativePath));
@@ -63,7 +63,7 @@ public class UidReferenceTests
     /// folder — believes the path.
     /// </summary>
     [Theory]
-    [MemberData(nameof(GameFileSources.Resources), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Resources), MemberType = typeof(FileSources))]
     public void ExternalResourceUidAndPath_NameTheSameFile(string relativePath)
     {
         SceneFile scene = SceneFile.Load(RepositoryPaths.Absolute(relativePath));

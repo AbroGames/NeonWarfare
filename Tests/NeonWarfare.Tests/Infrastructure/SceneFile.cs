@@ -85,7 +85,7 @@ public sealed class SceneFile
     public static SceneFile Load(string path)
     {
         string absolutePath = System.IO.Path.GetFullPath(path);
-        string[] lines = File.ReadAllText(absolutePath).Split('\n');
+        string[] lines = TextFile.ReadLines(absolutePath);
 
         List<ExternalResource> resources = [];
         List<SceneNode> nodes = [];
@@ -94,7 +94,7 @@ public sealed class SceneFile
 
         for (int i = 0; i < lines.Length; i++)
         {
-            string line = lines[i].TrimEnd('\r');
+            string line = lines[i];
 
             Match external = ExternalResourceRegex.Match(line);
             if (external.Success)

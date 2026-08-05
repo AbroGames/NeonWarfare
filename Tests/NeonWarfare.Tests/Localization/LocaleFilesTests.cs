@@ -35,7 +35,7 @@ public class LocaleFilesTests
     }
 
     [Theory]
-    [MemberData(nameof(GameFileSources.Locales), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Locales), MemberType = typeof(FileSources))]
     public void LocaleFile_HasNoDuplicateKeys(string relativePath)
     {
         PoFile file = PoFile.Load(RepositoryPaths.Absolute(relativePath));
@@ -59,7 +59,7 @@ public class LocaleFilesTests
     /// another. Keys the file and the template do not share are left to LocaleFiles_HaveTheSameKeySet.
     /// </summary>
     [Theory]
-    [MemberData(nameof(GameFileSources.Translations), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Translations), MemberType = typeof(FileSources))]
     public void LocaleKeys_AreInTheSameOrderAsInTheTemplate(string relativePath)
     {
         PoFile template = PoFile.Load(RepositoryPaths.LocaleTemplatePath);
@@ -89,7 +89,7 @@ public class LocaleFilesTests
     }
 
     [Theory]
-    [MemberData(nameof(GameFileSources.Locales), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Locales), MemberType = typeof(FileSources))]
     public void LocaleKeys_FollowNamingConvention(string relativePath)
     {
         PoFile file = PoFile.Load(RepositoryPaths.Absolute(relativePath));
@@ -105,7 +105,7 @@ public class LocaleFilesTests
     }
 
     [Theory]
-    [MemberData(nameof(GameFileSources.Translations), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Translations), MemberType = typeof(FileSources))]
     public void Translations_AreNotEmpty(string relativePath)
     {
         PoFile file = PoFile.Load(RepositoryPaths.Absolute(relativePath));

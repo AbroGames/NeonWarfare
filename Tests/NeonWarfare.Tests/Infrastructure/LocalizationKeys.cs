@@ -45,7 +45,7 @@ public static class LocalizationKeys
 
     private static IEnumerable<LocalizationKeyUsage> InScene(SceneFile scene)
     {
-        string[] lines = File.ReadAllText(scene.Path).Split('\n');
+        string[] lines = TextFile.ReadLines(scene.Path);
         for (int i = 0; i < lines.Length; i++)
         {
             foreach (Match match in SceneKeyRegex.Matches(lines[i]))

@@ -27,6 +27,12 @@ public class ChatCommandsDocTests
 
     private const string EveryoneRights = "everyone";
 
+    private const int CommandColumn = 0;
+
+    private const int ClassColumn = 1;
+
+    private const int RightsColumn = 2;
+
     /// <summary>
     /// Not a row of the table: its GetCommand() is empty on purpose — it is the fallback the service
     /// calls when no processor matched, and a row would put a command into the list that nobody can
@@ -38,20 +44,20 @@ public class ChatCommandsDocTests
     [Fact]
     public void CommandClasses_AreListedInTheTable()
     {
+        IReadOnlyDictionary<string, CommandProcessor> declared = DeclaredCommands();
         IReadOnlySet<string> documented = DocumentedCommands()
             .Select(row => row.Class)
             .ToHashSet(StringComparer.Ordinal);
 
         FailureReport report = new($"Command classes missing from the table of Docs/{DocumentName}");
 
-        foreach (CommandProcessor processor in DeclaredCommands())
-        {
-            if (!documented.Contains(processor.Class) && !NotDocumentedAsRow.Contains(processor.Class))
-            {
-                report.Add($"{processor.Class} — add a row for '/{processor.Command}', " +
-                           $"or list it in NotDocumentedAsRow with the reason");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            declared.Keys.Order(StringComparer.Ordinal),
+            documented,
+            NotDocumentedAsRow,
+            @class => $"{@class} — add a row for '/{declared[@class].Command}', " +
+                      $"or list it in NotDocumentedAsRow with the reason");
 
         report.AssertEmpty();
     }
@@ -59,19 +65,13 @@ public class ChatCommandsDocTests
     [Fact]
     public void TableRows_PointToExistingCommandClasses()
     {
-        IReadOnlySet<string> declared = DeclaredCommands()
-            .Select(processor => processor.Class)
-            .ToHashSet(StringComparer.Ordinal);
-
         FailureReport report = new($"Rows of Docs/{DocumentName} that no ICommandProcessor backs");
 
-        foreach ((_, string @class) in DocumentedCommands())
-        {
-            if (!declared.Contains(@class))
-            {
-                report.Add($"{@class} — renamed or deleted, the row is stale");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DocumentedCommands().Select(row => row.Class),
+            DeclaredCommands().Keys.ToHashSet(StringComparer.Ordinal),
+            @class => $"{@class} — renamed or deleted, the row is stale");
 
         report.AssertEmpty();
     }
@@ -79,8 +79,7 @@ public class ChatCommandsDocTests
     [Fact]
     public void TableRows_NameTheCommandTheClassHandles()
     {
-        IReadOnlyDictionary<string, CommandProcessor> declared = DeclaredCommands()
-            .ToDictionary(processor => processor.Class, StringComparer.Ordinal);
+        IReadOnlyDictionary<string, CommandProcessor> declared = DeclaredCommands();
 
         FailureReport report = new($"Rows of Docs/{DocumentName} whose command name is not what the class answers to");
 
@@ -95,7 +94,8 @@ public class ChatCommandsDocTests
 
             if (!string.Equals(command, processor.Command, StringComparison.Ordinal))
             {
-                report.Add($"{@class} — the table says '/{command}', {CommandMethod}() returns '{processor.Command}'");
+                report.Add($"{@class} — the table says '/{command}', " +
+                           $"{CommandMethod}() returns '{processor.Command}'");
             }
         }
 
@@ -105,20 +105,19 @@ public class ChatCommandsDocTests
     [Fact]
     public void TableRows_StateTheRightsTheClassRequires()
     {
-        IReadOnlyDictionary<string, CommandProcessor> declared = DeclaredCommands()
-            .ToDictionary(processor => processor.Class, StringComparer.Ordinal);
+        IReadOnlyDictionary<string, CommandProcessor> declared = DeclaredCommands();
 
         FailureReport report = new($"Rows of Docs/{DocumentName} that promise the wrong rights");
 
         foreach (IReadOnlyList<string> row in Table().Rows)
         {
-            string? @class = MarkdownDocument.CodeSpans(row[1]).FirstOrDefault();
+            string? @class = MarkdownTable.SingleCodeSpan(row[ClassColumn]);
             if (@class is null || !declared.TryGetValue(@class, out CommandProcessor? processor))
             {
                 continue;
             }
 
-            string rights = row[2].Trim();
+            string rights = row[RightsColumn];
             string expected = processor.RequiresAdmin ? AdminRights : EveryoneRights;
 
             if (!string.Equals(rights, expected, StringComparison.Ordinal))
@@ -134,28 +133,18 @@ public class ChatCommandsDocTests
     [Fact]
     public void TableRows_NameOneCommandAndOneClass()
     {
-        HashSet<string> seen = new(StringComparer.Ordinal);
+        MarkdownTable table = Table();
         FailureReport report = new($"Malformed rows of the command table of Docs/{DocumentName}");
 
-        foreach (IReadOnlyList<string> row in Table().Rows)
+        DocTableChecks.SingleCodeSpanPerRow(table, report, ClassColumn, "class name");
+
+        foreach (IReadOnlyList<string> row in table.Rows)
         {
-            List<string> commands = MarkdownDocument.CodeSpans(row[0]).ToList();
-            List<string> classes = MarkdownDocument.CodeSpans(row[1]).ToList();
-
-            if (commands.Count != 1 || !commands[0].StartsWith('/'))
+            string? command = MarkdownTable.SingleCodeSpan(row[CommandColumn]);
+            if (command is null || !command.StartsWith('/'))
             {
-                report.Add($"'{row[0]}' — the first cell must hold exactly one '/command' in backticks");
-            }
-
-            if (classes.Count != 1)
-            {
-                report.Add($"'{row[1]}' — the second cell must hold exactly one class name in backticks");
-                continue;
-            }
-
-            if (!seen.Add(classes[0]))
-            {
-                report.Add($"{classes[0]} — listed twice");
+                report.Add($"'{row[CommandColumn]}' — the {table.Header[CommandColumn]} cell must hold " +
+                           $"exactly one '/command' in backticks");
             }
         }
 
@@ -169,20 +158,17 @@ public class ChatCommandsDocTests
     [Fact]
     public void ExcludedCommands_AreDescribedInTheText()
     {
-        MarkdownDocument document = Document();
-        IReadOnlySet<string> mentioned = document.Lines
+        IReadOnlySet<string> mentioned = Document().Lines
             .SelectMany(MarkdownDocument.CodeSpans)
             .ToHashSet(StringComparer.Ordinal);
 
         FailureReport report = new($"Command classes left out of the table and never explained in Docs/{DocumentName}");
 
-        foreach (string excluded in NotDocumentedAsRow)
-        {
-            if (!mentioned.Contains(excluded))
-            {
-                report.Add($"{excluded} — say in the text what it is and why it has no row");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            NotDocumentedAsRow,
+            mentioned,
+            excluded => $"{excluded} — say in the text what it is and why it has no row");
 
         report.AssertEmpty();
     }
@@ -197,8 +183,8 @@ public class ChatCommandsDocTests
     {
         foreach (IReadOnlyList<string> row in Table().Rows)
         {
-            string? command = MarkdownDocument.CodeSpans(row[0]).FirstOrDefault();
-            string? @class = MarkdownDocument.CodeSpans(row[1]).FirstOrDefault();
+            string? command = MarkdownTable.SingleCodeSpan(row[CommandColumn]);
+            string? @class = MarkdownTable.SingleCodeSpan(row[ClassColumn]);
 
             if (command is null || @class is null || !command.StartsWith('/'))
             {
@@ -210,13 +196,14 @@ public class ChatCommandsDocTests
     }
 
     /// <summary>
-    /// Every implementation of ICommandProcessor, with the name it answers to and the rights it asks
-    /// for. Both come from expression-bodied methods returning a literal — that is how all of them are
-    /// written, and a processor computing either would be an unreadable command in the first place.
+    /// Every implementation of ICommandProcessor, by class name, with the name it answers to and the
+    /// rights it asks for. Both come from expression-bodied methods returning a literal — that is how
+    /// all of them are written, and a processor computing either would be an unreadable command in the
+    /// first place.
     /// </summary>
-    private static IReadOnlyList<CommandProcessor> DeclaredCommands()
+    private static IReadOnlyDictionary<string, CommandProcessor> DeclaredCommands()
     {
-        List<CommandProcessor> processors = [];
+        Dictionary<string, CommandProcessor> processors = new(StringComparer.Ordinal);
 
         foreach (string path in RepositoryPaths.CommandProcessorFiles())
         {
@@ -232,10 +219,9 @@ public class ChatCommandsDocTests
                     continue;
                 }
 
-                processors.Add(new CommandProcessor(
-                    declaration.Identifier.ValueText,
+                processors[declaration.Identifier.ValueText] = new CommandProcessor(
                     ReturnedLiteral(file, declaration, CommandMethod),
-                    ReturnedLiteral(file, declaration, AdminMethod) == "true"));
+                    ReturnedLiteral(file, declaration, AdminMethod) == "true");
             }
         }
 
@@ -260,30 +246,12 @@ public class ChatCommandsDocTests
         return literal.Token.ValueText;
     }
 
-    /// <summary>
-    /// The command table, with its shape checked before anything reads a cell by index: a column
-    /// dropped or reordered has to say so, not surface as an index out of range three tests later.
-    /// </summary>
-    private static MarkdownTable Table()
-    {
-        MarkdownTable table = Document().TableUnder(TableHeading) ?? throw new InvalidOperationException(
-            $"Docs/{DocumentName}: no table under '{TableHeading}'. Either the heading was renamed, or " +
-            $"the list of commands is gone.");
+    private static MarkdownTable Table() =>
+        Document().Section(TableHeading)
+            .RequireTable("the list of commands is gone", "Command", "Class", "Rights");
 
-        string[] expected = ["Command", "Class", "Rights"];
-        if (!table.Header.SequenceEqual(expected, StringComparer.Ordinal))
-        {
-            throw new InvalidOperationException(
-                $"Docs/{DocumentName}:{table.Line}: the command table must have the columns " +
-                $"{string.Join(" | ", expected)}, it has {string.Join(" | ", table.Header)}.");
-        }
-
-        return table;
-    }
-
-    private static MarkdownDocument Document() =>
-        MarkdownDocument.Load(Path.Combine(RepositoryPaths.DocsDirectory, DocumentName));
+    private static MarkdownDocument Document() => MarkdownDocument.LoadDoc(DocumentName);
 }
 
-/// <summary>One chat command as the code defines it: the class, the name it answers to, the rights.</summary>
-internal sealed record CommandProcessor(string Class, string Command, bool RequiresAdmin);
+/// <summary>One chat command as the code defines it: the name it answers to and the rights.</summary>
+internal sealed record CommandProcessor(string Command, bool RequiresAdmin);

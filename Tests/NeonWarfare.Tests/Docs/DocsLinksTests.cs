@@ -10,7 +10,7 @@ namespace NeonWarfare.Tests.Docs;
 public class DocsLinksTests
 {
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void Links_PointToExistingFiles(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));
@@ -48,7 +48,7 @@ public class DocsLinksTests
     }
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void Links_PointToExistingAnchors(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));

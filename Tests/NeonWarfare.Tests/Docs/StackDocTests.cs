@@ -14,7 +14,13 @@ public class StackDocTests
     private static readonly Regex PackageReferenceRegex =
         new(@"<PackageReference\s+Include=""(?<name>[^""]+)""", RegexOptions.Compiled);
 
+    private const string DocumentName = "Stack.md";
+
     private const string PackagesHeading = "Stack and dependencies";
+
+    private const string ProjectExtension = ".csproj";
+
+    private const int PackageColumn = 0;
 
     [Fact]
     public void GameProjectPackages_MatchTheDocument()
@@ -32,25 +38,21 @@ public class StackDocTests
     {
         string project = RepositoryPaths.Relative(projectPath);
         IReadOnlySet<string> referenced = ReferencedPackages(projectPath);
-        IReadOnlySet<string> documented = DocumentedPackages(projectPath);
+        IReadOnlySet<string> documented = DocumentedPackages(project);
 
-        FailureReport report = new($"Docs/Stack.md and {project} disagree about packages");
+        FailureReport report = new($"Docs/{DocumentName} and {project} disagree about packages");
 
-        foreach (string package in referenced.Order(StringComparer.Ordinal))
-        {
-            if (!documented.Contains(package))
-            {
-                report.Add($"{package} is referenced by {project} but has no table row");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            referenced.Order(StringComparer.Ordinal),
+            documented,
+            package => $"{package} is referenced by {project} but has no table row");
 
-        foreach (string package in documented.Order(StringComparer.Ordinal))
-        {
-            if (!referenced.Contains(package))
-            {
-                report.Add($"{package} has a table row but {project} does not reference it");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            documented.Order(StringComparer.Ordinal),
+            referenced,
+            package => $"{package} has a table row but {project} does not reference it");
 
         report.AssertEmpty();
     }
@@ -61,64 +63,32 @@ public class StackDocTests
             .ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
-    /// The package table that follows the paragraph naming this .csproj. The document has two of them,
+    /// The package table introduced by the paragraph naming this .csproj. The document has two of them,
     /// one per project, and they are told apart by the file the paragraph above mentions — the same way
-    /// a reader does it. A paragraph that names a .csproj without a table under it (the one explaining
-    /// <c>Compile Remove</c>) introduces nothing and contributes nothing.
+    /// a reader does it. A paragraph that names a .csproj without a table under it (the one about the
+    /// smoke test project) introduces nothing and contributes nothing.
     /// </summary>
-    private static IReadOnlySet<string> DocumentedPackages(string projectPath)
+    private static IReadOnlySet<string> DocumentedPackages(string project)
     {
-        string project = RepositoryPaths.Relative(projectPath);
-        Dictionary<string, HashSet<string>> byProject = new(StringComparer.Ordinal);
-        string? owner = null;
-        bool insideTable = false;
+        MarkdownSection section = MarkdownDocument.LoadDoc(DocumentName).Section(PackagesHeading);
 
-        foreach (MarkdownLine line in Document.Section(PackagesHeading))
-        {
-            if (line.IsTableRow)
-            {
-                insideTable = true;
-                if (owner is not null)
-                {
-                    // The first cell holds the package, the second the reason it is there. The header
-                    // row has no code span and drops out on its own.
-                    string firstCell =
-                        line.Text.Split('|', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()
-                        ?? string.Empty;
+        MarkdownTable table = section.Tables.FirstOrDefault(
+                candidate => string.Equals(IntroducedBy(section, candidate), project, StringComparison.Ordinal))
+            ?? throw new InvalidOperationException(
+                $"Docs/{DocumentName}: no package table is introduced for {project}. A table belongs to " +
+                $"the project the paragraph above it names.");
 
-                    if (!byProject.TryGetValue(owner, out HashSet<string>? packages))
-                    {
-                        packages = new HashSet<string>(StringComparer.Ordinal);
-                        byProject[owner] = packages;
-                    }
-
-                    packages.UnionWith(MarkdownDocument.CodeSpans(firstCell));
-                }
-
-                continue;
-            }
-
-            if (insideTable)
-            {
-                insideTable = false;
-                owner = null;
-            }
-
-            string? mentioned = MarkdownDocument.CodeSpans(line.Text)
-                .FirstOrDefault(span => span.EndsWith(".csproj", StringComparison.Ordinal));
-            if (mentioned is not null)
-            {
-                owner = mentioned;
-            }
-        }
-
-        Assert.True(
-            byProject.ContainsKey(project),
-            $"Docs/Stack.md: no package table is introduced for {project}");
-
-        return byProject[project];
+        return table.CodeSpanColumn(PackageColumn).ToHashSet(StringComparer.Ordinal);
     }
 
-    private static MarkdownDocument Document =>
-        MarkdownDocument.Load(Path.Combine(RepositoryPaths.DocsDirectory, "Stack.md"));
+    /// <summary>
+    /// The .csproj named by the last prose line above a table. Reading upwards rather than tracking
+    /// state through the section keeps the two tables independent of each other.
+    /// </summary>
+    private static string? IntroducedBy(MarkdownSection section, MarkdownTable table) =>
+        section.ProseLines
+            .Where(line => line.Number < table.Line)
+            .Reverse()
+            .SelectMany(line => MarkdownDocument.CodeSpans(line.Text))
+            .FirstOrDefault(span => span.EndsWith(ProjectExtension, StringComparison.Ordinal));
 }

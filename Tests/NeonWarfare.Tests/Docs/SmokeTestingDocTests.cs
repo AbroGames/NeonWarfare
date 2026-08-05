@@ -21,21 +21,20 @@ public class SmokeTestingDocTests
 
     private const string RunningHeading = "Running";
 
-    private static readonly string[] TestMethodAttributes = ["Fact", "Theory"];
+    private const int TestColumn = 0;
+
+    private const int ProcessesColumn = 1;
 
     [Fact]
     public void SmokeTests_AreListedInTheTable()
     {
-        IReadOnlySet<string> documented = DocumentedScenarios();
         FailureReport report = new($"Smoke tests missing from the '{ScenariosHeading}' table of Docs/{DocumentName}");
 
-        foreach (string test in DeclaredSmokeTests().Order(StringComparer.Ordinal))
-        {
-            if (!documented.Contains(test))
-            {
-                report.Add($"{test} — add a row saying which processes it starts");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DeclaredSmokeTests().Order(StringComparer.Ordinal),
+            DocumentedScenarios(),
+            test => $"{test} — add a row saying which processes it starts");
 
         report.AssertEmpty();
     }
@@ -43,16 +42,13 @@ public class SmokeTestingDocTests
     [Fact]
     public void TableRows_PointToExistingSmokeTests()
     {
-        IReadOnlySet<string> declared = DeclaredSmokeTests();
         FailureReport report = new($"Rows of the '{ScenariosHeading}' table that no smoke test backs");
 
-        foreach (string documented in DocumentedScenarios().Order(StringComparer.Ordinal))
-        {
-            if (!declared.Contains(documented))
-            {
-                report.Add($"{documented} — renamed or deleted, the row is stale");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DocumentedScenarios().Order(StringComparer.Ordinal),
+            DeclaredSmokeTests(),
+            test => $"{test} — renamed or deleted, the row is stale");
 
         report.AssertEmpty();
     }
@@ -60,28 +56,12 @@ public class SmokeTestingDocTests
     [Fact]
     public void TableRows_NameOneTestAndDescribeIt()
     {
-        HashSet<string> seen = new(StringComparer.Ordinal);
+        MarkdownTable table = ScenariosTable();
         FailureReport report = new($"Malformed rows of the '{ScenariosHeading}' table of Docs/{DocumentName}");
 
-        foreach (IReadOnlyList<string> row in ScenariosTable().Rows)
-        {
-            List<string> names = MarkdownDocument.CodeSpans(row[0]).ToList();
-            if (names.Count != 1)
-            {
-                report.Add($"'{row[0]}' — the first cell must hold exactly one test method name in backticks");
-                continue;
-            }
-
-            if (row[1].Length == 0)
-            {
-                report.Add($"{names[0]} — the row says nothing about which processes the scenario starts");
-            }
-
-            if (!seen.Add(names[0]))
-            {
-                report.Add($"{names[0]} — listed twice");
-            }
-        }
+        DocTableChecks.SingleCodeSpanPerRow(table, report, TestColumn, "test method name");
+        DocTableChecks.CellIsNotEmpty(
+            table, report, ProcessesColumn, TestColumn, "which processes the scenario starts");
 
         report.AssertEmpty();
     }
@@ -97,7 +77,7 @@ public class SmokeTestingDocTests
         string expected = RepositoryPaths.Relative(RepositoryPaths.SmokeTestProjectPath);
         Assert.True(File.Exists(RepositoryPaths.SmokeTestProjectPath), $"{expected} does not exist.");
 
-        bool named = Document().Section(RunningHeading)
+        bool named = MarkdownDocument.LoadDoc(DocumentName).Section(RunningHeading).Lines
             .Any(line => line.Text.Contains(expected, StringComparison.Ordinal));
 
         Assert.True(named,
@@ -107,33 +87,22 @@ public class SmokeTestingDocTests
 
     /// <summary>The test method names of the table, as they are written.</summary>
     private static IReadOnlySet<string> DocumentedScenarios() =>
-        ScenariosTable().Rows
-            .Select(row => MarkdownDocument.CodeSpans(row[0]).FirstOrDefault())
-            .OfType<string>()
-            .ToHashSet(StringComparer.Ordinal);
+        ScenariosTable().CodeSpanColumn(TestColumn).ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
-    /// Every smoke test that actually exists, by method name — a method carrying [Fact] or [Theory].
-    /// Infrastructure/ holds the process launching and the output scanning and runs no test of its own.
+    /// Every smoke test that actually exists, by method name. Infrastructure/ holds the process
+    /// launching and the output scanning and runs no test of its own.
     /// </summary>
     private static IReadOnlySet<string> DeclaredSmokeTests() =>
         RepositoryPaths.SmokeTestFiles()
             .Select(CSharpFile.Load)
             .SelectMany(file => file.Nodes<MethodDeclarationSyntax>())
-            .Where(IsTestMethod)
+            .Where(CSharpFile.IsTestMethod)
             .Select(method => method.Identifier.ValueText)
             .ToHashSet(StringComparer.Ordinal);
 
-    private static bool IsTestMethod(MethodDeclarationSyntax method) =>
-        method.AttributeLists
-            .SelectMany(list => list.Attributes)
-            .Any(attribute => TestMethodAttributes.Contains(CSharpFile.AttributeName(attribute)));
-
     private static MarkdownTable ScenariosTable() =>
-        Document().TableUnder(ScenariosHeading) ?? throw new InvalidOperationException(
-            $"Docs/{DocumentName}: no table under '{ScenariosHeading}'. Either the heading was renamed, " +
-            $"or the inventory of scenarios is gone.");
-
-    private static MarkdownDocument Document() =>
-        MarkdownDocument.Load(Path.Combine(RepositoryPaths.DocsDirectory, DocumentName));
+        MarkdownDocument.LoadDoc(DocumentName)
+            .Section(ScenariosHeading)
+            .RequireTable("the inventory of scenarios is gone", "Test", "Processes");
 }

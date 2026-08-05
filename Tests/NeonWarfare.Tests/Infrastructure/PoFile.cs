@@ -9,14 +9,6 @@ namespace NeonWarfare.Tests.Infrastructure;
 /// </summary>
 public sealed class PoFile
 {
-    private const string UnsupportedLineMessage =
-        "{Path}:{Line}: PoFile does not support this line: '{Text}'. The project keeps one key per " +
-        "single-line msgid/msgstr pair — see Docs/Localization.md. Extend the parser before using " +
-        "the extended format.";
-
-    private const string MissingTranslationLineMessage =
-        "{Path}:{Line}: msgid '{Key}' is not followed by a msgstr line.";
-
     private PoFile(string path, IReadOnlyList<PoEntry> entries)
     {
         Path = path;
@@ -42,12 +34,12 @@ public sealed class PoFile
     public static PoFile Load(string path)
     {
         string absolutePath = System.IO.Path.GetFullPath(path);
-        string[] lines = File.ReadAllText(absolutePath).Split('\n');
+        string[] lines = TextFile.ReadLines(absolutePath);
         List<PoEntry> entries = [];
 
         for (int i = 0; i < lines.Length; i++)
         {
-            string line = lines[i].TrimEnd('\r');
+            string line = lines[i];
             if (line.Length == 0 || line.StartsWith('#'))
             {
                 continue;
@@ -67,8 +59,7 @@ public sealed class PoFile
 
             if (!line.StartsWith("msgid ", StringComparison.Ordinal))
             {
-                throw new InvalidOperationException(Message(
-                    UnsupportedLineMessage, absolutePath, i + 1, ("{Text}", line)));
+                throw Unsupported(absolutePath, i + 1, line);
             }
 
             string key = Unquote(line["msgid ".Length..], absolutePath, i + 1);
@@ -77,20 +68,20 @@ public sealed class PoFile
                 continue;
             }
 
-            string? next = i + 1 < lines.Length ? lines[i + 1].TrimEnd('\r') : null;
+            string? next = i + 1 < lines.Length ? lines[i + 1] : null;
             if (next is null || !next.StartsWith("msgstr ", StringComparison.Ordinal))
             {
-                throw new InvalidOperationException(Message(
-                    MissingTranslationLineMessage, absolutePath, i + 1, ("{Key}", key)));
+                throw new InvalidOperationException(
+                    $"{RepositoryPaths.Relative(absolutePath)}:{i + 1}: msgid '{key}' is not followed " +
+                    $"by a msgstr line.");
             }
 
             // A real key must fit one line. A continuation here would mean the translation is longer
             // than what Entries reports, and Translations_AreNotEmpty would be checking a fragment.
-            string? after = i + 2 < lines.Length ? lines[i + 2].TrimEnd('\r') : null;
+            string? after = i + 2 < lines.Length ? lines[i + 2] : null;
             if (after is not null && after.StartsWith('"'))
             {
-                throw new InvalidOperationException(Message(
-                    UnsupportedLineMessage, absolutePath, i + 3, ("{Text}", after)));
+                throw Unsupported(absolutePath, i + 3, after);
             }
 
             entries.Add(new PoEntry(
@@ -116,8 +107,7 @@ public sealed class PoFile
         string trimmed = quoted.Trim();
         if (trimmed.Length < 2 || !trimmed.StartsWith('"') || !trimmed.EndsWith('"'))
         {
-            throw new InvalidOperationException(Message(
-                UnsupportedLineMessage, path, line, ("{Text}", quoted)));
+            throw Unsupported(path, line, quoted);
         }
 
         string body = trimmed[1..^1];
@@ -143,18 +133,14 @@ public sealed class PoFile
         return result.ToString();
     }
 
-    private static string Message(string template, string path, int line, params (string Key, string Value)[] parts)
-    {
-        string message = template
-            .Replace("{Path}", RepositoryPaths.Relative(path))
-            .Replace("{Line}", line.ToString());
-        foreach ((string key, string value) in parts)
-        {
-            message = message.Replace(key, value);
-        }
-
-        return message;
-    }
+    /// <summary>
+    /// The one refusal this parser has. Only the subset of gettext the project uses is supported, and
+    /// anything else throws instead of being skipped — a skipped line is a key the tests never see.
+    /// </summary>
+    private static InvalidOperationException Unsupported(string path, int line, string text) =>
+        new($"{RepositoryPaths.Relative(path)}:{line}: PoFile does not support this line: '{text}'. " +
+            $"The project keeps one key per single-line msgid/msgstr pair — see Docs/Localization.md. " +
+            $"Extend the parser before using the extended format.");
 }
 
 /// <summary>One localization key, its translation and the one-based line the key is on.</summary>

@@ -32,10 +32,14 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 * The repository root comes from `RepositoryPaths` (baked in via `AssemblyMetadata`; the working
   directory is `bin/<config>/<tfm>/`), never assembled by hand.
 * Read a file through the helper for its format, not `File.ReadAllText`: `MarkdownDocument`,
-  `CSharpFile`, `PoFile`, `SceneFile` (`.tscn` / `.tres`), `GodotProjectFile`. `PoFile` and `SceneFile`
-  throw on anything unexpected instead of skipping it. `UidIndex` maps every `uid://` to its file: a
-  `.uid` sidecar for code and shaders, the header of a `.tscn` / `.tres`, or the `.import` of a
-  converted asset.
+  `CSharpFile`, `PoFile`, `SceneFile` (`.tscn` / `.tres`), `GodotProjectFile`; underneath them all
+  `TextFile` is the one place that turns bytes into lines. `PoFile` and `SceneFile` throw on anything
+  unexpected instead of skipping it. `UidIndex` maps every `uid://` to its file: a `.uid` sidecar for
+  code and shaders, the header of a `.tscn` / `.tres`, or the `.import` of a converted asset.
+* A document is read section by section: `MarkdownDocument.Section(heading)` throws when the heading is
+  gone, and `RequireTable(...)` names the columns before anything reads a cell by index. The repeated
+  shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
+  `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
   skip. Five exist: `Scripts/GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
@@ -50,7 +54,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Docs/DocsLinksTests` | Links and anchors in `Docs/**/*.md` and `README.md` resolve |
 | `Docs/DocsReadmeIndexTests` | Every `Docs/` file is linked from `README.md` |
 | `Docs/DocsBackLinkTests` | Every `Docs/` file starts with a heading and the back-anchor to `README.md` |
-| `Docs/DocsFormattingTests` | Encoding, line endings, trailing whitespace, line length, one heading, final newline |
+| `Docs/DocsFormattingTests` | Encoding, trailing whitespace, line length, one heading, final newline |
 | `Docs/CliArgsDocTests` | Flag table of [Command-line arguments](Cli-args.md) ↔ `Scripts/Content/CmdArgs/` |
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj` |
 | `Docs/ServicesDocTests` | Both tables of [Services](Services.md) ↔ `Scripts/Services.cs` and `World*Service` |
@@ -69,7 +73,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Conventions/ChildInjectionTests` | A `[Child]` member name resolves to a reachable node in the scene |
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
 | `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
-| `Conventions/FileEncodingTests` | Every text file of the repository: LF line endings; the BOM check is written but off |
+| `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings; the BOM check is written but off |
 | `Launch/LaunchProfilesTests` | `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |
 | `Scenes/SceneResourceTests` | Every `res://` path resolves; a root node's script is the `.cs` beside the scene |

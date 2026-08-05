@@ -28,19 +28,6 @@ public sealed class RunConfigFile
 
     private const string IdOptionName = "id";
 
-    private const string MissingConfigurationMessage =
-        "{Path}: no single <{Element} name=\"...\"> element. The file is a Rider Multi-Launch " +
-        "configuration, see Docs/Quick-start.md.";
-
-    private const string NoRowsMessage =
-        "{Path}: no <{Element}> tasks. A Multi-Launch that starts nothing is a broken file, not an " +
-        "empty one.";
-
-    private const string UnexpectedReferenceMessage =
-        "{Path}: task '{Value}' does not start with '{Prefix}'. RunConfigFile only understands tasks " +
-        "that refer to a launch profile of the game project — extend the parser before adding another " +
-        "kind.";
-
     private RunConfigFile(string path, string name, IReadOnlyList<string> profileNames)
     {
         Path = path;
@@ -66,6 +53,7 @@ public sealed class RunConfigFile
     public static RunConfigFile Load(string path)
     {
         string absolutePath = System.IO.Path.GetFullPath(path);
+        string file = RepositoryPaths.Relative(absolutePath);
         XDocument document = XDocument.Load(absolutePath);
 
         XElement[] configurations = document.Descendants(ConfigurationElementName)
@@ -73,15 +61,17 @@ public sealed class RunConfigFile
             .ToArray();
         if (configurations.Length != 1)
         {
-            throw new InvalidOperationException(Message(MissingConfigurationMessage, absolutePath)
-                .Replace("{Element}", ConfigurationElementName));
+            throw new InvalidOperationException(
+                $"{file}: no single <{ConfigurationElementName} name=\"...\"> element. The file is a " +
+                $"Rider Multi-Launch configuration, see Docs/Quick-start.md.");
         }
 
         XElement[] rows = configurations[0].Descendants(RowElementName).ToArray();
         if (rows.Length == 0)
         {
-            throw new InvalidOperationException(Message(NoRowsMessage, absolutePath)
-                .Replace("{Element}", RowElementName));
+            throw new InvalidOperationException(
+                $"{file}: no <{RowElementName}> tasks. A Multi-Launch that starts nothing is a broken " +
+                $"file, not an empty one.");
         }
 
         List<string> profiles = [];
@@ -91,9 +81,10 @@ public sealed class RunConfigFile
             {
                 if (!value.StartsWith(ProfileReferencePrefix, StringComparison.Ordinal))
                 {
-                    throw new InvalidOperationException(Message(UnexpectedReferenceMessage, absolutePath)
-                        .Replace("{Value}", value)
-                        .Replace("{Prefix}", ProfileReferencePrefix));
+                    throw new InvalidOperationException(
+                        $"{file}: task '{value}' does not start with '{ProfileReferencePrefix}'. " +
+                        $"RunConfigFile only understands tasks that refer to a launch profile of the " +
+                        $"game project — extend the parser before adding another kind.");
                 }
 
                 profiles.Add(value[ProfileReferencePrefix.Length..]);
@@ -115,7 +106,4 @@ public sealed class RunConfigFile
         row.Descendants(OptionElementName)
             .Where(option => option.Attribute("name")?.Value == IdOptionName)
             .Select(option => option.Attribute("value")?.Value ?? string.Empty);
-
-    private static string Message(string template, string path) =>
-        template.Replace("{Path}", RepositoryPaths.Relative(path));
 }

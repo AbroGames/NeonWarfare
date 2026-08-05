@@ -4,8 +4,8 @@ using System.Text.RegularExpressions;
 namespace NeonWarfare.Tests.Infrastructure;
 
 /// <summary>
-/// A parsed markdown file: raw content for the formatting checks, plus links and headings taken from
-/// a sanitized copy where fenced blocks and inline code spans are blanked out. Sanitizing matters —
+/// A parsed markdown file: raw content for the formatting checks, plus links, headings and tables taken
+/// from a sanitized copy where fenced blocks and inline code spans are blanked out. Sanitizing matters —
 /// Docs/Code-style.md contains things like <c>[Rpc(...)]</c> inside code, and README.md has
 /// <c>`[Child]`</c>; parsing those as links would produce phantom failures.
 /// </summary>
@@ -28,15 +28,12 @@ public sealed class MarkdownDocument
 
     private static readonly Regex TableDelimiterCellRegex = new(@"^:?-+:?$", RegexOptions.Compiled);
 
-    private const string RaggedRowMessage =
-        "{Path}:{Line}: the table row has {Actual} cell(s), its header has {Expected}: '{Text}'.";
-
     private MarkdownDocument(string path, byte[] bytes, string text)
     {
         Path = path;
         Bytes = bytes;
         Text = text;
-        Lines = text.Split('\n');
+        Lines = TextFile.SplitLines(text);
 
         bool[] insideFence = MapFences(Lines);
         string[] sanitized = Sanitize(Lines, insideFence);
@@ -51,13 +48,16 @@ public sealed class MarkdownDocument
     /// <summary>Absolute path of the file.</summary>
     public string Path { get; }
 
+    /// <summary>Repository-relative path, for failure messages.</summary>
+    public string RelativePath => RepositoryPaths.Relative(Path);
+
     /// <summary>Raw bytes — the BOM check needs them, a decoded string would hide it.</summary>
     public byte[] Bytes { get; }
 
-    /// <summary>Raw text, line endings untouched.</summary>
+    /// <summary>Raw text, line endings untouched — what the "ends with one newline" check reads.</summary>
     public string Text { get; }
 
-    /// <summary>Lines split on LF; a trailing CR, if any, is left in place for the format checks.</summary>
+    /// <summary>Lines split on LF, each without its trailing CR.</summary>
     public string[] Lines { get; }
 
     /// <summary><c>IsFenced[i]</c> — line <c>i</c> is inside a fenced code block (fences included).</summary>
@@ -73,45 +73,31 @@ public sealed class MarkdownDocument
     /// <summary>Every pipe table, in file order. Cell text keeps its markup — backticks included.</summary>
     public IReadOnlyList<MarkdownTable> Tables { get; }
 
-    /// <summary>
-    /// The first table that follows the given heading, or null when the section has none. Looking the
-    /// table up by its heading rather than by its index keeps a check working when another table is
-    /// added elsewhere in the document.
-    /// </summary>
-    public MarkdownTable? TableUnder(string headingText)
+    public static MarkdownDocument Load(string path)
     {
-        (int start, int end) = SectionRange(headingText);
-        return Tables.FirstOrDefault(table => table.Line > start && table.Line < end);
+        byte[] bytes = File.ReadAllBytes(path);
+        string text = new UTF8Encoding(false).GetString(TextFile.StripBom(bytes));
+        return new MarkdownDocument(System.IO.Path.GetFullPath(path), bytes, text);
     }
 
-    /// <summary>
-    /// The raw lines of the section under the given heading, the heading itself and fenced blocks
-    /// excluded. Empty when there is no such heading.
-    /// </summary>
-    public IEnumerable<string> LinesUnder(string headingText)
-    {
-        (int start, int end) = SectionRange(headingText);
-        for (int line = start + 1; line < end; line++)
-        {
-            if (!IsFenced[line - 1])
-            {
-                yield return Lines[line - 1].TrimEnd('\r');
-            }
-        }
-    }
+    /// <summary>A file of <c>Docs/</c> by its file name — how every doc test reaches its document.</summary>
+    public static MarkdownDocument LoadDoc(string fileName) => Load(RepositoryPaths.Doc(fileName));
 
     /// <summary>
-    /// The one-based line of the heading and of the first heading after it that is not nested inside
-    /// it — the half-open range the section occupies. <c>(0, 0)</c> when the heading is absent.
+    /// The part of the document under a heading, down to the next heading of the same or a higher level.
+    /// The checks that compare a document with the code work section by section: Docs/Services.md has one
+    /// table for the global services and another for the world ones, and they mean different things.
+    /// <br/>
+    /// A missing heading throws rather than yielding nothing: a renamed heading has to read as "this
+    /// test is looking at the wrong place", not as "the section is empty and everything checks out".
     /// </summary>
-    private (int Start, int End) SectionRange(string headingText)
+    public MarkdownSection Section(string headingText)
     {
-        MarkdownHeading? heading = Headings.FirstOrDefault(
-            candidate => string.Equals(candidate.Text, headingText, StringComparison.Ordinal));
-        if (heading is null)
-        {
-            return (0, 0);
-        }
+        MarkdownHeading heading = Headings.FirstOrDefault(
+                candidate => string.Equals(candidate.Text, headingText, StringComparison.Ordinal))
+            ?? throw new InvalidOperationException(
+                $"{RelativePath}: no heading '{headingText}'. Either it was renamed, or the test is " +
+                $"looking at the wrong document.");
 
         int end = Headings
             .Where(candidate => candidate.Line > heading.Line && candidate.Level <= heading.Level)
@@ -119,14 +105,17 @@ public sealed class MarkdownDocument
             .DefaultIfEmpty(Lines.Length + 1)
             .First();
 
-        return (heading.Line, end);
-    }
+        List<MarkdownLine> lines = [];
+        for (int number = heading.Line + 1; number < end && number <= Lines.Length; number++)
+        {
+            lines.Add(new MarkdownLine(number, Lines[number - 1], IsFenced[number - 1]));
+        }
 
-    public static MarkdownDocument Load(string path)
-    {
-        byte[] bytes = File.ReadAllBytes(path);
-        string text = new UTF8Encoding(false).GetString(StripBom(bytes));
-        return new MarkdownDocument(System.IO.Path.GetFullPath(path), bytes, text);
+        IReadOnlyList<MarkdownTable> tables = Tables
+            .Where(table => table.Line > heading.Line && table.Line < end)
+            .ToList();
+
+        return new MarkdownSection(this, heading, lines, tables);
     }
 
     /// <summary>
@@ -155,46 +144,11 @@ public sealed class MarkdownDocument
     }
 
     /// <summary>
-    /// The lines under a heading, up to the next heading of the same or a higher level. The checks that
-    /// compare a document with the code work section by section: Docs/Services.md has one table for the
-    /// global services and another for the world ones, and they mean different things.
-    /// </summary>
-    public IReadOnlyList<MarkdownLine> Section(string headingText)
-    {
-        MarkdownHeading? heading = Headings.FirstOrDefault(candidate =>
-            string.Equals(candidate.Text, headingText, StringComparison.Ordinal));
-
-        if (heading is null)
-        {
-            throw new InvalidOperationException(
-                $"{RepositoryPaths.Relative(Path)}: no heading '{headingText}'. Either it was renamed, " +
-                $"or the test is looking at the wrong document.");
-        }
-
-        MarkdownHeading? next = Headings
-            .Where(candidate => candidate.Line > heading.Line && candidate.Level <= heading.Level)
-            .MinBy(candidate => candidate.Line);
-
-        int first = heading.Line;
-        int last = next?.Line - 1 ?? Lines.Length;
-
-        return Enumerable.Range(first, last - first + 1)
-            .Where(number => number <= Lines.Length)
-            .Select(number => new MarkdownLine(number, Lines[number - 1].TrimEnd('\r')))
-            .ToList();
-    }
-
-    /// <summary>
     /// The contents of every inline code span on a line. The tables that describe the code write the
     /// identifiers in backticks, which is what makes them findable without parsing markdown tables.
     /// </summary>
     public static IEnumerable<string> CodeSpans(string line) =>
         InlineCodeRegex.Matches(line).Select(match => match.Value.Trim('`').Trim());
-
-    private static byte[] StripBom(byte[] bytes) =>
-        bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF
-            ? bytes[3..]
-            : bytes;
 
     private static bool[] MapFences(string[] lines)
     {
@@ -203,7 +157,7 @@ public sealed class MarkdownDocument
 
         for (int i = 0; i < lines.Length; i++)
         {
-            Match match = FenceRegex.Match(lines[i].TrimEnd('\r'));
+            Match match = FenceRegex.Match(lines[i]);
             if (openFence is null)
             {
                 if (match.Success)
@@ -234,10 +188,9 @@ public sealed class MarkdownDocument
         string[] sanitized = new string[lines.Length];
         for (int i = 0; i < lines.Length; i++)
         {
-            string line = lines[i].TrimEnd('\r');
             sanitized[i] = insideFence[i]
-                ? new string(' ', line.Length)
-                : InlineCodeRegex.Replace(line, match => new string(' ', match.Length));
+                ? new string(' ', lines[i].Length)
+                : InlineCodeRegex.Replace(lines[i], match => new string(' ', match.Length));
         }
 
         return sanitized;
@@ -271,7 +224,7 @@ public sealed class MarkdownDocument
                 continue;
             }
 
-            Match match = HeadingRegex.Match(lines[i].TrimEnd('\r'));
+            Match match = HeadingRegex.Match(lines[i]);
             if (match.Success)
             {
                 headings.Add(new MarkdownHeading(
@@ -315,18 +268,15 @@ public sealed class MarkdownDocument
                 IReadOnlyList<string> cells = SplitCells(lines, sanitized, row);
                 if (cells.Count != header.Count)
                 {
-                    throw new InvalidOperationException(RaggedRowMessage
-                        .Replace("{Path}", RepositoryPaths.Relative(path))
-                        .Replace("{Line}", (row + 1).ToString())
-                        .Replace("{Actual}", cells.Count.ToString())
-                        .Replace("{Expected}", header.Count.ToString())
-                        .Replace("{Text}", lines[row].TrimEnd('\r')));
+                    throw new InvalidOperationException(
+                        $"{RepositoryPaths.Relative(path)}:{row + 1}: the table row has {cells.Count} " +
+                        $"cell(s), its header has {header.Count}: '{lines[row]}'.");
                 }
 
                 rows.Add(cells);
             }
 
-            tables.Add(new MarkdownTable(i + 1, header, rows));
+            tables.Add(new MarkdownTable(path, i + 1, header, rows));
             i = row - 1;
         }
 
@@ -353,7 +303,7 @@ public sealed class MarkdownDocument
     /// </summary>
     private static List<string> SplitCells(string[] lines, string[] sanitized, int index)
     {
-        string raw = lines[index].TrimEnd('\r');
+        string raw = lines[index];
         List<string> cells = [];
         int start = 0;
 
@@ -411,11 +361,69 @@ public sealed class MarkdownDocument
 /// <summary>One ATX heading: its level, its raw text and its one-based line number.</summary>
 public sealed record MarkdownHeading(int Level, string Text, int Line);
 
-/// <summary>One line of a document, with the one-based number an editor shows.</summary>
-public sealed record MarkdownLine(int Number, string Text)
+/// <summary>
+/// One line of a document, with the one-based number an editor shows and whether it sits inside a
+/// fenced block — a fenced line is an example, not a statement, and most checks skip it.
+/// </summary>
+public sealed record MarkdownLine(int Number, string Text, bool IsFenced)
 {
     /// <summary>True for a line of a markdown table, header and separator included.</summary>
     public bool IsTableRow => Text.TrimStart().StartsWith('|');
+}
+
+/// <summary>
+/// Everything written under one heading: the lines and the tables. This is the unit the checks that
+/// compare a document with the code work in — a document holds several independent lists, and a check
+/// that read the whole file would compare the code against the wrong one.
+/// </summary>
+public sealed class MarkdownSection
+{
+    private readonly MarkdownDocument _document;
+
+    internal MarkdownSection(
+        MarkdownDocument document,
+        MarkdownHeading heading,
+        IReadOnlyList<MarkdownLine> lines,
+        IReadOnlyList<MarkdownTable> tables)
+    {
+        _document = document;
+        Heading = heading;
+        Lines = lines;
+        Tables = tables;
+    }
+
+    public MarkdownHeading Heading { get; }
+
+    /// <summary>The lines under the heading, the heading itself excluded, fenced blocks included.</summary>
+    public IReadOnlyList<MarkdownLine> Lines { get; }
+
+    /// <summary>Every table of the section, in document order. Docs/Stack.md has two under one heading.</summary>
+    public IReadOnlyList<MarkdownTable> Tables { get; }
+
+    /// <summary>The lines that are prose: no fenced blocks, no table rows.</summary>
+    public IEnumerable<MarkdownLine> ProseLines =>
+        Lines.Where(line => !line.IsFenced && !line.IsTableRow);
+
+    /// <summary>
+    /// The one table of the section, with its columns checked before anything reads a cell by index.
+    /// A dropped or reordered column has to say so, not surface as an index out of range three checks
+    /// later, and a missing table has to name what is gone rather than throw a null reference.
+    /// </summary>
+    public MarkdownTable RequireTable(string whatIsGone, params string[] columns)
+    {
+        MarkdownTable table = Tables.FirstOrDefault() ?? throw new InvalidOperationException(
+            $"{_document.RelativePath}: no table under '{Heading.Text}'. Either the heading was " +
+            $"renamed, or {whatIsGone}.");
+
+        if (!table.Header.SequenceEqual(columns, StringComparer.Ordinal))
+        {
+            throw new InvalidOperationException(
+                $"{_document.RelativePath}:{table.Line}: the table under '{Heading.Text}' must have the " +
+                $"columns {string.Join(" | ", columns)}, it has {string.Join(" | ", table.Header)}.");
+        }
+
+        return table;
+    }
 }
 
 /// <summary>
@@ -423,6 +431,26 @@ public sealed record MarkdownLine(int Number, string Text)
 /// as many cells as the header — <see cref="MarkdownDocument"/> refuses to read a ragged one.
 /// </summary>
 public sealed record MarkdownTable(
+    string Path,
     int Line,
     IReadOnlyList<string> Header,
-    IReadOnlyList<IReadOnlyList<string>> Rows);
+    IReadOnlyList<IReadOnlyList<string>> Rows)
+{
+    /// <summary>Repository-relative path of the document the table is in, for failure messages.</summary>
+    public string RelativePath => RepositoryPaths.Relative(Path);
+
+    /// <summary>
+    /// The single code span of a cell, or <c>null</c> when the cell holds none or several. These tables
+    /// write every identifier in backticks; a cell that does not is reported by
+    /// <see cref="DocTableChecks.SingleCodeSpanPerRow"/> rather than guessed at here.
+    /// </summary>
+    public static string? SingleCodeSpan(string cell)
+    {
+        List<string> spans = MarkdownDocument.CodeSpans(cell).ToList();
+        return spans.Count == 1 ? spans[0] : null;
+    }
+
+    /// <summary>The single code span of one column, row by row, cells without one left out.</summary>
+    public IEnumerable<string> CodeSpanColumn(int column) =>
+        Rows.Select(row => SingleCodeSpan(row[column])).OfType<string>();
+}

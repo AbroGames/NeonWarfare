@@ -20,7 +20,7 @@ public class NamespaceTests
     private static readonly string[] WithoutNamespace = ["Scripts/GlobalUsings.cs"];
 
     [Theory]
-    [MemberData(nameof(GameFileSources.Sources), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Sources), MemberType = typeof(FileSources))]
     public void Namespace_MatchesFilePath(string relativePath)
     {
         CSharpFile file = CSharpFile.Load(RepositoryPaths.Absolute(relativePath));

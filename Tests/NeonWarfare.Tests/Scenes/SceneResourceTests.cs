@@ -12,7 +12,7 @@ namespace NeonWarfare.Tests.Scenes;
 public class SceneResourceTests
 {
     [Theory]
-    [MemberData(nameof(GameFileSources.Resources), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Resources), MemberType = typeof(FileSources))]
     public void ResourcePath_PointsToExistingFile(string relativePath)
     {
         SceneFile scene = SceneFile.Load(RepositoryPaths.Absolute(relativePath));
@@ -36,7 +36,7 @@ public class SceneResourceTests
     /// A scene whose root node carries no script at all is fine — Scenes/Entity/Walls/Wall.tscn is one.
     /// </summary>
     [Theory]
-    [MemberData(nameof(GameFileSources.Scenes), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Scenes), MemberType = typeof(FileSources))]
     public void RootNodeScript_LivesNextToSceneWithSameName(string relativePath)
     {
         SceneFile scene = SceneFile.Load(RepositoryPaths.Absolute(relativePath));

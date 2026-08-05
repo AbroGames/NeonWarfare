@@ -5,7 +5,7 @@ namespace NeonWarfare.Tests.Docs;
 
 /// <summary>
 /// README.md is the single entry point into the documentation, and Docs/Repository-structure.md
-/// states it outright: "на все файлы есть ссылки из README.md". A new file under Docs/ that nobody
+/// states it outright: "every file is linked from README.md". A new file under Docs/ that nobody
 /// links to is invisible, so this test refuses to let one appear.
 /// </summary>
 public class DocsReadmeIndexTests

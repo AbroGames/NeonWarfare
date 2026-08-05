@@ -13,6 +13,8 @@ namespace NeonWarfare.Tests.Launch;
 /// </summary>
 public class MultiLaunchTests
 {
+    private const string DocumentName = "Quick-start.md";
+
     private const string MultiLaunchHeading = "Multi-Launch: server and clients with one button";
 
     /// <summary>
@@ -30,20 +32,16 @@ public class MultiLaunchTests
     [Fact]
     public void RunConfigs_AreDocumented()
     {
-        HashSet<string> documented = DocumentedConfigs()
-            .Select(config => config.Name)
-            .ToHashSet(StringComparer.Ordinal);
+        IReadOnlyDictionary<string, RunConfigFile> existing = ExistingConfigs();
         FailureReport report = new(
             $"Multi-Launch configurations in {RepositoryPaths.Relative(RepositoryPaths.RunConfigsDirectory)} " +
-            $"missing from the '{MultiLaunchHeading}' list of Docs/Quick-start.md");
+            $"missing from the '{MultiLaunchHeading}' list of Docs/{DocumentName}");
 
-        foreach (RunConfigFile config in RunConfigFile.LoadAll())
-        {
-            if (!documented.Contains(config.Name))
-            {
-                report.Add($"{config.RelativePath}: '{config.Name}' — add a list item for it");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            existing.Keys,
+            DocumentedConfigs().Select(config => config.Name).ToHashSet(StringComparer.Ordinal),
+            name => $"{existing[name].RelativePath}: '{name}' — add a list item for it");
 
         report.AssertEmpty();
     }
@@ -51,20 +49,15 @@ public class MultiLaunchTests
     [Fact]
     public void DocumentedRunConfigs_Exist()
     {
-        HashSet<string> existing = RunConfigFile.LoadAll()
-            .Select(config => config.Name)
-            .ToHashSet(StringComparer.Ordinal);
         FailureReport report = new(
-            $"Multi-Launch configurations described in Docs/Quick-start.md that " +
+            $"Multi-Launch configurations described in Docs/{DocumentName} that " +
             $"{RepositoryPaths.Relative(RepositoryPaths.RunConfigsDirectory)} does not contain");
 
-        foreach (DocumentedConfig config in DocumentedConfigs())
-        {
-            if (!existing.Contains(config.Name))
-            {
-                report.Add($"'{config.Name}' — either the file was renamed, or the list item is stale");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DocumentedConfigs().Select(config => config.Name),
+            ExistingConfigs().Keys.ToHashSet(StringComparer.Ordinal),
+            name => $"'{name}' — either the file was renamed, or the list item is stale");
 
         report.AssertEmpty();
     }
@@ -83,7 +76,7 @@ public class MultiLaunchTests
         }
 
         FailureReport report = new(
-            $"Task lists in the '{MultiLaunchHeading}' section of Docs/Quick-start.md that disagree " +
+            $"Task lists in the '{MultiLaunchHeading}' section of Docs/{DocumentName} that disagree " +
             "with the .run/ files");
 
         foreach (RunConfigFile config in RunConfigFile.LoadAll())
@@ -132,7 +125,7 @@ public class MultiLaunchTests
     /// while the repository and the document speak about another.
     /// </summary>
     [Theory]
-    [MemberData(nameof(LaunchFileSources.RunConfigs), MemberType = typeof(LaunchFileSources))]
+    [MemberData(nameof(FileSources.RunConfigs), MemberType = typeof(FileSources))]
     public void RunConfigName_MatchesFileName(string relativePath)
     {
         RunConfigFile config = RunConfigFile.Load(RepositoryPaths.Absolute(relativePath));
@@ -149,13 +142,12 @@ public class MultiLaunchTests
     /// <summary>The list items of the Multi-Launch section, in document order.</summary>
     private static IReadOnlyList<DocumentedConfig> DocumentedConfigs()
     {
-        MarkdownDocument document = MarkdownDocument.Load(
-            Path.Combine(RepositoryPaths.DocsDirectory, "Quick-start.md"));
-
         List<DocumentedConfig> configs = [];
-        foreach (string line in document.LinesUnder(MultiLaunchHeading))
+
+        foreach (MarkdownLine line in MarkdownDocument.LoadDoc(DocumentName)
+                     .Section(MultiLaunchHeading).ProseLines)
         {
-            Match match = DocumentedConfigRegex.Match(line);
+            Match match = DocumentedConfigRegex.Match(line.Text);
             if (match.Success)
             {
                 configs.Add(new DocumentedConfig(
@@ -167,12 +159,16 @@ public class MultiLaunchTests
         if (configs.Count == 0)
         {
             throw new InvalidOperationException(
-                $"Docs/Quick-start.md has no Multi-Launch list items under '## {MultiLaunchHeading}'. " +
+                $"Docs/{DocumentName} has no Multi-Launch list items under '## {MultiLaunchHeading}'. " +
                 "The .run/ checks have nothing to compare against.");
         }
 
         return configs;
     }
+
+    /// <summary>Every configuration in .run/, by the name Rider shows for it.</summary>
+    private static IReadOnlyDictionary<string, RunConfigFile> ExistingConfigs() =>
+        RunConfigFile.LoadAll().ToDictionary(config => config.Name, StringComparer.Ordinal);
 
     /// <summary>One list item: the configuration name and the profiles it says are started.</summary>
     private sealed record DocumentedConfig(string Name, IReadOnlyList<string> Tasks);

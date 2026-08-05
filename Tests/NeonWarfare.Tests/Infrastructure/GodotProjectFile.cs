@@ -37,7 +37,7 @@ public sealed class GodotProjectFile
 
     private static GodotProjectFile Load()
     {
-        string[] lines = File.ReadAllText(RepositoryPaths.ProjectSettingsPath).Split('\n');
+        string[] lines = TextFile.ReadLines(RepositoryPaths.ProjectSettingsPath);
 
         List<string> actions = [];
         List<GodotUidReference> references = [];
@@ -45,7 +45,7 @@ public sealed class GodotProjectFile
 
         for (int i = 0; i < lines.Length; i++)
         {
-            string line = lines[i].TrimEnd('\r');
+            string line = lines[i];
 
             Match sectionMatch = SectionRegex.Match(line);
             if (sectionMatch.Success)

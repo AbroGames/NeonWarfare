@@ -4,46 +4,27 @@ using Xunit;
 namespace NeonWarfare.Tests.Docs;
 
 /// <summary>
-/// The .editorconfig rules for markdown — UTF-8, LF, 120 columns — plus a couple of structural rules
-/// the documentation already follows everywhere.
+/// The .editorconfig rules for markdown — UTF-8, 120 columns — plus a couple of structural rules the
+/// documentation already follows everywhere. Line endings are not here: FileEncodingTests checks every
+/// text file of the repository for CR, and the documentation is part of that scope.
 /// </summary>
 public class DocsFormattingTests
 {
     private const int MaxLineLength = 120;
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void File_IsUtf8WithoutBom(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));
-        bool hasBom = document.Bytes.Length >= 3
-                      && document.Bytes[0] == 0xEF
-                      && document.Bytes[1] == 0xBB
-                      && document.Bytes[2] == 0xBF;
 
-        Assert.False(hasBom, $"{relativePath}: UTF-8 BOM found, .editorconfig requires charset = utf-8");
+        Assert.False(
+            TextFile.HasBom(document.Bytes),
+            $"{relativePath}: UTF-8 BOM found, .editorconfig requires charset = utf-8");
     }
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
-    public void File_UsesLineFeedOnly(string relativePath)
-    {
-        MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));
-        FailureReport report = new($"{relativePath}: CR found, .editorconfig requires end_of_line = lf");
-
-        for (int i = 0; i < document.Lines.Length; i++)
-        {
-            if (document.Lines[i].Contains('\r'))
-            {
-                report.Add($"line {i + 1}");
-            }
-        }
-
-        report.AssertEmpty();
-    }
-
-    [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void File_EndsWithExactlyOneNewline(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));
@@ -55,7 +36,7 @@ public class DocsFormattingTests
     }
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void Lines_HaveNoStrayTrailingWhitespace(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));
@@ -63,7 +44,7 @@ public class DocsFormattingTests
 
         for (int i = 0; i < document.Lines.Length; i++)
         {
-            string line = document.Lines[i].TrimEnd('\r');
+            string line = document.Lines[i];
             string trailing = line[line.TrimEnd().Length..];
 
             // Exactly two spaces is a markdown hard line break and is used on purpose, for example
@@ -79,7 +60,7 @@ public class DocsFormattingTests
     }
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void Lines_FitIntoMaxLineLength(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));
@@ -89,13 +70,8 @@ public class DocsFormattingTests
         {
             // Fenced blocks (ASCII diagrams, command lines) and table rows cannot be wrapped
             // without breaking them, so only prose is measured.
-            if (document.IsFenced[i])
-            {
-                continue;
-            }
-
-            string line = document.Lines[i].TrimEnd('\r');
-            if (line.TrimStart().StartsWith('|'))
+            string line = document.Lines[i];
+            if (document.IsFenced[i] || line.TrimStart().StartsWith('|'))
             {
                 continue;
             }
@@ -112,7 +88,7 @@ public class DocsFormattingTests
     }
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.DocsAndReadme), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.DocsAndReadme), MemberType = typeof(FileSources))]
     public void File_HasSingleTopLevelHeadingOnFirstLine(string relativePath)
     {
         MarkdownDocument document = MarkdownDocument.Load(RepositoryPaths.Absolute(relativePath));

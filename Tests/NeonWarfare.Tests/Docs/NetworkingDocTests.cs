@@ -19,19 +19,20 @@ public class NetworkingDocTests
 
     private const string ChannelEnum = "TransferChannel";
 
+    private const int ChannelColumn = 0;
+
+    private const int PurposeColumn = 1;
+
     [Fact]
     public void TransferChannels_AreListedInTheTable()
     {
-        IReadOnlySet<string> documented = DocumentedChannels().ToHashSet(StringComparer.Ordinal);
         FailureReport report = new($"Members of Consts.{ChannelEnum} missing from the table of Docs/{DocumentName}");
 
-        foreach (string channel in DeclaredChannels())
-        {
-            if (!documented.Contains(channel))
-            {
-                report.Add($"{channel} — add a row saying what goes through it");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DeclaredChannels(),
+            DocumentedChannels().ToHashSet(StringComparer.Ordinal),
+            channel => $"{channel} — add a row saying what goes through it");
 
         report.AssertEmpty();
     }
@@ -39,16 +40,13 @@ public class NetworkingDocTests
     [Fact]
     public void TableRows_PointToExistingTransferChannels()
     {
-        IReadOnlySet<string> declared = DeclaredChannels().ToHashSet(StringComparer.Ordinal);
         FailureReport report = new($"Rows of Docs/{DocumentName} that Consts.{ChannelEnum} does not back");
 
-        foreach (string channel in DocumentedChannels())
-        {
-            if (!declared.Contains(channel))
-            {
-                report.Add($"{channel} — no such member, the name is misspelled or the channel is gone");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DocumentedChannels(),
+            DeclaredChannels().ToHashSet(StringComparer.Ordinal),
+            channel => $"{channel} — no such member, the name is misspelled or the channel is gone");
 
         report.AssertEmpty();
     }
@@ -103,38 +101,19 @@ public class NetworkingDocTests
     [Fact]
     public void TableRows_NameOneChannelAndDescribeIt()
     {
-        HashSet<string> seen = new(StringComparer.Ordinal);
+        MarkdownTable table = Table();
         FailureReport report = new($"Malformed rows of the channel table of Docs/{DocumentName}");
 
-        foreach (IReadOnlyList<string> row in Table().Rows)
-        {
-            List<string> names = MarkdownDocument.CodeSpans(row[0]).ToList();
-            if (names.Count != 1)
-            {
-                report.Add($"'{row[0]}' — the first cell must hold exactly one channel name in backticks");
-                continue;
-            }
-
-            if (row[1].Length == 0)
-            {
-                report.Add($"{names[0]} — the row says nothing about what goes through the channel");
-            }
-
-            if (!seen.Add(names[0]))
-            {
-                report.Add($"{names[0]} — listed twice");
-            }
-        }
+        DocTableChecks.SingleCodeSpanPerRow(table, report, ChannelColumn, "channel name");
+        DocTableChecks.CellIsNotEmpty(
+            table, report, PurposeColumn, ChannelColumn, "what goes through the channel");
 
         report.AssertEmpty();
     }
 
     /// <summary>The channel names of the table, in the order they are written.</summary>
     private static IReadOnlyList<string> DocumentedChannels() =>
-        Table().Rows
-            .Select(row => MarkdownDocument.CodeSpans(row[0]).FirstOrDefault())
-            .OfType<string>()
-            .ToList();
+        Table().CodeSpanColumn(ChannelColumn).ToList();
 
     /// <summary>The members of Consts.TransferChannel, in declaration order.</summary>
     private static IReadOnlyList<string> DeclaredChannels() =>
@@ -149,10 +128,7 @@ public class NetworkingDocTests
             $"Docs/{DocumentName} has nothing left to be checked against.");
 
     private static MarkdownTable Table() =>
-        Document().TableUnder(TableHeading) ?? throw new InvalidOperationException(
-            $"Docs/{DocumentName}: no table under '{TableHeading}'. Either the heading was renamed, or " +
-            $"the list of channels is gone.");
-
-    private static MarkdownDocument Document() =>
-        MarkdownDocument.Load(Path.Combine(RepositoryPaths.DocsDirectory, DocumentName));
+        MarkdownDocument.LoadDoc(DocumentName)
+            .Section(TableHeading)
+            .RequireTable("the list of channels is gone", "Channel", "What goes through it");
 }

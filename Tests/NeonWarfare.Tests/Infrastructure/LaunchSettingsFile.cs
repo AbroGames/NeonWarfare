@@ -20,17 +20,6 @@ public sealed class LaunchSettingsFile
 
     private const string CommandLineArgsPropertyName = "commandLineArgs";
 
-    private const string MissingProfilesMessage =
-        "{Path}: no '{Property}' object at the root. The file is the Rider run profiles, see " +
-        "Docs/Quick-start.md.";
-
-    private const string NotAnObjectMessage =
-        "{Path}: profile '{Profile}' is not an object.";
-
-    private const string MissingArgsMessage =
-        "{Path}: profile '{Profile}' has no string '{Property}'. Every profile launches Godot with " +
-        "arguments — a profile without them cannot be compared with the table in Docs/Quick-start.md.";
-
     private LaunchSettingsFile(string path, IReadOnlyList<LaunchProfile> profiles)
     {
         Path = path;
@@ -52,13 +41,15 @@ public sealed class LaunchSettingsFile
     public static LaunchSettingsFile Load(string path)
     {
         string absolutePath = System.IO.Path.GetFullPath(path);
+        string file = RepositoryPaths.Relative(absolutePath);
         using JsonDocument document = JsonDocument.Parse(File.ReadAllText(absolutePath));
 
         if (!document.RootElement.TryGetProperty(ProfilesPropertyName, out JsonElement profiles)
             || profiles.ValueKind != JsonValueKind.Object)
         {
-            throw new InvalidOperationException(Message(MissingProfilesMessage, absolutePath)
-                .Replace("{Property}", ProfilesPropertyName));
+            throw new InvalidOperationException(
+                $"{file}: no '{ProfilesPropertyName}' object at the root. The file is the Rider run " +
+                $"profiles, see Docs/Quick-start.md.");
         }
 
         List<LaunchProfile> parsed = [];
@@ -66,16 +57,16 @@ public sealed class LaunchSettingsFile
         {
             if (profile.Value.ValueKind != JsonValueKind.Object)
             {
-                throw new InvalidOperationException(Message(NotAnObjectMessage, absolutePath)
-                    .Replace("{Profile}", profile.Name));
+                throw new InvalidOperationException($"{file}: profile '{profile.Name}' is not an object.");
             }
 
             if (!profile.Value.TryGetProperty(CommandLineArgsPropertyName, out JsonElement args)
                 || args.ValueKind != JsonValueKind.String)
             {
-                throw new InvalidOperationException(Message(MissingArgsMessage, absolutePath)
-                    .Replace("{Profile}", profile.Name)
-                    .Replace("{Property}", CommandLineArgsPropertyName));
+                throw new InvalidOperationException(
+                    $"{file}: profile '{profile.Name}' has no string '{CommandLineArgsPropertyName}'. " +
+                    $"Every profile launches Godot with arguments — a profile without them cannot be " +
+                    $"compared with the table in Docs/Quick-start.md.");
             }
 
             parsed.Add(new LaunchProfile(profile.Name, args.GetString()!));
@@ -86,9 +77,6 @@ public sealed class LaunchSettingsFile
 
     /// <summary>The one launchSettings.json of the repository.</summary>
     public static LaunchSettingsFile Load() => Load(RepositoryPaths.LaunchSettingsPath);
-
-    private static string Message(string template, string path) =>
-        template.Replace("{Path}", RepositoryPaths.Relative(path));
 }
 
 /// <summary>One run profile: its name and the command line it starts Godot with.</summary>

@@ -14,6 +14,8 @@ namespace NeonWarfare.Tests.Docs;
 /// </summary>
 public class RepositoryStructureDocTests
 {
+    private const string DocumentName = "Repository-structure.md";
+
     /// <summary>The characters the tree is drawn with; the entry name starts after the last of them.</summary>
     private const string TreeCharacters = "│├└─ ";
 
@@ -23,10 +25,9 @@ public class RepositoryStructureDocTests
     [Fact]
     public void DrawnPaths_ExistInTheRepository()
     {
-        MarkdownDocument document = MarkdownDocument.Load(
-            Path.Combine(RepositoryPaths.DocsDirectory, "Repository-structure.md"));
+        MarkdownDocument document = MarkdownDocument.LoadDoc(DocumentName);
 
-        FailureReport report = new("Docs/Repository-structure.md draws paths that do not exist");
+        FailureReport report = new($"Docs/{DocumentName} draws paths that do not exist");
         List<string> parents = [];
         int drawn = 0;
 
@@ -38,7 +39,7 @@ public class RepositoryStructureDocTests
                 continue;
             }
 
-            string line = document.Lines[i].TrimEnd('\r');
+            string line = document.Lines[i];
             int start = line.TakeWhile(TreeCharacters.Contains).Count();
             if (start >= line.Length || line.StartsWith("```", StringComparison.Ordinal))
             {

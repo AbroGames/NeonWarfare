@@ -13,7 +13,7 @@ public class DocsBackLinkTests
     private const string BackLinkTemplate = "[← Project README]({Path})";
 
     [Theory]
-    [MemberData(nameof(MarkdownFileSources.Docs), MemberType = typeof(MarkdownFileSources))]
+    [MemberData(nameof(FileSources.Docs), MemberType = typeof(FileSources))]
     public void DocFile_StartsWithHeadingAndBackLink(string relativePath)
     {
         string absolutePath = RepositoryPaths.Absolute(relativePath);

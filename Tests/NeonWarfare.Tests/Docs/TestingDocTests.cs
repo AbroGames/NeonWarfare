@@ -12,23 +12,24 @@ namespace NeonWarfare.Tests.Docs;
 /// </summary>
 public class TestingDocTests
 {
+    private const string DocumentName = "Testing.md";
+
     private const string CoverageHeading = "What is covered now";
 
-    private static readonly string[] TestMethodAttributes = ["Fact", "Theory"];
+    private const int ClassColumn = 0;
+
+    private const int PurposeColumn = 1;
 
     [Fact]
     public void TestClasses_AreListedInTheTable()
     {
-        IReadOnlySet<string> documented = DocumentedTestClasses();
-        FailureReport report = new($"Test classes missing from the '{CoverageHeading}' table of Docs/Testing.md");
+        FailureReport report = new($"Test classes missing from the '{CoverageHeading}' table of Docs/{DocumentName}");
 
-        foreach (string testClass in DeclaredTestClasses().Order(StringComparer.Ordinal))
-        {
-            if (!documented.Contains(testClass))
-            {
-                report.Add($"{testClass} — add a row saying what it checks");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DeclaredTestClasses().Order(StringComparer.Ordinal),
+            DocumentedTestClasses(),
+            testClass => $"{testClass} — add a row saying what it checks");
 
         report.AssertEmpty();
     }
@@ -64,28 +65,10 @@ public class TestingDocTests
     public void TableRows_NameOneClassAndDescribeIt()
     {
         MarkdownTable table = CoverageTable();
-        HashSet<string> seen = new(StringComparer.Ordinal);
-        FailureReport report = new($"Malformed rows of the '{CoverageHeading}' table of Docs/Testing.md");
+        FailureReport report = new($"Malformed rows of the '{CoverageHeading}' table of Docs/{DocumentName}");
 
-        foreach (IReadOnlyList<string> row in table.Rows)
-        {
-            List<string> names = MarkdownDocument.CodeSpans(row[0]).ToList();
-            if (names.Count != 1)
-            {
-                report.Add($"'{row[0]}' — the first cell must hold exactly one class path in backticks");
-                continue;
-            }
-
-            if (row[1].Length == 0)
-            {
-                report.Add($"{names[0]} — the row says nothing about what the class checks");
-            }
-
-            if (!seen.Add(names[0]))
-            {
-                report.Add($"{names[0]} — listed twice");
-            }
-        }
+        DocTableChecks.SingleCodeSpanPerRow(table, report, ClassColumn, "class path");
+        DocTableChecks.CellIsNotEmpty(table, report, PurposeColumn, ClassColumn, "what the class checks");
 
         report.AssertEmpty();
     }
@@ -96,15 +79,11 @@ public class TestingDocTests
     /// reported by <see cref="TableRows_NameOneClassAndDescribeIt"/>, not here.
     /// </summary>
     private static IReadOnlySet<string> DocumentedTestClasses() =>
-        CoverageTable().Rows
-            .Select(row => MarkdownDocument.CodeSpans(row[0]).FirstOrDefault())
-            .OfType<string>()
-            .ToHashSet(StringComparer.Ordinal);
+        CoverageTable().CodeSpanColumn(ClassColumn).ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
-    /// Every test class that actually exists, keyed the way the table writes it. A class counts as one
-    /// when it declares a [Fact] or a [Theory]: Infrastructure/ holds helpers that run no tests, and
-    /// listing them as coverage would say something untrue.
+    /// Every test class that actually exists, keyed the way the table writes it: the folder it lives in
+    /// under Tests/NeonWarfare.Tests/, then the class name.
     /// </summary>
     private static IReadOnlySet<string> DeclaredTestClasses()
     {
@@ -117,13 +96,9 @@ public class TestingDocTests
                 .GetRelativePath(RepositoryPaths.TestsDirectory, Path.GetDirectoryName(path)!)
                 .Replace(Path.DirectorySeparatorChar, '/');
 
-            foreach (ClassDeclarationSyntax declaration in file.Nodes<ClassDeclarationSyntax>())
+            foreach (ClassDeclarationSyntax declaration in file.Nodes<ClassDeclarationSyntax>()
+                         .Where(CSharpFile.DeclaresTestMethod))
             {
-                if (!DeclaresTestMethod(declaration))
-                {
-                    continue;
-                }
-
                 string name = declaration.Identifier.ValueText;
                 classes.Add(directory == "." ? name : $"{directory}/{name}");
             }
@@ -132,19 +107,8 @@ public class TestingDocTests
         return classes;
     }
 
-    private static bool DeclaresTestMethod(ClassDeclarationSyntax declaration) =>
-        declaration.Members.OfType<MethodDeclarationSyntax>()
-            .SelectMany(method => method.AttributeLists)
-            .SelectMany(list => list.Attributes)
-            .Any(attribute => TestMethodAttributes.Contains(CSharpFile.AttributeName(attribute)));
-
-    private static MarkdownTable CoverageTable()
-    {
-        MarkdownDocument document =
-            MarkdownDocument.Load(Path.Combine(RepositoryPaths.DocsDirectory, "Testing.md"));
-
-        return document.TableUnder(CoverageHeading) ?? throw new InvalidOperationException(
-            $"Docs/Testing.md: no table under '{CoverageHeading}'. Either the heading was renamed, or " +
-            $"the inventory of test classes is gone.");
-    }
+    private static MarkdownTable CoverageTable() =>
+        MarkdownDocument.LoadDoc(DocumentName)
+            .Section(CoverageHeading)
+            .RequireTable("the inventory of test classes is gone", "Test class", "What it checks");
 }

@@ -19,7 +19,7 @@ public class SidecarFileTests
     /// looks recoverable — but Godot resolves by uid and it is the uid that changed.
     /// </summary>
     [Theory]
-    [MemberData(nameof(GameFileSources.Sources), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Sources), MemberType = typeof(FileSources))]
     public void SourceFile_HasAUidSidecar(string relativePath)
     {
         string sidecar = relativePath + UidExtension;
@@ -34,7 +34,7 @@ public class SidecarFileTests
     /// nothing, which is exactly what makes a stale reference look valid.
     /// </summary>
     [Theory]
-    [MemberData(nameof(GameFileSources.Sidecars), MemberType = typeof(GameFileSources))]
+    [MemberData(nameof(FileSources.Sidecars), MemberType = typeof(FileSources))]
     public void Sidecar_HasTheFileItBelongsTo(string relativePath)
     {
         string owner = relativePath[..relativePath.LastIndexOf('.')];

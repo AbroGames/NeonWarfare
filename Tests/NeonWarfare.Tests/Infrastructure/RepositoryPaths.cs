@@ -29,10 +29,6 @@ public static class RepositoryPaths
         ".editorconfig", ".gitattributes", ".gitignore",
     };
 
-    private const string MissingMetadataMessage =
-        "Assembly metadata '{Key}' is missing. It is set by an AssemblyMetadata item in " +
-        "NeonWarfare.Tests.csproj — tests cannot locate the repository without it.";
-
     public static string Root { get; } = ReadRoot();
 
     public static string ReadmePath { get; } = Path.Combine(Root, "README.md");
@@ -107,6 +103,9 @@ public static class RepositoryPaths
     /// <summary>Rider Multi-Launch configurations, each starting several launch profiles at once.</summary>
     public static string RunConfigsDirectory { get; } = Path.Combine(Root, ".run");
 
+    /// <summary>One file of <c>Docs/</c> by its file name — how every doc test names its document.</summary>
+    public static string Doc(string fileName) => Path.Combine(DocsDirectory, fileName);
+
     /// <summary>All documentation files, sorted, as absolute paths.</summary>
     public static IReadOnlyList<string> DocFiles() =>
         Directory.GetFiles(DocsDirectory, "*.md", SearchOption.AllDirectories)
@@ -146,27 +145,14 @@ public static class RepositoryPaths
     /// <summary>Every Multi-Launch configuration in .run/.</summary>
     public static IReadOnlyList<string> RunConfigFiles() => Files([RunConfigsDirectory], "*.run.xml");
 
-    /// <summary>
-    /// Every hand-written test source file. <c>bin/</c> and <c>obj/</c> are skipped: the build output
-    /// holds generated sources — the xUnit entry point among them — that nobody wrote and nothing
-    /// documents.
-    /// </summary>
-    public static IReadOnlyList<string> TestFiles() =>
-        Files([TestsDirectory], "*.cs")
-            .Where(path => !IsInside(path, Path.Combine(TestsDirectory, "bin"))
-                           && !IsInside(path, Path.Combine(TestsDirectory, "obj")))
-            .ToList();
+    /// <summary>Every hand-written test source file.</summary>
+    public static IReadOnlyList<string> TestFiles() => HandWrittenSources(TestsDirectory);
 
     /// <summary>
-    /// Every hand-written smoke test source file, with the same <c>bin/</c> and <c>obj/</c> left out as
-    /// in <see cref="TestFiles"/>. Kept separate from it: the two projects are documented by two
-    /// different files, and neither table may claim the other's tests.
+    /// Every hand-written smoke test source file. Kept separate from <see cref="TestFiles"/>: the two
+    /// projects are documented by two different files, and neither table may claim the other's tests.
     /// </summary>
-    public static IReadOnlyList<string> SmokeTestFiles() =>
-        Files([SmokeTestsDirectory], "*.cs")
-            .Where(path => !IsInside(path, Path.Combine(SmokeTestsDirectory, "bin"))
-                           && !IsInside(path, Path.Combine(SmokeTestsDirectory, "obj")))
-            .ToList();
+    public static IReadOnlyList<string> SmokeTestFiles() => HandWrittenSources(SmokeTestsDirectory);
 
     /// <summary>The world service classes — every .cs under Scenes/World/Service, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
@@ -220,6 +206,17 @@ public static class RepositoryPaths
     public static string Absolute(string relativePath) =>
         Path.GetFullPath(Path.Combine(Root, relativePath));
 
+    /// <summary>
+    /// The <c>.cs</c> files of a project that somebody actually wrote. <c>bin/</c> and <c>obj/</c> are
+    /// skipped: the build output holds generated sources — the xUnit entry point among them — that
+    /// nobody wrote and nothing documents.
+    /// </summary>
+    private static IReadOnlyList<string> HandWrittenSources(string projectDirectory) =>
+        Files([projectDirectory], "*.cs")
+            .Where(path => !IsInside(path, Path.Combine(projectDirectory, "bin"))
+                           && !IsInside(path, Path.Combine(projectDirectory, "obj")))
+            .ToList();
+
     /// <summary>Files matching <paramref name="pattern"/> under the given roots, sorted, absolute.</summary>
     private static IReadOnlyList<string> Files(IEnumerable<string> directories, string pattern) =>
         directories
@@ -265,7 +262,9 @@ public static class RepositoryPaths
         if (string.IsNullOrWhiteSpace(value))
         {
             throw new InvalidOperationException(
-                MissingMetadataMessage.Replace("{Key}", RepositoryRootMetadataKey));
+                $"Assembly metadata '{RepositoryRootMetadataKey}' is missing. It is set by an " +
+                $"AssemblyMetadata item in NeonWarfare.Tests.csproj — tests cannot locate the " +
+                $"repository without it.");
         }
 
         return Path.GetFullPath(value);

@@ -31,7 +31,10 @@ public class RepositoryStatsTests
         AppendTextDirectory(report, "Docs/", RepositoryPaths.DocsDirectory);
         AppendTextDirectory(report, "brain/", RepositoryPaths.BrainDirectory);
         AppendCode(report, "*.cs (game)", RepositoryPaths.SourceFiles());
-        AppendCode(report, "*.cs (tests)", RepositoryPaths.TestFiles());
+        AppendCode(
+            report,
+            "*.cs (tests)",
+            RepositoryPaths.TestFiles().Concat(RepositoryPaths.SmokeTestFiles()).ToList());
         AppendCode(report, "*.tscn", FilesWithExtension(allFiles, ".tscn"));
         report.AppendLine($"  messages.pot: {TemplateKeyCount()} keys");
         report.AppendLine($"  Assets/: {RepositoryPaths.AllFilesUnder(RepositoryPaths.AssetsDirectory).Count} files");
@@ -59,7 +62,7 @@ public class RepositoryStatsTests
         foreach (string file in files)
         {
             string text = File.ReadAllText(file);
-            lines += LineCount(text);
+            lines += TextFile.LineCount(text);
             words += text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length;
         }
 
@@ -73,7 +76,7 @@ public class RepositoryStatsTests
     /// </summary>
     private static void AppendCode(StringBuilder report, string label, IReadOnlyList<string> files)
     {
-        int lines = files.Sum(file => LineCount(File.ReadAllText(file)));
+        int lines = files.Sum(file => TextFile.LineCount(File.ReadAllText(file)));
 
         report.AppendLine($"  {label}: {files.Count} files, {lines} lines");
     }
@@ -82,21 +85,6 @@ public class RepositoryStatsTests
         files
             .Where(path => Path.GetExtension(path).Equals(extension, StringComparison.OrdinalIgnoreCase))
             .ToList();
-
-    /// <summary>
-    /// Lines the way an editor shows them: a trailing newline ends the last line, it does not open a
-    /// new one. Every text file here is LF-only — FileEncodingTests is what makes that safe to assume.
-    /// </summary>
-    private static int LineCount(string text)
-    {
-        if (text.Length == 0)
-        {
-            return 0;
-        }
-
-        int count = text.Count(character => character == '\n');
-        return text.EndsWith('\n') ? count : count + 1;
-    }
 
     private static int TemplateKeyCount() =>
         PoFile.Load(RepositoryPaths.LocaleTemplatePath).Keys.Count;

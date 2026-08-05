@@ -11,6 +11,8 @@ namespace NeonWarfare.Tests.Launch;
 /// </summary>
 public class LaunchProfilesTests
 {
+    private const string DocumentName = "Quick-start.md";
+
     private const string RunProfilesHeading = "Run profiles";
 
     /// <summary>The Arguments cell of a profile that adds nothing to the project path.</summary>
@@ -23,21 +25,16 @@ public class LaunchProfilesTests
     [Fact]
     public void Profiles_AreDocumented()
     {
-        HashSet<string> documented = DocumentedProfiles()
-            .Select(profile => profile.Name)
-            .ToHashSet(StringComparer.Ordinal);
         LaunchSettingsFile settings = LaunchSettingsFile.Load();
         FailureReport report = new(
             $"Profiles declared in {settings.RelativePath} but missing from the '{RunProfilesHeading}' " +
-            "table of Docs/Quick-start.md");
+            $"table of Docs/{DocumentName}");
 
-        foreach (LaunchProfile profile in settings.Profiles)
-        {
-            if (!documented.Contains(profile.Name))
-            {
-                report.Add($"'{profile.Name}' — add a table row for it");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            settings.ProfileNames,
+            DocumentedProfiles().Select(profile => profile.Name).ToHashSet(StringComparer.Ordinal),
+            name => $"'{name}' — add a table row for it");
 
         report.AssertEmpty();
     }
@@ -46,19 +43,15 @@ public class LaunchProfilesTests
     public void DocumentedProfiles_Exist()
     {
         LaunchSettingsFile settings = LaunchSettingsFile.Load();
-        HashSet<string> declared = settings.ProfileNames.ToHashSet(StringComparer.Ordinal);
         FailureReport report = new(
-            $"Profiles described in the '{RunProfilesHeading}' table of Docs/Quick-start.md that " +
+            $"Profiles described in the '{RunProfilesHeading}' table of Docs/{DocumentName} that " +
             $"{settings.RelativePath} does not declare");
 
-        foreach (DocumentedProfile profile in DocumentedProfiles())
-        {
-            if (!declared.Contains(profile.Name))
-            {
-                report.Add(
-                    $"'{profile.Name}' — either it was renamed in launchSettings.json, or the row is stale");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DocumentedProfiles().Select(profile => profile.Name),
+            settings.ProfileNames.ToHashSet(StringComparer.Ordinal),
+            name => $"'{name}' — either it was renamed in launchSettings.json, or the row is stale");
 
         report.AssertEmpty();
     }
@@ -74,7 +67,7 @@ public class LaunchProfilesTests
 
         LaunchSettingsFile settings = LaunchSettingsFile.Load();
         FailureReport report = new(
-            $"Arguments in the '{RunProfilesHeading}' table of Docs/Quick-start.md that disagree with " +
+            $"Arguments in the '{RunProfilesHeading}' table of Docs/{DocumentName} that disagree with " +
             settings.RelativePath);
 
         foreach (LaunchProfile profile in settings.Profiles)
@@ -85,7 +78,7 @@ public class LaunchProfilesTests
             }
 
             string expected = profile.ArgumentsWithoutProjectPath;
-            string actual = cell == NoArgumentsCell ? string.Empty : Uncode(cell);
+            string actual = MarkdownTable.SingleCodeSpan(cell) ?? string.Empty;
             if (!string.Equals(actual, expected, StringComparison.Ordinal))
             {
                 report.Add(
@@ -108,7 +101,7 @@ public class LaunchProfilesTests
         LaunchSettingsFile settings = LaunchSettingsFile.Load();
         IReadOnlyList<string> declared = settings.ProfileNames;
         FailureReport report = new(
-            $"The '{RunProfilesHeading}' table of Docs/Quick-start.md lists the profiles in an order " +
+            $"The '{RunProfilesHeading}' table of Docs/{DocumentName} lists the profiles in an order " +
             $"other than {settings.RelativePath}");
 
         for (int i = 0; i < Math.Min(documented.Count, declared.Count); i++)
@@ -118,6 +111,14 @@ public class LaunchProfilesTests
                 report.Add(
                     $"row {i + 1}: the table has '{documented[i].Name}', the file has '{declared[i]}'");
             }
+        }
+
+        // The loop above stops at the shorter of the two. Which names the extra rows hold is reported
+        // by the two checks above; that there are extra rows at all is only visible here.
+        if (documented.Count != declared.Count)
+        {
+            report.Add($"the table has {documented.Count} row(s), {settings.RelativePath} declares " +
+                       $"{declared.Count} profile(s)");
         }
 
         report.AssertEmpty();
@@ -145,22 +146,17 @@ public class LaunchProfilesTests
     }
 
     /// <summary>The table rows in document order. A duplicated row is kept — the order check reports it.</summary>
-    private static IReadOnlyList<DocumentedProfile> DocumentedProfiles()
-    {
-        MarkdownDocument document = MarkdownDocument.Load(
-            Path.Combine(RepositoryPaths.DocsDirectory, "Quick-start.md"));
-        MarkdownTable table = document.TableUnder(RunProfilesHeading)
-                              ?? throw new InvalidOperationException(
-                                  $"Docs/Quick-start.md has no table under '## {RunProfilesHeading}'. " +
-                                  "The launch profile checks have nothing to compare against.");
-
-        return table.Rows
-            .Select(row => new DocumentedProfile(Uncode(row[ProfileColumn]), row[ArgumentsColumn]))
+    private static IReadOnlyList<DocumentedProfile> DocumentedProfiles() =>
+        MarkdownDocument.LoadDoc(DocumentName)
+            .Section(RunProfilesHeading)
+            .RequireTable(
+                "the launch profile checks have nothing to compare against",
+                "Profile", "Arguments", "What it does")
+            .Rows
+            .Select(row => new DocumentedProfile(
+                MarkdownTable.SingleCodeSpan(row[ProfileColumn]) ?? row[ProfileColumn],
+                row[ArgumentsColumn]))
             .ToList();
-    }
-
-    /// <summary>Strips the code span the table writes names and arguments in.</summary>
-    private static string Uncode(string cell) => cell.Trim('`');
 
     /// <summary>An empty argument list still has to be shown as something in a failure message.</summary>
     private static string Describe(string arguments) =>

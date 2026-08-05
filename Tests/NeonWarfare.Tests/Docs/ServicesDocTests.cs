@@ -11,6 +11,8 @@ namespace NeonWarfare.Tests.Docs;
 /// </summary>
 public class ServicesDocTests
 {
+    private const string DocumentName = "Services.md";
+
     private const string GlobalServicesHeading = "Global services";
 
     private const string WorldServicesHeading = "World services";
@@ -20,6 +22,10 @@ public class ServicesDocTests
     private const string ServicesPrefix = "Services.";
 
     private const string ServiceSuffix = "Service";
+
+    private const int FieldColumn = 0;
+
+    private const int ClassColumn = 1;
 
     /// <summary>
     /// Not a world service despite living in the folder: it is not a child node of World, is not
@@ -32,7 +38,8 @@ public class ServicesDocTests
     public void DocumentedGlobalServices_ExistInServicesClass()
     {
         IReadOnlyDictionary<string, string> declared = DeclaredGlobalServices();
-        FailureReport report = new($"Docs/Services.md rows that {RepositoryPaths.Relative(RepositoryPaths.ServicesPath)} does not back");
+        FailureReport report = new(
+            $"Docs/{DocumentName} rows that {RepositoryPaths.Relative(RepositoryPaths.ServicesPath)} does not back");
 
         foreach ((string field, string type) in DocumentedGlobalServices())
         {
@@ -62,15 +69,14 @@ public class ServicesDocTests
         // each — the document says so, and that counts as documented.
         IReadOnlySet<string> mentioned = MentionedBeforeTable(GlobalServicesHeading);
 
-        FailureReport report = new("Members of Services that Docs/Services.md never mentions");
+        FailureReport report = new($"Members of Services that Docs/{DocumentName} never mentions");
 
-        foreach ((string field, _) in DeclaredGlobalServices())
-        {
-            if (!documented.Contains(field) && !mentioned.Contains(field))
-            {
-                report.Add($"Services.{field} — add a table row or name it in the paragraph above");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DeclaredGlobalServices().Keys,
+            documented,
+            mentioned,
+            field => $"Services.{field} — add a table row or name it in the paragraph above");
 
         report.AssertEmpty();
     }
@@ -78,16 +84,14 @@ public class ServicesDocTests
     [Fact]
     public void WorldServiceClasses_AreDocumented()
     {
-        IReadOnlySet<string> documented = DocumentedWorldServices();
-        FailureReport report = new("World service classes missing from the Docs/Services.md table");
+        FailureReport report = new($"World service classes missing from the Docs/{DocumentName} table");
 
-        foreach (string service in DeclaredWorldServices().Order(StringComparer.Ordinal))
-        {
-            if (!documented.Contains(service) && !NotWorldServices.Contains(service))
-            {
-                report.Add($"{service} — add a row, or list it in NotWorldServices with the reason");
-            }
-        }
+        CrossCheck.ReportMissing(
+            report,
+            DeclaredWorldServices().Order(StringComparer.Ordinal),
+            DocumentedWorldServices(),
+            NotWorldServices,
+            service => $"{service} — add a row, or list it in NotWorldServices with the reason");
 
         report.AssertEmpty();
     }
@@ -96,7 +100,7 @@ public class ServicesDocTests
     public void DocumentedWorldServices_ExistAsClasses()
     {
         IReadOnlySet<string> declared = DeclaredWorldServices();
-        FailureReport report = new("Docs/Services.md names world services that no class backs");
+        FailureReport report = new($"Docs/{DocumentName} names world services that no class backs");
 
         foreach (string service in DocumentedWorldServices().Order(StringComparer.Ordinal))
         {
@@ -149,17 +153,14 @@ public class ServicesDocTests
     /// <summary>The rows of the global services table: the member name and the class it is declared as.</summary>
     private static IEnumerable<(string Field, string Type)> DocumentedGlobalServices()
     {
-        foreach (MarkdownLine line in Document.Section(GlobalServicesHeading).Where(line => line.IsTableRow))
-        {
-            IReadOnlyList<string> cells = Cells(line.Text);
-            if (cells.Count < 2)
-            {
-                continue;
-            }
+        MarkdownTable table = Table(GlobalServicesHeading, "the global registry is gone",
+            "Service", "Class", "Purpose");
 
-            string? field = MarkdownDocument.CodeSpans(cells[0])
+        foreach (IReadOnlyList<string> row in table.Rows)
+        {
+            string? field = MarkdownDocument.CodeSpans(row[FieldColumn])
                 .FirstOrDefault(span => span.StartsWith(ServicesPrefix, StringComparison.Ordinal));
-            string? type = MarkdownDocument.CodeSpans(cells[1]).FirstOrDefault();
+            string? type = MarkdownTable.SingleCodeSpan(row[ClassColumn]);
 
             if (field is not null && type is not null)
             {
@@ -170,9 +171,8 @@ public class ServicesDocTests
 
     /// <summary>Everything written in backticks in the world services table, cells included.</summary>
     private static IReadOnlySet<string> DocumentedWorldServices() =>
-        Document.Section(WorldServicesHeading)
-            .Where(line => line.IsTableRow)
-            .SelectMany(line => MarkdownDocument.CodeSpans(line.Text))
+        Table(WorldServicesHeading, "the world registry is gone", "Service", "Purpose").Rows
+            .SelectMany(row => row.SelectMany(MarkdownDocument.CodeSpans))
             .ToHashSet(StringComparer.Ordinal);
 
     /// <summary>The classes under Scenes/World/Service whose name marks them as a service.</summary>
@@ -184,12 +184,16 @@ public class ServicesDocTests
             .Where(name => name.EndsWith(ServiceSuffix, StringComparison.Ordinal))
             .ToHashSet(StringComparer.Ordinal);
 
-    /// <summary>Code spans of the prose that comes before the table of a section.</summary>
+    /// <summary>
+    /// Code spans of the prose that comes before the table of a section. What follows the table is a
+    /// different subject — under "Global services" it is about the global usings — and counting it
+    /// would let a service be considered documented by an unrelated mention.
+    /// </summary>
     private static IReadOnlySet<string> MentionedBeforeTable(string heading)
     {
         HashSet<string> mentioned = new(StringComparer.Ordinal);
 
-        foreach (MarkdownLine line in Document.Section(heading))
+        foreach (MarkdownLine line in Document().Section(heading).Lines)
         {
             if (line.IsTableRow)
             {
@@ -202,10 +206,8 @@ public class ServicesDocTests
         return mentioned;
     }
 
-    /// <summary>The cells of a table row, without the empty edges the outer pipes produce.</summary>
-    private static IReadOnlyList<string> Cells(string row) =>
-        row.Trim().Trim('|').Split('|').Select(cell => cell.Trim()).ToList();
+    private static MarkdownTable Table(string heading, string whatIsGone, params string[] columns) =>
+        Document().Section(heading).RequireTable(whatIsGone, columns);
 
-    private static MarkdownDocument Document =>
-        MarkdownDocument.Load(Path.Combine(RepositoryPaths.DocsDirectory, "Services.md"));
+    private static MarkdownDocument Document() => MarkdownDocument.LoadDoc(DocumentName);
 }
