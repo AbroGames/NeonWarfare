@@ -38,7 +38,7 @@ public partial class ColorPickerPanel : Control
     public Color Color => _color;
 
     /// <summary>Raised whenever the current color changes (user or programmatic).</summary>
-    public event Action<Color> ColorChanged;
+    public event Action<Color> ColorChangedEvent;
 
     /// <param name="color">Initial color.</param>
     /// <param name="palette">Preset swatches; null falls back to <see cref="DefaultPalette"/>.</param>
@@ -147,7 +147,7 @@ public partial class ColorPickerPanel : Control
         {
             _suppress = false;
         }
-        ColorChanged?.Invoke(_color);
+        ColorChangedEvent?.Invoke(_color);
     }
 
     // ---- input handlers: each normalizes then funnels to SetColor ----

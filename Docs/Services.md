@@ -21,6 +21,7 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | `Services.LastGame` | `ResumableGameService` | The last session for the "Continue" button (`ResumableGame`) |
 | `Services.Process` | `ProcessService` | Launching the dedicated server child process |
 | `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
+| `Services.KnownServers` | `KnownServersService` | The server list of the multiplayer menu, stored in `user://known-servers.json` |
 
 The field name in `Services` is deliberately shorter than the class name (`Services.SaveLoad` →
 `SaveLoadService`): the `Service` suffix would be noise at the call site.

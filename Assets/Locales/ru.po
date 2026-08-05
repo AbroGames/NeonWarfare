@@ -13,12 +13,6 @@ msgstr ""
 msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 msgstr "Одиночная игра"
 
-msgid "MAIN_MENU__CREATE_SERVER_BUTTON"
-msgstr "Создать сервер"
-
-msgid "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
-msgstr "Подключиться к серверу"
-
 msgid "MAIN_MENU__SETTINGS_BUTTON"
 msgstr "Настройки"
 
@@ -39,30 +33,6 @@ msgstr "Имя сохранения:"
 
 msgid "SINGLEPLAYER_MENU__START_BUTTON"
 msgstr "Начать игру"
-
-msgid "CONNECT_MENU__HOST"
-msgstr "Хост:"
-
-msgid "CONNECT_MENU__PORT"
-msgstr "Порт:"
-
-msgid "CONNECT_MENU__CONNECT_BUTTON"
-msgstr "Подключиться к серверу"
-
-msgid "CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR"
-msgstr "Адрес хоста не указан"
-
-msgid "HOST_MENU__PORT"
-msgstr "Порт:"
-
-msgid "HOST_MENU__SAVE_NAME"
-msgstr "Имя сохранения:"
-
-msgid "HOST_MENU__DEDICATED"
-msgstr "Новое окно?"
-
-msgid "HOST_MENU__CREATE_BUTTON"
-msgstr "Создать сервер"
 
 msgid "SETTING_MENU__NICK"
 msgstr "Ник:"
@@ -90,9 +60,6 @@ msgstr "Автоматически сохранять игру"
 
 msgid "SETTING_MENU__LANGUAGE"
 msgstr "Язык:"
-
-msgid "SETTING_MENU__SAVE_BUTTON"
-msgstr "Сохранить и выйти"
 
 msgid "MESSAGE_MENU__OK_BUTTON"
 msgstr "Ок"
@@ -144,15 +111,6 @@ msgstr "Новая игра"
 
 msgid "SINGLEPLAYER_MENU__LOAD_TAB"
 msgstr "Загрузить игру"
-
-msgid "CONNECT_MENU__TITLE"
-msgstr "Подключиться к серверу"
-
-msgid "HOST_MENU__TITLE"
-msgstr "Создать сервер"
-
-msgid "SETTING_MENU__TITLE"
-msgstr "Настройки"
 
 msgid "GENERIC_MENU__CANCEL_BUTTON"
 msgstr "Отмена"

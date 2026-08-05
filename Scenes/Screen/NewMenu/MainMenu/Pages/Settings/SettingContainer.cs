@@ -195,7 +195,7 @@ public static class Configurators
         { typeof(Color), new CustomSettingContainerConfigurator(container =>
         {
             var panel = new ColorPickerPanel((Color)container.Handle.Value);
-            panel.ColorChanged += color => container.Handle.Value = color;
+            panel.ColorChangedEvent += color => container.Handle.Value = color;
             return panel;
         })}
     };

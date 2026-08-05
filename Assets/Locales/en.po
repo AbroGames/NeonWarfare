@@ -12,12 +12,6 @@ msgstr ""
 msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 msgstr "Start singleplayer"
 
-msgid "MAIN_MENU__CREATE_SERVER_BUTTON"
-msgstr "Create server"
-
-msgid "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
-msgstr "Connect to server"
-
 msgid "MAIN_MENU__SETTINGS_BUTTON"
 msgstr "Settings"
 
@@ -38,30 +32,6 @@ msgstr "Save name:"
 
 msgid "SINGLEPLAYER_MENU__START_BUTTON"
 msgstr "Start game"
-
-msgid "CONNECT_MENU__HOST"
-msgstr "Host:"
-
-msgid "CONNECT_MENU__PORT"
-msgstr "Port:"
-
-msgid "CONNECT_MENU__CONNECT_BUTTON"
-msgstr "Connect to server"
-
-msgid "CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR"
-msgstr "Host address is not specified"
-
-msgid "HOST_MENU__PORT"
-msgstr "Port:"
-
-msgid "HOST_MENU__SAVE_NAME"
-msgstr "Save Name:"
-
-msgid "HOST_MENU__DEDICATED"
-msgstr "Dedicated?"
-
-msgid "HOST_MENU__CREATE_BUTTON"
-msgstr "Create server"
 
 msgid "SETTING_MENU__NICK"
 msgstr "Nick:"
@@ -89,9 +59,6 @@ msgstr "Automatically save the game"
 
 msgid "SETTING_MENU__LANGUAGE"
 msgstr "Language:"
-
-msgid "SETTING_MENU__SAVE_BUTTON"
-msgstr "Save and return"
 
 msgid "MESSAGE_MENU__OK_BUTTON"
 msgstr "Ok"
@@ -143,15 +110,6 @@ msgstr "New Game"
 
 msgid "SINGLEPLAYER_MENU__LOAD_TAB"
 msgstr "Load Game"
-
-msgid "CONNECT_MENU__TITLE"
-msgstr "Connect to Server"
-
-msgid "HOST_MENU__TITLE"
-msgstr "Create Server"
-
-msgid "SETTING_MENU__TITLE"
-msgstr "Settings"
 
 msgid "GENERIC_MENU__CANCEL_BUTTON"
 msgstr "Cancel"
