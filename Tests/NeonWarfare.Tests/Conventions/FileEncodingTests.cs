@@ -14,13 +14,7 @@ namespace NeonWarfare.Tests.Conventions;
 /// </summary>
 public class FileEncodingTests
 {
-    /// <summary>
-    /// Off, not deleted. Godot writes the .cs.uid sidecars with a BOM and rewrites them whenever it
-    /// reopens the project, so turning this on means either converting the repository and having the
-    /// editor undo it, or exempting the sidecars — which is most of what the check would cover. The
-    /// decision is open; the check is kept so that turning it on is one attribute away.
-    /// </summary>
-    [Theory(Skip = "Godot rewrites the .cs.uid sidecars with a BOM — see the comment above.")]
+    [Theory]
     [MemberData(nameof(FileSources.TextFiles), MemberType = typeof(FileSources))]
     public void File_IsUtf8WithoutBom(string relativePath)
     {

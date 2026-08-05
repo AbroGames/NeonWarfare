@@ -154,6 +154,16 @@ public static class RepositoryPaths
     /// </summary>
     public static IReadOnlyList<string> SmokeTestFiles() => HandWrittenSources(SmokeTestsDirectory);
 
+    /// <summary>
+    /// Every hand-written .cs of the repository: the game, the tests and the smoke tests. The scope of
+    /// the checks that are about how a C# file is written rather than about what the game does, and
+    /// those hold for the test projects just as much.
+    /// </summary>
+    public static IReadOnlyList<string> CSharpFiles() =>
+        SourceFiles().Concat(TestFiles()).Concat(SmokeTestFiles())
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
     /// <summary>The world service classes — every .cs under Scenes/World/Service, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
 

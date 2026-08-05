@@ -18,6 +18,9 @@ public static class FileSources
     /// <summary>Every .cs file under Scenes/ and Scripts/.</summary>
     public static TheoryData<string> Sources => RepositoryPaths.SourceFiles().AsTheoryData();
 
+    /// <summary>Every hand-written .cs: the game, the tests and the smoke tests.</summary>
+    public static TheoryData<string> CSharpFiles => RepositoryPaths.CSharpFiles().AsTheoryData();
+
     /// <summary>Every .tscn plus the standalone .tres resources.</summary>
     public static TheoryData<string> Resources => RepositoryPaths.ResourceFiles().AsTheoryData();
 

@@ -73,7 +73,8 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Conventions/ChildInjectionTests` | A `[Child]` member name resolves to a reachable node in the scene |
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
 | `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
-| `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings; the BOM check is written but off |
+| `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into 120 characters |
+| `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
 | `Launch/LaunchProfilesTests` | `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |
 | `Scenes/SceneResourceTests` | Every `res://` path resolves; a root node's script is the `.cs` beside the scene |
