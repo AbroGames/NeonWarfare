@@ -14,6 +14,15 @@ search, build or edit.
 
 Read `Testing.md` and `Smoke-testing.md` **only** when editing tests or smoke tests.
 
+Before a non-trivial task, the `Docs/` file you need is read **in full** — the README tables are an
+index, not a summary. Key entities are named in those rows on purpose, so a document can also be
+found by searching for a class or attribute name.
+
+## Do not edit by hand
+
+`.godot/`, `*.uid` and `*.tscn` are maintained by the Godot editor. Never create or modify them
+manually — ask the user to make the change in the editor instead.
+
 ## Tasks
 
 Tasks live in `.claude/tasks/NNN-short-slug/` (`NNN` — a zero-padded number).
@@ -41,7 +50,7 @@ verified by compilation plus a manual run of the game.
 
 ```bash
 dotnet build                              # quick compilation check (~3 s)
-dotnet test                               # unit tests, including documentation and code-style checks
+dotnet test                               # unit tests, documentation and code-style checks, smoke tests
 "$GODOT_EXE" --path "./"                  # normal game launch
 "$GODOT_EXE" --path "./" --auto-start     # straight into a single-player game, skipping the menu
 "$GODOT_EXE" --path "./" --server         # straight to launching a dedicated server
