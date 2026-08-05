@@ -6,10 +6,13 @@ namespace NeonWarfare.Scenes.Entity.Characters.Controller;
 
 /// <summary>
 /// Этот класс не имеет клиентской версии <c>CharacterControllerClient</c>,
-/// т.к. источником данных может выступать как <c>CharacterController</c> на стороне сервера, так и на стороне клиента.<br/>
+/// т.к. источником данных может выступать как <c>CharacterController</c> на стороне сервера,
+/// так и на стороне клиента.<br/>
 /// Поэтому части методов необходимо иметь параметр <c>syncToClient</c>, чтобы избежать циклической синхронизации.
 /// </summary>
-//TODO Очень много сложностей с AddImpulse, с AddBlock, с SetController в одиночной игре (подробней в MapSurface). Может всё-таки попробовать разбить на два класса? Или хотя бы сделать Фасад для сервера и клиента.
+//TODO Очень много сложностей с AddImpulse, с AddBlock, с SetController в одиночной игре (подробней
+//TODO в MapSurface). Может всё-таки попробовать разбить на два класса? Или хотя бы сделать Фасад
+//TODO для сервера и клиента.
 public class CharacterController
 {
     public IController CurrentController { get; private set; }
@@ -62,7 +65,8 @@ public class CharacterController
         _synchronizer.Controller_OnChange(peerId, controller);
     }
     
-    //TODO Переделать эти методы в серверный AddBlock, который вызывает на клиенте и на сервере OnAddBlock? Не забыть коммент к OnAddBlock, что его нельзя вызывать напрямую.
+    //TODO Переделать эти методы в серверный AddBlock, который вызывает на клиенте и на сервере
+    //TODO OnAddBlock? Не забыть коммент к OnAddBlock, что его нельзя вызывать напрямую.
     //TODO Или можно? Всё-таки меню открывается на клиенте только, сервер не участвует. Переименовать в AddBlockLocal? 
     public void AddBlock(ControlBlocker controlBlocker, bool syncToClient = true)
     {

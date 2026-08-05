@@ -12,7 +12,8 @@ public partial class NavigationService : Node2D
     /// <summary>
     /// Список стандартных размеров агентов поиска пути.
     /// </summary>
-    /// <remarks>Чем их меньше, тем лучше для производительности при запекании карты путей. Допускается не более 32 различных размеров.</remarks>
+    /// <remarks>Чем их меньше, тем лучше для производительности при запекании карты путей.
+    /// Допускается не более 32 различных размеров.</remarks>
     public readonly IReadOnlyList<int> UnitSizes = [5, 10, 20, 40, 80, 160];
     public int SmallestUnitSize => UnitSizes[0]; // Самый маленбкий размер в списке
     public int BiggestUnitSize => UnitSizes[^1]; // Самый большой размер в списке
@@ -31,14 +32,19 @@ public partial class NavigationService : Node2D
     /// Перезапечет карты путей
     /// </summary>
     /// <param name="worldOutlines">Координаты углов периметра игровых локаций</param>
-    /// <param name="additionalObstacles">Массив полигонов для вырезания в карте путей "дырок", по которым нельзя ходить. Нужен для тонкой настройки карты путей.</param>
-    /// <param name="collisionsParsingRoot">Нода, начиная с которой будут рекурсивно парситься статичные тела. По умолчанию парсит прямо с корня сцены.</param>
+    /// <param name="additionalObstacles">Массив полигонов для вырезания в карте путей "дырок",
+    /// по которым нельзя ходить. Нужен для тонкой настройки карты путей.</param>
+    /// <param name="collisionsParsingRoot">Нода, начиная с которой будут рекурсивно парситься
+    /// статичные тела. По умолчанию парсит прямо с корня сцены.</param>
     /// <remarks>
     /// В <b>worldOutlines</b> можешь передать 4 угла квадрата карты типа [[vec2, vec2, vec2, vec2]]<br/>
     /// <b>additionalObstacles</b> не обязательно, если ты хочешь сделать лишние дырки в карте путей<br/>
     /// <b>collisionsParsingRoot</b> игра может вычислить сама, но для надежности передай сюда ссылку на корень мира
     /// </remarks>
-    public NavigationService(IEnumerable<Vector2[]> worldOutlines, IEnumerable<Vector2[]> additionalObstacles = null, Node collisionsParsingRoot = null)
+    public NavigationService(
+        IEnumerable<Vector2[]> worldOutlines,
+        IEnumerable<Vector2[]> additionalObstacles = null,
+        Node collisionsParsingRoot = null)
     {
         _initialWorldOutlines = worldOutlines;
         _initialAdditionalObstacles = additionalObstacles;
@@ -66,11 +72,17 @@ public partial class NavigationService : Node2D
     /// Перезапечет карты путей
     /// </summary>
     /// <param name="worldOutlines">Координаты углов периметра игровых локаций</param>
-    /// <param name="additionalObstacles">Массив полигонов для вырезания в карте путей "дырок", по которым нельзя ходить. Нужен для тонкой настройки карты путей.</param>
-    /// <param name="collisionsParsingRoot">Нода, начиная с которой будут ресурсивно парситься статичные тела. По умолчанию парсит прямо с корня сцены.</param>
-    public void RebuildNavigation(IEnumerable<Vector2[]> worldOutlines, IEnumerable<Vector2[]> additionalObstacles = null, Node collisionsParsingRoot = null)
+    /// <param name="additionalObstacles">Массив полигонов для вырезания в карте путей "дырок",
+    /// по которым нельзя ходить. Нужен для тонкой настройки карты путей.</param>
+    /// <param name="collisionsParsingRoot">Нода, начиная с которой будут ресурсивно парситься
+    /// статичные тела. По умолчанию парсит прямо с корня сцены.</param>
+    public void RebuildNavigation(
+        IEnumerable<Vector2[]> worldOutlines,
+        IEnumerable<Vector2[]> additionalObstacles = null,
+        Node collisionsParsingRoot = null)
     {
-        var navSource = new NavigationMeshSourceGeometryData2D(); // Это контейнер с информацией для запекания карты путей
+        // Это контейнер с информацией для запекания карты путей
+        var navSource = new NavigationMeshSourceGeometryData2D();
         
         // Мы создаем полигон-пустышку, чтобы записать в него настройки для парсера препятствий в игровом мире
         var requestPolygon = new NavigationPolygon();
@@ -119,9 +131,13 @@ public partial class NavigationService : Node2D
     /// <param name="navigationPolygon">Ссылка на полигон (пустой) карты путей, в который будут запечены пути</param>
     /// <param name="navSource">Контейнер с информацией о проходимых и непроходимых участках</param>
     /// <param name="targetRegion">Карта путей, в которую нужно положить полигон после запекания</param>
-    private void BakeNavMesh(NavigationPolygon navigationPolygon, NavigationMeshSourceGeometryData2D navSource, NavigationRegion2D targetRegion)
+    private void BakeNavMesh(
+        NavigationPolygon navigationPolygon,
+        NavigationMeshSourceGeometryData2D navSource,
+        NavigationRegion2D targetRegion)
     {
-        // обратный вызов из асинхронно запекаемой карты пути, чтобы назначить хлебобулочный полигон в соответствующий NavigationRegion2D
+        // обратный вызов из асинхронно запекаемой карты пути, чтобы назначить хлебобулочный полигон
+        // в соответствующий NavigationRegion2D
         var cb = () =>
         {
             targetRegion.NavigationPolygon = navigationPolygon;
@@ -146,7 +162,9 @@ public partial class NavigationService : Node2D
         }
         catch (InvalidOperationException)
         {
-            _log.Error("Unable to map raw size of {rawSize} to any of existing ones: [{SmallestUnitSize} ... {BiggestUnitSize}]", 
+            _log.Error(
+                "Unable to map raw size of {rawSize} to any of existing ones: " +
+                "[{SmallestUnitSize} ... {BiggestUnitSize}]",
                 $"{rawSize:N2}", SmallestUnitSize, BiggestUnitSize);
             unitSize = UnitSizes[^1]; 
         }

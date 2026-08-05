@@ -51,6 +51,7 @@ public class ConnectToMultiplayerGameStarter(
     // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
     private void ConnectionFailedEvent() => GoToMenuAndShowError(ConnectionFailedMessage);
     
-    // Server disconnected (the connection was successful, but the server disconnected us). This may also happen several hours after the connection.
+    // Server disconnected (the connection was successful, but the server disconnected us).
+    // This may also happen several hours after the connection.
     private void ServerDisconnectedEvent() => GoToMenuAndShowError(DisconnectedFromServerMessage);
 }

@@ -22,7 +22,11 @@ public class Pathfinder
     /// <param name="navigationAgent">NavigationAgent, лежащий внутри этого персонажа</param>
     /// <param name="navigationService">Ссылка на навигационный сервис в сцене</param>
     /// <param name="pathfindingData">Информация о размере персонажа и его максимальной скорости</param>
-    public Pathfinder(Character character, NavigationAgent2D navigationAgent, NavigationService navigationService, PathfindingData pathfindingData)
+    public Pathfinder(
+        Character character,
+        NavigationAgent2D navigationAgent,
+        NavigationService navigationService,
+        PathfindingData pathfindingData)
     {
         _character = character;
         _navigationAgent = navigationAgent;

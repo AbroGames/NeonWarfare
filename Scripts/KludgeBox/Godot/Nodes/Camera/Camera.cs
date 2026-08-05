@@ -12,7 +12,8 @@ public partial class Camera : Camera2D
 	public Vector2 TargetPosition = Vec2(); // Position where camera wants to be
 	public Vector2 ActualPosition = Vec2(); // Position where camera is currently in
 	public Vector2 PositionShift = Vec2(); // Additional shift to ActualPosition
-	public Vector2 HardPositionShift = Vec2(); // Additional shift to ActualPosition that will not be smoothed. Usable for shake
+	// Additional shift to ActualPosition that will not be smoothed. Usable for shake
+	public Vector2 HardPositionShift = Vec2();
 	
 	public double SmoothingBase = 0.1;
 	public double SmoothingPower = 1.5; // The power to which the SmoothingBase value will be raised
@@ -96,7 +97,8 @@ public partial class Camera : Camera2D
 		var availableMovement = (TargetPosition + PositionShift) - ActualPosition;
 		var actualMovement = availableMovement * (float) Mathf.Pow(SmoothingBase, SmoothingPower);
 		var actualMovementLength = actualMovement.Length();
-		actualMovement = availableMovement.Normalized() * (float)Mathf.Min(availableMovement.Length(), Mathf.Max(actualMovementLength, MinSpeed * delta));
+		actualMovement = availableMovement.Normalized() * (float)Mathf.Min(
+			availableMovement.Length(), Mathf.Max(actualMovementLength, MinSpeed * delta));
 			
 		ActualPosition += actualMovement;
 		Position = ActualPosition + HardPositionShift + AdditionalShift;

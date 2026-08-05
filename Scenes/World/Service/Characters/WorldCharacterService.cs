@@ -29,13 +29,21 @@ public partial class WorldCharacterService : Node
         character.Position = Vec2(x, y);
         Tree.Surface.AddChildWithUniqueName(character, "Character");
 
-        //TODO Сейчас дергается бот на клиенте при спавне! Он летит из (0;0). Надо либо вернуть обратно эту функцию на просто установку Character.Position,
-        //TODO либо подебажить как в обоих реализациях работает телепорт по среди игры, а не только в момент спауна (для этого на кнопку Тест 1 ищет Character игрока/бота в мире и телепортируем его на фиксированную позицию) 
+        //TODO Сейчас дергается бот на клиенте при спавне! Он летит из (0;0). Надо либо вернуть
+        //TODO обратно эту функцию на просто установку Character.Position,
+        //TODO либо подебажить как в обоих реализациях работает телепорт по среди игры, а не только
+        //TODO в момент спауна (для этого на кнопку Тест 1 ищет Character игрока/бота в мире
+        //TODO и телепортируем его на фиксированную позицию)
         //TODO Подсказка: игрок имеет имя Character-1-3, а бот Character-1-4
         
-        //TODO В доку: для избежания появления юнита на кадр в корах 0;0 и для следов (интерполяции) при телепорте, мы в Ready отключаем интерполяцию на 1 кадр, а Position синхроним через MpSync при спавне
-        //TODO Но это +1 нода, так что возможно стоит спавнить юнитов, передавая коры при спавне, через RPC (но тогда мы не увидим других игроков при подключении??!)
-        //TODO или через MpSpawner.SpawnFunction + MpSpawner.Spawn в byte[] через сериализатор (протестить как работает синк при подключении игрока по ходу игры), код тут https://gemini.google.com/app/21c0306cc9a7fccb
+        //TODO В доку: для избежания появления юнита на кадр в корах 0;0 и для следов (интерполяции)
+        //TODO при телепорте, мы в Ready отключаем интерполяцию на 1 кадр, а Position синхроним
+        //TODO через MpSync при спавне
+        //TODO Но это +1 нода, так что возможно стоит спавнить юнитов, передавая коры при спавне,
+        //TODO через RPC (но тогда мы не увидим других игроков при подключении??!)
+        //TODO или через MpSpawner.SpawnFunction + MpSpawner.Spawn в byte[] через сериализатор
+        //TODO (протестить как работает синк при подключении игрока по ходу игры), код тут
+        //TODO https://gemini.google.com/app/21c0306cc9a7fccb
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.MovementSpeed, 200));
         character.Stats.AddStatModifier(StatModifier<CharacterStat>.CreateAdditive(CharacterStat.RotationSpeed, 360));
         return character;

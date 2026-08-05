@@ -50,7 +50,11 @@ public partial class ServerHud : Control
         SaveButton.Pressed += () => { _world.DataSaveLoadService.Save(SaveLineEdit.Text); };
         
         _world.ChatService.SentNewMessageEvent += message => ChatLabel.Text += $"[{message.Nick}]: {message.Text}\n"; 
-        ChatSendButton.Pressed += () => { _world.ChatService.TrySendNewMessage(ChatLineEdit.Text); ChatLineEdit.Clear(); };
+        ChatSendButton.Pressed += () =>
+        {
+            _world.ChatService.TrySendNewMessage(ChatLineEdit.Text);
+            ChatLineEdit.Clear();
+        };
     }
 
     public override void _Process(double delta)
@@ -65,9 +69,14 @@ public partial class ServerHud : Control
     {
         WorldENetPerformance.PeerInfo defaultPeerInfo = new WorldENetPerformance.PeerInfo(0, 0);
         IEnumerable<String> playersInfo = _world.TemporaryData.PlayerUidByPeerId
-            .Select(kv => $"{_world.FacadeService.GetPlayerData(kv.Key).Nick} (uid: {kv.Value}, peerId: {kv.Key}): " + 
-                          $"ping {_world.PerformanceService.ENet.InfoByPeerId.GetValueOrDefault((int) kv.Key, defaultPeerInfo).Ping} ms, " + 
-                          $"packet loss {_world.PerformanceService.ENet.InfoByPeerId.GetValueOrDefault((int) kv.Key, defaultPeerInfo).PacketLoss:N2}%");
+            .Select(kv =>
+            {
+                WorldENetPerformance.PeerInfo peerInfo = _world.PerformanceService.ENet.InfoByPeerId
+                    .GetValueOrDefault((int) kv.Key, defaultPeerInfo);
+                return $"{_world.FacadeService.GetPlayerData(kv.Key).Nick} " +
+                       $"(uid: {kv.Value}, peerId: {kv.Key}): " +
+                       $"ping {peerInfo.Ping} ms, packet loss {peerInfo.PacketLoss:N2}%";
+            });
         return "Players:\n" + string.Join("\n", playersInfo);
     }
 }

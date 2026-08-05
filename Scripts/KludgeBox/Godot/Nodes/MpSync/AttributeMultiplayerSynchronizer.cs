@@ -12,13 +12,17 @@ namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
 /// This is a <see cref="MultiplayerSynchronizer"/>,
 /// which in its constructor <c>AttributeMultiplayerSynchronizer(Node observableNode)</c>,
 /// automatically scans all properties and fields of the <c>observableNode</c>,
-/// marked with the <see cref="SyncAttribute"/> and adds them to the <see cref="SceneReplicationConfig"/> as synchronized.<br/>
+/// marked with the <see cref="SyncAttribute"/> and adds them to the
+/// <see cref="SceneReplicationConfig"/> as synchronized.<br/>
 /// <br/>
-/// This node cannot be added from the editor, as it would not work correctly with the <see cref="MultiplayerSpawner"/> in that case.
+/// This node cannot be added from the editor, as it would not work correctly with the
+/// <see cref="MultiplayerSpawner"/> in that case.
 /// Because the <see cref="SceneReplicationConfig"/> must be set up before <c>_EnterTree()</c>.<br/>
 /// <br/>
-/// This means you should either configure it through the editor (in which case you should use the regular <see cref="MultiplayerSynchronizer"/>),
-/// or call the constructor <c>AttributeMultiplayerSynchronizer(Node observableNode)</c> before <c>AddChild(attributeMultiplayerSynchronizer)</c>.
+/// This means you should either configure it through the editor (in which case you should use
+/// the regular <see cref="MultiplayerSynchronizer"/>),
+/// or call the constructor <c>AttributeMultiplayerSynchronizer(Node observableNode)</c>
+/// before <c>AddChild(attributeMultiplayerSynchronizer)</c>.
 /// This is our case, and it only works from code.
 /// </summary>
 // ReSharper disable once Godot.MissingParameterlessConstructor
@@ -35,7 +39,8 @@ public partial class AttributeMultiplayerSynchronizer : MultiplayerSynchronizer
         
         if (observableNode == null)
         {
-            _log.Error("AttributeMultiplayerSynchronizer must have not null _observableNode. Synchronizer path: " + GetPath());
+            _log.Error("AttributeMultiplayerSynchronizer must have not null _observableNode. " +
+                       "Synchronizer path: " + GetPath());
             return;
         }
         _observableNode = observableNode;
@@ -68,7 +73,9 @@ public partial class AttributeMultiplayerSynchronizer : MultiplayerSynchronizer
                 }
                 else
                 {
-                    _log.Error($"{member.Member.MemberType} '{member.Member.Name}' in type '{observableNode.GetType()}' has Sync attribute, but doesn't have Export attribute");
+                    _log.Error($"{member.Member.MemberType} '{member.Member.Name}' in type " +
+                               $"'{observableNode.GetType()}' has Sync attribute, " +
+                               $"but doesn't have Export attribute");
                 }
             }
         }
@@ -80,7 +87,8 @@ public partial class AttributeMultiplayerSynchronizer : MultiplayerSynchronizer
     {
         if (!member.TryGetAttribute<SyncAttribute>(out var syncAttr))
         {
-            _log.Error($"Can't add {member.Member.MemberType} '{member.Member.Name}' to ReplicationConfig of '{GetPath()}' because it don't have Sync attribute");
+            _log.Error($"Can't add {member.Member.MemberType} '{member.Member.Name}' " +
+                       $"to ReplicationConfig of '{GetPath()}' because it don't have Sync attribute");
             return;
         }
         

@@ -14,7 +14,8 @@ public partial class MainMenu : Node
     public override void _Ready()
     {
         Di.Process(this);
-        _pageContainer.SetRootPage(PagesProvider.MainPageScene.Instantiate<MainMenuPage>().WithAvailablePages(PagesProvider));
+        _pageContainer.SetRootPage(
+            PagesProvider.MainPageScene.Instantiate<MainMenuPage>().WithAvailablePages(PagesProvider));
     }
     
     public void PushPage(IPage page) => _pageContainer.PushPage(page);

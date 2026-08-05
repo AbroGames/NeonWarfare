@@ -35,7 +35,8 @@ public partial class SettingsCategoryPage : MainMenuPage
         PopulateSettings();
     }
 
-    /// <summary>Called by <see cref="PagesProvider.PrepareSettingsCategoryPage"/> before the page is added to the tree.</summary>
+    /// <summary>Called by <see cref="PagesProvider.PrepareSettingsCategoryPage"/>
+    /// before the page is added to the tree.</summary>
     public void Configure(string category, string titleKey)
     {
         _category = category;

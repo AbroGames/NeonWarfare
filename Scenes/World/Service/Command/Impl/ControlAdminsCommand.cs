@@ -12,8 +12,10 @@ public class ControlAdminsCommand : ICommandProcessor
     private const string AddAdminSuccessfullyMessage = "Successfully add admin '{0}'.";
     private const string RemoveAdminSuccessfullyMessage = "Successfully remove admin '{0}'.";
     
-    private const string RequireParamErrorMessage = "Command '{0}' require param: '" + AddAdminParam + "' or '" + RemoveAdminParam + "'.";
-    private const string RequireNickErrorMessage = "Command '{0}' require nick after param '" + AddAdminParam + "' or '" + RemoveAdminParam + "'.";
+    private const string RequireParamErrorMessage =
+        "Command '{0}' require param: '" + AddAdminParam + "' or '" + RemoveAdminParam + "'.";
+    private const string RequireNickErrorMessage =
+        "Command '{0}' require nick after param '" + AddAdminParam + "' or '" + RemoveAdminParam + "'.";
     private const string PlayerNotFoundErrorMessage = "Player '{0}' not found.";
     private const string ManyPlayersFoundedErrorMessage = "Many players have nick '{0}'.";
     private const string AlwaysAdminErrorMessage = "Player '{0}' always admin.";

@@ -22,7 +22,8 @@ public partial class WorldSynchronizerService : Node
     
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string UidAlreadyUsedErrorMessage = "Player with the same uid already online";
-    private static readonly string LengthOfNicknameErrorMessage = $"Length of nickname must be between {NicknameMinLength} and {NicknameMaxLength} characters";
+    private static readonly string LengthOfNicknameErrorMessage =
+        $"Length of nickname must be between {NicknameMinLength} and {NicknameMaxLength} characters";
     private const string NicknameContainsSpaceErrorMessage = "Nickname contains space";
     private const string ColorValueErrorMessage = "Your color is too dark";
     
@@ -63,7 +64,8 @@ public partial class WorldSynchronizerService : Node
         NewClientInitOnServer(uid, nick, color);
     }
 
-    private void NewClientInitOnServer(string uid, string nick, Color color) => RpcId(ServerId, MethodName.NewClientInitOnServerRpc, uid, nick, color);
+    private void NewClientInitOnServer(string uid, string nick, Color color)
+        => RpcId(ServerId, MethodName.NewClientInitOnServerRpc, uid, nick, color);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)] 
     private void NewClientInitOnServerRpc(string uid, string nick, Color color)
     {
@@ -72,22 +74,26 @@ public partial class WorldSynchronizerService : Node
         
         if (_temporaryData.PlayerUidByPeerId.Values.Contains(uid))
         {
-            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, UidAlreadyUsedErrorMessage);
+            _log.Warning("Syncing peer {peer} was rejected with error: {error}",
+                connectedClientId, UidAlreadyUsedErrorMessage);
             RejectSyncOnClient(connectedClientId, UidAlreadyUsedErrorMessage);
         }
         if (nick.Length < NicknameMinLength || nick.Length > NicknameMaxLength)
         {
-            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, LengthOfNicknameErrorMessage);
+            _log.Warning("Syncing peer {peer} was rejected with error: {error}",
+                connectedClientId, LengthOfNicknameErrorMessage);
             RejectSyncOnClient(connectedClientId, LengthOfNicknameErrorMessage);
         }
         if (nick.Contains(' '))
         {
-            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, NicknameContainsSpaceErrorMessage);
+            _log.Warning("Syncing peer {peer} was rejected with error: {error}",
+                connectedClientId, NicknameContainsSpaceErrorMessage);
             RejectSyncOnClient(connectedClientId, NicknameContainsSpaceErrorMessage);
         }
         if (color.Luminance < 0.2)
         {
-            _log.Warning("Syncing peer {peer} was rejected with error: {error}", connectedClientId, ColorValueErrorMessage);
+            _log.Warning("Syncing peer {peer} was rejected with error: {error}",
+                connectedClientId, ColorValueErrorMessage);
             RejectSyncOnClient(connectedClientId, ColorValueErrorMessage);
         }
         
@@ -110,7 +116,8 @@ public partial class WorldSynchronizerService : Node
         EndSyncOnClient(connectedClientId, _dataSerializerService.SerializeWorldData());
     }
 
-    private void EndSyncOnClient(long peerId, byte[] serializableData) => RpcId(peerId, MethodName.EndSyncOnClientRpc, serializableData);
+    private void EndSyncOnClient(long peerId, byte[] serializableData)
+        => RpcId(peerId, MethodName.EndSyncOnClientRpc, serializableData);
     [Rpc(CallLocal = true)]
     private void EndSyncOnClientRpc(byte[] serializableData)
     {
@@ -122,7 +129,8 @@ public partial class WorldSynchronizerService : Node
         SyncEndedOnClientEvent?.Invoke();
     }
     
-    private void RejectSyncOnClient(long peerId, string errorMessage) => RpcId(peerId, MethodName.RejectSyncOnClientRpc, errorMessage);
+    private void RejectSyncOnClient(long peerId, string errorMessage)
+        => RpcId(peerId, MethodName.RejectSyncOnClientRpc, errorMessage);
     [Rpc(CallLocal = true)] 
     private void RejectSyncOnClientRpc(string errorMessage)
     {

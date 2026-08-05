@@ -16,7 +16,8 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
         [Key(0)] public Dictionary<string, PlayerData> PlayerByUid = new();
     }
     
-    public IReadOnlyDictionary<string, PlayerData> PlayerByUid => new ReadOnlyDictionary<string, PlayerData>(_innerStorage.PlayerByUid);
+    public IReadOnlyDictionary<string, PlayerData> PlayerByUid
+        => new ReadOnlyDictionary<string, PlayerData>(_innerStorage.PlayerByUid);
     private InnerStorage _innerStorage = new();
 
     public void AddPlayer(PlayerData player)

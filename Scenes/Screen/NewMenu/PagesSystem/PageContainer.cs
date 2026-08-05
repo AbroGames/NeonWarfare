@@ -43,7 +43,9 @@ public partial class PageContainer : Control
         {
             if (ctx == nextPage)
             {
-                _log.Error("Loop detected: trying to push a context that already exists in the chain at {containerPath}", GetPath());
+                _log.Error(
+                    "Loop detected: trying to push a context that already exists in the chain at {containerPath}",
+                    GetPath());
                 return;
             }
         }

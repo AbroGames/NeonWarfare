@@ -65,5 +65,6 @@ public class HostMultiplayerGameStarter(
         Net.DoClient(() => ClientStartWorld(world));
     }
 
-    private void HostingFailedEventOnClient(Error error) => GoToMenuAndShowError(HostingFailedMessage.FormatWith(error));
+    private void HostingFailedEventOnClient(Error error)
+        => GoToMenuAndShowError(HostingFailedMessage.FormatWith(error));
 }

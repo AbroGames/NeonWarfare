@@ -11,12 +11,18 @@ namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 /// Godot cannot attach code from libraries to scenes; it requires a <c>*.cs</c> file within the main project.<br/>
 /// It is sufficient to simply create a class inheriting from this one, without any changes.<br/>
 /// <br/>
-/// To use the class, you need to create a scene of type <see cref="MultiplayerSpawner"/>, for example, <c>WorldMultiplayerSpawner</c>.<br/>
+/// To use the class, you need to create a scene of type <see cref="MultiplayerSpawner"/>,
+/// for example, <c>WorldMultiplayerSpawner</c>.<br/>
 /// Attach the <c>*.cs</c> file created in the previous step to the scene node.<br/>
 /// <br/>
-/// The scene must have two child nodes: <c>PackedScenes</c> (type <see cref="Node"/>) and <c>MultiplayerSynchronizer</c> (type <see cref="MultiplayerSynchronizer"/>).<br/>
-/// <c>PackedScenes</c> is a reference to another scene (inheriting <see cref="AbstractStorage"/>) that contains all nodes to be spawned. <b>It must not contain the <c>WorldMultiplayerSpawner</c> scene itself</b>!<br/>
-/// In <c>MultiplayerSynchronizer</c>, the <c>RootPath</c> must be set to <c>WorldMultiplayerSpawner</c>, and one property added for synchronization: <c>spawn_path</c> with settings <c>Spawn=true</c> and <c>Replicate=Never</c>.<br/>
+/// The scene must have two child nodes: <c>PackedScenes</c> (type <see cref="Node"/>) and
+/// <c>MultiplayerSynchronizer</c> (type <see cref="MultiplayerSynchronizer"/>).<br/>
+/// <c>PackedScenes</c> is a reference to another scene (inheriting <see cref="AbstractStorage"/>)
+/// that contains all nodes to be spawned.
+/// <b>It must not contain the <c>WorldMultiplayerSpawner</c> scene itself</b>!<br/>
+/// In <c>MultiplayerSynchronizer</c>, the <c>RootPath</c> must be set to
+/// <c>WorldMultiplayerSpawner</c>, and one property added for synchronization: <c>spawn_path</c>
+/// with settings <c>Spawn=true</c> and <c>Replicate=Never</c>.<br/>
 /// In <c>WorldMultiplayerSpawner</c>, the reference to the child node <c>PackedScenes</c> must be assigned.<br/>
 /// <br/>
 /// Code example for <c>WorldMultiplayerSpawner</c>:
@@ -77,7 +83,8 @@ public abstract partial class AbstractMultiplayerSpawner : MultiplayerSpawner
             AddSpawnableScene(SceneFilePath); // Reference by self
         }
         
-        // _observableNode can be null if the Spawner is synced over the network by another Spawner or created in the Editor.
+        // _observableNode can be null if the Spawner is synced over the network by another Spawner
+        // or created in the Editor.
         // In these cases, SpawnPath must not be null.
         if (_observableNode != null) 
         {
@@ -85,7 +92,9 @@ public abstract partial class AbstractMultiplayerSpawner : MultiplayerSpawner
         }
         else if (string.IsNullOrEmpty(GetSpawnPath())) 
         {
-            _log.Error("AbstractMultiplayerSpawner must have not null _observableNode or SpawnPath. Spawner path: {path}", GetPath());
+            _log.Error(
+                "AbstractMultiplayerSpawner must have not null _observableNode or SpawnPath. " +
+                "Spawner path: {path}", GetPath());
         }
     }
 

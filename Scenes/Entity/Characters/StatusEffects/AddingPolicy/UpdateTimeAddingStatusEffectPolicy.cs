@@ -27,12 +27,14 @@ public class UpdateTimeAddingStatusEffectPolicy : IAddingStatusEffectPolicy
             throw new ArgumentException(
                 $"{newStatusEffect} with {nameof(UpdateTimeAddingStatusEffectPolicy)}" +
                 $"applied on {character}, which has many effects with id \"{newStatusEffect.Id}\" at the same time. " +
-                $"It can be only if another effect with id \"{newStatusEffect.Id}\" use not {nameof(UpdateTimeAddingStatusEffectPolicy)} addingPolicy");
+                $"It can be only if another effect with id \"{newStatusEffect.Id}\" use not " +
+                $"{nameof(UpdateTimeAddingStatusEffectPolicy)} addingPolicy");
         }
     
         if (newStatusEffect.Cooldown != null)
         {
-            StatusEffect currentStatusEffect = currentStatusEffectsById.GetValueOrDefault(newStatusEffect.Id, []).First();
+            StatusEffect currentStatusEffect = currentStatusEffectsById
+                .GetValueOrDefault(newStatusEffect.Id, []).First();
             if (currentStatusEffect.Cooldown != null)
             {
                 if (currentStatusEffect.Cooldown.TimeLeft < newStatusEffect.Cooldown.TimeLeft)
@@ -44,13 +46,15 @@ public class UpdateTimeAddingStatusEffectPolicy : IAddingStatusEffectPolicy
             else
             {
                 throw new ArgumentException(
-                    $"{nameof(UpdateTimeAddingStatusEffectPolicy)} can used with another {nameof(StatusEffect)} with not null {nameof(StatusEffect.Cooldown)}");
+                    $"{nameof(UpdateTimeAddingStatusEffectPolicy)} can used with another " +
+                    $"{nameof(StatusEffect)} with not null {nameof(StatusEffect.Cooldown)}");
             }
         }
         else
         {
             throw new ArgumentException(
-                $"{nameof(UpdateTimeAddingStatusEffectPolicy)} can used only on {nameof(StatusEffect)} with not null {nameof(StatusEffect.Cooldown)}");
+                $"{nameof(UpdateTimeAddingStatusEffectPolicy)} can used only on " +
+                $"{nameof(StatusEffect)} with not null {nameof(StatusEffect.Cooldown)}");
         }
     }
 }

@@ -50,7 +50,8 @@ public partial class WorldENetPerformance : Node
         
         StringBuilder sb = new();
         
-        sb.Append($"Server: ping {_infoByPeerId[ServerId].Ping} ms, packet loss {_infoByPeerId[ServerId].PacketLoss:N2}%\n");
+        sb.Append($"Server: ping {_infoByPeerId[ServerId].Ping} ms, " +
+                  $"packet loss {_infoByPeerId[ServerId].PacketLoss:N2}%\n");
 
         return sb.ToString();
     }
@@ -88,7 +89,9 @@ public partial class WorldENetPerformance : Node
             foreach (var peerData in GetConnectedPeers(peer))
             {
                 double ping = peerData.eNetPacketPeer.GetStatistic(ENetPacketPeer.PeerStatistic.RoundTripTime);
-                double packetLoss = peerData.eNetPacketPeer.GetStatistic(ENetPacketPeer.PeerStatistic.PacketLoss) / ENetPacketPeer.PacketLossScale * 100;
+                double packetLoss =
+                    peerData.eNetPacketPeer.GetStatistic(ENetPacketPeer.PeerStatistic.PacketLoss)
+                    / ENetPacketPeer.PacketLossScale * 100;
                 _infoByPeerId[peerData.peerId] = new PeerInfo(ping, packetLoss);
             }
         }

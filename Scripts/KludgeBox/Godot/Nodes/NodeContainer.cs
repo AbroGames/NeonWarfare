@@ -15,7 +15,8 @@ public partial class NodeContainer : Node
 
     public override void _Ready()
     {
-        if (GetChildCount() > 1) throw new InvalidOperationException($"NodeContainer must has not more 1 child. Has '{GetChildCount()}' children.");
+        if (GetChildCount() > 1) throw new InvalidOperationException(
+            $"NodeContainer must has not more 1 child. Has '{GetChildCount()}' children.");
         if (GetChildCount() == 1)
         {
             _currentStoredNode?.QueueFree();

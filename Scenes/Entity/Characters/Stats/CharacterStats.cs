@@ -156,7 +156,9 @@ public class CharacterStats
         _synchronizer.Stats_OnStatUpdate(stat, updatedAdditive, updatedMultiplicative);
     }
     
-    public double GetRawStatValue(CharacterStat stat, StatModifier<CharacterStat>.ModifierType type) => _statModifiersContainer.GetStatValue(stat, type);
-    public double GetRawStat(CharacterStat stat, double baseValue = 0) => _statModifiersContainer.GetStat(stat, baseValue);
+    public double GetRawStatValue(CharacterStat stat, StatModifier<CharacterStat>.ModifierType type)
+        => _statModifiersContainer.GetStatValue(stat, type);
+    public double GetRawStat(CharacterStat stat, double baseValue = 0)
+        => _statModifiersContainer.GetStat(stat, baseValue);
     #endregion
 }

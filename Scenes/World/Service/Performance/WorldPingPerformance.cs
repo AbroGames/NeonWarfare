@@ -26,9 +26,12 @@ public partial class WorldPingPerformance : Node
     public double P50PingTime => _pingChecker.PingAnalyzer.P50PingTime;
     public double P90PingTime => _pingChecker.PingAnalyzer.P90PingTime;
     public double P99PingTime => _pingChecker.PingAnalyzer.P99PingTime;
-    public double AveragePacketLossInPercentForLongTime => _pingChecker.PingAnalyzer.AveragePacketLossInPercentForLongTime;
-    public double AveragePacketLossInPercentForMidTime => _pingChecker.PingAnalyzer.AveragePacketLossInPercentForMidTime;
-    public double AveragePacketLossInPercentForShortTime => _pingChecker.PingAnalyzer.AveragePacketLossInPercentForShortTime;
+    public double AveragePacketLossInPercentForLongTime
+        => _pingChecker.PingAnalyzer.AveragePacketLossInPercentForLongTime;
+    public double AveragePacketLossInPercentForMidTime
+        => _pingChecker.PingAnalyzer.AveragePacketLossInPercentForMidTime;
+    public double AveragePacketLossInPercentForShortTime
+        => _pingChecker.PingAnalyzer.AveragePacketLossInPercentForShortTime;
 
     private PingChecker _pingChecker;
 
@@ -65,8 +68,13 @@ public partial class WorldPingPerformance : Node
         sb.Append($"Ping P50/P90/P99 ({Settings.MaxTimeOfAnalyticalSlidingWindowForPing/1000}s): ");
         sb.Append($"{analyzer.P50PingTime:N1}/{analyzer.P90PingTime:N1}/{analyzer.P99PingTime:N1} ms\n");
         
-        sb.Append($"Packet loss ({Settings.ShortTimeOfAnalyticalSlidingWindowForPacketLoss / 1000}s/{Settings.MidTimeOfAnalyticalSlidingWindowForPacketLoss / 1000}s/{Settings.MaxTimeOfAnalyticalSlidingWindowForPacketLoss / 1000}s): ");
-        sb.Append($"{analyzer.AveragePacketLossInPercentForShortTime:N2}/{analyzer.AveragePacketLossInPercentForMidTime:N2}/{analyzer.AveragePacketLossInPercentForLongTime:N2} %\n");
+        sb.Append($"Packet loss (" +
+                  $"{Settings.ShortTimeOfAnalyticalSlidingWindowForPacketLoss / 1000}s/" +
+                  $"{Settings.MidTimeOfAnalyticalSlidingWindowForPacketLoss / 1000}s/" +
+                  $"{Settings.MaxTimeOfAnalyticalSlidingWindowForPacketLoss / 1000}s): ");
+        sb.Append($"{analyzer.AveragePacketLossInPercentForShortTime:N2}/" +
+                  $"{analyzer.AveragePacketLossInPercentForMidTime:N2}/" +
+                  $"{analyzer.AveragePacketLossInPercentForLongTime:N2} %\n");
 
         return sb.ToString();
     }
@@ -78,7 +86,8 @@ public partial class WorldPingPerformance : Node
         ReturnPingToClient(GetMultiplayer().GetRemoteSenderId(), pingId);
     }
 
-    private void ReturnPingToClient(long peerId, long pingId) => RpcId(peerId, MethodName.ReturnPingToClientRpc, pingId);    
+    private void ReturnPingToClient(long peerId, long pingId)
+        => RpcId(peerId, MethodName.ReturnPingToClientRpc, pingId);
     [Rpc(CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     private void ReturnPingToClientRpc(long pingId)
     {

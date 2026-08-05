@@ -123,7 +123,8 @@ public partial class ServerListPage : MainMenuPage
         string host;
         int? port = null;
         int colon = raw.LastIndexOf(':');
-        if (colon > 0 && int.TryParse(raw[(colon + 1)..], NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedPort))
+        if (colon > 0 && int.TryParse(
+                raw[(colon + 1)..], NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedPort))
         {
             host = raw[..colon].Trim();
             port = parsedPort;

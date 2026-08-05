@@ -48,7 +48,11 @@ public partial class Hud : Control
         SaveButton.Pressed += () => { _world.DataSaveLoadService.Save(SaveLineEdit.Text); };
 
         _world.ChatService.SentNewMessageEvent += message => ChatLabel.Text += $"[{message.Nick}]: {message.Text}\n"; 
-        ChatSendButton.Pressed += () => { _world.ChatService.TrySendNewMessage(ChatLineEdit.Text); ChatLineEdit.Clear(); };
+        ChatSendButton.Pressed += () =>
+        {
+            _world.ChatService.TrySendNewMessage(ChatLineEdit.Text);
+            ChatLineEdit.Clear();
+        };
     }
 
     public override void _Process(double delta)

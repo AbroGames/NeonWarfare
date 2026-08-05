@@ -36,7 +36,8 @@ public partial class Network(Node multiplayerRoot) : Node
     /// <summary>Try to connect to the server</summary>
     /// <returns>
     /// Returns <see cref="Godot.Error.Ok"/> if a client was created.<br/>
-    /// <see cref="Godot.Error.AlreadyInUse"/> if this <see cref="ENetMultiplayerPeer"/> instance already has an open connection.<br/>
+    /// <see cref="Godot.Error.AlreadyInUse"/> if this <see cref="ENetMultiplayerPeer"/> instance
+    /// already has an open connection.<br/>
     /// <see cref="Godot.Error.CantCreate"/> if the client could not be created.<br/>
     /// <see cref="Godot.Error.AlreadyInUse"/> if the client already connected.<br/>
     /// </returns>
@@ -64,11 +65,13 @@ public partial class Network(Node multiplayerRoot) : Node
     
     /// <summary>
     /// Try to host server.<br/>
-    /// If server hosted with <c>refuseNewConnections = true</c>, you must call <c>OpenServer()</c> after hosting process.
+    /// If server hosted with <c>refuseNewConnections = true</c>, you must call <c>OpenServer()</c>
+    /// after hosting process.
     /// </summary>
     /// <returns>
     /// Returns <see cref="Godot.Error.Ok"/> if a server was created.<br/>
-    /// <see cref="Godot.Error.AlreadyInUse"/> if this <see cref="ENetMultiplayerPeer"/> instance already has an open connection.<br/>
+    /// <see cref="Godot.Error.AlreadyInUse"/> if this <see cref="ENetMultiplayerPeer"/> instance
+    /// already has an open connection.<br/>
     /// <see cref="Godot.Error.CantCreate"/> if the server could not be created.<br/>
     /// <see cref="Godot.Error.AlreadyInUse"/> if the server already hosted.<br/>
     /// </returns>

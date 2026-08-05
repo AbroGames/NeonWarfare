@@ -29,7 +29,8 @@ public partial class MainMenuPage : Page
 
 public static class MainMenuPageExtensions
 {
-    public static TMainMenuPage WithAvailablePages<TMainMenuPage>(this TMainMenuPage page, PagesProvider pagesProvider) where TMainMenuPage : MainMenuPage
+    public static TMainMenuPage WithAvailablePages<TMainMenuPage>(
+        this TMainMenuPage page, PagesProvider pagesProvider) where TMainMenuPage : MainMenuPage
     {
         page.SetPagesProvider(pagesProvider);
         return page;

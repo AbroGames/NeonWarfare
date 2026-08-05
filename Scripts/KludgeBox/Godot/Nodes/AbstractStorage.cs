@@ -38,7 +38,8 @@ public abstract partial class AbstractStorage : Node
         if (obj == null) throw new ArgumentNullException(nameof(obj));
 
         Type type = obj.GetType();
-        foreach (PropertyInfo property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        foreach (PropertyInfo property in type.GetProperties(
+                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
         {
             if (!property.PropertyType.IsAssignableTo(typeof(PackedScene))) continue;
             if (!Attribute.IsDefined(property, typeof(ExportAttribute))) continue;

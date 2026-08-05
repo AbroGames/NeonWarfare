@@ -13,9 +13,11 @@ public partial class WorldGodotPerformance : Node
     public double FramePerSecond => Engine.GetFramesPerSecond();
     public double FrameTime => GPerf.GetMonitor(GPerf.Monitor.TimeProcess) * 1000;
     
-    public double TickPerSecond => Mathf.Min(1.0 / GPerf.GetMonitor(GPerf.Monitor.TimePhysicsProcess), Engine.PhysicsTicksPerSecond);
+    public double TickPerSecond => Mathf.Min(
+        1.0 / GPerf.GetMonitor(GPerf.Monitor.TimePhysicsProcess), Engine.PhysicsTicksPerSecond);
     public double TickTime => GPerf.GetMonitor(GPerf.Monitor.TimePhysicsProcess) * 1000;
-    public double TickTimePercent => GPerf.GetMonitor(GPerf.Monitor.TimePhysicsProcess) * Engine.PhysicsTicksPerSecond * 100;
+    public double TickTimePercent =>
+        GPerf.GetMonitor(GPerf.Monitor.TimePhysicsProcess) * Engine.PhysicsTicksPerSecond * 100;
 
     public double NavigationTime => GPerf.GetMonitor(GPerf.Monitor.TimeNavigationProcess) * 1000;
     
@@ -57,7 +59,8 @@ public partial class WorldGodotPerformance : Node
         
         sb.Append($"FPS/TPS: {FramePerSecond:N0}/{TickPerSecond:N0}    ");
         sb.Append($"Nodes (1-level/all): {SurfacesChildCount}/{NodeCount}\n");
-        sb.Append($"Time (frame/physics/navi): {FrameTime:N1}/{TickTime:N1}({TickTimePercent:N0}%)/{NavigationTime:N1}     ");
+        sb.Append($"Time (frame/physics/navi): " +
+                  $"{FrameTime:N1}/{TickTime:N1}({TickTimePercent:N0}%)/{NavigationTime:N1}     ");
         sb.Append($"Memory (static/max/video): {MemoryStaticMb}/{MemoryStaticMaxMb}/{VideoMemUsedMb} mb\n");
 
         return sb.ToString();

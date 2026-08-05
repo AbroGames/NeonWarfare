@@ -8,7 +8,8 @@ namespace NeonWarfare.Scenes.World.Service.MpSpawn;
 
 public partial class WorldMultiplayerSpawner : AbstractMultiplayerSpawner
 {
-    // We can't use [Child] here, because we must have PackedScenes automatically in multiplayer and before WorldMultiplayerSpawner was added to tree.
+    // We can't use [Child] here, because we must have PackedScenes automatically in multiplayer
+    // and before WorldMultiplayerSpawner was added to tree.
     [Export] [NotNull] public SyncedPackedScenes PackedScenes { get; set; }
     [Export] private bool _selfSync = true;
     

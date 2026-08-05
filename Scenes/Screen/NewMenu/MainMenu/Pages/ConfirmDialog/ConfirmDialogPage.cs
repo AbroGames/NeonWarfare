@@ -28,7 +28,8 @@ public partial class ConfirmDialogPage : MainMenuPage
     }
 
     /// <summary>Called by <see cref="PagesProvider.PrepareConfirmDialogPage"/> before the page is added to the tree.
-    /// Stashes inputs — <see cref="MessageLabel"/> is applied in <see cref="_Ready"/> (the node does not exist yet).</summary>
+    /// Stashes inputs — <see cref="MessageLabel"/> is applied in <see cref="_Ready"/>
+    /// (the node does not exist yet).</summary>
     public void Setup(string message, Action onReset, Action onContinue, Action onBack)
     {
         _message = message;

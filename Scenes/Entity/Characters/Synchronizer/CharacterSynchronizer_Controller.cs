@@ -66,11 +66,13 @@ public partial class CharacterSynchronizer
         _controller.AddImpulse(impulse, false);
     }
 
-    public void Controller_SendMovement(IController.MovementData movementData) => Rpc(MethodName.Controller_SendMovementRpc, MessagePackSerializer.Serialize(movementData));
+    public void Controller_SendMovement(IController.MovementData movementData)
+        => Rpc(MethodName.Controller_SendMovementRpc, MessagePackSerializer.Serialize(movementData));
     [Rpc(AnyPeer, CallLocal = false, TransferMode = Unreliable)]
     private void Controller_SendMovementRpc(byte[] movementDataBytes)
     {
-        IController.MovementData movementData = MessagePackSerializer.Deserialize<IController.MovementData>(movementDataBytes);
+        IController.MovementData movementData =
+            MessagePackSerializer.Deserialize<IController.MovementData>(movementDataBytes);
         _controller.OnReceivedMovement(movementData);
     }
 }

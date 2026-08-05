@@ -49,7 +49,9 @@ public partial class SingleplayerPage : MainMenuPage
         foreach (var save in saves)
         {
             var button = new Button();
-            button.Text = $"{save.FileName} ({DateTimeOffset.FromUnixTimeSeconds((long)save.ModifiedTime).ToLocalTime():yyyy-MM-dd HH:mm})";
+            DateTimeOffset modifiedTime = DateTimeOffset
+                .FromUnixTimeSeconds((long)save.ModifiedTime).ToLocalTime();
+            button.Text = $"{save.FileName} ({modifiedTime:yyyy-MM-dd HH:mm})";
             button.Pressed += () => SaveNameLineEdit.Text = save.FileName;
             SavesListContainer.AddChild(button);
         }

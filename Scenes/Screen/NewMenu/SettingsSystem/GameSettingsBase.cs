@@ -7,7 +7,8 @@ namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
 
 public partial class MenuGameSettings
 {
-    public static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerOptions.Default) { WriteIndented = true };
+    public static readonly JsonSerializerOptions JsonSerializerOptions =
+        new JsonSerializerOptions(JsonSerializerOptions.Default) { WriteIndented = true };
 
     static MenuGameSettings()
     {

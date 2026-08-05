@@ -18,7 +18,12 @@ public class PlayerController : IController
         Di.Process(this);
     }
 
-    public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler, Vector2? teleportTask)
+    public void OnIntegrateForces(
+        PhysicsDirectBodyState2D state,
+        Character character,
+        CharacterSynchronizer synchronizer,
+        ControlBlockerHandler controlBlockerHandler,
+        Vector2? teleportTask)
     {
         if (teleportTask.HasValue)
         {
@@ -26,11 +31,16 @@ public class PlayerController : IController
             state.Transform = new Transform2D(state.Transform.Rotation, teleportTask.Value);
             state.LinearVelocity = Vector2.Zero;
             character.ResetPhysicsInterpolation();
-            //TODO Телепорт таск дублируется. Вынести куда-то? И сделать параметр teleportTask в функции OnPhysicsProcess в интерфейсе тоже
-            //TODO По хорошему мы должны отправить новый SendMovement, но из-за ненадежности передачи и этого не достаточно
-            //TODO А зачем вообще этот метод на клиенте? Пусть в обычном порядке выполнится логика телепорта из DistanceForTeleport ветки
-            //TODO Надо при спауне юнитов по хорошему? Т.к. спаун по надежному каналу и там же телепорт. В коммент это всё.
-            //TODO В идеале мы должны при отправке команды телепорта отправить последний _nextOrderId, чтобы все пакеты со старыми корами гарантировано заигнорились
+            //TODO Телепорт таск дублируется. Вынести куда-то? И сделать параметр teleportTask
+            //TODO в функции OnPhysicsProcess в интерфейсе тоже
+            //TODO По хорошему мы должны отправить новый SendMovement, но из-за ненадежности
+            //TODO передачи и этого не достаточно
+            //TODO А зачем вообще этот метод на клиенте? Пусть в обычном порядке выполнится логика
+            //TODO телепорта из DistanceForTeleport ветки
+            //TODO Надо при спауне юнитов по хорошему? Т.к. спаун по надежному каналу и там же
+            //TODO телепорт. В коммент это всё.
+            //TODO В идеале мы должны при отправке команды телепорта отправить последний
+            //TODO _nextOrderId, чтобы все пакеты со старыми корами гарантировано заигнорились
             return;
         }
         
@@ -43,16 +53,22 @@ public class PlayerController : IController
             character.RotateToTarget(GetGlobalRotatePosition(character), GetRotationSpeed(character), state.Step);
         }
         
+        //TODO Сравнить character.Position с полученным значением из _physicsCalculator,
+        //TODO если отличаются, то попробовать поменять на _physicsCalculator
         synchronizer.Controller_SendMovement(new IController.MovementData(
             orderId: _nextOrderId++,
-            positionX: character.Position.X, //TODO Сравнить это значение с полученным значение из _physicsCalculator, если отчаются, то попробовать поменять на _physicsCalculator
+            positionX: character.Position.X,
             positionY: character.Position.Y,
             rotation: character.Rotation,
             movementX: movementInSec.X,
             movementY: movementInSec.Y));
     }
     
-    public void OnPhysicsProcess(double delta, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler)
+    public void OnPhysicsProcess(
+        double delta,
+        Character character,
+        CharacterSynchronizer synchronizer,
+        ControlBlockerHandler controlBlockerHandler)
     {
         //TODO Здесь или в OnUnhandledInput
         if (!controlBlockerHandler.IsSkillsBlocked())
@@ -61,9 +77,15 @@ public class PlayerController : IController
         }
     }
 
-    public void OnUnhandledInput(InputEvent @event, Action setAsHandled, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler)
+    public void OnUnhandledInput(
+        InputEvent @event,
+        Action setAsHandled,
+        Character character,
+        CharacterSynchronizer synchronizer,
+        ControlBlockerHandler controlBlockerHandler)
     {
-        //TODO Надо проверить отлов released при свернутом окне. Вроде Released ивента нет, и мышка вообще не работает (мб Hud её перехватывает, или надо прям в игрока кликать)
+        //TODO Надо проверить отлов released при свернутом окне. Вроде Released ивента нет, и мышка
+        //TODO вообще не работает (мб Hud её перехватывает, или надо прям в игрока кликать)
         //GD.Print(@event.AsText());
         //GD.Print(@event.IsActionPressed(Keys.AttackPrimary));
         //GD.Print(@event.IsActionReleased(Keys.AttackPrimary));
@@ -71,7 +93,10 @@ public class PlayerController : IController
         //GD.Print(@event.IsActionReleased(Keys.Up));
     }
     
-    public void OnReceivedMovement(Character character, CharacterSynchronizer synchronizer, IController.MovementData movementData)
+    public void OnReceivedMovement(
+        Character character,
+        CharacterSynchronizer synchronizer,
+        IController.MovementData movementData)
     {
         _log.Error("Method {method} is not valid in {class} on node {node}", 
             nameof(OnReceivedMovement), GetType().Name, character.GetName());

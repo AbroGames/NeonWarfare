@@ -48,12 +48,14 @@ public partial class PagesProvider : CheckedAbstractStorage
 
 	public Pages.SettingsCategory.SettingsCategoryPage PrepareSettingsCategoryPage(string category, string titleKey)
 	{
-		var page = SettingsCategoryPageScene.Instantiate<Pages.SettingsCategory.SettingsCategoryPage>().WithAvailablePages(this);
+		var page = SettingsCategoryPageScene
+			.Instantiate<Pages.SettingsCategory.SettingsCategoryPage>().WithAvailablePages(this);
 		page.Configure(category, titleKey);
 		return page;
 	}
 
-	public Pages.ConfirmDialog.ConfirmDialogPage PrepareConfirmDialogPage(string message, Action onReset = null, Action onContinue = null, Action onBack = null)
+	public Pages.ConfirmDialog.ConfirmDialogPage PrepareConfirmDialogPage(
+		string message, Action onReset = null, Action onContinue = null, Action onBack = null)
 	{
 		var page = ConfirmDialogPageScene.Instantiate<Pages.ConfirmDialog.ConfirmDialogPage>().WithAvailablePages(this);
 		page.Setup(message, onReset, onContinue, onBack);

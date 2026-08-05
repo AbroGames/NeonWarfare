@@ -8,7 +8,8 @@ public class ControlSurfaceCommand : ICommandProcessor
     private const string BattleSurfaceParam = "battle";
     
     private const string ChangedSuccessfullyMessage = "Successfully changed surface to '{0}'.";
-    private const string RequireParamErrorMessage = "Command '{0}' require param: '" + SafeSurfaceParam + "' or '" + BattleSurfaceParam + "'.";
+    private const string RequireParamErrorMessage =
+        "Command '{0}' require param: '" + SafeSurfaceParam + "' or '" + BattleSurfaceParam + "'.";
     
     public string GetCommand() => "surface";
     public string GetDescription() => "Change current surface. Format: surface {safe|battle}";

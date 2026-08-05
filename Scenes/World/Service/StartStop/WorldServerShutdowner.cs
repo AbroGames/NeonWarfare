@@ -7,9 +7,14 @@ using Serilog;
 namespace NeonWarfare.Scenes.World.Service.StartStop;
 
 /// <summary>
-/// In shutdown process (<see cref="Node.NotificationExitTree"/>) we can't use <c>Node.GetMultiplayer().IsServer()</c> for checking, because after TreeExit <c>Node.GetMultiplayer()</c> returns null.<br/>
-/// Also, <c>Game.Network</c> may have been disabled earlier, in which case it replaces the <c>Peer</c> with an <c>OfflinePeer</c> during the shutdown process, therefore we cannot trust <c>Game.Network</c>.<br/>
-/// So, the solution is using specific node, only on server, which will catch <see cref="Node.NotificationExitTree"/> and can run server shutdown process.
+/// In shutdown process (<see cref="Node.NotificationExitTree"/>) we can't use
+/// <c>Node.GetMultiplayer().IsServer()</c> for checking, because after TreeExit
+/// <c>Node.GetMultiplayer()</c> returns null.<br/>
+/// Also, <c>Game.Network</c> may have been disabled earlier, in which case it replaces the
+/// <c>Peer</c> with an <c>OfflinePeer</c> during the shutdown process, therefore we cannot trust
+/// <c>Game.Network</c>.<br/>
+/// So, the solution is using specific node, only on server, which will catch
+/// <see cref="Node.NotificationExitTree"/> and can run server shutdown process.
 /// </summary>
 public partial class WorldServerShutdowner : Node
 {

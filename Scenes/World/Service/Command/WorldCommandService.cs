@@ -44,7 +44,8 @@ public partial class WorldCommandService : Node
     private void InitCommandProcessors()
     {
         // Get all classes implementing ICommandProcessor
-        List<IGrouping<string, ICommandProcessor>> commandGroups = Services.AssemblyCache.GetTypes(Assembly.GetExecutingAssembly())
+        List<IGrouping<string, ICommandProcessor>> commandGroups = Services.AssemblyCache
+            .GetTypes(Assembly.GetExecutingAssembly())
             .Where(t => typeof(ICommandProcessor).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
             .Select(t => (ICommandProcessor) Activator.CreateInstance(t))
             .GroupBy(t => t.GetCommand().ToLower())
@@ -59,7 +60,8 @@ public partial class WorldCommandService : Node
             if (processorsList.Count > 1)
             {
                 string conflictingTypes = string.Join(", ", processorsList.Select(p => p.GetType().Name));
-                _log.Warning("Duplicate command '{command}' found in types: {conflictingTypes}.", group.Key, conflictingTypes); 
+                _log.Warning("Duplicate command '{command}' found in types: {conflictingTypes}.",
+                    group.Key, conflictingTypes);
             }
 
             _commandProcessorByCommand.Add(group.Key, processorsList.First());

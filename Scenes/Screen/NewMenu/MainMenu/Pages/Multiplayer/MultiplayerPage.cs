@@ -14,8 +14,10 @@ public partial class MultiplayerPage : MainMenuPage
     {
         Di.Process(this);
 
-        CreateNewServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateNewServerPageScene));
-        CreateFromSaveButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateSavedServerPageScene));
+        CreateNewServerButton.Pressed += ()
+            => GoNext(PagesProvider.PreparePage(PagesProvider.CreateNewServerPageScene));
+        CreateFromSaveButton.Pressed += ()
+            => GoNext(PagesProvider.PreparePage(PagesProvider.CreateSavedServerPageScene));
         ConnectButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.ServerListPageScene));
         BackButton.Pressed += () => GoBack();
     }

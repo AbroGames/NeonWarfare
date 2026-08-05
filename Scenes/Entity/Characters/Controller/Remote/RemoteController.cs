@@ -13,7 +13,12 @@ public class RemoteController : IController
     private readonly ManualCooldown _cooldownFromLastMovementDataUpdate = new(InertiaTime);
     private IController.MovementData? _lastMovementData;
     
-    public void OnIntegrateForces(PhysicsDirectBodyState2D state, Character character, CharacterSynchronizer synchronizer, ControlBlockerHandler controlBlockerHandler, Vector2? teleportTask)
+    public void OnIntegrateForces(
+        PhysicsDirectBodyState2D state,
+        Character character,
+        CharacterSynchronizer synchronizer,
+        ControlBlockerHandler controlBlockerHandler,
+        Vector2? teleportTask)
     {
         if (teleportTask.HasValue)
         {
@@ -39,10 +44,15 @@ public class RemoteController : IController
 
         if (movement.Length() < DistanceForTeleport)
         {
-            //TODO Заменить экстраполяцию на интерполяцию, тогда не будет никаких лагов для юнитов, которые не взаимодействуют с игроками.
-            //TODO Но таких кейсов быть не должно и так, в поиске путей надо учитывать расстояние. Основные ситуации с коллизиями: это тараны
-            Vector2 positionOffset = movement * 0.5f; // Можно умножить на понижающий коэффициент, если требуется больше плавности. TODO В константы класса
-            state.LinearVelocity = positionOffset / state.Step; // Деление, потому что LinearVelocity хранит скорость в секунду, а PositionOffset за кадр
+            //TODO Заменить экстраполяцию на интерполяцию, тогда не будет никаких лагов для юнитов,
+            //TODO которые не взаимодействуют с игроками.
+            //TODO Но таких кейсов быть не должно и так, в поиске путей надо учитывать расстояние.
+            //TODO Основные ситуации с коллизиями: это тараны
+            // Можно умножить на понижающий коэффициент, если требуется больше плавности.
+            //TODO В константы класса
+            Vector2 positionOffset = movement * 0.5f;
+            // Деление, потому что LinearVelocity хранит скорость в секунду, а PositionOffset за кадр
+            state.LinearVelocity = positionOffset / state.Step;
         }
         else
         {
@@ -54,7 +64,10 @@ public class RemoteController : IController
         character.Rotation = _lastMovementData.Value.Rotation;
     }
     
-    public void OnReceivedMovement(Character character, CharacterSynchronizer synchronizer, IController.MovementData movementData)
+    public void OnReceivedMovement(
+        Character character,
+        CharacterSynchronizer synchronizer,
+        IController.MovementData movementData)
     {
         if (movementData.OrderId == 0) _lastMovementData = null;
         if (_lastMovementData.HasValue && _lastMovementData.Value.OrderId >= movementData.OrderId) return;
