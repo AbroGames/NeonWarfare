@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Godot;
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.LoggerInjection;

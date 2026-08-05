@@ -1,4 +1,4 @@
-﻿using KludgeBox.Core;
+using KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.Content.CmdArgs;
 

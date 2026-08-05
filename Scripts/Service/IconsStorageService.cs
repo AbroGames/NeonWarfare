@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Scripts.Service;
+namespace NeonWarfare.Scripts.Service;
 
 public class IconsStorageService
 {

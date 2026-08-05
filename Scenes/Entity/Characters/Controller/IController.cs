@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Godot;
 using MessagePack;
 using NeonWarfare.Scenes.Entity.Characters.Synchronizer;

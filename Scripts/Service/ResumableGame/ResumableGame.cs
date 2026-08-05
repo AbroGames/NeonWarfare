@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Scripts.Service.ResumableGame;
+namespace NeonWarfare.Scripts.Service.ResumableGame;
 
 public record ResumableGame(
     ResumableGame.ResumableType Type,

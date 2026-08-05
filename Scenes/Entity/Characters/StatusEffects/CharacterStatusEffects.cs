@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using NeonWarfare.Scenes.Entity.Characters.Synchronizer;
 
 namespace NeonWarfare.Scenes.Entity.Characters.StatusEffects;

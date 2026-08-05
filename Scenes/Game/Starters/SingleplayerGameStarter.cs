@@ -1,4 +1,4 @@
-﻿using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.Service.ResumableGame;
 using NeonWarfare.Scripts.Service.Settings;
 

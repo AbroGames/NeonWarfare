@@ -1,4 +1,4 @@
-﻿using NeonWarfare.Scenes.KludgeBox;
+using NeonWarfare.Scenes.KludgeBox;
 
 namespace NeonWarfare.Scenes.World.Scenes.ClientScenes;
 

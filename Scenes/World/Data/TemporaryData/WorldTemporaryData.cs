@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using Godot.Collections;
 using NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
 

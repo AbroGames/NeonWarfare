@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.DI.Requests;
 using KludgeBox.Reflection.Access;
 using NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;

@@ -1,4 +1,4 @@
-﻿using NeonWarfare.Scenes.Entity.Characters;
+using NeonWarfare.Scenes.Entity.Characters;
 using NeonWarfare.Scenes.Entity.Characters.Controller.Ai;
 using NeonWarfare.Scenes.Entity.Characters.Controller.Ai.Impl;
 

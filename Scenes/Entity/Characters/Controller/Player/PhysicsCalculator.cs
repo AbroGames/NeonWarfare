@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Godot;
 
 namespace NeonWarfare.Scenes.Entity.Characters.Controller.Player;

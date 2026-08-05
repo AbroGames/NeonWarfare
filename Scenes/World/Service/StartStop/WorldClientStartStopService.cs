@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Godot;
 using Humanizer;
 using KludgeBox.DI.Requests.LoggerInjection;

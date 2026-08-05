@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
 using NeonWarfare.Scenes.World.Service.MpSpawn;
 

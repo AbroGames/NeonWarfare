@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.World.Data.PersistenceData.General;
 using NeonWarfare.Scenes.World.Data.PersistenceData.Player;

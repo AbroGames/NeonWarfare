@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using KludgeBox.Core;
 using KludgeBox.DI.Requests.LoggerInjection;

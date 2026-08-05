@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.KludgeBox;

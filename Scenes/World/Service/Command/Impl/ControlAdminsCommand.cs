@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Humanizer;
 using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 

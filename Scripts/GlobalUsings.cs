@@ -1,4 +1,4 @@
-﻿global using NeonWarfare.Scripts;
+global using NeonWarfare.Scripts;
 global using static NeonWarfare.Scripts.Services.Global;
 global using static NeonWarfare.Scripts.Consts.Global;
 

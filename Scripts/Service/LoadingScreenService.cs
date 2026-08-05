@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Godot;
 using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Screen.LoadingScreen;

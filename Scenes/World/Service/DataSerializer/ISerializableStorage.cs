@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Scenes.World.Service.DataSerializer;
+namespace NeonWarfare.Scenes.World.Service.DataSerializer;
 
 public interface ISerializableStorage
 {

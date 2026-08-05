@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Godot;
 using KludgeBox.Core.Stats;
 using NeonWarfare.Scenes.Entity.Characters.Synchronizer;

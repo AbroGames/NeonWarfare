@@ -1,4 +1,4 @@
-﻿using KludgeBox.DI.Requests;
+using KludgeBox.DI.Requests;
 using NeonWarfare.Scripts.KludgeBox.DI.Requests.MpSyncInjection;
 
 namespace NeonWarfare.Scripts.KludgeBox.DI;

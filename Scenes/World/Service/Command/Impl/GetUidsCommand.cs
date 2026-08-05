@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Humanizer;
 
 namespace NeonWarfare.Scenes.World.Service.Command.Impl;

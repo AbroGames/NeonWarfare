@@ -1,4 +1,4 @@
-﻿using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
 

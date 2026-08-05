@@ -1,4 +1,4 @@
-﻿using Humanizer;
+using Humanizer;
 
 namespace NeonWarfare.Scenes.World.Service.Command.Impl;
 

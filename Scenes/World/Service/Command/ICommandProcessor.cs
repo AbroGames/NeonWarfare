@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Scenes.World.Service.Command;
+namespace NeonWarfare.Scenes.World.Service.Command;
 
 public interface ICommandProcessor
 {

@@ -1,4 +1,4 @@
-﻿namespace NeonWarfare.Scenes.World.Service.Chat;
+namespace NeonWarfare.Scenes.World.Service.Chat;
 
 public interface IChatMessageInterceptor
 {

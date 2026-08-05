@@ -1,4 +1,4 @@
-﻿using KludgeBox.DI;
+using KludgeBox.DI;
 
 namespace NeonWarfare.Scenes.KludgeBox;
 

@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using NeonWarfare.Scenes.Entity.Characters.Stats;
 
 namespace NeonWarfare.Scenes.Entity.Characters.Synchronizer;

@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.DI.Requests;
 using KludgeBox.Logging;
 using KludgeBox.Reflection.Access;

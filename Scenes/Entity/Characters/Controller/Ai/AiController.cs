@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using NeonWarfare.Scenes.Entity.Characters.Controller.Player;
 
 namespace NeonWarfare.Scenes.Entity.Characters.Controller.Ai;

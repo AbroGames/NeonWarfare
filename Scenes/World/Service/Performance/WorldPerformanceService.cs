@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
 namespace NeonWarfare.Scenes.World.Service.Performance;

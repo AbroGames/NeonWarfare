@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.Core.Stats;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.Entity.Characters;

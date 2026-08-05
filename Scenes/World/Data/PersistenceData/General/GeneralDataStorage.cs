@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using MessagePack;
 using NeonWarfare.Scenes.World.Service.DataSerializer;
 using static MessagePack.MessagePackSerializer;

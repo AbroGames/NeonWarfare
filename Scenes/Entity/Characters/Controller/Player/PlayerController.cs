@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.Entity.Characters.Synchronizer;

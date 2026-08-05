@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NeonWarfare.Scenes.World.Service.Chat;
 
 namespace NeonWarfare.Scenes.World.Service.Command;

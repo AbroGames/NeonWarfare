@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MessagePack;
 
 namespace NeonWarfare.Scenes.Entity.Characters.Controller;

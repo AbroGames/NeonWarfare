@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using Humanizer;
 using KludgeBox.Reflection.Access;

@@ -35,7 +35,7 @@ so that a file can be found by searching for a class or attribute name.
 | [Startup flow](Docs/Startup-flow.md) | `RootStarter`, `GameStarter`, the four game session modes |
 | [Shutdown](Docs/Shutdown.md) | Autosave on exit, killing child processes |
 | [Entities](Docs/Entities.md) | `Character` and its subsystems: controllers, stats, status effects |
-| [UI](Docs/Ui.md) | The menu page stack, settings screen generation, HUD, loading screen |
+| [UI](Docs/Ui.md) | The menu page stack, `PagesProvider`, the menu pages, `MenuGameSettings` settings generation, HUD, loading screen |
 | [Chat and commands](Docs/Chat-and-commands.md) | Chat, `IChatMessageInterceptor` interceptors, `ICommandProcessor` chat commands |
 | [Localization](Docs/Localization.md) | Player-visible text: `Tr(KEY)`, `Assets/Locales/*.po`, `messages.pot`, locale selection |
 

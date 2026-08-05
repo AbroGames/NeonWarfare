@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MessagePack;
 
 namespace NeonWarfare.Scenes.World.Data.PersistenceData.General;

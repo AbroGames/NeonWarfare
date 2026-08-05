@@ -1,4 +1,4 @@
-﻿using NeonWarfare.Scenes.Game.Network;
+using NeonWarfare.Scenes.Game.Network;
 
 namespace NeonWarfare.Scripts.Service;
 

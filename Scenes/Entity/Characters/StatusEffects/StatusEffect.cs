@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using KludgeBox.Core.Cooldown;
 using NeonWarfare.Scenes.Entity.Characters.StatusEffects.AddingPolicy;

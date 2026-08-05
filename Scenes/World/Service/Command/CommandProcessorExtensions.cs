@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace NeonWarfare.Scenes.World.Service.Command;
 

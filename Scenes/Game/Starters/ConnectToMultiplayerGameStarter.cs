@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.Service.ResumableGame;
 

@@ -1,4 +1,4 @@
-﻿using KludgeBox.Core.Stats;
+using KludgeBox.Core.Stats;
 using NeonWarfare.Scenes.Entity.Characters;
 using NeonWarfare.Scenes.Entity.Characters.Controller.Player;
 using NeonWarfare.Scenes.Entity.Characters.Controller.Remote;

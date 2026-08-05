@@ -1,4 +1,4 @@
-﻿using Godot;
+using Godot;
 using KludgeBox.Godot.Services;
 
 namespace NeonWarfare.Scripts;
