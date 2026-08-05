@@ -1,4 +1,4 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3]
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c3dse3dggtt68"]
 
 [ext_resource type="Texture2D" uid="uid://bjvq28tv5sfy2" path="res://Assets/Textures/UI/MainMenu/MainMenuBackgroundGrid.png" id="1_grid"]
 
