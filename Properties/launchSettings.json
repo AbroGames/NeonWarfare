@@ -1,0 +1,34 @@
+{
+  "profiles": {
+    "Client": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_PATH%/Godot",
+      "commandLineArgs": "--path \"./\"",
+      "workingDirectory": "."
+    },
+    "Auto-start": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_PATH%/Godot",
+      "commandLineArgs": "--path \"./\" --auto-start",
+      "workingDirectory": "."
+    },
+    "Server": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_PATH%/Godot",
+      "commandLineArgs": "--path \"./\" --server",
+      "workingDirectory": "."
+    },
+    "Autoconnect (1)": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_PATH%/Godot",
+      "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer1 --nick TestPlayer1",
+      "workingDirectory": "."
+    },
+    "Autoconnect (2)": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_PATH%/Godot",
+      "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer2 --nick TestPlayer2",
+      "workingDirectory": "."
+    }
+  }
+}
