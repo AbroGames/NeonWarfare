@@ -6,6 +6,7 @@
 /.idea/*/.idea/sonarlint/
 .idea/
 .vscode/
+.zcode/
 PlayerSettings.json
 
 ## Ignore Visual Studio temporary files, build results, and
