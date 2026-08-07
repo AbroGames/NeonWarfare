@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T14:37:23"
+updated: "2026-08-07T14:49:01"
 ---
 
 <!-- compiled_truth -->
@@ -67,7 +67,7 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 | 1 — Settings Foundation | ✅ завершена |
 | 2 — Known Servers Service | ✅ завершена |
 | 3 — Multiplayer хаб | ✅ завершена |
-| 4 — ServerListPage | ❌ не начата |
+| 4 — ServerListPage | ✅ завершена |
 | 5 — First-run gate | ❌ не начата |
 | 6 — ColorPicker | ❌ не начата |
 | 7 — Settings хаб | ❌ не начата |
@@ -122,4 +122,16 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
   kind: decision
   summary: "Phase 3 (Multiplayer хаб + серверные формы) завершена. MultiplayerPage хаб создан, CreateNewServerPage + CreateSavedServerPage портированы из HostPage, MainPage → один MultiplayerButton, HostPage удалён, PagesProvider/MainMenu.tscn переподключены, 17 ключей локали добавлены, dotnet build 0 errors."
   source: "Phase 3 имплементация (plans/phase-3-multiplayer-hub-and-server-forms.md)"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T14:42:48
+  kind: decision
+  summary: "Составлен детальный план Phase 4 (ServerListPage + direct connect) в plans/phase-4-server-list-and-connect.md. Скоуп без изменений: ServerListPage (список известных серверов + inline add/remove + прямое подключение host:port), repoint MultiplayerPage.ConnectButton → ServerListPageScene, удаление ConnectPage. Документированные решения плана: (1) ServerListPage = form shell (PanelContainer), НЕ hub; list frame копируется node-for-node из CreateSavedServerPage.tscn; (2) add/remove/direct-connect на одной странице (не отдельная Add-страница); (3) порт = SpinBox (min 1 max 65535), host-only direct-connect → port=null (spec #12); (4) de-dup через KnownServers.Exists в странице (сервис НЕ дедуплицирует — решение Phase 2); (5) автодобавление в known при прямом подключении если нового; (6) ConnectionPageScene → переименован в ServerListPageScene (как Phase 3 сделала CreateNewServerPageScene); (7) CONNECT_MENU__* ключи остаются orphaned до Phase 8 (как HOST_MENU__* в Phase 3); (8) TODO (#16 gate Phase 5) маркер на OnConnectDirect. Реализация НЕ начата — делает другой агент."
+  source: "plans/phase-4-server-list-and-connect.md; анализ ConnectPage.cs/.tscn, KnownServersService.cs, CreateSavedServerPage.cs/.tscn, PagesProvider.cs, MultiplayerPage.cs, MainMenu.tscn, Services.cs, MainSceneService.ConnectToMultiplayerGame"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T14:49:01
+  kind: decision
+  summary: "Phase 4 (ServerListPage + direct connect) завершена: ServerListPage создан (список известных серверов, inline add/remove, прямое подключение host:port), MultiplayerPage.ConnectButton repoint на ServerListPageScene, ConnectionPageScene → ServerListPageScene в PagesProvider, ConnectPage удалён, 14 SERVER_LIST_MENU__* ключей локали добавлены, dotnet build 0 errors"
+  source: brain update-truth
   affects: [main-menu-structure]

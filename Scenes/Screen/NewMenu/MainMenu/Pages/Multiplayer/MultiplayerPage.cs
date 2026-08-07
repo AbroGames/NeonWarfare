@@ -16,9 +16,7 @@ public partial class MultiplayerPage : MainMenuPage
 
         CreateNewServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateNewServerPageScene));
         CreateFromSaveButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateSavedServerPageScene));
-        // Connect targets the existing ConnectPage for now; Phase 4 repoints this to ServerListPage
-        // and deletes ConnectPage. Do not "fix" this until Phase 4.
-        ConnectButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.ConnectionPageScene));
+        ConnectButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.ServerListPageScene));
         BackButton.Pressed += () => GoBack();
     }
 }

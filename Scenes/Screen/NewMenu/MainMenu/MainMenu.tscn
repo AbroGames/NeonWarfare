@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://t53rgkpwod2e" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Main/MainPage.tscn" id="3_lc56h"]
 [ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/Screen/NewMenu/PagesSystem/PageContainer.cs" id="4_likqx"]
 [ext_resource type="PackedScene" uid="uid://mifj75iiskji" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Settings/SettingsPage.tscn" id="5_h4gti"]
-[ext_resource type="PackedScene" uid="uid://bk5pn3b7flte1" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Connect/ConnectPage.tscn" id="5_lc56h"]
+[ext_resource type="PackedScene" uid="uid://cqntxk7b4y5mr1" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/ServerList/ServerListPage.tscn" id="5_lc56h"]
 [ext_resource type="PackedScene" uid="uid://cd5qyq67teome" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/LanguageSelection/LanguageSelectionPage.tscn" id="8_3biw6"]
 [ext_resource type="PackedScene" uid="uid://le67pdyqucqu" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Message/MessagePage.tscn" id="8_6kuw2"]
 [ext_resource type="PackedScene" uid="uid://dvjv8ekp6q4c2" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Singleplayer/SingleplayerPage.tscn" id="9_8wwjd"]
@@ -33,7 +33,7 @@ script = ExtResource("1_likqx")
 script = ExtResource("2_l4fos")
 MainPageScene = ExtResource("3_lc56h")
 SettingsPageScene = ExtResource("5_h4gti")
-ConnectionPageScene = ExtResource("5_lc56h")
+ServerListPageScene = ExtResource("5_lc56h")
 MessagePageScene = ExtResource("8_6kuw2")
 LanguageSelectionPageScene = ExtResource("8_3biw6")
 SingleplayerPage = ExtResource("9_8wwjd")

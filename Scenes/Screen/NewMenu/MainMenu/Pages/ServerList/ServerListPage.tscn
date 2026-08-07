@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://dian600t4v8uy"]
+
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/ServerList/ServerListPage.cs" id="1_slpage"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font_size = 32
+
+[node name="ServerListPage" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_slpage")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "SERVER_LIST_MENU__TITLE"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ServersListPanel" type="PanelContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ListMargin" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ServersListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ServersListPanel/ListMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollMargin" type="MarginContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ServersListPanel/ListMargin/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ServersListContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/ServersListPanel/ListMargin/ScrollContainer/ScrollMargin"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Separator2" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="AddServerContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="AddServerLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer"]
+layout_mode = 2
+text = "SERVER_LIST_MENU__ADD_SERVER_TITLE"
+
+[node name="AddHostContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer"]
+layout_mode = 2
+
+[node name="AddHostLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer/AddHostContainer"]
+layout_mode = 2
+text = "SERVER_LIST_MENU__HOST"
+
+[node name="AddHostLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer/AddHostContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+placeholder_text = "SERVER_LIST_MENU__HOST_PLACEHOLDER"
+
+[node name="AddPortContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer"]
+layout_mode = 2
+
+[node name="AddPortLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer/AddPortContainer"]
+layout_mode = 2
+text = "SERVER_LIST_MENU__PORT"
+
+[node name="AddPortSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer/AddPortContainer"]
+layout_mode = 2
+min_value = 1.0
+max_value = 65535.0
+value = 25566.0
+custom_arrow_step = 1.0
+custom_arrow_round = true
+
+[node name="AddLabelContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer"]
+layout_mode = 2
+
+[node name="AddLabelLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer/AddLabelContainer"]
+layout_mode = 2
+text = "SERVER_LIST_MENU__LABEL"
+
+[node name="AddLabelLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer/AddLabelContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+placeholder_text = "SERVER_LIST_MENU__LABEL_PLACEHOLDER"
+
+[node name="AddServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/AddServerContainer"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "SERVER_LIST_MENU__ADD_BUTTON"
+
+[node name="RemoveServerContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="RemoveServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/RemoveServerContainer"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+text = "SERVER_LIST_MENU__REMOVE_BUTTON"
+
+[node name="Separator3" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="DirectConnectContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="DirectConnectLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/DirectConnectContainer"]
+layout_mode = 2
+text = "SERVER_LIST_MENU__DIRECT_CONNECT_TITLE"
+
+[node name="DirectHostLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/DirectConnectContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+placeholder_text = "SERVER_LIST_MENU__DIRECT_HOST_PLACEHOLDER"
+
+[node name="Separator4" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ConnectButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "SERVER_LIST_MENU__CONNECT_BUTTON"
+
+[node name="BackButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "GENERIC_MENU__BACK_BUTTON"

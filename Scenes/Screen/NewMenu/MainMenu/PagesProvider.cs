@@ -9,7 +9,7 @@ public partial class PagesProvider : CheckedAbstractStorage
 {
 	[Export] [NotNull] public PackedScene MainPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene SettingsPageScene { get; private set; }
-	[Export] [NotNull] public PackedScene ConnectionPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene ServerListPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene MessagePageScene { get; private set; }
 	[Export] [NotNull] public PackedScene LanguageSelectionPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene SingleplayerPage { get; private set; }

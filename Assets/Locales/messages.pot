@@ -209,6 +209,48 @@ msgstr ""
 msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
 msgstr ""
 
+msgid "SERVER_LIST_MENU__TITLE"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__ADD_SERVER_TITLE"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__HOST"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__HOST_PLACEHOLDER"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__PORT"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__LABEL"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__LABEL_PLACEHOLDER"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__ADD_BUTTON"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__REMOVE_BUTTON"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__DIRECT_CONNECT_TITLE"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__DIRECT_HOST_PLACEHOLDER"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__CONNECT_BUTTON"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__HOSTNAME_EMPTY_ERROR"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__ALREADY_EXISTS_ERROR"
+msgstr ""
+
 msgid "GENERIC_MENU__BACK_BUTTON"
 msgstr ""
 
