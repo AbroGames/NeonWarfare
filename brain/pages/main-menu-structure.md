@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T14:49:01"
+updated: "2026-08-07T15:17:07"
 ---
 
 <!-- compiled_truth -->
@@ -68,7 +68,7 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 | 2 — Known Servers Service | ✅ завершена |
 | 3 — Multiplayer хаб | ✅ завершена |
 | 4 — ServerListPage | ✅ завершена |
-| 5 — First-run gate | ❌ не начата |
+| 5 — First-run gate | ✅ завершена |
 | 6 — ColorPicker | ❌ не начата |
 | 7 — Settings хаб | ❌ не начата |
 | 8 — Локаль | ❌ не начата |
@@ -133,5 +133,11 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 - time: 2026-08-07T14:49:01
   kind: decision
   summary: "Phase 4 (ServerListPage + direct connect) завершена: ServerListPage создан (список известных серверов, inline add/remove, прямое подключение host:port), MultiplayerPage.ConnectButton repoint на ServerListPageScene, ConnectionPageScene → ServerListPageScene в PagesProvider, ConnectPage удалён, 14 SERVER_LIST_MENU__* ключей локали добавлены, dotnet build 0 errors"
+  source: brain update-truth
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T15:17:07
+  kind: decision
+  summary: "Phase 5 (First-run gate) завершена: PlayerSettingsPage создан (draft/preserved pattern, Player-category settings, Save sets PlayerSettingsAcknowledged=true + persist + continuation), TryStartGame(Action) helper в MainMenuPage, обёрнуты 4 точки старта (SingleplayerPage.OnStart, CreateNewServerPage.ParseAndStartServer, CreateSavedServerPage.OnCreate, ServerListPage.OnConnectDirect), PagesProvider + MainMenu.tscn подключены, 1 ключ локали PLAYER_SETTINGS_MENU__TITLE, dotnet build 0 errors"
   source: brain update-truth
   affects: [main-menu-structure]

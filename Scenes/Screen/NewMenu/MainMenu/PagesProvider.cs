@@ -16,6 +16,7 @@ public partial class PagesProvider : CheckedAbstractStorage
 	[Export] [NotNull] public PackedScene MultiplayerPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene CreateNewServerPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene CreateSavedServerPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene PlayerSettingsPageScene { get; private set; }
 	
 	public Pages.Message.MessagePage PrepareMessagePage(string message)
 	{
@@ -33,5 +34,12 @@ public partial class PagesProvider : CheckedAbstractStorage
 		}
 		
 		return page.WithAvailablePages(this);
+	}
+
+	public Pages.PlayerSettings.PlayerSettingsPage PreparePlayerSettingsPage(Action continuation)
+	{
+		var page = PlayerSettingsPageScene.Instantiate<Pages.PlayerSettings.PlayerSettingsPage>().WithAvailablePages(this);
+		page.SetContinuation(continuation);
+		return page;
 	}
 }

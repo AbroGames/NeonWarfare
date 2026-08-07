@@ -297,3 +297,6 @@ msgstr "Размер интерфейса:"
 
 msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
 msgstr "Масштаб элементов интерфейса"
+
+msgid "PLAYER_SETTINGS_MENU__TITLE"
+msgstr "Настройки игрока"

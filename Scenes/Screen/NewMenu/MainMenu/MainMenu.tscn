@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bc3xvgd0paknf"]
+[gd_scene load_steps=18 format=3 uid="uid://bc3xvgd0paknf"]
 
 [ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/Screen/NewMenu/MainMenu/MainMenu.cs" id="1_likqx"]
 [ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/Screen/NewMenu/MainMenu/PagesProvider.cs" id="2_l4fos"]
@@ -12,10 +12,11 @@
 [ext_resource type="PackedScene" uid="uid://bxmwpf7r6enqh" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Multiplayer/MultiplayerPage.tscn" id="10_mpage"]
 [ext_resource type="PackedScene" uid="uid://cqntxk7b4y5mr" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/CreateNewServer/CreateNewServerPage.tscn" id="11_cnsp"]
 [ext_resource type="PackedScene" uid="uid://cjdt8efhr6qka" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/CreateSavedServer/CreateSavedServerPage.tscn" id="12_cssp"]
-[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/Background3D.cs" id="13_bg3d"]
-[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorContainer.cs" id="14_ccor"]
-[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorSegment3D.tscn" id="15_cseg"]
-[ext_resource type="Material" path="res://Assets/Materials/MainMenuWallMaterial.tres" id="16_wall"]
+[ext_resource type="PackedScene" uid="uid://c7qmprn3t5kxf" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/PlayerSettings/PlayerSettingsPage.tscn" id="13_pspage"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/Background3D.cs" id="14_bg3d"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorContainer.cs" id="15_ccor"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorSegment3D.tscn" id="16_cseg"]
+[ext_resource type="Material" path="res://Assets/Materials/MainMenuWallMaterial.tres" id="17_wall"]
 
 [sub_resource type="Environment" id="Environment_corridor"]
 background_mode = 2
@@ -40,6 +41,7 @@ SingleplayerPage = ExtResource("9_8wwjd")
 MultiplayerPageScene = ExtResource("10_mpage")
 CreateNewServerPageScene = ExtResource("11_cnsp")
 CreateSavedServerPageScene = ExtResource("12_cssp")
+PlayerSettingsPageScene = ExtResource("13_pspage")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 anchors_preset = 15
@@ -58,9 +60,9 @@ mesh_lod_threshold = 0.0
 render_target_update_mode = 4
 
 [node name="Background3D" type="Node3D" parent="SubViewportContainer/SubViewport" node_paths=PackedStringArray("_light")]
-script = ExtResource("13_bg3d")
+script = ExtResource("14_bg3d")
 _light = NodePath("OmniLight3D")
-_material = ExtResource("16_wall")
+_material = ExtResource("17_wall")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="SubViewportContainer/SubViewport/Background3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 8)
@@ -78,15 +80,15 @@ fov = 85.0
 near = 0.583
 
 [node name="CorridorContainer" type="Node3D" parent="SubViewportContainer/SubViewport/Background3D"]
-script = ExtResource("14_ccor")
-_corridorSegmentScene = ExtResource("15_cseg")
+script = ExtResource("15_ccor")
+_corridorSegmentScene = ExtResource("16_cseg")
 
-[node name="CorridorSegment2" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("15_cseg")]
+[node name="CorridorSegment2" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("16_cseg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
 
-[node name="CorridorSegment" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("15_cseg")]
+[node name="CorridorSegment" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("16_cseg")]
 
-[node name="CorridorSegment3" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("15_cseg")]
+[node name="CorridorSegment3" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("16_cseg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/Background3D"]

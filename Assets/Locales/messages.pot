@@ -292,3 +292,6 @@ msgstr ""
 
 msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
 msgstr ""
+
+msgid "PLAYER_SETTINGS_MENU__TITLE"
+msgstr ""

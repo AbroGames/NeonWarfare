@@ -71,7 +71,6 @@ public partial class CreateSavedServerPage : MainMenuPage
 
     private void OnCreate()
     {
-        // TODO (#16 gate, Phase 5): wrap this call in TryStartGame(...).
         if (String.IsNullOrWhiteSpace(_selectedSaveFileName))
         {
             GoNext(PagesProvider.PrepareMessagePage(Tr("CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR")));
@@ -80,6 +79,6 @@ public partial class CreateSavedServerPage : MainMenuPage
 
         int port = (int) PortSpinBox.Value;
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        Services.MainScene.HostMultiplayerGameAsClient(_selectedSaveFileName, port, isDedicated);
+        TryStartGame(() => Services.MainScene.HostMultiplayerGameAsClient(_selectedSaveFileName, port, isDedicated));
     }
 }

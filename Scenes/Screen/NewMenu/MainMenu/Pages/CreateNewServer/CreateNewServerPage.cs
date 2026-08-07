@@ -24,12 +24,11 @@ public partial class CreateNewServerPage : MainMenuPage
 
     private void ParseAndStartServer()
     {
-        // TODO (#16 gate, Phase 5): wrap this call in TryStartGame(...).
         int port = (int) PortSpinBox.Value;
         string saveFileName = String.IsNullOrWhiteSpace(SaveNameLineEdit.Text)
             ? Services.SaveLoad.GenNewSaveFileName()
             : SaveNameLineEdit.Text.Trim();
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated);
+        TryStartGame(() => Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated));
     }
 }

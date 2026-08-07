@@ -296,3 +296,6 @@ msgstr "Interface size:"
 
 msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
 msgstr "Scale of UI elements"
+
+msgid "PLAYER_SETTINGS_MENU__TITLE"
+msgstr "Player Settings"

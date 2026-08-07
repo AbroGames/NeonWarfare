@@ -113,7 +113,6 @@ public partial class ServerListPage : MainMenuPage
 
     private void OnConnectDirect()
     {
-        // TODO (#16 gate, Phase 5): wrap this call in TryStartGame(...).
         string raw = DirectHostLineEdit.Text?.Trim();
         if (String.IsNullOrWhiteSpace(raw))
         {
@@ -140,11 +139,15 @@ public partial class ServerListPage : MainMenuPage
             return;
         }
 
-        if (!Services.KnownServers.Exists(host, port))
+        // Gate first; auto-add to known servers only when the game actually starts
+        // (a cancelled gate must not mutate the list).
+        TryStartGame(() =>
         {
-            Services.KnownServers.Add(new KnownServer(host, port, String.Empty));
-        }
-
-        Services.MainScene.ConnectToMultiplayerGame(host, port);
+            if (!Services.KnownServers.Exists(host, port))
+            {
+                Services.KnownServers.Add(new KnownServer(host, port, String.Empty));
+            }
+            Services.MainScene.ConnectToMultiplayerGame(host, port);
+        });
     }
 }
