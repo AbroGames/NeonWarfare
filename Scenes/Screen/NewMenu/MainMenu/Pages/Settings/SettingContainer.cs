@@ -63,7 +63,9 @@ public partial class SettingContainer : PanelContainer
             ? BuildOptionControl(this, optionsAttr)
             : Configurators.GetFor(Handle.Type).GetControl(this);
         _inputControl.SizeFlagsHorizontal = SizeFlags.ShrinkEnd;
-        _inputControl.CustomMinimumSize = new Vector2(300, 20);
+        // Width 300 keeps inputs aligned; respect the control's own min height
+        // (e.g. ColorPickerPanel's multi-row palette needs more than 20px).
+        _inputControl.CustomMinimumSize = new Vector2(300, _inputControl.CustomMinimumSize.Y);
         _mainHbox.AddChild(_inputControl);
         if (Handle.Hint is not null)
         {
@@ -192,21 +194,9 @@ public static class Configurators
         
         { typeof(Color), new CustomSettingContainerConfigurator(container =>
         {
-            var hbox = new HBoxContainer();
-            var colorPicker = new ColorPickerButton();
-            var label = new Label();
-            
-            colorPicker.CustomMinimumSize = new Vector2(50, 0);
-            colorPicker.Color = (Color)container.Handle.Value;
-            label.Text = $"#{colorPicker.Color.ToHtml()}";
-            
-            colorPicker.ColorChanged += color => container.Handle.Value = color;
-            colorPicker.ColorChanged += color => label.Text = $"#{color.ToHtml()}";
-            
-            hbox.AddChild(colorPicker);
-            hbox.AddChild(label);
-            
-            return hbox;
+            var panel = new ColorPickerPanel((Color)container.Handle.Value);
+            panel.ColorChanged += color => container.Handle.Value = color;
+            return panel;
         })}
     };
     

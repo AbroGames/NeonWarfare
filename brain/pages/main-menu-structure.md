@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T15:17:07"
+updated: "2026-08-07T16:34:48"
 ---
 
 <!-- compiled_truth -->
@@ -54,6 +54,16 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 - **Page-архитектура НЕ трогается** — `Page`/`PageContainer`/`IPage` (push/pop) рабочая. DI: `[Export][NotNull]` + `Di.Process(this)` (NotNullChecker отсутствует в проекте).
 - **Visual:** неон-cyan, фон 3D-коридор; MainPage кнопки = StyleBoxEmpty+cyan gradient hover, Play-Bold; страницы = PanelContainer margin 20.
 
+## Layout-уроки кастомных контролов в SettingContainer (актуально для Phase 7+)
+
+Phase 6 вскрыла два layout-капкана при возврате кастомного Control из Configurator в `SettingContainer._Ready`:
+
+1. **`Control`-наследник НЕ агрегирует min-size детей.** В отличие от `Container`, голый `Control` не считает `_GetMinimumSize` детей. Если панель многострочная (палитра под инпутами) — задавай `CustomMinimumSize` явно в `_Ready`, иначе родитель строки не вырастет и контент обрежется/наползёт на соседние строки.
+2. **`SettingContainer._Ready` перетирал высоту input-контрола:** `_inputControl.CustomMinimumSize = new Vector2(300, 20)` — жёсткие 20px по Y, игнорирует собственную min-height контрола. Фикс: `new Vector2(300, _inputControl.CustomMinimumSize.Y)` — уважать min-height контрола, ширину держать 300 для выравнивания. Любой будущий многострочный/многоэлементный конфигуратор должен это учитывать.
+3. **Палитра swatch = `GridContainer` (6 колонок, wrap), НЕ `HBoxContainer`.** 12 swatch × ~30px в одну строку HBox не помещаются, вылезают за `SettingContainer` и наползают на соседние setting-строки. Grid с `Columns` переносит на новые ряды автоматически. Применимо к любому multi-item контролу внутри setting-строки.
+
+Phase 6 факты: палитра = GridContainer 6×2, панель `CustomMinimumSize.Y = 92` (top-row 28 + sep 4 + 2 ряда swatch 56 + grid sep 4). `EditAlpha = false` (PlayerColor RGB-only). Single-source-of-truth `SetColor` + `_suppress` guard против рекурсивного `ColorChanged`. Hex `TextChanged` коммитит только при `Color.HtmlIsValid` (без сброса box mid-typing), `TextSubmitted`/`FocusExited` snap-back.
+
 ## Допущения / риски
 
 - MainPage Resume не в спеке #12, но уже работает — оставляю.
@@ -69,7 +79,7 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 | 3 — Multiplayer хаб | ✅ завершена |
 | 4 — ServerListPage | ✅ завершена |
 | 5 — First-run gate | ✅ завершена |
-| 6 — ColorPicker | ❌ не начата |
+| 6 — ColorPicker | ✅ завершена |
 | 7 — Settings хаб | ❌ не начата |
 | 8 — Локаль | ❌ не начата |
 
@@ -140,4 +150,16 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
   kind: decision
   summary: "Phase 5 (First-run gate) завершена: PlayerSettingsPage создан (draft/preserved pattern, Player-category settings, Save sets PlayerSettingsAcknowledged=true + persist + continuation), TryStartGame(Action) helper в MainMenuPage, обёрнуты 4 точки старта (SingleplayerPage.OnStart, CreateNewServerPage.ParseAndStartServer, CreateSavedServerPage.OnCreate, ServerListPage.OnConnectDirect), PagesProvider + MainMenu.tscn подключены, 1 ключ локали PLAYER_SETTINGS_MENU__TITLE, dotnet build 0 errors"
   source: brain update-truth
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T15:31:27
+  kind: decision
+  summary: "Составлен детальный план Phase 6 (custom ColorPickerPanel) в plans/phase-6-custom-colorpicker.md. Скоуп без изменений: ColorPickerPanel.cs (ColorPickerButton EditAlpha=false + editable hex LineEdit с валидацией Color.HtmlIsValid + preset-палитра 12 neon-swatch) — pure C# без .tscn; замена typeof(Color) записи в Configurators._configurators на new ColorPickerPanel(Handle.Value) + ColorChanged→Handle.Value. Документированные решения плана: (1) single-source-of-truth SetColor + _suppress guard против рекурсивного ColorChanged ping-pong; (2) TextChanged коммитит только при HtmlIsValid (не сбрасывает box mid-typing — иначе нельзя ввести #ff0), TextSubmitted/FocusExited snap-back к текущему цвету; (3) palette как HBox (row-efficiency) или VBox (general plan §6.1) — оба допустимы; (4) inline lambda в Configurators (4 строки) вместо отдельного ColorSettingConfigurator класса; (5) EditAlpha=false — PlayerColor RGB-only, hex контракт 6 цифр; (6) panel decoupled от Setting/Handle — принимает Color+palette в ctor, event ColorChanged наружу; (7) НЕТ .tscn, НЕТ PagesProvider/MainMenu.tscn wiring (code-only как SettingContainer), НЕТ locale keys; (8) PlayerSettingsPage Phase 5 и SettingsPage апгрейдятся автоматически через SettingContainer pipeline; (9) SettingContainer._Ready dispatch НЕ трогается — PlayerColor без [Options] падает в Configurators.GetFor(typeof(Color)). Реализация НЕ начата — делает другой агент."
+  source: "plans/phase-6-custom-colorpicker.md; анализ SettingContainer.cs (Configurators._configurators Color entry, _Ready OptionsAttribute pre-check), Setting.cs (Value/Apply), MenuGameSettings.cs (PlayerColor [Category(Player)]), SettingsPage.cs (draft/preserved pattern), ColorJsonConverter.cs (ToHtml/FromHtml round-trip), Phase 5 plan (PlayerSettingsPage reuses SettingContainer)"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T16:34:48
+  kind: decision
+  summary: "Phase 6 (ColorPickerPanel) завершена. Палитра оказалась GridContainer 6 колонок (не HBox — 12 swatch не помещались в строку SettingContainer). Урок layout: Control-наследник не агрегирует min-size детей, SettingContainer._Ready перетирал высоту input на 20px — фикс: CustomMinimumSize.Y=input.CustomMinimumSize.Y (уважать собственную min-height контрола) + явная min-height в самой панели (~92px)."
+  source: "Phase 6 имплементация (plans/phase-6-custom-colorpicker.md); отладка layout overflow палитры за границы SettingContainer"
   affects: [main-menu-structure]
