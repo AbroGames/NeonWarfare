@@ -165,6 +165,57 @@ msgstr "Cancel"
 msgid "GENERIC_MENU__SAVE_BUTTON"
 msgstr "Save"
 
+msgid "MAIN_MENU__MULTIPLAYER_BUTTON"
+msgstr "Multiplayer"
+
+msgid "MULTIPLAYER_MENU__TITLE"
+msgstr "Multiplayer"
+
+msgid "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+msgstr "Create new game"
+
+msgid "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+msgstr "Create from save"
+
+msgid "MULTIPLAYER_MENU__CONNECT_BUTTON"
+msgstr "Connect to server"
+
+msgid "CREATE_SERVER_MENU__TITLE"
+msgstr "Create Server"
+
+msgid "CREATE_SERVER_MENU__PORT"
+msgstr "Port:"
+
+msgid "CREATE_SERVER_MENU__SAVE_NAME"
+msgstr "Save Name:"
+
+msgid "CREATE_SERVER_MENU__DEDICATED"
+msgstr "Dedicated?"
+
+msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
+msgstr "Create server"
+
+msgid "CREATE_SAVED_SERVER_MENU__TITLE"
+msgstr "Create Server from Save"
+
+msgid "CREATE_SAVED_SERVER_MENU__PORT"
+msgstr "Port:"
+
+msgid "CREATE_SAVED_SERVER_MENU__SEARCH_PLACEHOLDER"
+msgstr "Search saves..."
+
+msgid "CREATE_SAVED_SERVER_MENU__DEDICATED"
+msgstr "Dedicated?"
+
+msgid "CREATE_SAVED_SERVER_MENU__CREATE_BUTTON"
+msgstr "Create server"
+
+msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
+msgstr "Select a save file first"
+
+msgid "GENERIC_MENU__BACK_BUTTON"
+msgstr "Back"
+
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr "Language"
 

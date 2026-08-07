@@ -10,10 +10,12 @@ public partial class PagesProvider : CheckedAbstractStorage
 	[Export] [NotNull] public PackedScene MainPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene SettingsPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene ConnectionPageScene { get; private set; }
-	[Export] [NotNull] public PackedScene CreateServerPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene MessagePageScene { get; private set; }
 	[Export] [NotNull] public PackedScene LanguageSelectionPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene SingleplayerPage { get; private set; }
+	[Export] [NotNull] public PackedScene MultiplayerPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene CreateNewServerPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene CreateSavedServerPageScene { get; private set; }
 	
 	public Pages.Message.MessagePage PrepareMessagePage(string message)
 	{

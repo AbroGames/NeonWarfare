@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T14:03:55"
+updated: "2026-08-07T14:37:23"
 ---
 
 <!-- compiled_truth -->
@@ -66,7 +66,7 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 |------|--------|
 | 1 — Settings Foundation | ✅ завершена |
 | 2 — Known Servers Service | ✅ завершена |
-| 3 — Multiplayer хаб | ❌ не начата |
+| 3 — Multiplayer хаб | ✅ завершена |
 | 4 — ServerListPage | ❌ не начата |
 | 5 — First-run gate | ❌ не начата |
 | 6 — ColorPicker | ❌ не начата |
@@ -110,4 +110,16 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
   kind: decision
   summary: "Phase 2 (Known Servers Service) завершена. Добавлен трекер прогресса по фазам."
   source: "Phase 2 имплементация"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T14:14:45
+  kind: decision
+  summary: "Составлен детальный план Phase 3 (Multiplayer хаб + серверные формы) в plans/phase-3-multiplayer-hub-and-server-forms.md. Скоуп без изменений: MultiplayerPage (хаб, 4 кнопки), CreateNewServerPage (порт логики HostPage), CreateSavedServerPage (форма + список сейвов с поиском), MainPage → один MultiplayerButton вместо Host+Connect. Документированные решения плана: (1) хаб использует neon-button template MainPage, формы — HostPage form shell; (2) Connect кнопка хаба временно → старый ConnectPage, Phase 4 заменит на ServerListPage и удалит ConnectPage; (3) HostPage (.cs+.tscn) удаляется В Phase 3 (замена в этой же фазе), ConnectPage — в Phase 4; (4) SaveName = LineEdit (не TextEdit), Port SpinBox min 1024; (5) CreateSavedServerPage re-populate списка на каждый TextChanged (case-insensitive contains), inline error через PrepareMessagePage если сейв не выбран; (6) PagesProvider rewiring в MainMenu.tscn через Godot editor (не hand-edit — uid/path/load_steps хрупкие). Реализация НЕ начата — делает другой агент."
+  source: "plans/phase-3-multiplayer-hub-and-server-forms.md; анализ MainPage/HostPage/ConnectPage/SingleplayerPage/PagesProvider/Page system/MainMenu.tscn/Services.MainScene/Services.SaveLoad"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T14:37:23
+  kind: decision
+  summary: "Phase 3 (Multiplayer хаб + серверные формы) завершена. MultiplayerPage хаб создан, CreateNewServerPage + CreateSavedServerPage портированы из HostPage, MainPage → один MultiplayerButton, HostPage удалён, PagesProvider/MainMenu.tscn переподключены, 17 ключей локали добавлены, dotnet build 0 errors."
+  source: "Phase 3 имплементация (plans/phase-3-multiplayer-hub-and-server-forms.md)"
   affects: [main-menu-structure]

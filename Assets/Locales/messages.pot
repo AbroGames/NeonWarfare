@@ -161,6 +161,57 @@ msgstr ""
 msgid "GENERIC_MENU__SAVE_BUTTON"
 msgstr ""
 
+msgid "MAIN_MENU__MULTIPLAYER_BUTTON"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__TITLE"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__CONNECT_BUTTON"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__TITLE"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__PORT"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__SAVE_NAME"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__DEDICATED"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__TITLE"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__PORT"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__SEARCH_PLACEHOLDER"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__DEDICATED"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__CREATE_BUTTON"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
+msgstr ""
+
+msgid "GENERIC_MENU__BACK_BUTTON"
+msgstr ""
+
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr ""
 

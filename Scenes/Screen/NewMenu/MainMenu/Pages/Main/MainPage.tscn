@@ -129,7 +129,7 @@ theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
 text = "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 alignment = 0
 
-[node name="CreateServerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=269197810]
+[node name="MultiplayerButton" type="Button" parent="ScreenSplit/ControlsContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 size_flags_vertical = 3
@@ -139,20 +139,7 @@ theme_override_fonts/font = ExtResource("2_title")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
 theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "MAIN_MENU__CREATE_SERVER_BUTTON"
-alignment = 0
-
-[node name="ConnectToServerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=316229896]
-custom_minimum_size = Vector2(0, 35)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_title")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
-theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "MAIN_MENU__CONNECT_TO_SERVER_BUTTON"
+text = "MAIN_MENU__MULTIPLAYER_BUTTON"
 alignment = 0
 
 [node name="Separator" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1153997288]

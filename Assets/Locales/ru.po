@@ -166,6 +166,57 @@ msgstr "Отмена"
 msgid "GENERIC_MENU__SAVE_BUTTON"
 msgstr "Сохранить"
 
+msgid "MAIN_MENU__MULTIPLAYER_BUTTON"
+msgstr "Игра по сети"
+
+msgid "MULTIPLAYER_MENU__TITLE"
+msgstr "Игра по сети"
+
+msgid "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+msgstr "Создать новую игру"
+
+msgid "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+msgstr "Создать из сохранения"
+
+msgid "MULTIPLAYER_MENU__CONNECT_BUTTON"
+msgstr "Подключиться к серверу"
+
+msgid "CREATE_SERVER_MENU__TITLE"
+msgstr "Создать сервер"
+
+msgid "CREATE_SERVER_MENU__PORT"
+msgstr "Порт:"
+
+msgid "CREATE_SERVER_MENU__SAVE_NAME"
+msgstr "Имя сохранения:"
+
+msgid "CREATE_SERVER_MENU__DEDICATED"
+msgstr "Выделенный?"
+
+msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
+msgstr "Создать сервер"
+
+msgid "CREATE_SAVED_SERVER_MENU__TITLE"
+msgstr "Создать сервер из сохранения"
+
+msgid "CREATE_SAVED_SERVER_MENU__PORT"
+msgstr "Порт:"
+
+msgid "CREATE_SAVED_SERVER_MENU__SEARCH_PLACEHOLDER"
+msgstr "Поиск сохранений..."
+
+msgid "CREATE_SAVED_SERVER_MENU__DEDICATED"
+msgstr "Выделенный?"
+
+msgid "CREATE_SAVED_SERVER_MENU__CREATE_BUTTON"
+msgstr "Создать сервер"
+
+msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
+msgstr "Сначала выберите сохранение"
+
+msgid "GENERIC_MENU__BACK_BUTTON"
+msgstr "Назад"
+
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr "Язык"
 
