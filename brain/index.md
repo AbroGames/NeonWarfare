@@ -1,6 +1,6 @@
 # Brain Index
 
-_Auto-generated. Last updated 2026-08-07T13:34:48.585Z._
+_Auto-generated. Last updated 2026-08-07T13:53:56.092Z._
 
 - [achievements-system](pages/achievements-system.md) — category: project | tags: [feature, ui] | ## Что это
 - [bilingual-readme-convention](pages/bilingual-readme-convention.md) — category: decision | tags: [docs, conventions] | ## Что решено

@@ -299,3 +299,48 @@ msgstr "Scale of UI elements"
 
 msgid "PLAYER_SETTINGS_MENU__TITLE"
 msgstr "Player Settings"
+
+msgid "SETTINGS_HUB__TITLE"
+msgstr "Settings"
+
+msgid "SETTINGS_HUB__PLAYER_BUTTON"
+msgstr "Player"
+
+msgid "SETTINGS_HUB__CONTROLS_BUTTON"
+msgstr "Controls"
+
+msgid "SETTINGS_HUB__INTERFACE_BUTTON"
+msgstr "Interface"
+
+msgid "SETTINGS_HUB__GRAPHICS_BUTTON"
+msgstr "Graphics"
+
+msgid "SETTINGS_HUB__AUDIO_BUTTON"
+msgstr "Audio"
+
+msgid "SETTINGS_HUB__PLAYER_TITLE"
+msgstr "Player"
+
+msgid "SETTINGS_HUB__CONTROLS_TITLE"
+msgstr "Controls"
+
+msgid "SETTINGS_HUB__INTERFACE_TITLE"
+msgstr "Interface"
+
+msgid "SETTINGS_HUB__GRAPHICS_TITLE"
+msgstr "Graphics"
+
+msgid "SETTINGS_HUB__AUDIO_TITLE"
+msgstr "Audio"
+
+msgid "CONFIRM_DIALOG__UNSAVED_CHANGES"
+msgstr "You have unsaved changes."
+
+msgid "CONFIRM_DIALOG__RESET_BUTTON"
+msgstr "Reset changes"
+
+msgid "CONFIRM_DIALOG__BACK_BUTTON"
+msgstr "Back"
+
+msgid "CONFIRM_DIALOG__CONTINUE_BUTTON"
+msgstr "Continue"

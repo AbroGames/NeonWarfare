@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T16:34:48"
+updated: "2026-08-07T16:53:56"
 ---
 
 <!-- compiled_truth -->
@@ -80,14 +80,13 @@ Phase 6 факты: палитра = GridContainer 6×2, панель `CustomMin
 | 4 — ServerListPage | ✅ завершена |
 | 5 — First-run gate | ✅ завершена |
 | 6 — ColorPicker | ✅ завершена |
-| 7 — Settings хаб | ❌ не начата |
+| 7 — Settings хаб | ✅ завершена |
 | 8 — Локаль | ❌ не начата |
 
 ## Связанные страницы
 
 - Архитектура клиент/сервер — [[client-server-subsystem-split]]
 - Предыдущая миграция визуала (завершена) — [[main-menu-visual-migration]]
-- Single authoritative logic path (single/host/dedicated один серверный путь) — [[single-authoritative-logic-path]]
 
 
 ## Timeline
@@ -162,4 +161,22 @@ Phase 6 факты: палитра = GridContainer 6×2, панель `CustomMin
   kind: decision
   summary: "Phase 6 (ColorPickerPanel) завершена. Палитра оказалась GridContainer 6 колонок (не HBox — 12 swatch не помещались в строку SettingContainer). Урок layout: Control-наследник не агрегирует min-size детей, SettingContainer._Ready перетирал высоту input на 20px — фикс: CustomMinimumSize.Y=input.CustomMinimumSize.Y (уважать собственную min-height контрола) + явная min-height в самой панели (~92px)."
   source: "Phase 6 имплементация (plans/phase-6-custom-colorpicker.md); отладка layout overflow палитры за границы SettingContainer"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T16:47:18
+  kind: decision
+  summary: "Составлен детальный план Phase 7 (Settings хаб + 5 категорий + ConfirmDialog) в plans/phase-7-settings-hub-and-categories.md. Ключевые решения: (1) SettingsHubPage = неон-кнопки по образцу MultiplayerPage, 5 категорий + Back; (2) один обобщённый SettingsCategoryPage(category,titleKey) для всех 5 категорий — НЕ 5 отдельных классов; Controls категория пустая (нет [Category(\"Controls\")] полей), страница должна работать с пустым списком; (3) dirty-проверка через _draftSettings.Serialize() != _preservedSettings.Serialize() (JSON-строка, ColorJsonConverter детерминирован); (4) ConfirmDialogPage = обобщение MessagePage (3 кнопки Reset/Back/Continue, колбэки onReset/onContinue/onBack); (5) PlayerSettingsPage (Phase 5 gate) ОСТАЁТСЯ как есть — НЕ перенаправляется в хаб; хаб-категория Player = отдельный plain-save путь через SettingsCategoryPage(\"Player\"). Два класса сосуществуют (вариант 'разделить на 2 класса' из допущений общего плана); (6) ConfirmDialog callback/pop ordering: колбэк категории вызывает GoBack (попает dialog), затем OnResetPressed/OnContinuePressed вызывает GoBack снова (попает category) — оба вызова обязательны; (7) OnSave ОБЯЗАТЕЛЬНО обновляет _preservedSettings после ApplyAndSaveSettings, иначе Save→Back повторно триггерит dirty-диалог; (8) удаляются SettingsPage.cs+tscn и PagesProvider.SettingsPageScene; MainPage.SettingsButton → PreparePage(SettingsHubPageScene). 15 новых ключей локали (SETTINGS_HUB__*, CONFIRM_DIALOG__*). Файлы (новые ≈6): SettingsHubPage(.cs+.tscn), SettingsCategoryPage(.cs+.tscn), ConfirmDialogPage(.cs+.tscn). Удаляемые (≈2): SettingsPage.cs+tscn."
+  source: "plans/phase-7-settings-hub-and-categories.md; анализ существующих MultiplayerPage/SettingsPage/MessagePage как шаблонов, MenuGameSettings [Category] полей (Controls отсутствует), GameSettingsBase.GetVisibleSettings(string)+Serialize(), PageContainer.PopPage semantics"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T16:53:48
+  kind: decision
+  summary: "Phase 7 (Settings хаб) завершена"
+  source: "plans/phase-7-settings-hub-and-categories.md имплементация"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T16:53:56
+  kind: evidence
+  summary: "Phase 7 (Settings хаб + 5 категорий + ConfirmDialog) реализована: SettingsHubPage (5 неон-кнопок Player/Controls/Interface/Graphics/Audio + Back, клон MultiplayerPage), обобщённый SettingsCategoryPage(category,titleKey) рендерит категорию через SettingContainer (Controls пустой — работает), ConfirmDialogPage (Reset/Back/Continue + onReset/onContinue/onBack колбэки, клон MessagePage). Dirty = Serialize() != Serialize(). OnSave обновляет _preservedSettings post-save (Save→Back без re-prompt). MainMenu.tscn: удалён SettingsPage ext_resource + SettingsPageScene assignment, добавлены SettingsHub/Category/ConfirmDialog slots (load_steps 18→20). Удалены SettingsPage.cs+tscn. MainPage.SettingsButton → SettingsHubPageScene. 15 ключей локали (SETTINGS_HUB__*, CONFIRM_DIALOG__*) в pot/en/ru. dotnet build 0 errors. PlayerSettingsPage (Phase 5 gate) НЕ тронут — сосуществует с хаб-категорией Player. Уникальные uid не проставлены в новых .tscn — Godot назначит при импорте (рекомендуется открыть MainMenu.tscn в редакторе для верификации slots + ручного теста 7.6c)."
+  source: "plans/phase-7-settings-hub-and-categories.md имплементация; dotnet build 0 errors"
   affects: [main-menu-structure]

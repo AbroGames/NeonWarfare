@@ -24,7 +24,7 @@ public partial class MainPage : MainMenuPage
 		ResumeButton.Pressed += () => Services.LastGame.StartLastGame();
 		StartSingleplayerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SingleplayerPage));
 			MultiplayerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.MultiplayerPageScene));
-		SettingsButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SettingsPageScene));
+		SettingsButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SettingsHubPageScene));
 		LanguageButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.LanguageSelectionPageScene));
 		QuitButton.Pressed += () => Services.MainScene.Shutdown();
 

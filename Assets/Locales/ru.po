@@ -300,3 +300,48 @@ msgstr "Масштаб элементов интерфейса"
 
 msgid "PLAYER_SETTINGS_MENU__TITLE"
 msgstr "Настройки игрока"
+
+msgid "SETTINGS_HUB__TITLE"
+msgstr "Настройки"
+
+msgid "SETTINGS_HUB__PLAYER_BUTTON"
+msgstr "Игрок"
+
+msgid "SETTINGS_HUB__CONTROLS_BUTTON"
+msgstr "Управление"
+
+msgid "SETTINGS_HUB__INTERFACE_BUTTON"
+msgstr "Интерфейс"
+
+msgid "SETTINGS_HUB__GRAPHICS_BUTTON"
+msgstr "Графика"
+
+msgid "SETTINGS_HUB__AUDIO_BUTTON"
+msgstr "Аудио"
+
+msgid "SETTINGS_HUB__PLAYER_TITLE"
+msgstr "Игрок"
+
+msgid "SETTINGS_HUB__CONTROLS_TITLE"
+msgstr "Управление"
+
+msgid "SETTINGS_HUB__INTERFACE_TITLE"
+msgstr "Интерфейс"
+
+msgid "SETTINGS_HUB__GRAPHICS_TITLE"
+msgstr "Графика"
+
+msgid "SETTINGS_HUB__AUDIO_TITLE"
+msgstr "Аудио"
+
+msgid "CONFIRM_DIALOG__UNSAVED_CHANGES"
+msgstr "У вас есть несохранённые изменения."
+
+msgid "CONFIRM_DIALOG__RESET_BUTTON"
+msgstr "Сбросить изменения"
+
+msgid "CONFIRM_DIALOG__BACK_BUTTON"
+msgstr "Назад"
+
+msgid "CONFIRM_DIALOG__CONTINUE_BUTTON"
+msgstr "Продолжить"

@@ -8,7 +8,6 @@ namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 public partial class PagesProvider : CheckedAbstractStorage
 {
 	[Export] [NotNull] public PackedScene MainPageScene { get; private set; }
-	[Export] [NotNull] public PackedScene SettingsPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene ServerListPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene MessagePageScene { get; private set; }
 	[Export] [NotNull] public PackedScene LanguageSelectionPageScene { get; private set; }
@@ -17,6 +16,9 @@ public partial class PagesProvider : CheckedAbstractStorage
 	[Export] [NotNull] public PackedScene CreateNewServerPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene CreateSavedServerPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene PlayerSettingsPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene SettingsHubPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene SettingsCategoryPageScene { get; private set; }
+	[Export] [NotNull] public PackedScene ConfirmDialogPageScene { get; private set; }
 	
 	public Pages.Message.MessagePage PrepareMessagePage(string message)
 	{
@@ -40,6 +42,20 @@ public partial class PagesProvider : CheckedAbstractStorage
 	{
 		var page = PlayerSettingsPageScene.Instantiate<Pages.PlayerSettings.PlayerSettingsPage>().WithAvailablePages(this);
 		page.SetContinuation(continuation);
+		return page;
+	}
+
+	public Pages.SettingsCategory.SettingsCategoryPage PrepareSettingsCategoryPage(string category, string titleKey)
+	{
+		var page = SettingsCategoryPageScene.Instantiate<Pages.SettingsCategory.SettingsCategoryPage>().WithAvailablePages(this);
+		page.Configure(category, titleKey);
+		return page;
+	}
+
+	public Pages.ConfirmDialog.ConfirmDialogPage PrepareConfirmDialogPage(string message, Action onReset = null, Action onContinue = null, Action onBack = null)
+	{
+		var page = ConfirmDialogPageScene.Instantiate<Pages.ConfirmDialog.ConfirmDialogPage>().WithAvailablePages(this);
+		page.Setup(message, onReset, onContinue, onBack);
 		return page;
 	}
 }

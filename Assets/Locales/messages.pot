@@ -295,3 +295,48 @@ msgstr ""
 
 msgid "PLAYER_SETTINGS_MENU__TITLE"
 msgstr ""
+
+msgid "SETTINGS_HUB__TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__PLAYER_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__CONTROLS_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__INTERFACE_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__GRAPHICS_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__AUDIO_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__PLAYER_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__CONTROLS_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__INTERFACE_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__GRAPHICS_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__AUDIO_TITLE"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__UNSAVED_CHANGES"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__RESET_BUTTON"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__BACK_BUTTON"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__CONTINUE_BUTTON"
+msgstr ""
