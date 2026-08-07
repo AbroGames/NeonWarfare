@@ -58,7 +58,10 @@ public partial class SettingContainer : PanelContainer
         _nameLabel.Text = Handle.Name;
         _hintLabel.Text = Handle.Hint;
         _hintLabel.Visible = Handle.Hint is not null;
-        _inputControl = Configurators.GetFor(Handle.Type).GetControl(this);
+        var optionsAttr = Handle.Member.GetAttribute<OptionsAttribute>();
+        _inputControl = optionsAttr is not null
+            ? BuildOptionControl(this, optionsAttr)
+            : Configurators.GetFor(Handle.Type).GetControl(this);
         _inputControl.SizeFlagsHorizontal = SizeFlags.ShrinkEnd;
         _inputControl.CustomMinimumSize = new Vector2(300, 20);
         _mainHbox.AddChild(_inputControl);
@@ -67,6 +70,33 @@ public partial class SettingContainer : PanelContainer
             _nameLabel.TooltipText = Handle.Hint;
             _nameLabel.MouseFilter = MouseFilterEnum.Stop;
         }
+    }
+
+    private static Control BuildOptionControl(SettingContainer container, OptionsAttribute optionsAttr)
+    {
+        if (optionsAttr is null) return null;
+
+        var optionButton = new OptionButton();
+        var options = optionsAttr.Options;
+        var currentValue = container.Handle.Value?.ToString() ?? "";
+
+        for (int i = 0; i < options.Length; i++)
+        {
+            optionButton.AddItem(container.Tr(options[i]));
+            if (options[i] == currentValue)
+            {
+                optionButton.Select(i);
+            }
+        }
+
+        if (optionButton.Selected == -1 && options.Length > 0)
+        {
+            optionButton.Select(0);
+            container.Handle.Value = options[0];
+        }
+
+        optionButton.ItemSelected += index => container.Handle.Value = options[(int)index];
+        return optionButton;
     }
 }
 

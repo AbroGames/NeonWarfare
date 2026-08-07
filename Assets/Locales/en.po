@@ -167,3 +167,39 @@ msgstr "Save"
 
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr "Language"
+
+msgid "SETTING_MENU__MASTER_VOLUME"
+msgstr "Master volume:"
+
+msgid "SETTING_MENU__MASTER_VOLUME_HINT"
+msgstr "Master volume for all audio"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME"
+msgstr "Sounds volume:"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME_HINT"
+msgstr "Volume of gameplay sound effects"
+
+msgid "SETTING_MENU__MUSIC_VOLUME"
+msgstr "Music volume:"
+
+msgid "SETTING_MENU__MUSIC_VOLUME_HINT"
+msgstr "Volume of background music"
+
+msgid "SETTING_MENU__FULLSCREEN"
+msgstr "Fullscreen:"
+
+msgid "SETTING_MENU__FULLSCREEN_HINT"
+msgstr "Run the game in fullscreen"
+
+msgid "SETTING_MENU__RESOLUTION"
+msgstr "Resolution:"
+
+msgid "SETTING_MENU__RESOLUTION_HINT"
+msgstr "Screen resolution (windowed mode)"
+
+msgid "SETTING_MENU__INTERFACE_SIZE"
+msgstr "Interface size:"
+
+msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
+msgstr "Scale of UI elements"

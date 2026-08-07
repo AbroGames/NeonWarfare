@@ -168,3 +168,39 @@ msgstr "Сохранить"
 
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr "Язык"
+
+msgid "SETTING_MENU__MASTER_VOLUME"
+msgstr "Общая громкость:"
+
+msgid "SETTING_MENU__MASTER_VOLUME_HINT"
+msgstr "Общая громкость всего звука"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME"
+msgstr "Громкость звуков:"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME_HINT"
+msgstr "Громкость звуковых эффектов"
+
+msgid "SETTING_MENU__MUSIC_VOLUME"
+msgstr "Громкость музыки:"
+
+msgid "SETTING_MENU__MUSIC_VOLUME_HINT"
+msgstr "Громкость фоновой музыки"
+
+msgid "SETTING_MENU__FULLSCREEN"
+msgstr "Полноэкранный режим:"
+
+msgid "SETTING_MENU__FULLSCREEN_HINT"
+msgstr "Запускать игру в полноэкранном режиме"
+
+msgid "SETTING_MENU__RESOLUTION"
+msgstr "Разрешение:"
+
+msgid "SETTING_MENU__RESOLUTION_HINT"
+msgstr "Разрешение экрана (оконный режим)"
+
+msgid "SETTING_MENU__INTERFACE_SIZE"
+msgstr "Размер интерфейса:"
+
+msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
+msgstr "Масштаб элементов интерфейса"

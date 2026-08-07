@@ -33,9 +33,16 @@ public partial class MenuGameSettings
     public IReadOnlyList<Setting> GetVisibleSettings()
     {
         var accessors = GameSettingsInternals.VisibleAccessors;
-        
+
         return accessors
             .Select(accessor => new Setting(accessor, this))
+            .ToList();
+    }
+
+    public IReadOnlyList<Setting> GetVisibleSettings(string category)
+    {
+        return GetVisibleSettings()
+            .Where(setting => setting.Member.GetAttribute<CategoryAttribute>()?.Category == category)
             .ToList();
     }
 
@@ -45,6 +52,11 @@ public partial class MenuGameSettings
         {
             setting.Apply();
         }
+    }
+
+    public void SetVisibleSettings(IReadOnlyList<Setting> settings, string category)
+    {
+        SetVisibleSettings(settings);
     }
 }
 

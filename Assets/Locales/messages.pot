@@ -163,3 +163,39 @@ msgstr ""
 
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr ""
+
+msgid "SETTING_MENU__MASTER_VOLUME"
+msgstr ""
+
+msgid "SETTING_MENU__MASTER_VOLUME_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__SOUNDS_VOLUME"
+msgstr ""
+
+msgid "SETTING_MENU__SOUNDS_VOLUME_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__MUSIC_VOLUME"
+msgstr ""
+
+msgid "SETTING_MENU__MUSIC_VOLUME_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__FULLSCREEN"
+msgstr ""
+
+msgid "SETTING_MENU__FULLSCREEN_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__RESOLUTION"
+msgstr ""
+
+msgid "SETTING_MENU__RESOLUTION_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__INTERFACE_SIZE"
+msgstr ""
+
+msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
+msgstr ""

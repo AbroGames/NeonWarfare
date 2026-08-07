@@ -48,3 +48,23 @@ public class RangeAttribute : Attribute
         Max = max;
     }
 }
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class CategoryAttribute : Attribute
+{
+    public string Category { get; }
+    public CategoryAttribute(string category)
+    {
+        Category = category;
+    }
+}
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class OptionsAttribute : Attribute
+{
+    public string[] Options { get; }
+    public OptionsAttribute(params string[] options)
+    {
+        Options = options;
+    }
+}
