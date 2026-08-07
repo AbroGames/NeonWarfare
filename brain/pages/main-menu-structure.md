@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T12:51:17"
+updated: "2026-08-07T13:58:08"
 ---
 
 <!-- compiled_truth -->
@@ -79,4 +79,16 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
   kind: decision
   summary: "Записан полный план реструктуризации MainMenu (эпик #12) в plans/main-menu-general-plan.md; скоуп расширен до #94 сервер-лист + #16 first-run gate по решению пользователя"
   source: "Обсуждение структуры меню + ответы пользователя на 3 развилки (server-list / settings categories / first-run gate)"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T13:56:15
+  kind: evidence
+  summary: "Phase 1 (Settings Foundation) завершена: GameSettings расширен 7 полями, [Category]+[Options] атрибуты, MenuGameSettings 11 свойств, OptionButton рендер, Convert round-trip, ApplyRuntimeSettings (fullscreen/size/volumes), 12 ключей локали, dotnet build 0 errors"
+  source: "plans/phase-1-settings-foundation.md имплементация"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T13:58:08
+  kind: decision
+  summary: "Составлен детальный план Phase 2 (known-servers service) в plans/phase-2-known-servers-service.md. Скоуп без изменений: KnownServer record + KnownServersService (user://known-servers.json, GetAll/Add/Remove/Exists, без дедупликата). Документированное отклонение от общего плана: папка Scripts/Service/KnownServers/ + 2 файла (KnownServer.cs + KnownServersService.cs) вместо одного файла — зеркало ResumableGame/ (record + service рядом). Init только в ClientRootStarter (НЕ dedicated). GetAll возвращает живой список."
+  source: "plans/phase-2-known-servers-service.md; анализ существующих сервисов-паттернов (ResumableGameService, GameSettingsService)"
   affects: [main-menu-structure]
