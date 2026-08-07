@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bc3xvgd0paknf"]
+[gd_scene load_steps=15 format=3 uid="uid://bc3xvgd0paknf"]
 
 [ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/Screen/NewMenu/MainMenu/MainMenu.cs" id="1_likqx"]
 [ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/Screen/NewMenu/MainMenu/PagesProvider.cs" id="2_l4fos"]
@@ -10,15 +10,19 @@
 [ext_resource type="PackedScene" uid="uid://cd5qyq67teome" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/LanguageSelection/LanguageSelectionPage.tscn" id="8_3biw6"]
 [ext_resource type="PackedScene" uid="uid://le67pdyqucqu" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Message/MessagePage.tscn" id="8_6kuw2"]
 [ext_resource type="PackedScene" uid="uid://dvjv8ekp6q4c2" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Singleplayer/SingleplayerPage.tscn" id="9_8wwjd"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/Background3D.cs" id="11_bg3d"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorContainer.cs" id="12_ccor"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorSegment3D.tscn" id="13_cseg"]
+[ext_resource type="Material" path="res://Assets/Materials/MainMenuWallMaterial.tres" id="14_wall"]
 
-[sub_resource type="Gradient" id="Gradient_gu8fo"]
-offsets = PackedFloat32Array(0, 0.55108696)
-colors = PackedColorArray(0.00014435916, 0.010876166, 0.1461932, 1, 0, 0, 0, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_h4gti"]
-gradient = SubResource("Gradient_gu8fo")
-fill_from = Vector2(0.4974359, 0)
-fill_to = Vector2(0.50769234, 1)
+[sub_resource type="Environment" id="Environment_corridor"]
+background_mode = 2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0, 0, 0, 1)
+fog_density = 1.0
+fog_depth_begin = 0.0
+fog_depth_end = 15.0
 
 [node name="MainMenu" type="Node" unique_id=910496385]
 script = ExtResource("1_likqx")
@@ -33,13 +37,56 @@ MessagePageScene = ExtResource("8_6kuw2")
 LanguageSelectionPageScene = ExtResource("8_3biw6")
 SingleplayerPage = ExtResource("9_8wwjd")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=613968459]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("GradientTexture2D_h4gti")
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+msaa_3d = 3
+screen_space_aa = 1
+use_debanding = true
+mesh_lod_threshold = 0.0
+render_target_update_mode = 4
+
+[node name="Background3D" type="Node3D" parent="SubViewportContainer/SubViewport" node_paths=PackedStringArray("_light")]
+script = ExtResource("11_bg3d")
+_light = NodePath("OmniLight3D")
+_material = ExtResource("14_wall")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="SubViewportContainer/SubViewport/Background3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 8)
+light_energy = 16.0
+distance_fade_begin = 0.0
+distance_fade_length = 0.0
+omni_range = 9.326
+omni_attenuation = -1.717
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Background3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+projection = 2
+current = true
+fov = 85.0
+near = 0.583
+
+[node name="CorridorContainer" type="Node3D" parent="SubViewportContainer/SubViewport/Background3D"]
+script = ExtResource("12_ccor")
+_corridorSegmentScene = ExtResource("13_cseg")
+
+[node name="CorridorSegment2" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("13_cseg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="CorridorSegment" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("13_cseg")]
+
+[node name="CorridorSegment3" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("13_cseg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/Background3D"]
+environment = SubResource("Environment_corridor")
 
 [node name="Control" type="Control" parent="." unique_id=1988893568]
 layout_mode = 3

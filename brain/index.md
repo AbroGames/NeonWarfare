@@ -1,6 +1,6 @@
 # Brain Index
 
-_Auto-generated. Last updated 2026-08-06T19:17:58.601Z._
+_Auto-generated. Last updated 2026-08-07T09:07:46.006Z._
 
 - [achievements-system](pages/achievements-system.md) — category: project | tags: [feature, ui] | ## Что это
 - [bilingual-readme-convention](pages/bilingual-readme-convention.md) — category: decision | tags: [docs, conventions] | ## Что решено
@@ -9,6 +9,7 @@ _Auto-generated. Last updated 2026-08-06T19:17:58.601Z._
 - [godot-version-migration-cadence](pages/godot-version-migration-cadence.md) — category: decision | tags: [stack, maintenance, history] | ## Что наблюдается (из git log)
 - [intent-vs-reality-version-drift](pages/intent-vs-reality-version-drift.md) — category: decision | tags: [stack, docs, debt] | ## Что наблюдается
 - [lan-trust-threat-model](pages/lan-trust-threat-model.md) — category: concept | tags: [security, networking, decisions] | ## Суть
+- [main-menu-visual-migration](pages/main-menu-visual-migration.md) — category: decision | status: archived | tags: [main-menu, ui, migration, visual] | Перенос визуала MainMenu из `.
 - [messagepack-for-net-and-saves](pages/messagepack-for-net-and-saves.md) — category: decision | tags: [serialization, networking, data] | ## Что решено
 - [native-godot-multiplayer-over-custom-bus](pages/native-godot-multiplayer-over-custom-bus.md) — category: decision | tags: [networking, architecture] | ## Что решено
 - [network-shutdown-ordering-hazard](pages/network-shutdown-ordering-hazard.md) — category: concept | tags: [networking, fragile, architecture] | ## Суть
