@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T13:58:08"
+updated: "2026-08-07T14:03:55"
 ---
 
 <!-- compiled_truth -->
@@ -38,7 +38,7 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 ## 8 фаз (после каждой — `dotnet build`, 0 ошибок)
 
 1. **Фундамент SettingsSystem + persistence** — расширить `GameSettings`/`MenuGameSettings` новыми полями (PlayerSettingsAcknowledged, MasterVolume/SoundsVolume/MusicVolume, Fullscreen, Resolution, InterfaceSize); добавить атрибуты `[Category]` + `[Options]` для категоризации и dropdown; `MenuGameSettingsService.Convert` проброс полей.
-2. **Сервис known-servers** — `Scripts/Service/KnownServersService.cs` (record KnownServer, `user://known-servers.json`, методы GetAll/Add/Remove/Exists); регистрация в `Services.cs`.
+2. **Сервис known-servers** — `Scripts/Service/KnownServers/` (record KnownServer, KnownServersService, `user://known-servers.json`, Init/GetAll/Add/Remove/Exists); регистрация в `Services.KnownServers`, Init в ClientRootStarter.
 3. **Multiplayer хаб + серверные формы** — MultiplayerPage, CreateNewServerPage (перенос логики HostPage), CreateSavedServerPage (список сейвов + динамический поиск по TextChanged); MainPage → один MultiplayerButton вместо Host+Connect.
 4. **ServerListPage + удаление ConnectPage** — список известных серверов, add/remove/connect, прямое подключение «host:port».
 5. **First-run gate** — PlayerSettingsPage (modal-style, continuation-action), `TryStartGame(Action)` helper, обернуть 3 точки старта игры.
@@ -59,6 +59,19 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
 - MainPage Resume не в спеке #12, но уже работает — оставляю.
 - AutoScale (#137, открытый) НЕ в этом эпике; InterfaceSize настройка добавляется, реальный scaling-mechanism отдельно.
 - GameSettings record immutable — обновление через `with`; персист в `user://`.
+
+## Прогресс фаз
+
+| Фаза | Статус |
+|------|--------|
+| 1 — Settings Foundation | ✅ завершена |
+| 2 — Known Servers Service | ✅ завершена |
+| 3 — Multiplayer хаб | ❌ не начата |
+| 4 — ServerListPage | ❌ не начата |
+| 5 — First-run gate | ❌ не начата |
+| 6 — ColorPicker | ❌ не начата |
+| 7 — Settings хаб | ❌ не начата |
+| 8 — Локаль | ❌ не начата |
 
 ## Связанные страницы
 
@@ -91,4 +104,10 @@ PlayerSettings gate (#16): перед single/multi new/connect проверят�
   kind: decision
   summary: "Составлен детальный план Phase 2 (known-servers service) в plans/phase-2-known-servers-service.md. Скоуп без изменений: KnownServer record + KnownServersService (user://known-servers.json, GetAll/Add/Remove/Exists, без дедупликата). Документированное отклонение от общего плана: папка Scripts/Service/KnownServers/ + 2 файла (KnownServer.cs + KnownServersService.cs) вместо одного файла — зеркало ResumableGame/ (record + service рядом). Init только в ClientRootStarter (НЕ dedicated). GetAll возвращает живой список."
   source: "plans/phase-2-known-servers-service.md; анализ существующих сервисов-паттернов (ResumableGameService, GameSettingsService)"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T14:03:55
+  kind: decision
+  summary: "Phase 2 (Known Servers Service) завершена. Добавлен трекер прогресса по фазам."
+  source: "Phase 2 имплементация"
   affects: [main-menu-structure]
