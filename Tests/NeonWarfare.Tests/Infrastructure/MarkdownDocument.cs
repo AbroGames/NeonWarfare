@@ -80,7 +80,7 @@ public sealed class MarkdownDocument
     /// </summary>
     public MarkdownTable? TableUnder(string headingText)
     {
-        (int start, int end) = Section(headingText);
+        (int start, int end) = SectionRange(headingText);
         return Tables.FirstOrDefault(table => table.Line > start && table.Line < end);
     }
 
@@ -90,7 +90,7 @@ public sealed class MarkdownDocument
     /// </summary>
     public IEnumerable<string> LinesUnder(string headingText)
     {
-        (int start, int end) = Section(headingText);
+        (int start, int end) = SectionRange(headingText);
         for (int line = start + 1; line < end; line++)
         {
             if (!IsFenced[line - 1])
@@ -104,7 +104,7 @@ public sealed class MarkdownDocument
     /// The one-based line of the heading and of the first heading after it that is not nested inside
     /// it — the half-open range the section occupies. <c>(0, 0)</c> when the heading is absent.
     /// </summary>
-    private (int Start, int End) Section(string headingText)
+    private (int Start, int End) SectionRange(string headingText)
     {
         MarkdownHeading? heading = Headings.FirstOrDefault(
             candidate => string.Equals(candidate.Text, headingText, StringComparison.Ordinal));
@@ -153,6 +153,43 @@ public sealed class MarkdownDocument
 
         return kept.ToString().Trim().Replace(' ', '-');
     }
+
+    /// <summary>
+    /// The lines under a heading, up to the next heading of the same or a higher level. The checks that
+    /// compare a document with the code work section by section: Docs/Services.md has one table for the
+    /// global services and another for the world ones, and they mean different things.
+    /// </summary>
+    public IReadOnlyList<MarkdownLine> Section(string headingText)
+    {
+        MarkdownHeading? heading = Headings.FirstOrDefault(candidate =>
+            string.Equals(candidate.Text, headingText, StringComparison.Ordinal));
+
+        if (heading is null)
+        {
+            throw new InvalidOperationException(
+                $"{RepositoryPaths.Relative(Path)}: no heading '{headingText}'. Either it was renamed, " +
+                $"or the test is looking at the wrong document.");
+        }
+
+        MarkdownHeading? next = Headings
+            .Where(candidate => candidate.Line > heading.Line && candidate.Level <= heading.Level)
+            .MinBy(candidate => candidate.Line);
+
+        int first = heading.Line;
+        int last = next?.Line - 1 ?? Lines.Length;
+
+        return Enumerable.Range(first, last - first + 1)
+            .Where(number => number <= Lines.Length)
+            .Select(number => new MarkdownLine(number, Lines[number - 1].TrimEnd('\r')))
+            .ToList();
+    }
+
+    /// <summary>
+    /// The contents of every inline code span on a line. The tables that describe the code write the
+    /// identifiers in backticks, which is what makes them findable without parsing markdown tables.
+    /// </summary>
+    public static IEnumerable<string> CodeSpans(string line) =>
+        InlineCodeRegex.Matches(line).Select(match => match.Value.Trim('`').Trim());
 
     private static byte[] StripBom(byte[] bytes) =>
         bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF
@@ -373,6 +410,13 @@ public sealed class MarkdownDocument
 
 /// <summary>One ATX heading: its level, its raw text and its one-based line number.</summary>
 public sealed record MarkdownHeading(int Level, string Text, int Line);
+
+/// <summary>One line of a document, with the one-based number an editor shows.</summary>
+public sealed record MarkdownLine(int Number, string Text)
+{
+    /// <summary>True for a line of a markdown table, header and separator included.</summary>
+    public bool IsTableRow => Text.TrimStart().StartsWith('|');
+}
 
 /// <summary>
 /// One pipe table: the one-based line of its header, the header cells and the body rows. Every row has

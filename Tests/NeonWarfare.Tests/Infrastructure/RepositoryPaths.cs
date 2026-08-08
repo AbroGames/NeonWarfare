@@ -25,7 +25,28 @@ public static class RepositoryPaths
     public static IReadOnlyList<string> SourceDirectories { get; } =
         [Path.Combine(Root, "Scenes"), Path.Combine(Root, "Scripts")];
 
+    /// <summary>Everything that is neither a scene nor code — textures, fonts, shaders, locales.</summary>
+    public static string AssetsDirectory { get; } = Path.Combine(Root, "Assets");
+
     public static string LocalesDirectory { get; } = Path.Combine(Root, "Assets", "Locales");
+
+    /// <summary>The Godot project settings: the input map, the main scene, the icon and the theme.</summary>
+    public static string ProjectSettingsPath { get; } = Path.Combine(Root, "project.godot");
+
+    public static string GameProjectPath { get; } = Path.Combine(Root, "NeonWarfare.csproj");
+
+    public static string TestProjectPath { get; } =
+        Path.Combine(Root, "Tests", "NeonWarfare.Tests", "NeonWarfare.Tests.csproj");
+
+    /// <summary>The registry of all global services.</summary>
+    public static string ServicesPath { get; } = Path.Combine(Root, "Scripts", "Services.cs");
+
+    /// <summary>The world services — child nodes of World, one class per service.</summary>
+    public static string WorldServiceDirectory { get; } = Path.Combine(Root, "Scenes", "World", "Service");
+
+    /// <summary>The only place that names an input action.</summary>
+    public static string InputActionsPath { get; } =
+        Path.Combine(Root, "Scenes", "Entity", "Characters", "Controller", "Player", "Keys.cs");
 
     /// <summary>The localization template — the same keys as the .po files, with empty translations.</summary>
     public static string LocaleTemplatePath { get; } = Path.Combine(LocalesDirectory, "messages.pot");
@@ -80,6 +101,19 @@ public static class RepositoryPaths
 
     /// <summary>Every Multi-Launch configuration in .run/.</summary>
     public static IReadOnlyList<string> RunConfigFiles() => Files([RunConfigsDirectory], "*.run.xml");
+
+    /// <summary>The world service classes — every .cs under Scenes/World/Service, at any depth.</summary>
+    public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
+
+    /// <summary>
+    /// Every <c>.uid</c> sidecar Godot keeps next to a file it cannot store a uid inside — a .cs or a
+    /// .gdshader. Scenes and resources carry their uid in their own header instead.
+    /// </summary>
+    public static IReadOnlyList<string> UidFiles() =>
+        Files(SourceDirectories.Append(AssetsDirectory), "*.uid");
+
+    /// <summary>The import settings of the assets Godot converts on load — that is where their uid is.</summary>
+    public static IReadOnlyList<string> ImportFiles() => Files([AssetsDirectory], "*.import");
 
     /// <summary>True when <paramref name="absolutePath"/> is inside <paramref name="directory"/>.</summary>
     public static bool IsInside(string absolutePath, string directory) =>
