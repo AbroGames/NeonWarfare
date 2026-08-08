@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Godot;
-using KludgeBox.Godot.Nodes;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
+using AbstractMultiplayerSpawner = NeonWarfare.Scripts.KludgeBox.Godot.Nodes.AbstractMultiplayerSpawner;
 
 namespace NeonWarfare.Scenes.World.Service.MpSpawn;
 

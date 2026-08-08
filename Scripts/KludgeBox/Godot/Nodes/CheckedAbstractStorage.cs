@@ -1,6 +1,6 @@
 ﻿using KludgeBox.DI;
 
-namespace KludgeBox.Godot.Nodes;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
 
 /// <summary>
 /// Storage with auto calling <c>Di.Process(this)</c>.<br/>

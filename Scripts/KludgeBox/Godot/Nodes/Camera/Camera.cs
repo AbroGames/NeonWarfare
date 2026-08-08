@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Godot;
-using KludgeBox.Godot.Nodes.Camera.Shifts;
+using NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Camera.Shifts;
 
-namespace KludgeBox.Godot.Nodes.Camera;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Camera;
 
 public partial class Camera : Camera2D
 {

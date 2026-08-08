@@ -1,8 +1,9 @@
 ﻿using Godot;
-using KludgeBox.Godot.Nodes.MpSync;
+using KludgeBox.DI.Requests;
 using KludgeBox.Reflection.Access;
+using NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
 
-namespace KludgeBox.DI.Requests.MpSyncInjection;
+namespace NeonWarfare.Scripts.KludgeBox.DI.Requests.MpSyncInjection;
 
 public class MpSyncInjectionRequest : IProcessingRequest
 {

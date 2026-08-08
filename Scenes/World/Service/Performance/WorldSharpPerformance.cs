@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using Godot;
 using KludgeBox.Core.Cooldown;
+using Environment = System.Environment;
 
 namespace NeonWarfare.Scenes.World.Service.Performance;
 
@@ -35,7 +36,7 @@ public partial class WorldSharpPerformance : Node
     public override void _Ready()
     {
         _cooldown = new(UpdateMetricsInterval, true, UpdateMetrics);
-        _logicalProcessors = System.Environment.ProcessorCount;
+        _logicalProcessors = Environment.ProcessorCount;
         _currentProcess = Process.GetCurrentProcess();
     }
 

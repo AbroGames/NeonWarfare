@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace KludgeBox.Godot.Nodes.MpSync;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
 
 /// <summary>
 /// See <see cref="AttributeMultiplayerSynchronizer"/>.

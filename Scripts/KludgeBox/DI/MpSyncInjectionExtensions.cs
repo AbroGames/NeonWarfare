@@ -1,7 +1,7 @@
 ﻿using KludgeBox.DI.Requests;
-using KludgeBox.DI.Requests.MpSyncInjection;
+using NeonWarfare.Scripts.KludgeBox.DI.Requests.MpSyncInjection;
 
-namespace KludgeBox.DI;
+namespace NeonWarfare.Scripts.KludgeBox.DI;
 
 /// <summary>
 /// Точка подключения опциональной MpSync-инъекции (раньше входила в

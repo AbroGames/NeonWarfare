@@ -1,6 +1,6 @@
 using Godot;
 
-namespace KludgeBox.Godot.Nodes.Camera.Shifts;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Camera.Shifts;
 
 public interface IShiftProvider
 {

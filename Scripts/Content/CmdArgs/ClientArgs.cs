@@ -1,3 +1,5 @@
+using KludgeBox.Core;
+
 namespace NeonWarfare.Scripts.Content.CmdArgs;
 
 public readonly record struct ClientArgs(
@@ -18,7 +20,7 @@ public readonly record struct ClientArgs(
     public static readonly string NickParam = "--nick";
     public static readonly string UidParam = "--uid";
     
-    public static ClientArgs GetFromCmd(KludgeBox.Core.CmdArgsService argsService)
+    public static ClientArgs GetFromCmd(CmdArgsService argsService)
     {
         return new ClientArgs(
             CommonArgs.GetFromCmd(argsService),

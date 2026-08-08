@@ -5,7 +5,7 @@ using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.Reflection.Access;
 using Serilog;
 
-namespace KludgeBox.Godot.Nodes.MpSync;
+namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
 
 /// <summary>
 /// <b>This node cannot be added from the editor</b><br/>
@@ -57,7 +57,7 @@ public partial class AttributeMultiplayerSynchronizer : MultiplayerSynchronizer
         List<IMemberAccessor> result = new();
         
         
-        IReadOnlyList<IMemberAccessor> members = NeonWarfare.Scripts.Services.MembersScanner.ScanMembers(type);
+        IReadOnlyList<IMemberAccessor> members = Services.MembersScanner.ScanMembers(type);
         foreach (var member in members)
         {
             if (member.HasAttribute<SyncAttribute>())
