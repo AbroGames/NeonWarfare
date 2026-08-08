@@ -5,7 +5,7 @@ category: decision
 status: active
 tags: [main-menu, ui, plan, issue-12, issue-94, issue-16]
 created: "2026-08-07T12:50:59"
-updated: "2026-08-07T16:53:56"
+updated: "2026-08-07T17:17:53"
 ---
 
 <!-- compiled_truth -->
@@ -82,6 +82,17 @@ Phase 6 факты: палитра = GridContainer 6×2, панель `CustomMin
 | 6 — ColorPicker | ✅ завершена |
 | 7 — Settings хаб | ✅ завершена |
 | 8 — Локаль | ❌ не начата |
+
+## Pages-system паттерны (PageContainer / Page / MainMenuPage)
+
+Актуально для любой страницы поверх `Scenes/Screen/NewMenu/PagesSystem/`. Вскрыты Phase 7, но не специфичны для settings:
+
+1. **Configure-before-`_Ready`.** Данные для страницы передаются через метод (`Configure(...)`, `Setup(...)`, `SetContinuation(...)`), вызываемый из `PagesProvider.PrepareXxxPage` ДО `PageContainer.PushPage` → `AddChild`. `PushPage` добавляет ноду в дерево после prepare, значит `_Ready` бежит после configure — порядок гарантирован. НЕ читать данные в конструкторе (узлов ещё нет), НЕ переносить configure-логику в `_Ready` (категория/title неизвестны в момент construction). Узлы `[Child]` НЕ существуют в момент `Setup` — сташь строки в поля, применяй в `_Ready` после `Di.Process(this)`.
+2. **Callback / pop ordering при confirm-dialog поверх страницы.** Диалог пушится через `GoNext`; он становится `CurrentPage`, родительская страница `RemoveChild`'ится из дерева (но не freed). `Page.GoBack` → `PageContainer.PopPage` → попает `CurrentPage` (диалог), re-adds родителя в дерево, frees диалог. Два сценария:
+   - «Остаться» (Back в диалоге): один `GoBack` в `OnBackPressed` → попается только диалог, родитель показывается снова. ✅
+   - «Уйти» (Reset/Continue): колбэк родителя (`onReset`/`onContinue`) вызывает свой `GoBack` ВНУТРИ `Invoke()` → попает диалог (он CurrentPage). Затем `OnResetPressed`/`OnContinuePressed` вызывает `GoBack` ЕЩЁ РАЗ → попается уже родитель. **Оба `GoBack` обязательны** — убрать любой = диалог закрывается, родитель зависает.
+3. **`PopPage` НЕ перезапускает `_Ready` родителя.** `RemoveChild` + `AddChild` одного узла без `QueueFree` не триггерят повторный `_Ready` (Godot вызывает `_Ready` только при первом входе в дерево). Значит подписки `Button.Pressed +=` не дублируются, draft-state сохраняется между показами. Это позволяет диалогу «остаться» корректно возвращать страницу с правками нетронутыми.
+4. **`MainMenuPage.GoNext`/`GoBack` — `protected Action<IPage>` / `protected Action`.** `Setup(goBack, goNext)` вызывается `PageContainer.SetupPage` при каждом push, перевязывая замыкания только на новую страницу. Родитель хранит свои старые замыкания — его `GoBack` всегда попает себя (через `PopPage`, который берёт `CurrentPage`).
 
 ## Связанные страницы
 
@@ -179,4 +190,10 @@ Phase 6 факты: палитра = GridContainer 6×2, панель `CustomMin
   kind: evidence
   summary: "Phase 7 (Settings хаб + 5 категорий + ConfirmDialog) реализована: SettingsHubPage (5 неон-кнопок Player/Controls/Interface/Graphics/Audio + Back, клон MultiplayerPage), обобщённый SettingsCategoryPage(category,titleKey) рендерит категорию через SettingContainer (Controls пустой — работает), ConfirmDialogPage (Reset/Back/Continue + onReset/onContinue/onBack колбэки, клон MessagePage). Dirty = Serialize() != Serialize(). OnSave обновляет _preservedSettings post-save (Save→Back без re-prompt). MainMenu.tscn: удалён SettingsPage ext_resource + SettingsPageScene assignment, добавлены SettingsHub/Category/ConfirmDialog slots (load_steps 18→20). Удалены SettingsPage.cs+tscn. MainPage.SettingsButton → SettingsHubPageScene. 15 ключей локали (SETTINGS_HUB__*, CONFIRM_DIALOG__*) в pot/en/ru. dotnet build 0 errors. PlayerSettingsPage (Phase 5 gate) НЕ тронут — сосуществует с хаб-категорией Player. Уникальные uid не проставлены в новых .tscn — Godot назначит при импорте (рекомендуется открыть MainMenu.tscn в редакторе для верификации slots + ручного теста 7.6c)."
   source: "plans/phase-7-settings-hub-and-categories.md имплементация; dotnet build 0 errors"
+  affects: [main-menu-structure]
+
+- time: 2026-08-07T17:17:53
+  kind: decision
+  summary: "Добавлен раздел Pages-system паттерны (configure-before-_Ready, callback/pop ordering для confirm-dialog, PopPage не перезапускает _Ready, GoNext/GoBack замыкания)"
+  source: "Phase 7 имплементация (plans/phase-7-settings-hub-and-categories.md); анализ Scenes/Screen/NewMenu/PagesSystem/"
   affects: [main-menu-structure]
