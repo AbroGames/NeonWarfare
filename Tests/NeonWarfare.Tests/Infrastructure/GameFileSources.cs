@@ -17,6 +17,10 @@ public static class GameFileSources
     /// <summary>Every .tscn — the files that have nodes, and therefore a root node.</summary>
     public static TheoryData<string> Scenes => RepositoryPaths.SceneFiles().AsTheoryData();
 
+    /// <summary>Every .uid and .import — the files Godot keeps next to another file and for it.</summary>
+    public static TheoryData<string> Sidecars =>
+        RepositoryPaths.UidFiles().Concat(RepositoryPaths.ImportFiles()).AsTheoryData();
+
     /// <summary>en.po, ru.po and messages.pot.</summary>
     public static TheoryData<string> Locales => RepositoryPaths.LocaleFilesAndTemplate().AsTheoryData();
 
