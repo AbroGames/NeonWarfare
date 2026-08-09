@@ -21,6 +21,7 @@ public class ClientRootStarter : BaseRootStarter
         Services.Net.Init(false);
         Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
         Services.LastGame.Init();
+        Services.KnownServers.Init();
         
         Services.GameSettings.Init();
         if (_clientArgs.Nick != null) Services.GameSettings.SetNickTemporarily(_clientArgs.Nick);

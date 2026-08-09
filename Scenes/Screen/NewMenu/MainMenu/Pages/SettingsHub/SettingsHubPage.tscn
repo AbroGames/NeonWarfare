@@ -1,13 +1,12 @@
-[gd_scene format=3 uid="uid://t53rgkpwod2e"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://vqjbgpswrg7h" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Main/MainPage.cs" id="1_ao86q"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/SettingsHub/SettingsHubPage.cs" id="1_shub"]
 [ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="2_title"]
-[ext_resource type="Texture2D" uid="uid://r2ug04iuot8w" path="res://Assets/Textures/UI/Icons/LanguageIcon.svg" id="4_gq26c"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font = ExtResource("2_title")
-font_size = 68
-font_color = Color(1, 1, 1, 0)
+font_size = 32
+font_color = Color(1, 1, 1, 1)
 outline_size = 3
 outline_color = Color(0, 0.647059, 0.647059, 1)
 
@@ -25,20 +24,16 @@ gradient = SubResource("Gradient_hover")
 content_margin_left = 48.0
 texture = SubResource("GradientTexture1D_hover")
 
-[sub_resource type="LabelSettings" id="LabelSettings_version"]
-font_size = 14
-font_color = Color(1, 1, 1, 0.20784314)
-
-[node name="MainPage" type="Control" unique_id=1463431211]
+[node name="SettingsHubPage" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ao86q")
+script = ExtResource("1_shub")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1660475157]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,73 +45,22 @@ theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
-[node name="LanguageButton" type="Button" parent="MarginContainer" unique_id=2037422953]
-custom_minimum_size = Vector2(40, 40)
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 8
-tooltip_text = "SETTING_MENU__LANGUAGE"
-icon = ExtResource("4_gq26c")
-icon_alignment = 1
-expand_icon = true
-
-[node name="ScreenSplit" type="VBoxContainer" parent="." unique_id=358022420]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 64.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="TitleContainer" type="VBoxContainer" parent="ScreenSplit" unique_id=2014795867]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.75
-alignment = 1
-
-[node name="Control" type="Control" parent="ScreenSplit/TitleContainer" unique_id=1946147381]
-layout_mode = 2
-size_flags_horizontal = 0
+custom_minimum_size = Vector2(450, 0)
+size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="NeonWarfare" type="Label" parent="ScreenSplit/TitleContainer/Control" unique_id=1879073753]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -45.0
-offset_right = 672.0
-offset_bottom = 45.0
-grow_vertical = 2
-scale = Vector2(1.3, 1)
-pivot_offset_ratio = Vector2(0, 0.5)
-text = "NEON WARFARE"
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "SETTINGS_HUB__TITLE"
 label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
 
-[node name="ControlsContainer" type="VBoxContainer" parent="ScreenSplit" unique_id=721790362]
-custom_minimum_size = Vector2(450, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 2
-
-[node name="ResumeButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2054832041]
-custom_minimum_size = Vector2(0, 35)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_title")
-theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
-theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "Resume"
-alignment = 0
-
-[node name="Separator2" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1814827603]
+[node name="Spacer" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="StartSingleplayerButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=2065167447]
+[node name="PlayerButton" type="Button" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 size_flags_vertical = 3
@@ -126,10 +70,10 @@ theme_override_fonts/font = ExtResource("2_title")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
 theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
+text = "SETTINGS_HUB__PLAYER_BUTTON"
 alignment = 0
 
-[node name="MultiplayerButton" type="Button" parent="ScreenSplit/ControlsContainer"]
+[node name="ControlsButton" type="Button" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 size_flags_vertical = 3
@@ -139,19 +83,12 @@ theme_override_fonts/font = ExtResource("2_title")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
 theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "MAIN_MENU__MULTIPLAYER_BUTTON"
+text = "SETTINGS_HUB__CONTROLS_BUTTON"
 alignment = 0
 
-[node name="Separator" type="Label" parent="ScreenSplit/ControlsContainer" unique_id=1153997288]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="ScreenSplit/ControlsContainer" unique_id=38533400]
-layout_mode = 2
-
-[node name="SettingsButton" type="Button" parent="ScreenSplit/ControlsContainer/HBoxContainer" unique_id=1668013026]
+[node name="InterfaceButton" type="Button" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
@@ -159,26 +96,47 @@ theme_override_fonts/font = ExtResource("2_title")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
 theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "MAIN_MENU__SETTINGS_BUTTON"
+text = "SETTINGS_HUB__INTERFACE_BUTTON"
 alignment = 0
 
-[node name="QuitButton" type="Button" parent="ScreenSplit/ControlsContainer" unique_id=1218976550]
+[node name="GraphicsButton" type="Button" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_title")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
 theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
-text = "MAIN_MENU__EXIT_BUTTON"
+text = "SETTINGS_HUB__GRAPHICS_BUTTON"
 alignment = 0
 
-[node name="InfoContainer" type="HBoxContainer" parent="ScreenSplit" unique_id=810617367]
+[node name="AudioButton" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-alignment = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "SETTINGS_HUB__AUDIO_BUTTON"
+alignment = 0
 
-[node name="Version" type="Label" parent="ScreenSplit/InfoContainer" unique_id=1381857683]
+[node name="Spacer2" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "v0.0.1-pre-alpha-dev-please-help-me"
-label_settings = SubResource("LabelSettings_version")
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "GENERIC_MENU__BACK_BUTTON"
+alignment = 0

@@ -155,5 +155,182 @@ msgstr ""
 msgid "GENERIC_MENU__SAVE_BUTTON"
 msgstr ""
 
+msgid "MAIN_MENU__MULTIPLAYER_BUTTON"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__TITLE"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+msgstr ""
+
+msgid "MULTIPLAYER_MENU__CONNECT_BUTTON"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__TITLE"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__PORT"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__SAVE_NAME"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__DEDICATED"
+msgstr ""
+
+msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__TITLE"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__PORT"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__SEARCH_PLACEHOLDER"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__DEDICATED"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__CREATE_BUTTON"
+msgstr ""
+
+msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__TITLE"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__ADD_SERVER_TITLE"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__HOST"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__HOST_PLACEHOLDER"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__PORT"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__LABEL"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__LABEL_PLACEHOLDER"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__ADD_BUTTON"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__REMOVE_BUTTON"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__DIRECT_CONNECT_TITLE"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__DIRECT_HOST_PLACEHOLDER"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__CONNECT_BUTTON"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__HOSTNAME_EMPTY_ERROR"
+msgstr ""
+
+msgid "SERVER_LIST_MENU__ALREADY_EXISTS_ERROR"
+msgstr ""
+
+msgid "GENERIC_MENU__BACK_BUTTON"
+msgstr ""
+
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
+msgstr ""
+
+msgid "SETTING_MENU__MASTER_VOLUME"
+msgstr ""
+
+msgid "SETTING_MENU__MASTER_VOLUME_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__SOUNDS_VOLUME"
+msgstr ""
+
+msgid "SETTING_MENU__SOUNDS_VOLUME_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__MUSIC_VOLUME"
+msgstr ""
+
+msgid "SETTING_MENU__MUSIC_VOLUME_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__FULLSCREEN"
+msgstr ""
+
+msgid "SETTING_MENU__FULLSCREEN_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__RESOLUTION"
+msgstr ""
+
+msgid "SETTING_MENU__RESOLUTION_HINT"
+msgstr ""
+
+msgid "SETTING_MENU__INTERFACE_SIZE"
+msgstr ""
+
+msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
+msgstr ""
+
+msgid "PLAYER_SETTINGS_MENU__TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__PLAYER_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__CONTROLS_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__INTERFACE_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__GRAPHICS_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__AUDIO_BUTTON"
+msgstr ""
+
+msgid "SETTINGS_HUB__PLAYER_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__CONTROLS_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__INTERFACE_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__GRAPHICS_TITLE"
+msgstr ""
+
+msgid "SETTINGS_HUB__AUDIO_TITLE"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__UNSAVED_CHANGES"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__RESET_BUTTON"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__BACK_BUTTON"
+msgstr ""
+
+msgid "CONFIRM_DIALOG__CONTINUE_BUTTON"
 msgstr ""

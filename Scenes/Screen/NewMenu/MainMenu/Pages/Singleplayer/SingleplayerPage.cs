@@ -70,7 +70,7 @@ public partial class SingleplayerPage : MainMenuPage
         string saveFileName = String.IsNullOrWhiteSpace(SaveNameLineEdit.Text)
             ? Services.SaveLoad.GenNewSaveFileName()
             : SaveNameLineEdit.Text.Trim();
-        Services.MainScene.StartSingleplayerGame(saveFileName);
+        TryStartGame(() => Services.MainScene.StartSingleplayerGame(saveFileName));
     }
     
     private void OnCancel()

@@ -159,5 +159,182 @@ msgstr "Cancel"
 msgid "GENERIC_MENU__SAVE_BUTTON"
 msgstr "Save"
 
+msgid "MAIN_MENU__MULTIPLAYER_BUTTON"
+msgstr "Multiplayer"
+
+msgid "MULTIPLAYER_MENU__TITLE"
+msgstr "Multiplayer"
+
+msgid "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+msgstr "Create new game"
+
+msgid "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+msgstr "Create from save"
+
+msgid "MULTIPLAYER_MENU__CONNECT_BUTTON"
+msgstr "Connect to server"
+
+msgid "CREATE_SERVER_MENU__TITLE"
+msgstr "Create Server"
+
+msgid "CREATE_SERVER_MENU__PORT"
+msgstr "Port:"
+
+msgid "CREATE_SERVER_MENU__SAVE_NAME"
+msgstr "Save Name:"
+
+msgid "CREATE_SERVER_MENU__DEDICATED"
+msgstr "Dedicated?"
+
+msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
+msgstr "Create server"
+
+msgid "CREATE_SAVED_SERVER_MENU__TITLE"
+msgstr "Create Server from Save"
+
+msgid "CREATE_SAVED_SERVER_MENU__PORT"
+msgstr "Port:"
+
+msgid "CREATE_SAVED_SERVER_MENU__SEARCH_PLACEHOLDER"
+msgstr "Search saves..."
+
+msgid "CREATE_SAVED_SERVER_MENU__DEDICATED"
+msgstr "Dedicated?"
+
+msgid "CREATE_SAVED_SERVER_MENU__CREATE_BUTTON"
+msgstr "Create server"
+
+msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
+msgstr "Select a save file first"
+
+msgid "SERVER_LIST_MENU__TITLE"
+msgstr "Connect to Server"
+
+msgid "SERVER_LIST_MENU__ADD_SERVER_TITLE"
+msgstr "Add server"
+
+msgid "SERVER_LIST_MENU__HOST"
+msgstr "Host:"
+
+msgid "SERVER_LIST_MENU__HOST_PLACEHOLDER"
+msgstr "host name or IP"
+
+msgid "SERVER_LIST_MENU__PORT"
+msgstr "Port:"
+
+msgid "SERVER_LIST_MENU__LABEL"
+msgstr "Label:"
+
+msgid "SERVER_LIST_MENU__LABEL_PLACEHOLDER"
+msgstr "optional label"
+
+msgid "SERVER_LIST_MENU__ADD_BUTTON"
+msgstr "Add"
+
+msgid "SERVER_LIST_MENU__REMOVE_BUTTON"
+msgstr "Remove"
+
+msgid "SERVER_LIST_MENU__DIRECT_CONNECT_TITLE"
+msgstr "Direct connect"
+
+msgid "SERVER_LIST_MENU__DIRECT_HOST_PLACEHOLDER"
+msgstr "host:port"
+
+msgid "SERVER_LIST_MENU__CONNECT_BUTTON"
+msgstr "Connect"
+
+msgid "SERVER_LIST_MENU__HOSTNAME_EMPTY_ERROR"
+msgstr "Enter a host name"
+
+msgid "SERVER_LIST_MENU__ALREADY_EXISTS_ERROR"
+msgstr "This server is already in the list"
+
+msgid "GENERIC_MENU__BACK_BUTTON"
+msgstr "Back"
+
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr "Language"
+
+msgid "SETTING_MENU__MASTER_VOLUME"
+msgstr "Master volume:"
+
+msgid "SETTING_MENU__MASTER_VOLUME_HINT"
+msgstr "Master volume for all audio"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME"
+msgstr "Sounds volume:"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME_HINT"
+msgstr "Volume of gameplay sound effects"
+
+msgid "SETTING_MENU__MUSIC_VOLUME"
+msgstr "Music volume:"
+
+msgid "SETTING_MENU__MUSIC_VOLUME_HINT"
+msgstr "Volume of background music"
+
+msgid "SETTING_MENU__FULLSCREEN"
+msgstr "Fullscreen:"
+
+msgid "SETTING_MENU__FULLSCREEN_HINT"
+msgstr "Run the game in fullscreen"
+
+msgid "SETTING_MENU__RESOLUTION"
+msgstr "Resolution:"
+
+msgid "SETTING_MENU__RESOLUTION_HINT"
+msgstr "Screen resolution (windowed mode)"
+
+msgid "SETTING_MENU__INTERFACE_SIZE"
+msgstr "Interface size:"
+
+msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
+msgstr "Scale of UI elements"
+
+msgid "PLAYER_SETTINGS_MENU__TITLE"
+msgstr "Player Settings"
+
+msgid "SETTINGS_HUB__TITLE"
+msgstr "Settings"
+
+msgid "SETTINGS_HUB__PLAYER_BUTTON"
+msgstr "Player"
+
+msgid "SETTINGS_HUB__CONTROLS_BUTTON"
+msgstr "Controls"
+
+msgid "SETTINGS_HUB__INTERFACE_BUTTON"
+msgstr "Interface"
+
+msgid "SETTINGS_HUB__GRAPHICS_BUTTON"
+msgstr "Graphics"
+
+msgid "SETTINGS_HUB__AUDIO_BUTTON"
+msgstr "Audio"
+
+msgid "SETTINGS_HUB__PLAYER_TITLE"
+msgstr "Player"
+
+msgid "SETTINGS_HUB__CONTROLS_TITLE"
+msgstr "Controls"
+
+msgid "SETTINGS_HUB__INTERFACE_TITLE"
+msgstr "Interface"
+
+msgid "SETTINGS_HUB__GRAPHICS_TITLE"
+msgstr "Graphics"
+
+msgid "SETTINGS_HUB__AUDIO_TITLE"
+msgstr "Audio"
+
+msgid "CONFIRM_DIALOG__UNSAVED_CHANGES"
+msgstr "You have unsaved changes."
+
+msgid "CONFIRM_DIALOG__RESET_BUTTON"
+msgstr "Reset changes"
+
+msgid "CONFIRM_DIALOG__BACK_BUTTON"
+msgstr "Back"
+
+msgid "CONFIRM_DIALOG__CONTINUE_BUTTON"
+msgstr "Continue"

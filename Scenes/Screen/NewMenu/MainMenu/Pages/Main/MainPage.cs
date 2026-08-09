@@ -8,8 +8,7 @@ public partial class MainPage : MainMenuPage
 {
 	[Child] public Button ResumeButton { get; private set; }
 	[Child] public Button StartSingleplayerButton { get; private set; }
-	[Child] public Button CreateServerButton { get; private set; }
-	[Child] public Button ConnectToServerButton { get; private set; }
+	[Child] public Button MultiplayerButton { get; private set; }
 	[Child] public Button SettingsButton { get; private set; }
 	[Child] public Button LanguageButton { get; private set; }
 	[Child] public Button QuitButton { get; private set; }
@@ -24,9 +23,8 @@ public partial class MainPage : MainMenuPage
 		Di.Process(this);
 		ResumeButton.Pressed += () => Services.LastGame.StartLastGame();
 		StartSingleplayerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SingleplayerPage));
-		CreateServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.CreateServerPageScene));
-		ConnectToServerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.ConnectionPageScene));
-		SettingsButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SettingsPageScene));
+			MultiplayerButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.MultiplayerPageScene));
+		SettingsButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.SettingsHubPageScene));
 		LanguageButton.Pressed += () => GoNext(PagesProvider.PreparePage(PagesProvider.LanguageSelectionPageScene));
 		QuitButton.Pressed += () => Services.MainScene.Shutdown();
 

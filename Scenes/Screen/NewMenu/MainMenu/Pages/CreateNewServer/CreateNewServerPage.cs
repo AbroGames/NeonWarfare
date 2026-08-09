@@ -2,12 +2,12 @@ using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Host;
+namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.CreateNewServer;
 
-public partial class HostPage : MainMenuPage
+public partial class CreateNewServerPage : MainMenuPage
 {
     [Child] public SpinBox PortSpinBox { get; private set; }
-    [Child] public TextEdit SaveNameTextEdit { get; private set; }
+    [Child] public LineEdit SaveNameLineEdit { get; private set; }
     [Child] public CheckButton IsDedicatedCheckButton { get; private set; }
     [Child] public Button CreateServerButton { get; private set; }
     [Child] public Button CancelButton { get; private set; }
@@ -18,17 +18,17 @@ public partial class HostPage : MainMenuPage
         CreateServerButton.Pressed += ParseAndStartServer;
         CancelButton.Pressed += () => GoBack();
         PortSpinBox.Value = Consts.DefaultPort;
-        SaveNameTextEdit.Text = String.Empty;
+        SaveNameLineEdit.Text = Services.SaveLoad.GenNewSaveFileName();
         IsDedicatedCheckButton.ButtonPressed = false;
     }
-    
+
     private void ParseAndStartServer()
     {
         int port = (int) PortSpinBox.Value;
-        string saveFileName = String.IsNullOrWhiteSpace(SaveNameTextEdit.Text)
+        string saveFileName = String.IsNullOrWhiteSpace(SaveNameLineEdit.Text)
             ? Services.SaveLoad.GenNewSaveFileName()
-            : SaveNameTextEdit.Text.Trim();
+            : SaveNameLineEdit.Text.Trim();
         bool isDedicated = IsDedicatedCheckButton.ButtonPressed;
-        Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated);
+        TryStartGame(() => Services.MainScene.HostMultiplayerGameAsClient(saveFileName, port, isDedicated));
     }
 }

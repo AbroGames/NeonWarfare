@@ -160,5 +160,182 @@ msgstr "Отмена"
 msgid "GENERIC_MENU__SAVE_BUTTON"
 msgstr "Сохранить"
 
+msgid "MAIN_MENU__MULTIPLAYER_BUTTON"
+msgstr "Игра по сети"
+
+msgid "MULTIPLAYER_MENU__TITLE"
+msgstr "Игра по сети"
+
+msgid "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+msgstr "Создать новую игру"
+
+msgid "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+msgstr "Создать из сохранения"
+
+msgid "MULTIPLAYER_MENU__CONNECT_BUTTON"
+msgstr "Подключиться к серверу"
+
+msgid "CREATE_SERVER_MENU__TITLE"
+msgstr "Создать сервер"
+
+msgid "CREATE_SERVER_MENU__PORT"
+msgstr "Порт:"
+
+msgid "CREATE_SERVER_MENU__SAVE_NAME"
+msgstr "Имя сохранения:"
+
+msgid "CREATE_SERVER_MENU__DEDICATED"
+msgstr "Выделенный?"
+
+msgid "CREATE_SERVER_MENU__CREATE_BUTTON"
+msgstr "Создать сервер"
+
+msgid "CREATE_SAVED_SERVER_MENU__TITLE"
+msgstr "Создать сервер из сохранения"
+
+msgid "CREATE_SAVED_SERVER_MENU__PORT"
+msgstr "Порт:"
+
+msgid "CREATE_SAVED_SERVER_MENU__SEARCH_PLACEHOLDER"
+msgstr "Поиск сохранений..."
+
+msgid "CREATE_SAVED_SERVER_MENU__DEDICATED"
+msgstr "Выделенный?"
+
+msgid "CREATE_SAVED_SERVER_MENU__CREATE_BUTTON"
+msgstr "Создать сервер"
+
+msgid "CREATE_SAVED_SERVER_MENU__NO_SAVE_SELECTED_ERROR"
+msgstr "Сначала выберите сохранение"
+
+msgid "SERVER_LIST_MENU__TITLE"
+msgstr "Подключение к серверу"
+
+msgid "SERVER_LIST_MENU__ADD_SERVER_TITLE"
+msgstr "Добавить сервер"
+
+msgid "SERVER_LIST_MENU__HOST"
+msgstr "Хост:"
+
+msgid "SERVER_LIST_MENU__HOST_PLACEHOLDER"
+msgstr "имя хоста или IP"
+
+msgid "SERVER_LIST_MENU__PORT"
+msgstr "Порт:"
+
+msgid "SERVER_LIST_MENU__LABEL"
+msgstr "Метка:"
+
+msgid "SERVER_LIST_MENU__LABEL_PLACEHOLDER"
+msgstr "необязательная метка"
+
+msgid "SERVER_LIST_MENU__ADD_BUTTON"
+msgstr "Добавить"
+
+msgid "SERVER_LIST_MENU__REMOVE_BUTTON"
+msgstr "Удалить"
+
+msgid "SERVER_LIST_MENU__DIRECT_CONNECT_TITLE"
+msgstr "Прямое подключение"
+
+msgid "SERVER_LIST_MENU__DIRECT_HOST_PLACEHOLDER"
+msgstr "хост:порт"
+
+msgid "SERVER_LIST_MENU__CONNECT_BUTTON"
+msgstr "Подключиться"
+
+msgid "SERVER_LIST_MENU__HOSTNAME_EMPTY_ERROR"
+msgstr "Введите имя хоста"
+
+msgid "SERVER_LIST_MENU__ALREADY_EXISTS_ERROR"
+msgstr "Этот сервер уже в списке"
+
+msgid "GENERIC_MENU__BACK_BUTTON"
+msgstr "Назад"
+
 msgid "LANGUAGE_SELECTION_MENU__TITLE"
 msgstr "Язык"
+
+msgid "SETTING_MENU__MASTER_VOLUME"
+msgstr "Общая громкость:"
+
+msgid "SETTING_MENU__MASTER_VOLUME_HINT"
+msgstr "Общая громкость всего звука"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME"
+msgstr "Громкость звуков:"
+
+msgid "SETTING_MENU__SOUNDS_VOLUME_HINT"
+msgstr "Громкость звуковых эффектов"
+
+msgid "SETTING_MENU__MUSIC_VOLUME"
+msgstr "Громкость музыки:"
+
+msgid "SETTING_MENU__MUSIC_VOLUME_HINT"
+msgstr "Громкость фоновой музыки"
+
+msgid "SETTING_MENU__FULLSCREEN"
+msgstr "Полноэкранный режим:"
+
+msgid "SETTING_MENU__FULLSCREEN_HINT"
+msgstr "Запускать игру в полноэкранном режиме"
+
+msgid "SETTING_MENU__RESOLUTION"
+msgstr "Разрешение:"
+
+msgid "SETTING_MENU__RESOLUTION_HINT"
+msgstr "Разрешение экрана (оконный режим)"
+
+msgid "SETTING_MENU__INTERFACE_SIZE"
+msgstr "Размер интерфейса:"
+
+msgid "SETTING_MENU__INTERFACE_SIZE_HINT"
+msgstr "Масштаб элементов интерфейса"
+
+msgid "PLAYER_SETTINGS_MENU__TITLE"
+msgstr "Настройки игрока"
+
+msgid "SETTINGS_HUB__TITLE"
+msgstr "Настройки"
+
+msgid "SETTINGS_HUB__PLAYER_BUTTON"
+msgstr "Игрок"
+
+msgid "SETTINGS_HUB__CONTROLS_BUTTON"
+msgstr "Управление"
+
+msgid "SETTINGS_HUB__INTERFACE_BUTTON"
+msgstr "Интерфейс"
+
+msgid "SETTINGS_HUB__GRAPHICS_BUTTON"
+msgstr "Графика"
+
+msgid "SETTINGS_HUB__AUDIO_BUTTON"
+msgstr "Аудио"
+
+msgid "SETTINGS_HUB__PLAYER_TITLE"
+msgstr "Игрок"
+
+msgid "SETTINGS_HUB__CONTROLS_TITLE"
+msgstr "Управление"
+
+msgid "SETTINGS_HUB__INTERFACE_TITLE"
+msgstr "Интерфейс"
+
+msgid "SETTINGS_HUB__GRAPHICS_TITLE"
+msgstr "Графика"
+
+msgid "SETTINGS_HUB__AUDIO_TITLE"
+msgstr "Аудио"
+
+msgid "CONFIRM_DIALOG__UNSAVED_CHANGES"
+msgstr "У вас есть несохранённые изменения."
+
+msgid "CONFIRM_DIALOG__RESET_BUTTON"
+msgstr "Сбросить изменения"
+
+msgid "CONFIRM_DIALOG__BACK_BUTTON"
+msgstr "Назад"
+
+msgid "CONFIRM_DIALOG__CONTINUE_BUTTON"
+msgstr "Продолжить"

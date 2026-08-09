@@ -1,24 +1,33 @@
-[gd_scene format=3 uid="uid://bc3xvgd0paknf"]
+[gd_scene load_steps=20 format=3 uid="uid://bc3xvgd0paknf"]
 
 [ext_resource type="Script" uid="uid://b5p8c2fb5xtas" path="res://Scenes/Screen/NewMenu/MainMenu/MainMenu.cs" id="1_likqx"]
 [ext_resource type="Script" uid="uid://cgchw5t35wpjr" path="res://Scenes/Screen/NewMenu/MainMenu/PagesProvider.cs" id="2_l4fos"]
 [ext_resource type="PackedScene" uid="uid://t53rgkpwod2e" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Main/MainPage.tscn" id="3_lc56h"]
 [ext_resource type="Script" uid="uid://n1ar1rq25s70" path="res://Scenes/Screen/NewMenu/PagesSystem/PageContainer.cs" id="4_likqx"]
-[ext_resource type="PackedScene" uid="uid://cu0ciyqyf0m7d" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Host/HostPage.tscn" id="5_36rd5"]
-[ext_resource type="PackedScene" uid="uid://mifj75iiskji" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Settings/SettingsPage.tscn" id="5_h4gti"]
-[ext_resource type="PackedScene" uid="uid://bk5pn3b7flte1" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Connect/ConnectPage.tscn" id="5_lc56h"]
+[ext_resource type="PackedScene" uid="uid://cqntxk7b4y5mr1" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/ServerList/ServerListPage.tscn" id="5_lc56h"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/SettingsHub/SettingsHubPage.tscn" id="6_shub"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/SettingsCategory/SettingsCategoryPage.tscn" id="7_scat"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/ConfirmDialog/ConfirmDialogPage.tscn" id="8_cdlg"]
 [ext_resource type="PackedScene" uid="uid://cd5qyq67teome" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/LanguageSelection/LanguageSelectionPage.tscn" id="8_3biw6"]
 [ext_resource type="PackedScene" uid="uid://le67pdyqucqu" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Message/MessagePage.tscn" id="8_6kuw2"]
 [ext_resource type="PackedScene" uid="uid://dvjv8ekp6q4c2" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Singleplayer/SingleplayerPage.tscn" id="9_8wwjd"]
+[ext_resource type="PackedScene" uid="uid://bxmwpf7r6enqh" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/Multiplayer/MultiplayerPage.tscn" id="10_mpage"]
+[ext_resource type="PackedScene" uid="uid://cqntxk7b4y5mr" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/CreateNewServer/CreateNewServerPage.tscn" id="11_cnsp"]
+[ext_resource type="PackedScene" uid="uid://cjdt8efhr6qka" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/CreateSavedServer/CreateSavedServerPage.tscn" id="12_cssp"]
+[ext_resource type="PackedScene" uid="uid://c7qmprn3t5kxf" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/PlayerSettings/PlayerSettingsPage.tscn" id="13_pspage"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/Background3D.cs" id="14_bg3d"]
+[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorContainer.cs" id="15_ccor"]
+[ext_resource type="PackedScene" path="res://Scenes/Screen/NewMenu/MainMenu/Background/CorridorSegment3D.tscn" id="16_cseg"]
+[ext_resource type="Material" path="res://Assets/Materials/MainMenuWallMaterial.tres" id="17_wall"]
 
-[sub_resource type="Gradient" id="Gradient_gu8fo"]
-offsets = PackedFloat32Array(0, 0.55108696)
-colors = PackedColorArray(0.00014435916, 0.010876166, 0.1461932, 1, 0, 0, 0, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_h4gti"]
-gradient = SubResource("Gradient_gu8fo")
-fill_from = Vector2(0.4974359, 0)
-fill_to = Vector2(0.50769234, 1)
+[sub_resource type="Environment" id="Environment_corridor"]
+background_mode = 2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0, 0, 0, 1)
+fog_density = 1.0
+fog_depth_begin = 0.0
+fog_depth_end = 15.0
 
 [node name="MainMenu" type="Node" unique_id=910496385]
 script = ExtResource("1_likqx")
@@ -26,20 +35,68 @@ script = ExtResource("1_likqx")
 [node name="PagesProvider" type="Node" parent="." unique_id=494853123]
 script = ExtResource("2_l4fos")
 MainPageScene = ExtResource("3_lc56h")
-SettingsPageScene = ExtResource("5_h4gti")
-ConnectionPageScene = ExtResource("5_lc56h")
-CreateServerPageScene = ExtResource("5_36rd5")
+ServerListPageScene = ExtResource("5_lc56h")
 MessagePageScene = ExtResource("8_6kuw2")
 LanguageSelectionPageScene = ExtResource("8_3biw6")
 SingleplayerPage = ExtResource("9_8wwjd")
+MultiplayerPageScene = ExtResource("10_mpage")
+CreateNewServerPageScene = ExtResource("11_cnsp")
+CreateSavedServerPageScene = ExtResource("12_cssp")
+PlayerSettingsPageScene = ExtResource("13_pspage")
+SettingsHubPageScene = ExtResource("6_shub")
+SettingsCategoryPageScene = ExtResource("7_scat")
+ConfirmDialogPageScene = ExtResource("8_cdlg")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=613968459]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("GradientTexture2D_h4gti")
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+msaa_3d = 3
+screen_space_aa = 1
+use_debanding = true
+mesh_lod_threshold = 0.0
+render_target_update_mode = 4
+
+[node name="Background3D" type="Node3D" parent="SubViewportContainer/SubViewport" node_paths=PackedStringArray("_light")]
+script = ExtResource("14_bg3d")
+_light = NodePath("OmniLight3D")
+_material = ExtResource("17_wall")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="SubViewportContainer/SubViewport/Background3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 8)
+light_energy = 16.0
+distance_fade_begin = 0.0
+distance_fade_length = 0.0
+omni_range = 9.326
+omni_attenuation = -1.717
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/Background3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+projection = 2
+current = true
+fov = 85.0
+near = 0.583
+
+[node name="CorridorContainer" type="Node3D" parent="SubViewportContainer/SubViewport/Background3D"]
+script = ExtResource("15_ccor")
+_corridorSegmentScene = ExtResource("16_cseg")
+
+[node name="CorridorSegment2" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("16_cseg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+
+[node name="CorridorSegment" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("16_cseg")]
+
+[node name="CorridorSegment3" parent="SubViewportContainer/SubViewport/Background3D/CorridorContainer" instance=ExtResource("16_cseg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport/Background3D"]
+environment = SubResource("Environment_corridor")
 
 [node name="Control" type="Control" parent="." unique_id=1988893568]
 layout_mode = 3
