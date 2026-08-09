@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://cqntxk7b4y5mr"]
 
-[ext_resource type="Script" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/CreateNewServer/CreateNewServerPage.cs" id="1_cnsp"]
+[ext_resource type="Script" uid="uid://t6gw1mvxstw8" path="res://Scenes/Screen/NewMenu/MainMenu/Pages/CreateNewServer/CreateNewServerPage.cs" id="1_cnsp"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_title"]
 font_size = 32
 
-[node name="CreateNewServerPage" type="Control"]
+[node name="CreateNewServerPage" type="Control" unique_id=159818755]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_cnsp")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=568088775]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,44 +26,44 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=560342374]
 custom_minimum_size = Vector2(850, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/PanelContainer" unique_id=1101809986]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer" unique_id=979883916]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1154349408]
 layout_mode = 2
 text = "CREATE_SERVER_MENU__TITLE"
 label_settings = SubResource("LabelSettings_title")
 horizontal_alignment = 1
 
-[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1502712057]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="InputsContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="InputsContainer" type="VBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=895297265]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="PortContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer"]
+[node name="PortContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=223976800]
 layout_mode = 2
 
-[node name="PortLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer"]
+[node name="PortLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1788219485]
 layout_mode = 2
 text = "CREATE_SERVER_MENU__PORT"
 
-[node name="PortSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer"]
+[node name="PortSpinBox" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/PortContainer" unique_id=1590786796]
 layout_mode = 2
 min_value = 1024.0
 max_value = 65535.0
@@ -71,37 +71,37 @@ value = 25566.0
 custom_arrow_step = 1.0
 custom_arrow_round = true
 
-[node name="SaveNameContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer"]
+[node name="SaveNameContainer" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=319040234]
 layout_mode = 2
 
-[node name="SaveNameLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer"]
+[node name="SaveNameLabel" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer" unique_id=1476915060]
 layout_mode = 2
 text = "CREATE_SERVER_MENU__SAVE_NAME"
 
-[node name="SaveNameLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer"]
+[node name="SaveNameLineEdit" type="LineEdit" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/SaveNameContainer" unique_id=1302451538]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="IsDedicatedCheckButton" type="CheckButton" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer"]
+[node name="IsDedicatedCheckButton" type="CheckButton" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=197850604]
 layout_mode = 2
 text = "CREATE_SERVER_MENU__DEDICATED"
 
-[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer"]
+[node name="Separator" type="Control" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=411090228]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer"]
+[node name="Buttons" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer" unique_id=567319452]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="CreateServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons"]
+[node name="CreateServerButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=822812600]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 text = "CREATE_SERVER_MENU__CREATE_BUTTON"
 
-[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons"]
+[node name="CancelButton" type="Button" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/InputsContainer/Buttons" unique_id=1818751348]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 text = "GENERIC_MENU__CANCEL_BUTTON"
