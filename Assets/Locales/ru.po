@@ -10,9 +10,6 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-msgid "MAIN_MENU__START_LAST_GAME_BUTTON"
-msgstr "Возобновить последнюю игру"
-
 msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 msgstr "Одиночная игра"
 
@@ -130,17 +127,14 @@ msgstr "Тест 3"
 msgid "HUD__LOG_BUTTON"
 msgstr "Лог"
 
-msgid "LOADING_SCREEN__LOADING"
-msgstr "Загрузка"
-
 msgid "LOADING_SCREEN__CONNECTING"
 msgstr "Подключение к серверу"
 
+msgid "LOADING_SCREEN__LOADING"
+msgstr "Загрузка"
+
 msgid "LOADING_SCREEN__WAITING_SYNCING"
 msgstr "Ожидаение окончания синхронизации"
-
-msgid "MAIN_MENU__TITLE"
-msgstr "Главное меню"
 
 msgid "SINGLEPLAYER_MENU__TITLE"
 msgstr "Одиночная игра"

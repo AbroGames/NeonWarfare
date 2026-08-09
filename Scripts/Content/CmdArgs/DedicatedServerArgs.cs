@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using KludgeBox.Core;
 
 namespace NeonWarfare.Scripts.Content.CmdArgs;
 
@@ -22,7 +23,7 @@ public readonly record struct DedicatedServerArgs(
     public static readonly string NoHudParam = "--no-hud";
     public static readonly string WorldRenderParam = "--world-render";
     
-    public static DedicatedServerArgs GetFromCmd(KludgeBox.Core.CmdArgsService argsService)
+    public static DedicatedServerArgs GetFromCmd(CmdArgsService argsService)
     {
         return new DedicatedServerArgs(
             CommonArgs.GetFromCmd(argsService),

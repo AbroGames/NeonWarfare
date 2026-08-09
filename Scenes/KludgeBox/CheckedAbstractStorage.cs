@@ -7,7 +7,7 @@ namespace NeonWarfare.Scenes.KludgeBox;
 /// <br/>
 /// <b>You must add [NotNull] to every field that requires validation.</b>
 /// </summary>
-public abstract partial class CheckedAbstractStorage : global::KludgeBox.Godot.Nodes.CheckedAbstractStorage
+public abstract partial class CheckedAbstractStorage : Scripts.KludgeBox.Godot.Nodes.CheckedAbstractStorage
 {
     public override DependencyInjector GetDi()
     {

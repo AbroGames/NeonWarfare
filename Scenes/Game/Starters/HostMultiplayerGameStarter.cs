@@ -1,8 +1,8 @@
 ﻿using Godot;
 using Humanizer;
-using KludgeBox.Godot.Nodes.Process;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.Service.ResumableGame;
+using ProcessDeadChecker = NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Process.ProcessDeadChecker;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
@@ -18,6 +18,7 @@ public class HostMultiplayerGameStarter(
     ) : BaseGameStarter
 {
     
+    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string HostingFailedMessage = "Failed to start server: {0}";
     
     public override void Init(Game game)

@@ -12,6 +12,7 @@ namespace NeonWarfare.Scenes.World.Service;
 public partial class WorldDataSaveLoadService : Node
 {
     
+    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string SaveFilenameMustBeNotEmptyErrorMessage = "Filename for saving must be not empty";
     private const string NotRightsForSaveErrorMessage = "You don't have the rights for saving";
 

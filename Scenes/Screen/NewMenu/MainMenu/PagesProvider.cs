@@ -2,6 +2,7 @@ using System;
 using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
 using NeonWarfare.Scenes.KludgeBox;
+using NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Message;
 
 namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
 
@@ -20,9 +21,9 @@ public partial class PagesProvider : CheckedAbstractStorage
 	[Export] [NotNull] public PackedScene SettingsCategoryPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene ConfirmDialogPageScene { get; private set; }
 	
-	public Pages.Message.MessagePage PrepareMessagePage(string message)
+	public MessagePage PrepareMessagePage(string message)
 	{
-		var page = MessagePageScene.Instantiate<Pages.Message.MessagePage>().WithAvailablePages(this);
+		var page = MessagePageScene.Instantiate<MessagePage>().WithAvailablePages(this);
 		page.MessageLabel.Text = message;
 		return page;
 	}

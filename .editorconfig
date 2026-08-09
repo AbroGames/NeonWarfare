@@ -4,3 +4,8 @@ root = true
 charset = utf-8
 end_of_line = lf
 max_line_length = 120
+
+[*.md]
+charset = utf-8
+end_of_line = lf
+max_line_length = 120

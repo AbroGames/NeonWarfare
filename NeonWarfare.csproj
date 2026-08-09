@@ -5,9 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="KludgeBox" Version="3.3.3" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="MessagePack" Version="3.1.4" />
+        <PackageReference Include="KludgeBox" Version="4.0.0" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageReference Include="MessagePack" Version="3.1.8" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -25,6 +25,20 @@
     </Target>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="/" />
+        <None Include="README.md" />
+        <None Include="Docs/**/*" />
+        <None Include="Assets/**/*" />
+        <None Include="Properties/launchSettings.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- The project directory is the repository root, so the default Godot.NET.Sdk glob
+             (**/*.cs) also picks up Tests/**. Without this the game assembly would try to compile
+             the test sources and fail on xUnit types it does not reference. Tests are built by
+             Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj instead. -->
+        <Compile Remove="Tests/**" />
+        <!-- Same glob puts Tests/** (including its bin/obj) into None, cluttering the file tree in
+             Rider next to the Assets/** and Docs/** items included above on purpose. -->
+        <None Remove="Tests/**" />
     </ItemGroup>
 </Project>

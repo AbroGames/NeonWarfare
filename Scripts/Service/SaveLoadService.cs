@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
+using FileAccess = Godot.FileAccess;
 
 namespace NeonWarfare.Scripts.Service;
 
@@ -43,7 +45,7 @@ public class SaveLoadService
         return DirAccess.GetFilesAt(SaveDirPath)
             .Where(filename => filename.EndsWith(SaveExtension))
             .Select(filename => new SaveFileInfo(
-                FileName: System.IO.Path.GetFileNameWithoutExtension(filename),
+                FileName: Path.GetFileNameWithoutExtension(filename),
                 ModifiedTime: FileAccess.GetModifiedTime(SaveDirPath + filename)))
             .OrderByDescending(file => file.ModifiedTime)
             .ToList();

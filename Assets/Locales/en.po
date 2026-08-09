@@ -9,9 +9,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "MAIN_MENU__START_LAST_GAME_BUTTON"
-msgstr "Resume last game"
-
 msgid "MAIN_MENU__START_SINGLEPLAYER_BUTTON"
 msgstr "Start singleplayer"
 
@@ -137,9 +134,6 @@ msgstr "Loading"
 
 msgid "LOADING_SCREEN__WAITING_SYNCING"
 msgstr "Wait for the synchronization ends"
-
-msgid "MAIN_MENU__TITLE"
-msgstr "Main Menu"
 
 msgid "SINGLEPLAYER_MENU__TITLE"
 msgstr "Singleplayer"
