@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://baeir4xp6kjyd"]
 
-[ext_resource type="Script" uid="uid://c585x32ntemdo" path="res://Src/NeonWarfare/Scenes/World/Service/MpSpawn/WorldMultiplayerSpawner.cs" id="1_0kghw"]
+[ext_resource type="Script" uid="uid://c585x32ntemdo" path="res://Src/NeonWarfare/Scenes/World/Services/MpSpawn/WorldMultiplayerSpawner.cs" id="1_0kghw"]
 [ext_resource type="PackedScene" uid="uid://ba3apeajydxl6" path="res://Src/NeonWarfare/Scenes/World/Scenes/SyncedScenes/SyncedPackedScenes.tscn" id="2_gcmmx"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_4q7u0"]
