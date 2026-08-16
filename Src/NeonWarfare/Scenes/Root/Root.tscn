@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bjyux48ai45ry"]
 
 [ext_resource type="Script" uid="uid://b32mf7xxe450a" path="res://Src/NeonWarfare/Scenes/Root/Root.cs" id="1_66vvw"]
-[ext_resource type="Script" uid="uid://bxa7yaqut8dr7" path="res://Src/GodotBox/NodeContainer.cs" id="2_3ssen"]
+[ext_resource type="Script" uid="uid://bvetxe7dt4af2" path="res://Src/GodotBox/Godot/Nodes/NodeContainer.cs" id="2_3ssen"]
 [ext_resource type="Script" uid="uid://c286ld13u04i3" path="res://Src/NeonWarfare/Scenes/Root/RootPackedScenes.cs" id="3_rt2b8"]
 [ext_resource type="PackedScene" uid="uid://7yywjdawo4yu" path="res://Src/NeonWarfare/Scenes/Game/Game.tscn" id="4_0qtfh"]
 [ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Src/NeonWarfare/Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="5_0qtfh"]
