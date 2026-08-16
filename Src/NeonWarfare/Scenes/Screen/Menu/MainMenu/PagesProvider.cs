@@ -6,10 +6,11 @@ using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.ConfirmDialog;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Message;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.PlayerSettings;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.SettingsCategory;
+using GameCheckedAbstractStorage = NeonWarfare.Scenes.Misc.GameCheckedAbstractStorage;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu;
 
-public partial class PagesProvider : CheckedAbstractStorage
+public partial class PagesProvider : GameCheckedAbstractStorage
 {
 	[Export] [NotNull] public PackedScene MainPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene ServerListPageScene { get; private set; }

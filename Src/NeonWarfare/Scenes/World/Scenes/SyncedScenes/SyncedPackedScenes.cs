@@ -1,10 +1,11 @@
 using Godot;
 using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
+using GameCheckedAbstractStorage = NeonWarfare.Scenes.Misc.GameCheckedAbstractStorage;
 
 namespace NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 
-public partial class SyncedPackedScenes : CheckedAbstractStorage
+public partial class SyncedPackedScenes : GameCheckedAbstractStorage
 {
     
     [ExportGroup("Surfaces")]
