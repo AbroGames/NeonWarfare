@@ -2,6 +2,7 @@ using KludgeBox.DI;
 
 namespace GodotBox;
 
+// TODO: an we get rid of this class?
 /// <summary>
 /// Storage with auto calling <c>Di.Process(this)</c>.<br/>
 /// <br/>

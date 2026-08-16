@@ -1,5 +1,6 @@
 using Godot;
 using GodotBox;
+using GodotBox.Godot.Nodes;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
