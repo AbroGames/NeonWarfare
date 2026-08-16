@@ -1,0 +1,115 @@
+[gd_scene format=3 uid="uid://bxmwpf7r6enqh"]
+
+[ext_resource type="Script" uid="uid://ccfyjx6i7jogq" path="res://Src/NeonWarfare/Scenes/Screen/Menu/MainMenu/Pages/Multiplayer/MultiplayerPage.cs" id="1_mpage"]
+[ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="2_title"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("2_title")
+font_size = 32
+outline_size = 3
+outline_color = Color(0, 0.647059, 0.647059, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
+content_margin_left = 48.0
+
+[sub_resource type="Gradient" id="Gradient_hover"]
+offsets = PackedFloat32Array(0, 0.5, 0.516393, 1)
+colors = PackedColorArray(0, 1, 1, 0, 0, 0.819608, 0.819608, 1, 1.92523e-06, 0.818315, 0.818315, 1, 0, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_hover"]
+gradient = SubResource("Gradient_hover")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hover"]
+content_margin_left = 48.0
+texture = SubResource("GradientTexture1D_hover")
+
+[node name="MultiplayerPage" type="Control" unique_id=343883908]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mpage")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2012767452]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 110
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=743377325]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1407072162]
+layout_mode = 2
+text = "MULTIPLAYER_MENU__TITLE"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Spacer" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1526878381]
+layout_mode = 2
+
+[node name="CreateNewServerButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=4460864]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "MULTIPLAYER_MENU__CREATE_NEW_BUTTON"
+alignment = 0
+
+[node name="CreateFromSaveButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=2127244242]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "MULTIPLAYER_MENU__CREATE_FROM_SAVE_BUTTON"
+alignment = 0
+
+[node name="ConnectButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1858401852]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "MULTIPLAYER_MENU__CONNECT_BUTTON"
+alignment = 0
+
+[node name="Spacer2" type="Label" parent="MarginContainer/VBoxContainer" unique_id=355544527]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1870049020]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "GENERIC_MENU__BACK_BUTTON"
+alignment = 0

@@ -1,0 +1,141 @@
+[gd_scene format=3 uid="uid://dtrv60xy5ise3"]
+
+[ext_resource type="Script" uid="uid://cpy8qmj0dowyv" path="res://Src/NeonWarfare/Scenes/Screen/Menu/MainMenu/Pages/SettingsHub/SettingsHubPage.cs" id="1_shub"]
+[ext_resource type="FontFile" uid="uid://bedcgaalmrgab" path="res://Assets/Fonts/Play-Bold.ttf" id="2_title"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = ExtResource("2_title")
+font_size = 32
+outline_size = 3
+outline_color = Color(0, 0.647059, 0.647059, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_normal"]
+content_margin_left = 48.0
+
+[sub_resource type="Gradient" id="Gradient_hover"]
+offsets = PackedFloat32Array(0, 0.5, 0.516393, 1)
+colors = PackedColorArray(0, 1, 1, 0, 0, 0.819608, 0.819608, 1, 1.92523e-06, 0.818315, 0.818315, 1, 0, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_hover"]
+gradient = SubResource("Gradient_hover")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hover"]
+content_margin_left = 48.0
+texture = SubResource("GradientTexture1D_hover")
+
+[node name="SettingsHubPage" type="Control" unique_id=914884925]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shub")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1684326181]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 110
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1625656836]
+custom_minimum_size = Vector2(450, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer" unique_id=821653919]
+layout_mode = 2
+text = "SETTINGS_HUB__TITLE"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Spacer" type="Label" parent="MarginContainer/VBoxContainer" unique_id=299632193]
+layout_mode = 2
+
+[node name="PlayerButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=801567047]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "SETTINGS_HUB__PLAYER_BUTTON"
+alignment = 0
+
+[node name="ControlsButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=968309499]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "SETTINGS_HUB__CONTROLS_BUTTON"
+alignment = 0
+
+[node name="InterfaceButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=967872889]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "SETTINGS_HUB__INTERFACE_BUTTON"
+alignment = 0
+
+[node name="GraphicsButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1207127313]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "SETTINGS_HUB__GRAPHICS_BUTTON"
+alignment = 0
+
+[node name="AudioButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=548452281]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "SETTINGS_HUB__AUDIO_BUTTON"
+alignment = 0
+
+[node name="Spacer2" type="Label" parent="MarginContainer/VBoxContainer" unique_id=810690490]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1706369476]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_title")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("StyleBoxEmpty_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+text = "GENERIC_MENU__BACK_BUTTON"
+alignment = 0

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bqwjclof66q86"]
-
-[ext_resource type="Script" uid="uid://dakx3g1m72j3w" path="res://Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs" id="1_i2cjj"]
-
-[node name="BattleSurface" type="Node2D"]
-script = ExtResource("1_i2cjj")

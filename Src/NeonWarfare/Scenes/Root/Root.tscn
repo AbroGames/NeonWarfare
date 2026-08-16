@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://bjyux48ai45ry"]
+
+[ext_resource type="Script" uid="uid://b32mf7xxe450a" path="res://Src/NeonWarfare/Scenes/Root/Root.cs" id="1_66vvw"]
+[ext_resource type="Script" uid="uid://bxa7yaqut8dr7" path="res://Src/GodotBox/NodeContainer.cs" id="2_3ssen"]
+[ext_resource type="Script" uid="uid://c286ld13u04i3" path="res://Src/NeonWarfare/Scenes/Root/RootPackedScenes.cs" id="3_rt2b8"]
+[ext_resource type="PackedScene" uid="uid://7yywjdawo4yu" path="res://Src/NeonWarfare/Scenes/Game/Game.tscn" id="4_0qtfh"]
+[ext_resource type="PackedScene" uid="uid://cuy77qqautv4t" path="res://Src/NeonWarfare/Scenes/Screen/LoadingScreen/LoadingScreen.tscn" id="5_0qtfh"]
+[ext_resource type="PackedScene" uid="uid://bc3xvgd0paknf" path="res://Src/NeonWarfare/Scenes/Screen/Menu/MainMenu/MainMenu.tscn" id="5_sawrf"]
+
+[node name="Root" type="Node2D" unique_id=561708531]
+script = ExtResource("1_66vvw")
+
+[node name="MainSceneContainer" type="Node2D" parent="." unique_id=1950065654]
+script = ExtResource("2_3ssen")
+
+[node name="LoadingScreenContainer" type="CanvasLayer" parent="." unique_id=351012228]
+script = ExtResource("2_3ssen")
+
+[node name="PackedScenes" type="Node" parent="." unique_id=724200889]
+script = ExtResource("3_rt2b8")
+Game = ExtResource("4_0qtfh")
+MainMenu = ExtResource("5_sawrf")
+LoadingScreen = ExtResource("5_0qtfh")
