@@ -1,0 +1,70 @@
+using Godot;
+using Humanizer;
+using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.Service.ResumableGame;
+using ProcessDeadChecker = GodotBox.Godot.Nodes.Process.ProcessDeadChecker;
+
+namespace NeonWarfare.Scenes.Game.Starters;
+
+public class HostMultiplayerGameStarter(
+    string saveFileName,
+    int? port,
+    string adminUid,
+    int? parentPid,
+    bool serverHudRender,
+    bool worldRender,
+    bool mustSetLastGame,
+    bool startedAsDedicated
+    ) : BaseGameStarter
+{
+    
+    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
+    private const string HostingFailedMessage = "Failed to start server: {0}";
+    
+    public override void Init(Game game)
+    {
+        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
+
+        if (parentPid.HasValue)
+        {
+            ProcessDeadChecker clientDeadChecker = new ProcessDeadChecker(
+                parentPid.Value, 
+                () => Services.MainScene.Shutdown(),
+                pid => $"Parent process {pid} is dead. Shutdown server.");
+            game.AddChild(clientDeadChecker);
+        }
+        
+        Network.Network network = game.AddNetwork();
+        World.World world = game.AddWorld();
+        Net.DoClient(() => game.AddHud());
+
+        if (serverHudRender)
+        {
+            game.AddServerHud();
+        }
+        if (!worldRender)
+        {
+            world.SetVisible(false);
+        }
+        if (mustSetLastGame)
+        {
+            var lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, startedAsDedicated);
+            SetLastGame(lastGame);
+            AddLastGameUpdaterToSaveEvent(world, lastGame);
+        }
+
+        Error error = network.HostServer(port ?? DefaultPort, true);
+        if (error != Error.Ok)
+        {
+            Net.DoClient(() => HostingFailedEventOnClient(error));
+            return;
+        }
+
+        ServerStartWorld(world, saveFileName, adminUid);
+        network.OpenServer();
+        Net.DoClient(() => ClientStartWorld(world));
+    }
+
+    private void HostingFailedEventOnClient(Error error)
+        => GoToMenuAndShowError(HostingFailedMessage.FormatWith(error));
+}

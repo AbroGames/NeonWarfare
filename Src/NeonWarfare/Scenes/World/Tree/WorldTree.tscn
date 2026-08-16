@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c8mpkavrkvkxh"]
+
+[ext_resource type="Script" uid="uid://dng6mje1goj0w" path="res://Src/NeonWarfare/Scenes/World/Tree/WorldTree.cs" id="1_y5brc"]
+
+[node name="Tree" type="Node2D" unique_id=2068167502]
+script = ExtResource("1_y5brc")
