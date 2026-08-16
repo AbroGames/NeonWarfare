@@ -40,7 +40,7 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
         player.PropertyChanged += (p, _) => UpdatePlayer((PlayerData) p);
     }
     
-    public void RemovePlayer(PlayerData player) => RemovePlayer(player.Uid);
+    public void RemovePlayer(PlayerData player) => RemovePlayer((string)player.Uid);
     public void RemovePlayer(string uid) => Rpc(MethodName.RemovePlayerRpc, uid);
     [Rpc(CallLocal = true)]
     private void RemovePlayerRpc(string uid)

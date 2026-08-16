@@ -3,7 +3,7 @@ using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.CreateSavedServer;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.CreateSavedServer;
 
 public partial class CreateSavedServerPage : MainMenuPage
 {

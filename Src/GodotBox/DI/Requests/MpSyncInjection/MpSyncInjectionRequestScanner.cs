@@ -1,11 +1,11 @@
 using Godot;
+using GodotBox.Godot.Nodes.MpSync;
 using KludgeBox.DI.Requests;
 using KludgeBox.Logging;
 using KludgeBox.Reflection.Access;
-using NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
 using Serilog;
 
-namespace NeonWarfare.Scripts.KludgeBox.DI.Requests.MpSyncInjection;
+namespace GodotBox.DI.Requests.MpSyncInjection;
 
 public class MpSyncInjectionRequestScanner : IProcessingRequestScanner
 {

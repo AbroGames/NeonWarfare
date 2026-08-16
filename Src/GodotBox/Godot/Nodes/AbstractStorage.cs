@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Godot;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
+namespace GodotBox.Godot.Nodes;
 
 public abstract partial class AbstractStorage : Node
 {

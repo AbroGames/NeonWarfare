@@ -2,7 +2,7 @@ using System;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.CreateNewServer;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.CreateNewServer;
 
 public partial class CreateNewServerPage : MainMenuPage
 {

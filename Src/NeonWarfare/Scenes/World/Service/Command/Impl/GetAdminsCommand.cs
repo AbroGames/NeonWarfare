@@ -1,5 +1,6 @@
 using System.Linq;
 using Humanizer;
+using NeonWarfare.Scenes.World.Data.PersistenceData.Player;
 
 namespace NeonWarfare.Scenes.World.Service.Command.Impl;
 
@@ -16,12 +17,12 @@ public class GetAdminsCommand : ICommandProcessor
     {
         string adminsOnline = string.Join(", ", world.FacadeService.GetOnlinePlayers()
             .Where(playerData => playerData.IsAdmin)
-            .Select(playerData => playerData.Nick)
+            .Select<PlayerData, string>(playerData => playerData.Nick)
             .DefaultIfEmpty(NotFoundText));
         
         string adminsOffline = string.Join(", ", world.FacadeService.GetOfflinePlayers()
             .Where(playerData => playerData.IsAdmin)
-            .Select(playerData => playerData.Nick)
+            .Select<PlayerData, string>(playerData => playerData.Nick)
             .DefaultIfEmpty(NotFoundText));
         
         string message = AdminsMessage.FormatWith(adminsOnline, adminsOffline);

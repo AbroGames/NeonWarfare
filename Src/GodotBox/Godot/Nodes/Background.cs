@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
+namespace GodotBox.Godot.Nodes;
 
 public partial class Background : TextureRect
 {

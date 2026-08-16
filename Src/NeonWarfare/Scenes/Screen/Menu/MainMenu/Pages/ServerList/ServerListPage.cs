@@ -1,11 +1,10 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scripts.Service.KnownServers;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.ServerList;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.ServerList;
 
 public partial class ServerListPage : MainMenuPage
 {

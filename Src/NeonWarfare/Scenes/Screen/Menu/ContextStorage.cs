@@ -1,8 +1,8 @@
 using Godot;
+using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
-using NeonWarfare.Scenes.KludgeBox;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu;
+namespace NeonWarfare.Scenes.Screen.Menu;
 
 public partial class ContextStorage : CheckedAbstractStorage
 {

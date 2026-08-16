@@ -1,10 +1,13 @@
 using System;
 using Godot;
+using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
-using NeonWarfare.Scenes.KludgeBox;
-using NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Message;
+using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.ConfirmDialog;
+using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Message;
+using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.PlayerSettings;
+using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.SettingsCategory;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu;
 
 public partial class PagesProvider : CheckedAbstractStorage
 {
@@ -39,25 +42,25 @@ public partial class PagesProvider : CheckedAbstractStorage
 		return page.WithAvailablePages(this);
 	}
 
-	public Pages.PlayerSettings.PlayerSettingsPage PreparePlayerSettingsPage(Action continuation)
+	public PlayerSettingsPage PreparePlayerSettingsPage(Action continuation)
 	{
-		var page = PlayerSettingsPageScene.Instantiate<Pages.PlayerSettings.PlayerSettingsPage>().WithAvailablePages(this);
+		var page = PlayerSettingsPageScene.Instantiate<PlayerSettingsPage>().WithAvailablePages(this);
 		page.SetContinuation(continuation);
 		return page;
 	}
 
-	public Pages.SettingsCategory.SettingsCategoryPage PrepareSettingsCategoryPage(string category, string titleKey)
+	public SettingsCategoryPage PrepareSettingsCategoryPage(string category, string titleKey)
 	{
 		var page = SettingsCategoryPageScene
-			.Instantiate<Pages.SettingsCategory.SettingsCategoryPage>().WithAvailablePages(this);
+			.Instantiate<SettingsCategoryPage>().WithAvailablePages(this);
 		page.Configure(category, titleKey);
 		return page;
 	}
 
-	public Pages.ConfirmDialog.ConfirmDialogPage PrepareConfirmDialogPage(
+	public ConfirmDialogPage PrepareConfirmDialogPage(
 		string message, Action onReset = null, Action onContinue = null, Action onBack = null)
 	{
-		var page = ConfirmDialogPageScene.Instantiate<Pages.ConfirmDialog.ConfirmDialogPage>().WithAvailablePages(this);
+		var page = ConfirmDialogPageScene.Instantiate<ConfirmDialogPage>().WithAvailablePages(this);
 		page.Setup(message, onReset, onContinue, onBack);
 		return page;
 	}

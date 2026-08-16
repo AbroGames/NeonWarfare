@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.PagesSystem;
+namespace NeonWarfare.Scenes.Screen.Menu.PagesSystem;
 
 public partial class PageContainer : Control
 {

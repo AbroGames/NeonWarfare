@@ -1,8 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.SettingsCategory;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.SettingsHub;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.SettingsHub;
 
 public partial class SettingsHubPage : MainMenuPage
 {

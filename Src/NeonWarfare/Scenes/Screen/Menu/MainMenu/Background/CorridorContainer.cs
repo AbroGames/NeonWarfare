@@ -1,11 +1,9 @@
-using Godot;
 using System.Collections.Generic;
 using System.Linq;
-using KludgeBox.DI.Requests;
-using KludgeBox.DI.Requests.ChildInjection;
+using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Background;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Background;
 
 public partial class CorridorContainer : Node3D
 {

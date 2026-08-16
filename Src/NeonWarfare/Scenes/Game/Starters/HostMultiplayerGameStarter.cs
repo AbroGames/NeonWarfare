@@ -2,7 +2,7 @@ using Godot;
 using Humanizer;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.Service.ResumableGame;
-using ProcessDeadChecker = NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Process.ProcessDeadChecker;
+using ProcessDeadChecker = GodotBox.Godot.Nodes.Process.ProcessDeadChecker;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scripts.Service.ResumableGame;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Main;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Main;
 
 public partial class MainPage : MainMenuPage
 {

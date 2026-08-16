@@ -2,7 +2,7 @@ using NeonWarfare.Scenes.Game.Network;
 
 namespace NeonWarfare.Scripts.Service;
 
-public class NetworkService : global::KludgeBox.Godot.Services.NetworkService
+public class NetworkService : KludgeBox.Godot.Services.NetworkService
 {
 
     private bool _isDedicatedServer;

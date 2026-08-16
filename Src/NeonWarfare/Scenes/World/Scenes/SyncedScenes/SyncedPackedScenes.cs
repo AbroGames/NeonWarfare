@@ -1,6 +1,6 @@
 using Godot;
+using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
-using NeonWarfare.Scenes.KludgeBox;
 
 namespace NeonWarfare.Scenes.World.Scenes.SyncedScenes;
 

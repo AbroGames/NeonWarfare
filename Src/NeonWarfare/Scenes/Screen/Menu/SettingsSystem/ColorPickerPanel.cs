@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
+namespace NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 
 public partial class ColorPickerPanel : Control
 {

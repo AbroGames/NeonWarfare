@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
+namespace NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public class NameAttribute : Attribute

@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.LanguageSelection;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.LanguageSelection;
 
 public partial class LanguageSelectionPage : MainMenuPage
 {

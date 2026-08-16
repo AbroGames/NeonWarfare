@@ -1,6 +1,6 @@
 using Godot;
+using GodotBox;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.KludgeBox;
 using NeonWarfare.Scenes.Root.Starters;
 
 namespace NeonWarfare.Scenes.Root;

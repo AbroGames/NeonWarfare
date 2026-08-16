@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Settings;
-using NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
+using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Settings;
+using NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.SettingsCategory;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.SettingsCategory;
 
 public partial class SettingsCategoryPage : MainMenuPage
 {

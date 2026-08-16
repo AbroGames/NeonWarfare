@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Camera.Shifts;
+namespace GodotBox.Godot.Nodes.Camera.Shifts;
 
 public class Punch(Vector2 rotation, double strength, double movementSpeed = 3000) : IShiftProvider
 {

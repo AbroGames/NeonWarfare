@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
+namespace GodotBox.Godot.Nodes;
 
 /// <summary>
 /// <b>To use this, you must inherit this class.</b><br/>

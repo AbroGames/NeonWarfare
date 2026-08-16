@@ -5,7 +5,7 @@ using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.Reflection.Access;
 using Serilog;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
+namespace GodotBox.Godot.Nodes.MpSync;
 
 /// <summary>
 /// <b>This node cannot be added from the editor</b><br/>

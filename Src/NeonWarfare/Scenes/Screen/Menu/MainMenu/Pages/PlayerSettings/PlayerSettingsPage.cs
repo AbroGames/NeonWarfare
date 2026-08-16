@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Settings;
-using NeonWarfare.Scenes.Screen.NewMenu.SettingsSystem;
+using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Settings;
+using NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.PlayerSettings;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.PlayerSettings;
 
 public partial class PlayerSettingsPage : MainMenuPage
 {

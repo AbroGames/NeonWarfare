@@ -3,7 +3,7 @@ using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes;
+namespace GodotBox.Godot.Nodes;
 
 
 /// <summary>

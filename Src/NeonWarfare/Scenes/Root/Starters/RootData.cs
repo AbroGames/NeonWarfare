@@ -1,5 +1,5 @@
 using Godot;
-using NeonWarfare.Scenes.KludgeBox;
+using GodotBox;
 
 namespace NeonWarfare.Scenes.Root.Starters;
 

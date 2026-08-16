@@ -1,9 +1,7 @@
 using Godot;
-using KludgeBox.DI.Requests;
-using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.NotNullCheck;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Background;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Background;
 
 public partial class Background3D : Node3D
 {

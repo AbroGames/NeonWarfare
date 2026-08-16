@@ -1,6 +1,6 @@
 using Godot;
 using Godot.Collections;
-using NeonWarfare.Scripts.KludgeBox.Godot.Nodes.MpSync;
+using GodotBox.Godot.Nodes.MpSync;
 
 namespace NeonWarfare.Scenes.World.Data.TemporaryData;
 

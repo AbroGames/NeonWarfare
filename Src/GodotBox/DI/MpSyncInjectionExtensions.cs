@@ -1,7 +1,7 @@
+using GodotBox.DI.Requests.MpSyncInjection;
 using KludgeBox.DI.Requests;
-using NeonWarfare.Scripts.KludgeBox.DI.Requests.MpSyncInjection;
 
-namespace NeonWarfare.Scripts.KludgeBox.DI;
+namespace GodotBox.DI;
 
 /// <summary>
 /// Точка подключения опциональной MpSync-инъекции (раньше входила в

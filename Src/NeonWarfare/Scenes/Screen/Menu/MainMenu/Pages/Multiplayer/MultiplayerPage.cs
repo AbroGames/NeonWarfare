@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 
-namespace NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.Multiplayer;
+namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Multiplayer;
 
 public partial class MultiplayerPage : MainMenuPage
 {

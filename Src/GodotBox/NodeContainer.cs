@@ -1,6 +1,6 @@
-namespace NeonWarfare.Scenes.KludgeBox;
+namespace GodotBox;
 
-public partial class NodeContainer : Scripts.KludgeBox.Godot.Nodes.NodeContainer
+public partial class NodeContainer : Godot.Nodes.NodeContainer
 {
     
 }

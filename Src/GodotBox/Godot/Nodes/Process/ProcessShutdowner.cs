@@ -3,7 +3,7 @@ using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 
-namespace NeonWarfare.Scripts.KludgeBox.Godot.Nodes.Process;
+namespace GodotBox.Godot.Nodes.Process;
 
 // ReSharper disable once Godot.MissingParameterlessConstructor
 public partial class ProcessShutdowner : Node
