@@ -33,7 +33,7 @@ public class SceneResourceTests
 
     /// <summary>
     /// "A scene and its handler live in the same folder under the same name" from Docs/Code-style.md.
-    /// A scene whose root node carries no script at all is fine — Scenes/Entity/Walls/Wall.tscn is one.
+    /// A scene whose root node carries no script at all is fine — Scenes/Entities/Walls/Wall.tscn is one.
     /// </summary>
     [Theory]
     [MemberData(nameof(FileSources.Scenes), MemberType = typeof(FileSources))]

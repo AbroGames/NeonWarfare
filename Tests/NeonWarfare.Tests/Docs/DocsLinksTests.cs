@@ -31,7 +31,7 @@ public class DocsLinksTests
 
             string target = ResolveTarget(document.Path, link.PathPart);
 
-            // Directory links are legitimate — README.md points at Scenes/Game/Starters/ and .run/.
+            // Directory links are legitimate — README.md points at the CmdArgs/ folder and .run/.
             if (!File.Exists(target) && !Directory.Exists(target))
             {
                 report.Add($"{link.Describe()}: {RepositoryPaths.Relative(target)} does not exist");

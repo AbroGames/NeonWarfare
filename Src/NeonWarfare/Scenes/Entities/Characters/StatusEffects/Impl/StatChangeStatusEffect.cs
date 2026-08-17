@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using KludgeBox.Core.Stats;
-using NeonWarfare.Scenes.Entity.Characters.Stats;
-using NeonWarfare.Scenes.Entity.Characters.StatusEffects.AddingPolicy;
+using NeonWarfare.Scenes.Entities.Characters.Stats;
+using NeonWarfare.Scenes.Entities.Characters.StatusEffects.AddingPolicy;
 
-namespace NeonWarfare.Scenes.Entity.Characters.StatusEffects.Impl;
+namespace NeonWarfare.Scenes.Entities.Characters.StatusEffects.Impl;
 
 public class StatChangeStatusEffect : StatusEffect
 {

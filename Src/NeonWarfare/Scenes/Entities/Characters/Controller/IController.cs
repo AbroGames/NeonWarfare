@@ -1,9 +1,9 @@
 using System;
 using Godot;
 using MessagePack;
-using NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+using NeonWarfare.Scenes.Entities.Characters.Synchronizer;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Controller;
+namespace NeonWarfare.Scenes.Entities.Characters.Controller;
 
 public interface IController
 {

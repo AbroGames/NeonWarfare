@@ -175,7 +175,7 @@ public class ServicesDocTests
             .SelectMany(row => row.SelectMany(MarkdownDocument.CodeSpans))
             .ToHashSet(StringComparer.Ordinal);
 
-    /// <summary>The classes under Scenes/World/Service whose name marks them as a service.</summary>
+    /// <summary>The classes under Scenes/World/WorldServices of the game whose name marks them as a service.</summary>
     private static IReadOnlySet<string> DeclaredWorldServices() =>
         RepositoryPaths.WorldServiceFiles()
             .Select(CSharpFile.Load)

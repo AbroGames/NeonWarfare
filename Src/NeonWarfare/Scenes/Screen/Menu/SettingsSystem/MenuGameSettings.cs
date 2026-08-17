@@ -1,5 +1,5 @@
 using Godot;
-using NeonWarfare.Scripts.Service.Settings;
+using NeonWarfare.Scripts.GlobalServices.Settings;
 
 namespace NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 

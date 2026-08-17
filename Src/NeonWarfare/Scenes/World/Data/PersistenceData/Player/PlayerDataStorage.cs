@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Godot;
 using MessagePack;
-using NeonWarfare.Scenes.World.Service.DataSerializer;
+using NeonWarfare.Scenes.World.WorldServices.DataSerializer;
 using static MessagePack.MessagePackSerializer;
 
 namespace NeonWarfare.Scenes.World.Data.PersistenceData.Player;

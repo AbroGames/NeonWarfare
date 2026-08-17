@@ -44,7 +44,7 @@ public sealed class CSharpFile
     public static CSharpFile Load(string path) =>
         Parsed.GetOrAdd(System.IO.Path.GetFullPath(path), Parse);
 
-    /// <summary>Every game source file, parsed.</summary>
+    /// <summary>Every source file under Src/ — the game and GodotBox — parsed.</summary>
     public static IReadOnlyList<CSharpFile> LoadAll() =>
         RepositoryPaths.SourceFiles().Select(Load).ToList();
 

@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace NeonWarfare.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public class UidGenerator
 {

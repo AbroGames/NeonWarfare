@@ -9,7 +9,7 @@ namespace NeonWarfare.Tests.Docs;
 /// tree that describes a repository that no longer exists.
 /// <br/>
 /// Only one direction is checked — that everything drawn is really there. The tree is deliberately
-/// partial (Scenes/Entity is one line, not a subtree), so demanding the reverse would be demanding a
+/// partial (Scenes/Entities is one line, not a subtree), so demanding the reverse would be demanding a
 /// different document.
 /// </summary>
 public class RepositoryStructureDocTests

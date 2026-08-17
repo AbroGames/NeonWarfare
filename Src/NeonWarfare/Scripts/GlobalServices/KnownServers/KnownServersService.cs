@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.Json;
 using Godot;
 
-namespace NeonWarfare.Scripts.Service.KnownServers;
+namespace NeonWarfare.Scripts.GlobalServices.KnownServers;
 
 public class KnownServersService
 {

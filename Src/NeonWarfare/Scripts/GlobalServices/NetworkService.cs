@@ -1,6 +1,6 @@
 using NeonWarfare.Scenes.Game.Network;
 
-namespace NeonWarfare.Scripts.Service;
+namespace NeonWarfare.Scripts.GlobalServices;
 
 public class NetworkService : KludgeBox.Godot.Services.NetworkService
 {

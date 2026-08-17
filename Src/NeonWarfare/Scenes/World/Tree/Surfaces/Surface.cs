@@ -2,7 +2,7 @@ using Godot;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Data.TemporaryData;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
-using NeonWarfare.Scenes.World.Service.Characters;
+using NeonWarfare.Scenes.World.WorldServices.Characters;
 
 namespace NeonWarfare.Scenes.World.Tree.Surfaces;
 

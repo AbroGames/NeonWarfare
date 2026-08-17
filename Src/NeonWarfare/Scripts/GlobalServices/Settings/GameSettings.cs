@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public record GameSettings(
     string PlayerUid,

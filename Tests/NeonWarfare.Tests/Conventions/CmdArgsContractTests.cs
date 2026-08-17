@@ -7,7 +7,7 @@ using Xunit;
 namespace NeonWarfare.Tests.Conventions;
 
 /// <summary>
-/// The contract Docs/Cli-args.md states: the arguments are declared in Scripts/Content/CmdArgs/, they
+/// The contract Docs/Cli-args.md states: the arguments are declared in Scripts/Content/CmdArgs/ of the game, they
 /// are parsed only in the Root starters and only through the ready CmdArgsService, and from there
 /// travel as ordinary parameters. Nothing stops any node from asking the OS for the command line on its
 /// own, which is exactly how a flag ends up with two different meanings in two places.
@@ -15,6 +15,12 @@ namespace NeonWarfare.Tests.Conventions;
 public class CmdArgsContractTests
 {
     private const string FlagPrefix = "--";
+
+    /// <summary>Where the arguments live, as the failure messages name it.</summary>
+    private static readonly string CmdArgsLocation = RepositoryPaths.Relative(RepositoryPaths.CmdArgsDirectory) + "/";
+
+    private static readonly string RootStartersLocation =
+        RepositoryPaths.Relative(RepositoryPaths.RootStartersDirectory) + "/";
 
     private const string CmdArgsServiceType = "CmdArgsService";
 
@@ -32,13 +38,13 @@ public class CmdArgsContractTests
     /// starter to build, so neither a starter nor its CmdArgsService exists yet.
     /// </summary>
     private static readonly string[] MayReadCommandLineDirectly =
-        ["Scenes/Root/Starters/RootStarterManager.cs"];
+        ["Src/NeonWarfare/Scenes/Root/Starters/RootStarterManager.cs"];
 
     [Fact]
     public void Flags_AreDeclaredOnlyInCmdArgs()
     {
         FailureReport report = new(
-            "Command-line flags written outside Scripts/Content/CmdArgs/ — reference the constant instead");
+            $"Command-line flags written outside {CmdArgsLocation} — reference the constant instead");
 
         foreach (CSharpFile file in OutsideCmdArgs())
         {
@@ -63,7 +69,7 @@ public class CmdArgsContractTests
     public void CmdArgsService_IsUsedOnlyInRootStartersAndCmdArgs()
     {
         FailureReport report = new(
-            $"{CmdArgsServiceType} referenced outside Scenes/Root/Starters/ and Scripts/Content/CmdArgs/");
+            $"{CmdArgsServiceType} referenced outside {RootStartersLocation} and {CmdArgsLocation}");
 
         foreach (CSharpFile file in CSharpFile.LoadAll()
                      .Where(file => !IsInRootStarters(file) && !IsInCmdArgs(file)))
@@ -83,7 +89,7 @@ public class CmdArgsContractTests
     public void CmdArgsParsing_HappensOnlyInCmdArgs()
     {
         FailureReport report = new(
-            "Command-line arguments read outside Scripts/Content/CmdArgs/ — add a field to *Args instead");
+            $"Command-line arguments read outside {CmdArgsLocation} — add a field to *Args instead");
 
         foreach ((CSharpFile file, InvocationExpressionSyntax invocation) in
                  Calls(OutsideCmdArgs(), ParsingMethods))

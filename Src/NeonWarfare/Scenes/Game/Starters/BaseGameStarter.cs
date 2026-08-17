@@ -1,6 +1,6 @@
 using System;
-using NeonWarfare.Scripts.Service;
-using NeonWarfare.Scripts.Service.ResumableGame;
+using NeonWarfare.Scripts.GlobalServices;
+using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

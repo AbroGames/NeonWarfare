@@ -15,7 +15,7 @@ public static class FileSources
     /// <summary>Every file under Docs/ plus README.md — the full scope of the doc checks.</summary>
     public static TheoryData<string> DocsAndReadme => RepositoryPaths.DocFilesAndReadme().AsTheoryData();
 
-    /// <summary>Every .cs file under Scenes/ and Scripts/.</summary>
+    /// <summary>Every .cs file under Src/ — the game and GodotBox.</summary>
     public static TheoryData<string> Sources => RepositoryPaths.SourceFiles().AsTheoryData();
 
     /// <summary>Every hand-written .cs: the game, the tests and the smoke tests.</summary>

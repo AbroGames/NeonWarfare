@@ -17,7 +17,7 @@ public class CodeStyleTests
     private const string ResourcePathPrefix = "res://";
 
     /// <summary>The file that owns every global import, see Docs/Repository-structure.md.</summary>
-    private const string GlobalUsingsFile = "Scripts/GlobalUsings.cs";
+    private const string GlobalUsingsFile = "Src/NeonWarfare/Scripts/GlobalUsings.cs";
 
     /// <summary>The two ways to reach a resource by path instead of through a scene storage.</summary>
     private const string GodotClass = "GD";

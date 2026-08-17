@@ -59,7 +59,8 @@ public class CliArgsDocTests
             DeclaredFlags().Select(declaration => declaration.Literal.Token.ValueText)
                 .ToHashSet(StringComparer.Ordinal),
             NotOurFlags,
-            flag => $"'{flag}' — either it was renamed in Scripts/Content/CmdArgs/, or the row is stale");
+            flag => $"'{flag}' — either it was renamed in " +
+                    $"{RepositoryPaths.Relative(RepositoryPaths.CmdArgsDirectory)}/, or the row is stale");
 
         report.AssertEmpty();
     }

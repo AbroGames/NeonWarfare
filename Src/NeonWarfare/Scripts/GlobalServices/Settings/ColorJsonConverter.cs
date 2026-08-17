@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Godot;
 
-namespace NeonWarfare.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public class ColorJsonConverter : JsonConverter<Color>
 {

@@ -5,7 +5,7 @@ using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu;
 
-namespace NeonWarfare.Scripts.Service;
+namespace NeonWarfare.Scripts.GlobalServices;
 
 public class MainSceneService
 {

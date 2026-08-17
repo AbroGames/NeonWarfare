@@ -1,5 +1,6 @@
 using Godot;
 using GodotBox.Godot.Nodes.MpSync;
+using KludgeBox.Godot.Extensions;
 using KludgeBox.DI.Requests;
 using KludgeBox.Reflection.Access;
 

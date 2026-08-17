@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Godot;
 
-namespace NeonWarfare.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public class DedicatedServerSettingsService
 {

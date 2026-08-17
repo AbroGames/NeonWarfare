@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scripts.Service.KnownServers;
+using NeonWarfare.Scripts.GlobalServices.KnownServers;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.ServerList;
 

@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Godot;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Controller.Player;
+namespace NeonWarfare.Scenes.Entities.Characters.Controller.Player;
 
 public class PhysicsCalculator
 {

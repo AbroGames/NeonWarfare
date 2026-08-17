@@ -13,8 +13,9 @@ public partial class MainMenuPage : Page
 
     /// <summary>
     /// First-run gate (#16). Runs <paramref name="startAction"/> immediately when the player
-    /// has already acknowledged their settings; otherwise pushes <see cref="NeonWarfare.Scenes.Screen.NewMenu.MainMenu.Pages.PlayerSettings.PlayerSettingsPage"/>
-    /// with <paramref name="startAction"/> as the post-save continuation.
+    /// has already acknowledged their settings; otherwise pushes
+    /// <see cref="Pages.PlayerSettings.PlayerSettingsPage"/> with <paramref name="startAction"/>
+    /// as the post-save continuation.
     /// </summary>
     protected void TryStartGame(Action startAction)
     {

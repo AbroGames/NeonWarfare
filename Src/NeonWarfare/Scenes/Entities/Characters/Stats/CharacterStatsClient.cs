@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Godot;
 using KludgeBox.Core.Stats;
-using NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+using NeonWarfare.Scenes.Entities.Characters.Synchronizer;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Stats;
+namespace NeonWarfare.Scenes.Entities.Characters.Stats;
 
 public class CharacterStatsClient
 {    

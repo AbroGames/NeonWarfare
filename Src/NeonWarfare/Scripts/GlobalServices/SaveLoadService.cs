@@ -8,7 +8,7 @@ using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 using FileAccess = Godot.FileAccess;
 
-namespace NeonWarfare.Scripts.Service;
+namespace NeonWarfare.Scripts.GlobalServices;
 
 public class SaveLoadService
 {

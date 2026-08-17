@@ -11,13 +11,11 @@ namespace NeonWarfare.Tests.Conventions;
 /// </summary>
 public class NamespaceTests
 {
-    private const string RootNamespace = "NeonWarfare";
-
     /// <summary>
     /// Files that must declare no namespace at all. Global usings have to be at file level, so
     /// GlobalUsings.cs cannot have one — see Docs/Repository-structure.md.
     /// </summary>
-    private static readonly string[] WithoutNamespace = ["Scripts/GlobalUsings.cs"];
+    private static readonly string[] WithoutNamespace = ["Src/NeonWarfare/Scripts/GlobalUsings.cs"];
 
     [Theory]
     [MemberData(nameof(FileSources.Sources), MemberType = typeof(FileSources))]
@@ -49,14 +47,16 @@ public class NamespaceTests
     }
 
     /// <summary>
-    /// Derived from the path rather than hardcoded, so a new folder needs no change here:
-    /// Scenes/World/Service/Chat/WorldChatService.cs → NeonWarfare.Scenes.World.Service.Chat.
+    /// Derived from the path rather than hardcoded, so a new folder needs no change here. The path is
+    /// taken relative to Src/ with no prefix of its own — NeonWarfare.csproj has an empty RootNamespace:
+    /// Src/NeonWarfare/Scenes/World/WorldServices/Chat/WorldChatService.cs →
+    /// NeonWarfare.Scenes.World.WorldServices.Chat,
+    /// Src/GodotBox/Godot/Nodes/Background.cs → GodotBox.Godot.Nodes.
     /// </summary>
     private static string ExpectedNamespace(string relativePath)
     {
-        string directory = Path.GetDirectoryName(relativePath)!.Replace(Path.DirectorySeparatorChar, '/');
-        return directory.Length == 0
-            ? RootNamespace
-            : $"{RootNamespace}.{directory.Replace('/', '.')}";
+        string directory = Path.GetDirectoryName(RepositoryPaths.Absolute(relativePath))!;
+        return Path.GetRelativePath(RepositoryPaths.SrcDirectory, directory)
+            .Replace(Path.DirectorySeparatorChar, '.');
     }
 }

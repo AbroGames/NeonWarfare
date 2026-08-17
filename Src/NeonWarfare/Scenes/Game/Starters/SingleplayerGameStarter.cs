@@ -1,6 +1,6 @@
 using NeonWarfare.Scripts.Content.LoadingScreen;
-using NeonWarfare.Scripts.Service.ResumableGame;
-using NeonWarfare.Scripts.Service.Settings;
+using NeonWarfare.Scripts.GlobalServices.ResumableGame;
+using NeonWarfare.Scripts.GlobalServices.Settings;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

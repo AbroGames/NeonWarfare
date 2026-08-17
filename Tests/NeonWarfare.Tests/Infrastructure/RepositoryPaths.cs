@@ -41,9 +41,26 @@ public static class RepositoryPaths
     /// </summary>
     public static string BrainDirectory { get; } = Path.Combine(Root, "brain");
 
-    /// <summary>The two directories that hold every hand-written game source file.</summary>
-    public static IReadOnlyList<string> SourceDirectories { get; } =
-        [Path.Combine(Root, "Scenes"), Path.Combine(Root, "Scripts")];
+    /// <summary>
+    /// Every hand-written source of the Godot project: the game itself and GodotBox. The folder path
+    /// under it is the namespace — see Docs/Code-style.md.
+    /// </summary>
+    public static string SrcDirectory { get; } = Path.Combine(Root, "Src");
+
+    /// <summary>
+    /// The game itself — Scenes/ and Scripts/. Every game-specific location below is built from it; a
+    /// convention that holds for the game but not for GodotBox narrows its scope to it.
+    /// </summary>
+    public static string GameSourceDirectory { get; } = Path.Combine(SrcDirectory, "NeonWarfare");
+
+    /// <summary>
+    /// GodotBox — the game-independent extras over KludgeBox that live in this repository. Built into
+    /// the same assembly as the game, but knows nothing about it.
+    /// </summary>
+    public static string GodotBoxDirectory { get; } = Path.Combine(SrcDirectory, "GodotBox");
+
+    /// <summary>The directories that hold every hand-written source file of the Godot project.</summary>
+    public static IReadOnlyList<string> SourceDirectories { get; } = [SrcDirectory];
 
     /// <summary>Everything that is neither a scene nor code — textures, fonts, shaders, locales.</summary>
     public static string AssetsDirectory { get; } = Path.Combine(Root, "Assets");
@@ -72,30 +89,33 @@ public static class RepositoryPaths
         Path.Combine(SmokeTestsDirectory, "NeonWarfare.SmokeTests.csproj");
 
     /// <summary>The registry of all global services.</summary>
-    public static string ServicesPath { get; } = Path.Combine(Root, "Scripts", "Services.cs");
+    public static string ServicesPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Services.cs");
 
     /// <summary>The world services — child nodes of World, one class per service.</summary>
-    public static string WorldServiceDirectory { get; } = Path.Combine(Root, "Scenes", "World", "Service");
+    public static string WorldServiceDirectory { get; } =
+        Path.Combine(GameSourceDirectory, "Scenes", "World", "WorldServices");
 
     /// <summary>The chat commands: ICommandProcessor and its implementations, one class per command.</summary>
     public static string CommandProcessorDirectory { get; } =
         Path.Combine(WorldServiceDirectory, "Command");
 
     /// <summary>The only place that declares a transfer channel — Consts.TransferChannel.</summary>
-    public static string ConstsPath { get; } = Path.Combine(Root, "Scripts", "Consts.cs");
+    public static string ConstsPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Consts.cs");
 
     /// <summary>The only place that names an input action.</summary>
     public static string InputActionsPath { get; } =
-        Path.Combine(Root, "Scenes", "Entity", "Characters", "Controller", "Player", "Keys.cs");
+        Path.Combine(GameSourceDirectory, "Scenes", "Entities", "Characters", "Controller", "Player", "Keys.cs");
 
     /// <summary>The localization template — the same keys as the .po files, with empty translations.</summary>
     public static string LocaleTemplatePath { get; } = Path.Combine(LocalesDirectory, "messages.pot");
 
     /// <summary>The only place allowed to declare command-line flags and parse them.</summary>
-    public static string CmdArgsDirectory { get; } = Path.Combine(Root, "Scripts", "Content", "CmdArgs");
+    public static string CmdArgsDirectory { get; } =
+        Path.Combine(GameSourceDirectory, "Scripts", "Content", "CmdArgs");
 
     /// <summary>The only place allowed to build a CmdArgsService and ask it for arguments.</summary>
-    public static string RootStartersDirectory { get; } = Path.Combine(Root, "Scenes", "Root", "Starters");
+    public static string RootStartersDirectory { get; } =
+        Path.Combine(GameSourceDirectory, "Scenes", "Root", "Starters");
 
     /// <summary>The run profiles Rider picks up by itself — see Docs/Quick-start.md.</summary>
     public static string LaunchSettingsPath { get; } = Path.Combine(Root, "Properties", "launchSettings.json");
@@ -118,13 +138,19 @@ public static class RepositoryPaths
         DocFiles().Prepend(Path.GetFullPath(ReadmePath)).ToList();
 
     /// <summary>
-    /// Every game source file. Only Scenes/ and Scripts/ are scanned: the build output lives in bin/
-    /// and obj/, and Tests/ has conventions of its own (see Docs/Testing.md).
+    /// Every source file of the Godot project — the game and GodotBox. Only Src/ is scanned: the build
+    /// output lives in bin/ and obj/, and Tests/ has conventions of its own (see Docs/Testing.md).
     /// </summary>
     public static IReadOnlyList<string> SourceFiles() => Files(SourceDirectories, "*.cs");
 
-    /// <summary>Every scene. Scenes only ever live under Scenes/.</summary>
-    public static IReadOnlyList<string> SceneFiles() => Files([Path.Combine(Root, "Scenes")], "*.tscn");
+    /// <summary>
+    /// Every source file of GodotBox and nothing else — the input of the compilation that proves GodotBox
+    /// builds without the game.
+    /// </summary>
+    public static IReadOnlyList<string> GodotBoxFiles() => Files([GodotBoxDirectory], "*.cs");
+
+    /// <summary>Every scene. Scenes only ever live under Src/.</summary>
+    public static IReadOnlyList<string> SceneFiles() => Files([SrcDirectory], "*.tscn");
 
     /// <summary>Scenes plus standalone resources — every file that can carry a res:// reference.</summary>
     public static IReadOnlyList<string> ResourceFiles() =>
@@ -164,7 +190,7 @@ public static class RepositoryPaths
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-    /// <summary>The world service classes — every .cs under Scenes/World/Service, at any depth.</summary>
+    /// <summary>The world service classes — every .cs under Scenes/World/WorldServices, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
 
     /// <summary>The chat command classes — ICommandProcessor and every implementation of it.</summary>
@@ -172,8 +198,8 @@ public static class RepositoryPaths
         Files([CommandProcessorDirectory], "*.cs");
 
     /// <summary>
-    /// Every <c>.uid</c> sidecar Godot keeps next to a file it cannot store a uid inside — a .cs or a
-    /// .gdshader. Scenes and resources carry their uid in their own header instead.
+    /// Every <c>.uid</c> sidecar Godot keeps next to a file it cannot store a uid inside — a .cs under
+    /// Src/ or a .gdshader under Assets/. Scenes and resources carry their uid in their own header instead.
     /// </summary>
     public static IReadOnlyList<string> UidFiles() =>
         Files(SourceDirectories.Append(AssetsDirectory), "*.uid");

@@ -1,7 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.SceneServiceInjection;
 using NeonWarfare.Scenes.World.Scenes.SyncedScenes;
-using NeonWarfare.Scenes.World.Service;
+using NeonWarfare.Scenes.World.WorldServices;
 using NeonWarfare.Scenes.World.Tree.Surfaces;
 using NeonWarfare.Scenes.World.Tree.Surfaces.Battle;
 using NeonWarfare.Scenes.World.Tree.Surfaces.Safe;

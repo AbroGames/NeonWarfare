@@ -4,7 +4,7 @@ using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.World.Service.Performance;
+using NeonWarfare.Scenes.World.WorldServices.Performance;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;

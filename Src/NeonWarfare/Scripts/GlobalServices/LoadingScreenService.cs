@@ -5,7 +5,7 @@ using GodotBox.Godot.Nodes;
 using NeonWarfare.Scenes.Screen.LoadingScreen;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 
-namespace NeonWarfare.Scripts.Service;
+namespace NeonWarfare.Scripts.GlobalServices;
 
 public class LoadingScreenService
 {

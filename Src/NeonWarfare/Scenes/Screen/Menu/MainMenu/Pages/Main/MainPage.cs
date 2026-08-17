@@ -1,6 +1,6 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scripts.Service.ResumableGame;
+using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Main;
 

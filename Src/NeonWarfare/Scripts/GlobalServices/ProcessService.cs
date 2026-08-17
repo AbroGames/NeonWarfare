@@ -1,7 +1,7 @@
 using Godot;
 using NeonWarfare.Scripts.Content.CmdArgs;
 
-namespace NeonWarfare.Scripts.Service;
+namespace NeonWarfare.Scripts.GlobalServices;
 
 public class ProcessService
 {

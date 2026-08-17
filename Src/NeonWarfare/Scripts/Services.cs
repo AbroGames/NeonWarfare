@@ -3,11 +3,11 @@ using KludgeBox.Core.Random;
 using KludgeBox.DI;
 using KludgeBox.Godot.Services;
 using KludgeBox.Reflection.Access;
-using NeonWarfare.Scripts.Service;
-using NeonWarfare.Scripts.Service.KnownServers;
-using NeonWarfare.Scripts.Service.ResumableGame;
-using NeonWarfare.Scripts.Service.Settings;
-using NetworkService = NeonWarfare.Scripts.Service.NetworkService;
+using NeonWarfare.Scripts.GlobalServices;
+using NeonWarfare.Scripts.GlobalServices.KnownServers;
+using NeonWarfare.Scripts.GlobalServices.ResumableGame;
+using NeonWarfare.Scripts.GlobalServices.Settings;
+using NetworkService = NeonWarfare.Scripts.GlobalServices.NetworkService;
 
 namespace NeonWarfare.Scripts;
 

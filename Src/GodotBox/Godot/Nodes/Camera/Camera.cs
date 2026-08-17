@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Godot;
 using GodotBox.Godot.Nodes.Camera.Shifts;
+using KludgeBox.Godot.Extensions;
+using static KludgeBox.Godot.Extensions.VectorExtensions;
 
 namespace GodotBox.Godot.Nodes.Camera;
 

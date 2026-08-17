@@ -1,11 +1,11 @@
 using System;
 using Godot;
 using MessagePack;
-using NeonWarfare.Scenes.Entity.Characters.Controller;
+using NeonWarfare.Scenes.Entities.Characters.Controller;
 using static Godot.MultiplayerPeer.TransferModeEnum;
 using static Godot.MultiplayerApi.RpcMode;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+namespace NeonWarfare.Scenes.Entities.Characters.Synchronizer;
 
 public partial class CharacterSynchronizer
 {

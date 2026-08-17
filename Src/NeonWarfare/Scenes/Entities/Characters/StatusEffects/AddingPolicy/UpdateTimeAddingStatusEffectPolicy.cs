@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NeonWarfare.Scenes.Entity.Characters.StatusEffects.AddingPolicy;
+namespace NeonWarfare.Scenes.Entities.Characters.StatusEffects.AddingPolicy;
 
 public class UpdateTimeAddingStatusEffectPolicy : IAddingStatusEffectPolicy
 {

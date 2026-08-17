@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Controller.Ai;
+namespace NeonWarfare.Scenes.Entities.Characters.Controller.Ai;
 
 public interface IAiControllerLogic
 {

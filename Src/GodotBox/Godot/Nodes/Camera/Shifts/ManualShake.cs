@@ -1,4 +1,5 @@
 using Godot;
+using static KludgeBox.Godot.Extensions.VectorExtensions;
 
 namespace GodotBox.Godot.Nodes.Camera.Shifts;
 

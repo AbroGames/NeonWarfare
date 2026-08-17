@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Godot;
 
-namespace NeonWarfare.Scripts.Service.ResumableGame;
+namespace NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 public class ResumableGameService
 {

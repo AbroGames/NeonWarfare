@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using KludgeBox.Core.Cooldown;
 using MessagePack;
 
-namespace NeonWarfare.Scenes.Entity.Characters.StatusEffects;
+namespace NeonWarfare.Scenes.Entities.Characters.StatusEffects;
 
 [MessagePackObject]
 public class ClientStatusEffect

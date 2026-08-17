@@ -18,7 +18,7 @@ public class RoleCheckTests
     private static readonly string[] RoleCheckMethods = ["IsServer", "IsClient"];
 
     /// <summary>The service the role must be asked from — <c>Services.Net</c>, or <c>Net</c> through the
-    /// global using static in Scripts/GlobalUsings.cs.</summary>
+    /// global using static in Src/NeonWarfare/Scripts/GlobalUsings.cs.</summary>
     private static readonly string[] AllowedReceivers = ["Net", "Services.Net"];
 
     private const string PeerIdMethod = "GetUniqueId";

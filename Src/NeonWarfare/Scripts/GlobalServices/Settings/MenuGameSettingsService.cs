@@ -1,7 +1,7 @@
 using Godot;
 using NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 
-namespace NeonWarfare.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public class MenuGameSettingsService
 {

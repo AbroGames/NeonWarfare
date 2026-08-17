@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+namespace NeonWarfare.Scenes.Entities.Characters.Synchronizer;
 
 public partial class CharacterSynchronizer : Node
 {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using KludgeBox.Reflection.Access;
-using NeonWarfare.Scripts.Service.Settings;
+using NeonWarfare.Scripts.GlobalServices.Settings;
 
 namespace NeonWarfare.Scenes.Screen.Menu.SettingsSystem;
 

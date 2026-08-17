@@ -1,12 +1,12 @@
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using NeonWarfare.Scenes.Entity.Characters.Controller;
-using NeonWarfare.Scenes.Entity.Characters.Controller.Remote;
-using NeonWarfare.Scenes.Entity.Characters.Stats;
-using NeonWarfare.Scenes.Entity.Characters.StatusEffects;
-using NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+using NeonWarfare.Scenes.Entities.Characters.Controller;
+using NeonWarfare.Scenes.Entities.Characters.Controller.Remote;
+using NeonWarfare.Scenes.Entities.Characters.Stats;
+using NeonWarfare.Scenes.Entities.Characters.StatusEffects;
+using NeonWarfare.Scenes.Entities.Characters.Synchronizer;
 
-namespace NeonWarfare.Scenes.Entity.Characters;
+namespace NeonWarfare.Scenes.Entities.Characters;
 
 public partial class Character : RigidBody2D
 {

@@ -71,7 +71,7 @@ public class RepositoryStatsTests
 
     /// <summary>
     /// Files and lines of one group of sources. The .cs of the repository are split by project rather
-    /// than counted together: Scenes/ and Scripts/ are the game, Tests/ is the suite checking it, and a
+    /// than counted together: Src/ is the game, GodotBox included, Tests/ is the suite checking it, and a
     /// single number hides which of the two is growing.
     /// </summary>
     private static void AppendCode(StringBuilder report, string label, IReadOnlyList<string> files)

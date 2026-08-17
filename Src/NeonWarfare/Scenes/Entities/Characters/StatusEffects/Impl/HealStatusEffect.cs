@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using KludgeBox.Core.Cooldown;
-using NeonWarfare.Scenes.Entity.Characters.StatusEffects.AddingPolicy;
+using NeonWarfare.Scenes.Entities.Characters.StatusEffects.AddingPolicy;
 
-namespace NeonWarfare.Scenes.Entity.Characters.StatusEffects.Impl;
+namespace NeonWarfare.Scenes.Entities.Characters.StatusEffects.Impl;
 
 public class HealStatusEffect : StatusEffect
 {

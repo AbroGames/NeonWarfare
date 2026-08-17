@@ -1,8 +1,8 @@
 using Godot;
 using KludgeBox.Core.Cooldown;
-using NeonWarfare.Scenes.Entity.Characters.Synchronizer;
+using NeonWarfare.Scenes.Entities.Characters.Synchronizer;
 
-namespace NeonWarfare.Scenes.Entity.Characters.Controller.Remote;
+namespace NeonWarfare.Scenes.Entities.Characters.Controller.Remote;
 
 public class RemoteController : IController
 {

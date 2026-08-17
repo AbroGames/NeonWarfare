@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using NeonWarfare.Scenes.Entity.Characters.Controller;
-using NeonWarfare.Scenes.Entity.Characters.StatusEffects.AddingPolicy;
+using NeonWarfare.Scenes.Entities.Characters.Controller;
+using NeonWarfare.Scenes.Entities.Characters.StatusEffects.AddingPolicy;
 
-namespace NeonWarfare.Scenes.Entity.Characters.StatusEffects.Impl;
+namespace NeonWarfare.Scenes.Entities.Characters.StatusEffects.Impl;
 
 public class ControlBlockStatusEffect : StatusEffect
 {

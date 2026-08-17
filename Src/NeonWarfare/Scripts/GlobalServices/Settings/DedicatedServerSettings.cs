@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scripts.Service.Settings;
+namespace NeonWarfare.Scripts.GlobalServices.Settings;
 
 public record DedicatedServerSettings(
     string Locale,
