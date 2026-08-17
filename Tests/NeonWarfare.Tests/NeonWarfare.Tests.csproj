@@ -1,5 +1,8 @@
-<!-- Plain Microsoft.NET.Sdk, not Godot.NET.Sdk: the tests never start the engine and must not pull in
-     GodotSharp, which cannot initialize outside a Godot process. -->
+<!-- Plain Microsoft.NET.Sdk, not Godot.NET.Sdk: the tests never start the engine and must not load
+     GodotSharp, which cannot initialize outside a Godot process. The one exception is compile-time only:
+     GodotSharp and KludgeBox are referenced below so that GodotBoxIndependenceTests can hand them to
+     Roslyn as metadata; GodotSharp without its runtime asset, so it is never copied into the output
+     nor loaded into the test host. -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <!-- Same TFM as the game project: both live in one solution, and later the tests may
@@ -32,10 +35,52 @@
     </ItemGroup>
 
     <ItemGroup>
+        <!-- Compile-time references for GodotBoxIndependenceTests, which compiles Src/GodotBox on its own
+             with Roslyn: GodotBox may depend on the engine and on KludgeBox, never on the game.
+             ExcludeAssets="runtime" on GodotSharp keeps GodotSharp.dll in @(ReferencePath) while it is
+             neither copied to bin/ nor listed in deps.json — the test host cannot load it even by
+             accident. The direct reference is what carries that flag: without it GodotSharp would come
+             in through KludgeBox with its runtime asset.
+             KludgeBox itself keeps its runtime assets: NuGet narrows the asset flags down the dependency
+             chain, so excluding them there strips the Humanizer.Core.<culture> packages (satellite
+             resources only) of everything and restore fails with NU1202. KludgeBox.dll, Serilog and
+             Humanizer land in bin/ but are never loaded: no test code uses their types.
+             The versions must be the game's: GodotSharp is what Godot.NET.Sdk/<version> in
+             NeonWarfare.csproj references implicitly, KludgeBox is its explicit PackageReference.
+             GodotBoxIndependenceTests.PackageVersions_MatchTheGameProject fails when they drift.
+             GodotSharpEditor (the SDK adds it in Debug) is deliberately not here: GodotBox is runtime
+             code and must build for an export as well. -->
+        <PackageReference Include="GodotSharp" Version="4.7.1" ExcludeAssets="runtime" />
+        <PackageReference Include="KludgeBox" Version="4.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
         <!-- The tests read repository files (Docs/, README.md), but their working directory is
              bin/<config>/<tfm>/. The root is baked into the assembly at compile time: walking up
              from AppContext.BaseDirectory is fragile because the output depth changes between
              configurations. Read back by RepositoryPaths. -->
         <AssemblyMetadata Include="RepositoryRoot" Value="$(MSBuildThisFileDirectory)..\..\" />
     </ItemGroup>
+
+    <!-- Writes the resolved compile-time references — the reference assemblies of net10.0 plus every
+         package assembly, transitive ones included — to one file next to the test assembly, one path
+         per line. Read by Infrastructure/CompileReferences for GodotBoxIndependenceTests.
+         @(ReferencePath) is what csc itself receives, after NuGet resolution and conflict resolution
+         between the framework and packages. Rebuilding that list in the test instead (walking
+         ~/.nuget/packages, finding the targeting pack under the dotnet root) would duplicate the SDK
+         and silently disagree with it on a version bump.
+         The list also holds the test project's own packages (xUnit, Roslyn, the test platform). They are
+         kept rather than filtered: an extra reference can only make GodotBox compile where it otherwise
+         would not, and anything GodotBox took from them would break the game build first, since the
+         game references none of them. Filtering by package would need the transitive closure of
+         KludgeBox written out by hand — one more list to go stale. -->
+    <Target Name="WriteCompileReferences" AfterTargets="ResolveAssemblyReferences">
+        <WriteLinesToFile File="$(OutDir)compile-references.txt"
+                          Lines="@(ReferencePath->'%(FullPath)')"
+                          Overwrite="true"
+                          WriteOnlyWhenDifferent="true" />
+        <ItemGroup>
+            <FileWrites Include="$(OutDir)compile-references.txt" />
+        </ItemGroup>
+    </Target>
 </Project>

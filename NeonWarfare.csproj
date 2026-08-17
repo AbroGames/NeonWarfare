@@ -25,21 +25,20 @@
         <WriteLinesToFile File="@(FilesToCreate)" Lines="" Overwrite="true" />
     </Target>
 
+    <!-- The project directory is the repository root, so the default **/*.cs glob would also pick up
+         Tests/** (separate test projects). Game code lives only in Src/, so it is listed explicitly
+         instead. -->
+    <PropertyGroup>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Src/**/*.cs" />
+    </ItemGroup>
+
     <ItemGroup>
         <None Include="README.md" />
         <None Include="Docs/**/*" />
         <None Include="Assets/**/*" />
         <None Include="Properties/launchSettings.json"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <!-- The project directory is the repository root, so the default Godot.NET.Sdk glob
-             (**/*.cs) also picks up Tests/**. Without this the game assembly would try to compile
-             the test sources and fail on xUnit types it does not reference. Tests are built by
-             Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj instead. -->
-        <Compile Remove="Tests/**" />
-        <!-- Same glob puts Tests/** (including its bin/obj) into None, cluttering the file tree in
-             Rider next to the Assets/** and Docs/** items included above on purpose. -->
-        <None Remove="Tests/**" />
     </ItemGroup>
 </Project>
