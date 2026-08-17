@@ -44,7 +44,7 @@ combination of movement / rotation / skills; they are combined in `ControlBlocke
 ## Stats
 
 The `CharacterStat` enum is the single source of truth for the list of stats and their units of
-measurement, see [CharacterStat.cs](../Scenes/Entity/Characters/Stats/CharacterStat.cs). It covers
+measurement, see [CharacterStat.cs](../Src/NeonWarfare/Scenes/Entities/Characters/Stats/CharacterStat.cs). It covers
 survivability (`MaxHp`, `RegenHp`, `Armor`, `ArmorAbsorption`, `ReceivingHeal`), movement
 (`MovementSpeed`, `RotationSpeed`, `Mass`) and skills (`SkillDamage`, `SkillHeal`, `SkillCooldown`,
 `SkillCritChance`, …).

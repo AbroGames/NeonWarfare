@@ -4,8 +4,8 @@
 
 ## The main menu
 
-`Scenes/Screen/NewMenu/`. `MainMenu` (`MainMenu.tscn`) is the scene the `MainSceneService` puts into
-`MainSceneContainer`. It holds three things:
+`Src/NeonWarfare/Scenes/Screen/Menu/`. `MainMenu` (`MainMenu.tscn`) is the scene the `MainSceneService`
+puts into `MainSceneContainer`. It holds three things:
 
 * `PagesProvider` — the `PackedScene` storage of every page, references are set in the editor;
 * the animated 3D background (`SubViewportContainer` → `Background3D` + `CorridorContainer`);
@@ -16,7 +16,7 @@
 
 ### The page stack
 
-`Scenes/Screen/NewMenu/PagesSystem/`:
+`Scenes/Screen/Menu/PagesSystem/`:
 
 * `PageContainer` — `SetRootPage` / `PushPage` / `PopPage`; only one page is in the tree at a time
   (pushing removes the previous one and adds the next), catches cycles and pushes of non-top pages;
@@ -32,7 +32,7 @@ Every entry point into a game session goes through it.
 
 ### The pages
 
-`Scenes/Screen/NewMenu/MainMenu/Pages/`:
+`Scenes/Screen/Menu/MainMenu/Pages/`:
 
 | Page | What it does |
 |---|---|
@@ -58,7 +58,7 @@ applied in `_Ready()` — the child nodes do not exist earlier.
 ## The settings screen
 
 It is built **from a model, not by hand**. `MenuGameSettings`
-(`Scenes/Screen/NewMenu/SettingsSystem/`) describes the fields; the attributes control the display:
+(`Scenes/Screen/Menu/SettingsSystem/`) describes the fields; the attributes control the display:
 
 | Attribute | Effect |
 |---|---|

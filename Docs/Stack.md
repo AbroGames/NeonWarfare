@@ -8,7 +8,7 @@ Packages of the game project (`NeonWarfare.csproj`):
 
 | Package | What for |
 |---|---|
-| `KludgeBox` | An in-house library with shared reusable code: DI, logging, utility Godot nodes, utility classes |
+| `KludgeBox` | An in-house library with shared reusable code: DI, logging, services, Godot extensions, utility classes |
 | `CommunityToolkit.Mvvm` | The `[ObservableProperty]` annotation for data models |
 | `MessagePack` | Binary serialization of the world state for saves and for transfer over the network |
 
@@ -21,6 +21,8 @@ Packages of the test project (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`
 | `xunit.runner.visualstudio` | The VSTest adapter — without it `dotnet test` and Rider do not find the tests |
 | `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
 | `Microsoft.CodeAnalysis.CSharp` | The C# parser (Roslyn), convention tests check a syntax tree |
+| `GodotSharp` | Compile-time only, no runtime asset: a reference for the `GodotBoxIndependenceTests` compilation |
+| `KludgeBox` | Compile-time only, never loaded: the other reference for the `GodotBoxIndependenceTests` compilation |
 
 The smoke test project (`Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csproj`) takes the same
 three xUnit packages and nothing else — it launches the game as an external process and needs no parser,
@@ -30,16 +32,26 @@ Coming in transitively through KludgeBox and used directly in the code: **Serilo
 (`[Logger] private ILogger _log`); **Humanizer** — substitution into string templates
 (`FormatWith(...)`).
 
-**About KludgeBox.** The library's sources are not in this repository — it is referenced as a NuGet
-package, so searching the repository will not find declarations of its types (`NodeContainer`,
-`AbstractMultiplayerSpawner`, `ProcessShutdowner`, `ProcessDeadChecker`, `StatModifiersContainer<T>`,
-the `[Sync]` attribute and so on). The path to the library's source code is stored in the
-`KLUDGEBOX_SRC` ENV variable — that is where they should be read.
+**KludgeBox and GodotBox.** KludgeBox is referenced as a NuGet package, so its sources are not in this
+repository and searching it will not find declarations of its types: the DI core (`DependencyInjector`,
+`[Child]`, `[Parent]`, `[SceneService]`, `[Logger]`, `[NotNull]`), logging, the services of the
+[global registry](Services.md) (`I18N`, `Rand`, `NodeTree`, …), the Godot extensions pulled in by
+`GlobalUsings.cs`, `StatModifiersContainer<T>` and so on. The path to the library's source code is stored
+in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
+
+The Godot nodes built on top of it are **not** in the package: they live in this repository, in
+`Src/GodotBox/` (namespaces `GodotBox.*`) — `NodeContainer`, `AbstractStorage`, `CheckedAbstractStorage`,
+`AbstractMultiplayerSpawner`, `Background`, `Camera` with its shifts, `ProcessShutdowner`,
+`ProcessDeadChecker`, the `[Sync]` attribute with `AttributeMultiplayerSynchronizer`, and the DI request
+that processes `[Sync]`. GodotBox is a reusable layer that must not depend on the game — see
+[Code style conventions](Code-style.md#namespaces).
 
 Two build details. The `CS0649` warning is suppressed (`NoWarn` in `.csproj`): the fields are filled by
-DI rather than by a constructor, and the compiler considers them unused. And `NeonWarfare.csproj`
-contains `<Compile Remove="Tests/**" />`: the game project's directory is the repository root, so
-otherwise the default `Godot.NET.Sdk` glob (`**/*.cs`) would pull the test files into the game assembly,
-and it would fail on the xUnit types. The test project builds on its own; in `ExportDebug` and
-`ExportRelease` it is excluded from the solution build so that the Godot editor and the game export do
-not touch it.
+DI rather than by a constructor, and the compiler considers them unused. And `NeonWarfare.csproj` turns
+the default `Compile` glob off (`EnableDefaultCompileItems` set to `false`) and lists its sources itself:
+`<Compile Include="Src/**/*.cs" />`. The game project's directory is the repository root, so the default
+glob (`**/*.cs`) would otherwise pull the test files into the game assembly, and it would fail on the
+xUnit types; all the game code lives in `Src/`. `Godot.NET.Sdk` already turns the default `None` glob off,
+so the `None` items for `README.md`, `Docs/`, `Assets/` and `launchSettings.json` are listed explicitly.
+The test projects build on their own; in `ExportDebug` and `ExportRelease` they are excluded from the
+solution build so that the Godot editor and the game export do not touch them.

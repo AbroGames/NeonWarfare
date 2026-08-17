@@ -35,7 +35,7 @@ on Windows/Linux/macOS.
 
 | Document | What is inside |
 |---|---|
-| [Command-line arguments](Docs/Cli-args.md) | All flags, `Scripts/Content/CmdArgs/` |
+| [Command-line arguments](Docs/Cli-args.md) | All flags, `Src/NeonWarfare/Scripts/Content/CmdArgs/` |
 | [Repository structure](Docs/Repository-structure.md) | What lives in each folder |
 | [Stack and dependencies](Docs/Stack.md) | Godot and .NET versions, libraries, `KLUDGEBOX_SRC` |
 | [Quick start](Docs/Quick-start.md) | Environment setup, Rider run profiles |
@@ -67,16 +67,17 @@ on Windows/Linux/macOS.
 
 | Path | What it is |
 |---|---|
-| [Scenes/Root/Root.cs](Scenes/Root/Root.cs) | The process entry point, lives for the whole application session |
-| [Scenes/Game/Game.cs](Scenes/Game/Game.cs) | A single game session: `Network`, `World`, `Hud` / `ServerHud`; created anew on every entry into the game |
-| [Scenes/World/World.cs](Scenes/World/World.cs) | The world root, `IServiceProvider`, the world service registry |
-| [Scenes/World/Data/PersistenceData/WorldPersistenceData.cs](Scenes/World/Data/PersistenceData/WorldPersistenceData.cs) | Data that goes into the save |
-| [Scenes/World/Data/TemporaryData/WorldTemporaryData.cs](Scenes/World/Data/TemporaryData/WorldTemporaryData.cs) | Data of the current session, does not go into the save |
-| [Scenes/World/Tree/WorldTree.cs](Scenes/World/Tree/WorldTree.cs) | The game tree, switching locations |
-| [Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs](Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs) | The peaceful hub — the first of the two locations |
-| [Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs](Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs) | The battle zone — the second of the two locations |
-| [Scenes/Entity/Characters/Character.cs](Scenes/Entity/Characters/Character.cs) | The character (`RigidBody2D`) and all of its subsystems |
-| [Scripts/Services.cs](Scripts/Services.cs) | The global service registry |
-| [Scripts/Consts.cs](Scripts/Consts.cs) | Global constants, `Consts.TransferChannel` |
-| [Scripts/Content/CmdArgs/](Scripts/Content/CmdArgs/) | `CommonArgs`, `ClientArgs`, `DedicatedServerArgs` |
+| [Src/NeonWarfare/Scenes/Root/Root.cs](Src/NeonWarfare/Scenes/Root/Root.cs) | The process entry point, lives for the whole application session |
+| [Src/NeonWarfare/Scenes/Game/Game.cs](Src/NeonWarfare/Scenes/Game/Game.cs) | A single game session: `Network`, `World`, `Hud` / `ServerHud`; created anew on every entry into the game |
+| [Src/NeonWarfare/Scenes/World/World.cs](Src/NeonWarfare/Scenes/World/World.cs) | The world root, `IServiceProvider`, the world service registry |
+| [Src/NeonWarfare/Scenes/World/Data/PersistenceData/WorldPersistenceData.cs](Src/NeonWarfare/Scenes/World/Data/PersistenceData/WorldPersistenceData.cs) | Data that goes into the save |
+| [Src/NeonWarfare/Scenes/World/Data/TemporaryData/WorldTemporaryData.cs](Src/NeonWarfare/Scenes/World/Data/TemporaryData/WorldTemporaryData.cs) | Data of the current session, does not go into the save |
+| [Src/NeonWarfare/Scenes/World/Tree/WorldTree.cs](Src/NeonWarfare/Scenes/World/Tree/WorldTree.cs) | The game tree, switching locations |
+| [Src/NeonWarfare/Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs](Src/NeonWarfare/Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs) | The peaceful hub — the first of the two locations |
+| [Src/NeonWarfare/Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs](Src/NeonWarfare/Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs) | The battle zone — the second of the two locations |
+| [Src/NeonWarfare/Scenes/Entities/Characters/Character.cs](Src/NeonWarfare/Scenes/Entities/Characters/Character.cs) | The character (`RigidBody2D`) and all of its subsystems |
+| [Src/NeonWarfare/Scripts/Services.cs](Src/NeonWarfare/Scripts/Services.cs) | The global service registry |
+| [Src/NeonWarfare/Scripts/Consts.cs](Src/NeonWarfare/Scripts/Consts.cs) | Global constants, `Consts.TransferChannel` |
+| [Src/NeonWarfare/Scripts/Content/CmdArgs/](Src/NeonWarfare/Scripts/Content/CmdArgs/) | `CommonArgs`, `ClientArgs`, `DedicatedServerArgs` |
+| [Src/GodotBox/](Src/GodotBox/) | The game-independent layer over KludgeBox: `NodeContainer`, storages, spawner, `[Sync]`, camera |
 | [Properties/launchSettings.json](Properties/launchSettings.json), [.run/](.run/) | Rider and Multi-Launch run profiles |

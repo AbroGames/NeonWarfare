@@ -25,7 +25,7 @@ World (Node2D, IServiceProvider)                   The game world and all of its
 │       └── Character, Wall, ...                   Game objects, synchronized by MultiplayerSpawner
 ├── PersistenceData                                Data that goes into the save
 ├── TemporaryData                                  Data of the current session
-├── Service                                        Services that live within a single game session
+├── ChatService, PlayerService, ...                The world services, each a direct child of World
 ├── SyncedPackedScenes                             Prototypes of scenes that are synchronized from server to client on spawn
 └── ClientPackedScenes                             Prototypes of purely client-side (visual) scenes
 ```

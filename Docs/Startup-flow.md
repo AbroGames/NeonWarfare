@@ -136,7 +136,7 @@ The difference is in the constructor flags rather than in a separate class: `sav
 `adminUid`, `parentPid`, `serverHudRender`, `worldRender`, `mustSetLastGame`, `startedAsDedicated`.
 
 1. The `Loading` loading screen.
-2. With `parentPid` — a `ProcessDeadChecker` (a KludgeBox node) on `Game`: it watches the parent process
+2. With `parentPid` — a `ProcessDeadChecker` (a GodotBox node) on `Game`: it watches the parent process
    and calls `MainScene.Shutdown()` when it dies, so a child server is not left hanging after the client
    is closed (see [Shutdown](Shutdown.md)).
 3. `AddNetwork()`, `AddWorld()`, `Net.DoClient(() => AddHud())` — the HUD only where there is a player.
@@ -184,7 +184,7 @@ A **second OS process** plus an ordinary client connection to it. A descendant o
    `--port`, `--savefile`, `--admin` and **`--parent-pid` with the PID of the current process**.
    `--headless` is set when the server window is not requested; log mirroring into the Godot console is
    never passed to the dedicated server.
-2. A `ProcessShutdowner` (a KludgeBox node) with the server's PID is attached to `Game`: the child
+2. A `ProcessShutdowner` (a GodotBox node) with the server's PID is attached to `Game`: the child
    process is killed when `Game` is destroyed.
 3. `base.Init(game)` — from here on this is an ordinary connection to `127.0.0.1`.
 4. The write into `resume-game.json` is done manually **after** `base.Init`, as "own server". That is

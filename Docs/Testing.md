@@ -20,9 +20,9 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   [smoke tests](Smoke-testing.md) and by a manual run — see [Quick start](Quick-start.md).
 * **A test collects all violations into one list** instead of failing on the first —
   `Infrastructure/FailureReport`. A per-file check is a `[Theory]` with one file per case.
-* **Conventions are checked on a syntax tree, not on text** (`Microsoft.CodeAnalysis.CSharp` — a parser
-  only, no `GodotSharp`): text matching cannot tell a declaration from a call, and
-  [Code style conventions](Code-style.md) is written in those terms.
+* **Conventions are checked on a syntax tree, not on text** (`Microsoft.CodeAnalysis.CSharp`): text
+  matching cannot tell a declaration from a call, and [Code style conventions](Code-style.md) is written
+  in those terms.
 
 ## Conventions
 
@@ -41,7 +41,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
   `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Five exist: `Scripts/GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  skip. Five exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
   `NotFoundCommand` (no command name of its own).
 
@@ -65,7 +65,8 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot` |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |
-| `Conventions/NamespaceTests` | Namespace matches the file path |
+| `Conventions/NamespaceTests` | Namespace matches the folder path relative to `Src/` |
+| `Conventions/GodotBoxIndependenceTests` | `Src/GodotBox` compiles without the game; its `GodotSharp` / `KludgeBox` versions match the game's |
 | `Conventions/RpcConventionTests` | RPC targets are private, carry an explicit `[Rpc(...)]`, called once from their wrapper |
 | `Conventions/RoleCheckTests` | Process role read from `Net.*`, not `GetMultiplayer()` or a peer-id literal |
 | `Conventions/CmdArgsContractTests` | Flags, parsing and `CmdArgsService` stay where [Cli args](Cli-args.md) says |

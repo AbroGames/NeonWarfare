@@ -6,7 +6,7 @@ The **stock Godot high-level multiplayer** is used (`SceneMultiplayer` + `ENetMu
 
 ## Main nodes
 
-* **`Network`** ([Scenes/Game/Network/Network.cs](../Scenes/Game/Network/Network.cs)) — a wrapper over
+* **`Network`** ([Scenes/Game/Network/Network.cs](../Src/NeonWarfare/Scenes/Game/Network/Network.cs)) — a wrapper over
   `MultiplayerApi`, responsible for `ConnectToServer()`, `HostServer()`, `OpenServer()` and a correct
   `Shutdown()`. It creates a new `SceneMultiplayer` bound to the `Game` node, so that on returning to
   the menu all the old subscriptions are guaranteed to fall away.
@@ -42,7 +42,7 @@ The mode is always stated explicitly. The full cheat sheet is in the
 ## Spawning objects
 
 `WorldMultiplayerSpawnerService.AddSpawnerToNode(node)` attaches a `WorldMultiplayerSpawner` (a
-descendant of `AbstractMultiplayerSpawner` from KludgeBox) to a node. The spawner watches that node and
+descendant of `AbstractMultiplayerSpawner` from GodotBox) to a node. The spawner watches that node and
 synchronizes over the network every sub-node created on it; it is named after the
 `<node name>-MultiplayerSpawner` pattern and is deleted automatically together with the observed node.
 The exception is the spawner for `Tree`, which sits right in `World.tscn` rather than being created from
@@ -51,7 +51,7 @@ already tracks to a peer that connects later — see [Client connection](#client
 
 ## Field synchronization
 
-The `[Sync]` attribute from `KludgeBox.Godot.Nodes.MpSync` (example:
+The `[Sync]` attribute from `GodotBox.Godot.Nodes.MpSync` (example:
 `WorldTemporaryData.PlayerUidByPeerId`). What to sync via `[Sync]` and what to put into the save
 snapshot is covered in [Data and saves](Data-and-saves.md).
 
@@ -85,13 +85,14 @@ single-player game — in single player there is no `Network` node at all, and `
 
 The `World` and all of its sub-entities are built by the game starter, before the peers meet:
 
-* **Server** ([HostMultiplayerGameStarter](../Scenes/Game/Starters/HostMultiplayerGameStarter.cs)) —
+* **Server** ([HostMultiplayerGameStarter](../Src/NeonWarfare/Scenes/Game/Starters/HostMultiplayerGameStarter.cs)) —
   `AddNetwork()`, `AddWorld()`, then `HostServer(port, refuseNewConnections: true)`: the port is open
   but closed for business. Only afterwards comes `ServerStartWorld()` → `StartNewGame()` / `LoadGame()`
   → `Tree.SetSafeSurface()`, which creates the `SafeSurface`, hangs a `SafeSurface-MultiplayerSpawner`
   on it and fills it with walls and bots. The last step is `OpenServer()`, so a client can only get in
   once the world is fully assembled.
-* **Client** ([ConnectToMultiplayerGameStarter](../Scenes/Game/Starters/ConnectToMultiplayerGameStarter.cs))
+* **Client**
+  ([ConnectToMultiplayerGameStarter](../Src/NeonWarfare/Scenes/Game/Starters/ConnectToMultiplayerGameStarter.cs))
   — `AddNetwork()`, `AddWorld()`, `AddHud()` and only then `ConnectToServer()`. The `World` is the same
   scene with the same services, but empty: `WorldTree._Ready()` only makes a placeholder `Surface`
   outside the tree so that other services do not get a `null`, and the real one arrives from the server.
