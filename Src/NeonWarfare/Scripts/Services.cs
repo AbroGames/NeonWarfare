@@ -1,6 +1,8 @@
+using GodotBox.DI;
 using KludgeBox.Core;
 using KludgeBox.Core.Random;
 using KludgeBox.DI;
+using KludgeBox.DI.Requests;
 using KludgeBox.Godot.Services;
 using KludgeBox.Reflection.Access;
 using NeonWarfare.Scripts.GlobalServices;
@@ -14,7 +16,7 @@ namespace NeonWarfare.Scripts;
 public static class Services
 {
     // Services from KludgeBox
-    public static readonly DependencyInjector Di = new();
+    public static readonly DependencyInjector Di = new(RequestsScanner.CreateDefault().EnableMpSyncInjection());
     public static readonly ExceptionHandlerService ExceptionHandler = new();
     public static readonly RandomService Rand = new();
     public static readonly MathService Math = new();
