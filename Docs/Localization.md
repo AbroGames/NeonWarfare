@@ -4,8 +4,7 @@
 
 The translation files are `Assets/Locales/en.po` and `ru.po`, the template is `messages.pot`. A new key
 is added to all three files. Keys are written in `SCREAMING_SNAKE_CASE` and grouped by screen with a
-double underscore: `MAIN_MENU__EXIT_BUTTON`, `HUD__CHAT_PLACEHOLDER`,
-`CONNECT_MENU__HOSTNAME_UNSPECIFIED_ERROR`.
+double underscore: `MAIN_MENU__EXIT_BUTTON`, `HUD__CHAT_PLACEHOLDER`.
 
 ## How a translation is substituted
 

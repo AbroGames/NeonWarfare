@@ -20,6 +20,6 @@ The DI from KludgeBox is used. Practically every class calls `Di.Process(this)` 
 
 `GameCheckedAbstractStorage` (`Scenes/Misc/`, a descendant of `CheckedAbstractStorage` from GodotBox that
 runs the checks with the game's `Di`) is the base for all the `PackedScene` storages (`RootPackedScenes`,
-`GamePackedScenes`, `SyncedPackedScenes`, `ClientPackedScenes`, `PagesProvider`). The references to the
+`GamePackedScenes`, `PagesProvider`, etc.). The references to the
 scene prototypes are configured in the Godot editor; obtaining any scene for instantiation starts here,
 not with `GD.Load`.

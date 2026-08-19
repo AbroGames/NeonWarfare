@@ -6,6 +6,7 @@
 Assets/                               Any files except scenes (.tscn) and code (.cs and .cs.uid)
 ├── Fonts/                            Fonts and their licenses
 ├── Locales/                          The localization template (.pot) and the locale files (.po)
+├── Materials/                        Materials (.tres)
 ├── Resources/                        UI themes and other non-standard resources
 ├── Shaders/                          Shaders (.gdshader)
 └── Textures/                         Textures (.png and .svg) and their sources (.psd)

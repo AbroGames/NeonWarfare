@@ -47,6 +47,7 @@ someone else's server, hosting "from inside the client". `Init()` after `base.In
 | `Services.Net.Init(false)` | The process is **not** a dedicated server → `Net.IsClient()` is always `true` |
 | `Services.AutoScaling.Init(...)` | UI auto-scaling per `Consts.AutoScalingSettings` |
 | `Services.LastGame.Init()` | Reading `resume-game.json` for the "Continue" button |
+| `Services.KnownServers.Init()` | Reading `known-servers.json` for the server list of the multiplayer menu |
 | `Services.GameSettings.Init()` | Reading `game-settings.json` |
 | `--nick` / `--uid` | A temporary override of the nickname and the UID, **without writing** to the settings file |
 | `Services.I18N.SetCurrentLocale(...)` | The locale from `GameSettings` |
@@ -85,7 +86,8 @@ from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`,
 `MainSceneService` creates the `Game` scene, puts it into `MainSceneContainer` and hands it a **game
 starter** — an object that knows how to bring this session up. `Game.Init(BaseGameStarter starter)`
 calls `starter.Init(game)`, which performs in order: `game.AddNetwork()` (creates `Network` — ENet +
-`SceneMultiplayer`), `game.AddWorld()`, `game.AddHud()` / `game.AddServerHud()`, then
+`SceneMultiplayer`; skipped by `SingleplayerGameStarter`), `game.AddWorld()`, `game.AddHud()` /
+`game.AddServerHud()`, then
 `ServerStartWorld()` on the server (`StartNewGame()` or `LoadGame()`) and `ClientStartWorld()` on the
 client (`StartSyncWithServer()`).
 

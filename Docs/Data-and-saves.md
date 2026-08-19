@@ -54,3 +54,4 @@ Other files in `user://` (JSON, `System.Text.Json`):
 | `game-settings.json` | Client settings |
 | `dedicated-server-settings.json` | Dedicated server settings |
 | `resume-game.json` | The last session for the "Continue" button |
+| `known-servers.json` | The server list of the multiplayer menu |
