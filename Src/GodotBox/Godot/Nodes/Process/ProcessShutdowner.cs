@@ -25,7 +25,7 @@ public partial class ProcessShutdowner : Node
     
     public ProcessShutdowner(int processPid, Func<int, string> logMessageGenerator = null)
     {
-        Di.Process(this);
+        GodotBoxServices.Di.Process(this);
         
         _processPid = processPid;
         if (logMessageGenerator != null) _logMessageGenerator = logMessageGenerator;

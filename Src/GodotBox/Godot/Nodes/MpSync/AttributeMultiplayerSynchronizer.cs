@@ -35,7 +35,7 @@ public partial class AttributeMultiplayerSynchronizer : MultiplayerSynchronizer
     
     public AttributeMultiplayerSynchronizer(Node observableNode)
     {
-        Di.Process(this);
+        GodotBoxServices.Di.Process(this);
         
         if (observableNode == null)
         {
@@ -62,7 +62,7 @@ public partial class AttributeMultiplayerSynchronizer : MultiplayerSynchronizer
         List<IMemberAccessor> result = new();
         
         
-        IReadOnlyList<IMemberAccessor> members = Services.MembersScanner.ScanMembers(type);
+        IReadOnlyList<IMemberAccessor> members = GodotBoxServices.MembersScanner.ScanMembers(type);
         foreach (var member in members)
         {
             if (member.HasAttribute<SyncAttribute>())

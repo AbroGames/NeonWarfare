@@ -14,8 +14,11 @@ public class DiTests
 {
     private const string ProcessMethod = "Process";
 
-    /// <summary>The injector, either through <c>Services.Di</c> or through the global using static.</summary>
-    private static readonly string[] AllowedReceivers = ["Di", "Services.Di"];
+    /// <summary>
+    /// The injector: the game's, through <c>Services.Di</c> or the global using static, or GodotBox's own
+    /// <c>GodotBoxServices.Di</c> — GodotBox must not touch the game's services.
+    /// </summary>
+    private static readonly string[] AllowedReceivers = ["Di", "Services.Di", "GodotBoxServices.Di"];
 
     /// <summary>
     /// The attributes that need an injector run. <c>[NotNull]</c> is deliberately not one of them: it

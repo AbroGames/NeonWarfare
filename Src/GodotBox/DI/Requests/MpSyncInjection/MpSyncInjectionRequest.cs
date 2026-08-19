@@ -14,8 +14,6 @@ public class MpSyncInjectionRequest : IProcessingRequest
 
     public MpSyncInjectionRequest(IMemberAccessor memberAccessor)
     {
-        Di.Process(this);
-        
         _memberAccessor = memberAccessor;
     }
 

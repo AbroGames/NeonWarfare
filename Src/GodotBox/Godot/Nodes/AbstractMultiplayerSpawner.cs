@@ -57,7 +57,7 @@ public abstract partial class AbstractMultiplayerSpawner : MultiplayerSpawner
     
     public AbstractMultiplayerSpawner InitPreReady(Node observableNode, bool selfSync = true)
     {
-        Di.Process(this);
+        GodotBoxServices.Di.Process(this);
         
         _observableNode = observableNode;
         SetSelfSync(selfSync);
@@ -66,8 +66,8 @@ public abstract partial class AbstractMultiplayerSpawner : MultiplayerSpawner
 
     public override void _Ready()
     {
-        //Call Di.Process again, because InitPreReady calls only on server-side.
-        Di.Process(this);
+        //Call GodotBoxServices.Di.Process again, because InitPreReady calls only on server-side.
+        GodotBoxServices.Di.Process(this);
 
         foreach (var packedScene in GetPackedScenesForSpawn())
         {

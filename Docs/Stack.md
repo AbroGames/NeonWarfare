@@ -43,7 +43,8 @@ The Godot nodes built on top of it are **not** in the package: they live in this
 `Src/GodotBox/` (namespaces `GodotBox.*`) — `NodeContainer`, `AbstractStorage`, `CheckedAbstractStorage`,
 `AbstractMultiplayerSpawner`, `Background`, `Camera` with its shifts, `ProcessShutdowner`,
 `ProcessDeadChecker`, the `[Sync]` attribute with `AttributeMultiplayerSynchronizer`, and the DI request
-that processes `[Sync]`. GodotBox is a reusable layer that must not depend on the game — see
+that processes `[Sync]`, plus its own service registry `GodotBoxServices`. GodotBox is a reusable layer
+that must not depend on the game — see
 [Code style conventions](Code-style.md#namespaces).
 
 Two build details. The `CS0649` warning is suppressed (`NoWarn` in `.csproj`): the fields are filled by

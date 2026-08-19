@@ -32,6 +32,9 @@ globally available there are `Consts.Global` (`ServerId`, `BroadcastId`) and the
 KludgeBox (vectors, colors, camera, nodes — `Vec2(x, y)`, for example, comes from there) — see
 [GlobalUsings.cs](../Src/NeonWarfare/Scripts/GlobalUsings.cs). New global imports are added only there.
 
+GodotBox does not use `Services`: it has its own `GodotBoxServices`,
+with instances of its own and no global using — see [Code style conventions](Code-style.md#namespaces).
+
 ## World services
 
 Child nodes of `World`. `World` itself implements `IServiceProvider` and registers them in a dictionary

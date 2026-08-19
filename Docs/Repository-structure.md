@@ -12,6 +12,7 @@ Assets/                               Any files except scenes (.tscn) and code (
 
 Src/                                  Code and scenes of the Godot project; a namespace is the folder path relative to Src/
 ├── GodotBox/                         The game-independent layer over KludgeBox; must not depend on NeonWarfare
+│   ├── GodotBoxServices.cs           GodotBox's own services (Di, Rand, MembersScanner), separate from the game's
 │   ├── DI/                           The [Sync] injection request for the KludgeBox DI (EnableMpSyncInjection)
 │   └── Godot/
 │       └── Nodes/                    NodeContainer, AbstractStorage, CheckedAbstractStorage, spawner, Background

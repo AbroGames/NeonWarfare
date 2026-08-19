@@ -21,7 +21,7 @@ public partial class ProcessDeadChecker : Node
     
     public ProcessDeadChecker(int processPid, Action actionWhenDead, Func<int, string> logMessageGenerator = null)
     {
-        Di.Process(this);
+        GodotBoxServices.Di.Process(this);
         
         _processPid = processPid;
         _actionWhenDead = actionWhenDead;
