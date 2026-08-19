@@ -51,7 +51,7 @@
              GodotSharpEditor (the SDK adds it in Debug) is deliberately not here: GodotBox is runtime
              code and must build for an export as well. -->
         <PackageReference Include="GodotSharp" Version="4.7.1" ExcludeAssets="runtime" />
-        <PackageReference Include="KludgeBox" Version="4.0.0" />
+        <PackageReference Include="KludgeBox" Version="4.0.1" />
     </ItemGroup>
 
     <ItemGroup>
