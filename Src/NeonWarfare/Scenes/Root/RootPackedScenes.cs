@@ -1,7 +1,7 @@
 using Godot;
 using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
-using GameCheckedAbstractStorage = NeonWarfare.Scenes.Misc.GameCheckedAbstractStorage;
+using NeonWarfare.Scenes.Misc;
 
 namespace NeonWarfare.Scenes.Root;
 

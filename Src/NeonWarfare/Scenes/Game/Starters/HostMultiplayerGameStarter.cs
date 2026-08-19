@@ -1,8 +1,8 @@
 using Godot;
+using GodotBox.Godot.Nodes.Process;
 using Humanizer;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
-using ProcessDeadChecker = GodotBox.Godot.Nodes.Process.ProcessDeadChecker;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

@@ -1,5 +1,5 @@
+using GodotBox.Godot.Nodes.Process;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
-using ProcessShutdowner = GodotBox.Godot.Nodes.Process.ProcessShutdowner;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 

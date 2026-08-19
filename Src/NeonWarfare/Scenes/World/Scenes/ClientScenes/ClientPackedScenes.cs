@@ -1,5 +1,5 @@
 using GodotBox;
-using GameCheckedAbstractStorage = NeonWarfare.Scenes.Misc.GameCheckedAbstractStorage;
+using NeonWarfare.Scenes.Misc;
 
 namespace NeonWarfare.Scenes.World.Scenes.ClientScenes;
 
