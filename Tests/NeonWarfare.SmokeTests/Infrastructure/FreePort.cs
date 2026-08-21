@@ -11,21 +11,15 @@ namespace NeonWarfare.SmokeTests.Infrastructure;
 public static class FreePort
 {
     /// <summary>
-    /// Asks the OS for a free port from the dynamic range by binding to port 0 and reading back what
-    /// was assigned. The port is released immediately, so this is a hint rather than a reservation —
-    /// good enough here, and the alternative (a hardcoded port) collides far more often.
+    /// Asks the OS for a free UDP port from the dynamic range by binding to port 0 and reading back what
+    /// was assigned. UDP, not TCP: the server is an ENetMultiplayerPeer, and a port free for one protocol
+    /// can be taken for the other. The port is released immediately, so this is a hint rather than a
+    /// reservation — good enough here, and the alternative (a hardcoded port) collides far more often.
     /// </summary>
     public static int Take()
     {
-        TcpListener listener = new(IPAddress.Loopback, 0);
-        listener.Start();
-        try
-        {
-            return ((IPEndPoint)listener.LocalEndpoint).Port;
-        }
-        finally
-        {
-            listener.Stop();
-        }
+        using Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.Bind(new IPEndPoint(IPAddress.Any, 0));
+        return ((IPEndPoint)socket.LocalEndPoint!).Port;
     }
 }

@@ -12,9 +12,15 @@ namespace NeonWarfare.SmokeTests.Infrastructure;
 public static partial class OutputScanner
 {
     /// <summary>
-    /// A Serilog line from the game. The level is rendered by KludgeBox's RichGodotSink as the full
-    /// level name padded left to the width of "Information" — the {Level:u3} in the template is
-    /// ignored by that renderer, so this matches "(      Error)" and not "(ERR)".
+    /// Any Serilog line from the game, whatever its level: "|09:40:22.851| (...".
+    /// </summary>
+    [GeneratedRegex(@"^\|[\d:.]+\| ")]
+    private static partial Regex SerilogLineRegex();
+
+    /// <summary>
+    /// A Serilog line at a level that fails the test. The level is rendered by KludgeBox's RichGodotSink
+    /// as the full level name padded left to the width of "Information" — the {Level:u3} in the template
+    /// is ignored by that renderer, so this matches "(      Error)" and not "(ERR)".
     /// </summary>
     [GeneratedRegex(@"^\|[\d:.]+\| \( *(Warning|Error|Fatal)\)")]
     private static partial Regex SerilogProblemRegex();
@@ -27,39 +33,37 @@ public static partial class OutputScanner
     private static partial Regex EngineProblemRegex();
 
     /// <summary>
-    /// GD.PrintRich emits BBCode, which the engine turns into ANSI escapes when stdout is a terminal.
-    /// Redirected output should be plain, but stripping is cheap insurance against a leading escape
-    /// sequence pushing the timestamp off column zero and hiding an error.
-    /// </summary>
-    [GeneratedRegex(@"\x1B\[[0-9;]*m")]
-    private static partial Regex AnsiEscapeRegex();
-
-    /// <summary>
     /// Every problem found in one process's output, each already prefixed with the process name.
-    /// An engine error drags its stack trace along: "ERROR: NullReferenceException" on its own says
-    /// nothing about where it came from.
+    /// A problem drags its details along: "ERROR: NullReferenceException" or "(Error) Failed to load"
+    /// on its own says nothing about where it came from.
     /// </summary>
     public static IReadOnlyList<string> Scan(GameProcess process)
     {
-        string[] lines = process.Output.Select(line => AnsiEscapeRegex().Replace(line, string.Empty)).ToArray();
+        IReadOnlyList<string> lines = process.Output;
         List<string> problems = [];
 
-        for (int i = 0; i < lines.Length; i++)
+        for (int i = 0; i < lines.Count; i++)
         {
             string line = lines[i];
 
+            IEnumerable<string> details;
             if (SerilogProblemRegex().IsMatch(line))
             {
-                problems.Add($"[{process.Name}] {line}");
+                details = TakeFollowing(lines, i, IsSerilogContinuation);
+            }
+            else if (EngineProblemRegex().IsMatch(line))
+            {
+                details = TakeFollowing(lines, i, IsEngineTrace);
+            }
+            else
+            {
                 continue;
             }
 
-            if (!EngineProblemRegex().IsMatch(line)) continue;
-
             problems.Add($"[{process.Name}] {line}");
-            foreach (string traceLine in TakeTrace(lines, i))
+            foreach (string detail in details)
             {
-                problems.Add($"[{process.Name}]     {traceLine.TrimEnd()}");
+                problems.Add($"[{process.Name}]     {detail.TrimEnd()}");
             }
         }
 
@@ -67,16 +71,24 @@ public static partial class OutputScanner
     }
 
     /// <summary>
-    /// The indented continuation of an engine error, up to the first blank or unindented line.
+    /// RichGodotSink prints the message and then the exception with a separate GD.Print, so the
+    /// exception text starts at column zero ("System.NullReferenceException: ...") and is followed by
+    /// its "   at" frames. It belongs to the problem up to the next log line of either kind.
     /// </summary>
-    private static IEnumerable<string> TakeTrace(string[] lines, int problemIndex)
-    {
-        for (int i = problemIndex + 1; i < lines.Length; i++)
-        {
-            string line = lines[i];
-            if (line.Length == 0 || !char.IsWhiteSpace(line[0])) yield break;
+    private static bool IsSerilogContinuation(string line) =>
+        line.Length > 0 && !SerilogLineRegex().IsMatch(line) && !EngineProblemRegex().IsMatch(line);
 
-            yield return line;
+    /// <summary>
+    /// The indented continuation of an engine error: "   at: ...", "   C# backtrace ...".
+    /// </summary>
+    private static bool IsEngineTrace(string line) => line.Length > 0 && char.IsWhiteSpace(line[0]);
+
+    private static IEnumerable<string> TakeFollowing(
+        IReadOnlyList<string> lines, int problemIndex, Func<string, bool> belongs)
+    {
+        for (int i = problemIndex + 1; i < lines.Count && belongs(lines[i]); i++)
+        {
+            yield return lines[i];
         }
     }
 }

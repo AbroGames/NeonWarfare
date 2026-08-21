@@ -4,7 +4,8 @@ using Xunit;
 namespace NeonWarfare.SmokeTests.Scenarios;
 
 /// <summary>
-/// Launches the game the way a player would and checks that it says nothing bad while it starts up.
+/// Launches the game the way a player would and checks that it gets where it was sent and says nothing
+/// bad on the way.
 ///
 /// These cover what the unit tests structurally cannot: a broken node tree, an injection that comes
 /// out null, an exception in _Ready, a client that fails to reach the server. Every process runs
@@ -12,23 +13,38 @@ namespace NeonWarfare.SmokeTests.Scenarios;
 /// </summary>
 public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
 {
+    /// <summary>ClientRootStarter: the client has initialized and is about to open the menu.</summary>
+    private const string ClientStarted = "Starting Client...";
+
+    /// <summary>Network.HostServer: the ENet socket is open.</summary>
+    private const string ServerStarted = "Started server successfully";
+
+    /// <summary>Network: the ENet handshake with the server is done.</summary>
+    private const string ConnectedToServer = "Connected to the server successfully";
+
+    /// <summary>
+    /// WorldSynchronizerService on the client: the initial world snapshot arrived and was applied. The
+    /// single-player game goes through the same local handshake, so it prints this too.
+    /// </summary>
+    private const string WorldSynced = "Syncing complete successfully";
+
     /// <summary>
     /// The plain client launch: the menu comes up and nothing else happens.
     /// </summary>
     [Fact]
     public void Client_StartsToMenu()
     {
-        SmokeRun.Run(() => GameProcess.Start("client"));
+        SmokeRun.Run(new GameLaunch("client", [], [ClientStarted]));
     }
 
     /// <summary>
     /// Straight into a single-player game: world generation plus the local handshake.
-    /// No save file name is passed, so every run creates a fresh one and runs stay independent.
+    /// user:// is a fresh directory for every process, so the save it creates never outlives the run.
     /// </summary>
     [Fact]
     public void Client_StartsSingleplayerGame()
     {
-        SmokeRun.Run(() => GameProcess.Start("client", "--auto-start"));
+        SmokeRun.Run(new GameLaunch("client", ["--auto-start"], [WorldSynced]));
     }
 
     /// <summary>
@@ -41,16 +57,23 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
         int port = FreePort.Take();
 
         SmokeRun.Run(
-            () => GameProcess.Start("server", "--server", "--port", port.ToString()),
-            () => Client("client-1", port),
-            () => Client("client-2", port));
+            new GameLaunch("server", ["--server", "--port", port.ToString()], [ServerStarted]),
+            Client("client-1", port),
+            Client("client-2", port));
     }
 
-    private static GameProcess Client(string name, int port) => GameProcess.Start(
+    /// <summary>
+    /// The nickname doubles as the uid and must be 3 to 25 characters long, or the server rejects the
+    /// sync — "client-1" fits.
+    /// </summary>
+    private static GameLaunch Client(string name, int port) => new(
         name,
-        "--auto-connect",
-        "--auto-connect-ip", "127.0.0.1",
-        "--auto-connect-port", port.ToString(),
-        "--uid", name,
-        "--nick", name);
+        [
+            "--auto-connect",
+            "--auto-connect-ip", "127.0.0.1",
+            "--auto-connect-port", port.ToString(),
+            "--uid", name,
+            "--nick", name,
+        ],
+        [ConnectedToServer, WorldSynced]);
 }
