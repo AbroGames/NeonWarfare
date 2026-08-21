@@ -13,6 +13,7 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 |---|---|---|
 | `Services.Net` | `NetworkService` | The process role (`IsClient`/`IsServer`), the `DoClient`, `DoServerClient` helpers |
 | `Services.MainScene` | `MainSceneService` | Switching MainMenu ↔ Game, the entry points into all the modes, `Shutdown()` |
+| `Services.TerminationSignals` | `TerminationSignalsService` | SIGTERM / SIGINT → `MainScene.Shutdown()`, see [Shutdown](Shutdown.md) |
 | `Services.LoadingScreen` | `LoadingScreenService` | Showing / hiding the loading screen |
 | `Services.GameSettings` | `GameSettingsService` | Client settings + the temporary `--nick` / `--uid` |
 | `Services.DedicatedServerSettings` | `DedicatedServerSettingsService` | Dedicated server settings |

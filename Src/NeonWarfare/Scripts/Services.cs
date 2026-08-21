@@ -35,6 +35,7 @@ public static class Services
     public static readonly ProcessService Process = new();
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
+    public static readonly TerminationSignalsService TerminationSignals = new();
     public static readonly GameSettingsService GameSettings = new();
     public static readonly DedicatedServerSettingsService DedicatedServerSettings = new();
     public static readonly MenuGameSettingsService MenuGameSettings = new();
