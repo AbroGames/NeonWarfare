@@ -3,6 +3,12 @@
 [← Project README](../README.md)
 
 * **The client** — `Services.MainScene.Shutdown()` → a deferred `SceneTree.Quit()`.
+* **A termination signal** — SIGTERM or SIGINT (Ctrl+C, `kill`, `systemctl stop`, `docker stop`). Godot
+  installs no handler of its own, so the signal would kill the process on the spot, with no
+  `NotificationExitTree` and hence no autosave. `TerminationSignalsService.Init()`, called
+  from `BaseRootStarter.Init()` for both roles, cancels the signal through `PosixSignalRegistration` and
+  calls `Services.MainScene.Shutdown()` instead. A second signal is not cancelled and kills the process
+  — the way out when a shutdown hangs.
 * **The server child process** — `ProcessShutdowner` (a node from GodotBox,
   `GodotBox.Godot.Nodes.Process`) is attached to `Game` in
   `HostDedicatedServerAndConnectGameStarter`. When the `Game` scene is destroyed, it kills the server

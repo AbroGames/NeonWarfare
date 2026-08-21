@@ -32,7 +32,9 @@ auto-scaling) and `Start()` (the scenario, through `Services.MainScene.*`). `Roo
    automatic pickup of `ICommandProcessor`, say) do not work.
 6. `Services.LoadingScreen.Init(...)`, `Services.MainScene.Init(...)` — the services get the `Root`
    containers and the scene prototypes.
-7. `Services.I18N.Init(sceneTree)`.
+7. `Services.TerminationSignals.Init()` — only after `MainScene`, which the handler calls
+   (see [Shutdown](Shutdown.md)).
+8. `Services.I18N.Init(sceneTree)`.
 
 `Start()` in the base only logs — the scenario itself is in the descendants.
 
