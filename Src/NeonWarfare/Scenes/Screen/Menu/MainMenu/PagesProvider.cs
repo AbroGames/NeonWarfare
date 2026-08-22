@@ -28,7 +28,7 @@ public partial class PagesProvider : GameCheckedAbstractStorage
 	public MessagePage PrepareMessagePage(string message)
 	{
 		var page = MessagePageScene.Instantiate<MessagePage>().WithAvailablePages(this);
-		page.MessageLabel.Text = message;
+		page.Configure(message);
 		return page;
 	}
 

@@ -20,6 +20,7 @@ puts into `MainSceneContainer`. It holds three things:
 
 * `PageContainer` — `SetRootPage` / `PushPage` / `PopPage`; only one page is in the tree at a time
   (pushing removes the previous one and adds the next), catches cycles and pushes of non-top pages;
+  the pages it holds out of the tree are freed together with the container;
 * `IPage` / `Page` — `Parent`/`Child` links, `IsRoot`/`IsTop`, the `OnShown` / `OnHidden` / `Close`
   callbacks and `Setup(goBack, next)`, which the container uses to hand the page its `GoBack` /
   `GoNext` delegates;
