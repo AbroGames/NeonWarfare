@@ -94,4 +94,25 @@ public partial class PageContainer : Control
     {
         page.Setup(() => PopPage(), PushPage);
     }
+
+    public override void _Notification(int id)
+    {
+        if (id == NotificationPredelete) FreeHiddenPages();
+    }
+
+    /// <summary>
+    /// Only <see cref="CurrentPage"/> is a child of the container: <see cref="PushPage"/> takes the pages under it
+    /// out of the tree, so freeing the container does not reach them, and they would leak with every
+    /// MainMenu → Game transition and on quit.
+    /// </summary>
+    private void FreeHiddenPages()
+    {
+        IPage page = CurrentPage?.Parent;
+        while (page is not null)
+        {
+            IPage parent = page.Parent;
+            (page as Node)?.Free();
+            page = parent;
+        }
+    }
 }
