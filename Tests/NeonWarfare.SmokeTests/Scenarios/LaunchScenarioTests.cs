@@ -28,6 +28,9 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     /// </summary>
     private const string WorldSynced = "Syncing complete successfully";
 
+    /// <summary>Network on the server: an ENet peer is gone.</summary>
+    private const string PeerDisconnected = "Network peer disconnected";
+
     /// <summary>
     /// The plain client launch: the menu comes up and nothing else happens.
     /// </summary>
@@ -48,19 +51,35 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     }
 
     /// <summary>
-    /// A dedicated server with two clients connecting to it — the one scenario that exercises the
-    /// network handshake and the initial world snapshot.
+    /// A dedicated server with two clients connecting to it — the scenario that exercises the network
+    /// handshake and the initial world snapshot. Processes stop in launch order, so here the server
+    /// always goes first and the clients are dropped back to the menu before they quit.
     /// </summary>
     [Fact]
     public void Server_AcceptsTwoClients()
     {
         int port = FreePort.Take();
 
-        SmokeRun.Run(
-            new GameLaunch("server", ["--server", "--port", port.ToString()], [ServerStarted]),
-            Client("client-1", port),
-            Client("client-2", port));
+        SmokeRun.Run(Server(port), Client("client-1", port), Client("client-2", port));
     }
+
+    /// <summary>
+    /// The other way round: a client quits right from the game while the server and the other client
+    /// keep playing. This is the only path where a client tears down a live world on exit, and where the
+    /// server sees a player leave — neither happens in <see cref="Server_AcceptsTwoClients"/>.
+    /// </summary>
+    [Fact]
+    public void Client_QuitsFromMultiplayerGame()
+    {
+        int port = FreePort.Take();
+
+        SmokeRun.Run(
+            [Server(port), Client("client-1", port), Client("client-2", port)],
+            new Departure(Leaver: "client-1", Witness: "server", Milestone: PeerDisconnected));
+    }
+
+    private static GameLaunch Server(int port) =>
+        new("server", ["--server", "--port", port.ToString()], [ServerStarted]);
 
     /// <summary>
     /// The nickname doubles as the uid and must be 3 to 25 characters long, or the server rejects the

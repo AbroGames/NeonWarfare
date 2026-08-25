@@ -15,7 +15,7 @@ public sealed partial class GameProcess : IDisposable
     /// <summary>
     /// How long a SIGTERM is given to bring the process down before it is killed outright.
     /// </summary>
-    private const int GracefulShutdownTimeoutMs = 5000;
+    private static readonly TimeSpan GracefulShutdownTimeout = TimeSpan.FromSeconds(5);
 
     /// <summary>
     /// How often <see cref="WaitForLine"/> looks at the output again.
@@ -28,6 +28,7 @@ public sealed partial class GameProcess : IDisposable
     private readonly string _userDataPath;
     private readonly List<string> _output = [];
     private readonly Lock _outputLock = new();
+
 
     private GameProcess(string name, Process process, string userDataPath)
     {
@@ -121,8 +122,7 @@ public sealed partial class GameProcess : IDisposable
 
             if (_process.HasExited)
             {
-                // The last lines may still be in flight; only the parameterless overload drains them.
-                _process.WaitForExit();
+                DrainOutput();
                 return HasPrinted(fragment);
             }
 
@@ -133,36 +133,48 @@ public sealed partial class GameProcess : IDisposable
     }
 
     /// <summary>
-    /// Asks the process to quit and waits for it, output included.
+    /// Asks the process to quit and waits for it, output included. Null when it quit the way the game
+    /// is meant to — on its own within the timeout and with exit code 0; otherwise what went wrong.
     ///
     /// SIGTERM first, on purpose. The Serilog sink is wrapped in WriteTo.Async and nothing calls
     /// Log.CloseAndFlush(), so a hard kill drops whatever is still queued — including the error that
-    /// would have explained the failure. A graceful exit also runs the autosave path (Docs/Shutdown.md).
+    /// would have explained the failure. A graceful exit also runs the autosave path (Docs/Shutdown.md),
+    /// and that is exactly what a hang or a crash on the way out breaks.
+    ///
+    /// A process that had already exited before the call is not judged here: dying early is a problem of
+    /// its own, and the caller reports it with more context. Neither is one on a platform without
+    /// SIGTERM (Windows): there is nothing to ask it politely with, and a kill says nothing about the game.
     /// </summary>
-    public void Stop()
+    public string? Stop()
     {
-        if (!_process.HasExited && !(TryRequestTermination() && _process.WaitForExit(GracefulShutdownTimeoutMs)))
+        if (_process.HasExited)
         {
-            try
-            {
-                _process.Kill(entireProcessTree: true);
-            }
-            catch (InvalidOperationException)
-            {
-                // The process exited between the check and the kill. Nothing to do.
-            }
+            DrainOutput();
+            return null;
         }
 
-        // WaitForExit(int) returning true does not mean the asynchronous output handlers are done — the
-        // last lines, the ones that explain a failure, can still be in flight. Only the parameterless
-        // overload waits for the redirected streams to reach their end.
-        _process.WaitForExit();
+        if (!TryRequestTermination())
+        {
+            Kill();
+            return null;
+        }
+
+        if (!_process.WaitForExit(GracefulShutdownTimeout))
+        {
+            Kill();
+            return $"did not exit within {GracefulShutdownTimeout.TotalSeconds:0} s of SIGTERM and was killed";
+        }
+
+        DrainOutput();
+        return _process.ExitCode == 0 ? null : $"exited with code {_process.ExitCode} after SIGTERM";
     }
 
     public void Dispose()
     {
         try
         {
+            // A safety net for a run that threw halfway: a scenario stops and judges its processes
+            // itself, so by now there is normally nothing left to stop and nothing to report.
             Stop();
         }
         finally
@@ -211,6 +223,27 @@ public sealed partial class GameProcess : IDisposable
             // Same as above.
         }
     }
+
+    private void Kill()
+    {
+        try
+        {
+            _process.Kill(entireProcessTree: true);
+        }
+        catch (InvalidOperationException)
+        {
+            // The process exited between the check and the kill. Nothing to do.
+        }
+
+        DrainOutput();
+    }
+
+    /// <summary>
+    /// WaitForExit(int) returning true does not mean the asynchronous output handlers are done — the
+    /// last lines, the ones that explain a failure, can still be in flight. Only the parameterless
+    /// overload waits for the redirected streams to reach their end.
+    /// </summary>
+    private void DrainOutput() => _process.WaitForExit();
 
     private bool HasPrinted(string fragment)
     {

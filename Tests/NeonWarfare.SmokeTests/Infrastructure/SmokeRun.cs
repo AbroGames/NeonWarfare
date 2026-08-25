@@ -15,6 +15,12 @@ public static class SmokeRun
     private static readonly TimeSpan StartupTimeout = TimeSpan.FromSeconds(60);
 
     /// <summary>
+    /// How long the witness of a <see cref="Departure"/> gets to notice it. A graceful exit disconnects
+    /// the ENet peer on the spot; this only has to outlast a slow machine.
+    /// </summary>
+    private static readonly TimeSpan DepartureTimeout = TimeSpan.FromSeconds(10);
+
+    /// <summary>
     /// How long everything keeps running once every milestone is reached, so an error that follows a
     /// successful start — the first frames of a world, a late RPC — still gets caught.
     /// </summary>
@@ -26,46 +32,40 @@ public static class SmokeRun
     /// </summary>
     private const int TailLineCount = 15;
 
+    /// <inheritdoc cref="Run(IReadOnlyList{GameLaunch}, Departure?)"/>
+    public static void Run(params GameLaunch[] launches) => Run(launches, departure: null);
+
     /// <summary>
     /// Processes start in the given order, and the next one only after the previous has reached its
     /// milestones. So a client is launched once the server reports that its socket is open, and there
     /// is no race between them. Once a process misses a milestone, the rest are not started.
+    ///
+    /// With a <paramref name="departure"/>, once everything has lingered the leaver is stopped alone,
+    /// the witness must print its milestone, and the rest linger once more before they are stopped too —
+    /// in launch order, so otherwise it is always the server that goes first.
     /// </summary>
-    public static void Run(params GameLaunch[] launches)
+    public static void Run(IReadOnlyList<GameLaunch> launches, Departure? departure)
     {
         List<GameProcess> processes = [];
-        List<(GameProcess Process, string Problem)> startupProblems = [];
+        List<(GameProcess Process, string Problem)> lifecycleProblems = [];
         try
         {
-            foreach (GameLaunch launch in launches)
+            bool running = Launch(launches, processes, lifecycleProblems)
+                && LingerAndCheck(processes, lifecycleProblems);
+
+            if (running && departure is not null)
             {
-                GameProcess process = GameProcess.Start(launch.Name, launch.Arguments);
-                processes.Add(process);
-
-                string? problem = ReachMilestones(process, launch.Milestones);
-                if (problem is null) continue;
-
-                startupProblems.Add((process, problem));
-                break;
-            }
-
-            if (startupProblems.Count == 0)
-            {
-                Thread.Sleep(Linger);
-                startupProblems.AddRange(processes
-                    .Where(process => process.HasExited)
-                    .Select(process => (process,
-                        $"exited on its own with code {process.ExitCode} while it should have kept running")));
+                Depart(departure, launches, processes, lifecycleProblems);
             }
 
             // Stopping before scanning is deliberate: the Serilog sink is asynchronous, so the last
             // lines only arrive as the process shuts down.
             foreach (GameProcess process in processes)
             {
-                process.Stop();
+                AddProblem(lifecycleProblems, process, process.Stop());
             }
 
-            Report(processes, startupProblems);
+            Report(processes, lifecycleProblems);
         }
         finally
         {
@@ -77,11 +77,86 @@ public static class SmokeRun
     }
 
     /// <summary>
+    /// Starts the processes one by one. False when one of them missed a milestone.
+    /// </summary>
+    private static bool Launch(
+        IReadOnlyList<GameLaunch> launches,
+        List<GameProcess> processes,
+        List<(GameProcess Process, string Problem)> problems)
+    {
+        foreach (GameLaunch launch in launches)
+        {
+            GameProcess process = GameProcess.Start(launch.Name, launch.Arguments);
+            processes.Add(process);
+
+            string? problem = ReachMilestones(process, launch.Milestones, StartupTimeout);
+            if (problem is null) continue;
+
+            problems.Add((process, problem));
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Lets every process that is still meant to run live a little longer. False when one of them
+    /// exited on its own meanwhile.
+    /// </summary>
+    private static bool LingerAndCheck(
+        IEnumerable<GameProcess> processes, List<(GameProcess Process, string Problem)> problems)
+    {
+        Thread.Sleep(Linger);
+
+        List<GameProcess> exited = processes.Where(process => process.HasExited).ToList();
+        problems.AddRange(exited.Select(process => (process,
+            $"exited on its own with code {process.ExitCode} while it should have kept running")));
+
+        return exited.Count == 0;
+    }
+
+    private static void Depart(
+        Departure departure,
+        IReadOnlyList<GameLaunch> launches,
+        IReadOnlyList<GameProcess> processes,
+        List<(GameProcess Process, string Problem)> problems)
+    {
+        GameProcess leaver = ProcessOf(departure.Leaver, launches, processes);
+        GameProcess witness = ProcessOf(departure.Witness, launches, processes);
+
+        AddProblem(problems, leaver, leaver.Stop());
+
+        string? problem = ReachMilestones(witness, [departure.Milestone], DepartureTimeout);
+        if (problem is not null)
+        {
+            problems.Add((witness, $"after {leaver.Name} quit, {problem}"));
+            return;
+        }
+
+        LingerAndCheck(processes.Where(process => process != leaver), problems);
+    }
+
+    /// <summary>
+    /// The process launched as <paramref name="name"/>. A departure naming no launch is a mistake in the
+    /// scenario itself, not a game failure, so it throws instead of reporting.
+    /// </summary>
+    private static GameProcess ProcessOf(
+        string name, IReadOnlyList<GameLaunch> launches, IReadOnlyList<GameProcess> processes)
+    {
+        for (int i = 0; i < launches.Count; i++)
+        {
+            if (launches[i].Name == name) return processes[i];
+        }
+
+        throw new ArgumentException($"The departure names '{name}', but no process of the scenario is called that.");
+    }
+
+    /// <summary>
     /// Null when the process printed every milestone in time; otherwise what went wrong.
     /// </summary>
-    private static string? ReachMilestones(GameProcess process, IReadOnlyList<string> milestones)
+    private static string? ReachMilestones(GameProcess process, IReadOnlyList<string> milestones, TimeSpan timeout)
     {
-        DateTime deadline = DateTime.UtcNow + StartupTimeout;
+        DateTime deadline = DateTime.UtcNow + timeout;
 
         foreach (string milestone in milestones)
         {
@@ -89,10 +164,16 @@ public static class SmokeRun
 
             return process.HasExited
                 ? $"exited with code {process.ExitCode} before printing '{milestone}'"
-                : $"did not print '{milestone}' within {StartupTimeout.TotalSeconds:0} s";
+                : $"did not print '{milestone}' within {timeout.TotalSeconds:0} s";
         }
 
         return null;
+    }
+
+    private static void AddProblem(
+        List<(GameProcess Process, string Problem)> problems, GameProcess process, string? problem)
+    {
+        if (problem is not null) problems.Add((process, problem));
     }
 
     /// <summary>
@@ -100,11 +181,11 @@ public static class SmokeRun
     /// the unit tests do — fixing them one round-trip at a time is the alternative.
     /// </summary>
     private static void Report(
-        IReadOnlyList<GameProcess> processes, IReadOnlyList<(GameProcess Process, string Problem)> startupProblems)
+        IReadOnlyList<GameProcess> processes, IReadOnlyList<(GameProcess Process, string Problem)> lifecycleProblems)
     {
         List<string> problems = [];
 
-        foreach ((GameProcess process, string problem) in startupProblems)
+        foreach ((GameProcess process, string problem) in lifecycleProblems)
         {
             problems.Add($"[{process.Name}] {problem}. Last lines of its output:");
             problems.AddRange(process.Output.TakeLast(TailLineCount).Select(line => $"[{process.Name}]     {line}"));

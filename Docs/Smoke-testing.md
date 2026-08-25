@@ -2,10 +2,10 @@
 
 [← Project README](../README.md)
 
-`Tests/NeonWarfare.SmokeTests` launches the real game and checks that it starts without complaining.
-This is the only automated check of what actually happens inside the node tree — a broken scene, an
-injection that comes out `null`, an exception in `_Ready`, a client that never reaches the server. The
-unit tests of [Testing](Testing.md) cannot see any of that.
+`Tests/NeonWarfare.SmokeTests` launches the real game (`--headless`) and checks that it gets where it
+was sent without complaining. It is the only automated check of the node tree — broken scenes, `null`
+injections, exceptions in `_Ready`, failed connections; the unit tests of [Testing](Testing.md) cannot
+see these.
 
 ## Running
 
@@ -13,71 +13,50 @@ unit tests of [Testing](Testing.md) cannot see any of that.
 dotnet test Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csproj
 ```
 
-Needs `GODOT_EXE` — the same variable the launch profiles use, see [Quick start](Quick-start.md). A
-fixture builds the game project first, because Godot runs assemblies that are already compiled.
+Needs `GODOT_EXE` (see [Quick start](Quick-start.md)). A fixture builds the game project first, since
+Godot runs already compiled assemblies. The suite takes about 25 s. Not run in CI (no engine on the
+runner), only compiled.
 
 ## Scenarios
-
-Every process runs with `--headless`; the whole suite takes about fifteen seconds.
 
 | Test | Processes |
 |---|---|
 | `Client_StartsToMenu` | one client, no flags |
 | `Client_StartsSingleplayerGame` | one client with `--auto-start` |
 | `Server_AcceptsTwoClients` | `--server` plus two `--auto-connect` clients |
+| `Client_QuitsFromMultiplayerGame` | `--server` plus two `--auto-connect` clients, `client-1` quits first |
 
-Silence is not success, so every process also has milestones — fragments of its own log lines that
-prove it got where it was sent (`GameLaunch`):
+`SmokeRun` flow:
 
-| Process | Milestones |
-|---|---|
-| menu client | `Starting Client...` |
-| `--auto-start` client | `Syncing complete successfully` |
-| server | `Started server successfully` |
-| `--auto-connect` client | `Connected to the server successfully`, then `Syncing complete successfully` |
+1. Processes start one by one; each must print its milestones (`GameLaunch` — log line fragments proving
+   it got where it was sent) before the next starts, so clients launch only after the server is up.
+2. Everything lingers for 3 s to catch errors after a successful start.
+3. Optional `Departure`: the leaver alone is stopped, a witness must print its milestone (the server:
+   `Network peer disconnected`), the rest linger again. This is the only path where a client tears down a
+   live world on exit and the server sees a player leave.
+4. The rest are stopped in launch order — so without a `Departure` the server always goes first and
+   clients quit from the menu.
 
-Processes start one by one, each after the previous has printed its milestones, so a client is only
-launched once the server's socket is open. When every milestone is in, all processes keep running for
-three more seconds to catch an error that follows a successful start.
-
-The multiplayer scenario takes a free UDP port (ENet is UDP) from the dynamic range instead of the
-default `25566`, so it does not collide with a server started by hand.
+Multiplayer scenarios use a free UDP port instead of the default `25566`, to avoid clashing with a
+server started by hand.
 
 ## What counts as a failure
 
-The exit code says nothing — `ExceptionHandlerService` catches unhandled exceptions, logs them and
-lets the process live on. So the output is watched instead, and anything below fails the test:
+* a milestone missed (timeout, or the process exited first) — the report adds the process's last lines;
+* a process exiting on its own while it should keep running;
+* not exiting within 5 s of `SIGTERM` (then killed), or a non-zero exit code after it. While the game
+  runs the exit code means nothing — `ExceptionHandlerService` swallows exceptions — so this is the only
+  place it is checked;
+* a Serilog line at `Warning`, `Error` or `Fatal`, with the exception text after it;
+* an engine line starting with `ERROR:`, `WARNING:` or `SCRIPT ERROR:`, with its stack trace. This
+  includes `ObjectDB instances were leaked at exit` — usually a node taken out of the tree or never added.
 
-* a milestone not printed within 60 seconds, or the process exiting before printing it — the report
-  then carries the last lines of that process's output;
-* a process exiting on its own after its milestones, while it should have kept running;
-* a Serilog line at `Warning`, `Error` or `Fatal` — the level is rendered as a padded full name, as in
-  `|09:40:22.851| (      Error) (...)` — together with the exception text printed after it;
-* an engine line starting with `ERROR:`, `WARNING:` or `SCRIPT ERROR:`, together with its stack trace.
-  That includes the report of a graceful exit on what was never freed (`ObjectDB instances were leaked
-  at exit`) — usually a node taken out of the tree or never added to it.
-
-Output is captured from each process rather than read from `user://logs/godot.log`: milestones are
-awaited as the lines arrive, and ANSI escapes, which `GD.PrintRich` emits even into a pipe, are
-stripped on the way in.
-
-Every process gets its own fresh `user://` in the temp directory, deleted afterwards, so the
-developer's settings and saves neither affect a run nor collect its leftovers. Godot derives
-`user://` from `XDG_DATA_HOME` on Linux and from `APPDATA` on Windows (the latter not verified); on
-macOS it hangs off `HOME`, which is too broad to override, so there the real `user://` is still used.
-
-Processes are stopped with `SIGTERM` rather than killed. The Serilog sink is asynchronous and nothing
-flushes it on exit, so a hard kill would drop the very lines that explain a failure; a graceful exit
-also runs the autosave path from [Shutdown](Shutdown.md).
-
-## Not in CI
-
-The GitHub runner has no engine, so the `Test` step names the unit test project explicitly. The smoke
-project is still compiled there — only never run.
+Stopping is `SIGTERM`, not a kill: the async Serilog sink is never flushed, so a kill would drop the lines
+that explain a failure, and a graceful exit exercises [Shutdown](Shutdown.md) and autosave. Windows has
+no `SIGTERM`: processes are killed and their exit is not checked (Windows not verified at all).
 
 ## Known gotchas
 
-* A fresh `user://` means first-run defaults: whatever a developer changed in their own settings is
-  not exercised here.
-* Running a client headless is not a mode players use; parts of the code that depend on a window may
-  behave differently there.
+* Every process gets a fresh `user://` in the temp directory (via `XDG_DATA_HOME` / `APPDATA`; macOS uses
+  the real one). So only first-run default settings are exercised.
+* A headless client is not a mode players use; window-dependent code may behave differently.

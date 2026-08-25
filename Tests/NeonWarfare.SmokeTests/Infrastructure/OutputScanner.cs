@@ -5,9 +5,9 @@ namespace NeonWarfare.SmokeTests.Infrastructure;
 /// <summary>
 /// Decides whether a launched game printed anything bad.
 ///
-/// The exit code is useless as a signal: ExceptionHandlerService catches unhandled exceptions, logs
-/// them and lets the process run on, and the only GetTree().Quit() in the game passes no code. So the
-/// output is all there is.
+/// While the game runs, the exit code is useless as a signal: ExceptionHandlerService catches unhandled
+/// exceptions, logs them and lets the process run on. So the output is all there is. The exit code only
+/// means something after SIGTERM, and GameProcess.Stop checks it there.
 /// </summary>
 public static partial class OutputScanner
 {
