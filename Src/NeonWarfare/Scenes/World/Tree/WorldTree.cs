@@ -60,4 +60,19 @@ public partial class WorldTree : Node2D
     {
         return Surface as BattleSurface;
     }
+
+    public override void _Notification(int id)
+    {
+        if (id == NotificationPredelete) FreePlaceholderSurface();
+    }
+
+    /// <summary>
+    /// The placeholder from <see cref="_Ready"/> never enters the tree, so freeing the tree does not reach it.
+    /// The server replaces and frees it in <see cref="SetSafeSurface"/>, but a pure client never calls that —
+    /// its surfaces come from the spawner — and would leak the placeholder with every session.
+    /// </summary>
+    private void FreePlaceholderSurface()
+    {
+        if (Surface is not null && Surface.GetParent() is null) Surface.Free();
+    }
 }

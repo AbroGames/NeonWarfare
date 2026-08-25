@@ -96,6 +96,7 @@ The `World` and all of its sub-entities are built by the game starter, before th
   — `AddNetwork()`, `AddWorld()`, `AddHud()` and only then `ConnectToServer()`. The `World` is the same
   scene with the same services, but empty: `WorldTree._Ready()` only makes a placeholder `Surface`
   outside the tree so that other services do not get a `null`, and the real one arrives from the server.
+  Nothing replaces the placeholder on this side, so `WorldTree` frees it itself when it is deleted.
 
 On both sides `World._EnterTree()` registers the services, `WorldTemporaryData._Ready()` → `Di.Process`
 attaches an `AttributeMultiplayerSynchronizer` built from the `[Sync]` fields, and the

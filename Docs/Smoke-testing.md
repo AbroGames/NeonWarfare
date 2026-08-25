@@ -54,6 +54,8 @@ lets the process live on. So the output is watched instead, and anything below f
 * a Serilog line at `Warning`, `Error` or `Fatal` — the level is rendered as a padded full name, as in
   `|09:40:22.851| (      Error) (...)` — together with the exception text printed after it;
 * an engine line starting with `ERROR:`, `WARNING:` or `SCRIPT ERROR:`, together with its stack trace.
+  That includes the report of a graceful exit on what was never freed (`ObjectDB instances were leaked
+  at exit`) — usually a node taken out of the tree or never added to it.
 
 Output is captured from each process rather than read from `user://logs/godot.log`: milestones are
 awaited as the lines arrive, and ANSI escapes, which `GD.PrintRich` emits even into a pipe, are
