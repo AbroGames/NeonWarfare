@@ -24,6 +24,9 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
 | `Services.KnownServers` | `KnownServersService` | The server list of the multiplayer menu, stored in `user://known-servers.json` |
 
+`NetworkService` and `TerminationSignalsService` extend abstract services of the same name from KludgeBox
+(`KludgeBox.Godot.Services`): the base holds the mechanism, the game adds only its own part.
+
 The field name in `Services` is deliberately shorter than the class name (`Services.SaveLoad` →
 `SaveLoadService`): the `Service` suffix would be noise at the call site.
 

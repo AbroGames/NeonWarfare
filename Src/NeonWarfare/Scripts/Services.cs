@@ -10,6 +10,7 @@ using NeonWarfare.Scripts.GlobalServices.KnownServers;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
 using NetworkService = NeonWarfare.Scripts.GlobalServices.NetworkService;
+using TerminationSignalsService = NeonWarfare.Scripts.GlobalServices.TerminationSignalsService;
 
 namespace NeonWarfare.Scripts;
 
@@ -30,12 +31,12 @@ public static class Services
     
     // Services from game, but extended KludgeBox services
     public static readonly NetworkService Net = new();
+    public static readonly TerminationSignalsService TerminationSignals = new();
     
     // Services from game
     public static readonly ProcessService Process = new();
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();
-    public static readonly TerminationSignalsService TerminationSignals = new();
     public static readonly GameSettingsService GameSettings = new();
     public static readonly DedicatedServerSettingsService DedicatedServerSettings = new();
     public static readonly MenuGameSettingsService MenuGameSettings = new();
