@@ -42,6 +42,7 @@ may be added as needed. Work with them through the `task` skill.
   even when the work is finished and verified. Report what changed and stop.
 - The user can run the game and read the Godot log. When verification
   requires launching Godot, ask the user to run it and paste the output.
+- Comment only *why* the code is here and works this way, never *what* it does. Keep comments rare.
 
 ## Commands
 
