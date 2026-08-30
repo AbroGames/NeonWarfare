@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace NeonWarfare.Tests.Infrastructure;
@@ -10,12 +12,6 @@ namespace NeonWarfare.Tests.Infrastructure;
 public static class RepositoryPaths
 {
     private const string RepositoryRootMetadataKey = "RepositoryRoot";
-
-    /// <summary>
-    /// Directories that hold nothing hand-written: build output, the engine cache, VCS and IDE state.
-    /// They are skipped by name at any depth — bin/ and obj/ exist next to both .csproj files.
-    /// </summary>
-    private static readonly string[] GeneratedDirectories = ["bin", "obj", ".git", ".godot", ".idea", ".vs"];
 
     /// <summary>
     /// Extensions of every text file the repository owns — code, scenes, sidecars, locales, documentation
@@ -210,23 +206,22 @@ public static class RepositoryPaths
     /// <summary>
     /// Every text file of the repository, whatever its format — the scope of the checks that look at
     /// the bytes of a file rather than at what is written in it. Unlike the other sources here this one
-    /// walks the whole tree instead of naming directories, so a new folder is covered from the day it
-    /// appears; what keeps the build output out is <see cref="GeneratedDirectories"/>.
+    /// covers the whole tree instead of naming directories, so a new folder is covered from the day it
+    /// appears. It is <see cref="AllFiles"/> filtered by extension.
     /// </summary>
     public static IReadOnlyList<string> TextFiles() =>
         AllFiles().Where(path => TextFileExtensions.Contains(Path.GetExtension(path))).ToList();
 
     /// <summary>
-    /// Every file the repository owns, whatever its format — text and binary alike, with the same
-    /// <see cref="GeneratedDirectories"/> left out. <see cref="TextFiles"/> is this list filtered by
-    /// extension; this one is what "how large is the project" is counted from.
+    /// Every file the repository owns, whatever its format, sorted, absolute: what git tracks plus the
+    /// new files it does not ignore — <c>git ls-files --cached --others --exclude-standard</c>. This one
+    /// is what "how large is the project" is counted from.
     /// </summary>
-    public static IReadOnlyList<string> AllFiles() =>
-        FilesUnder(Root).OrderBy(path => path, StringComparer.Ordinal).ToList();
+    public static IReadOnlyList<string> AllFiles() => GitFiles.Value;
 
-    /// <summary>Every file of one directory and of everything below it, sorted, absolute.</summary>
+    /// <summary><see cref="AllFiles"/> narrowed to one directory and everything below it.</summary>
     public static IReadOnlyList<string> AllFilesUnder(string directory) =>
-        FilesUnder(directory).OrderBy(path => path, StringComparer.Ordinal).ToList();
+        AllFiles().Where(path => IsInside(path, directory)).ToList();
 
     /// <summary>True when <paramref name="absolutePath"/> is inside <paramref name="directory"/>.</summary>
     public static bool IsInside(string absolutePath, string directory) =>
@@ -261,30 +256,62 @@ public static class RepositoryPaths
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-    /// <summary>Files of one directory and of everything below it, unsorted.</summary>
-    private static IEnumerable<string> FilesUnder(string directory)
+    // Walking the directory tree would pull in whatever git ignores: .claude/worktrees/ holds full copies
+    // of the repository with other agents' uncommitted changes, .claude/tasks/ holds local notes. Asking
+    // git makes .gitignore and .git/info/exclude the one list of what is not part of the repository.
+    private static readonly Lazy<IReadOnlyList<string>> GitFiles = new(ListGitFiles);
+
+    private static IReadOnlyList<string> ListGitFiles()
     {
-        if (!Directory.Exists(directory))
+        // In a git worktree .git is a file pointing to the main repository, not a directory.
+        string dotGit = Path.Combine(Root, ".git");
+        if (!Directory.Exists(dotGit) && !File.Exists(dotGit))
         {
-            yield break;
+            throw new InvalidOperationException(
+                $"{Root} is not a git checkout, and the repository file list comes from git ls-files. " +
+                "Run the tests from a clone, not from a copy of the sources.");
         }
 
-        foreach (string file in Directory.GetFiles(directory))
+        ProcessStartInfo startInfo = new("git")
         {
-            yield return Path.GetFullPath(file);
+            ArgumentList = { "-C", Root, "ls-files", "-z", "--cached", "--others", "--exclude-standard" },
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+        };
+
+        Process process;
+        try
+        {
+            process = Process.Start(startInfo)
+                      ?? throw new InvalidOperationException("git ls-files did not start.");
+        }
+        catch (Win32Exception exception)
+        {
+            throw new InvalidOperationException(
+                "git is not on PATH, and the repository file list comes from git ls-files.", exception);
         }
 
-        foreach (string child in Directory.GetDirectories(directory))
+        using (process)
         {
-            if (GeneratedDirectories.Contains(Path.GetFileName(child)))
+            Task<string> error = process.StandardError.ReadToEndAsync();
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
             {
-                continue;
+                throw new InvalidOperationException(
+                    $"git ls-files failed with exit code {process.ExitCode}: {error.Result.Trim()}");
             }
 
-            foreach (string file in FilesUnder(child))
-            {
-                yield return file;
-            }
+            // --cached keeps listing a file deleted from the working tree until the deletion is staged.
+            return output
+                .Split('\0', StringSplitOptions.RemoveEmptyEntries)
+                .Select(Absolute)
+                .Where(File.Exists)
+                .Distinct()
+                .OrderBy(path => path, StringComparer.Ordinal)
+                .ToList();
         }
     }
 

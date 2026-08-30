@@ -30,7 +30,10 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   namespace mirrors the path, as in the game project. Method name: `<What>_<Expectation>`
   (`Links_PointToExistingFiles`, `File_UsesLineFeedOnly`).
 * The repository root comes from `RepositoryPaths` (baked in via `AssemblyMetadata`; the working
-  directory is `bin/<config>/<tfm>/`), never assembled by hand.
+  directory is `bin/<config>/<tfm>/`), never assembled by hand. Its whole-repository lists
+  (`AllFiles`, `TextFiles`) come from `git ls-files --cached --others --exclude-standard`: whatever
+  `.gitignore` or `.git/info/exclude` hides (`.claude/worktrees/`, `.claude/tasks/`) is not scanned, so
+  the tests need a git checkout and `git` on `PATH`.
 * Read a file through the helper for its format, not `File.ReadAllText`: `MarkdownDocument`,
   `CSharpFile`, `PoFile`, `SceneFile` (`.tscn` / `.tres`), `GodotProjectFile`; underneath them all
   `TextFile` is the one place that turns bytes into lines. `PoFile` and `SceneFile` throw on anything
