@@ -63,6 +63,16 @@ public class ChatCommandsDocTests
     }
 
     [Fact]
+    public void NotDocumentedAsRow_ListsDeclaredCommands()
+    {
+        CrossCheck.AssertExemptionsExist(
+            nameof(NotDocumentedAsRow),
+            NotDocumentedAsRow,
+            DeclaredCommands().ContainsKey,
+            $"no {ProcessorInterface} class of that name");
+    }
+
+    [Fact]
     public void TableRows_PointToExistingCommandClasses()
     {
         FailureReport report = new($"Rows of Docs/{DocumentName} that no ICommandProcessor backs");

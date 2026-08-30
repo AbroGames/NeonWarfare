@@ -45,4 +45,27 @@ public static class CrossCheck
             }
         }
     }
+
+    /// <summary>
+    /// Fails on every exemption that no longer names anything. A dead entry is not harmless: whatever
+    /// later appears under the same name inherits the exemption without anyone having reviewed it.
+    /// </summary>
+    public static void AssertExemptionsExist(
+        string listName,
+        IEnumerable<string> exemptions,
+        Func<string, bool> exists,
+        string whatIsGone)
+    {
+        FailureReport report = new($"Stale exception in {listName} — remove the entry");
+
+        foreach (string exemption in exemptions)
+        {
+            if (!exists(exemption))
+            {
+                report.Add($"'{exemption}' — {whatIsGone}");
+            }
+        }
+
+        report.AssertEmpty();
+    }
 }

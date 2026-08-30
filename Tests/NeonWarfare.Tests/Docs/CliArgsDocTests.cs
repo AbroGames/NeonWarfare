@@ -65,6 +65,16 @@ public class CliArgsDocTests
         report.AssertEmpty();
     }
 
+    [Fact]
+    public void NotOurFlags_AreMentionedInTheDocument()
+    {
+        CrossCheck.AssertExemptionsExist(
+            nameof(NotOurFlags),
+            NotOurFlags,
+            DocumentedFlags().Contains,
+            $"Docs/{DocumentName} no longer mentions it");
+    }
+
     /// <summary>
     /// Read from the raw text rather than through MarkdownDocument: that class blanks out code spans on
     /// purpose, and here the flags are exactly what is inside them.

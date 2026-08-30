@@ -40,6 +40,17 @@ public class InputActionTests
     }
 
     [Fact]
+    public void BuiltInActionPrefix_IsStillUsed()
+    {
+        CrossCheck.AssertExemptionsExist(
+            nameof(BuiltInActionPrefix),
+            [BuiltInActionPrefix],
+            prefix => DeclaredActions().Any(declaration =>
+                declaration.Action.StartsWith(prefix, StringComparison.Ordinal)),
+            "Keys.cs names no action with this prefix");
+    }
+
+    [Fact]
     public void ConfiguredActions_AreDeclaredInKeys()
     {
         IReadOnlySet<string> declared = DeclaredActions()

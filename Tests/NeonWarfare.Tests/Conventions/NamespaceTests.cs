@@ -46,6 +46,17 @@ public class NamespaceTests
             $"{relativePath}: namespace must be '{expected}', found '{declared[0].Name}'");
     }
 
+    [Fact]
+    public void WithoutNamespace_ListsExistingFiles()
+    {
+        IReadOnlySet<string> sources = RepositoryPaths.SourceFiles()
+            .Select(RepositoryPaths.Relative)
+            .ToHashSet(StringComparer.Ordinal);
+
+        CrossCheck.AssertExemptionsExist(
+            nameof(WithoutNamespace), WithoutNamespace, sources.Contains, "no such source file");
+    }
+
     /// <summary>
     /// Derived from the path rather than hardcoded, so a new folder needs no change here. The path is
     /// taken relative to Src/ with no prefix of its own — NeonWarfare.csproj has an empty RootNamespace:

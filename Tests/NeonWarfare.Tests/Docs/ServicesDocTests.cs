@@ -97,6 +97,16 @@ public class ServicesDocTests
     }
 
     [Fact]
+    public void NotWorldServices_ListsDeclaredClasses()
+    {
+        CrossCheck.AssertExemptionsExist(
+            nameof(NotWorldServices),
+            NotWorldServices,
+            DeclaredWorldServices().Contains,
+            $"no such class under {RepositoryPaths.Relative(RepositoryPaths.WorldServiceDirectory)}/");
+    }
+
+    [Fact]
     public void DocumentedWorldServices_ExistAsClasses()
     {
         IReadOnlySet<string> declared = DeclaredWorldServices();

@@ -44,9 +44,10 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
   `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Five exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  skip. Six exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
-  `NotFoundCommand` (no command name of its own).
+  `NotFoundCommand` (no command name of its own), Godot's `--path` (not our flag). Each has a test
+  failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).
 
 ## What is covered now
 

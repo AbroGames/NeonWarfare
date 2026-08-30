@@ -133,6 +133,21 @@ public class CmdArgsContractTests
         report.AssertEmpty();
     }
 
+    /// <summary>A file that stopped reading the command line no longer needs the exemption either.</summary>
+    [Fact]
+    public void MayReadCommandLineDirectly_ListsFilesThatReadIt()
+    {
+        IReadOnlySet<string> readers = Calls(CSharpFile.LoadAll(), CommandLineMethods)
+            .Select(call => call.File.RelativePath)
+            .ToHashSet(StringComparer.Ordinal);
+
+        CrossCheck.AssertExemptionsExist(
+            nameof(MayReadCommandLineDirectly),
+            MayReadCommandLineDirectly,
+            readers.Contains,
+            "no such source file, or it no longer reads the command line");
+    }
+
     private static IEnumerable<CSharpFile> OutsideCmdArgs() =>
         CSharpFile.LoadAll().Where(file => !IsInCmdArgs(file));
 
