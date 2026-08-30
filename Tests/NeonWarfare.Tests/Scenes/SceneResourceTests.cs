@@ -32,6 +32,26 @@ public class SceneResourceTests
     }
 
     /// <summary>
+    /// Godot accepts a res:// in a setting as readily as a uid:// — locale/translations is written that
+    /// way — and nothing but a run of the game notices the file behind it going away.
+    /// </summary>
+    [Fact]
+    public void ProjectSettingPaths_PointToExistingFiles()
+    {
+        FailureReport report = new("project.godot: res:// settings that resolve to nothing");
+
+        foreach (GodotPathReference reference in GodotProjectFile.Current.PathReferences)
+        {
+            if (!File.Exists(RepositoryPaths.Absolute(reference.ResourcePath)))
+            {
+                report.Add($"line {reference.Line}: {reference.Setting} = res://{reference.ResourcePath}");
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
     /// "A scene and its handler live in the same folder under the same name" from Docs/Code-style.md.
     /// A scene whose root node carries no script at all is fine — Scenes/Entities/Walls/Wall.tscn is one.
     /// </summary>
