@@ -54,9 +54,9 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
   `=> RpcId(ServerId, MethodName.XxxRpc, ...)` or `=> Rpc(...)`, and a blank line between the two is
   **not** inserted — this is deliberate.
 * Always state the mode explicitly: `[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]` for
-  "client → server", `[Rpc(CallLocal = true)]` for "server → client". `CallLocal = true` is mandatory:
-  on a host the server and the client are the same process, and without it the server would skip its
-  own call.
+  "client → server", `[Rpc(CallLocal = true)]` for "server → client". `CallLocal` is always stated:
+  `true` is the usual case — on a host the server and the client are the same process, and without it
+  the server would skip its own call; `false` is a deliberate choice.
 * Where possible, move the stream onto a separate `TransferChannel` from `Consts.TransferChannel`.
 * Arguments are Godot primitives or `byte[]` from MessagePack; JSON is not used over the network.
 * Combine data into a single call where you can (the coordinates of several units at once) rather than

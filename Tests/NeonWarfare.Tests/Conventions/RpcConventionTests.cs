@@ -36,6 +36,8 @@ public class RpcConventionTests
         report.AssertEmpty();
     }
 
+    private const string CallLocalArgument = "CallLocal";
+
     [Fact]
     public void RpcMethod_HasRpcAttributeWithExplicitMode()
     {
@@ -50,11 +52,15 @@ public class RpcConventionTests
                 continue;
             }
 
-            // [Rpc] with no arguments leaves the mode at Godot's default instead of stating it.
-            if (attribute.ArgumentList is null || attribute.ArgumentList.Arguments.Count == 0)
+            // Godot's default CallLocal = false makes a host skip its own call; either value is fine as
+            // long as it is a stated decision rather than an inherited default.
+            bool statesCallLocal = attribute.ArgumentList?.Arguments
+                .Any(argument => argument.NameEquals?.Name.Identifier.ValueText == CallLocalArgument) ?? false;
+            if (!statesCallLocal)
             {
                 report.Add(
-                    $"{file.Describe(attribute)}: {method.Identifier.ValueText} must state the mode, " +
+                    $"{file.Describe(attribute)}: {method.Identifier.ValueText} must state " +
+                    $"{CallLocalArgument} = true or false, " +
                     $"for example [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]");
             }
         }
