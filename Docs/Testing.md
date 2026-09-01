@@ -84,7 +84,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |
 | `Scenes/SceneResourceTests` | `res://` paths in scenes and `project.godot` resolve; a root script is the `.cs` beside its scene |
 | `Scenes/UidReferenceTests` | `ext_resource` uids resolve, agree with `path=`, are unique; `project.godot` uids resolve |
-| `Scenes/SidecarFileTests` | Every `.cs` has its `.cs.uid`; no `.uid` or `.import` outlived its file |
+| `Scenes/SidecarFileTests` | Every `.cs` and `.gdshader` has its `.uid`, every imported asset its `.import`; no sidecar outlived its file |
 | `Repository/RepositoryStatsTests` | Nothing — prints the size of the repository |
 
 Godot loads by `uid://` and treats `path=` as a hint, so a stale path survives a rename unnoticed —

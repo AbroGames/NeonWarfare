@@ -25,6 +25,21 @@ public static class RepositoryPaths
         ".editorconfig", ".gitattributes", ".gitignore",
     };
 
+    private static readonly HashSet<string> ShaderExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".gdshader", ".gdshaderinc",
+    };
+
+    /// <summary>
+    /// The kinds of asset Assets/ holds today that Godot imports. A new kind of asset needs its extension
+    /// added here, or its missing .import goes unnoticed. The .psd and .pdn next to the textures are the
+    /// editable originals: Godot has no importer for them and leaves them alone.
+    /// </summary>
+    private static readonly HashSet<string> ImportedAssetExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".png", ".svg", ".ttf",
+    };
+
     public static string Root { get; } = ReadRoot();
 
     public static string ReadmePath { get; } = Path.Combine(Root, "README.md");
@@ -202,6 +217,22 @@ public static class RepositoryPaths
 
     /// <summary>The import settings of the assets Godot converts on load — that is where their uid is.</summary>
     public static IReadOnlyList<string> ImportFiles() => Files([AssetsDirectory], "*.import");
+
+    /// <summary>
+    /// Every shader, wherever a <c>.uid</c> sidecar may live — the same scope as <see cref="UidFiles"/>.
+    /// </summary>
+    public static IReadOnlyList<string> ShaderFiles() =>
+        SourceDirectories.Append(AssetsDirectory)
+            .SelectMany(AllFilesUnder)
+            .Where(path => ShaderExtensions.Contains(Path.GetExtension(path)))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToList();
+
+    /// <summary>Every asset under Assets/ that Godot converts on load and so keeps an <c>.import</c> for.</summary>
+    public static IReadOnlyList<string> ImportedAssetFiles() =>
+        AllFilesUnder(AssetsDirectory)
+            .Where(path => ImportedAssetExtensions.Contains(Path.GetExtension(path)))
+            .ToList();
 
     /// <summary>
     /// Every text file of the repository, whatever its format — the scope of the checks that look at
