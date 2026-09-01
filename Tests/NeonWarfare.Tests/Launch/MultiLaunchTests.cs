@@ -27,6 +27,12 @@ public class MultiLaunchTests
         @"^\*\s+Type:\s+`Multi-Launch`\.\s+Name:\s+`(?<name>[^`]+)`\.\s+Tasks:\s+`(?<tasks>[^`]+)`\.\s*$",
         RegexOptions.Compiled);
 
+    /// <summary>
+    /// Any list item at all. An item the format regex misses would otherwise drop out of every check
+    /// silently, and the class would stay green while comparing .run/ against an incomplete list.
+    /// </summary>
+    private static readonly Regex ListItemRegex = new(@"^\s*[*+-]\s", RegexOptions.Compiled);
+
     private const string TaskSeparator = ", ";
 
     [Fact]
@@ -143,9 +149,10 @@ public class MultiLaunchTests
     private static IReadOnlyList<DocumentedConfig> DocumentedConfigs()
     {
         List<DocumentedConfig> configs = [];
+        List<string> unrecognised = [];
+        MarkdownDocument document = MarkdownDocument.LoadDoc(DocumentName);
 
-        foreach (MarkdownLine line in MarkdownDocument.LoadDoc(DocumentName)
-                     .Section(MultiLaunchHeading).ProseLines)
+        foreach (MarkdownLine line in document.Section(MultiLaunchHeading).ProseLines)
         {
             Match match = DocumentedConfigRegex.Match(line.Text);
             if (match.Success)
@@ -154,6 +161,18 @@ public class MultiLaunchTests
                     match.Groups["name"].Value,
                     match.Groups["tasks"].Value.Split(TaskSeparator)));
             }
+            else if (ListItemRegex.IsMatch(line.Text))
+            {
+                unrecognised.Add($"{document.RelativePath}:{line.Number}: {line.Text}");
+            }
+        }
+
+        if (unrecognised.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Unrecognised list items under '## {MultiLaunchHeading}' — each must read " +
+                "* Type: `Multi-Launch`. Name: `<name>`. Tasks: `<profile>, <profile>`.\n" +
+                string.Join('\n', unrecognised));
         }
 
         if (configs.Count == 0)
