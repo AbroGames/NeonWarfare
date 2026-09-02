@@ -101,15 +101,34 @@ public class CodeStyleTests
             foreach (InvocationExpressionSyntax invocation in file.Nodes<InvocationExpressionSyntax>())
             {
                 string receiver = CSharpFile.ReceiverOf(invocation);
+                string receiverClass = invocation.Expression is MemberAccessExpressionSyntax access
+                    ? RightmostName(access.Expression)
+                    : string.Empty;
                 bool loadsByPath =
-                    (receiver == GodotClass && LoadMethods.Contains(CSharpFile.CalledName(invocation)))
-                    || receiver == ResourceLoaderClass;
+                    (receiverClass == GodotClass && LoadMethods.Contains(CSharpFile.CalledName(invocation)))
+                    || receiverClass == ResourceLoaderClass;
 
                 if (loadsByPath)
                 {
                     report.Add($"{file.Describe(invocation)}: {receiver}." +
                                $"{CSharpFile.CalledName(invocation)}(...) — take the scene from a " +
                                $"CheckedAbstractStorage instead");
+                }
+            }
+
+            // Without a semantic model a bare Load(...) cannot be told from a method of the class itself,
+            // so the import that would make it reach Godot is what gets reported.
+            foreach (UsingDirectiveSyntax directive in file.Nodes<UsingDirectiveSyntax>())
+            {
+                bool importsLoader = directive.Name is not null
+                                     && (directive.StaticKeyword.IsKind(SyntaxKind.StaticKeyword)
+                                         || directive.Alias is not null)
+                                     && RightmostName(directive.Name) is GodotClass or ResourceLoaderClass;
+
+                if (importsLoader)
+                {
+                    report.Add($"{file.Describe(directive)}: {directive.ToString().Trim()} — hides the " +
+                               $"loader from this check; take the scene from a CheckedAbstractStorage instead");
                 }
             }
 
@@ -122,8 +141,33 @@ public class CodeStyleTests
                                $"code is checked by nothing and survives every rename");
                 }
             }
+
+            foreach (InterpolatedStringExpressionSyntax interpolated in
+                     file.Nodes<InterpolatedStringExpressionSyntax>())
+            {
+                if (interpolated.Contents.FirstOrDefault() is InterpolatedStringTextSyntax text
+                    && text.TextToken.ValueText.StartsWith(ResourcePathPrefix, StringComparison.Ordinal))
+                {
+                    report.Add($"{file.Describe(interpolated)}: {interpolated} — a res:// path in code is " +
+                               $"checked by nothing and survives every rename");
+                }
+            }
         }
 
         report.AssertEmpty();
     }
+
+    /// <summary>
+    /// <c>GD</c> for <c>GD</c>, <c>Godot.GD</c> and <c>global::Godot.GD</c>: without a semantic model the
+    /// qualification is only spelling, and comparing it whole let a qualified call slip through.
+    /// </summary>
+    private static string RightmostName(ExpressionSyntax expression) =>
+        expression switch
+        {
+            MemberAccessExpressionSyntax access => access.Name.Identifier.ValueText,
+            QualifiedNameSyntax qualified => qualified.Right.Identifier.ValueText,
+            AliasQualifiedNameSyntax alias => alias.Name.Identifier.ValueText,
+            SimpleNameSyntax simple => simple.Identifier.ValueText,
+            _ => expression.ToString(),
+        };
 }
