@@ -33,8 +33,9 @@ public class RepositoryStructureDocTests
 
         for (int i = 0; i < document.Lines.Length; i++)
         {
-            // Only the fenced block holds the tree; the fence lines themselves have no entry on them.
-            if (!document.IsFenced[i])
+            // Only a plain fenced block holds the tree — a ```bash one next to it holds commands, not
+            // paths. The fence lines themselves have no entry on them.
+            if (document.FenceInfo[i] is not ("" or "text"))
             {
                 continue;
             }

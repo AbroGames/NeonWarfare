@@ -18,7 +18,7 @@ public sealed class MarkdownDocument
         new(@"^(?<level>#{1,6})\s+(?<text>.+?)\s*#*\s*$", RegexOptions.Compiled);
 
     private static readonly Regex FenceRegex =
-        new(@"^\s{0,3}(?<fence>`{3,}|~{3,})", RegexOptions.Compiled);
+        new(@"^\s{0,3}(?<fence>`{3,}|~{3,})(?<info>.*)$", RegexOptions.Compiled);
 
     private static readonly Regex InlineCodeRegex =
         new(@"(?<ticks>`+)(?:[^`]|(?!\k<ticks>)`)*\k<ticks>", RegexOptions.Compiled);
@@ -35,7 +35,8 @@ public sealed class MarkdownDocument
         Text = text;
         Lines = TextFile.SplitLines(text);
 
-        bool[] insideFence = MapFences(Lines);
+        FenceInfo = MapFences(Lines);
+        bool[] insideFence = FenceInfo.Select(info => info is not null).ToArray();
         string[] sanitized = Sanitize(Lines, insideFence);
 
         Links = ParseLinks(path, sanitized);
@@ -62,6 +63,12 @@ public sealed class MarkdownDocument
 
     /// <summary><c>IsFenced[i]</c> — line <c>i</c> is inside a fenced code block (fences included).</summary>
     public bool[] IsFenced { get; }
+
+    /// <summary>
+    /// <c>FenceInfo[i]</c> — the trimmed info string of the fence line <c>i</c> is inside (<c>""</c> when
+    /// the opening fence has none), <c>null</c> outside a fenced block.
+    /// </summary>
+    public string?[] FenceInfo { get; }
 
     public IReadOnlyList<MarkdownLink> Links { get; }
 
@@ -150,10 +157,11 @@ public sealed class MarkdownDocument
     public static IEnumerable<string> CodeSpans(string line) =>
         InlineCodeRegex.Matches(line).Select(match => match.Value.Trim('`').Trim());
 
-    private static bool[] MapFences(string[] lines)
+    private static string?[] MapFences(string[] lines)
     {
-        bool[] insideFence = new bool[lines.Length];
+        string?[] fenceInfo = new string?[lines.Length];
         string? openFence = null;
+        string openInfo = string.Empty;
 
         for (int i = 0; i < lines.Length; i++)
         {
@@ -163,13 +171,14 @@ public sealed class MarkdownDocument
                 if (match.Success)
                 {
                     openFence = match.Groups["fence"].Value;
-                    insideFence[i] = true;
+                    openInfo = match.Groups["info"].Value.Trim();
+                    fenceInfo[i] = openInfo;
                 }
 
                 continue;
             }
 
-            insideFence[i] = true;
+            fenceInfo[i] = openInfo;
             bool closes = match.Success
                           && match.Groups["fence"].Value[0] == openFence[0]
                           && match.Groups["fence"].Value.Length >= openFence.Length;
@@ -179,7 +188,7 @@ public sealed class MarkdownDocument
             }
         }
 
-        return insideFence;
+        return fenceInfo;
     }
 
     /// <summary>Blanks out fenced blocks and inline code, keeping line count and line lengths.</summary>
