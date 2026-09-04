@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using NeonWarfare.Tests.Infrastructure;
 using Xunit;
 
@@ -11,8 +12,13 @@ namespace NeonWarfare.Tests.Docs;
 /// </summary>
 public class StackDocTests
 {
-    private static readonly Regex PackageReferenceRegex =
-        new(@"<PackageReference\s+Include=""(?<name>[^""]+)""", RegexOptions.Compiled);
+    private static readonly Regex Whitespace = new(@"\s+", RegexOptions.Compiled);
+
+    /// <summary>What "the same three xUnit packages" of the smoke test paragraph refers to.</summary>
+    private static readonly string[] XunitPackages =
+        ["xunit.v3", "xunit.runner.visualstudio", "Microsoft.NET.Test.Sdk"];
+
+    private const string SmokeProjectClaim = "takes the same three xUnit packages and nothing else";
 
     private const string DocumentName = "Stack.md";
 
@@ -32,6 +38,47 @@ public class StackDocTests
     public void TestProjectPackages_MatchTheDocument()
     {
         AssertPackagesMatch(RepositoryPaths.TestProjectPath);
+    }
+
+    [Fact]
+    public void SmokeTestProjectPackages_AreTheXunitPackagesOnly()
+    {
+        string smokeProject = RepositoryPaths.Relative(RepositoryPaths.SmokeTestProjectPath);
+        string testProject = RepositoryPaths.Relative(RepositoryPaths.TestProjectPath);
+        IReadOnlySet<string> xunit = XunitPackages.ToHashSet(StringComparer.Ordinal);
+        IReadOnlySet<string> smoke = ReferencedPackages(RepositoryPaths.SmokeTestProjectPath);
+        IReadOnlySet<string> test = ReferencedPackages(RepositoryPaths.TestProjectPath);
+
+        FailureReport report = new($"Docs/{DocumentName} and {smokeProject} disagree about packages");
+
+        string prose = Whitespace.Replace(
+            string.Join(' ', MarkdownDocument.LoadDoc(DocumentName).Section(PackagesHeading).ProseLines
+                .Select(line => line.Text)),
+            " ");
+        if (!prose.Contains(SmokeProjectClaim, StringComparison.Ordinal))
+        {
+            report.Add($"the document no longer says \"{SmokeProjectClaim}\" — update this test to match it");
+        }
+
+        CrossCheck.ReportMissing(
+            report,
+            smoke.Order(StringComparer.Ordinal),
+            xunit,
+            package => $"{package} is referenced by {smokeProject}, which takes the xUnit packages only");
+
+        CrossCheck.ReportMissing(
+            report,
+            XunitPackages,
+            smoke,
+            package => $"{package} is not referenced by {smokeProject}");
+
+        CrossCheck.ReportMissing(
+            report,
+            XunitPackages,
+            test,
+            package => $"{package} is not referenced by {testProject}, so the two projects no longer share it");
+
+        report.AssertEmpty();
     }
 
     private static void AssertPackagesMatch(string projectPath)
@@ -57,9 +104,17 @@ public class StackDocTests
         report.AssertEmpty();
     }
 
+    /// <summary>
+    /// Read as XML rather than matched as text: attribute order is free, and a commented-out reference
+    /// is not a reference. A reference without <c>Include</c> throws instead of being skipped.
+    /// </summary>
     private static IReadOnlySet<string> ReferencedPackages(string projectPath) =>
-        PackageReferenceRegex.Matches(File.ReadAllText(projectPath))
-            .Select(match => match.Groups["name"].Value)
+        XDocument.Load(projectPath)
+            .Descendants("PackageReference")
+            .Select(reference => reference.Attribute("Include")?.Value
+                ?? throw new InvalidOperationException(
+                    $"{RepositoryPaths.Relative(projectPath)}: a PackageReference without Include — " +
+                    "this test cannot tell what it references."))
             .ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
