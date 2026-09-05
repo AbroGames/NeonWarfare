@@ -62,6 +62,28 @@ public class ChatCommandsDocTests
         report.AssertEmpty();
     }
 
+    /// <summary>
+    /// The service picks a processor up from anywhere in the assembly, so a command written elsewhere
+    /// works in the game while nobody looking through Impl/ for the list of commands ever sees it.
+    /// </summary>
+    [Fact]
+    public void CommandClasses_LiveInImpl()
+    {
+        string impl = RepositoryPaths.Relative(RepositoryPaths.CommandProcessorImplDirectory);
+        FailureReport report = new($"{ProcessorInterface} implementations outside {impl}/");
+
+        foreach ((CSharpFile file, ClassDeclarationSyntax declaration) in ProcessorDeclarations())
+        {
+            if (!RepositoryPaths.IsInside(file.Path, RepositoryPaths.CommandProcessorImplDirectory))
+            {
+                report.Add($"{file.Describe(declaration)} — {declaration.Identifier.ValueText} " +
+                           $"is in the wrong place, move it to {impl}/");
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
     [Fact]
     public void NotDocumentedAsRow_ListsDeclaredCommands()
     {
@@ -215,28 +237,36 @@ public class ChatCommandsDocTests
     {
         Dictionary<string, CommandProcessor> processors = new(StringComparer.Ordinal);
 
-        foreach (string path in RepositoryPaths.CommandProcessorFiles())
+        foreach ((CSharpFile file, ClassDeclarationSyntax declaration) in ProcessorDeclarations())
         {
-            CSharpFile file = CSharpFile.Load(path);
-
-            foreach (ClassDeclarationSyntax declaration in file.Nodes<ClassDeclarationSyntax>())
-            {
-                bool implements = declaration.BaseList?.Types
-                    .Any(type => type.Type.ToString() == ProcessorInterface) ?? false;
-
-                if (!implements)
-                {
-                    continue;
-                }
-
-                processors[declaration.Identifier.ValueText] = new CommandProcessor(
-                    ReturnedLiteral(file, declaration, CommandMethod),
-                    ReturnedLiteral(file, declaration, AdminMethod) == "true");
-            }
+            processors[declaration.Identifier.ValueText] = new CommandProcessor(
+                ReturnedLiteral(file, declaration, CommandMethod),
+                ReturnedLiteral(file, declaration, AdminMethod) == "true");
         }
 
         return processors;
     }
+
+    /// <summary>
+    /// Every class under Src/ that names ICommandProcessor in its base list — the whole of Src/, because
+    /// that is where the service looks. The interface is matched by its rightmost identifier, so a
+    /// qualified name counts as well. A processor reaching the interface through a base class of its own
+    /// is not found; there is none.
+    /// </summary>
+    private static IEnumerable<(CSharpFile File, ClassDeclarationSyntax Declaration)> ProcessorDeclarations() =>
+        CSharpFile.LoadAll().SelectMany(file => file.Nodes<ClassDeclarationSyntax>()
+            .Where(declaration => declaration.BaseList?.Types
+                .Any(type => RightmostIdentifier(type.Type) == ProcessorInterface) ?? false)
+            .Select(declaration => (file, declaration)));
+
+    private static string RightmostIdentifier(TypeSyntax type) =>
+        type switch
+        {
+            QualifiedNameSyntax qualified => qualified.Right.Identifier.ValueText,
+            AliasQualifiedNameSyntax alias => alias.Name.Identifier.ValueText,
+            SimpleNameSyntax simple => simple.Identifier.ValueText,
+            _ => type.ToString(),
+        };
 
     /// <summary>The literal an expression-bodied method returns, as it is written in the source.</summary>
     private static string ReturnedLiteral(

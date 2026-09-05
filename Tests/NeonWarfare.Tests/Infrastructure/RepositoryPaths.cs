@@ -106,9 +106,9 @@ public static class RepositoryPaths
     public static string WorldServiceDirectory { get; } =
         Path.Combine(GameSourceDirectory, "Scenes", "World", "WorldServices");
 
-    /// <summary>The chat commands: ICommandProcessor and its implementations, one class per command.</summary>
-    public static string CommandProcessorDirectory { get; } =
-        Path.Combine(WorldServiceDirectory, "Command");
+    /// <summary>The only place allowed to implement ICommandProcessor, one class per command.</summary>
+    public static string CommandProcessorImplDirectory { get; } =
+        Path.Combine(WorldServiceDirectory, "Command", "Impl");
 
     /// <summary>The only place that declares a transfer channel — Consts.TransferChannel.</summary>
     public static string ConstsPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Consts.cs");
@@ -203,10 +203,6 @@ public static class RepositoryPaths
 
     /// <summary>The world service classes — every .cs under Scenes/World/WorldServices, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
-
-    /// <summary>The chat command classes — ICommandProcessor and every implementation of it.</summary>
-    public static IReadOnlyList<string> CommandProcessorFiles() =>
-        Files([CommandProcessorDirectory], "*.cs");
 
     /// <summary>
     /// Every <c>.uid</c> sidecar Godot keeps next to a file it cannot store a uid inside — a .cs under
