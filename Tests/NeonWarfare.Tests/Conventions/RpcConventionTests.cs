@@ -76,7 +76,7 @@ public class RpcConventionTests
         foreach (CSharpFile file in CSharpFile.LoadAll())
         {
             foreach (AttributeSyntax attribute in file.Nodes<AttributeSyntax>()
-                         .Where(attribute => attribute.Name.ToString() == RpcAttribute))
+                         .Where(IsRpcAttribute))
             {
                 MethodDeclarationSyntax? method = CSharpFile.EnclosingMethod(attribute);
                 if (method is null)
@@ -112,12 +112,29 @@ public class RpcConventionTests
                 .Select(access => (File: file, Reference: access)))
             .ToList();
 
+        // A direct call runs the target locally and skips the network altogether, so even the wrapper
+        // must not make one.
+        List<(CSharpFile File, InvocationExpressionSyntax Call)> directCalls = CSharpFile.LoadAll()
+            .SelectMany(file => file.Nodes<InvocationExpressionSyntax>()
+                .Where(invocation => CSharpFile.CalledName(invocation).EndsWith(RpcSuffix, StringComparison.Ordinal))
+                .Select(invocation => (File: file, Call: invocation)))
+            .ToList();
+
         FailureReport report = new($"RPC targets not called exactly once, from their wrapper");
 
         foreach ((CSharpFile file, MethodDeclarationSyntax method) in RpcMethods())
         {
             string target = method.Identifier.ValueText;
             string wrapper = target[..^RpcSuffix.Length];
+
+            foreach ((CSharpFile directFile, InvocationExpressionSyntax direct) in directCalls
+                         .Where(candidate => CSharpFile.CalledName(candidate.Call) == target))
+            {
+                string directCaller = CSharpFile.EnclosingMethod(direct)?.Identifier.ValueText ?? "outside any method";
+                report.Add($"{directFile.Describe(direct)}: {target} is called directly from '{directCaller}' — " +
+                           $"call the wrapper {wrapper}(...) instead");
+            }
+
             List<(CSharpFile File, MemberAccessExpressionSyntax Reference)> calls = references
                 .Where(reference => reference.Reference.Name.Identifier.ValueText == target)
                 .ToList();
@@ -164,5 +181,9 @@ public class RpcConventionTests
     private static AttributeSyntax? RpcAttributeOf(MethodDeclarationSyntax method) =>
         method.AttributeLists
             .SelectMany(list => list.Attributes)
-            .FirstOrDefault(attribute => attribute.Name.ToString() == RpcAttribute);
+            .FirstOrDefault(IsRpcAttribute);
+
+    /// <summary>Godot's attribute is also reachable as <c>[Godot.Rpc]</c> or <c>[RpcAttribute]</c>.</summary>
+    private static bool IsRpcAttribute(AttributeSyntax attribute) =>
+        CSharpFile.AttributeName(attribute) == RpcAttribute;
 }
