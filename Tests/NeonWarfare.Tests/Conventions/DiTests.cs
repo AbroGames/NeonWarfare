@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NeonWarfare.Tests.Infrastructure;
 using Xunit;
@@ -90,6 +92,38 @@ public class DiTests
         report.AssertEmpty();
     }
 
+    /// <summary>
+    /// The inherited call only runs if every override on the way down chains to it: ClientRootStarter
+    /// without <c>base.Init(rootData)</c> still passes the check above, yet nothing injects its
+    /// <c>[Logger]</c>. Only overrides of a method that runs <c>Di.Process(this)</c> in a repository base
+    /// type are checked; a call that sits in a method nobody invokes is out of reach of the syntax.
+    /// </summary>
+    [Fact]
+    public void OverridesOfInjectingMethods_CallBase()
+    {
+        IReadOnlyDictionary<string, TypeFacts> types = TypesByName();
+        FailureReport report = new("Overrides that drop the base method running Di.Process(this)");
+
+        foreach (TypeFacts type in types.Values.OrderBy(type => type.Name, StringComparer.Ordinal))
+        {
+            foreach (OverrideFacts method in type.Overrides.Where(method => !method.CallsBase))
+            {
+                TypeFacts? injecting = SelfAndBaseTypes(type, types)
+                    .Skip(1)
+                    .FirstOrDefault(baseType => baseType.DiProcessMethods.Contains(method.Name));
+
+                if (injecting is not null)
+                {
+                    report.Add($"{method.Location}: {type.Name}.{method.Name} never calls " +
+                               $"base.{method.Name}(...), so {injecting.Name}.{method.Name} and its " +
+                               $"Di.Process(this) do not run");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
     /// <summary>Calls of the form <c>Di.Process(this)</c>, whichever receiver they are written through.</summary>
     private static IEnumerable<InvocationExpressionSyntax> DiProcessCalls(CSharpFile file) =>
         file.Nodes<InvocationExpressionSyntax>()
@@ -134,7 +168,24 @@ public class DiTests
                         $"[{CSharpFile.AttributeName(member.Attribute)}] {member.Name}");
                 }
 
-                facts.CallsDiProcess |= calls.Any(call => CSharpFile.DeclaringType(call) == declaration);
+                List<InvocationExpressionSyntax> own =
+                    calls.Where(call => CSharpFile.DeclaringType(call) == declaration).ToList();
+                facts.CallsDiProcess |= own.Count > 0;
+
+                foreach (MethodDeclarationSyntax method in own
+                             .Select(CSharpFile.EnclosingMethod)
+                             .OfType<MethodDeclarationSyntax>())
+                {
+                    facts.DiProcessMethods.Add(method.Identifier.ValueText);
+                }
+
+                foreach (MethodDeclarationSyntax method in declaration.Members
+                             .OfType<MethodDeclarationSyntax>()
+                             .Where(method => method.Modifiers.Any(SyntaxKind.OverrideKeyword)))
+                {
+                    facts.Overrides.Add(new OverrideFacts(
+                        method.Identifier.ValueText, file.Describe(method), CallsBase(method)));
+                }
             }
         }
 
@@ -151,11 +202,26 @@ public class DiTests
                 _ => type.ToString(),
             }) ?? [];
 
+    /// <summary><c>base.Name(...)</c> anywhere in the method, for the method's own name.</summary>
+    private static bool CallsBase(MethodDeclarationSyntax method) =>
+        method.DescendantNodes()
+            .OfType<InvocationExpressionSyntax>()
+            .Any(invocation =>
+                invocation.Expression is MemberAccessExpressionSyntax
+                {
+                    Expression: BaseExpressionSyntax,
+                } access
+                && access.Name.Identifier.ValueText == method.Identifier.ValueText);
+
+    private static bool RunsDiProcess(TypeFacts type, IReadOnlyDictionary<string, TypeFacts> types) =>
+        SelfAndBaseTypes(type, types).Any(current => current.CallsDiProcess);
+
     /// <summary>
-    /// The type itself or any of its base types declared in this repository. Base types that come from
-    /// KludgeBox or Godot simply are not in the map and end the walk.
+    /// The type itself first, then its base types declared in this repository, nearest first. Base types
+    /// that come from KludgeBox or Godot simply are not in the map and end the walk.
     /// </summary>
-    private static bool RunsDiProcess(TypeFacts type, IReadOnlyDictionary<string, TypeFacts> types)
+    private static IEnumerable<TypeFacts> SelfAndBaseTypes(
+        TypeFacts type, IReadOnlyDictionary<string, TypeFacts> types)
     {
         HashSet<string> visited = new(StringComparer.Ordinal);
         Queue<TypeFacts> pending = new([type]);
@@ -168,10 +234,7 @@ public class DiTests
                 continue;
             }
 
-            if (current.CallsDiProcess)
-            {
-                return true;
-            }
+            yield return current;
 
             foreach (string baseType in current.BaseTypes)
             {
@@ -181,8 +244,6 @@ public class DiTests
                 }
             }
         }
-
-        return false;
     }
 
     private sealed class TypeFacts
@@ -203,5 +264,12 @@ public class DiTests
         public List<string> InjectedMembers { get; } = [];
 
         public bool CallsDiProcess { get; set; }
+
+        /// <summary>Methods, not constructors: a constructor chains to its base whether it says so or not.</summary>
+        public HashSet<string> DiProcessMethods { get; } = new(StringComparer.Ordinal);
+
+        public List<OverrideFacts> Overrides { get; } = [];
     }
+
+    private sealed record OverrideFacts(string Name, string Location, bool CallsBase);
 }

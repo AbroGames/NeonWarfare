@@ -74,7 +74,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Conventions/RpcConventionTests` | RPC targets are private, carry an explicit `[Rpc(...)]`, called once from their wrapper |
 | `Conventions/RoleCheckTests` | Process role read from `Net.*`, not `GetMultiplayer()` or a peer-id literal |
 | `Conventions/CmdArgsContractTests` | Flags, parsing and `CmdArgsService` stay where [Cli args](Cli-args.md) says |
-| `Conventions/DiTests` | `Di.Process(this)` is the first statement; every class with injected members calls it |
+| `Conventions/DiTests` | `Di.Process(this)` is the first statement; every class with injected members calls it; an override of the method running it calls `base` |
 | `Conventions/ChildInjectionTests` | A `[Child]` member name resolves to a reachable node in the scene |
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
 | `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
