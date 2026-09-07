@@ -35,7 +35,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   `.gitignore` or `.git/info/exclude` hides (`.claude/worktrees/`, `.claude/tasks/`) is not scanned, so
   the tests need a git checkout and `git` on `PATH`.
 * Read a file through the helper for its format, not `File.ReadAllText`: `MarkdownDocument`,
-  `CSharpFile`, `PoFile`, `SceneFile` (`.tscn` / `.tres`), `GodotProjectFile`; underneath them all
+  `CSharpFile`, `PoFile`, `SceneFile` (`.tscn` / `.tres`), `GodotProjectFile`, `EditorConfigFile`; underneath them all
   `TextFile` is the one place that turns bytes into lines. `PoFile` and `SceneFile` throw on anything
   unexpected instead of skipping it. `UidIndex` maps every `uid://` to its file: a `.uid` sidecar for
   code and shaders, the header of a `.tscn` / `.tres`, or the `.import` of a converted asset.
@@ -78,7 +78,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Conventions/ChildInjectionTests` | A `[Child]` member name resolves to a reachable node in the scene |
 | `Conventions/InputActionTests` | `Keys.cs` ↔ the `[input]` section of `project.godot`, both ways |
 | `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
-| `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into 120 characters |
+| `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
 | `Launch/LaunchProfilesTests` | `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |

@@ -115,4 +115,4 @@ profiler do Force GC → Snapshot and look for `World` among the types.
 
 ## Formatting
 
-`.editorconfig`: UTF-8, LF, maximum line length — 120 characters.
+`.editorconfig`: UTF-8, LF, maximum line length — 120 columns, tab width — 4.

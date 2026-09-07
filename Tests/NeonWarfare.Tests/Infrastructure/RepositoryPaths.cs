@@ -81,6 +81,8 @@ public static class RepositoryPaths
     /// <summary>The Godot project settings: the input map, the main scene, the icon and the theme.</summary>
     public static string ProjectSettingsPath { get; } = Path.Combine(Root, "project.godot");
 
+    public static string EditorConfigPath { get; } = Path.Combine(Root, ".editorconfig");
+
     public static string GameProjectPath { get; } = Path.Combine(Root, "NeonWarfare.csproj");
 
     /// <summary>The test project root — Docs/Testing.md names its test classes relative to it.</summary>

@@ -12,25 +12,42 @@ namespace NeonWarfare.Tests.Conventions;
 /// </summary>
 public class SourceFormattingTests
 {
-    private const int MaxLineLength = 120;
+    private const string Section = "*.cs";
+
+    private static readonly int MaxLineLength = EditorConfigFile.Current.IntValue(Section, "max_line_length");
+
+    private static readonly int TabWidth = EditorConfigFile.Current.IntValue(Section, "tab_width");
 
     [Theory]
     [MemberData(nameof(FileSources.CSharpFiles), MemberType = typeof(FileSources))]
     public void Lines_FitIntoMaxLineLength(string relativePath)
     {
         string[] lines = TextFile.ReadLines(RepositoryPaths.Absolute(relativePath));
-        FailureReport report = new($"{relativePath}: lines longer than {MaxLineLength} characters");
+        FailureReport report = new(
+            $"{relativePath}: lines wider than {MaxLineLength} columns (tab width {TabWidth})");
 
         for (int i = 0; i < lines.Length; i++)
         {
-            // Length in characters, not bytes: a comment may hold non-ASCII text, and a byte-based
-            // check would measure it as longer than it looks.
-            if (lines[i].Length > MaxLineLength)
+            int width = Width(lines[i]);
+            if (width > MaxLineLength)
             {
-                report.Add($"line {i + 1}: {lines[i].Length} characters");
+                report.Add($"line {i + 1}: {width} columns");
             }
         }
 
         report.AssertEmpty();
+    }
+
+    // Counted in characters, not bytes: a comment may hold non-ASCII text, and a byte-based check would
+    // measure it as longer than it looks. A tab moves to the next tab stop, the way the editor draws it.
+    private static int Width(string line)
+    {
+        int column = 0;
+        foreach (char character in line)
+        {
+            column = character == '\t' ? column + TabWidth - column % TabWidth : column + 1;
+        }
+
+        return column;
     }
 }

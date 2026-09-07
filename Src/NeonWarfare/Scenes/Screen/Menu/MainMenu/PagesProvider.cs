@@ -37,7 +37,8 @@ public partial class PagesProvider : GameCheckedAbstractStorage
 		var instance = pageScene.Instantiate();
 		if (instance is not MainMenuPage page)
 		{
-			throw new ArgumentException($"Attempt to prepare main menu page from non-page packed scene ({instance.GetType()})");
+			throw new ArgumentException(
+				$"Attempt to prepare main menu page from non-page packed scene ({instance.GetType()})");
 		}
 		
 		return page.WithAvailablePages(this);
