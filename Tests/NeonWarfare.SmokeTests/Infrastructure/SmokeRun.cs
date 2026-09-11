@@ -183,12 +183,14 @@ public static class SmokeRun
     private static void Report(
         IReadOnlyList<GameProcess> processes, IReadOnlyList<(GameProcess Process, string Problem)> lifecycleProblems)
     {
-        List<string> problems = [];
+        List<Problem> problems = [];
 
         foreach ((GameProcess process, string problem) in lifecycleProblems)
         {
-            problems.Add($"[{process.Name}] {problem}. Last lines of its output:");
-            problems.AddRange(process.Output.TakeLast(TailLineCount).Select(line => $"[{process.Name}]     {line}"));
+            problems.Add(new Problem(
+                process.Name,
+                $"{problem}. Last lines of its output:",
+                process.Output.TakeLast(TailLineCount).ToList()));
         }
 
         foreach (GameProcess process in processes)
@@ -196,10 +198,7 @@ public static class SmokeRun
             problems.AddRange(OutputScanner.Scan(process));
         }
 
-        if (problems.Count == 0) return;
-
-        Assert.Fail(
-            $"The game run has {problems.Count} problem line(s):{Environment.NewLine}" +
-            string.Join(Environment.NewLine, problems));
+        string? report = ProblemReport.Render(problems);
+        if (report is not null) Assert.Fail(report);
     }
 }

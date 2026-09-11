@@ -33,14 +33,14 @@ public static partial class OutputScanner
     private static partial Regex EngineProblemRegex();
 
     /// <summary>
-    /// Every problem found in one process's output, each already prefixed with the process name.
-    /// A problem drags its details along: "ERROR: NullReferenceException" or "(Error) Failed to load"
-    /// on its own says nothing about where it came from.
+    /// Every problem found in one process's output. A problem drags its details along:
+    /// "ERROR: NullReferenceException" or "(Error) Failed to load" on its own says nothing about where it
+    /// came from.
     /// </summary>
-    public static IReadOnlyList<string> Scan(GameProcess process)
+    public static IReadOnlyList<Problem> Scan(GameProcess process)
     {
         IReadOnlyList<string> lines = process.Output;
-        List<string> problems = [];
+        List<Problem> problems = [];
 
         for (int i = 0; i < lines.Count; i++)
         {
@@ -60,15 +60,17 @@ public static partial class OutputScanner
                 continue;
             }
 
-            problems.Add($"[{process.Name}] {line}");
-            foreach (string detail in details)
-            {
-                problems.Add($"[{process.Name}]     {detail.TrimEnd()}");
-            }
+            problems.Add(new Problem(process.Name, line, details.Select(detail => detail.TrimEnd()).ToList()));
         }
 
         return problems;
     }
+
+    /// <summary>
+    /// The line without its Serilog timestamp, if it has one — the only part that tells apart two
+    /// otherwise identical repeats of one log line.
+    /// </summary>
+    public static string WithoutTimestamp(string line) => SerilogLineRegex().Replace(line, "");
 
     /// <summary>
     /// RichGodotSink prints the message and then the exception with a separate GD.Print, so the

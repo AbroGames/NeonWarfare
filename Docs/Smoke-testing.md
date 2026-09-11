@@ -51,6 +51,9 @@ server started by hand.
 * an engine line starting with `ERROR:`, `WARNING:` or `SCRIPT ERROR:`, with its stack trace. This
   includes `ObjectDB instances were leaked at exit` — usually a node taken out of the tree or never added.
 
+Identical problems (the Serilog timestamp aside) are reported once with a repeat count, and the report
+is capped at about 200 lines: an exception on every physics frame would otherwise run to tens of thousands.
+
 Stopping is `SIGTERM`, not a kill: the async Serilog sink is never flushed, so a kill would drop the lines
 that explain a failure, and a graceful exit exercises [Shutdown](Shutdown.md) and autosave. Windows has
 no `SIGTERM`: processes are killed and their exit is not checked (Windows not verified at all).
