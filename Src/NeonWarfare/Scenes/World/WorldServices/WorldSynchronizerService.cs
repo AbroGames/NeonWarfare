@@ -77,24 +77,28 @@ public partial class WorldSynchronizerService : Node
             _log.Warning("Syncing peer {peer} was rejected with error: {error}",
                 connectedClientId, UidAlreadyUsedErrorMessage);
             RejectSyncOnClient(connectedClientId, UidAlreadyUsedErrorMessage);
+            return;
         }
         if (nick.Length < NicknameMinLength || nick.Length > NicknameMaxLength)
         {
             _log.Warning("Syncing peer {peer} was rejected with error: {error}",
                 connectedClientId, LengthOfNicknameErrorMessage);
             RejectSyncOnClient(connectedClientId, LengthOfNicknameErrorMessage);
+            return;
         }
         if (nick.Contains(' '))
         {
             _log.Warning("Syncing peer {peer} was rejected with error: {error}",
                 connectedClientId, NicknameContainsSpaceErrorMessage);
             RejectSyncOnClient(connectedClientId, NicknameContainsSpaceErrorMessage);
+            return;
         }
         if (color.Luminance < 0.2)
         {
             _log.Warning("Syncing peer {peer} was rejected with error: {error}",
                 connectedClientId, ColorValueErrorMessage);
             RejectSyncOnClient(connectedClientId, ColorValueErrorMessage);
+            return;
         }
         
         _temporaryData.PlayerUidByPeerId.Add(connectedClientId, uid);
