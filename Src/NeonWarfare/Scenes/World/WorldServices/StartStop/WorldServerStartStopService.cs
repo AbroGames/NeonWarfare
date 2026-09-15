@@ -55,13 +55,7 @@ public partial class WorldServerStartStopService : Node
         _log.Information("World starting...");
         
         // Init WorldTemporaryData
-        // Use inner function for detach this function after server shutdown,
-        // otherwise we can have memory leak for this function
-        void PeerDisconnectedEvent(long id)
-        {
-            _temporaryData.PlayerUidByPeerId.Remove((int) id);
-        }
-        GetMultiplayer().PeerDisconnected += PeerDisconnectedEvent;
+        GetMultiplayer().PeerDisconnected += id => _temporaryData.PlayerUidByPeerId.Remove((int) id);
         
         // Init WorldSynchronizerService
         _synchronizerService.InitOnServer(adminUid);
@@ -70,9 +64,7 @@ public partial class WorldServerStartStopService : Node
         _commandService.InitOnServer();
         
         // Init node for server shutdown process in the future
-        WorldServerShutdowner worldServerShutdowner = new WorldServerShutdowner();
-        worldServerShutdowner.AddCustomShutdownAction(() => GetMultiplayer().PeerDisconnected -= PeerDisconnectedEvent);
-        AddChild(worldServerShutdowner);
+        AddChild(new WorldServerShutdowner());
     }
 
     private void NewGameServerInit(string saveFileName)

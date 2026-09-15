@@ -168,7 +168,8 @@ Connecting to someone else's server — the only mode where `Net.IsServer()` ret
 3. Subscriptions to `MultiplayerApi` events: `ConnectedToServer` → `ClientStartWorld(...)`;
    `ConnectionFailed` → to the menu with "Connection to the server failed" (no answer within the
    timeout); `ServerDisconnected` → to the menu with "Server disconnected" (can arrive even hours into
-   the game).
+   the game). All three do nothing once their `Game` is queued for deletion: the multiplayer is still
+   polled until the end of that frame.
 4. `mustSetLastGame` → a "connection to a server" write into `resume-game.json`.
 5. `network.ConnectToServer(host ?? 127.0.0.1, port ?? 25566)`. A synchronous error is handled by that
    same `ConnectionFailedEvent`.

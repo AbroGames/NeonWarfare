@@ -27,8 +27,24 @@ public class ConnectToMultiplayerGameStarter(
         // otherwise we have memory leak for world.SynchronizerService
         void ConnectedToServerEvent()
         {
-            ClientStartWorld(world);
+            if (!IsGameAlive(game)) return;
             game.GetMultiplayer().ConnectedToServer -= ConnectedToServerEvent;
+            ClientStartWorld(world);
+        }
+        
+        // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
+        void ConnectionFailedEvent()
+        {
+            if (!IsGameAlive(game)) return;
+            GoToMenuAndShowError(ConnectionFailedMessage);
+        }
+    
+        // Server disconnected (the connection was successful, but the server disconnected us).
+        // This may also happen several hours after the connection.
+        void ServerDisconnectedEvent()
+        {
+            if (!IsGameAlive(game)) return;
+            GoToMenuAndShowError(DisconnectedFromServerMessage);
         }
 
         game.GetMultiplayer().ConnectedToServer += ConnectedToServerEvent;
@@ -48,10 +64,8 @@ public class ConnectToMultiplayerGameStarter(
         }
     }
     
-    // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
-    private void ConnectionFailedEvent() => GoToMenuAndShowError(ConnectionFailedMessage);
-    
-    // Server disconnected (the connection was successful, but the server disconnected us).
-    // This may also happen several hours after the connection.
-    private void ServerDisconnectedEvent() => GoToMenuAndShowError(DisconnectedFromServerMessage);
+    private bool IsGameAlive(Game game)
+    {
+        return GodotObject.IsInstanceValid(game) && !game.IsQueuedForDeletion();
+    }
 }

@@ -20,10 +20,14 @@ public partial class Network(Node multiplayerRoot) : Node
         
         Net.SetGameNetwork(this);
         
-        // Setup new Multiplayer object for guaranteed removing all old links and lambdas to old Multiplayer
-        // This multiplayer link to node Game (multiplayerRoot) and will be removed after move to MainMenu
+        // A fresh multiplayer per Game, so that old handlers and lambdas cannot outlive the session
         GetTree().SetMultiplayer(new SceneMultiplayer(), multiplayerRoot.GetPath());
-        
+        // The tree keeps a custom multiplayer until it is explicitly unset, even after the node is freed.
+        // Game's own TreeExiting comes after all its children have exited, so spawners and synchronizers
+        // still see this multiplayer when they unregister.
+        // Not in Shutdown(): Network is Game's last child, so it exits first, before World.
+        multiplayerRoot.TreeExiting += ReleaseMultiplayer;
+
         Api = GetMultiplayer();
         Api.ConnectedToServer += ConnectedToServerEvent;
         Api.PeerConnected += PeerConnectedEvent;
@@ -141,6 +145,16 @@ public partial class Network(Node multiplayerRoot) : Node
             StateMachine.SetState(NetworkStateMachine.State.NotInitialized);
             
             _log.Information("Network shutdown successful");
+        }
+    }
+
+    private void ReleaseMultiplayer()
+    {
+        SceneTree tree = multiplayerRoot.GetTree();
+        NodePath path = multiplayerRoot.GetPath();
+        if (tree.GetMultiplayer(path) == Api)
+        {
+            tree.SetMultiplayer(null, path);
         }
     }
 

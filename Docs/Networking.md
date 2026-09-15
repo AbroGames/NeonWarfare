@@ -9,7 +9,9 @@ The **stock Godot high-level multiplayer** is used (`SceneMultiplayer` + `ENetMu
 * **`Network`** ([Scenes/Game/Network/Network.cs](../Src/NeonWarfare/Scenes/Game/Network/Network.cs)) — a wrapper over
   `MultiplayerApi`, responsible for `ConnectToServer()`, `HostServer()`, `OpenServer()` and a correct
   `Shutdown()`. It creates a new `SceneMultiplayer` bound to the `Game` node, so that on returning to
-  the menu all the old subscriptions are guaranteed to fall away.
+  the menu all the old subscriptions are guaranteed to fall away. The `SceneTree` keeps it until it is
+  explicitly unset, so `Network` unsets it on `Game.TreeExiting` — after all of `Game`'s children have
+  exited and unregistered their spawners and synchronizers.
 * **`NetworkStateMachine`** — the states `NotInitialized → Connecting/Hosting → Connected/Hosted →
   Disconnected` and the derived flags (`IsClient`, `IsServer`, `IsActiveGameState`).
 

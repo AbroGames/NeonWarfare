@@ -101,9 +101,11 @@ translatable — see [Localization](Localization.md).
 
 ## Memory leaks
 
-Subscriptions to `MultiplayerApi` and service events are written as local functions so that they can be
-detached correctly (`GetMultiplayer().ConnectedToServer -= ConnectedToServerEvent`). This is a frequent
-cause of leaks during the Game → MainMenu transition, so such places are accompanied by a comment.
+A handler whose delegate target is a node (its method, or a local function capturing only `this`) needs
+no manual `-=`: Godot disconnects it when the node is freed. Any other handler (a closure over other
+objects, a method of a plain C# class) is detached by hand, so it is written as a local function
+(`GetMultiplayer().ConnectedToServer -= ConnectedToServerEvent`). This is a frequent cause of leaks
+during the Game → MainMenu transition, so such places are accompanied by a comment.
 
 An `Action` is never held in a `static` field: its subscribers are then never released. It is raised
 through `PlayerConnectedEvent?.Invoke(...)`, and is declared with the `event` keyword when only its own
