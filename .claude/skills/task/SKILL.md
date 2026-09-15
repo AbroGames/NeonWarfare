@@ -1,6 +1,6 @@
 ---
 name: task
-description: Manage tasks stored in .claude/tasks/. Use when the user asks to create a new task, write a plan for a task, start/continue work on a task, or code-review a finished task — typically phrased as "task 3", "задача 3", "новая задача", "план для задачи N", "ревью задачи N".
+description: Manage tasks stored in .claude/tasks/. Use when the user asks to create a new task, write a plan for a task, start/continue work on a task, or code-review a finished task — typically phrased as "task 3", "задача 3", "новая задача", "план для задачи N", "ревью задачи N", or just "/task N" (the mode then follows the task status).
 ---
 
 # Task workflow
@@ -11,12 +11,24 @@ Any other files may be added freely.
 
 ## Resolving a task
 
-A task is referenced by its number. Find its folder with `ls .claude/tasks/ | grep '^NNN'`.
+A task is referenced by its number. Pad it to 3 digits (`1` → `001`) and find its folder
+with `ls .claude/tasks/ | grep '^NNN'`.
 If the number does not exist and the user did not ask to create it — stop and say so.
 
 ## Modes
 
-The user's phrasing selects one of four modes. If it is ambiguous, ask.
+The user's phrasing selects one of four modes. If it names no mode — just a number, as in
+`/task 1` or "задача 1" — read the `status` in `task.md` and start the matching mode right
+away, without asking:
+
+| `status` | Mode |
+|---|---|
+| `todo` | 2. Plan |
+| `planned`, `in-progress` | 3. Do |
+| `review` | 4. Review |
+| `done` | none — say the task is done and stop |
+
+Announce the chosen mode in one line, then proceed. If the phrasing is otherwise ambiguous, ask.
 
 ### 1. New task
 
@@ -65,11 +77,19 @@ relevant code, then write `plan.md` next to `task.md`:
 
 ## Risks / open questions
 
-- <anything the user must decide>
+- <residual risks; forks were already resolved with the user>
 ```
 
+**Clarifying questions are mandatory at every fork.** Whenever exploration reveals more
+than one reasonable approach, an unclear requirement, or a trade-off the user should own,
+ask before writing `plan.md` (use `AskUserQuestion`, recommended option first). Never pick
+a branch silently. Write the plan only after the answers are in; "Risks / open questions"
+is for what remains after that, not a substitute for asking.
+
+`plan.md` is written in English. After writing it, show the user the whole plan in
+chat, translated into Russian — in full, not a summary.
+
 Set `status: planned` in `task.md`. Do not write production code in this mode.
-If there are open questions, ask them in chat instead of guessing.
 
 ### 3. Do
 
