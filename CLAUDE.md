@@ -44,6 +44,12 @@ may be added as needed. Work with them through the `task` skill.
   requires launching Godot, ask the user to run it and paste the output.
 - Comment only *why* the code is here and works this way, never *what* it does. Keep comments rare.
 
+## Review
+
+Always check that the change still works correctly:
+- after saving and loading the world;
+- when a new player joins mid-game.
+
 ## Commands
 
 There are only unit tests, which do not launch Godot. Everything that lives inside the node tree is
