@@ -9,6 +9,7 @@ Packages of the game project (`NeonWarfare.csproj`):
 | Package | What for |
 |---|---|
 | `KludgeBox` | An in-house library with shared reusable code: DI, logging, services, Godot extensions, utility classes |
+| `RepliCAT` | An in-house library for delta replication of plain C# objects |
 | `CommunityToolkit.Mvvm` | The `[ObservableProperty]` annotation for data models |
 | `MessagePack` | Binary serialization of the world state for saves and for transfer over the network |
 

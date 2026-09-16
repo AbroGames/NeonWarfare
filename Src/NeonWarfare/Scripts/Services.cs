@@ -11,6 +11,7 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
 using NetworkService = NeonWarfare.Scripts.GlobalServices.NetworkService;
 using TerminationSignalsService = NeonWarfare.Scripts.GlobalServices.TerminationSignalsService;
+using TypesMappingService = NeonWarfare.Scripts.GlobalServices.TypesMappingService;
 
 namespace NeonWarfare.Scripts;
 
@@ -23,7 +24,6 @@ public static class Services
     public static readonly MathService Math = new();
     public static readonly StringCompressionService StringCompression = new();
     public static readonly NodeTreeService NodeTree = new();
-    public static readonly TypesMappingService TypesMapping = new();
     public static readonly AssemblyCacheService AssemblyCache = new();
     public static readonly I18NService I18N = new();
     public static readonly AutoScalingService AutoScaling = new();
@@ -32,6 +32,7 @@ public static class Services
     // Services from game, but extended KludgeBox services
     public static readonly NetworkService Net = new();
     public static readonly TerminationSignalsService TerminationSignals = new();
+    public static readonly TypesMappingService TypesMapping = new();
     
     // Services from game
     public static readonly ProcessService Process = new();
