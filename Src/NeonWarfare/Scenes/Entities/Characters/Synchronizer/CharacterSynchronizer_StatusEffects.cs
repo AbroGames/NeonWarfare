@@ -19,7 +19,7 @@ public partial class CharacterSynchronizer
 
     public void StatusEffects_OnClientApply(int clientId, ClientStatusEffect clientStatusEffect)
     {
-        int typeId = Services.TypesMapping.GetId(clientStatusEffect.GetType());
+        int typeId = Services.TypesMapping.GetIdByType(clientStatusEffect.GetType());
         byte[] payload = MessagePackSerializer.Serialize(clientStatusEffect.GetType(), clientStatusEffect);
         Rpc(MethodName.StatusEffects_OnClientApplyRpc, clientId, typeId, payload);
     }
@@ -28,7 +28,7 @@ public partial class CharacterSynchronizer
     {
         if (!Net.IsClient()) return;
         
-        Type targetType = Services.TypesMapping.GetType(typeId);
+        Type targetType = Services.TypesMapping.GetTypeById(typeId);
         var clientStatusEffect = (ClientStatusEffect) MessagePackSerializer.Deserialize(targetType, payload);
         _statusEffectsClient.OnAddStatusEffect(clientId, clientStatusEffect);
     }
