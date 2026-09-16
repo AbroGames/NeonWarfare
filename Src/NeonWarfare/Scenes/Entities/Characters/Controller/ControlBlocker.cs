@@ -6,8 +6,6 @@ namespace NeonWarfare.Scenes.Entities.Characters.Controller;
 [MessagePackObject(AllowPrivate = true)]
 public partial class ControlBlocker : IEquatable<ControlBlocker>
 {
-    public static readonly ControlBlocker MenuIsOpen = new(true, true, true);
-    public static readonly ControlBlocker ChatIsOpen = new(true, true, true);
     public static readonly ControlBlocker CharacterIsDead = new(true, true, true);
     public static readonly ControlBlocker CharacterIsStunned = new(true, true, true);
     public static readonly ControlBlocker CharacterIsRooted = new(true, false, false);
