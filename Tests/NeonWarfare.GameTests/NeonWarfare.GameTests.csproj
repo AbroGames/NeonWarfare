@@ -1,0 +1,37 @@
+<!-- Godot.NET.Sdk, unlike the other two test projects: these tests create game nodes, and a Node cannot
+     be constructed outside a Godot process — its constructor calls into the engine. The gdUnit4 adapter
+     runs every [RequireGodotRuntime] test inside a real Godot started with this folder as the project,
+     so the folder is a Godot project of its own (project.godot next to this file) and this assembly is
+     its main assembly. See Docs/Game-testing.md. -->
+<Project Sdk="Godot.NET.Sdk/4.7.1">
+    <PropertyGroup>
+        <!-- Same TFM as the game: the game assembly is referenced below and loaded into the same
+             Godot process. -->
+        <TargetFramework>net10.0</TargetFramework>
+
+        <!-- As in the game project: copies every package assembly into the output, where Godot loads
+             them from — the gdUnit4 runner and its dependencies among them. -->
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+
+        <!-- Picked up by both `dotnet test` and Rider, so neither needs a settings flag. -->
+        <RunSettingsFilePath>$(MSBuildProjectDirectory)/GameTests.runsettings</RunSettingsFilePath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- VSTest host: sets IsTestProject and enables the `dotnet test` target. -->
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+        <!-- The framework: [TestSuite], [TestCase], [RequireGodotRuntime], AssertThat. A release
+             candidate on purpose: running Godot-runtime tests from a project other than the game's
+             itself arrived in 5.1, and the current stable adapter already requires it. -->
+        <PackageReference Include="gdUnit4.api" Version="5.1.0-rc5" />
+        <!-- VSTest adapter: discovers the tests and starts Godot for them. -->
+        <PackageReference Include="gdUnit4.test.adapter" Version="3.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../NeonWarfare.csproj" />
+    </ItemGroup>
+</Project>
