@@ -1,0 +1,6 @@
+# The gdUnit4 adapter drops its runner here on the first run and compiles it into the test assembly.
+gdunit4_testadapter_v5/
+
+# The adapter opens this project in the editor, which writes a .uid next to every script. Nothing refers
+# to a test script by uid, so unlike the game's they are not kept.
+*.uid
