@@ -1,4 +1,3 @@
-using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NeonWarfare.Tests.Infrastructure;
@@ -20,12 +19,6 @@ namespace NeonWarfare.Tests.Conventions;
 public class GodotBoxIndependenceTests
 {
     private const string AssemblyName = "GodotBox";
-
-    private const string GodotSdkName = "Godot.NET.Sdk";
-
-    private const string GodotSharpPackage = "GodotSharp";
-
-    private const string KludgeBoxPackage = "KludgeBox";
 
     /// <summary>
     /// The game project sets neither <c>Nullable</c> nor <c>AllowUnsafeBlocks</c>, and net10.0 fixes the
@@ -91,42 +84,6 @@ public class GodotBoxIndependenceTests
         report.AssertEmpty();
     }
 
-    /// <summary>
-    /// The compilation above is only as good as its references: a GodotSharp or KludgeBox the game has
-    /// moved away from would judge GodotBox against an API it no longer builds with. The test project
-    /// cannot take the versions from the game project, so a bump in one place has to fail here instead.
-    /// GodotSharp is referenced by the game implicitly, by <c>Godot.NET.Sdk</c> of the same version
-    /// (<c>PackageVersion_GodotSharp</c> in the SDK's <c>SdkPackageVersions.props</c>).
-    /// </summary>
-    [Fact]
-    public void PackageVersions_MatchTheGameProject()
-    {
-        XElement game = LoadProject(RepositoryPaths.GameProjectPath);
-        XElement tests = LoadProject(RepositoryPaths.TestProjectPath);
-        string gameProject = RepositoryPaths.Relative(RepositoryPaths.GameProjectPath);
-        string testProject = RepositoryPaths.Relative(RepositoryPaths.TestProjectPath);
-
-        FailureReport report = new($"{testProject} references other package versions than {gameProject}");
-
-        string? godotSdk = SdkVersion(game, GodotSdkName);
-        string? godotSharp = PackageVersion(tests, GodotSharpPackage);
-        if (godotSdk is null || !string.Equals(godotSdk, godotSharp, StringComparison.Ordinal))
-        {
-            report.Add($"{GodotSharpPackage}: {testProject} has {godotSharp ?? "no reference"}, " +
-                       $"{gameProject} uses {GodotSdkName} {godotSdk ?? "not at all"}");
-        }
-
-        string? gameKludgeBox = PackageVersion(game, KludgeBoxPackage);
-        string? testKludgeBox = PackageVersion(tests, KludgeBoxPackage);
-        if (gameKludgeBox is null || !string.Equals(gameKludgeBox, testKludgeBox, StringComparison.Ordinal))
-        {
-            report.Add($"{KludgeBoxPackage}: {testProject} has {testKludgeBox ?? "no reference"}, " +
-                       $"{gameProject} has {gameKludgeBox ?? "no reference"}");
-        }
-
-        report.AssertEmpty();
-    }
-
     private static SyntaxTree Parse(string path) =>
         CSharpSyntaxTree.ParseText(File.ReadAllText(path), ParseOptions, path);
 
@@ -147,24 +104,4 @@ public class GodotBoxIndependenceTests
         int line = span.StartLinePosition.Line + 1;
         return (path, line, $"{path}:{line}: {message}");
     }
-
-    private static XElement LoadProject(string path) =>
-        XDocument.Load(path).Root
-        ?? throw new InvalidOperationException($"{RepositoryPaths.Relative(path)} has no root element.");
-
-    /// <summary>The version in <c>&lt;Project Sdk="Name/Version"&gt;</c>, if the project uses that SDK.</summary>
-    private static string? SdkVersion(XElement project, string sdkName)
-    {
-        string? sdk = project.Attribute("Sdk")?.Value;
-        string prefix = sdkName + "/";
-        return sdk is not null && sdk.StartsWith(prefix, StringComparison.Ordinal) ? sdk[prefix.Length..] : null;
-    }
-
-    /// <summary>The <c>Version</c> of the one <c>PackageReference</c> to a package, if there is one.</summary>
-    private static string? PackageVersion(XElement project, string package) =>
-        project.Descendants("PackageReference")
-            .Where(reference => string.Equals(
-                reference.Attribute("Include")?.Value, package, StringComparison.Ordinal))
-            .Select(reference => reference.Attribute("Version")?.Value)
-            .SingleOrDefault();
 }

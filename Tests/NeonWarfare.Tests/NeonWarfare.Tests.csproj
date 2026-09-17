@@ -34,6 +34,29 @@
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
     </ItemGroup>
 
+    <!-- The versions are read from the game project rather than written here: the compilation in
+         GodotBoxIndependenceTests is only meaningful against the GodotSharp and KludgeBox the game builds
+         with, so a bump in NeonWarfare.csproj must carry over without a second edit. A regex over the
+         file, not an MSBuild evaluation of it: restore reads PackageReference versions at evaluation
+         time, where another project's items are out of reach, and evaluating the game project would pull
+         in Godot.NET.Sdk. GodotSharp has no explicit reference in the game: Godot.NET.Sdk/<version> adds
+         it implicitly with the same version (PackageVersion_GodotSharp in its SdkPackageVersions.props). -->
+    <PropertyGroup>
+        <GameProjectPath>$(MSBuildThisFileDirectory)..\..\NeonWarfare.csproj</GameProjectPath>
+        <GameProjectText>$([System.IO.File]::ReadAllText($(GameProjectPath)))</GameProjectText>
+        <GameGodotVersion>$([System.Text.RegularExpressions.Regex]::Match($(GameProjectText), 'Sdk="Godot\.NET\.Sdk/([^"]+)"').Groups[1].Value)</GameGodotVersion>
+        <GameKludgeBoxVersion>$([System.Text.RegularExpressions.Regex]::Match($(GameProjectText), 'Include="KludgeBox"\s+Version="([^"]+)"').Groups[1].Value)</GameKludgeBoxVersion>
+    </PropertyGroup>
+
+    <!-- Without this an unmatched regex would leave the version empty, and NuGet silently falls back
+         to the lowest available version with only a warning. -->
+    <Target Name="CheckGamePackageVersions" BeforeTargets="Restore;CollectPackageReferences">
+        <Error Condition="'$(GameGodotVersion)' == ''"
+               Text="Could not read the Godot.NET.Sdk version from $(GameProjectPath): expected &lt;Project Sdk=&quot;Godot.NET.Sdk/x.y.z&quot;&gt;." />
+        <Error Condition="'$(GameKludgeBoxVersion)' == ''"
+               Text="Could not read the KludgeBox version from $(GameProjectPath): expected &lt;PackageReference Include=&quot;KludgeBox&quot; Version=&quot;x.y.z&quot; /&gt;." />
+    </Target>
+
     <ItemGroup>
         <!-- Compile-time references for GodotBoxIndependenceTests, which compiles Src/GodotBox on its own
              with Roslyn: GodotBox may depend on the engine and on KludgeBox, never on the game.
@@ -45,13 +68,10 @@
              chain, so excluding them there strips the Humanizer.Core.<culture> packages (satellite
              resources only) of everything and restore fails with NU1202. KludgeBox.dll, Serilog and
              Humanizer land in bin/ but are never loaded: no test code uses their types.
-             The versions must be the game's: GodotSharp is what Godot.NET.Sdk/<version> in
-             NeonWarfare.csproj references implicitly, KludgeBox is its explicit PackageReference.
-             GodotBoxIndependenceTests.PackageVersions_MatchTheGameProject fails when they drift.
              GodotSharpEditor (the SDK adds it in Debug) is deliberately not here: GodotBox is runtime
              code and must build for an export as well. -->
-        <PackageReference Include="GodotSharp" Version="4.7.1" ExcludeAssets="runtime" />
-        <PackageReference Include="KludgeBox" Version="4.1.4" />
+        <PackageReference Include="GodotSharp" Version="$(GameGodotVersion)" ExcludeAssets="runtime" />
+        <PackageReference Include="KludgeBox" Version="$(GameKludgeBoxVersion)" />
     </ItemGroup>
 
     <ItemGroup>

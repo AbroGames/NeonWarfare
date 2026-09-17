@@ -70,7 +70,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot` |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |
 | `Conventions/NamespaceTests` | Namespace matches the folder path relative to `Src/` |
-| `Conventions/GodotBoxIndependenceTests` | `Src/GodotBox` compiles without the game; its `GodotSharp` / `KludgeBox` versions match the game's |
+| `Conventions/GodotBoxIndependenceTests` | `Src/GodotBox` compiles without the game |
 | `Conventions/RpcConventionTests` | RPC targets are private, carry an explicit `[Rpc(...)]`, called once from their wrapper |
 | `Conventions/RoleCheckTests` | Process role read from `Net.*`, not `GetMultiplayer()` or a peer-id literal |
 | `Conventions/CmdArgsContractTests` | Flags, parsing and `CmdArgsService` stay where [Cli args](Cli-args.md) says |
