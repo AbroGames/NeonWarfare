@@ -21,7 +21,7 @@ public static class RepositoryPaths
     private static readonly HashSet<string> TextFileExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".cs", ".uid", ".import", ".tscn", ".tres", ".gdshader", ".po", ".pot", ".md",
-        ".csproj", ".sln", ".json", ".xml", ".yml", ".cfg", ".godot",
+        ".csproj", ".sln", ".json", ".xml", ".yml", ".cfg", ".godot", ".runsettings",
         ".editorconfig", ".gitattributes", ".gitignore",
     };
 
@@ -100,6 +100,15 @@ public static class RepositoryPaths
 
     public static string SmokeTestProjectPath { get; } =
         Path.Combine(SmokeTestsDirectory, "NeonWarfare.SmokeTests.csproj");
+
+    /// <summary>
+    /// The game test project — a Godot project of its own whose tests run inside the engine, see
+    /// Docs/Game-testing.md.
+    /// </summary>
+    public static string GameTestsDirectory { get; } = Path.Combine(Root, "Tests", "NeonWarfare.GameTests");
+
+    public static string GameTestProjectPath { get; } =
+        Path.Combine(GameTestsDirectory, "NeonWarfare.GameTests.csproj");
 
     /// <summary>The registry of all global services.</summary>
     public static string ServicesPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Services.cs");
@@ -194,12 +203,22 @@ public static class RepositoryPaths
     public static IReadOnlyList<string> SmokeTestFiles() => HandWrittenSources(SmokeTestsDirectory);
 
     /// <summary>
-    /// Every hand-written .cs of the repository: the game, the tests and the smoke tests. The scope of
+    /// Every hand-written game test source file. Asked from git rather than from the file system: the
+    /// build output of a Godot project is in .godot/, not bin/ and obj/, and the gdUnit4 adapter drops
+    /// its own runner into the project — both are ignored by git and neither is written by us.
+    /// </summary>
+    public static IReadOnlyList<string> GameTestFiles() =>
+        AllFilesUnder(GameTestsDirectory)
+            .Where(path => string.Equals(Path.GetExtension(path), ".cs", StringComparison.Ordinal))
+            .ToList();
+
+    /// <summary>
+    /// Every hand-written .cs of the repository: the game and all three test projects. The scope of
     /// the checks that are about how a C# file is written rather than about what the game does, and
     /// those hold for the test projects just as much.
     /// </summary>
     public static IReadOnlyList<string> CSharpFiles() =>
-        SourceFiles().Concat(TestFiles()).Concat(SmokeTestFiles())
+        SourceFiles().Concat(TestFiles()).Concat(SmokeTestFiles()).Concat(GameTestFiles())
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 

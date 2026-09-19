@@ -29,6 +29,15 @@ The smoke test project (`Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csp
 three xUnit packages and nothing else — it launches the game as an external process and needs no parser,
 see [Smoke testing](Smoke-testing.md).
 
+Packages of the game test project (`Tests/NeonWarfare.GameTests/NeonWarfare.GameTests.csproj`), a
+`Godot.NET.Sdk` project that references the game, more detail — in [Game testing](Game-testing.md):
+
+| Package | What for |
+|---|---|
+| `gdUnit4.api` | The test framework: `[TestSuite]`, `[TestCase]`, `[RequireGodotRuntime]`, `AssertThat`; a release candidate, see the document |
+| `gdUnit4.test.adapter` | The VSTest adapter — discovers the tests and starts Godot for them |
+| `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
+
 Coming in transitively through KludgeBox and used directly in the code: **Serilog** — logging
 (`[Logger] private ILogger _log`); **Humanizer** — substitution into string templates
 (`FormatWith(...)`).

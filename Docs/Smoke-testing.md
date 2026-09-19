@@ -14,8 +14,7 @@ dotnet test Tests/NeonWarfare.SmokeTests/NeonWarfare.SmokeTests.csproj
 ```
 
 Needs `GODOT_EXE` (see [Quick start](Quick-start.md)). A fixture builds the game project first, since
-Godot runs already compiled assemblies. The suite takes about 25 s. Not run in CI (no engine on the
-runner), only compiled.
+Godot runs already compiled assemblies. The suite takes about 25 s. Not run in CI, only compiled.
 
 ## Scenarios
 

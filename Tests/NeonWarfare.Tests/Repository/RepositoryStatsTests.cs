@@ -34,7 +34,10 @@ public class RepositoryStatsTests
         AppendCode(
             report,
             "*.cs (tests)",
-            RepositoryPaths.TestFiles().Concat(RepositoryPaths.SmokeTestFiles()).ToList());
+            RepositoryPaths.TestFiles()
+                .Concat(RepositoryPaths.SmokeTestFiles())
+                .Concat(RepositoryPaths.GameTestFiles())
+                .ToList());
         AppendCode(report, "*.tscn", FilesWithExtension(allFiles, ".tscn"));
         report.AppendLine($"  messages.pot: {TemplateKeyCount()} keys");
         report.AppendLine($"  Assets/: {RepositoryPaths.AllFilesUnder(RepositoryPaths.AssetsDirectory).Count} files");

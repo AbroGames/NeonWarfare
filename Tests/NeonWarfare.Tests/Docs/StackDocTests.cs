@@ -6,7 +6,7 @@ using Xunit;
 namespace NeonWarfare.Tests.Docs;
 
 /// <summary>
-/// Docs/Stack.md lists what the two projects depend on and what each dependency is for. Adding a
+/// Docs/Stack.md lists what the projects depend on and what each dependency is for. Adding a
 /// package is one line in a .csproj and nothing asks for the other half — the table is the only place
 /// that says why the package is there at all.
 /// </summary>
@@ -38,6 +38,12 @@ public class StackDocTests
     public void TestProjectPackages_MatchTheDocument()
     {
         AssertPackagesMatch(RepositoryPaths.TestProjectPath);
+    }
+
+    [Fact]
+    public void GameTestProjectPackages_MatchTheDocument()
+    {
+        AssertPackagesMatch(RepositoryPaths.GameTestProjectPath);
     }
 
     [Fact]
@@ -118,10 +124,10 @@ public class StackDocTests
             .ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
-    /// The package table introduced by the paragraph naming this .csproj. The document has two of them,
-    /// one per project, and they are told apart by the file the paragraph above mentions — the same way
-    /// a reader does it. A paragraph that names a .csproj without a table under it (the one about the
-    /// smoke test project) introduces nothing and contributes nothing.
+    /// The package table introduced by the paragraph naming this .csproj. The document has one per
+    /// project with packages of its own, and they are told apart by the file the paragraph above
+    /// mentions — the same way a reader does it. A paragraph that names a .csproj without a table under
+    /// it (the one about the smoke test project) introduces nothing and contributes nothing.
     /// </summary>
     private static IReadOnlySet<string> DocumentedPackages(string project)
     {

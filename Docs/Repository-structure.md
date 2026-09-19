@@ -56,11 +56,13 @@ Tests/                                xUnit v3 tests
 ├── NeonWarfare.SmokeTests/           A separate project, launches the real game and reads its output
 │   ├── Infrastructure/               Launching a process, capturing its output, scanning it for errors
 │   └── Scenarios/                    The launch scenarios themselves
+├── NeonWarfare.GameTests/            A separate Godot project, runs gdUnit4 tests of game nodes inside the engine
+│   └── GodotBox/                     Tests of the GodotBox classes
 └── .gdignore                         So that Godot does not look into this folder, since it holds no game code
 
 Properties/
 └── launchSettings.json               Quick-launch profiles for the game in different modes (Rider sees them by itself)
 Docs/                                 Documentation, every file is linked from README.md
 .run/                                 Rider Multi-Launch configurations: server + one or two clients at once
-.github/                              CI: build and unit tests on a push into master and on a pull request (no smoke tests)
+.github/                              CI: build, unit and game tests on a push into master and on a pull request (no smoke tests)
 ```
