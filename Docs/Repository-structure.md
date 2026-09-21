@@ -51,7 +51,7 @@ Tests/                                xUnit v3 tests
 │   ├── Localization/                 Tests over Assets/Locales/ and the keys used in the code
 │   ├── Conventions/                  Static checks of the rules from Docs/Code-style.md and Docs/Cli-args.md, GodotBox independence
 │   ├── Launch/                       Tests over Properties/launchSettings.json and .run/
-│   ├── Repository/                   Repository-wide statistics (file and line counts), printed for information
+│   ├── Repository/                   Repository-wide: size statistics, one Godot version across the projects
 │   └── Scenes/                       Tests over the .tscn and .tres files
 ├── NeonWarfare.SmokeTests/           A separate project, launches the real game and reads its output
 │   ├── Infrastructure/               Launching a process, capturing its output, scanning it for errors

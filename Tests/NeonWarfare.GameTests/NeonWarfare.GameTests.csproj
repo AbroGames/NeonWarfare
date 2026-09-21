@@ -2,7 +2,9 @@
      be constructed outside a Godot process — its constructor calls into the engine. The gdUnit4 adapter
      runs every [RequireGodotRuntime] test inside a real Godot started with this folder as the project,
      so the folder is a Godot project of its own (project.godot next to this file) and this assembly is
-     its main assembly. See Docs/Game-testing.md. -->
+     its main assembly. See Docs/Game-testing.md.
+     The version is a literal rather than read from NeonWarfare.csproj: the Godot editor rewrites this
+     attribute of a project it opens. GodotVersionTests keeps the two equal. -->
 <Project Sdk="Godot.NET.Sdk/4.7.1">
     <PropertyGroup>
         <!-- Same TFM as the game: the game assembly is referenced below and loaded into the same
