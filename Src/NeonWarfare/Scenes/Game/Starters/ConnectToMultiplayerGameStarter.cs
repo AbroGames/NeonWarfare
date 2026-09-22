@@ -20,7 +20,7 @@ public class ConnectToMultiplayerGameStarter(
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
         
         Network.Network network = game.AddNetwork();
-        World.World world = game.AddWorld();
+        OldWorld.World world = game.AddWorld();
         game.AddHud();
 
         // Use inner function for detach this function after connecting to server,

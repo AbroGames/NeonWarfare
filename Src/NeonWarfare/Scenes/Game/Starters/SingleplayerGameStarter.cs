@@ -14,7 +14,7 @@ public class SingleplayerGameStarter(
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         GameSettings gameSettings = Services.GameSettings.GetSettings();
-        World.World world = game.AddWorld();
+        OldWorld.World world = game.AddWorld();
         game.AddHud();
         
         var lastGame = ResumableGame.GetSingleplayer(saveFileName);

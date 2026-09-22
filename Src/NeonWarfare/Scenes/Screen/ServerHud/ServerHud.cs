@@ -4,7 +4,7 @@ using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.World.WorldServices.Performance;
+using NeonWarfare.Scenes.OldWorld.WorldServices.Performance;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;
@@ -25,10 +25,10 @@ public partial class ServerHud : Control
     [Child] private Button SaveButton { get; set; }
     [Child] private LineEdit SaveLineEdit { get; set; }
     
-    private World.World _world;
+    private OldWorld.World _world;
     [Logger] private ILogger _log;
     
-    public ServerHud InitPreReady(World.World world)
+    public ServerHud InitPreReady(OldWorld.World world)
     {
         Di.Process(this);
         
