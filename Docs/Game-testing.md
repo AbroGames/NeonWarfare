@@ -64,6 +64,20 @@ public class NodeContainerTests
 * A node that never enters a scene tree is freed by nobody: wrap it in `AutoFree(...)`. Its children are
   freed with it.
 * `AssertThat` comes from `using static GdUnit4.Assertions;`.
+* Lifecycle methods are called directly (`node._Ready()`), with no scene tree; a `QueueFree` is checked
+  with `IsQueuedForDeletion()`, which needs no frame.
+* A node subclass a test needs goes into `<Area>/Fixtures/`, one per file: Godot binds a script class to
+  the file of the same name.
+
+## What is covered now
+
+One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
+
+| Test class | What it checks |
+| --- | --- |
+| `GodotBox/NodeContainerTests` | Storing, replacing and clearing the child; the replaced one is queued for deletion; `_Ready` adopts one child, throws on two |
+| `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady` |
+| `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
 
 ## CI
 
