@@ -29,7 +29,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj --no-build --verbosity normal
+      run: dotnet test Tests/NeonWarfare.RepoTests/NeonWarfare.RepoTests.csproj --no-build --verbosity normal
 
     # Read from the game project rather than written here, so a Godot upgrade is one edit.
     - name: Read Godot version

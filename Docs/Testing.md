@@ -2,7 +2,7 @@
 
 [← Project README](../README.md)
 
-Tests live in `Tests/NeonWarfare.Tests`, framework — **xUnit v3**. The project is part of
+Tests live in `Tests/NeonWarfare.RepoTests`, framework — **xUnit v3**. The project is part of
 `NeonWarfare.sln`, so Rider sees the tests as usual.
 
 ```bash
@@ -27,7 +27,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 
 ## Conventions
 
-* Location: `Tests/NeonWarfare.Tests/<Area>/<Subject>Tests.cs`, shared helpers — `Infrastructure/`; the
+* Location: `Tests/NeonWarfare.RepoTests/<Area>/<Subject>Tests.cs`, shared helpers — `Infrastructure/`; the
   namespace mirrors the path, as in the game project. Method name: `<What>_<Expectation>`
   (`Links_PointToExistingFiles`, `File_UsesLineFeedOnly`).
 * The repository root comes from `RepositoryPaths` (baked in via `AssemblyMetadata`; the working
@@ -52,7 +52,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 
 ## What is covered now
 
-One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test = a new row.
+One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new test = a new row.
 
 | Test class | What it checks |
 | --- | --- |
@@ -63,7 +63,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Docs/CliArgsDocTests` | Flag table of [Command-line arguments](Cli-args.md) ↔ `Scripts/Content/CmdArgs/` |
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj`; the smoke project takes only the xUnit three |
 | `Docs/ServicesDocTests` | Both tables of [Services](Services.md) ↔ `Scripts/Services.cs` and `World*Service` |
-| `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.Tests/`, both ways |
+| `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.RepoTests/`, both ways |
 | `Docs/SmokeTestingDocTests` | Scenario table of [Smoke testing](Smoke-testing.md) ↔ the tests of `Tests/NeonWarfare.SmokeTests/` |
 | `Docs/ChatCommandsDocTests` | Command table of [Chat and commands](Chat-and-commands.md) ↔ the `ICommandProcessor` classes: name, rights, only in `Command/Impl/` |
 | `Docs/NetworkingDocTests` | Channel table of [Networking](Networking.md) ↔ `Consts.TransferChannel`, order included |

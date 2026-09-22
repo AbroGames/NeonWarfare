@@ -45,7 +45,7 @@ Src/                                  Code and scenes of the Godot project; a na
         └── GlobalUsings.cs           Here we declare global using and global using static
 
 Tests/                                xUnit v3 tests
-├── NeonWarfare.Tests/                A separate project, does not launch the engine
+├── NeonWarfare.RepoTests/            A separate project, does not launch the engine
 │   ├── Infrastructure/               Helpers for all the tests
 │   ├── Docs/                         Tests that verify the documentation
 │   ├── Localization/                 Tests over Assets/Locales/ and the keys used in the code

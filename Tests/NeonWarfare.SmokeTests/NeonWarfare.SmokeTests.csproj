@@ -1,4 +1,4 @@
-<!-- Plain Microsoft.NET.Sdk, like NeonWarfare.Tests. The smoke tests do launch the engine, but they do
+<!-- Plain Microsoft.NET.Sdk, like NeonWarfare.RepoTests. The smoke tests do launch the engine, but they do
      it as an external process and never touch a game type, so GodotSharp must stay out of here. See
      Docs/Smoke-testing.md for why there is no ProjectReference to NeonWarfare.csproj. -->
 <Project Sdk="Microsoft.NET.Sdk">
@@ -27,7 +27,7 @@
     <ItemGroup>
         <!-- The game is launched against the repository directory, but the working directory of a
              test run is bin/<config>/<tfm>/. The root is baked into the assembly at compile time, the
-             same way NeonWarfare.Tests does it. Read back by RepositoryRoot. -->
+             same way NeonWarfare.RepoTests does it. Read back by RepositoryRoot. -->
         <AssemblyMetadata Include="RepositoryRoot" Value="$(MSBuildThisFileDirectory)..\..\" />
     </ItemGroup>
 </Project>

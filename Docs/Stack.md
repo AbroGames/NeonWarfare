@@ -13,7 +13,7 @@ Packages of the game project (`NeonWarfare.csproj`):
 | `CommunityToolkit.Mvvm` | The `[ObservableProperty]` annotation for data models |
 | `MessagePack` | Binary serialization of the world state for saves and for transfer over the network |
 
-Packages of the test project (`Tests/NeonWarfare.Tests/NeonWarfare.Tests.csproj`), more detail — in
+Packages of the test project (`Tests/NeonWarfare.RepoTests/NeonWarfare.RepoTests.csproj`), more detail — in
 [Testing](Testing.md):
 
 | Package | What for |
