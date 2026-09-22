@@ -27,9 +27,9 @@ public partial class Game : Node2D
         gameStarter.Init(this);
     }
 
-    public World.World AddWorld()
+    public OldWorld.World AddWorld()
     {
-        World.World world = PackedScenes.World.Instantiate<World.World>();
+        OldWorld.World world = PackedScenes.World.Instantiate<OldWorld.World>();
         world.SetName("World");
         WorldContainer.ChangeStoredNode(world);
         return world;
@@ -38,7 +38,7 @@ public partial class Game : Node2D
     public Hud AddHud()
     {
         Hud hud = PackedScenes.Hud.Instantiate<Hud>()
-            .InitPreReady(WorldContainer.GetCurrentStoredNode<World.World>());
+            .InitPreReady(WorldContainer.GetCurrentStoredNode<OldWorld.World>());
         hud.SetName("Hud");
         HudContainer.ChangeStoredNode(hud);
         return hud;
@@ -47,7 +47,7 @@ public partial class Game : Node2D
     public ServerHud AddServerHud()
     {
         ServerHud serverHud = PackedScenes.ServerHud.Instantiate<ServerHud>()
-            .InitPreReady(WorldContainer.GetCurrentStoredNode<World.World>());
+            .InitPreReady(WorldContainer.GetCurrentStoredNode<OldWorld.World>());
         serverHud.SetName("ServerHud");
         HudContainer.ChangeStoredNode(serverHud);
         return serverHud;

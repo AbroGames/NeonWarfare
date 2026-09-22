@@ -1,0 +1,53 @@
+using System;
+using Godot;
+using Humanizer;
+using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.DI.Requests.SceneServiceInjection;
+using NeonWarfare.Scenes.OldWorld.WorldServices.Performance;
+using NeonWarfare.Scripts.Content.LoadingScreen;
+using NeonWarfare.Scripts.GlobalServices.Settings;
+using Serilog;
+
+namespace NeonWarfare.Scenes.OldWorld.WorldServices.StartStop;
+
+public partial class WorldClientStartStopService : Node
+{
+    
+    // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
+    private const string SyncRejectedMessage = "Synchronization with the server was rejected: {0}";
+    
+    [SceneService] private WorldSynchronizerService _synchronizerService;
+    [SceneService] private WorldPerformanceService _performanceService;
+    [Logger] private ILogger _log;
+
+    public override void _Ready()
+    {
+        Di.Process(this);
+    }
+
+    public void StartSyncWithServer(Action<string> goToMenuAndShowErrorAction)
+    {
+        if (!Net.IsClient()) throw new InvalidOperationException("Can only be executed on the client");
+        _log.Information("World starting...");
+        
+        _synchronizerService.SyncStartedOnClientEvent += OnSyncStarted;
+        _synchronizerService.SyncEndedOnClientEvent += OnSyncEnded;
+        _synchronizerService.SyncRejectOnClientEvent += 
+            errorMessage => goToMenuAndShowErrorAction.Invoke(SyncRejectedMessage.FormatWith(errorMessage));
+        
+        GameSettings gameSettings = Services.GameSettings.GetSettings();
+        _synchronizerService.StartSyncOnClient(
+            gameSettings.PlayerUid, gameSettings.PlayerNick, gameSettings.PlayerColor);
+    }
+    
+    private void OnSyncStarted()
+    {
+        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
+    }
+
+    private void OnSyncEnded()
+    {
+        _performanceService.Ping.Start();
+        Services.LoadingScreen.Clear();
+    }
+}

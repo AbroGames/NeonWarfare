@@ -22,10 +22,10 @@ public partial class Hud : Control
     [Child] private Button ExitButton { get; set; }
     [Child] private LineEdit SaveLineEdit { get; set; }
     
-    private World.World _world;
+    private OldWorld.World _world;
     [Logger] private ILogger _log;
     
-    public Hud InitPreReady(World.World world)
+    public Hud InitPreReady(OldWorld.World world)
     {
         Di.Process(this);
         

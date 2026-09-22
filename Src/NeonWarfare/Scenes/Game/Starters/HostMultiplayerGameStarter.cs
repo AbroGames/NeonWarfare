@@ -35,7 +35,7 @@ public class HostMultiplayerGameStarter(
         }
         
         Network.Network network = game.AddNetwork();
-        World.World world = game.AddWorld();
+        OldWorld.World world = game.AddWorld();
         Net.DoClient(() => game.AddHud());
 
         if (serverHudRender)

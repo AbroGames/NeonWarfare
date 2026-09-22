@@ -17,7 +17,7 @@ public abstract class BaseGameStarter
         Services.LastGame.SetLastGame(lastGame);
     }
 
-    protected void AddLastGameUpdaterToSaveEvent(World.World world, ResumableGame lastGame)
+    protected void AddLastGameUpdaterToSaveEvent(OldWorld.World world, ResumableGame lastGame)
     {
         world.DataSaveLoadService.SaveSuccessServerEvent += saveName =>
         {
@@ -25,7 +25,7 @@ public abstract class BaseGameStarter
         };
     }
     
-    protected void ServerStartWorld(World.World world, string saveFileName, string adminUid)
+    protected void ServerStartWorld(OldWorld.World world, string saveFileName, string adminUid)
     {
         if (saveFileName == null) throw new ArgumentNullException(nameof(saveFileName));
 
@@ -46,7 +46,7 @@ public abstract class BaseGameStarter
         }
     }
 
-    protected void ClientStartWorld(World.World world)
+    protected void ClientStartWorld(OldWorld.World world)
     {
         world.ClientStartStopService.StartSyncWithServer(GoToMenuAndShowError);
     }
