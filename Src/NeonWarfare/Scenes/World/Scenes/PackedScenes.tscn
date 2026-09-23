@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cqtk5i2qwb0wp"]
+
+[ext_resource type="Script" uid="uid://bqyytxu4j6xkx" path="res://Src/NeonWarfare/Scenes/World/Scenes/PackedScenes.cs" id="1_pphtq"]
+
+[node name="PackedScenes" type="Node" unique_id=1307332324]
+script = ExtResource("1_pphtq")
