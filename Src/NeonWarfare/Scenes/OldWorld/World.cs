@@ -96,7 +96,7 @@ public partial class World : Node2D, IServiceProvider
     }
 
     //TODO Test methods. Remove after tests.
-    public void Test1() => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.World.MethodName.Test1Rpc);
+    public void Test1() => RpcId(ServerId, MethodName.Test1Rpc);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void Test1Rpc()
     {
@@ -114,7 +114,7 @@ public partial class World : Node2D, IServiceProvider
         }), "MapPoint");*/
     }
     
-    public void Test2() => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.World.MethodName.Test2Rpc);
+    public void Test2() => RpcId(ServerId, MethodName.Test2Rpc);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void Test2Rpc()
     {
@@ -128,7 +128,7 @@ public partial class World : Node2D, IServiceProvider
         bot.Controller.ForceCoef *= 4;
     }
     
-    public void Test3() => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.World.MethodName.Test3Rpc);
+    public void Test3() => RpcId(ServerId, MethodName.Test3Rpc);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void Test3Rpc()
     {

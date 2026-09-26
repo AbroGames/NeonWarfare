@@ -29,7 +29,7 @@ public partial class WorldDataSaveLoadService : Node
         Di.Process(this);
     }
     
-    public void Save(string saveFileName) => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.WorldServices.WorldDataSaveLoadService.MethodName.SaveRpc, saveFileName);
+    public void Save(string saveFileName) => RpcId(ServerId, MethodName.SaveRpc, saveFileName);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void SaveRpc(string saveFileName)
     {
@@ -60,7 +60,7 @@ public partial class WorldDataSaveLoadService : Node
         }
     }
 
-    public void SaveReject(long peerId, string errorMessage) => RpcId(peerId, NeonWarfare.Scenes.OldWorld.WorldServices.WorldDataSaveLoadService.MethodName.SaveRejectRpc, errorMessage);
+    public void SaveReject(long peerId, string errorMessage) => RpcId(peerId, MethodName.SaveRejectRpc, errorMessage);
     [Rpc(CallLocal = true)]
     private void SaveRejectRpc(string errorMessage)
     {

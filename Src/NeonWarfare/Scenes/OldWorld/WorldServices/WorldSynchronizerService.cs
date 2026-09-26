@@ -65,7 +65,7 @@ public partial class WorldSynchronizerService : Node
     }
 
     private void NewClientInitOnServer(string uid, string nick, Color color)
-        => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.WorldServices.WorldSynchronizerService.MethodName.NewClientInitOnServerRpc, uid, nick, color);
+        => RpcId(ServerId, MethodName.NewClientInitOnServerRpc, uid, nick, color);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)] 
     private void NewClientInitOnServerRpc(string uid, string nick, Color color)
     {
@@ -121,7 +121,7 @@ public partial class WorldSynchronizerService : Node
     }
 
     private void EndSyncOnClient(long peerId, byte[] serializableData)
-        => RpcId(peerId, NeonWarfare.Scenes.OldWorld.WorldServices.WorldSynchronizerService.MethodName.EndSyncOnClientRpc, serializableData);
+        => RpcId(peerId, MethodName.EndSyncOnClientRpc, serializableData);
     [Rpc(CallLocal = true)]
     private void EndSyncOnClientRpc(byte[] serializableData)
     {
@@ -134,7 +134,7 @@ public partial class WorldSynchronizerService : Node
     }
     
     private void RejectSyncOnClient(long peerId, string errorMessage)
-        => RpcId(peerId, NeonWarfare.Scenes.OldWorld.WorldServices.WorldSynchronizerService.MethodName.RejectSyncOnClientRpc, errorMessage);
+        => RpcId(peerId, MethodName.RejectSyncOnClientRpc, errorMessage);
     [Rpc(CallLocal = true)] 
     private void RejectSyncOnClientRpc(string errorMessage)
     {
@@ -142,7 +142,7 @@ public partial class WorldSynchronizerService : Node
         SyncRejectOnClientEvent?.Invoke(errorMessage);
     }
     
-    private void EndSyncOnServer() => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.WorldServices.WorldSynchronizerService.MethodName.EndSyncOnServerRpc);
+    private void EndSyncOnServer() => RpcId(ServerId, MethodName.EndSyncOnServerRpc);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)] 
     private void EndSyncOnServerRpc()
     {

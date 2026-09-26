@@ -25,7 +25,7 @@ public partial class WorldChatService : Node
     }
 
     public void TrySendNewMessage(string text, int receiverId = BroadcastId)
-        => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.WorldServices.Chat.WorldChatService.MethodName.TrySendNewMessageRpc, text, receiverId);
+        => RpcId(ServerId, MethodName.TrySendNewMessageRpc, text, receiverId);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = (int) Consts.TransferChannel.Chat)]
     private void TrySendNewMessageRpc(string text, int receiverId)
     {
@@ -47,7 +47,7 @@ public partial class WorldChatService : Node
     }
     
     private void NotifyAboutNewMessage(ChatMessage chatMessage, int receiverId)
-        => RpcId(receiverId, NeonWarfare.Scenes.OldWorld.WorldServices.Chat.WorldChatService.MethodName.NotifyAboutNewMessageRpc, Serialize(chatMessage));
+        => RpcId(receiverId, MethodName.NotifyAboutNewMessageRpc, Serialize(chatMessage));
     [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.Chat)]
     private void NotifyAboutNewMessageRpc(byte[] chatMessageBytes)
     {
