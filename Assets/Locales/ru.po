@@ -73,15 +73,6 @@ msgstr "Введите сообщение или команду, начиная 
 msgid "HUD__CHAT_SEND_BUTTON"
 msgstr "Отправить"
 
-msgid "HUD__CHAT_SERVER_NICK"
-msgstr "СЕРВЕР"
-
-msgid "HUD__CHAT_PLAYER_JOINED"
-msgstr "заходит в игру"
-
-msgid "HUD__CHAT_PLAYER_LEFT"
-msgstr "покидает игру"
-
 msgid "HUD__SAVE_BUTTON"
 msgstr "Сохранить"
 

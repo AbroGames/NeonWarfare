@@ -29,7 +29,7 @@ A new `.po` is then registered in the Godot project settings, under Localization
 > [!NOTE]
 > **Chat command responses are not localized.**
 >
-> This covers all of `Scenes/World/WorldServices/Command/Impl/`, plus `RequireAdminMessage` in
+> This covers all of `Scenes/OldWorld/WorldServices/Command/Impl/`, plus `RequireAdminMessage` in
 > `WorldCommandService`. Commands are an admin tool that is used extremely rarely, so keeping their
 > texts in `.po` makes no sense.
 

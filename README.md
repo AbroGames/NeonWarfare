@@ -70,12 +70,12 @@ on Windows/Linux/macOS.
 |---|---|
 | [Src/NeonWarfare/Scenes/Root/Root.cs](Src/NeonWarfare/Scenes/Root/Root.cs) | The process entry point, lives for the whole application session |
 | [Src/NeonWarfare/Scenes/Game/Game.cs](Src/NeonWarfare/Scenes/Game/Game.cs) | A single game session: `Network`, `World`, `Hud` / `ServerHud`; created anew on every entry into the game |
-| [Src/NeonWarfare/Scenes/World/World.cs](Src/NeonWarfare/Scenes/World/World.cs) | The world root, `IServiceProvider`, the world service registry |
-| [Src/NeonWarfare/Scenes/World/Data/PersistenceData/WorldPersistenceData.cs](Src/NeonWarfare/Scenes/World/Data/PersistenceData/WorldPersistenceData.cs) | Data that goes into the save |
-| [Src/NeonWarfare/Scenes/World/Data/TemporaryData/WorldTemporaryData.cs](Src/NeonWarfare/Scenes/World/Data/TemporaryData/WorldTemporaryData.cs) | Data of the current session, does not go into the save |
-| [Src/NeonWarfare/Scenes/World/Tree/WorldTree.cs](Src/NeonWarfare/Scenes/World/Tree/WorldTree.cs) | The game tree, switching locations |
-| [Src/NeonWarfare/Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs](Src/NeonWarfare/Scenes/World/Tree/Surfaces/Safe/SafeSurface.cs) | The peaceful hub — the first of the two locations |
-| [Src/NeonWarfare/Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs](Src/NeonWarfare/Scenes/World/Tree/Surfaces/Battle/BattleSurface.cs) | The battle zone — the second of the two locations |
+| [Src/NeonWarfare/Scenes/OldWorld/World.cs](Src/NeonWarfare/Scenes/OldWorld/World.cs) | The world root, `IServiceProvider`, the world service registry |
+| [Src/NeonWarfare/Scenes/OldWorld/Data/PersistenceData/WorldPersistenceData.cs](Src/NeonWarfare/Scenes/OldWorld/Data/PersistenceData/WorldPersistenceData.cs) | Data that goes into the save |
+| [Src/NeonWarfare/Scenes/OldWorld/Data/TemporaryData/WorldTemporaryData.cs](Src/NeonWarfare/Scenes/OldWorld/Data/TemporaryData/WorldTemporaryData.cs) | Data of the current session, does not go into the save |
+| [Src/NeonWarfare/Scenes/OldWorld/Tree/WorldTree.cs](Src/NeonWarfare/Scenes/OldWorld/Tree/WorldTree.cs) | The game tree, switching locations |
+| [Src/NeonWarfare/Scenes/OldWorld/Tree/Surfaces/Safe/SafeSurface.cs](Src/NeonWarfare/Scenes/OldWorld/Tree/Surfaces/Safe/SafeSurface.cs) | The peaceful hub — the first of the two locations |
+| [Src/NeonWarfare/Scenes/OldWorld/Tree/Surfaces/Battle/BattleSurface.cs](Src/NeonWarfare/Scenes/OldWorld/Tree/Surfaces/Battle/BattleSurface.cs) | The battle zone — the second of the two locations |
 | [Src/NeonWarfare/Scenes/Entities/Characters/Character.cs](Src/NeonWarfare/Scenes/Entities/Characters/Character.cs) | The character (`RigidBody2D`) and all of its subsystems |
 | [Src/NeonWarfare/Scripts/Services.cs](Src/NeonWarfare/Scripts/Services.cs) | The global service registry |
 | [Src/NeonWarfare/Scripts/Consts.cs](Src/NeonWarfare/Scripts/Consts.cs) | Global constants, `Consts.TransferChannel` |
