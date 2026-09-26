@@ -79,7 +79,7 @@ public partial class WorldPingPerformance : Node
         return sb.ToString();
     }
     
-    private void SendPingToServer(long pingId) => RpcId(ServerId, NeonWarfare.Scenes.OldWorld.WorldServices.Performance.WorldPingPerformance.MethodName.SendPingToServerRpc, pingId);
+    private void SendPingToServer(long pingId) => RpcId(ServerId, MethodName.SendPingToServerRpc, pingId);
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     private void SendPingToServerRpc(long pingId)
     {
@@ -87,7 +87,7 @@ public partial class WorldPingPerformance : Node
     }
 
     private void ReturnPingToClient(long peerId, long pingId)
-        => RpcId(peerId, NeonWarfare.Scenes.OldWorld.WorldServices.Performance.WorldPingPerformance.MethodName.ReturnPingToClientRpc, pingId);
+        => RpcId(peerId, MethodName.ReturnPingToClientRpc, pingId);
     [Rpc(CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Unreliable)]
     private void ReturnPingToClientRpc(long pingId)
     {

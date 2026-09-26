@@ -23,7 +23,7 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
     public void AddPlayer(PlayerData player)
     {
         AddPlayerLocal(player);
-        Rpc(NeonWarfare.Scenes.OldWorld.Data.PersistenceData.Player.PlayerDataStorage.MethodName.AddPlayerRpc, Serialize(player));
+        Rpc(MethodName.AddPlayerRpc, Serialize(player));
     }
     
     [Rpc(CallLocal = false)]
@@ -41,14 +41,14 @@ public partial class PlayerDataStorage : Node, ISerializableStorage
     }
     
     public void RemovePlayer(PlayerData player) => RemovePlayer((string)player.Uid);
-    public void RemovePlayer(string uid) => Rpc(NeonWarfare.Scenes.OldWorld.Data.PersistenceData.Player.PlayerDataStorage.MethodName.RemovePlayerRpc, uid);
+    public void RemovePlayer(string uid) => Rpc(MethodName.RemovePlayerRpc, uid);
     [Rpc(CallLocal = true)]
     private void RemovePlayerRpc(string uid)
     {
         _innerStorage.PlayerByUid.Remove(uid);
     }
     
-    private void UpdatePlayer(PlayerData player) => Rpc(NeonWarfare.Scenes.OldWorld.Data.PersistenceData.Player.PlayerDataStorage.MethodName.UpdatePlayerRpc, Serialize(player));
+    private void UpdatePlayer(PlayerData player) => Rpc(MethodName.UpdatePlayerRpc, Serialize(player));
     [Rpc(CallLocal = false)]
     private void UpdatePlayerRpc(byte[] playerBytes)
     {

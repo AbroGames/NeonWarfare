@@ -33,7 +33,7 @@ public partial class GeneralDataStorage : Node, ISerializableStorage
         general.PropertyChanged += (g, _) => UpdateGeneral((GeneralData) g);
     }
 
-    private void UpdateGeneral(GeneralData general) => Rpc(NeonWarfare.Scenes.OldWorld.Data.PersistenceData.General.GeneralDataStorage.MethodName.UpdateGeneralRpc, Serialize(general));
+    private void UpdateGeneral(GeneralData general) => Rpc(MethodName.UpdateGeneralRpc, Serialize(general));
     [Rpc(CallLocal = false)]
     private void UpdateGeneralRpc(byte[] generalBytes)
     {
