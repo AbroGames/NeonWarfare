@@ -10,7 +10,7 @@ namespace NeonWarfare.RepoTests.Infrastructure;
 public sealed class LaunchSettingsFile
 {
     /// <summary>
-    /// Every profile starts the game the same way — the flag that points Godot at the project folder.
+    /// Every game profile starts the game the same way — the flag that points Godot at the project folder.
     /// The table in Docs/Quick-start.md leaves it out of the Arguments column on purpose, so it is
     /// stripped here rather than in the test.
     /// </summary>
@@ -65,8 +65,8 @@ public sealed class LaunchSettingsFile
             {
                 throw new InvalidOperationException(
                     $"{file}: profile '{profile.Name}' has no string '{CommandLineArgsPropertyName}'. " +
-                    $"Every profile launches Godot with arguments — a profile without them cannot be " +
-                    $"compared with the table in Docs/Quick-start.md.");
+                    $"Every profile launches its executable with arguments — a profile without them " +
+                    $"cannot be compared with the table in Docs/Quick-start.md.");
             }
 
             parsed.Add(new LaunchProfile(profile.Name, args.GetString()!));
@@ -79,10 +79,10 @@ public sealed class LaunchSettingsFile
     public static LaunchSettingsFile Load() => Load(RepositoryPaths.LaunchSettingsPath);
 }
 
-/// <summary>One run profile: its name and the command line it starts Godot with.</summary>
+/// <summary>One run profile: its name and the command line it starts its executable with.</summary>
 public sealed record LaunchProfile(string Name, string CommandLineArgs)
 {
-    /// <summary>True when the profile passes the project folder to Godot, as all of them must.</summary>
+    /// <summary>True when the profile passes the project folder to Godot, as every game profile must.</summary>
     public bool HasProjectPath =>
         CommandLineArgs.StartsWith(LaunchSettingsFile.ProjectPathArgument, StringComparison.Ordinal);
 

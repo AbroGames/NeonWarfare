@@ -46,10 +46,11 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
   `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Eight exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  skip. Nine exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
   `NotFoundCommand` (no command name of its own), Godot's `--path` (not our flag), `World` (the
-  composition root takes `Services`), `Services.Di`. Each has a test
+  composition root takes `Services`), `Services.Di`, the `All tests` launch profile (does not start
+  the game). Each has a test
   failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).
 
 ## What is covered now
@@ -88,7 +89,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group |
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |
-| `Launch/LaunchProfilesTests` | `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
+| `Launch/LaunchProfilesTests` | Game profiles of `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |
 | `Scenes/SceneResourceTests` | `res://` paths in scenes and `project.godot` resolve; a root script is the `.cs` beside its scene |
 | `Scenes/UidReferenceTests` | `ext_resource` uids resolve, agree with `path=`, are unique; `project.godot` uids resolve |

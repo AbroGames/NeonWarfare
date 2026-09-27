@@ -22,6 +22,13 @@ public class LaunchProfilesTests
 
     private const int ArgumentsColumn = 1;
 
+    /// <summary>
+    /// Profiles that do not start the game. <c>All tests</c> runs <c>dotnet test</c> over the solution — a
+    /// shortcut for the developer, not a way to launch the game, so it has no project path to pass and no
+    /// place in a table of game launch modes.
+    /// </summary>
+    private static readonly string[] NotGameProfiles = ["All tests"];
+
     [Fact]
     public void Profiles_AreDocumented()
     {
@@ -32,7 +39,7 @@ public class LaunchProfilesTests
 
         CrossCheck.ReportMissing(
             report,
-            settings.ProfileNames,
+            GameProfiles(settings).Select(profile => profile.Name),
             DocumentedProfiles().Select(profile => profile.Name).ToHashSet(StringComparer.Ordinal),
             name => $"'{name}' — add a table row for it");
 
@@ -50,7 +57,7 @@ public class LaunchProfilesTests
         CrossCheck.ReportMissing(
             report,
             DocumentedProfiles().Select(profile => profile.Name),
-            settings.ProfileNames.ToHashSet(StringComparer.Ordinal),
+            GameProfiles(settings).Select(profile => profile.Name).ToHashSet(StringComparer.Ordinal),
             name => $"'{name}' — either it was renamed in launchSettings.json, or the row is stale");
 
         report.AssertEmpty();
@@ -70,7 +77,7 @@ public class LaunchProfilesTests
             $"Arguments in the '{RunProfilesHeading}' table of Docs/{DocumentName} that disagree with " +
             settings.RelativePath);
 
-        foreach (LaunchProfile profile in settings.Profiles)
+        foreach (LaunchProfile profile in GameProfiles(settings))
         {
             if (!documented.TryGetValue(profile.Name, out string? cell))
             {
@@ -99,7 +106,7 @@ public class LaunchProfilesTests
     {
         IReadOnlyList<DocumentedProfile> documented = DocumentedProfiles();
         LaunchSettingsFile settings = LaunchSettingsFile.Load();
-        IReadOnlyList<string> declared = settings.ProfileNames;
+        IReadOnlyList<string> declared = GameProfiles(settings).Select(profile => profile.Name).ToList();
         FailureReport report = new(
             $"The '{RunProfilesHeading}' table of Docs/{DocumentName} lists the profiles in an order " +
             $"other than {settings.RelativePath}");
@@ -137,13 +144,28 @@ public class LaunchProfilesTests
             $"Profiles in {settings.RelativePath} that do not start with " +
             $"'{LaunchSettingsFile.ProjectPathArgument}'");
 
-        foreach (LaunchProfile profile in settings.Profiles.Where(profile => !profile.HasProjectPath))
+        foreach (LaunchProfile profile in GameProfiles(settings).Where(profile => !profile.HasProjectPath))
         {
             report.Add($"'{profile.Name}': '{profile.CommandLineArgs}'");
         }
 
         report.AssertEmpty();
     }
+
+    [Fact]
+    public void NotGameProfiles_AreDeclared()
+    {
+        LaunchSettingsFile settings = LaunchSettingsFile.Load();
+        CrossCheck.AssertExemptionsExist(
+            nameof(NotGameProfiles),
+            NotGameProfiles,
+            settings.ProfileNames.Contains,
+            $"{settings.RelativePath} declares no such profile");
+    }
+
+    /// <summary>Every profile that starts the game, in file order.</summary>
+    private static IEnumerable<LaunchProfile> GameProfiles(LaunchSettingsFile settings) =>
+        settings.Profiles.Where(profile => !NotGameProfiles.Contains(profile.Name));
 
     /// <summary>The table rows in document order. A duplicated row is kept — the order check reports it.</summary>
     private static IReadOnlyList<DocumentedProfile> DocumentedProfiles() =>
