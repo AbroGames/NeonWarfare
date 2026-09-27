@@ -12,6 +12,7 @@ namespace NeonWarfare.RepoTests.Infrastructure;
 public static class RepositoryPaths
 {
     private const string RepositoryRootMetadataKey = "RepositoryRoot";
+    private const string GameAssemblyPathMetadataKey = "GameAssemblyPath";
 
     /// <summary>
     /// Extensions of every text file the repository owns — code, scenes, sidecars, locales, documentation
@@ -84,6 +85,12 @@ public static class RepositoryPaths
     public static string EditorConfigPath { get; } = Path.Combine(Root, ".editorconfig");
 
     public static string GameProjectPath { get; } = Path.Combine(Root, "NeonWarfare.csproj");
+
+    /// <summary>
+    /// The compiled game assembly, read as metadata by the Architecture/ tests. The path is asked from the
+    /// game project at build time — Godot.NET.Sdk decides it — and the project reference builds it first.
+    /// </summary>
+    public static string GameAssemblyPath => ReadGameAssemblyPath();
 
     /// <summary>The test project root — Docs/Testing.md names its test classes relative to it.</summary>
     public static string RepoTestsDirectory { get; } = Path.Combine(Root, "Tests", "NeonWarfare.RepoTests");
@@ -363,21 +370,35 @@ public static class RepositoryPaths
         }
     }
 
-    private static string ReadRoot()
+    private static string ReadRoot() => Path.GetFullPath(ReadMetadata(RepositoryRootMetadataKey));
+
+    private static string ReadGameAssemblyPath()
+    {
+        string path = Path.GetFullPath(ReadMetadata(GameAssemblyPathMetadataKey));
+        if (!File.Exists(path))
+        {
+            throw new InvalidOperationException(
+                $"The game assembly {path} does not exist. Build the game project first — " +
+                "building NeonWarfare.RepoTests does it through its project reference.");
+        }
+
+        return path;
+    }
+
+    private static string ReadMetadata(string key)
     {
         string? value = typeof(RepositoryPaths).Assembly
             .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .FirstOrDefault(attribute => attribute.Key == RepositoryRootMetadataKey)
+            .FirstOrDefault(attribute => attribute.Key == key)
             ?.Value;
 
         if (string.IsNullOrWhiteSpace(value))
         {
             throw new InvalidOperationException(
-                $"Assembly metadata '{RepositoryRootMetadataKey}' is missing. It is set by an " +
-                $"AssemblyMetadata item in NeonWarfare.RepoTests.csproj — tests cannot locate the " +
-                $"repository without it.");
+                $"Assembly metadata '{key}' is missing. It is set by NeonWarfare.RepoTests.csproj — " +
+                $"tests cannot locate what they read without it.");
         }
 
-        return Path.GetFullPath(value);
+        return value;
     }
 }
