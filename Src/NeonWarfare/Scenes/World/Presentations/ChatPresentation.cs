@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Events;
 
 namespace NeonWarfare.Scenes.World.Presentations;
 
-//TODO [Presentation(RequiredByServerHud = true)]
+[Presentation(RequiredByServerHud = true)]
 public class ChatPresentation
 {
     private const int MaxNumberOfMessages = 100;

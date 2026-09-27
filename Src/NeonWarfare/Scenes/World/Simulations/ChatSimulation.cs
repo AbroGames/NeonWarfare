@@ -1,9 +1,11 @@
 using System;
+using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 
 namespace NeonWarfare.Scenes.World.Simulations;
 
+[Simulation]
 public class ChatSimulation(TimeProvider timeProvider)
 {
     // TODO

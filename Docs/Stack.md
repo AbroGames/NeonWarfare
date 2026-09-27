@@ -12,6 +12,7 @@ Packages of the game project (`NeonWarfare.csproj`):
 | `RepliCAT` | An in-house library for delta replication of plain C# objects |
 | `CommunityToolkit.Mvvm` | The `[ObservableProperty]` annotation for data models |
 | `MessagePack` | Binary serialization of the world state for saves and for transfer over the network |
+| `Microsoft.Extensions.DependencyInjection` | The container of world services, built by `World` from the layer attributes |
 
 Packages of the test project (`Tests/NeonWarfare.RepoTests/NeonWarfare.RepoTests.csproj`), more detail — in
 [Testing](Testing.md):
