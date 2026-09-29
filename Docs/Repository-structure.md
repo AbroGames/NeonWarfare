@@ -24,7 +24,7 @@ Src/                                  Code and scenes of the Godot project; a na
     ├── Scenes/                       Scenes (.tscn) and their handlers (.cs) — kept next to each other, in one folder
     │   ├── Root/                     The application entry point and the client and server starters
     │   ├── Game/                     The game session: a wrapper for the network and the game mode starters
-    │   ├── World/                    The world: one per game session, synchronized from the server to the client
+    │   ├── OldWorld/                 The world: one per game session, synchronized from the server to the client
     │   │   ├── Data/                 World data
     │   │   │   ├── PersistenceData/  Data that goes into the save (General, Player)
     │   │   │   └── TemporaryData/    Data of the current session, not saved
@@ -34,6 +34,7 @@ Src/                                  Code and scenes of the Godot project; a na
     │   │   ├── WorldServices/        World services: chat, commands, characters, spawning, performance, start/stop
     │   │   └── Tree/                 The current surface (location) and the game objects on it
     │   │       └── Surfaces/         Surfaces (locations): Safe, Battle
+    │   ├── World/                    The new world under construction, will replace OldWorld/
     │   ├── Entities/                 Game objects: characters (controllers, stats, effects), walls
     │   ├── Screen/                   UI: the main menu, HUD, server console, loading screen
     │   └── Misc/                     Game-side descendants of the GodotBox nodes (GameCheckedAbstractStorage)

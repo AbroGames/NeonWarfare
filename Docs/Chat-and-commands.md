@@ -9,7 +9,7 @@ takes everything that starts with `/` and hands it to `WorldCommandService`.
 Commands are classes implementing `ICommandProcessor` (`GetCommand`, `GetDescription`,
 `IsRequiringAdmin`, `ProcessCommand`). They are **registered automatically**: at startup the service
 scans the assembly and collects all the implementations. To add a command it is enough to create a
-descendant of `ICommandProcessor` in `Scenes/World/WorldServices/Command/Impl/` — the only folder allowed
+descendant of `ICommandProcessor` in `Scenes/OldWorld/WorldServices/Command/Impl/` — the only folder allowed
 to hold one.
 
 The current set:

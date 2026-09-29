@@ -115,7 +115,7 @@ public static class RepositoryPaths
 
     /// <summary>The world services — child nodes of World, one class per service.</summary>
     public static string WorldServiceDirectory { get; } =
-        Path.Combine(GameSourceDirectory, "Scenes", "World", "WorldServices");
+        Path.Combine(GameSourceDirectory, "Scenes", "OldWorld", "WorldServices");
 
     /// <summary>The only place allowed to implement ICommandProcessor, one class per command.</summary>
     public static string CommandProcessorImplDirectory { get; } =
@@ -222,7 +222,7 @@ public static class RepositoryPaths
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
 
-    /// <summary>The world service classes — every .cs under Scenes/World/WorldServices, at any depth.</summary>
+    /// <summary>The world service classes — every .cs under Scenes/OldWorld/WorldServices, at any depth.</summary>
     public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
 
     /// <summary>
