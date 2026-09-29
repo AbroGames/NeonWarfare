@@ -1,9 +1,13 @@
 using NeonWarfare.Scenes.World.Commands;
+using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Models;
+using NeonWarfare.Scenes.World.Simulations;
 
 namespace NeonWarfare.Scenes.World.CommandHandlers;
 
-public class SendChatMessageHandler : IPlayerCommandHandler<SendChatMessageCommand>
+[CommandHandler]
+public class SendChatMessageHandler(ChatSimulationFacade chatSimulationFacade)
+    : IPlayerCommandHandler<SendChatMessageCommand>
 {
     public bool Validate(PlayerModel sender, SendChatMessageCommand command)
     {
@@ -12,13 +16,6 @@ public class SendChatMessageHandler : IPlayerCommandHandler<SendChatMessageComma
         return true;
     }
 
-    public void Process(PlayerModel sender, SendChatMessageCommand command)
-    {
-        if (command.Text.StartsWith('/'))
-        {
-            //ChatCommandSimulation.ProcessChatCommand(sender, command.Text.Substring(1))
-            return;
-        }
-        //ChatSimulation.SendMessage(sender, command)
-    }
+    public void Process(PlayerModel sender, SendChatMessageCommand command) =>
+        chatSimulationFacade.SendMessage(sender, command.Text);
 }
