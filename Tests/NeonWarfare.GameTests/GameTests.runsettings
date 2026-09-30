@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+    <RunConfiguration>
+        <!-- The adapter skips Godot-runtime tests instead of failing them when GODOT_BIN is not a .NET
+             build of Godot; a run that executed nothing must not pass. -->
+        <TreatNoTestsAsError>true</TreatNoTestsAsError>
+    </RunConfiguration>
+
+    <GdUnit4>
+        <!-- The CI runner has no display, and a window is of no use locally either. -->
+        <Parameters>--headless</Parameters>
+        <!-- The default is 10 s; the first start on a cold CI runner takes longer. -->
+        <GodotConnectTimeout>30000</GodotConnectTimeout>
+    </GdUnit4>
+</RunSettings>

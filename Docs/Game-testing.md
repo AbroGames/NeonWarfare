@@ -1,0 +1,80 @@
+# Game testing
+
+[← Project README](../README.md)
+
+`Tests/NeonWarfare.GameTests` tests game code that lives in `Node` descendants, and it does so inside a real
+Godot process. The [unit tests](Testing.md) cannot: a `Node` cannot even be constructed outside the
+engine — its constructor calls into native Godot code, and so does the static state of every engine
+class. The [smoke tests](Smoke-testing.md) run the whole game and only look at its output. Here a test
+creates the nodes it needs, calls their methods and checks the result.
+
+Framework — **gdUnit4Net** (`gdUnit4.api` plus the `gdUnit4.test.adapter` VSTest adapter), not xUnit:
+xUnit has no way to run a test inside the engine.
+
+## Running
+
+```bash
+dotnet test Tests/NeonWarfare.GameTests/NeonWarfare.GameTests.csproj
+```
+
+Needs `GODOT_BIN` — the path to a .NET build of Godot, the same file as `GODOT_EXE` (see
+[Quick start](Quick-start.md)); the adapter reads no other name. Without it nothing runs and the run fails:
+`GameTests.runsettings` turns "no tests executed" into an error. Rider picks the settings file up through
+`RunSettingsFilePath` in the `.csproj`, the same as `dotnet test`.
+
+Every run starts Godot headless, which adds a few seconds to the run; the first run in a fresh checkout
+takes longer, see below.
+
+## How it works
+
+* The folder is a Godot project of its own: `project.godot` next to a `Godot.NET.Sdk` `.csproj` whose
+  assembly is the project's main assembly. The game comes in through a `ProjectReference` to
+  `NeonWarfare.csproj`. The game's Godot project does not see this one — `Tests/` holds a `.gdignore`.
+* The adapter looks for the Godot project in the nearest folder above the test assembly that holds a
+  `.csproj` — `Godot.NET.Sdk` builds into `.godot/mono/temp/bin/`, so that is this folder.
+* On the first run the adapter writes its runner into `gdunit4_testadapter_v5/` and rebuilds the project
+  with it. It then opens the project in the headless editor once, and that editor writes a `.uid` next to
+  every script. Both are generated rather than written by hand, so the folder's own `.gitignore` keeps
+  them out of the repository.
+* The tests themselves run in `godot --path . -s <runner> --headless`: no scene, no autoloads, nothing
+  of the game is started. What a test needs, it builds itself.
+
+## Writing a test
+
+Location and naming follow [Testing](Testing.md#conventions): `<Area>/<Subject>Tests.cs`, the namespace
+mirrors the path, method `<What>_<Expectation>`.
+
+```csharp
+[TestSuite]
+public class NodeContainerTests
+{
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ChangeStoredNode_StoresTheNodeAsItsChild()
+    {
+        NodeContainer container = AutoFree(new NodeContainer())!;
+        ...
+        AssertThat(container.GetCurrentStoredNode<Node>()).IsSame(stored);
+    }
+}
+```
+
+* `[RequireGodotRuntime]` is what sends a test into the engine; without it the adapter runs it in plain
+  .NET, where creating a node fails.
+* A node that never enters a scene tree is freed by nobody: wrap it in `AutoFree(...)`. Its children are
+  freed with it.
+* `AssertThat` comes from `using static GdUnit4.Assertions;`.
+
+## CI
+
+`.github/workflows/build.yml` downloads the official Godot .NET build of the version the game builds with
+(read from `Godot.NET.Sdk/<version>` in `NeonWarfare.csproj`), caches it, points `GODOT_BIN` at it and
+runs this project in a step of its own.
+
+## Known gotchas
+
+* `gdUnit4.api` is a release candidate: running engine tests from a project other than the game's own
+  arrived in 5.1, and the current stable adapter already requires it. Move to the stable release once it
+  is out.
+* The Godot version is written in two `.csproj` files — the game's and this one; the editor upgrades only
+  the first. After a Godot upgrade, bump `Godot.NET.Sdk` here by hand.

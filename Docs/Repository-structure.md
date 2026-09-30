@@ -45,22 +45,24 @@ Src/                                  Code and scenes of the Godot project; a na
         └── GlobalUsings.cs           Here we declare global using and global using static
 
 Tests/                                xUnit v3 tests
-├── NeonWarfare.Tests/                A separate project, does not launch the engine
+├── NeonWarfare.RepoTests/            A separate project, does not launch the engine
 │   ├── Infrastructure/               Helpers for all the tests
 │   ├── Docs/                         Tests that verify the documentation
 │   ├── Localization/                 Tests over Assets/Locales/ and the keys used in the code
 │   ├── Conventions/                  Static checks of the rules from Docs/Code-style.md and Docs/Cli-args.md, GodotBox independence
 │   ├── Launch/                       Tests over Properties/launchSettings.json and .run/
-│   ├── Repository/                   Repository-wide statistics (file and line counts), printed for information
+│   ├── Repository/                   Repository-wide: size statistics, one Godot version across the projects
 │   └── Scenes/                       Tests over the .tscn and .tres files
 ├── NeonWarfare.SmokeTests/           A separate project, launches the real game and reads its output
 │   ├── Infrastructure/               Launching a process, capturing its output, scanning it for errors
 │   └── Scenarios/                    The launch scenarios themselves
+├── NeonWarfare.GameTests/            A separate Godot project, runs gdUnit4 tests of game nodes inside the engine
+│   └── GodotBox/                     Tests of the GodotBox classes
 └── .gdignore                         So that Godot does not look into this folder, since it holds no game code
 
 Properties/
 └── launchSettings.json               Quick-launch profiles for the game in different modes (Rider sees them by itself)
 Docs/                                 Documentation, every file is linked from README.md
 .run/                                 Rider Multi-Launch configurations: server + one or two clients at once
-.github/                              CI: build and unit tests on a push into master and on a pull request (no smoke tests)
+.github/                              CI: build, unit and game tests on a push into master and on a pull request (no smoke tests)
 ```

@@ -8,6 +8,8 @@
   [GodotUpdaterUI](https://github.com/AbroGames/GodotUpdaterUI/releases): this automatically sets up all
   the ENV variables used by the project in `launchSettings.json` — first of all `GODOT_EXE` (the path to
   the Godot executable).
+* The [game tests](Game-testing.md) also need `GODOT_BIN` set to the same path: the gdUnit4 adapter reads
+  that name only.
 * To set up the Rider integration in Godot, go to Editor → Editor Settings → Dotnet → Editor. In the
   External Editor list select JetBrains Rider and clear the Custom Exec Path Args value.
 * After moving a file, fix its namespace with Rider's Adjust Namespaces.

@@ -41,6 +41,7 @@ on Windows/Linux/macOS.
 | [Quick start](Docs/Quick-start.md) | Environment setup, Rider run profiles |
 | [Testing](Docs/Testing.md) | The approach to tests, `dotnet test`, what is covered |
 | [Smoke testing](Docs/Smoke-testing.md) | Running the real game from a test, `GODOT_EXE` |
+| [Game testing](Docs/Game-testing.md) | Testing `Node` descendants inside the engine, gdUnit4Net, `GODOT_BIN` |
 
 ---
 
@@ -58,7 +59,7 @@ on Windows/Linux/macOS.
 | Add a stat, a status effect, a character subsystem | [Entities](Docs/Entities.md) → [Networking](Docs/Networking.md) |
 | Add player-visible text | [Localization](Docs/Localization.md) |
 | The code behaves differently in single-player and over the network | [Networking](Docs/Networking.md) (`IsServer` / `IsClient`) → [Startup flow](Docs/Startup-flow.md) |
-| Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) → [Smoke testing](Docs/Smoke-testing.md) |
+| Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) → [Smoke testing](Docs/Smoke-testing.md) → [Game testing](Docs/Game-testing.md) |
 | `[Child]` / `[SceneService]` came out `null` | [DI](Docs/Dependency-injection.md) → [Scene tree](Docs/Scene-tree.md) |
 
 ---

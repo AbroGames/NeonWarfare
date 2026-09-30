@@ -2,7 +2,7 @@
 
 [← Project README](../README.md)
 
-Tests live in `Tests/NeonWarfare.Tests`, framework — **xUnit v3**. The project is part of
+Tests live in `Tests/NeonWarfare.RepoTests`, framework — **xUnit v3**. The project is part of
 `NeonWarfare.sln`, so Rider sees the tests as usual.
 
 ```bash
@@ -17,7 +17,8 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   — and that does not initialize outside a Godot process.
 * Hence only two things are testable here: **pure logic** and **repository invariants** (files,
   documentation, locales, conventions). What lives inside the node tree is covered by the build, by the
-  [smoke tests](Smoke-testing.md) and by a manual run — see [Quick start](Quick-start.md).
+  [game tests](Game-testing.md), by the [smoke tests](Smoke-testing.md) and by a manual run — see
+  [Quick start](Quick-start.md).
 * **A test collects all violations into one list** instead of failing on the first —
   `Infrastructure/FailureReport`. A per-file check is a `[Theory]` with one file per case.
 * **Conventions are checked on a syntax tree, not on text** (`Microsoft.CodeAnalysis.CSharp`): text
@@ -26,7 +27,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 
 ## Conventions
 
-* Location: `Tests/NeonWarfare.Tests/<Area>/<Subject>Tests.cs`, shared helpers — `Infrastructure/`; the
+* Location: `Tests/NeonWarfare.RepoTests/<Area>/<Subject>Tests.cs`, shared helpers — `Infrastructure/`; the
   namespace mirrors the path, as in the game project. Method name: `<What>_<Expectation>`
   (`Links_PointToExistingFiles`, `File_UsesLineFeedOnly`).
 * The repository root comes from `RepositoryPaths` (baked in via `AssemblyMetadata`; the working
@@ -51,7 +52,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 
 ## What is covered now
 
-One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test = a new row.
+One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new test = a new row.
 
 | Test class | What it checks |
 | --- | --- |
@@ -62,7 +63,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Docs/CliArgsDocTests` | Flag table of [Command-line arguments](Cli-args.md) ↔ `Scripts/Content/CmdArgs/` |
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj`; the smoke project takes only the xUnit three |
 | `Docs/ServicesDocTests` | Both tables of [Services](Services.md) ↔ `Scripts/Services.cs` and `World*Service` |
-| `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.Tests/`, both ways |
+| `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.RepoTests/`, both ways |
 | `Docs/SmokeTestingDocTests` | Scenario table of [Smoke testing](Smoke-testing.md) ↔ the tests of `Tests/NeonWarfare.SmokeTests/` |
 | `Docs/ChatCommandsDocTests` | Command table of [Chat and commands](Chat-and-commands.md) ↔ the `ICommandProcessor` classes: name, rights, only in `Command/Impl/` |
 | `Docs/NetworkingDocTests` | Channel table of [Networking](Networking.md) ↔ `Consts.TransferChannel`, order included |
@@ -85,6 +86,7 @@ One row per test class, path relative to `Tests/NeonWarfare.Tests/`. A new test 
 | `Scenes/SceneResourceTests` | `res://` paths in scenes and `project.godot` resolve; a root script is the `.cs` beside its scene |
 | `Scenes/UidReferenceTests` | `ext_resource` uids resolve, agree with `path=`, are unique; `project.godot` uids resolve |
 | `Scenes/SidecarFileTests` | Every `.cs` and `.gdshader` has its `.uid`, every imported asset its `.import`; no sidecar outlived its file |
+| `Repository/GodotVersionTests` | `Godot.NET.Sdk` version of the game tests' `.csproj` equals the game's |
 | `Repository/RepositoryStatsTests` | Nothing — prints the size of the repository |
 
 Godot loads by `uid://` and treats `path=` as a hint, so a stale path survives a rename unnoticed —
@@ -94,9 +96,10 @@ structure tree is checked one way deliberately; the reverse would be a different
 ## CI and repository size
 
 `.github/workflows/build.yml` runs `dotnet restore`, `build`, `test` on every push into `master` and
-every pull request into it. Godot is not installed on the runner — `Godot.NET.Sdk` and `GodotSharp` come
-from NuGet, and the tests never start the engine. The `test` step names this project explicitly, so the
-[smoke tests](Smoke-testing.md) are compiled but not run.
+every pull request into it. This project needs no engine — `Godot.NET.Sdk` and `GodotSharp` come from
+NuGet, and the tests never start it. The runner does download Godot, but only for the
+[game tests](Game-testing.md), which run in a later step of their own. Each `test` step names its project
+explicitly, so the [smoke tests](Smoke-testing.md) are compiled but not run.
 
 `RepositoryStatsTests` counts and asserts nothing; a verbose runner is what makes its output visible:
 
@@ -106,9 +109,8 @@ dotnet test --filter FullyQualifiedName~RepositoryStatsTests -l "console;verbosi
 
 ## What will not be here
 
-Tests that run from **inside** the engine's own process and reach into the node tree: they need a
-separate decision (gdUnit4 or an equivalent) and a separate project, not an extension of
-`NeonWarfare.Tests`.
+Tests that run from **inside** the engine's own process and reach into the node tree. They live in a
+separate project on a separate framework — [Game testing](Game-testing.md).
 
 Launching the game as an external process and reading its output is a different thing and does exist —
 [Smoke testing](Smoke-testing.md), a separate project that covers startup in several modes, including a

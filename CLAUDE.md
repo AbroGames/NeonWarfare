@@ -57,7 +57,7 @@ verified by compilation plus a manual run of the game.
 
 ```bash
 dotnet build                              # quick compilation check (~3 s)
-dotnet test                               # unit tests, documentation and code-style checks, smoke tests
+dotnet test                               # unit tests, documentation and code-style checks, smoke tests, game tests (need GODOT_BIN)
 "$GODOT_EXE" --path "./"                  # normal game launch
 "$GODOT_EXE" --path "./" --auto-start     # straight into a single-player game, skipping the menu
 "$GODOT_EXE" --path "./" --server         # straight to launching a dedicated server
