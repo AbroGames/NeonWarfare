@@ -23,6 +23,7 @@ Packages of the test project (`Tests/NeonWarfare.RepoTests/NeonWarfare.RepoTests
 | `xunit.runner.visualstudio` | The VSTest adapter — without it `dotnet test` and Rider do not find the tests |
 | `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
 | `Microsoft.CodeAnalysis.CSharp` | The C# parser (Roslyn), convention tests check a syntax tree |
+| `Mono.Cecil` | Reads the compiled game assembly as metadata and IL for the World layer rules, never loads it |
 | `GodotSharp` | Compile-time only, no runtime asset: a reference for the `GodotBoxIndependenceTests` compilation |
 | `KludgeBox` | Compile-time only, never loaded: the other reference for the `GodotBoxIndependenceTests` compilation |
 
