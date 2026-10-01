@@ -35,6 +35,12 @@
       "executablePath": "%GODOT_EXE%",
       "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer2 --nick TestPlayer2",
       "workingDirectory": "."
+    },
+    "All tests": {
+      "commandName": "Executable",
+      "executablePath": "dotnet",
+      "commandLineArgs": "test",
+      "workingDirectory": "."
     }
   }
 }
