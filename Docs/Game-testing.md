@@ -79,6 +79,8 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady` |
 | `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
 | `World/Composition/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server with and without `ServerHud`; each gets its own services, created eagerly |
+| `World/Protocol/NetMessageCodecTests` | Every command and event is mapped to a `ushort` id and round-trips; a not allowed, unknown or broken message is rejected |
+| `World/Protocol/ProtocolHasherTests` | The protocol hash is stable for one type list and changes with one more type |
 
 ## CI
 
