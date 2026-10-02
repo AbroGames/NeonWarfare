@@ -10,6 +10,7 @@ public enum Layer
     SimulationFacade,
     CommandHandler,
     Query,
+    ServerNetwork,
     Presentation,
 }
 
@@ -41,12 +42,13 @@ public static class WorldLayers
                     : Layer.Simulation,
             [CompositionNamespace + ".CommandHandlerAttribute"] = _ => Layer.CommandHandler,
             [CompositionNamespace + ".QueryAttribute"] = _ => Layer.Query,
+            [CompositionNamespace + ".ServerNetworkAttribute"] = _ => Layer.ServerNetwork,
             [CompositionNamespace + ".PresentationAttribute"] = _ => Layer.Presentation,
         };
 
     /// <summary>The layers whose code runs only where the Simulation does and may reach it.</summary>
     public static readonly IReadOnlySet<Layer> SimulationGroup =
-        new HashSet<Layer> { Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler };
+        new HashSet<Layer> { Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.ServerNetwork };
 
     /// <summary>The layers allowed to write replicated state, besides the models themselves.</summary>
     public static readonly IReadOnlySet<Layer> SimulationLayers =
