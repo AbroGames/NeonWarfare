@@ -12,6 +12,7 @@ public enum Layer
     Query,
     ServerNetwork,
     Presentation,
+    Console,
 }
 
 /// <summary>
@@ -44,11 +45,17 @@ public static class WorldLayers
             [CompositionNamespace + ".QueryAttribute"] = _ => Layer.Query,
             [CompositionNamespace + ".ServerNetworkAttribute"] = _ => Layer.ServerNetwork,
             [CompositionNamespace + ".PresentationAttribute"] = _ => Layer.Presentation,
+            [CompositionNamespace + ".ConsoleAttribute"] = _ => Layer.Console,
         };
 
-    /// <summary>The layers whose code runs only where the Simulation does and may reach it.</summary>
-    public static readonly IReadOnlySet<Layer> SimulationGroup =
-        new HashSet<Layer> { Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.ServerNetwork };
+    /// <summary>
+    /// The layers whose code runs only where the Simulation does and may reach it. The console is here because
+    /// it exists only on a dedicated server, which always has the Simulation.
+    /// </summary>
+    public static readonly IReadOnlySet<Layer> SimulationGroup = new HashSet<Layer>
+    {
+        Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.ServerNetwork, Layer.Console
+    };
 
     /// <summary>The layers allowed to write replicated state, besides the models themselves.</summary>
     public static readonly IReadOnlySet<Layer> SimulationLayers =

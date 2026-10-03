@@ -26,6 +26,7 @@ public class ConstructorLayerTests
             [Layer.Query] = [Layer.Query],
             [Layer.ServerNetwork] = [Layer.ServerNetwork],
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
+            [Layer.Console] = [Layer.ServerNetwork],
         };
 
     [Fact]

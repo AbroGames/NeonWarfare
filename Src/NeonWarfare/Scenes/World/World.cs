@@ -10,12 +10,12 @@ public partial class World : Node2D
 
     private ServiceProvider _services;
 
-    public World InitPreReady(WorldServiceGroups groups, WorldDependencies dependencies)
+    public World InitPreReady(WorldLayer layers, WorldDependencies dependencies)
     {
         if (_services != null) throw new InvalidOperationException("World is already initialized");
         if (IsInsideTree()) throw new InvalidOperationException("World must be initialized before it enters the tree");
 
-        _services = new WorldServicesBuilder().Build(groups, dependencies);
+        _services = new WorldServicesBuilder().Build(layers, dependencies);
         return this;
     }
 
