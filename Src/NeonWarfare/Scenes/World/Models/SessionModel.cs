@@ -7,8 +7,5 @@ namespace NeonWarfare.Scenes.World.Models;
 /// </summary>
 public class SessionModel
 {
-    /// <summary>
-    /// List of current connected players.
-    /// </summary>
-    [Replicated] public readonly ReplicatedDictionary<int, string> PlayerUidByPeerId = new();
+    [Replicated] public readonly ReplicatedSet<string> OnlinePlayerUids = new();
 }
