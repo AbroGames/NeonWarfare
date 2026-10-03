@@ -48,9 +48,9 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
   skip. Nine exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
-  `NotFoundCommand` (no command name of its own), Godot's `--path` (not our flag), `World` (the
-  composition root takes `Services`), `Services.Di`, the `All tests` launch profile (does not start
-  the game). Each has a test
+  `NotFoundCommand` (no command name of its own), Godot's `--path` (not our flag), the composition
+  root — `World` and `WorldServicesBuilder` as one entry (takes `Services` and wires every layer),
+  `Services.Di`, the `All tests` launch profile (does not start the game). Each has a test
   failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).
 
 ## What is covered now
