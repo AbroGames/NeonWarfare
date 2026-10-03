@@ -2,6 +2,7 @@ using GdUnit4;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.GameTests.World.Protocol;
+using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Models;
@@ -22,10 +23,11 @@ public class WorldServicesBuilderTests
         WorldLayer.Simulation | WorldLayer.CommandHandler | WorldLayer.ServerNetwork | WorldLayer.Query;
 
     private const WorldLayer Client =
-        WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ServerHudPresentation;
-    private const WorldLayer Host = Server | WorldLayer.Presentation | WorldLayer.ServerHudPresentation;
+        WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
+    private const WorldLayer Host =
+        Server | WorldLayer.Presentation | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
     private const WorldLayer DedicatedWithServerHud =
-        Server | WorldLayer.ServerHudPresentation | WorldLayer.Console;
+        Server | WorldLayer.ServerHudPresentation | WorldLayer.Console | WorldLayer.ClientNetwork;
     private const WorldLayer HeadlessDedicated = Server;
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
@@ -85,6 +87,25 @@ public class WorldServicesBuilderTests
 
             AssertThat(provider.GetService<SendChatMessageHandler>()).IsNotNull();
             AssertThat(provider.GetService<ChatPresentation>()).IsNotNull();
+        }
+    }
+
+    // Wherever a Presentation is, received events have to reach it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_OnlyConfigurationsWithPresentation_HaveEventDispatcher()
+    {
+        foreach ((WorldLayer layers, bool hasDispatcher) in new[]
+                 {
+                     (Client, true),
+                     (Host, true),
+                     (DedicatedWithServerHud, true),
+                     (HeadlessDedicated, false),
+                 })
+        {
+            using ServiceProvider provider = Build(layers);
+
+            AssertThat(provider.GetService<EventDispatcher>() != null).IsEqual(hasDispatcher);
         }
     }
 
@@ -165,9 +186,10 @@ public class WorldServicesBuilderTests
     private static ServiceProvider Build(WorldLayer layers) =>
         new WorldServicesBuilder().Build(layers, Dependencies());
 
-    // The root gives the outbox of a ServerHud world its console, so the outbox comes with any fixture
+    // The root gives the outbox of a ServerHud world its console and the dispatcher its handlers, so both come
+    // with any fixture
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
-        new([..fixtures, typeof(EventOutbox), typeof(PeerUidMap)]);
+        new([..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher)]);
 
     private static WorldDependencies Dependencies() =>
         new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec());

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
+using NeonWarfare.Scenes.World.ClientNetwork;
+using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.ServerNetwork;
 
 namespace NeonWarfare.Scenes.World.Composition;
@@ -33,11 +35,10 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Session);
         services.AddSingleton(dependencies.Codec);
 
-        List<Type> selected = ScanWorldServices()
+        var selected = ScanWorldServices()
             .Where(service => layers.HasFlag(service.Attribute.Layer))
-            .Select(service => service.Type)
             .ToList();
-        foreach (Type type in selected)
+        foreach ((Type type, _) in selected)
         {
             services.AddSingleton(type);
         }
@@ -50,9 +51,21 @@ public class WorldServicesBuilder
 
         // Eagerly, or a service nobody takes in a constructor (a Presentation with only event handlers)
         // would silently never be created
-        foreach (Type type in selected)
+        foreach ((Type type, _) in selected)
         {
             provider.GetRequiredService(type);
+        }
+
+        if (layers.HasFlag(WorldLayer.ClientNetwork))
+        {
+            IEnumerable<object> presentations = selected
+                .Where(service => service.Attribute is PresentationAttribute)
+                .Select(service => provider.GetRequiredService(service.Type));
+            HashSet<Type> eventTypes = _candidates
+                .Where(type => type.Namespace == typeof(PlayerJoinedEvent).Namespace
+                               && type is { IsNested: false, IsInterface: false, IsAbstract: false, IsEnum: false })
+                .ToHashSet();
+            provider.GetRequiredService<EventDispatcher>().Register(presentations, eventTypes);
         }
 
         if (layers.HasFlag(WorldLayer.Console))

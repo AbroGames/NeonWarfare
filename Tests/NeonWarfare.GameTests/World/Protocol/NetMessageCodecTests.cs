@@ -180,7 +180,7 @@ public class NetMessageCodecTests
     }
 
     // Not AssertThrown: it reports the inner exception, and the codec wraps the one it caught
-    private static void AssertRejected(Action read)
+    internal static void AssertRejected(Action read)
     {
         Exception? thrown = null;
         try

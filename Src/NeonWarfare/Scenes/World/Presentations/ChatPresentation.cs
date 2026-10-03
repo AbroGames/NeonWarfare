@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Events;
 
@@ -22,19 +23,19 @@ public class ChatPresentation
     public record PlayerJoinedEntry(long SentAtUnixSeconds, string Uid, string Nick) : ChatEntry(SentAtUnixSeconds);
     public record PlayerLeftEntry(long SentAtUnixSeconds, string Uid, string Nick) : ChatEntry(SentAtUnixSeconds);
 
-    //TODO [EventHandler]
+    [EventHandler]
     private void Handle(ChatPlayerMessageEvent e) =>
         AddChatEntry(new PlayerMessageEntry(e.SentAtUnixSeconds, e.SenderUid, e.SenderNick, e.Text));
 
-    //TODO [EventHandler]
+    [EventHandler]
     private void Handle(ChatServerMessageEvent e) =>
         AddChatEntry(new ServerTextEntry(e.SentAtUnixSeconds, e.Text));
 
-    //TODO [EventHandler]
+    [EventHandler]
     private void Handle(PlayerJoinedEvent e) =>
         AddChatEntry(new PlayerJoinedEntry(e.SentAtUnixSeconds, e.Uid, e.Nick));
 
-    //TODO [EventHandler]
+    [EventHandler]
     private void Handle(PlayerLeftEvent e) =>
         AddChatEntry(new PlayerLeftEntry(e.SentAtUnixSeconds, e.Uid, e.Nick));
 
