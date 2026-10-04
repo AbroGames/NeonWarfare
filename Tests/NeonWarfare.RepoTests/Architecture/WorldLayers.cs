@@ -9,10 +9,11 @@ public enum Layer
     Simulation,
     SimulationFacade,
     CommandHandler,
-    Query,
     ServerNetwork,
-    Presentation,
     Console,
+    Query,
+    ClientNetwork,
+    Presentation,
 }
 
 /// <summary>
@@ -42,10 +43,11 @@ public static class WorldLayers
                     ? Layer.SimulationFacade
                     : Layer.Simulation,
             [CompositionNamespace + ".CommandHandlerAttribute"] = _ => Layer.CommandHandler,
-            [CompositionNamespace + ".QueryAttribute"] = _ => Layer.Query,
             [CompositionNamespace + ".ServerNetworkAttribute"] = _ => Layer.ServerNetwork,
-            [CompositionNamespace + ".PresentationAttribute"] = _ => Layer.Presentation,
             [CompositionNamespace + ".ConsoleAttribute"] = _ => Layer.Console,
+            [CompositionNamespace + ".QueryAttribute"] = _ => Layer.Query,
+            [CompositionNamespace + ".ClientNetworkAttribute"] = _ => Layer.ClientNetwork,
+            [CompositionNamespace + ".PresentationAttribute"] = _ => Layer.Presentation,
         };
 
     /// <summary>

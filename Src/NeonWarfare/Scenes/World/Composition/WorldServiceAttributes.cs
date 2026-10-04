@@ -25,9 +25,19 @@ public class ServerNetworkAttribute : WorldServiceAttribute
     public override WorldLayer Layer => WorldLayer.ServerNetwork;
 }
 
+public class ConsoleAttribute : WorldServiceAttribute
+{
+    public override WorldLayer Layer => WorldLayer.Console;
+}
+
 public class QueryAttribute : WorldServiceAttribute
 {
     public override WorldLayer Layer => WorldLayer.Query;
+}
+
+public class ClientNetworkAttribute : WorldServiceAttribute
+{
+    public override WorldLayer Layer => WorldLayer.ClientNetwork;
 }
 
 public class PresentationAttribute : WorldServiceAttribute
@@ -36,9 +46,4 @@ public class PresentationAttribute : WorldServiceAttribute
 
     public override WorldLayer Layer =>
         RequiredByServerHud ? WorldLayer.ServerHudPresentation : WorldLayer.Presentation;
-}
-
-public class ConsoleAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.Console;
 }
