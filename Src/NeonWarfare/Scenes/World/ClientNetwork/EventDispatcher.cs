@@ -5,6 +5,7 @@ using System.Reflection;
 using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Composition;
+using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Protocol;
 using Serilog;
 
@@ -24,7 +25,7 @@ public class EventDispatcher(NetMessageCodec codec)
     private const string ParameterCountError = "[EventHandler] {0} must have exactly one parameter.";
     private const string NotEventError = "[EventHandler] {0} takes {1}, which is not an event type.";
     
-    private record Handler(string Name, Action<object> Call);
+    private record Handler(string Name, Action<Event> Call);
 
     private const BindingFlags HandlerFlags =
         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
@@ -90,7 +91,7 @@ public class EventDispatcher(NetMessageCodec codec)
         }
 
         IReadOnlyList<object> events = codec.ReadSection(section, _eventTypes, out int bytesRead);
-        foreach (object @event in events)
+        foreach (Event @event in events.Cast<Event>())
         {
             if (!_handlersByType.TryGetValue(@event.GetType(), out List<Handler> handlers)) continue;
 
@@ -127,11 +128,11 @@ public class EventDispatcher(NetMessageCodec codec)
 
     // A typed delegate rather than MethodInfo.Invoke: no reflection per event, and the handler's own exception
     // is not wrapped into a TargetInvocationException
-    private Action<object> CreateCall(object owner, MethodInfo method, Type eventType)
+    private static Action<Event> CreateCall(object owner, MethodInfo method, Type eventType)
     {
         Delegate typed = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(eventType), owner, method);
-        return (Action<object>) WrapMethod.MakeGenericMethod(eventType).Invoke(null, [typed])!;
+        return (Action<Event>) WrapMethod.MakeGenericMethod(eventType).Invoke(null, [typed])!;
     }
 
-    private Action<object> Wrap<T>(Action<T> handler) => @event => handler((T) @event);
+    private static Action<Event> Wrap<T>(Action<T> handler) where T : Event => @event => handler((T) @event);
 }

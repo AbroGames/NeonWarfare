@@ -6,4 +6,4 @@ namespace NeonWarfare.Scenes.World.Events;
 public record PlayerLeftEvent(
     [property: Key(0)] long SentAtUnixSeconds,
     [property: Key(1)] string Uid,
-    [property: Key(2)] string Nick);
+    [property: Key(2)] string Nick) : Event;
