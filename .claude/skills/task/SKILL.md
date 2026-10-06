@@ -99,13 +99,19 @@ Trigger: "start task N", "continue task N".
    non-trivial, propose making one first.
 2. Set `status: in-progress`.
 3. Implement. Follow `CLAUDE.md` and the `Docs/` files relevant to the area.
-4. Verify: `dotnet build`, and `dotnet test` if anything testable changed.
-   Anything that only shows up inside the node tree — ask the user to run the game.
+4. Verify — this is the last step of writing code, and it is mandatory:
+   - `dotnet build`, then the full `dotnet test`. Do not hand the task over with failing
+     tests; the reviewer does not run them.
+   - For every test added or changed: break the code it covers on purpose, confirm the
+     test fails, then revert the breakage and confirm it passes again. The reviewer
+     does not do this either.
+   - Anything that only shows up inside the node tree — ask the user to run the game.
 5. If the change affects the architecture, update the matching file in `Docs/` (and
    `README.md` if the list of documents or the entry points changed). Keep the doc
    edit as short as possible.
 6. Append a `## Result` section to `task.md`: what was changed, what was verified and
-   how, what was left out. Once the build passes, set `status: review`.
+   how (including which breakages the tests caught), what was left out. Once the build
+   and all tests pass, set `status: review`.
 
 **You must not set `status: done`, and you must not review your own work.** After
 `review` is set, tell the user the task is ready for review and stop.
@@ -144,6 +150,9 @@ Write `review.md`:
 
 `path/File.cs:42` — <what is wrong, why it matters, what to do.>
 ```
+
+Do not run `dotnet test` and do not break code to check the tests — that is done at the
+end of the Do mode and recorded in `## Result`. Review the tests by reading them.
 
 Findings only — do not fix anything in this mode unless the user asks.
 Review text is in Russian, per `CLAUDE.md`.
