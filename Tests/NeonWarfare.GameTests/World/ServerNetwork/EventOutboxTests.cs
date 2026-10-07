@@ -39,60 +39,60 @@ public class EventOutboxTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void PublishToAll_ReachesEveryPeerAndTheConsole()
+    public void PublishToAll_ReachesEveryPeerAndTheDedicatedWindow()
     {
-        _outbox.AddConsole();
+        _outbox.AddDedicatedWindow();
         ChatServerMessageEvent common = Event("common");
 
         _outbox.PublishToAll(common);
 
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(common);
         AssertThat(PeerEvents(BobPeer)).ContainsExactly(common);
-        AssertThat(ConsoleEvents()).ContainsExactly(common);
+        AssertThat(DedicatedWindowEvents()).ContainsExactly(common);
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void PublishTo_ReachesOnlyThatPlayersPeer()
     {
-        _outbox.AddConsole();
+        _outbox.AddDedicatedWindow();
         ChatServerMessageEvent personal = Event("personal");
 
         _outbox.PublishTo(personal, _alice);
 
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(personal);
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
-        AssertThat(ConsoleEvents()).IsEmpty();
+        AssertThat(DedicatedWindowEvents()).IsEmpty();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void PublishToConsole_ReachesOnlyTheConsole()
+    public void PublishToDedicatedWindow_ReachesOnlyTheDedicatedWindow()
     {
-        _outbox.AddConsole();
+        _outbox.AddDedicatedWindow();
         ChatServerMessageEvent reply = Event("reply");
 
-        _outbox.PublishToConsole(reply);
+        _outbox.PublishToDedicatedWindow(reply);
 
-        AssertThat(ConsoleEvents()).ContainsExactly(reply);
+        AssertThat(DedicatedWindowEvents()).ContainsExactly(reply);
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
     }
 
-    // The headless dedicated server: the root never calls AddConsole
+    // The headless dedicated server: the root never calls AddDedicatedWindow
     [TestCase]
     [RequireGodotRuntime]
-    public void NoConsole_PeersStillGetEventsAndConsoleEventsAreDropped()
+    public void NoDedicatedWindow_PeersStillGetEventsAndWindowEventsAreDropped()
     {
         ChatServerMessageEvent common = Event("common");
 
         _outbox.PublishToAll(common);
-        _outbox.PublishToConsole(Event("reply"));
+        _outbox.PublishToDedicatedWindow(Event("reply"));
 
-        AssertThat(_outbox.HasConsole).IsFalse();
+        AssertThat(_outbox.HasDedicatedWindow).IsFalse();
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(common);
         AssertThat(PeerEvents(BobPeer)).ContainsExactly(common);
-        AssertThrown(() => _outbox.DrainConsoleEvents(new ArrayBufferWriter<byte>()))
+        AssertThrown(() => _outbox.DrainDedicatedWindowEvents(new ArrayBufferWriter<byte>()))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -118,13 +118,13 @@ public class EventOutboxTests
     [RequireGodotRuntime]
     public void PublishTo_OfflinePlayer_TouchesNoBuffer()
     {
-        _outbox.AddConsole();
+        _outbox.AddDedicatedWindow();
 
         _outbox.PublishTo(Event("lost"), _offline);
 
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
-        AssertThat(ConsoleEvents()).IsEmpty();
+        AssertThat(DedicatedWindowEvents()).IsEmpty();
     }
 
     [TestCase]
@@ -177,12 +177,12 @@ public class EventOutboxTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void AddPeerAndAddConsole_Twice_Throw()
+    public void AddPeerAndAddDedicatedWindow_Twice_Throw()
     {
-        _outbox.AddConsole();
+        _outbox.AddDedicatedWindow();
 
         AssertThrown(() => _outbox.AddPeer(AlicePeer)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => _outbox.AddConsole()).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => _outbox.AddDedicatedWindow()).IsInstanceOf<InvalidOperationException>();
     }
 
     private void Join(PlayerModel player, int peerId)
@@ -200,10 +200,10 @@ public class EventOutboxTests
         return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
     }
 
-    private IReadOnlyList<object> ConsoleEvents()
+    private IReadOnlyList<object> DedicatedWindowEvents()
     {
         var output = new ArrayBufferWriter<byte>();
-        _outbox.DrainConsoleEvents(output);
+        _outbox.DrainDedicatedWindowEvents(output);
         return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
     }
 }
