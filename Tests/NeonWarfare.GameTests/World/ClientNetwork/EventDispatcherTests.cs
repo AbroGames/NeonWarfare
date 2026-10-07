@@ -1,11 +1,13 @@
 using System.Buffers;
 using GdUnit4;
 using Microsoft.Extensions.DependencyInjection;
+using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
+using NeonWarfare.Scenes.World.Notices;
 using NeonWarfare.Scenes.World.Presentations;
 using NeonWarfare.Scenes.World.Protocol;
 using static GdUnit4.Assertions;
@@ -53,6 +55,7 @@ public class EventDispatcherTests
             new PlayerMessageEntry(2, "alice", "Alice", "hi"),
             new ServerTextEntry(3, "server"),
             new PlayerLeftEntry(4, "alice", "Alice"));
+        AssertThat(provider.GetRequiredService<HudMailbox>().Read<ChatEntryAddedNotice>()).HasSize(4);
     }
 
     // The throwing handler is registered first, so it runs before ChatPresentation on the very same event
@@ -60,7 +63,7 @@ public class EventDispatcherTests
     [RequireGodotRuntime]
     public void Dispatch_ThrowingHandler_DoesNotStopTheBatch()
     {
-        var chat = new ChatPresentation();
+        var chat = new ChatPresentation(new HudMailbox(new ManualFrameProvider()));
         EventDispatcher dispatcher = Dispatcher(new ThrowingPresentation(), chat);
 
         dispatcher.Dispatch(Section(new ChatServerMessageEvent(1, "first"), new ChatServerMessageEvent(2, "second")));
@@ -72,7 +75,7 @@ public class EventDispatcherTests
     [RequireGodotRuntime]
     public void Dispatch_BrokenSection_ThrowsAndCallsNothing()
     {
-        var chat = new ChatPresentation();
+        var chat = new ChatPresentation(new HudMailbox(new ManualFrameProvider()));
         EventDispatcher dispatcher = Dispatcher(chat);
         byte[] section = Section(new ChatServerMessageEvent(1, "first"), new ChatServerMessageEvent(2, "second"));
 
@@ -114,8 +117,9 @@ public class EventDispatcherTests
         return buffer.WrittenSpan.ToArray();
     }
 
+    // A frame that never ends: everything posted during the test is still readable at its end
     private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec);
+        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider());
 
     private class ThrowingPresentation
     {

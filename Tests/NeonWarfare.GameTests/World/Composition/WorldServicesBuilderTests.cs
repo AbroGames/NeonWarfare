@@ -1,6 +1,7 @@
 using GdUnit4;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
+using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.CommandHandlers;
@@ -109,6 +110,25 @@ public class WorldServicesBuilderTests
         }
     }
 
+    // ChatPresentation posts to it, so it goes wherever ChatPresentation does
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_OnlyConfigurationsWithPresentation_HaveHudMailbox()
+    {
+        foreach ((WorldLayer layers, bool hasMailbox) in new[]
+                 {
+                     (Client, true),
+                     (Host, true),
+                     (DedicatedWithServerHud, true),
+                     (HeadlessDedicated, false),
+                 })
+        {
+            using ServiceProvider provider = Build(layers);
+
+            AssertThat(provider.GetService<HudMailbox>() != null).IsEqual(hasMailbox);
+        }
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Build_HeadlessDedicated_HasOnlySimulation()
@@ -192,7 +212,7 @@ public class WorldServicesBuilderTests
         new([..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher)]);
 
     private static WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec());
+        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec(), new ManualFrameProvider());
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping());
 

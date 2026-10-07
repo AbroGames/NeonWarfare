@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Composition;
+using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Protocol;
 using Serilog;
@@ -37,7 +38,7 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
 
     // Encoded once, here: every addressee gets the same bytes, and an event that cannot be serialized fails in
     // the Simulation that published it rather than at the end of the tick
-    public void PublishToAll(object @event)
+    public void PublishToAll(Event @event)
     {
         byte[] encoded = codec.Encode(@event);
         foreach (List<ReadOnlyMemory<byte>> buffer in _bufferByPeerId.Values)
@@ -50,7 +51,7 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
     // A receiver is always online: callers pick receivers through PlayerQuery, and a command's sender cannot have
     // left yet because commands and disconnections share one ordered queue. Breaking that is logged and dropped
     // rather than thrown, so the rest of the tick still goes out.
-    public void PublishTo(object @event, PlayerModel receiver)
+    public void PublishTo(Event @event, PlayerModel receiver)
     {
         byte[] encoded = codec.Encode(@event);
         if (!peers.TryGetPeerId(receiver.Uid, out int peerId))
@@ -67,7 +68,7 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
     }
 
     // Only console commands reply to the console, and their input exists only with ServerHud
-    public void PublishToConsole(object @event)
+    public void PublishToConsole(Event @event)
     {
         byte[] encoded = codec.Encode(@event);
         if (_consoleBuffer == null)
