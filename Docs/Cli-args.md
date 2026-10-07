@@ -29,6 +29,14 @@ nothing to do with the game's arguments.
 
 `--auto-start` and `--auto-connect` are mutually exclusive: if both are passed, `--auto-start` wins.
 
+**Physics benchmark** (`PhysicsBenchmarkArgs`):
+
+| Flag | Description |
+|---|---|
+| `--physics-benchmark` | Run the crowd physics prototype instead of the game: an arena where bots crowd under different steering modes, built to compare `CharacterBody2D` and `RigidBody2D` crowds by TPS, physics tick time and jitter (selects `PhysicsBenchmarkRootStarter`) |
+| `--bench-count <n>` | The initial bot count of the benchmark (if the flag is not passed, then `100`) |
+| `--bench-auto` | Run the automatic benchmark: four configurations, the bot count ramped 50 → 500, one CSV row per step written to `user://`, then quit (works together with `--headless`) |
+
 **Dedicated server** (`DedicatedServerArgs`):
 
 | Flag | Description |

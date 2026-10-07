@@ -28,8 +28,15 @@ public class RootStarterManager
 
     private BaseRootStarter ChooseStarter()
     {
-        return OS.GetCmdlineArgs().Contains(DedicatedServerArgs.DedicatedServerFlag) ? 
-            new DedicatedServerRootStarter() : 
-            new ClientRootStarter();
+        var cmdline = OS.GetCmdlineArgs();
+        if (cmdline.Contains(DedicatedServerArgs.DedicatedServerFlag))
+        {
+            return new DedicatedServerRootStarter();
+        }
+        if (cmdline.Contains(PhysicsBenchmarkArgs.PhysicsBenchmarkFlag))
+        {
+            return new PhysicsBenchmarkRootStarter();
+        }
+        return new ClientRootStarter();
     }
 }
