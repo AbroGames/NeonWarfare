@@ -9,6 +9,8 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// World services get their dependencies only through the constructor — no statics, no lookup by name —
 /// so checking constructor parameters catches every way one layer could reach another. Models and the
 /// types of <c>WorldDependencies</c> are open to every layer.
+/// Leaf simulations never call each other: an operation with all its effects lives in one facade, and a
+/// command handler goes through a facade too, or it would run half an operation. Shared reads go to queries.
 /// </summary>
 [Collection(GameAssembly.Collection)]
 public class ConstructorLayerTests
@@ -18,10 +20,11 @@ public class ConstructorLayerTests
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
         new Dictionary<Layer, Layer[]>
         {
-            [Layer.Simulation] = [],
-            [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade],
-            [Layer.CommandHandler] = [Layer.Simulation, Layer.SimulationFacade],
-            [Layer.Presentation] = [Layer.Presentation],
+            [Layer.Simulation] = [Layer.Query],
+            [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query],
+            [Layer.CommandHandler] = [Layer.SimulationFacade, Layer.Query],
+            [Layer.Query] = [Layer.Query],
+            [Layer.Presentation] = [Layer.Presentation, Layer.Query],
         };
 
     [Fact]

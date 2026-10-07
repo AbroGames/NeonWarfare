@@ -9,6 +9,7 @@ public enum Layer
     Simulation,
     SimulationFacade,
     CommandHandler,
+    Query,
     Presentation,
 }
 
@@ -39,6 +40,7 @@ public static class WorldLayers
                     ? Layer.SimulationFacade
                     : Layer.Simulation,
             [CompositionNamespace + ".CommandHandlerAttribute"] = _ => Layer.CommandHandler,
+            [CompositionNamespace + ".QueryAttribute"] = _ => Layer.Query,
             [CompositionNamespace + ".PresentationAttribute"] = _ => Layer.Presentation,
         };
 

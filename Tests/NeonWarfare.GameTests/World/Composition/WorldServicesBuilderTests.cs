@@ -72,6 +72,40 @@ public class WorldServicesBuilderTests
 
     [TestCase]
     [RequireGodotRuntime]
+    public void Build_AnyConfiguration_HasQueries()
+    {
+        foreach (WorldServiceGroups groups in new[] { Client, Host, DedicatedWithServerHud, HeadlessDedicated })
+        {
+            using ServiceProvider provider = new WorldServicesBuilder([typeof(FixtureQuery)])
+                .Build(groups, Dependencies());
+
+            // A bool: AssertThat dispatches dynamically and cannot bind a private fixture type
+            AssertThat(provider.GetService<FixtureQuery>() != null).IsTrue();
+        }
+    }
+
+    // The layer table lets facades take facades; no test of ours looks for cycles, the container does
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_FacadeCycle_Throws()
+    {
+        string message = "";
+        try
+        {
+            new WorldServicesBuilder([typeof(CyclicFacadeA), typeof(CyclicFacadeB)])
+                .Build(Host, Dependencies())
+                .Dispose();
+        }
+        catch (AggregateException exception)
+        {
+            message = exception.Message;
+        }
+
+        AssertThat(message).Contains("circular dependency");
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
     public void InitPreReady_OutsideTree_Succeeds()
     {
         GameWorld world = AutoFree(new GameWorld())!;
@@ -95,6 +129,21 @@ public class WorldServicesBuilderTests
 
     private static WorldDependencies Dependencies() =>
         new(TimeProvider.System, new PersistenceModel(), new SessionModel());
+
+    [Query]
+    private class FixtureQuery;
+
+    [Simulation(Facade = true)]
+    private class CyclicFacadeA(CyclicFacadeB other)
+    {
+        public CyclicFacadeB Other { get; } = other;
+    }
+
+    [Simulation(Facade = true)]
+    private class CyclicFacadeB(CyclicFacadeA other)
+    {
+        public CyclicFacadeA Other { get; } = other;
+    }
 
     // Stands for a Presentation with only event handlers: nothing takes it in a constructor
     [Presentation]
