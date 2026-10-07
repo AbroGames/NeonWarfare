@@ -72,7 +72,51 @@ The HUD (top left, twice a second) and the log (one line per second) report, ove
 | `AutoBenchmark.cs` | The automatic sweep and the CSV |
 | `BenchSpecs.cs` / `BenchLayers.cs` | Every tunable number and collision layer in one place |
 
-## Variant
+## Variant B — `RigidBody2D`
 
-See the variant section of the branch commits: this commit intentionally contains no
-`IPhysicsVariant` implementation, and the benchmark exits with an error when run without one.
+The player and the bots are `RigidBody2D` (`GravityScale = 0`, `LockRotation = true`, `LinearDamp = 0`,
+`CanSleep = false`). Choices made and why:
+
+- **`_IntegrateForces`, not `_PhysicsProcess`.** The integrate callback is the engine-sanctioned place
+  to mutate body state: the velocity written there is used by the solver within the same step, the
+  post-solve velocity of the previous step is readable there reliably, and per-body ordering cannot
+  race the harness's `_PhysicsProcess`. `_PhysicsProcess` would write the same property one callback
+  earlier, with no benefit.
+- **The solver's collision response is never discarded.** Writing a raw velocity every tick is exactly
+  what broke rams and caused tunnelling in the old `PhysicsCalculator`. Instead, at integrate time the
+  body measures what the solver did to the last prescription (`state.LinearVelocity − lastDesired`),
+  clamps it to 400 px/s, halves it (a bump fades instead of ringing) and adds it back on top of the
+  fresh prescription. Rams still push, wall hits do not accumulate into launches.
+- **CCD off.** Knockback peaks at 900 px/s = 15 px per tick against 30–40 px walls; no bot ever left
+  the arena in the automatic runs (`outside 0` everywhere). If a faster knockback ever tunnels, flip
+  `UseContinuousCollision` in `RigidBodyBenchBody` to `CastShape` — deliberately a one-line constant,
+  not a toggle key, so the measured configuration stays fixed.
+- **`CanSleep = false`** — a sleeping body would ignore the soft separation pushes.
+- **Teleports (`PlaceAt`) go through the next `_IntegrateForces`** as `state.Transform` write + zeroed
+  velocity + `ResetPhysicsInterpolation()`: the one-tick delay is invisible for a respawn, and writing
+  a rigid body transform outside integration is not reliable.
+- **Reported displacement is start-to-start** between consecutive integrates — it includes the
+  solver's positional correction, one tick later than variant A measures; consistent within the
+  variant, which is what the comparison needs.
+- The trade of the retained response: the solver partly owns the movement. Near walls the body keeps
+  a small decaying press into the contact, and knockback trajectories are less exactly scripted than
+  in variant A. Whether that *feels* right is exactly what the interactive run is for.
+
+### What the automatic run showed (headless, this machine)
+
+From `physics-benchmark-rigidbody-*.csv` written by `--bench-auto`, same harness and seed as the
+`CharacterBody2D` branch (numbers are machine-specific; the shape is the point):
+
+- *chase + self-collisions* — the headline. Variant A (kinematic bots colliding) collapses to
+  36–38 TPS at 450–500 bots; here the solver resolves the crowd and **TPS stays 60 at every count up
+  to 500**, with a jitter index of 0.01–0.03 and direction flips under 2.5 % (A: ~0.3 and ~90 % at
+  the same counts). Overlap resolution by the solver is simply not the same workload as every body
+  re-testing motion against every other body.
+- *chase + separation* and *wall + separation* hold TPS ≈ 60 up to 500 bots with a jitter index of
+  ~0.49 / flips ~18 % at 500 — roughly **half** of variant A's shimmer at the same counts.
+- *projectiles + hurtboxes* behaves like in A: the chase pile eats the projectiles, the alive count
+  collapses to ~5 at 200+ bots (242 at 100), TPS stays 60.
+- The cost shows up as spikes: single physics iterations reach 25–90 ms at the high counts while the
+  per-window *average* stays at 5–23 ms — the frame absorbs them, but the frame time is less even
+  than in variant A. Collision pairs run slightly higher than A (204 vs 136 at 500 chase bots) since
+  every rigid body stays permanently active.
