@@ -34,6 +34,7 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Persistence);
         services.AddSingleton(dependencies.Session);
         services.AddSingleton(dependencies.Codec);
+        services.AddSingleton(dependencies.Frames);
 
         var selected = ScanWorldServices()
             .Where(service => layers.HasFlag(service.Attribute.Layer))
@@ -62,8 +63,7 @@ public class WorldServicesBuilder
                 .Where(service => service.Attribute is PresentationAttribute)
                 .Select(service => provider.GetRequiredService(service.Type));
             HashSet<Type> eventTypes = _candidates
-                .Where(type => type.Namespace == typeof(PlayerJoinedEvent).Namespace
-                               && type is { IsNested: false, IsInterface: false, IsAbstract: false, IsEnum: false })
+                .Where(type => type.IsSubclassOf(typeof(Event)) && type is { IsNested: false, IsAbstract: false })
                 .ToHashSet();
             provider.GetRequiredService<EventDispatcher>().Register(presentations, eventTypes);
         }
