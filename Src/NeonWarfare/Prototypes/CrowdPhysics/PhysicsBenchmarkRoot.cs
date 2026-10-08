@@ -25,11 +25,11 @@ public partial class PhysicsBenchmarkRoot : Node2D
 
     private readonly List<BotUnit> _bots = [];
     private readonly Dictionary<Node, BotUnit> _botByBodyNode = [];
-    private readonly List<BenchWall> _runtimeWalls = [];
+    private readonly List<RuntimeWall> _runtimeWalls = [];
     private readonly SpatialHashGrid _grid = new(2f * BenchSpecs.BotRadius);
     private readonly List<int> _neighbours = [];
-    private readonly BenchmarkMetrics _metrics = new();
-    private readonly RandomNumberGenerator _rng = new() { Seed = BenchSpecs.RandomSeed };
+    private BenchmarkMetrics _metrics = new(false);
+    private readonly RandomNumberGenerator _rng = new();
 
     private IPhysicsVariant _variant;
     private IBenchPlayerBody _player;
@@ -43,12 +43,14 @@ public partial class PhysicsBenchmarkRoot : Node2D
 
     private int _initialBotCount = BenchSpecs.DefaultBotCount;
     private bool _autoEnabled;
+    private BenchRunOptions _options = new(null, null, 1, false, false);
     private float _zoom = 1f;
     private float _playerFacing;
     private float _projectileSpawnRemainder;
     private int _projectilesAlive;
     private double _hudAccumulator;
     private double _logAccumulator;
+    private int _sampleTickCounter;
 
     private SteeringMode _steering = SteeringMode.Chase;
     private bool _playerBlocksEnemies;
@@ -57,18 +59,45 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private bool _hurtboxesEnabled;
     private int _projectileRate = BenchSpecs.DefaultProjectileRate;
 
+    // The scripted auto-mode behaviour, all of it driven by the current BenchConfig; in manual mode the
+    // defaults never fire (no explosions, no wall drops, the player from the keyboard, facing from the mouse).
+    private PlayerMotionMode _playerMotion = PlayerMotionMode.Static;
+    private FacingMode _facingMode = FacingMode.TowardCrowd;
+    private ExplosionMode _explosions = ExplosionMode.None;
+    private double _explosionTimer;
+    private double _wallDropPeriod;
+    private double _wallDropTimer;
+    private bool _wallDropHorizontal;
+    private float _kiteAngle;
+    private Vector2 _playerPreviousPosition = Vector2.Zero;
+
     public IPhysicsVariant Variant => _variant;
 
+    /// <summary>The auto benchmark is a plain class and reports through the root's logger.</summary>
+    internal ILogger Log => _log;
+
     /// <summary>Called by the starter before the node enters the tree: plain parameters, no cmd args here.</summary>
-    public void InitBenchArgs(int botCount, bool autoBenchmark)
+    public void InitBenchArgs(int botCount, bool autoBenchmark, BenchRunOptions options)
     {
         _initialBotCount = botCount;
         _autoEnabled = autoBenchmark;
+        _options = options;
+        // The repetition offsets the seed: same repetition on both variants gets the same pile
+        // formation, different repetitions get genuinely different ones.
+        _rng.Seed = (ulong)(BenchSpecs.RandomSeed + options.Repetition);
     }
 
     public override void _Ready()
     {
         Di.Process(this);
+
+        if (_options.Throughput)
+        {
+            // A headless display server cannot draw, so each frame is padded to the low-processor sleep
+            // (~6.9 ms), capping the loop at ~145 frames/s; throughput mode must run unthrottled.
+            OS.LowProcessorUsageModeSleepUsec = 0;
+        }
+        _metrics = new BenchmarkMetrics(_options.Throughput);
 
         _variant = DiscoverVariant();
         if (_variant == null)
@@ -79,14 +108,23 @@ public partial class PhysicsBenchmarkRoot : Node2D
             return;
         }
 
+        if (_autoEnabled)
+        {
+            string suiteName = _options.Suite ?? BenchSuites.DefaultSuite;
+            if (!BenchSuites.TryResolve(suiteName, out BenchConfig[] configs))
+            {
+                _log.Error("Unknown --bench-suite {suite}; known suites: {suites}",
+                    suiteName, string.Join(", ", BenchSuites.Names));
+                Callable.From(() => GetTree().Quit(1)).CallDeferred();
+                return;
+            }
+            _auto = new AutoBenchmark(this, suiteName, configs, _options);
+        }
+
         BuildTree();
 
         _metrics.WindowCompletedEvent += OnWindowCompleted;
-        if (_autoEnabled)
-        {
-            _auto = new AutoBenchmark(this);
-            _auto.Start();
-        }
+        _auto?.Start();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -100,24 +138,19 @@ public partial class PhysicsBenchmarkRoot : Node2D
         ulong startUsec = Time.GetTicksUsec();
         float dt = (float)delta;
 
-        Vector2 moveInput = Vector2.Zero;
-        if (Input.IsKeyPressed(Key.W))
+        Vector2 playerCommand = _auto != null ? AutoPlayerCommand(dt) : ReadKeyboardMove();
+        _player.ApplyVelocity(playerCommand);
+        if (_playerMotion == PlayerMotionMode.Kite && playerCommand != Vector2.Zero)
         {
-            moveInput.Y -= 1f;
+            double actualSpeed = (_player.Position - _playerPreviousPosition).Length() / dt;
+            _metrics.AddPlayerSpeedRatio(actualSpeed / BenchSpecs.PlayerSpeed);
         }
-        if (Input.IsKeyPressed(Key.S))
+        _playerPreviousPosition = _player.Position;
+
+        if (_auto != null)
         {
-            moveInput.Y += 1f;
+            AutoFacing(dt);
         }
-        if (Input.IsKeyPressed(Key.A))
-        {
-            moveInput.X -= 1f;
-        }
-        if (Input.IsKeyPressed(Key.D))
-        {
-            moveInput.X += 1f;
-        }
-        _player.ApplyVelocity(moveInput.LimitLength(1f) * BenchSpecs.PlayerSpeed);
 
         SteerBots();
         SeparateBots();
@@ -130,7 +163,14 @@ public partial class PhysicsBenchmarkRoot : Node2D
 
             Vector2 actualVelocity = unit.Body.LastDisplacement / dt;
             _metrics.AddBotMovement(actualVelocity, unit.PreviousActualVelocity, unit.MaxSpeed);
+            _metrics.AddBotSpeed(actualVelocity.Length());
             unit.PreviousActualVelocity = actualVelocity;
+        }
+
+        AdvanceRuntimeWalls(dt);
+        if (_auto != null)
+        {
+            AutoEvents(dt);
         }
 
         if (_projectilesEnabled)
@@ -138,6 +178,14 @@ public partial class PhysicsBenchmarkRoot : Node2D
             SpawnProjectiles(dt);
         }
         _metrics.AddProjectilesAlive(_projectilesAlive);
+
+        _sampleTickCounter++;
+        if (_sampleTickCounter >= BenchSpecs.StuckSampleIntervalTicks)
+        {
+            _sampleTickCounter = 0;
+            _metrics.AddStuckSample(CountStuckBots());
+            _metrics.AddOutsideSample(CountBotsOutsideArena());
+        }
 
         _metrics.AddTickCallbackTime((Time.GetTicksUsec() - startUsec) / 1000f);
     }
@@ -149,8 +197,12 @@ public partial class PhysicsBenchmarkRoot : Node2D
             return;
         }
 
-        _playerFacing = (GetGlobalMousePosition() - _player.Position).Angle();
-        _player.SetFacing(_playerFacing);
+        // In auto mode the facing is scripted per tick (in headless the mouse is meaningless).
+        if (_auto == null)
+        {
+            _playerFacing = (GetGlobalMousePosition() - _player.Position).Angle();
+            _player.SetFacing(_playerFacing);
+        }
         _camera.Position = _player.Position;
         _camera.Zoom = new Vector2(_zoom, _zoom);
 
@@ -236,7 +288,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
                     _projectileRate += BenchSpecs.ProjectileRateStep;
                     break;
                 case Key.F:
-                    CreateRuntimeWall();
+                    CreateWallAt(GetGlobalMousePosition(), _playerFacing);
                     break;
                 case Key.G:
                     RemoveLastRuntimeWall();
@@ -254,7 +306,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
             switch (mouse.ButtonIndex)
             {
                 case MouseButton.Right:
-                    ExplodeAtCursor();
+                    ExplodeAt(GetGlobalMousePosition());
                     break;
                 case MouseButton.WheelUp:
                     SetZoom(_zoom * ZoomStep);
@@ -266,14 +318,28 @@ public partial class PhysicsBenchmarkRoot : Node2D
         }
     }
 
-    public void ApplyAutoSetup(SteeringMode steering, bool selfCollisions, bool projectiles, bool hurtboxes)
+    public void ApplyAutoSetup(BenchConfig config)
     {
-        SetSteering(steering);
-        _enemiesSelfCollide = selfCollisions;
+        SetSteering(config.Steering);
+        _enemiesSelfCollide = config.SelfCollisions;
         ApplySelfCollisions();
-        _projectilesEnabled = projectiles;
-        _hurtboxesEnabled = hurtboxes;
+        _playerBlocksEnemies = config.PlayerBlocks;
+        ApplyPlayerBlocking();
+        _hurtboxesEnabled = config.Hurtboxes;
         ApplyHurtboxes();
+        _projectilesEnabled = config.ProjectileRate > 0;
+        _projectileRate = config.ProjectileRate > 0 ? config.ProjectileRate : BenchSpecs.DefaultProjectileRate;
+
+        // Every configuration starts clean: a configuration that began inside the previous one's pile
+        // would measure the pile, not the configuration.
+        ResetWorldState();
+
+        _playerMotion = config.PlayerMotion;
+        _facingMode = config.Facing;
+        _explosions = config.Explosions;
+        _explosionTimer = BenchSpecs.ExplosionPeriod;
+        _wallDropPeriod = config.WallDropPeriod;
+        _wallDropTimer = config.WallDropPeriod;
     }
 
     public void SetBotCount(int count)
@@ -344,6 +410,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
         AddChild(_hud);
 
         _player = _variant.CreatePlayer();
+        _player.SetContinuousCollision(_options.Ccd);
         ApplyPlayerBlocking();
         _bodiesContainer.AddChild(_player.Node);
         _player.PlaceAt(Vector2.Zero);
@@ -357,6 +424,166 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private void OnWindowCompleted(MetricsWindow window)
     {
         _auto?.OnWindow(window);
+    }
+
+    private Vector2 ReadKeyboardMove()
+    {
+        Vector2 moveInput = Vector2.Zero;
+        if (Input.IsKeyPressed(Key.W))
+        {
+            moveInput.Y -= 1f;
+        }
+        if (Input.IsKeyPressed(Key.S))
+        {
+            moveInput.Y += 1f;
+        }
+        if (Input.IsKeyPressed(Key.A))
+        {
+            moveInput.X -= 1f;
+        }
+        if (Input.IsKeyPressed(Key.D))
+        {
+            moveInput.X += 1f;
+        }
+        return moveInput.LimitLength(1f) * BenchSpecs.PlayerSpeed;
+    }
+
+    /// <summary>
+    /// The kite: a carrot point walks the ellipse at the player speed, but only advances while the
+    /// player is close behind — a blocked player is not dragged through the crowd, which is what makes
+    /// player_speed_ratio meaningful.
+    /// </summary>
+    private Vector2 AutoPlayerCommand(float dt)
+    {
+        if (_playerMotion != PlayerMotionMode.Kite)
+        {
+            return Vector2.Zero;
+        }
+
+        Vector2 carrot = KiteCarrot();
+        int guard = 0;
+        while ((_player.Position - carrot).Length() < BenchSpecs.KiteCarrotDistance && guard++ < 64)
+        {
+            // Advance by the player's per-tick arc length; the local rate of the ellipse
+            // parametrization turns it into a step of the angle.
+            float localRate = MathF.Sqrt(
+                BenchSpecs.KiteRadii.X * BenchSpecs.KiteRadii.X * MathF.Sin(_kiteAngle) * MathF.Sin(_kiteAngle)
+                + BenchSpecs.KiteRadii.Y * BenchSpecs.KiteRadii.Y * MathF.Cos(_kiteAngle) * MathF.Cos(_kiteAngle));
+            _kiteAngle = (_kiteAngle + BenchSpecs.PlayerSpeed * dt / localRate) % MathF.Tau;
+            carrot = KiteCarrot();
+        }
+
+        Vector2 toCarrot = carrot - _player.Position;
+        return toCarrot.LengthSquared() > 1f ? toCarrot.Normalized() * BenchSpecs.PlayerSpeed : Vector2.Zero;
+    }
+
+    private Vector2 KiteCarrot() => BenchSpecs.KiteCentre
+        + new Vector2(
+            MathF.Cos(_kiteAngle) * BenchSpecs.KiteRadii.X,
+            MathF.Sin(_kiteAngle) * BenchSpecs.KiteRadii.Y);
+
+    private void AutoFacing(float dt)
+    {
+        switch (_facingMode)
+        {
+            case FacingMode.Spin:
+                _playerFacing += MathF.Tau / 4f * dt;
+                break;
+            case FacingMode.TowardCrowd when _bots.Count > 0:
+                Vector2 centroid = Vector2.Zero;
+                foreach (BotUnit unit in _bots)
+                {
+                    centroid += unit.Body.Position;
+                }
+                _playerFacing = (centroid / _bots.Count - _player.Position).Angle();
+                break;
+        }
+        _player.SetFacing(_playerFacing);
+    }
+
+    private void AutoEvents(float dt)
+    {
+        if (_explosions != ExplosionMode.None)
+        {
+            _explosionTimer -= dt;
+            if (_explosionTimer <= 0)
+            {
+                _explosionTimer += BenchSpecs.ExplosionPeriod;
+                if (_explosions == ExplosionMode.AtPlayer)
+                {
+                    ExplodeAt(_player.Position);
+                }
+                else
+                {
+                    ExplodeIntoWall();
+                }
+            }
+        }
+
+        if (_wallDropPeriod > 0)
+        {
+            _wallDropTimer -= dt;
+            if (_wallDropTimer <= 0)
+            {
+                _wallDropTimer += _wallDropPeriod;
+                DropWallOnCrowd();
+            }
+            for (int i = _runtimeWalls.Count - 1; i >= 0; i--)
+            {
+                if (_runtimeWalls[i].Age >= BenchSpecs.WallDropLifetime)
+                {
+                    _runtimeWalls[i].Wall.QueueFree();
+                    _runtimeWalls.RemoveAt(i);
+                }
+            }
+        }
+    }
+
+    /// <summary>The IntoWall explosion: throw the crowd pressing the long wall's south face north into it.</summary>
+    private void ExplodeIntoWall()
+    {
+        Vector2 centroid = Vector2.Zero;
+        int pressing = 0;
+        foreach (BotUnit unit in _bots)
+        {
+            Vector2 position = unit.Body.Position;
+            if (position.X >= BenchSpecs.IntoWallBandMin.X && position.X <= BenchSpecs.IntoWallBandMax.X
+                && position.Y >= BenchSpecs.IntoWallBandMin.Y && position.Y <= BenchSpecs.IntoWallBandMax.Y)
+            {
+                centroid += position;
+                pressing++;
+            }
+        }
+
+        if (pressing < BenchSpecs.IntoWallMinBots)
+        {
+            return;
+        }
+
+        ExplodeAt(centroid / pressing + new Vector2(0f, BenchSpecs.IntoWallBlastOffset));
+    }
+
+    private void DropWallOnCrowd()
+    {
+        Vector2 centroid = Vector2.Zero;
+        int near = 0;
+        foreach (BotUnit unit in _bots)
+        {
+            if (unit.Body.Position.DistanceSquaredTo(_player.Position)
+                <= BenchSpecs.WallDropCrowdRadius * BenchSpecs.WallDropCrowdRadius)
+            {
+                centroid += unit.Body.Position;
+                near++;
+            }
+        }
+
+        if (near == 0)
+        {
+            return;
+        }
+
+        _wallDropHorizontal = !_wallDropHorizontal;
+        CreateWallAt(centroid / near, _wallDropHorizontal ? 0f : MathF.PI / 2f);
     }
 
     private void SteerBots()
@@ -389,6 +616,10 @@ public partial class PhysicsBenchmarkRoot : Node2D
         float range = 2f * BenchSpecs.BotRadius;
         _grid.Rebuild(_bots);
 
+        double tickOverlapSum = 0;
+        int tickOverlapPairs = 0;
+        float tickOverlapMax = 0;
+
         for (int i = 0; i < _bots.Count; i++)
         {
             BotUnit unit = _bots[i];
@@ -413,14 +644,43 @@ public partial class PhysicsBenchmarkRoot : Node2D
                 }
 
                 float overlap = range - distance;
-                if (overlap > 0f)
+                if (overlap <= 0f)
                 {
-                    push += offset / distance
-                            * (BenchSpecs.SeparationStrength * overlap / range);
+                    continue;
                 }
+
+                // Every pair shows up from both sides; count it once for the penetration metrics.
+                if (neighbourIndex > i)
+                {
+                    tickOverlapSum += overlap;
+                    tickOverlapPairs++;
+                    if (overlap > tickOverlapMax)
+                    {
+                        tickOverlapMax = overlap;
+                    }
+                }
+
+                push += offset / distance
+                        * (BenchSpecs.SeparationStrength * overlap / range);
             }
 
             unit.Separation = push.LimitLength(BenchSpecs.SeparationClamp);
+        }
+
+        if (tickOverlapPairs > 0)
+        {
+            _metrics.AddTickOverlaps(tickOverlapSum / tickOverlapPairs, tickOverlapMax);
+        }
+
+        float playerRange = BenchSpecs.PlayerRadius + BenchSpecs.BotRadius;
+        _grid.CollectNeighbours(_player.Position, playerRange, _neighbours);
+        foreach (int neighbourIndex in _neighbours)
+        {
+            float penetration = playerRange - _player.Position.DistanceTo(_bots[neighbourIndex].Body.Position);
+            if (penetration > 0f)
+            {
+                _metrics.AddPlayerOverlap(penetration);
+            }
         }
     }
 
@@ -455,6 +715,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private void SpawnBot()
     {
         IBenchBotBody body = _variant.CreateBot();
+        body.SetContinuousCollision(_options.Ccd);
         body.SetCollidesWithEnemies(_enemiesSelfCollide);
         body.SetBlocksPlayer(_playerBlocksEnemies);
         body.SetHurtboxEnabled(_hurtboxesEnabled);
@@ -513,16 +774,16 @@ public partial class PhysicsBenchmarkRoot : Node2D
         }
     }
 
-    private void CreateRuntimeWall()
+    private void CreateWallAt(Vector2 position, float rotation)
     {
         BenchWall wall = new()
         {
-            Position = GetGlobalMousePosition(),
-            Rotation = _playerFacing,
+            Position = position,
+            Rotation = rotation,
         };
         _runtimeWallsContainer.AddChild(wall);
         wall.ResetPhysicsInterpolation();
-        _runtimeWalls.Add(wall);
+        _runtimeWalls.Add(new RuntimeWall { Wall = wall });
     }
 
     private void RemoveLastRuntimeWall()
@@ -532,9 +793,44 @@ public partial class PhysicsBenchmarkRoot : Node2D
             return;
         }
 
-        BenchWall wall = _runtimeWalls[^1];
+        RuntimeWall runtime = _runtimeWalls[^1];
         _runtimeWalls.RemoveAt(_runtimeWalls.Count - 1);
-        wall.QueueFree();
+        runtime.Wall.QueueFree();
+    }
+
+    private void AdvanceRuntimeWalls(float dt)
+    {
+        foreach (RuntimeWall runtime in _runtimeWalls)
+        {
+            runtime.Age += dt;
+        }
+    }
+
+    private void ResetWorldState()
+    {
+        ResetBots();
+        _player.PlaceAt(Vector2.Zero);
+        _playerPreviousPosition = Vector2.Zero;
+        _kiteAngle = 0f;
+        _projectileSpawnRemainder = 0f;
+        ClearProjectiles();
+        foreach (RuntimeWall runtime in _runtimeWalls)
+        {
+            runtime.Wall.QueueFree();
+        }
+        _runtimeWalls.Clear();
+    }
+
+    private void ClearProjectiles()
+    {
+        foreach (Node child in _projectilesContainer.GetChildren())
+        {
+            if (child is BenchProjectile projectile)
+            {
+                projectile.Destroy();
+            }
+        }
+        _projectilesAlive = 0;
     }
 
     private void ResetBots()
@@ -548,9 +844,8 @@ public partial class PhysicsBenchmarkRoot : Node2D
         }
     }
 
-    private void ExplodeAtCursor()
+    private void ExplodeAt(Vector2 center)
     {
-        Vector2 center = GetGlobalMousePosition();
         foreach (BotUnit unit in _bots)
         {
             Vector2 offset = unit.Body.Position - center;
@@ -593,6 +888,46 @@ public partial class PhysicsBenchmarkRoot : Node2D
         return Vector2.FromAngle(angle);
     }
 
+    /// <summary>A bot is stuck when its centre is inside static geometry or an aged runtime wall.</summary>
+    private bool IsInsideWallGeometry(Vector2 position)
+    {
+        foreach (Rect2 rect in _arena.Rects)
+        {
+            if (rect.HasPoint(position))
+            {
+                return true;
+            }
+        }
+
+        foreach (RuntimeWall runtime in _runtimeWalls)
+        {
+            if (runtime.Age < BenchSpecs.StuckWallMinAge)
+            {
+                continue;
+            }
+
+            Vector2 local = runtime.Wall.ToLocal(position);
+            if (MathF.Abs(local.X) <= BenchWall.HalfLength && MathF.Abs(local.Y) <= BenchWall.HalfThickness)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int CountStuckBots()
+    {
+        int stuck = 0;
+        foreach (BotUnit unit in _bots)
+        {
+            if (IsInsideWallGeometry(unit.Body.Position))
+            {
+                stuck++;
+            }
+        }
+        return stuck;
+    }
+
     private int CountBotsOutsideArena()
     {
         int outside = 0;
@@ -621,10 +956,23 @@ public partial class PhysicsBenchmarkRoot : Node2D
               + $" | islands {window.IslandsAvg:F0}\n"
               + $"jitter {window.JitterIndex:F4} | flips {window.FlipShare:P1} | outside {CountBotsOutsideArena()}";
 
+        string auto = _auto == null
+            ? string.Empty
+            : $" | suite {_options.Suite ?? BenchSuites.DefaultSuite} r{_options.Repetition}"
+              + $"{(_options.Throughput ? " | throughput" : "")}{(_options.Ccd ? " | ccd" : "")}";
+
         return $"{_variant.Title} | bots {_bots.Count} | projectiles {_projectilesAlive}"
                + $" | walls {_runtimeWalls.Count}\n"
                + $"steer {_steering} | B {_playerBlocksEnemies} | C {_enemiesSelfCollide}"
-               + $" | P {_projectilesEnabled} ({_projectileRate}/s) | H {_hurtboxesEnabled} | auto {_autoEnabled}\n"
+               + $" | P {_projectilesEnabled} ({_projectileRate}/s) | H {_hurtboxesEnabled}"
+               + $" | auto {_autoEnabled}{auto}\n"
                + metrics;
+    }
+
+    /// <summary>A runtime wall plus its age, for the stuck metric and the auto wall-drop lifetime.</summary>
+    private sealed class RuntimeWall
+    {
+        public required BenchWall Wall { get; init; }
+        public double Age { get; set; }
     }
 }

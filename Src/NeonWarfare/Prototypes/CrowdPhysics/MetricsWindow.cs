@@ -1,9 +1,11 @@
 namespace NeonWarfare.Prototypes.CrowdPhysics;
 
 /// <summary>
-/// Everything measured over one one-second window. All the rate values come from wall-clock time; the
-/// two kinds of physics tick time are kept apart: the engine monitor value (what
-/// Performance.Monitor.TimePhysicsProcess reports) and the harness's own wall time around the tick work.
+/// Everything measured over one metric window: one wall-clock second in realtime mode, 60 physics
+/// ticks (1 s of game time) in throughput mode. The two kinds of physics tick time are kept apart: the
+/// engine monitor value (what Performance.Monitor.TimePhysicsProcess reports) and the harness's own
+/// wall time around the tick work. `overlapMeanSum` / `overlapPairTicks` carry the mean over
+/// overlapping pairs per tick so windows can be combined exactly.
 /// </summary>
 public readonly record struct MetricsWindow(
     double DurationSeconds,
@@ -21,4 +23,18 @@ public readonly record struct MetricsWindow(
     double ProjectilesAvg,
     double ActiveObjectsAvg,
     double CollisionPairsAvg,
-    double IslandsAvg);
+    double IslandsAvg,
+    double FrameMsP50,
+    double FrameMsP99,
+    double FrameMsMax,
+    double[] FrameMsSamples,
+    double OverlapMeanSum,
+    int OverlapPairTicks,
+    double OverlapMaxPx,
+    double PlayerOverlapMaxPx,
+    int StuckMax,
+    int OutsideMax,
+    double MaxBotSpeed,
+    int FlungCount,
+    double PlayerSpeedRatioSum,
+    int PlayerSpeedRatioSamples);

@@ -41,16 +41,18 @@ public class SpatialHashGrid
         }
     }
 
-    /// <summary>Collects the indices of bots within `radius` of `position` into `result` (cleared first).</summary>
+    /// <summary>Collects the indices of bots within `radius` of `position` into `result` (cleared first).
+    /// The cell window grows with the radius, so a query wider than a cell still sees every neighbour.</summary>
     public void CollectNeighbours(Vector2 position, float radius, List<int> result)
     {
         result.Clear();
         float radiusSquared = radius * radius;
 
         Vector2I center = CellOf(position);
-        for (int y = center.Y - 1; y <= center.Y + 1; y++)
+        int reach = Mathf.CeilToInt(radius / _cellSize);
+        for (int y = center.Y - reach; y <= center.Y + reach; y++)
         {
-            for (int x = center.X - 1; x <= center.X + 1; x++)
+            for (int x = center.X - reach; x <= center.X + reach; x++)
             {
                 if (!_cells.TryGetValue(KeyOf(x, y), out List<int> cell))
                 {
