@@ -69,6 +69,12 @@ public partial class CharacterBodyBenchBot : CharacterBody2D, IBenchBotBody
         ResetPhysicsInterpolation();
     }
 
+    public void SetContinuousCollision(bool enabled)
+    {
+        // A no-op: MoveAndSlide sweeps the shape along the whole motion, so the body cannot tunnel the
+        // way a discretely integrated one can.
+    }
+
     public override void _Draw()
     {
         DrawCircle(Vector2.Zero, BenchSpecs.BotRadius, BodyColor);

@@ -56,6 +56,12 @@ public partial class CharacterBodyBenchPlayer : CharacterBody2D, IBenchPlayerBod
         ResetPhysicsInterpolation();
     }
 
+    public void SetContinuousCollision(bool enabled)
+    {
+        // A no-op: MoveAndSlide sweeps the shape along the whole motion, so the body cannot tunnel the
+        // way a discretely integrated one can.
+    }
+
     public override void _Process(double delta)
     {
         // The facing line is drawn in local space and the angle changes every frame.
