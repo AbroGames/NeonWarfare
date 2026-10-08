@@ -15,4 +15,10 @@ public interface IBenchBody
     /// itself with ResetPhysicsInterpolation().
     /// </summary>
     void PlaceAt(Vector2 globalPosition);
+
+    /// <summary>
+    /// Continuous collision detection, toggled per run by --bench-ccd. Meaningful only where a body can
+    /// tunnel the way a discretely integrated one can.
+    /// </summary>
+    void SetContinuousCollision(bool enabled);
 }

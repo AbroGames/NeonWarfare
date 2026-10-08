@@ -6,9 +6,12 @@ using Godot;
 namespace NeonWarfare.Prototypes.CrowdPhysics;
 
 /// <summary>
-/// Collects the per-tick and per-frame samples and closes them into one MetricsWindow per wall-clock
-/// second. The automatic benchmark listens for completed windows, so its numbers are always whole
-/// windows and comparable between the variants.
+/// Collects the per-tick and per-frame samples and closes them into one MetricsWindow — every
+/// wall-clock second in realtime mode, every ThroughputWindowTicks physics ticks in throughput mode
+/// (with --fixed-fps 60 that is one second of game time per window, and the window's wall time per
+/// tick is the full cost of a tick: callbacks, the physics server step and the near-zero headless
+/// render in one number). The automatic benchmark listens for completed windows, so its numbers are
+/// always whole windows and comparable between the variants.
 /// </summary>
 public class BenchmarkMetrics
 {
@@ -20,10 +23,14 @@ public class BenchmarkMetrics
     /// <summary>Cosine of 120 degrees: a direction change past it counts as a flip.</summary>
     private const double FlipCosine = -0.5;
 
+    private readonly bool _throughput;
+
     private readonly List<double> _enginePhysicsMs = new(128);
     private readonly List<double> _tickCallbackMs = new(128);
+    private readonly List<double> _frameMs = new(128);
 
     private ulong _windowStartUsec;
+    private ulong _frameLastUsec;
     private int _ticks;
     private int _ticksSinceFrame;
     private int _frames;
@@ -38,11 +45,26 @@ public class BenchmarkMetrics
     private double _collisionPairsSum;
     private double _islandsSum;
     private int _monitorSamples;
+    private double _overlapMeanSum;
+    private int _overlapPairTicks;
+    private double _overlapMaxPx;
+    private double _playerOverlapMaxPx;
+    private int _stuckMax;
+    private int _outsideMax;
+    private double _maxBotSpeed;
+    private int _flung;
+    private double _playerSpeedRatioSum;
+    private int _playerSpeedRatioSamples;
 
     public MetricsWindow? LastWindow { get; private set; }
 
-    /// <summary>Raised once per completed one-second window, on a process frame.</summary>
+    /// <summary>Raised once per completed window, on a process frame.</summary>
     public event Action<MetricsWindow> WindowCompletedEvent;
+
+    public BenchmarkMetrics(bool throughput)
+    {
+        _throughput = throughput;
+    }
 
     public void OnTickStart()
     {
@@ -73,6 +95,64 @@ public class BenchmarkMetrics
         _flipSamples++;
     }
 
+    /// <summary>The bot's actual displacement speed this tick, the source of max_bot_speed and `flung`.</summary>
+    public void AddBotSpeed(float speed)
+    {
+        if (speed > _maxBotSpeed)
+        {
+            _maxBotSpeed = speed;
+        }
+        if (speed > BenchSpecs.FlungSpeedThreshold)
+        {
+            _flung++;
+        }
+    }
+
+    /// <summary>
+    /// One tick's bot-bot penetration: the mean over overlapping pairs of that tick and its max. Ticks
+    /// without overlapping pairs add nothing, so the window mean stays a mean over overlapping pairs.
+    /// </summary>
+    public void AddTickOverlaps(double meanPx, double maxPx)
+    {
+        _overlapMeanSum += meanPx;
+        _overlapPairTicks++;
+        if (maxPx > _overlapMaxPx)
+        {
+            _overlapMaxPx = maxPx;
+        }
+    }
+
+    public void AddPlayerOverlap(float penetrationPx)
+    {
+        if (penetrationPx > _playerOverlapMaxPx)
+        {
+            _playerOverlapMaxPx = penetrationPx;
+        }
+    }
+
+    public void AddStuckSample(int stuckBots)
+    {
+        if (stuckBots > _stuckMax)
+        {
+            _stuckMax = stuckBots;
+        }
+    }
+
+    public void AddOutsideSample(int outsideBots)
+    {
+        if (outsideBots > _outsideMax)
+        {
+            _outsideMax = outsideBots;
+        }
+    }
+
+    /// <summary>Actual player speed over commanded speed, one sample per tick with a nonzero command.</summary>
+    public void AddPlayerSpeedRatio(double ratio)
+    {
+        _playerSpeedRatioSum += ratio;
+        _playerSpeedRatioSamples++;
+    }
+
     public void AddProjectilesAlive(int alive)
     {
         _projectileSum += alive;
@@ -80,9 +160,10 @@ public class BenchmarkMetrics
     }
 
     /// <summary>
-    /// Called once per rendered frame: fps, monitor samples and the catch-up-cap counter. The engine
-    /// monitor reports seconds and holds the running max physics-iteration time of the current
-    /// wall-clock second; store milliseconds so the window statistics are directly readable.
+    /// Called once per rendered frame: fps, monitor samples, the frame-to-frame wall time and the
+    /// catch-up-cap counter. The engine monitor reports seconds and holds the running max
+    /// physics-iteration time of the current wall-clock second; store milliseconds so the window
+    /// statistics are directly readable.
     /// </summary>
     public void OnFrame()
     {
@@ -101,12 +182,21 @@ public class BenchmarkMetrics
         _monitorSamples++;
 
         ulong now = Time.GetTicksUsec();
+        if (_frameLastUsec != 0)
+        {
+            _frameMs.Add((now - _frameLastUsec) / 1000.0);
+        }
+        _frameLastUsec = now;
+
         if (_windowStartUsec == 0)
         {
             _windowStartUsec = now;
             return;
         }
-        if (now - _windowStartUsec >= WindowUsec)
+        bool windowOver = _throughput
+            ? _ticks >= BenchSpecs.ThroughputWindowTicks
+            : now - _windowStartUsec >= WindowUsec;
+        if (windowOver)
         {
             CloseWindow(now);
         }
@@ -116,8 +206,10 @@ public class BenchmarkMetrics
     public void ResetAccumulators()
     {
         _windowStartUsec = Time.GetTicksUsec();
+        _frameLastUsec = 0;
         _enginePhysicsMs.Clear();
         _tickCallbackMs.Clear();
+        _frameMs.Clear();
         _ticks = 0;
         _ticksSinceFrame = 0;
         _frames = 0;
@@ -132,11 +224,21 @@ public class BenchmarkMetrics
         _collisionPairsSum = 0;
         _islandsSum = 0;
         _monitorSamples = 0;
+        _overlapMeanSum = 0;
+        _overlapPairTicks = 0;
+        _overlapMaxPx = 0;
+        _playerOverlapMaxPx = 0;
+        _stuckMax = 0;
+        _outsideMax = 0;
+        _maxBotSpeed = 0;
+        _flung = 0;
+        _playerSpeedRatioSum = 0;
+        _playerSpeedRatioSamples = 0;
     }
 
     private void CloseWindow(ulong now)
     {
-        double seconds = (now - _windowStartUsec) / 1_000_000.0;
+        double seconds = Math.Max((now - _windowStartUsec) / 1_000_000.0, 1e-6);
 
         LastWindow = new MetricsWindow(
             DurationSeconds: seconds,
@@ -154,14 +256,28 @@ public class BenchmarkMetrics
             ProjectilesAvg: _projectileSamples > 0 ? _projectileSum / _projectileSamples : 0,
             ActiveObjectsAvg: _monitorSamples > 0 ? _activeObjectsSum / _monitorSamples : 0,
             CollisionPairsAvg: _monitorSamples > 0 ? _collisionPairsSum / _monitorSamples : 0,
-            IslandsAvg: _monitorSamples > 0 ? _islandsSum / _monitorSamples : 0);
+            IslandsAvg: _monitorSamples > 0 ? _islandsSum / _monitorSamples : 0,
+            FrameMsP50: _frameMs.Percentile(0.50),
+            FrameMsP99: _frameMs.Percentile(0.99),
+            FrameMsMax: _frameMs.DefaultIfEmpty(0).Max(),
+            FrameMsSamples: [.. _frameMs],
+            OverlapMeanSum: _overlapMeanSum,
+            OverlapPairTicks: _overlapPairTicks,
+            OverlapMaxPx: _overlapMaxPx,
+            PlayerOverlapMaxPx: _playerOverlapMaxPx,
+            StuckMax: _stuckMax,
+            OutsideMax: _outsideMax,
+            MaxBotSpeed: _maxBotSpeed,
+            FlungCount: _flung,
+            PlayerSpeedRatioSum: _playerSpeedRatioSum,
+            PlayerSpeedRatioSamples: _playerSpeedRatioSamples);
 
         ResetAccumulators();
         WindowCompletedEvent?.Invoke(LastWindow.Value);
     }
 }
 
-/// <summary>Percentile over a sorted copy, nearest-rank: good enough for one-second sample sets.</summary>
+/// <summary>Percentile over a sorted copy, nearest-rank: good enough for a one-window sample set.</summary>
 public static class MetricsMathExtensions
 {
     public static double AverageOrDefault(this IEnumerable<double> values) =>
@@ -176,7 +292,21 @@ public static class MetricsMathExtensions
 
         List<double> sorted = [.. values];
         sorted.Sort();
-        int index = Math.Max(0, Math.Min(sorted.Count - 1, (int)Math.Ceiling(percentile * sorted.Count) - 1));
-        return sorted[index];
+        return sorted.PercentileSorted(percentile);
     }
+
+    public static double Percentile(this double[] values, double percentile)
+    {
+        if (values.Length == 0)
+        {
+            return 0;
+        }
+
+        List<double> sorted = [.. values];
+        sorted.Sort();
+        return sorted.PercentileSorted(percentile);
+    }
+
+    private static double PercentileSorted(this List<double> sorted, double percentile) =>
+        sorted[Math.Max(0, Math.Min(sorted.Count - 1, (int)Math.Ceiling(percentile * sorted.Count) - 1))];
 }

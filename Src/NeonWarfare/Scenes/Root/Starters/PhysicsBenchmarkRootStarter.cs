@@ -28,7 +28,16 @@ public class PhysicsBenchmarkRootStarter : BaseRootStarter
         PhysicsBenchmarkArgs args = PhysicsBenchmarkArgs.GetFromCmd(CmdArgsService);
 
         PhysicsBenchmarkRoot benchmarkRoot = new();
-        benchmarkRoot.InitBenchArgs(args.BenchCount ?? 100, args.BenchAuto);
+        bool auto = args.BenchAuto || args.BenchSuite is not null;
+        benchmarkRoot.InitBenchArgs(
+            args.BenchCount ?? BenchSpecs.DefaultBotCount,
+            auto,
+            new BenchRunOptions(
+                Suite: args.BenchSuite,
+                OutDirectory: args.BenchOut,
+                Repetition: args.BenchRep ?? 1,
+                Throughput: args.BenchThroughput,
+                Ccd: args.BenchCcd));
         rootData.MainSceneContainer.ChangeStoredNode(benchmarkRoot);
         Services.LoadingScreen.Clear();
     }

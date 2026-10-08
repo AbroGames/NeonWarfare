@@ -23,6 +23,12 @@ public partial class BenchProjectile : Area2D
 
     public Vector2 Velocity => _velocity;
 
+    /// <summary>Killed by the harness on a configuration reset, not by a hit.</summary>
+    public void Destroy()
+    {
+        Die();
+    }
+
     public override void _Ready()
     {
         CollisionLayer = BenchLayers.Projectiles;
