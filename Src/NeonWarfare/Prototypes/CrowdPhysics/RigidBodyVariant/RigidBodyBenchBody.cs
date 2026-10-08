@@ -18,13 +18,6 @@ public abstract partial class RigidBodyBenchBody : RigidBody2D
     /// <summary>Half of the measured response survives one tick: a bump fades instead of ringing.</summary>
     private const float SolverResponseRetention = 0.5f;
 
-    /// <summary>
-    /// Continuous collision detection for knockback speeds. Off: 900 px/s is 15 px per tick against
-    /// 30-40 px walls, and the automatic runs never showed a bot outside the arena; flip this on
-    /// (CastShape) if a faster knockback ever tunnels.
-    /// </summary>
-    private const bool UseContinuousCollision = false;
-
     private Vector2 _desiredVelocity;
     private Vector2 _lastDesiredVelocity;
     private Vector2 _lastIntegrateOrigin;
@@ -41,10 +34,6 @@ public abstract partial class RigidBodyBenchBody : RigidBody2D
         LockRotation = true;
         LinearDamp = 0f;
         CanSleep = false;
-        if (UseContinuousCollision)
-        {
-            ContinuousCd = CcdMode.CastShape;
-        }
 
         AddChild(new CollisionShape2D
         {
@@ -66,6 +55,13 @@ public abstract partial class RigidBodyBenchBody : RigidBody2D
     public void PlaceAt(Vector2 globalPosition)
     {
         _teleportTo = globalPosition;
+    }
+
+    public void SetContinuousCollision(bool enabled)
+    {
+        // Sweep-based CCD: the body's shape is cast along the whole tick motion, so a 900 px/s
+        // knockback cannot step through a wall between two solver steps. Off by default — see README.
+        ContinuousCd = enabled ? CcdMode.CastShape : CcdMode.Disabled;
     }
 
     public override void _Ready()
