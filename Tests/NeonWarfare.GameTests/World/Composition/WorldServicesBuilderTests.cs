@@ -22,7 +22,8 @@ namespace NeonWarfare.GameTests.World.Composition;
 public class WorldServicesBuilderTests
 {
     private const WorldLayer Server =
-        WorldLayer.Simulation | WorldLayer.CommandHandler | WorldLayer.ServerNetwork | WorldLayer.Query;
+        WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
+        | WorldLayer.Query;
 
     private const WorldLayer Client =
         WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
@@ -248,13 +249,13 @@ public class WorldServicesBuilderTests
     [Query]
     private class FixtureQuery;
 
-    [Simulation(Facade = true)]
+    [SimulationFacade]
     private class CyclicFacadeA(CyclicFacadeB other)
     {
         public CyclicFacadeB Other { get; } = other;
     }
 
-    [Simulation(Facade = true)]
+    [SimulationFacade]
     private class CyclicFacadeB(CyclicFacadeA other)
     {
         public CyclicFacadeA Other { get; } = other;

@@ -29,25 +29,22 @@ public static class WorldLayers
     private const string LayerAttributeBase = CompositionNamespace + ".WorldServiceAttribute";
     private const string ReplicatedAttribute = "RepliCAT.ReplicatedAttribute";
     private const string GodotObject = "Godot.GodotObject";
-    private const string FacadeArgument = "Facade";
 
     /// <summary>
     /// Every layer attribute the tests know, by Cecil full name. A new subclass of WorldServiceAttribute
     /// must be added here — until then <see cref="LayerOf"/> throws on any type carrying it.
     /// </summary>
-    public static readonly IReadOnlyDictionary<string, Func<CustomAttribute, Layer>> KnownAttributes =
-        new Dictionary<string, Func<CustomAttribute, Layer>>(StringComparer.Ordinal)
+    public static readonly IReadOnlyDictionary<string, Layer> KnownAttributes =
+        new Dictionary<string, Layer>(StringComparer.Ordinal)
         {
-            [CompositionNamespace + ".SimulationAttribute"] = attribute =>
-                attribute.Properties.Any(named => named.Name == FacadeArgument && named.Argument.Value is true)
-                    ? Layer.SimulationFacade
-                    : Layer.Simulation,
-            [CompositionNamespace + ".CommandHandlerAttribute"] = _ => Layer.CommandHandler,
-            [CompositionNamespace + ".ServerNetworkAttribute"] = _ => Layer.ServerNetwork,
-            [CompositionNamespace + ".DedicatedWindowAttribute"] = _ => Layer.DedicatedWindow,
-            [CompositionNamespace + ".QueryAttribute"] = _ => Layer.Query,
-            [CompositionNamespace + ".ClientNetworkAttribute"] = _ => Layer.ClientNetwork,
-            [CompositionNamespace + ".PresentationAttribute"] = _ => Layer.Presentation,
+            [CompositionNamespace + ".SimulationAttribute"] = Layer.Simulation,
+            [CompositionNamespace + ".SimulationFacadeAttribute"] = Layer.SimulationFacade,
+            [CompositionNamespace + ".CommandHandlerAttribute"] = Layer.CommandHandler,
+            [CompositionNamespace + ".ServerNetworkAttribute"] = Layer.ServerNetwork,
+            [CompositionNamespace + ".DedicatedWindowAttribute"] = Layer.DedicatedWindow,
+            [CompositionNamespace + ".QueryAttribute"] = Layer.Query,
+            [CompositionNamespace + ".ClientNetworkAttribute"] = Layer.ClientNetwork,
+            [CompositionNamespace + ".PresentationAttribute"] = Layer.Presentation,
         };
 
     /// <summary>
@@ -71,9 +68,9 @@ public static class WorldLayers
         foreach (CustomAttribute attribute in type.CustomAttributes)
         {
             string name = attribute.AttributeType.FullName;
-            if (KnownAttributes.TryGetValue(name, out Func<CustomAttribute, Layer>? layer))
+            if (KnownAttributes.TryGetValue(name, out Layer layer))
             {
-                found = layer(attribute);
+                found = layer;
             }
             else if (IsLayerAttribute(attribute.AttributeType))
             {

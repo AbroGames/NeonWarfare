@@ -6,7 +6,7 @@ using NeonWarfare.Scenes.World.Composition;
 
 namespace NeonWarfare.Scenes.World.Simulations.ChatCommands;
 
-[Simulation(Facade = true)]
+[SimulationFacade]
 public class HelpChatCommandSimulationFacade(ChatSimulationFacade chat) : IChatCommand
 {
     private const string PlayerCommandsMessage = "\nPlayer commands:\n{0}";
