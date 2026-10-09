@@ -176,7 +176,25 @@ public class CommandDispatcherTests
         _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand("hi"));
         dispatcher.ProcessAll();
 
-        AssertThat(_calls).ContainsExactly("window: hi");
+        AssertThat(_calls).ContainsExactly("validate window: hi", "process window: hi");
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_FailedDedicatedWindowValidate_DropsOnlyThatCommand()
+    {
+        CommandDispatcher dispatcher = Dispatcher(new WindowChatHandler(_calls));
+
+        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand(ThrowInValidate));
+        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand(Invalid));
+        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand("next"));
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly(
+            $"validate window: {ThrowInValidate}",
+            $"validate window: {Invalid}",
+            "validate window: next",
+            "process window: next");
     }
 
     [TestCase]
@@ -330,7 +348,18 @@ public class CommandDispatcherTests
 
     private class WindowChatHandler(List<string> calls) : IDedicatedWindowCommandHandler<SendChatMessageCommand>
     {
-        public void Process(SendChatMessageCommand command) => calls.Add($"window: {command.Text}");
+        public bool Validate(SendChatMessageCommand command)
+        {
+            calls.Add($"validate window: {command.Text}");
+            return command.Text switch
+            {
+                ThrowInValidate => throw new InvalidOperationException("validate failed"),
+                Invalid => false,
+                _ => true,
+            };
+        }
+
+        public void Process(SendChatMessageCommand command) => calls.Add($"process window: {command.Text}");
     }
 
     private class PlayerJoinHandler : IPlayerCommandHandler<JoinRequestCommand>

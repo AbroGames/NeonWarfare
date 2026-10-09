@@ -17,6 +17,10 @@ public class LayerReferenceTests
     private const string HudMailboxPost = "Post";
     private const string CommandInbox = WorldLayers.WorldNamespace + ".ServerNetwork.CommandInbox";
     private const string EnqueueFromDedicatedWindow = "EnqueueFromDedicatedWindow";
+    private const string ChatSimulationFacade = WorldLayers.WorldNamespace + ".Simulations.ChatSimulationFacade";
+    private const string HandleInputFromDedicatedWindow = "HandleInputFromDedicatedWindow";
+    private const string DedicatedWindowCommandHandler =
+        WorldLayers.WorldNamespace + ".CommandHandlers.IDedicatedWindowCommandHandler`1";
 
     private static readonly string[] ServicesTypes =
         ["NeonWarfare.Scripts.Services", "NeonWarfare.Scripts.Services/Global"];
@@ -169,8 +173,8 @@ public class LayerReferenceTests
     }
 
     /// <summary>
-    /// A command enqueued from the dedicated window skips <c>Validate</c> and is processed as the server's own: any
-    /// other caller — a peer's packet, a node — would get that trust too.
+    /// A command enqueued from the dedicated window is processed as the server's own, with admin rights: any other
+    /// caller — a peer's packet, a node — would get that trust too.
     /// </summary>
     [Fact]
     public void EnqueueFromDedicatedWindow_IsCalledOnlyFromDedicatedWindow()
@@ -203,6 +207,49 @@ public class LayerReferenceTests
 
         report.AssertEmpty();
     }
+
+    /// <summary>
+    /// The facade takes the dedicated window's word for it and gives admin rights: a player handler calling it by
+    /// mistake would hand those rights to a player, past the inbox rule above.
+    /// </summary>
+    [Fact]
+    public void HandleInputFromDedicatedWindow_IsCalledOnlyByDedicatedWindowHandler()
+    {
+        FailureReport report = new("ChatSimulationFacade.HandleInputFromDedicatedWindow called from outside the " +
+                                   "dedicated-window handler");
+        GameAssembly game = GameAssembly.Instance;
+
+        TypeDefinition facade = game.FindByName(ChatSimulationFacade)
+                                ?? throw new InvalidOperationException($"{ChatSimulationFacade} is gone");
+        // Without it a rename would leave the rule nothing to check
+        Assert.Contains(facade.Methods, method => method.Name == HandleInputFromDedicatedWindow);
+
+        foreach (TypeDefinition type in game.Types)
+        {
+            foreach (TypeReferenceSite site in TypeReferences.Of(type))
+            {
+                if (site.Type.FullName == ChatSimulationFacade
+                    && site.Via is MethodReference { Name: HandleInputFromDedicatedWindow }
+                    && !IsDedicatedWindowProcess(site.From))
+                {
+                    report.Add($"{GameAssembly.Describe(site.From)}: only the Process of an " +
+                               "IDedicatedWindowCommandHandler may call it");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    // The method, not the type: one handler may serve both a player and the window, and its player Process must not
+    // pass for the window's
+    private static bool IsDedicatedWindowProcess(IMemberDefinition from) =>
+        from is MethodDefinition { Name: "Process", Parameters.Count: 1 } method
+        && method.DeclaringType.Interfaces
+            .Select(implementation => implementation.InterfaceType)
+            .OfType<GenericInstanceType>()
+            .Any(handler => handler.ElementType.FullName == DedicatedWindowCommandHandler
+                            && handler.GenericArguments[0].FullName == method.Parameters[0].ParameterType.FullName);
 
     private static bool IsCompositionRoot(TypeDefinition type) =>
         GameAssembly.SelfAndEnclosing(type).Any(owner => CompositionRoots.Contains(owner.FullName));

@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.ServerNetwork;
+using NeonWarfare.Scenes.World.Simulations;
+using NeonWarfare.Scenes.World.Simulations.ChatCommands;
 
 namespace NeonWarfare.Scenes.World.Composition;
 
@@ -66,6 +68,14 @@ public class WorldServicesBuilder
                 .Where(type => type.IsSubclassOf(typeof(Event)) && type is { IsNested: false, IsAbstract: false })
                 .ToHashSet();
             provider.GetRequiredService<EventDispatcher>().Register(presentations, eventTypes);
+        }
+
+        if (layers.HasFlag(WorldLayer.Simulation))
+        {
+            IEnumerable<IChatCommand> commands = selected
+                .Select(service => provider.GetRequiredService(service.Type))
+                .OfType<IChatCommand>();
+            provider.GetRequiredService<ChatSimulationFacade>().Register(commands);
         }
 
         if (layers.HasFlag(WorldLayer.ServerNetwork))

@@ -29,6 +29,8 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
     private const string NoDedicatedWindowHandlerLog =
         "{command} from the dedicated window dropped: no dedicated-window handler";
     private const string NotValidLog = "{command} from peer {peerId} dropped: {handler} did not validate it";
+    private const string DedicatedWindowNotValidLog =
+        "{command} from the dedicated window dropped: {handler} did not validate it";
     private const string JoinRejectedLog = "{command} from peer {peerId} rejected by {handler}: {reason}";
     private const string JoinValidateFailedLog = "{handler} failed to validate {command}, the peer is rejected";
     private const string EntryFailedLog = "{entry} failed, the rest of the tick goes on";
@@ -53,6 +55,7 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
         Action<PlayerModel, Command> Process);
     private record DedicatedWindowHandler(
         string Name,
+        Func<Command, bool> Validate,
         Action<Command> Process);
 
     private static readonly MethodInfo WrapPlayerMethod =
@@ -275,6 +278,12 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
             return;
         }
 
+        if (!handler.Validate(command))
+        {
+            _log.Warning(DedicatedWindowNotValidLog, name, handler.Name);
+            return;
+        }
+
         handler.Process(command);
     }
 
@@ -293,5 +302,7 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
 
     private static DedicatedWindowHandler WrapDedicatedWindow<T>(IDedicatedWindowCommandHandler<T> handler)
         where T : Command =>
-        new(handler.GetType().Name, command => handler.Process((T) command));
+        new(handler.GetType().Name,
+            command => handler.Validate((T) command),
+            command => handler.Process((T) command));
 }
