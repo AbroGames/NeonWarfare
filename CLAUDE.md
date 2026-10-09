@@ -50,6 +50,8 @@ Always check that the change still works correctly:
 - after saving and loading the world;
 - when a new player joins mid-game.
 
+Ignore the git index state (`AD`, stray staged files): commits go through Rider, which commits the working tree.
+
 ## Commands
 
 There are only unit tests, which do not launch Godot. Everything that lives inside the node tree is
