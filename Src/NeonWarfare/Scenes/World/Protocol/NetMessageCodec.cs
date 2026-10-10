@@ -18,6 +18,9 @@ namespace NeonWarfare.Scenes.World.Protocol;
 public sealed class NetMessageCodec
 {
     private const int IdSize = sizeof(ushort);
+    private const int CountSize = sizeof(int);
+    // An id and at least one byte of MessagePack body
+    private const int MinMessageSize = IdSize + 1;
 
     private const string IdOverflowError = "{0} has type id {1}, which does not fit the {2}-byte message id.";
     private const string TruncatedIdError = "The message is {0} bytes long, shorter than its {1}-byte type id.";
@@ -25,6 +28,8 @@ public sealed class NetMessageCodec
     private const string NotAllowedError = "{0} is not allowed to come from the network.";
     private const string BrokenBodyError = "The body of {0} cannot be read.";
     private const string NullBodyError = "The body of {0} is nil.";
+    private const string TruncatedCountError = "The section is {0} bytes long, shorter than its {1}-byte count.";
+    private const string BadCountError = "The section claims {0} messages, but only {1} bytes follow the count.";
 
     private readonly TypesMappingService _mapping;
     private readonly MessagePackSerializerOptions _options = MessagePackSerializerOptions.Standard
@@ -53,6 +58,58 @@ public sealed class NetMessageCodec
         BinaryPrimitives.WriteUInt16LittleEndian(output.GetSpan(IdSize), (ushort) id);
         output.Advance(IdSize);
         MessagePackSerializer.Serialize(type, output, message, _options);
+    }
+
+    public byte[] Encode(object message)
+    {
+        var buffer = new ArrayBufferWriter<byte>();
+        Write(buffer, message);
+        return buffer.WrittenSpan.ToArray();
+    }
+
+    /// <summary>
+    /// A section: a little-endian <c>int</c> count followed by that many messages, each already encoded by
+    /// <see cref="Encode"/>.
+    /// </summary>
+    public void WriteSection(IBufferWriter<byte> output, IReadOnlyCollection<ReadOnlyMemory<byte>> encoded)
+    {
+        BinaryPrimitives.WriteInt32LittleEndian(output.GetSpan(CountSize), encoded.Count);
+        output.Advance(CountSize);
+        foreach (ReadOnlyMemory<byte> message in encoded)
+        {
+            output.Write(message.Span);
+        }
+    }
+
+    /// <exception cref="NetMessageFormatException">
+    /// A truncated or impossible count, or any message <see cref="Read"/> rejects.
+    /// </exception>
+    public IReadOnlyList<object> ReadSection(ReadOnlyMemory<byte> data, IReadOnlySet<Type> allowedTypes,
+        out int bytesRead)
+    {
+        if (data.Length < CountSize)
+        {
+            throw new NetMessageFormatException(TruncatedCountError.FormatWith(data.Length, CountSize));
+        }
+
+        int count = BinaryPrimitives.ReadInt32LittleEndian(data.Span);
+        int remaining = data.Length - CountSize;
+        // Checked before the list is sized by the count: the count comes from an untrusted peer
+        if (count < 0 || count > remaining / MinMessageSize)
+        {
+            throw new NetMessageFormatException(BadCountError.FormatWith(count, remaining));
+        }
+
+        var messages = new List<object>(count);
+        int offset = CountSize;
+        for (int i = 0; i < count; i++)
+        {
+            messages.Add(Read(data[offset..], allowedTypes, out int messageBytes));
+            offset += messageBytes;
+        }
+
+        bytesRead = offset;
+        return messages;
     }
 
     /// <summary>

@@ -126,6 +126,51 @@ public class NetMessageCodecTests
         AssertRejected(() => codec.Read(truncated, AllowedCommands(), out _));
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Section_RoundTrips()
+    {
+        var codec = new NetMessageCodec(CreateMapping());
+        object[] messages = [new SendChatMessageCommand("hello"), new PlayerJoinedEvent(1, "uid", "nick")];
+        HashSet<Type> allowed = [typeof(SendChatMessageCommand), typeof(PlayerJoinedEvent)];
+
+        foreach (object[] section in new[] { [], messages })
+        {
+            var buffer = new ArrayBufferWriter<byte>();
+            List<ReadOnlyMemory<byte>> encoded = section
+                .Select(message => new ReadOnlyMemory<byte>(codec.Encode(message)))
+                .ToList();
+            codec.WriteSection(buffer, encoded);
+
+            IReadOnlyList<object> read = codec.ReadSection(buffer.WrittenMemory, allowed, out int bytesRead);
+
+            AssertThat(read).ContainsExactly(section);
+            AssertThat(bytesRead).IsEqual(buffer.WrittenCount);
+        }
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ReadSection_BrokenCount_Throws()
+    {
+        var codec = new NetMessageCodec(CreateMapping());
+        byte[] message = codec.Encode(new SendChatMessageCommand("hello"));
+
+        // Too short for a count; a negative count; more messages than the bytes could ever hold; two messages
+        // claimed, one written
+        byte[][] broken =
+        [
+            [1, 0, 0],
+            [..BitConverter.GetBytes(-1), ..message],
+            [..BitConverter.GetBytes(int.MaxValue), ..message],
+            [..BitConverter.GetBytes(2), ..message],
+        ];
+        foreach (byte[] data in broken)
+        {
+            AssertRejected(() => codec.ReadSection(data, AllowedCommands(), out _));
+        }
+    }
+
     // The game fills the mapping the same way, in BaseRootStarter
     internal static TypesMappingService CreateMapping()
     {
