@@ -20,10 +20,11 @@ public class ConstructorLayerTests
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
         new Dictionary<Layer, Layer[]>
         {
-            [Layer.Simulation] = [Layer.Query],
-            [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query],
+            [Layer.Simulation] = [Layer.Query, Layer.ServerNetwork],
+            [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query, Layer.ServerNetwork],
             [Layer.CommandHandler] = [Layer.SimulationFacade, Layer.Query],
             [Layer.Query] = [Layer.Query],
+            [Layer.ServerNetwork] = [Layer.ServerNetwork],
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
         };
 

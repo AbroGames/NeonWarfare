@@ -20,6 +20,11 @@ public class CommandHandlerAttribute : WorldServiceAttribute
     public override bool AnnotatedClassBelongsTo(WorldServiceGroups groups) => groups.Simulation;
 }
 
+public class ServerNetworkAttribute : WorldServiceAttribute
+{
+    public override bool AnnotatedClassBelongsTo(WorldServiceGroups groups) => groups.Simulation;
+}
+
 // Pure reads over models: the client has models too, so its Presentation takes queries as well
 public class QueryAttribute : WorldServiceAttribute
 {

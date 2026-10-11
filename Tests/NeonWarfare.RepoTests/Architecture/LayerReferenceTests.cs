@@ -17,10 +17,15 @@ public class LayerReferenceTests
         ["NeonWarfare.Scripts.Services", "NeonWarfare.Scripts.Services/Global"];
 
     /// <summary>
-    /// The composition root takes the global services and hands them to the world services through their
-    /// constructors — the one place in the World namespace that may.
+    /// The composition root — <c>World</c> and the builder of its container — takes the global services, hands
+    /// them to the world services through their constructors and wires up the layers of the configuration
+    /// (the console of the outbox): the one place in the World namespace that may.
     /// </summary>
-    private static readonly string[] CompositionRoots = [WorldLayers.WorldNamespace + ".World"];
+    private static readonly string[] CompositionRoots =
+    [
+        WorldLayers.WorldNamespace + ".World",
+        WorldLayers.WorldNamespace + ".Composition.WorldServicesBuilder",
+    ];
 
     /// <summary>
     /// <c>Di.Process(this)</c> stays static: it holds no game state, and every node of the World calls it.
@@ -35,7 +40,7 @@ public class LayerReferenceTests
 
         foreach (TypeDefinition type in game.Types.Where(WorldLayers.InWorldNamespace))
         {
-            if (GameAssembly.SelfAndEnclosing(type).Any(owner => CompositionRoots.Contains(owner.FullName)))
+            if (IsCompositionRoot(type))
             {
                 continue;
             }
@@ -81,19 +86,20 @@ public class LayerReferenceTests
             "Services has no such member");
 
     /// <summary>
-    /// "Presentation and Input never reference Simulation", as a whitelist: a type of the Simulation layers
-    /// is referred to only from the Simulation group. Whatever is outside it — Presentation, nodes, HUD,
-    /// the network layer — runs where the Simulation may not exist at all, on a client.
+    /// "Presentation and Input never reference Simulation", as a whitelist: a type of the Simulation group —
+    /// the server network layer included — is referred to only from the group itself. Whatever is outside
+    /// it — Presentation, nodes, HUD, the transport — runs where the Simulation may not exist at all, on a client.
     /// </summary>
     [Fact]
-    public void Simulation_IsReferencedOnlyBySimulationGroup()
+    public void SimulationGroup_IsReferencedOnlyByItself()
     {
-        FailureReport report = new("References to the Simulation from outside the Simulation group");
+        FailureReport report = new("References to the Simulation group from outside it");
         GameAssembly game = GameAssembly.Instance;
 
         foreach (TypeDefinition type in game.Types)
         {
-            if (WorldLayers.LayerOf(type) is { } own && WorldLayers.SimulationGroup.Contains(own))
+            if (WorldLayers.LayerOf(type) is { } own && WorldLayers.SimulationGroup.Contains(own)
+                || IsCompositionRoot(type))
             {
                 continue;
             }
@@ -104,7 +110,7 @@ public class LayerReferenceTests
                 TypeDefinition? referenced = game.Find(site.Type);
                 if (referenced == null
                     || WorldLayers.LayerOf(referenced) is not { } layer
-                    || !WorldLayers.SimulationLayers.Contains(layer))
+                    || !WorldLayers.SimulationGroup.Contains(layer))
                 {
                     continue;
                 }
@@ -120,6 +126,9 @@ public class LayerReferenceTests
 
         report.AssertEmpty();
     }
+
+    private static bool IsCompositionRoot(TypeDefinition type) =>
+        GameAssembly.SelfAndEnclosing(type).Any(owner => CompositionRoots.Contains(owner.FullName));
 
     private static string MemberName(MemberReference member) =>
         member is MethodReference { Name: var name } && (name.StartsWith("get_") || name.StartsWith("set_"))
