@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
+using NeonWarfare.Scenes.World.ServerNetwork;
 
 namespace NeonWarfare.Scenes.World.Composition;
 
@@ -30,6 +31,7 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Time);
         services.AddSingleton(dependencies.Persistence);
         services.AddSingleton(dependencies.Session);
+        services.AddSingleton(dependencies.Codec);
 
         List<Type> selected = ScanWorldServices()
             .Where(service => service.Attribute.AnnotatedClassBelongsTo(groups))
@@ -51,6 +53,12 @@ public class WorldServicesBuilder
         foreach (Type type in selected)
         {
             provider.GetRequiredService(type);
+        }
+
+        // The console input exists only with ServerHud, so only then is there a console to send events to
+        if (groups.HasServerHud)
+        {
+            provider.GetRequiredService<EventOutbox>().AddConsole();
         }
         return provider;
     }

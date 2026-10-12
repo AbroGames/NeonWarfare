@@ -1,10 +1,13 @@
 using GdUnit4;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
+using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Presentations;
+using NeonWarfare.Scenes.World.Protocol;
+using NeonWarfare.Scenes.World.ServerNetwork;
 using NeonWarfare.Scenes.World.Simulations;
 using static GdUnit4.Assertions;
 using GameWorld = NeonWarfare.Scenes.World.World;
@@ -31,7 +34,40 @@ public class WorldServicesBuilderTests
         using ServiceProvider provider = Build(Client);
 
         AssertThat(provider.GetService<ChatSimulation>()).IsNull();
+        AssertThat(provider.GetService<EventOutbox>()).IsNull();
+        AssertThat(provider.GetService<PeerUidMap>()).IsNull();
         AssertThat(provider.GetService<ChatPresentation>()).IsNotNull();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_ServerConfigurations_HaveOutboxAndPeerMap()
+    {
+        foreach (WorldServiceGroups groups in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
+        {
+            using ServiceProvider provider = Build(groups);
+
+            AssertThat(provider.GetService<EventOutbox>()).IsNotNull();
+            AssertThat(provider.GetService<PeerUidMap>()).IsNotNull();
+        }
+    }
+
+    // The host's own client is a peer like any other; the headless server has nobody to show events to
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_OnlyDedicatedWithServerHud_HasConsole()
+    {
+        foreach ((WorldServiceGroups groups, bool hasConsole) in new[]
+                 {
+                     (Host, false),
+                     (DedicatedWithServerHud, true),
+                     (HeadlessDedicated, false),
+                 })
+        {
+            using ServiceProvider provider = Build(groups);
+
+            AssertThat(provider.GetRequiredService<EventOutbox>().HasConsole).IsEqual(hasConsole);
+        }
     }
 
     // The two give the same chat services: ChatPresentation is RequiredByServerHud
@@ -64,8 +100,7 @@ public class WorldServicesBuilderTests
     {
         UnrequestedPresentation.Created = 0;
 
-        using ServiceProvider provider = new WorldServicesBuilder([typeof(UnrequestedPresentation)])
-            .Build(Host, Dependencies());
+        using ServiceProvider provider = FixtureBuilder(typeof(UnrequestedPresentation)).Build(Host, Dependencies());
 
         AssertThat(UnrequestedPresentation.Created).IsEqual(1);
     }
@@ -76,8 +111,7 @@ public class WorldServicesBuilderTests
     {
         foreach (WorldServiceGroups groups in new[] { Client, Host, DedicatedWithServerHud, HeadlessDedicated })
         {
-            using ServiceProvider provider = new WorldServicesBuilder([typeof(FixtureQuery)])
-                .Build(groups, Dependencies());
+            using ServiceProvider provider = FixtureBuilder(typeof(FixtureQuery)).Build(groups, Dependencies());
 
             // A bool: AssertThat dispatches dynamically and cannot bind a private fixture type
             AssertThat(provider.GetService<FixtureQuery>() != null).IsTrue();
@@ -92,7 +126,7 @@ public class WorldServicesBuilderTests
         string message = "";
         try
         {
-            new WorldServicesBuilder([typeof(CyclicFacadeA), typeof(CyclicFacadeB)])
+            FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB))
                 .Build(Host, Dependencies())
                 .Dispose();
         }
@@ -110,7 +144,7 @@ public class WorldServicesBuilderTests
     {
         GameWorld world = AutoFree(new GameWorld())!;
 
-        AssertThat(world.InitPreReady(Host, new PersistenceModel(), new SessionModel())).IsSame(world);
+        AssertThat(world.InitPreReady(Host, Dependencies())).IsSame(world);
     }
 
     [TestCase]
@@ -120,15 +154,21 @@ public class WorldServicesBuilderTests
         GameWorld world = AutoFree(new GameWorld())!;
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
-        AssertThrown(() => world.InitPreReady(Host, new PersistenceModel(), new SessionModel()))
+        AssertThrown(() => world.InitPreReady(Host, Dependencies()))
             .IsInstanceOf<InvalidOperationException>();
     }
 
     private static ServiceProvider Build(WorldServiceGroups groups) =>
         new WorldServicesBuilder().Build(groups, Dependencies());
 
+    // The root gives the outbox of a ServerHud world its console, so the outbox comes with any fixture
+    private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
+        new([..fixtures, typeof(EventOutbox), typeof(PeerUidMap)]);
+
     private static WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel());
+        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec());
+
+    private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping());
 
     [Query]
     private class FixtureQuery;

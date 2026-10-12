@@ -9,5 +9,5 @@ namespace NeonWarfare.Scenes.World.Queries;
 public class PlayerQuery(PersistenceModel persistence, SessionModel session)
 {
     public IEnumerable<PlayerModel> OnlinePlayers() =>
-        session.PlayerUidByPeerId.Values.Select(uid => persistence.PlayerByUid[uid]);
+        session.OnlinePlayerUids.Select(uid => persistence.PlayerByUid[uid]);
 }
