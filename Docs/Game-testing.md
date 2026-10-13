@@ -78,9 +78,11 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `GodotBox/NodeContainerTests` | Storing, replacing and clearing the child; the replaced one is queued for deletion; `_Ready` adopts one child, throws on two |
 | `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady` |
 | `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
-| `World/Composition/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server with and without `ServerHud`; each gets its own services, created eagerly; queries in every one; a facade cycle is rejected |
-| `World/Protocol/NetMessageCodecTests` | Every command and event is mapped to a `ushort` id and round-trips; a not allowed, unknown or broken message is rejected |
+| `World/Composition/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server with and without `ServerHud`; each gets its own services, created eagerly; queries in every one; the outbox only on a server, its console only with `ServerHud`; a facade cycle is rejected |
+| `World/Protocol/NetMessageCodecTests` | Every command and event is mapped to a `ushort` id and round-trips; a not allowed, unknown or broken message is rejected; a section round-trips, a broken count is rejected |
 | `World/Protocol/ProtocolHasherTests` | The protocol hash is stable for one type list and changes with one more type |
+| `World/ServerNetwork/EventOutboxTests` | Routing to all, to one player, to the console; the console never gets personal events, is absent headless; one peer keeps the order of publication |
+| `World/ServerNetwork/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |
 
 ## CI
 
