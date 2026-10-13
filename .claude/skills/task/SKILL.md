@@ -135,6 +135,10 @@ Review the work done for the task — the diff, plus the code around it — agai
   list or the entry points changed) — a missing doc update is a finding;
 - those doc edits are as short as they can be — bloat is a finding too.
 
+`plan.md` is not binding on the reviewer. A plan is written before the code exists, and a
+decision that looked right then can prove wrong once implemented — question it, and
+report a flawed plan decision as a finding even if the code follows the plan faithfully.
+
 Write `review.md`:
 
 ```markdown
