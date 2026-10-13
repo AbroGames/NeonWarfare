@@ -1,4 +1,4 @@
-using System;
+using NeonWarfare.Scenes.World.Models;
 
 namespace NeonWarfare.Scenes.World.Simulations.ChatCommands;
 
@@ -11,6 +11,5 @@ public interface IChatCommand
     string Description { get; }
     bool RequiresAdmin { get; }
 
-    // reply goes back to whoever ran the command: the player alone, or the dedicated window alone
-    void Execute(bool isAdmin, Action<string> reply, string arguments);
+    void Execute(PlayerModel sender, string arguments);
 }

@@ -7,29 +7,27 @@ using NeonWarfare.Scenes.World.Simulations;
 
 namespace NeonWarfare.Scenes.World.CommandHandlers;
 
-// One handler for both senders: the dedicated window's text is typed by a human and reaches every player too, so it
-// follows the same rule
 [CommandHandler]
 public class SendChatMessageHandler(ChatSimulationFacade chatSimulationFacade)
-    : IPlayerCommandHandler<SendChatMessageCommand>, IDedicatedWindowCommandHandler<SendChatMessageCommand>
+    : IPlayerCommandHandler<SendChatMessageCommand>
 {
     private const int MessageMaxLength = 1024;
 
-    public bool Validate(PlayerModel sender, SendChatMessageCommand command) => 
-        IsValid(command.Text);
+    public bool Validate(PlayerModel sender, SendChatMessageCommand command)
+    {
+        string text = command.Text;
+        if (string.IsNullOrWhiteSpace(text) || text.Length > MessageMaxLength)
+        {
+            return false;
+        }
+
+        return !text.Any(IsForbiddenChar);
+    }
 
     public void Process(PlayerModel sender, SendChatMessageCommand command) =>
-        chatSimulationFacade.HandleInputFromPlayer(sender, command.Text);
+        chatSimulationFacade.HandleInput(sender, command.Text);
 
-    public bool Validate(SendChatMessageCommand command) => 
-        IsValid(command.Text);
-
-    public void Process(SendChatMessageCommand command) =>
-        chatSimulationFacade.HandleInputFromDedicatedWindow(command.Text);
-
-    private static bool IsValid(string text) =>
-        !string.IsNullOrWhiteSpace(text)
-        && text.Length <= MessageMaxLength
-        && text.All(c => char.GetUnicodeCategory(c) is not (UnicodeCategory.Control or UnicodeCategory.Format
-            or UnicodeCategory.LineSeparator or UnicodeCategory.ParagraphSeparator));
+    private static bool IsForbiddenChar(char c) =>
+        char.GetUnicodeCategory(c) is UnicodeCategory.Control or UnicodeCategory.Format
+            or UnicodeCategory.LineSeparator or UnicodeCategory.ParagraphSeparator;
 }

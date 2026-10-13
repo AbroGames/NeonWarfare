@@ -6,7 +6,7 @@ using NeonWarfare.Scenes.World.Notices;
 
 namespace NeonWarfare.Scenes.World.Presentations;
 
-[Presentation(RequiredByServerHud = true)]
+[Presentation]
 public class ChatPresentation(HudMailbox hudMailbox)
 {
     private const int MaxNumberOfMessages = 100;

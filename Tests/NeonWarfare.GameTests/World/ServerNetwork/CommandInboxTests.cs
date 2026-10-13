@@ -13,6 +13,7 @@ namespace NeonWarfare.GameTests.World.ServerNetwork;
 public class CommandInboxTests
 {
     private const int AlicePeer = 2;
+    private const int BobPeer = 3;
 
     // JoinRequestCommand is left out on purpose: a command type without a handler must be rejected too
     private static readonly HashSet<Type> NetworkCommandTypes = [typeof(SendChatMessageCommand)];
@@ -36,7 +37,7 @@ public class CommandInboxTests
 
         _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(command));
 
-        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.FromPeer(AlicePeer, command));
+        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, command));
     }
 
     [TestCase]
@@ -59,23 +60,22 @@ public class CommandInboxTests
         }
         _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(next));
 
-        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.FromPeer(AlicePeer, next));
+        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, next));
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void TakeAll_ReturnsEveryKindInArrivalOrder()
     {
-        var fromPeer = new SendChatMessageCommand("peer");
-        var fromWindow = new SendChatMessageCommand("window");
+        var command = new SendChatMessageCommand("peer");
 
-        _inbox.EnqueueFromDedicatedWindow(fromWindow);
-        _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(fromPeer));
+        _inbox.EnqueuePeerDisconnected(BobPeer);
+        _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(command));
         _inbox.EnqueuePeerDisconnected(AlicePeer);
 
         AssertThat(_inbox.TakeAll()).ContainsExactly(
-            new CommandInbox.FromDedicatedWindow(fromWindow),
-            new CommandInbox.FromPeer(AlicePeer, fromPeer),
+            new CommandInbox.PeerDisconnected(BobPeer),
+            new CommandInbox.PeerCommand(AlicePeer, command),
             new CommandInbox.PeerDisconnected(AlicePeer));
     }
 
@@ -86,10 +86,10 @@ public class CommandInboxTests
         _inbox.EnqueuePeerDisconnected(AlicePeer);
         IReadOnlyList<CommandInbox.Entry> taken = _inbox.TakeAll();
 
-        _inbox.EnqueuePeerDisconnected(3);
+        _inbox.EnqueuePeerDisconnected(BobPeer);
 
         AssertThat(taken).ContainsExactly(new CommandInbox.PeerDisconnected(AlicePeer));
-        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerDisconnected(3));
+        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerDisconnected(BobPeer));
         AssertThat(_inbox.TakeAll()).IsEmpty();
     }
 

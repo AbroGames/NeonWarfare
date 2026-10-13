@@ -3,50 +3,21 @@ using System;
 namespace NeonWarfare.Scenes.World.Composition;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public abstract class WorldServiceAttribute : Attribute
+public abstract class WorldServiceAttribute(WorldLayer layer) : Attribute
 {
-    public abstract WorldLayer Layer { get; }
+    public WorldLayer Layer => layer;
 }
 
-public class SimulationAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.Simulation;
-}
+public class SimulationAttribute() : WorldServiceAttribute(WorldLayer.Simulation);
 
-public class SimulationFacadeAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.SimulationFacade;
-}
+public class SimulationFacadeAttribute() : WorldServiceAttribute(WorldLayer.SimulationFacade);
 
-public class CommandHandlerAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.CommandHandler;
-}
+public class CommandHandlerAttribute() : WorldServiceAttribute(WorldLayer.CommandHandler);
 
-public class ServerNetworkAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.ServerNetwork;
-}
+public class ServerNetworkAttribute() : WorldServiceAttribute(WorldLayer.ServerNetwork);
 
-public class DedicatedWindowAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.DedicatedWindow;
-}
+public class QueryAttribute() : WorldServiceAttribute(WorldLayer.Query);
 
-public class QueryAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.Query;
-}
+public class ClientNetworkAttribute() : WorldServiceAttribute(WorldLayer.ClientNetwork);
 
-public class ClientNetworkAttribute : WorldServiceAttribute
-{
-    public override WorldLayer Layer => WorldLayer.ClientNetwork;
-}
-
-public class PresentationAttribute : WorldServiceAttribute
-{
-    public bool RequiredByServerHud { get; init; }
-
-    public override WorldLayer Layer =>
-        RequiredByServerHud ? WorldLayer.ServerHudPresentation : WorldLayer.Presentation;
-}
+public class PresentationAttribute() : WorldServiceAttribute(WorldLayer.Presentation);

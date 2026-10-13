@@ -10,19 +10,13 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.World.Simulations;
 
-/// <summary>
-/// A line typed into the chat: a chat command runs with the rights and the reply address of its sender, any other
-/// text is a chat message. Messages and replies are built and logged by <see cref="ChatSimulation"/>, which other
-/// facades call directly for their own server messages.
-/// </summary>
 [SimulationFacade]
 public class ChatSimulationFacade(ChatSimulation chatSimulation)
 {
-    private const string RanLog = "{sender} ran /{text}";
-    private const string PlayerSender = "{0} ({1})";
-    private const string DedicatedWindowSender = "the dedicated window";
+    private const string RanLog = "{nick} ({uid}) ran /{text}";
     private const string NotFoundReply = "Command '{0}' not found. Use '/help' to see the list of commands.";
     private const string RequiresAdminReply = "Command '{0}' requires admin status.";
+
     private const string RegisteredError = "The chat commands are already registered.";
     private const string NotRegisteredError = "The chat commands are not registered yet.";
     private const string BadNameError =
@@ -62,46 +56,25 @@ public class ChatSimulationFacade(ChatSimulation chatSimulation)
         _commandByName = commandByName;
     }
 
-    public void HandleInputFromPlayer(PlayerModel sender, string text)
+    public void HandleInput(PlayerModel sender, string text)
     {
-        if (IsChatCommand(text))
+        if (text.StartsWith('/'))
         {
-            ExecuteChatCommand(
-                PlayerSender.FormatWith(sender.Nick, sender.Uid),
-                sender.IsAdmin,
-                reply => chatSimulation.SendMessageAsServerToPlayer(reply, sender),
-                GetChatCommand(text));
+            ExecuteChatCommand(sender, text[1..]);
             return;
         }
         chatSimulation.SendMessageAsPlayerToAll(sender, text);
     }
 
-    public void HandleInputFromDedicatedWindow(string text)
-    {
-        if (IsChatCommand(text))
-        {
-            ExecuteChatCommand(
-                DedicatedWindowSender,
-                true,
-                chatSimulation.SendMessageAsServerToDedicatedWindow,
-                GetChatCommand(text));
-            return;
-        }
-        chatSimulation.SendMessageAsServerToAll(text);
-    }
-
-    private bool IsChatCommand(string text) => text.StartsWith('/');
-    private string GetChatCommand(string text) => text[1..];
-
-    private void ExecuteChatCommand(string sender, bool isAdmin, Action<string> reply, string text)
+    private void ExecuteChatCommand(PlayerModel sender, string text)
     {
         if (_commandByName == null)
         {
             throw new InvalidOperationException(NotRegisteredError);
         }
 
-        // A command is not a chat message, so ChatSimulation never logs it
-        _log.Information(RanLog, sender, text);
+        // A command is not a chat message, so ChatSimulation never logs it, we have to log it here
+        _log.Information(RanLog, sender.Nick, sender.Uid, text);
 
         int nameEnd = 0;
         while (nameEnd < text.Length && !char.IsWhiteSpace(text[nameEnd]))
@@ -113,15 +86,15 @@ public class ChatSimulationFacade(ChatSimulation chatSimulation)
 
         if (!_commandByName.TryGetValue(name, out IChatCommand command))
         {
-            reply(NotFoundReply.FormatWith(name));
+            chatSimulation.SendMessageAsServerToPlayer(NotFoundReply.FormatWith(name), sender);
             return;
         }
-        if (command.RequiresAdmin && !isAdmin)
+        if (command.RequiresAdmin && !sender.IsAdmin)
         {
-            reply(RequiresAdminReply.FormatWith(name));
+            chatSimulation.SendMessageAsServerToPlayer(RequiresAdminReply.FormatWith(name), sender);
             return;
         }
 
-        command.Execute(isAdmin, reply, arguments);
+        command.Execute(sender, arguments);
     }
 }

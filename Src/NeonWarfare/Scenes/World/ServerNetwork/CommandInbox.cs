@@ -22,11 +22,10 @@ public class CommandInbox(NetMessageCodec codec)
     private const string RegisteredError = "The network command types are already registered.";
     private const string NotRegisteredError = "The network command types are not registered yet.";
 
-    public abstract record Entry;
-    public record FromPeer(int PeerId, Command Command) : Entry;
-    public record FromDedicatedWindow(Command Command) : Entry;
+    public abstract record Entry(int PeerId);
+    public record PeerCommand(int PeerId, Command Command) : Entry(PeerId);
     // Not a Command, so it never enters the network whitelist: a peer cannot send its own disconnection
-    public record PeerDisconnected(int PeerId) : Entry;
+    public record PeerDisconnected(int PeerId) : Entry(PeerId);
 
     private readonly ILogger _log = LogFactory.GetForStatic<CommandInbox>();
 
@@ -69,10 +68,8 @@ public class CommandInbox(NetMessageCodec codec)
             return;
         }
 
-        _entries.Add(new FromPeer(peerId, command));
+        _entries.Add(new PeerCommand(peerId, command));
     }
-
-    public void EnqueueFromDedicatedWindow(Command command) => _entries.Add(new FromDedicatedWindow(command));
 
     public void EnqueuePeerDisconnected(int peerId) => _entries.Add(new PeerDisconnected(peerId));
 

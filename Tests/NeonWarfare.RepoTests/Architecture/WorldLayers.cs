@@ -10,7 +10,6 @@ public enum Layer
     SimulationFacade,
     CommandHandler,
     ServerNetwork,
-    DedicatedWindow,
     Query,
     ClientNetwork,
     Presentation,
@@ -41,20 +40,15 @@ public static class WorldLayers
             [CompositionNamespace + ".SimulationFacadeAttribute"] = Layer.SimulationFacade,
             [CompositionNamespace + ".CommandHandlerAttribute"] = Layer.CommandHandler,
             [CompositionNamespace + ".ServerNetworkAttribute"] = Layer.ServerNetwork,
-            [CompositionNamespace + ".DedicatedWindowAttribute"] = Layer.DedicatedWindow,
             [CompositionNamespace + ".QueryAttribute"] = Layer.Query,
             [CompositionNamespace + ".ClientNetworkAttribute"] = Layer.ClientNetwork,
             [CompositionNamespace + ".PresentationAttribute"] = Layer.Presentation,
         };
 
-    /// <summary>
-    /// The layers whose code runs only where the Simulation does and may reach it. The dedicated window is here
-    /// because it exists only on a dedicated server, which always has the Simulation.
-    /// </summary>
+    /// <summary>The layers whose code runs only where the Simulation does and may reach it.</summary>
     public static readonly IReadOnlySet<Layer> SimulationGroup = new HashSet<Layer>
     {
-        Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.ServerNetwork,
-        Layer.DedicatedWindow
+        Layer.Simulation, Layer.SimulationFacade, Layer.CommandHandler, Layer.ServerNetwork
     };
 
     /// <summary>The layers allowed to write replicated state, besides the models themselves.</summary>
