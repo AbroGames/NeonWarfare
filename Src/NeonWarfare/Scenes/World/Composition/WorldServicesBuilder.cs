@@ -25,7 +25,7 @@ public class WorldServicesBuilder
         _candidates = candidates;
     }
 
-    public ServiceProvider Build(WorldServiceGroups groups, WorldDependencies dependencies)
+    public ServiceProvider Build(WorldLayer layers, WorldDependencies dependencies)
     {
         var services = new ServiceCollection();
         services.AddSingleton(dependencies.Time);
@@ -34,7 +34,7 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Codec);
 
         List<Type> selected = ScanWorldServices()
-            .Where(service => service.Attribute.AnnotatedClassBelongsTo(groups))
+            .Where(service => layers.HasFlag(service.Attribute.Layer))
             .Select(service => service.Type)
             .ToList();
         foreach (Type type in selected)
@@ -55,8 +55,7 @@ public class WorldServicesBuilder
             provider.GetRequiredService(type);
         }
 
-        // The console input exists only with ServerHud, so only then is there a console to send events to
-        if (groups.HasServerHud)
+        if (layers.HasFlag(WorldLayer.Console))
         {
             provider.GetRequiredService<EventOutbox>().AddConsole();
         }

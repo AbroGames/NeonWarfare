@@ -18,11 +18,15 @@ namespace NeonWarfare.GameTests.World.Composition;
 [TestSuite]
 public class WorldServicesBuilderTests
 {
-    private static readonly WorldServiceGroups Client = new(false, PresentationScope.Full);
-    private static readonly WorldServiceGroups Host = new(true, PresentationScope.Full);
-    private static readonly WorldServiceGroups DedicatedWithServerHud =
-        new(true, PresentationScope.RequiredByServerHud);
-    private static readonly WorldServiceGroups HeadlessDedicated = new(true, PresentationScope.None);
+    private const WorldLayer Server =
+        WorldLayer.Simulation | WorldLayer.CommandHandler | WorldLayer.ServerNetwork | WorldLayer.Query;
+
+    private const WorldLayer Client =
+        WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ServerHudPresentation;
+    private const WorldLayer Host = Server | WorldLayer.Presentation | WorldLayer.ServerHudPresentation;
+    private const WorldLayer DedicatedWithServerHud =
+        Server | WorldLayer.ServerHudPresentation | WorldLayer.Console;
+    private const WorldLayer HeadlessDedicated = Server;
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
     // a present handler means all three are there, an absent ChatSimulation means none is
@@ -43,9 +47,9 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_ServerConfigurations_HaveOutboxAndPeerMap()
     {
-        foreach (WorldServiceGroups groups in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
+        foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
         {
-            using ServiceProvider provider = Build(groups);
+            using ServiceProvider provider = Build(layers);
 
             AssertThat(provider.GetService<EventOutbox>()).IsNotNull();
             AssertThat(provider.GetService<PeerUidMap>()).IsNotNull();
@@ -57,14 +61,14 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_OnlyDedicatedWithServerHud_HasConsole()
     {
-        foreach ((WorldServiceGroups groups, bool hasConsole) in new[]
+        foreach ((WorldLayer layers, bool hasConsole) in new[]
                  {
                      (Host, false),
                      (DedicatedWithServerHud, true),
                      (HeadlessDedicated, false),
                  })
         {
-            using ServiceProvider provider = Build(groups);
+            using ServiceProvider provider = Build(layers);
 
             AssertThat(provider.GetRequiredService<EventOutbox>().HasConsole).IsEqual(hasConsole);
         }
@@ -75,9 +79,9 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_HostAndDedicatedWithServerHud_HaveSimulationAndPresentation()
     {
-        foreach (WorldServiceGroups groups in new[] { Host, DedicatedWithServerHud })
+        foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud })
         {
-            using ServiceProvider provider = Build(groups);
+            using ServiceProvider provider = Build(layers);
 
             AssertThat(provider.GetService<SendChatMessageHandler>()).IsNotNull();
             AssertThat(provider.GetService<ChatPresentation>()).IsNotNull();
@@ -109,9 +113,9 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_HasQueries()
     {
-        foreach (WorldServiceGroups groups in new[] { Client, Host, DedicatedWithServerHud, HeadlessDedicated })
+        foreach (WorldLayer layers in new[] { Client, Host, DedicatedWithServerHud, HeadlessDedicated })
         {
-            using ServiceProvider provider = FixtureBuilder(typeof(FixtureQuery)).Build(groups, Dependencies());
+            using ServiceProvider provider = FixtureBuilder(typeof(FixtureQuery)).Build(layers, Dependencies());
 
             // A bool: AssertThat dispatches dynamically and cannot bind a private fixture type
             AssertThat(provider.GetService<FixtureQuery>() != null).IsTrue();
@@ -158,8 +162,8 @@ public class WorldServicesBuilderTests
             .IsInstanceOf<InvalidOperationException>();
     }
 
-    private static ServiceProvider Build(WorldServiceGroups groups) =>
-        new WorldServicesBuilder().Build(groups, Dependencies());
+    private static ServiceProvider Build(WorldLayer layers) =>
+        new WorldServicesBuilder().Build(layers, Dependencies());
 
     // The root gives the outbox of a ServerHud world its console, so the outbox comes with any fixture
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
