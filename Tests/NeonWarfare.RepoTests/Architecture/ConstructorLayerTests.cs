@@ -23,10 +23,11 @@ public class ConstructorLayerTests
             [Layer.Simulation] = [Layer.Query, Layer.ServerNetwork],
             [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query, Layer.ServerNetwork],
             [Layer.CommandHandler] = [Layer.SimulationFacade, Layer.Query],
-            [Layer.Query] = [Layer.Query],
             [Layer.ServerNetwork] = [Layer.ServerNetwork],
-            [Layer.Presentation] = [Layer.Presentation, Layer.Query],
             [Layer.Console] = [Layer.ServerNetwork],
+            [Layer.Query] = [Layer.Query],
+            [Layer.ClientNetwork] = [Layer.ClientNetwork],
+            [Layer.Presentation] = [Layer.Presentation, Layer.Query],
         };
 
     [Fact]
