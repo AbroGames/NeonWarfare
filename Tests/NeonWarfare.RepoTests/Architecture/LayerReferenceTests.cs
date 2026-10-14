@@ -19,7 +19,7 @@ public class LayerReferenceTests
     /// <summary>
     /// The composition root — <c>World</c> and the builder of its container — takes the global services, hands
     /// them to the world services through their constructors and wires up the layers of the configuration
-    /// (the console of the outbox): the one place in the World namespace that may.
+    /// (the console of the outbox, the event handlers): the one place in the World namespace that may.
     /// </summary>
     private static readonly string[] CompositionRoots =
     [
