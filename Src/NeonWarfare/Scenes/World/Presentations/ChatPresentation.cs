@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Events;
+using NeonWarfare.Scenes.World.Notices;
 
 namespace NeonWarfare.Scenes.World.Presentations;
 
 [Presentation(RequiredByServerHud = true)]
-public class ChatPresentation
+public class ChatPresentation(HudMailbox hudMailbox)
 {
     private const int MaxNumberOfMessages = 100;
 
@@ -43,6 +44,6 @@ public class ChatPresentation
     {
         if (_entries.Count >= MaxNumberOfMessages) _entries.Dequeue();
         _entries.Enqueue(chatEntry);
-        //TODO Mailbox.push(ChatMailboxEvent) Просто факт, что есть новая запись, HUD сам прочтет её отсюда
+        hudMailbox.Post(new ChatEntryAddedNotice());
     }
 }
