@@ -7,20 +7,22 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using MessagePack;
+using NeonWarfare.Scenes.World.Entities;
 using RepliCAT;
 
 namespace NeonWarfare.Scenes.World.Protocol;
 
 /// <summary>
 /// A hash of everything a peer of another build would read differently: the mapped types in id order, the
-/// MessagePack keys of every mapped [MessagePackObject] type and the RepliCAT schema of every mapped model.
+/// MessagePack keys of every mapped [MessagePackObject] type, the RepliCAT schema of every mapped model and the
+/// resource paths of the <see cref="WorldPackedScenes"/> scenes in id order.
 /// </summary>
 public class ProtocolHasher(Replicator replicator)
 {
     private const BindingFlags DeclaredInstanceMembers =
         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
-    public ulong Compute(IReadOnlyList<Type> mappedTypes)
+    public ulong Compute(IReadOnlyList<Type> mappedTypes, IReadOnlyList<string> scenePaths)
     {
         var text = new StringBuilder();
         foreach (Type type in mappedTypes)
@@ -42,6 +44,13 @@ public class ProtocolHasher(Replicator replicator)
                     .Append(replicator.GetSchemaHash(type).ToString(CultureInfo.InvariantCulture))
                     .Append('\n');
             }
+        }
+
+        // A scene id travels in spawn records and lies in saves; the path, not a property name, so a different
+        // scene under the same name is seen too
+        foreach (string path in scenePaths)
+        {
+            text.Append("scene ").Append(path).Append('\n');
         }
 
         byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString()));

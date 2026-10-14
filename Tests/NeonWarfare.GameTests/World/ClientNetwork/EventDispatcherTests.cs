@@ -5,6 +5,7 @@ using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.Composition;
+using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Notices;
@@ -31,7 +32,7 @@ public class EventDispatcherTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
     }
 
     // Built through the world container: the composition root registering the handlers is covered too
@@ -118,7 +119,8 @@ public class EventDispatcherTests
 
     // A frame that never ends: everything posted during the test is still readable at its end
     private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider());
+        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider(),
+            AutoFree(new WorldPackedScenes())!);
 
     private class ThrowingPresentation
     {

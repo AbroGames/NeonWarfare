@@ -6,6 +6,7 @@ using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Commands;
 using NeonWarfare.Scenes.World.Composition;
+using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Protocol;
@@ -38,7 +39,7 @@ public class CommandDispatcherTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _peers = new PeerUidMap();
         _persistence = new PersistenceModel();
         _inbox = new CommandInbox(_codec);
@@ -279,7 +280,8 @@ public class CommandDispatcherTests
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new JoinRequestCommand(1, uid, uid, Colors.Red)));
 
     private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider());
+        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider(),
+            AutoFree(new WorldPackedScenes())!);
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {

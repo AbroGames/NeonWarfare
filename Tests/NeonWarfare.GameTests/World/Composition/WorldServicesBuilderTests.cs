@@ -6,6 +6,7 @@ using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Composition;
+using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Presentations;
 using NeonWarfare.Scenes.World.Protocol;
@@ -183,9 +184,10 @@ public class WorldServicesBuilderTests
         ]);
 
     private static WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec(), new ManualFrameProvider());
+        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec(), new ManualFrameProvider(),
+            AutoFree(new WorldPackedScenes())!);
 
-    private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping());
+    private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);
 
     [Query]
     private class FixtureQuery;

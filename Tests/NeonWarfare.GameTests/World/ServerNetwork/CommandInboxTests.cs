@@ -24,7 +24,7 @@ public class CommandInboxTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _inbox = new CommandInbox(_codec);
         _inbox.Register(NetworkCommandTypes);
     }

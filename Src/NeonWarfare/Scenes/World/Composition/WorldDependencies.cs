@@ -1,5 +1,6 @@
 using System;
 using GodotBox.Godot;
+using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Protocol;
 
@@ -10,4 +11,5 @@ public record WorldDependencies(
     PersistenceModel Persistence,
     SessionModel Session,
     NetMessageCodec Codec,
-    FrameProvider Frames);
+    FrameProvider Frames,
+    WorldPackedScenes Scenes);

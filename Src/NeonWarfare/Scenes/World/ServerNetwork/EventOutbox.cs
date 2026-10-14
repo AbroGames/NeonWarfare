@@ -75,10 +75,9 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
     }
 
     /// <summary>
-    /// Writes the events section of the peer's packet and empties its buffer. An empty section is written too:
-    /// the packet may still carry spawns or models.
+    /// Writes the events section of the peer's events packet and empties its buffer.
     /// </summary>
-    /// <returns>The number of events written, so that an empty packet can be skipped.</returns>
+    /// <returns>The number of events written: an events packet without events is not sent.</returns>
     public int DrainEvents(int peerId, IBufferWriter<byte> output)
     {
         if (!_bufferByPeerId.TryGetValue(peerId, out List<ReadOnlyMemory<byte>> buffer))

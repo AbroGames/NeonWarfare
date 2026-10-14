@@ -5,6 +5,7 @@ using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
+using NeonWarfare.Scenes.World.Entities;
 
 namespace NeonWarfare.Scenes.Game;
 
@@ -13,7 +14,8 @@ public partial class Game : Node2D
 
     [Child] private NodeContainer WorldContainer { get; set; }
     [Child] private NodeContainer HudContainer { get; set; }
-    [Child] private GamePackedScenes PackedScenes { get; set; }
+    [Child] private GamePackedScenes GamePackedScenes { get; set; }
+    [Child] private WorldPackedScenes WorldPackedScenes { get; set; }
 
     private Network.Network _network;
 
@@ -29,7 +31,7 @@ public partial class Game : Node2D
 
     public OldWorld.World AddWorld()
     {
-        OldWorld.World world = PackedScenes.World.Instantiate<OldWorld.World>();
+        OldWorld.World world = GamePackedScenes.World.Instantiate<OldWorld.World>();
         world.SetName("World");
         WorldContainer.ChangeStoredNode(world);
         return world;
@@ -37,7 +39,7 @@ public partial class Game : Node2D
     
     public Hud AddHud()
     {
-        Hud hud = PackedScenes.Hud.Instantiate<Hud>()
+        Hud hud = GamePackedScenes.Hud.Instantiate<Hud>()
             .InitPreReady(WorldContainer.GetCurrentStoredNode<OldWorld.World>());
         hud.SetName("Hud");
         HudContainer.ChangeStoredNode(hud);
@@ -46,7 +48,7 @@ public partial class Game : Node2D
     
     public ServerHud AddServerHud()
     {
-        ServerHud serverHud = PackedScenes.ServerHud.Instantiate<ServerHud>()
+        ServerHud serverHud = GamePackedScenes.ServerHud.Instantiate<ServerHud>()
             .InitPreReady(WorldContainer.GetCurrentStoredNode<OldWorld.World>());
         serverHud.SetName("ServerHud");
         HudContainer.ChangeStoredNode(serverHud);

@@ -28,7 +28,7 @@ public class NetMessageCodecTests
     public void CommandsAndEvents_RoundTrip()
     {
         TypesMappingService mapping = CreateMapping();
-        var codec = new NetMessageCodec(mapping);
+        var codec = new NetMessageCodec(mapping, []);
         HashSet<Type> messages = MessageTypes<Command>()
             .Concat(MessageTypes<Event>())
             .ToHashSet();
@@ -96,7 +96,7 @@ public class NetMessageCodecTests
     [RequireGodotRuntime]
     public void Read_TypeOutsideAllowed_Throws()
     {
-        var codec = new NetMessageCodec(CreateMapping());
+        var codec = new NetMessageCodec(CreateMapping(), []);
         var buffer = new ArrayBufferWriter<byte>();
         codec.Write(buffer, new PlayerJoinedEvent(1, "uid", "nick"));
 
@@ -108,7 +108,7 @@ public class NetMessageCodecTests
     public void Read_UnknownId_Throws()
     {
         TypesMappingService mapping = CreateMapping();
-        var codec = new NetMessageCodec(mapping);
+        var codec = new NetMessageCodec(mapping, []);
         byte[] data = BitConverter.GetBytes((ushort) mapping.Types.Count);
 
         AssertRejected(() => codec.Read(data, AllowedCommands(), out _));
@@ -118,7 +118,7 @@ public class NetMessageCodecTests
     [RequireGodotRuntime]
     public void Read_TruncatedBody_Throws()
     {
-        var codec = new NetMessageCodec(CreateMapping());
+        var codec = new NetMessageCodec(CreateMapping(), []);
         var buffer = new ArrayBufferWriter<byte>();
         codec.Write(buffer, new SendChatMessageCommand("hello"));
         ReadOnlyMemory<byte> truncated = buffer.WrittenMemory[..^1];
@@ -130,7 +130,7 @@ public class NetMessageCodecTests
     [RequireGodotRuntime]
     public void Section_RoundTrips()
     {
-        var codec = new NetMessageCodec(CreateMapping());
+        var codec = new NetMessageCodec(CreateMapping(), []);
         object[] messages = [new SendChatMessageCommand("hello"), new PlayerJoinedEvent(1, "uid", "nick")];
         HashSet<Type> allowed = [typeof(SendChatMessageCommand), typeof(PlayerJoinedEvent)];
 
@@ -153,7 +153,7 @@ public class NetMessageCodecTests
     [RequireGodotRuntime]
     public void ReadSection_BrokenCount_Throws()
     {
-        var codec = new NetMessageCodec(CreateMapping());
+        var codec = new NetMessageCodec(CreateMapping(), []);
         byte[] message = codec.Encode(new SendChatMessageCommand("hello"));
 
         // Too short for a count; a negative count; more messages than the bytes could ever hold; two messages

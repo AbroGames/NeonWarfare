@@ -6,6 +6,7 @@ using Humanizer;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
+using NeonWarfare.Scenes.World.Entities;
 using RepliCAT;
 using NeonWarfare.Scripts.GlobalServices;
 
@@ -40,10 +41,11 @@ public sealed class NetMessageCodec
 
     public ulong ProtocolHash { get; }
 
-    public NetMessageCodec(TypesMappingService mapping)
+    /// <param name="scenePaths">The resource paths of the <see cref="WorldPackedScenes"/> scenes, in id order.</param>
+    public NetMessageCodec(TypesMappingService mapping, IReadOnlyList<string> scenePaths)
     {
         _mapping = mapping;
-        ProtocolHash = new ProtocolHasher(new Replicator(mapping)).Compute(mapping.Types);
+        ProtocolHash = new ProtocolHasher(new Replicator(mapping)).Compute(mapping.Types, scenePaths);
     }
 
     public void Write(IBufferWriter<byte> output, object message)
