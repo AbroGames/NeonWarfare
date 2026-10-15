@@ -29,8 +29,8 @@ public class NetMessageCodecTests
     {
         TypesMappingService mapping = CreateMapping();
         var codec = new NetMessageCodec(mapping);
-        HashSet<Type> messages = MessageTypes(typeof(JoinRequestCommand).Namespace!)
-            .Concat(MessageTypes(typeof(PlayerJoinedEvent).Namespace!))
+        HashSet<Type> messages = MessageTypes<Command>()
+            .Concat(MessageTypes<Event>())
             .ToHashSet();
         var failures = new List<string>();
 
@@ -60,12 +60,12 @@ public class NetMessageCodecTests
         AssertThat(failures).IsEmpty();
     }
 
-    // Guards the namespace scan: an empty or misplaced scan would let the two tests above pass vacuously
+    // Guards the scan: an empty one would let the two tests above pass vacuously
     [TestCase]
     [RequireGodotRuntime]
     public void MessageTypes_IncludeTheClientCommands()
     {
-        AssertThat(MessageTypes(typeof(JoinRequestCommand).Namespace!))
+        AssertThat(MessageTypes<Command>())
             .Contains(typeof(JoinRequestCommand), typeof(SendChatMessageCommand));
     }
 
@@ -76,8 +76,8 @@ public class NetMessageCodecTests
         TypesMappingService mapping = CreateMapping();
         var failures = new List<string>();
 
-        foreach (Type type in MessageTypes(typeof(JoinRequestCommand).Namespace!)
-                     .Concat(MessageTypes(typeof(PlayerJoinedEvent).Namespace!)))
+        foreach (Type type in MessageTypes<Command>()
+                     .Concat(MessageTypes<Event>()))
         {
             if (!mapping.Types.Contains(type))
             {
@@ -197,10 +197,9 @@ public class NetMessageCodecTests
 
     private static HashSet<Type> AllowedCommands() => [typeof(JoinRequestCommand), typeof(SendChatMessageCommand)];
 
-    private static IEnumerable<Type> MessageTypes(string ns) =>
-        typeof(JoinRequestCommand).Assembly.GetTypes()
-            .Where(type => type.Namespace == ns
-                           && type is { IsInterface: false, IsAbstract: false, IsEnum: false, IsNested: false });
+    private static IEnumerable<Type> MessageTypes<TBase>() =>
+        typeof(TBase).Assembly.GetTypes()
+            .Where(type => type.IsSubclassOf(typeof(TBase)) && type is { IsAbstract: false, IsNested: false });
 
     private static object? CreateSample(Type type, List<string> failures)
     {

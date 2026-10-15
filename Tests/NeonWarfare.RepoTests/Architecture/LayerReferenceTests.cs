@@ -13,6 +13,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class LayerReferenceTests
 {
+    private const string HudMailbox = WorldLayers.WorldNamespace + ".Presentations.HudMailbox";
+    private const string HudMailboxPost = "Post";
+
     private static readonly string[] ServicesTypes =
         ["NeonWarfare.Scripts.Services", "NeonWarfare.Scripts.Services/Global"];
 
@@ -120,6 +123,41 @@ public class LayerReferenceTests
                 {
                     string ownLayer = WorldLayers.LayerOf(type)?.ToString() ?? "a type outside the layers";
                     report.Add($"{where}: {ownLayer} refers to {GameAssembly.ShortName(referenced)} ({layer})");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
+    /// The HUD mailbox is cleared by the frame number alone, which holds only while every post comes from an event
+    /// handler, before <c>_Process</c>. A node or a widget posting would also make the HUD talk to itself.
+    /// </summary>
+    [Fact]
+    public void HudMailboxPost_IsCalledOnlyFromPresentations()
+    {
+        FailureReport report = new("HudMailbox.Post called from outside the Presentation");
+        GameAssembly game = GameAssembly.Instance;
+
+        TypeDefinition mailbox = game.FindByName(HudMailbox)
+                                 ?? throw new InvalidOperationException($"{HudMailbox} is gone");
+        // Without it a rename would leave the rule nothing to check
+        Assert.Contains(mailbox.Methods, method => method.Name == HudMailboxPost);
+
+        foreach (TypeDefinition type in game.Types)
+        {
+            if (WorldLayers.LayerOf(type) == Layer.Presentation)
+            {
+                continue;
+            }
+
+            foreach (TypeReferenceSite site in TypeReferences.Of(type))
+            {
+                if (site.Type.FullName == HudMailbox && site.Via is MethodReference { Name: HudMailboxPost })
+                {
+                    string ownLayer = WorldLayers.LayerOf(type)?.ToString() ?? "a type outside the layers";
+                    report.Add($"{GameAssembly.Describe(site.From)}: {ownLayer} posts to the HUD mailbox");
                 }
             }
         }
