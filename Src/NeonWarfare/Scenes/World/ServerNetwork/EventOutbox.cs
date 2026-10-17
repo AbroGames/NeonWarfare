@@ -14,27 +14,28 @@ namespace NeonWarfare.Scenes.World.ServerNetwork;
 /// <summary>
 /// Events from the Simulation to the clients, sent at the end of the tick. Not a bus: nothing on the server
 /// subscribes to it. One buffer per joined peer keeps personal and common events in the order of publication;
-/// the console of a dedicated server with <c>ServerHud</c> is an addressee of its own that gets common and console
-/// events, never the personal events of players.
+/// the window of a dedicated server with <c>ServerHud</c> is an addressee of its own that gets common and
+/// dedicated-window events, never the personal events of players.
 /// </summary>
 [ServerNetwork]
 public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
 {
     private const string OfflineReceiverLog = "{event} for player {uid} dropped: the player is not on any peer";
-    private const string NoConsoleLog = "{event} for the console dropped: this world has no console";
-    private const string NoConsoleError = "This world has no console.";
+    private const string NoDedicatedWindowLog =
+        "{event} for the dedicated window dropped: this world has no dedicated window";
+    private const string NoDedicatedWindowError = "This world has no dedicated window.";
     private const string NoPeerBufferError = "Player {0} is bound to peer {1}, which has no event buffer.";
     private const string PeerExistsError = "Peer {0} already has an event buffer.";
     private const string PeerMissingError = "Peer {0} has no event buffer.";
-    private const string ConsoleExistsError = "The console already has an event buffer.";
+    private const string DedicatedWindowExistsError = "The dedicated window already has an event buffer.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<EventOutbox>();
 
     private readonly Dictionary<int, List<ReadOnlyMemory<byte>>> _bufferByPeerId = new();
-    private List<ReadOnlyMemory<byte>> _consoleBuffer;
+    private List<ReadOnlyMemory<byte>> _dedicatedWindowBuffer;
 
     public IReadOnlyCollection<int> Peers => _bufferByPeerId.Keys;
-    public bool HasConsole => _consoleBuffer != null;
+    public bool HasDedicatedWindow => _dedicatedWindowBuffer != null;
 
     // Encoded once, here: every addressee gets the same bytes, and an event that cannot be serialized fails in
     // the Simulation that published it rather than at the end of the tick
@@ -45,7 +46,7 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
         {
             buffer.Add(encoded);
         }
-        _consoleBuffer?.Add(encoded);
+        _dedicatedWindowBuffer?.Add(encoded);
     }
 
     // A receiver is always online: callers pick receivers through PlayerQuery, and a command's sender cannot have
@@ -67,17 +68,17 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
         buffer.Add(encoded);
     }
 
-    // Only console commands reply to the console, and their input exists only with ServerHud
-    public void PublishToConsole(Event @event)
+    // Only dedicated-window commands reply to the window, and their input exists only with ServerHud
+    public void PublishToDedicatedWindow(Event @event)
     {
         byte[] encoded = codec.Encode(@event);
-        if (_consoleBuffer == null)
+        if (_dedicatedWindowBuffer == null)
         {
-            _log.Error(NoConsoleLog, @event.GetType().Name);
+            _log.Error(NoDedicatedWindowLog, @event.GetType().Name);
             return;
         }
 
-        _consoleBuffer.Add(encoded);
+        _dedicatedWindowBuffer.Add(encoded);
     }
 
     public void AddPeer(int peerId)
@@ -96,14 +97,14 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
         }
     }
 
-    public void AddConsole()
+    public void AddDedicatedWindow()
     {
-        if (_consoleBuffer != null)
+        if (_dedicatedWindowBuffer != null)
         {
-            throw new InvalidOperationException(ConsoleExistsError);
+            throw new InvalidOperationException(DedicatedWindowExistsError);
         }
 
-        _consoleBuffer = [];
+        _dedicatedWindowBuffer = [];
     }
 
     /// <summary>
@@ -122,14 +123,14 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
     }
 
     /// <inheritdoc cref="DrainPeerEvents"/>
-    public int DrainConsoleEvents(IBufferWriter<byte> output)
+    public int DrainDedicatedWindowEvents(IBufferWriter<byte> output)
     {
-        if (_consoleBuffer == null)
+        if (_dedicatedWindowBuffer == null)
         {
-            throw new InvalidOperationException(NoConsoleError);
+            throw new InvalidOperationException(NoDedicatedWindowError);
         }
 
-        return Drain(_consoleBuffer, output);
+        return Drain(_dedicatedWindowBuffer, output);
     }
 
     private int Drain(List<ReadOnlyMemory<byte>> buffer, IBufferWriter<byte> output)

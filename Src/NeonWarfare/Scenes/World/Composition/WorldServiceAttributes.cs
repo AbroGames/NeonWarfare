@@ -25,9 +25,9 @@ public class ServerNetworkAttribute : WorldServiceAttribute
     public override WorldLayer Layer => WorldLayer.ServerNetwork;
 }
 
-public class ConsoleAttribute : WorldServiceAttribute
+public class DedicatedWindowAttribute : WorldServiceAttribute
 {
-    public override WorldLayer Layer => WorldLayer.Console;
+    public override WorldLayer Layer => WorldLayer.DedicatedWindow;
 }
 
 public class QueryAttribute : WorldServiceAttribute

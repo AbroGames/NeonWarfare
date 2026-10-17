@@ -24,7 +24,7 @@ public class ConstructorLayerTests
             [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query, Layer.ServerNetwork],
             [Layer.CommandHandler] = [Layer.SimulationFacade, Layer.Query],
             [Layer.ServerNetwork] = [Layer.ServerNetwork],
-            [Layer.Console] = [Layer.ServerNetwork],
+            [Layer.DedicatedWindow] = [Layer.ServerNetwork],
             [Layer.Query] = [Layer.Query],
             [Layer.ClientNetwork] = [Layer.ClientNetwork],
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
