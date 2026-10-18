@@ -14,5 +14,6 @@ public partial class CharacterSynchronizer : Node
         StatusEffects_InitPostReady(character);
         Stats_InitPostReady(character);
         Controller_InitPostReady(character);
+        Appearance_InitPostReady(character);
     }
 }

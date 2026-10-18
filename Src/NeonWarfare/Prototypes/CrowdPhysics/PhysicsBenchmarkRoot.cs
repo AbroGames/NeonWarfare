@@ -51,6 +51,8 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private double _hudAccumulator;
     private double _logAccumulator;
     private int _sampleTickCounter;
+    private int _spawnCounter;
+    private int _bigBotCount;
 
     private SteeringMode _steering = SteeringMode.Chase;
     private bool _playerBlocksEnemies;
@@ -611,9 +613,10 @@ public partial class PhysicsBenchmarkRoot : Node2D
         }
     }
 
+    private static float RadiusOf(BotUnit unit) => unit.IsBig ? BenchSpecs.BigBotRadius : BenchSpecs.BotRadius;
+
     private void SeparateBots()
     {
-        float range = 2f * BenchSpecs.BotRadius;
         _grid.Rebuild(_bots);
 
         double tickOverlapSum = 0;
@@ -623,12 +626,20 @@ public partial class PhysicsBenchmarkRoot : Node2D
         for (int i = 0; i < _bots.Count; i++)
         {
             BotUnit unit = _bots[i];
+            if (unit.IsBig)
+            {
+                // Bigs are separated by the wide big pass below; keeping them out of this loop preserves
+                // the narrow 3x3 query profile of the regular crowd.
+                continue;
+            }
+
+            float range = 2f * BenchSpecs.BotRadius;
             _grid.CollectNeighbours(unit.Body.Position, range, _neighbours);
 
             Vector2 push = Vector2.Zero;
             foreach (int neighbourIndex in _neighbours)
             {
-                if (neighbourIndex == i)
+                if (neighbourIndex == i || _bots[neighbourIndex].IsBig)
                 {
                     continue;
                 }
@@ -667,16 +678,79 @@ public partial class PhysicsBenchmarkRoot : Node2D
             unit.Separation = push.LimitLength(BenchSpecs.SeparationClamp);
         }
 
+        // The big pass: bigs are rare, so only they run the wide queries. Their pairs are resolved here
+        // for both sides, because the regulars' narrow queries above never discover a big.
+        for (int i = 0; i < _bots.Count; i++)
+        {
+            BotUnit unit = _bots[i];
+            if (!unit.IsBig)
+            {
+                continue;
+            }
+
+            _grid.CollectNeighbours(unit.Body.Position, 2f * BenchSpecs.BigBotRadius, _neighbours);
+
+            Vector2 push = Vector2.Zero;
+            foreach (int neighbourIndex in _neighbours)
+            {
+                if (neighbourIndex == i)
+                {
+                    continue;
+                }
+
+                BotUnit neighbour = _bots[neighbourIndex];
+                Vector2 offset = unit.Body.Position - neighbour.Body.Position;
+                float distance = offset.Length();
+                if (distance < 0.01f)
+                {
+                    push += RandomUnitVector() * BenchSpecs.SeparationStrength * 0.5f;
+                    continue;
+                }
+
+                float pairRange = BenchSpecs.BigBotRadius + RadiusOf(neighbour);
+                float overlap = pairRange - distance;
+                if (overlap <= 0f)
+                {
+                    continue;
+                }
+
+                // Every pair shows up from both sides; count it once for the penetration metrics.
+                if (neighbourIndex > i)
+                {
+                    tickOverlapSum += overlap;
+                    tickOverlapPairs++;
+                    if (overlap > tickOverlapMax)
+                    {
+                        tickOverlapMax = overlap;
+                    }
+                }
+
+                Vector2 strength = offset / distance
+                                   * (BenchSpecs.SeparationStrength * overlap / pairRange);
+                push += strength;
+                if (!neighbour.IsBig)
+                {
+                    // The neighbour's own narrow pass never saw the big; combine the pushes and re-clamp
+                    // to the same limit.
+                    neighbour.Separation = (neighbour.Separation - strength)
+                        .LimitLength(BenchSpecs.SeparationClamp);
+                }
+            }
+
+            unit.Separation = push.LimitLength(BenchSpecs.SeparationClamp);
+        }
+
         if (tickOverlapPairs > 0)
         {
             _metrics.AddTickOverlaps(tickOverlapSum / tickOverlapPairs, tickOverlapMax);
         }
 
-        float playerRange = BenchSpecs.PlayerRadius + BenchSpecs.BotRadius;
+        float playerRange = BenchSpecs.PlayerRadius + BenchSpecs.BigBotRadius;
         _grid.CollectNeighbours(_player.Position, playerRange, _neighbours);
         foreach (int neighbourIndex in _neighbours)
         {
-            float penetration = playerRange - _player.Position.DistanceTo(_bots[neighbourIndex].Body.Position);
+            float range = BenchSpecs.PlayerRadius + RadiusOf(_bots[neighbourIndex]);
+            float penetration = range - _player.Position.DistanceTo(_bots[neighbourIndex].Body.Position);
             if (penetration > 0f)
             {
                 _metrics.AddPlayerOverlap(penetration);
@@ -714,7 +788,12 @@ public partial class PhysicsBenchmarkRoot : Node2D
 
     private void SpawnBot()
     {
-        IBenchBotBody body = _variant.CreateBot();
+        // The spawn sequence is a fixed prefix: every (BotsPerBigBot + 1)-th spawn is a big, so any bot
+        // count yields the same mix, and RemoveLastBot restores it by just rewinding the counter.
+        bool big = _spawnCounter % (BenchSpecs.BotsPerBigBot + 1) == 0;
+        _spawnCounter++;
+
+        IBenchBotBody body = _variant.CreateBot(big);
         body.SetContinuousCollision(_options.Ccd);
         body.SetCollidesWithEnemies(_enemiesSelfCollide);
         body.SetBlocksPlayer(_playerBlocksEnemies);
@@ -726,10 +805,15 @@ public partial class PhysicsBenchmarkRoot : Node2D
             Body = body,
             MaxSpeed = _rng.RandfRange(BenchSpecs.BotSpeedMin, BenchSpecs.BotSpeedMax),
             WanderTarget = RandomArenaPoint(),
+            IsBig = big,
         };
-        body.PlaceAt(RandomFreePoint());
+        body.PlaceAt(RandomFreePoint(RadiusOf(unit)));
         _bots.Add(unit);
         _botByBodyNode[body.Node] = unit;
+        if (big)
+        {
+            _bigBotCount++;
+        }
     }
 
     private void RemoveLastBot()
@@ -738,6 +822,11 @@ public partial class PhysicsBenchmarkRoot : Node2D
         _bots.RemoveAt(_bots.Count - 1);
         _botByBodyNode.Remove(unit.Body.Node);
         unit.Body.Node.QueueFree();
+        _spawnCounter--;
+        if (unit.IsBig)
+        {
+            _bigBotCount--;
+        }
     }
 
     private void SetSteering(SteeringMode steering)
@@ -837,7 +926,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
     {
         foreach (BotUnit unit in _bots)
         {
-            unit.Body.PlaceAt(RandomFreePoint());
+            unit.Body.PlaceAt(RandomFreePoint(RadiusOf(unit)));
             unit.Knockback = Vector2.Zero;
             unit.PreviousActualVelocity = Vector2.Zero;
             unit.WanderTarget = RandomArenaPoint();
@@ -872,10 +961,10 @@ public partial class PhysicsBenchmarkRoot : Node2D
         _rng.RandfRange(-BenchSpecs.ArenaHalfExtents.X + 60f, BenchSpecs.ArenaHalfExtents.X - 60f),
         _rng.RandfRange(-BenchSpecs.ArenaHalfExtents.Y + 60f, BenchSpecs.ArenaHalfExtents.Y - 60f));
 
-    private Vector2 RandomFreePoint()
+    private Vector2 RandomFreePoint(float radius)
     {
         Vector2 point = RandomArenaPoint();
-        for (int attempt = 0; attempt < 100 && !_arena.IsPointFree(point, BenchSpecs.BotRadius); attempt++)
+        for (int attempt = 0; attempt < 100 && !_arena.IsPointFree(point, radius); attempt++)
         {
             point = RandomArenaPoint();
         }
@@ -961,7 +1050,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
             : $" | suite {_options.Suite ?? BenchSuites.DefaultSuite} r{_options.Repetition}"
               + $"{(_options.Throughput ? " | throughput" : "")}{(_options.Ccd ? " | ccd" : "")}";
 
-        return $"{_variant.Title} | bots {_bots.Count} | projectiles {_projectilesAlive}"
+        return $"{_variant.Title} | bots {_bots.Count} ({_bigBotCount} big) | projectiles {_projectilesAlive}"
                + $" | walls {_runtimeWalls.Count}\n"
                + $"steer {_steering} | B {_playerBlocksEnemies} | C {_enemiesSelfCollide}"
                + $" | P {_projectilesEnabled} ({_projectileRate}/s) | H {_hurtboxesEnabled}"

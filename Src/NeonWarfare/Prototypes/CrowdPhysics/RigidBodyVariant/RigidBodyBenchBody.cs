@@ -23,10 +23,11 @@ public abstract partial class RigidBodyBenchBody : RigidBody2D
     private Vector2 _lastIntegrateOrigin;
     private Vector2? _teleportTo;
 
-    protected RigidBodyBenchBody(float radius, uint layer)
+    protected RigidBodyBenchBody(float radius, uint layer, float mass = 1f)
     {
         CollisionLayer = layer;
         CollisionMask = BenchLayers.Walls;
+        Mass = mass;
 
         // Top-down arcade movement: no gravity, no rotation from contacts, no air drag, and never
         // sleep — a sleeping body would ignore the separation pushes.

@@ -23,6 +23,10 @@ config/icon="uid://dxpvi08dfney4"
 
 project/assembly_name="NeonWarfare"
 
+[editor]
+
+run/main_run_args="--physics-benchmark"
+
 [gui]
 
 theme/custom="uid://cky2ixgrcrnlo"

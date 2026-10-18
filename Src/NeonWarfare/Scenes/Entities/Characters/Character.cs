@@ -20,6 +20,7 @@ public partial class Character : RigidBody2D
     public CharacterStatusEffectsClient StatusEffectsClient { get; private set; }
 
     public CharacterController Controller { get; private set; }
+    public CharacterSynchronizer Synchronizer { get; private set; }
     
     public override void _Ready()
     {
@@ -39,6 +40,7 @@ public partial class Character : RigidBody2D
         //TODO добавлять руками ".:Position" в синк и инфу в коммент/доку об этом
         
         var synchronizer = this.FindChild<CharacterSynchronizer>();
+        Synchronizer = synchronizer;
         Net.DoServerClient(
             () => Stats = new CharacterStats(this, synchronizer),
             () => StatsClient = new CharacterStatsClient(this, synchronizer));

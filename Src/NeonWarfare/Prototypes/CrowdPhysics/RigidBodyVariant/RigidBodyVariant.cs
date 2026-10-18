@@ -12,5 +12,5 @@ public sealed class RigidBodyVariant : IPhysicsVariant
 
     public IBenchPlayerBody CreatePlayer() => new RigidBodyBenchPlayer();
 
-    public IBenchBotBody CreateBot() => new RigidBodyBenchBot();
+    public IBenchBotBody CreateBot(bool big) => new RigidBodyBenchBot(big);
 }

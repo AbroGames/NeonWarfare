@@ -11,6 +11,7 @@ public sealed class BotUnit
 {
     public required IBenchBotBody Body { get; init; }
     public required float MaxSpeed { get; init; }
+    public required bool IsBig { get; init; }
 
     public Vector2 Intent { get; set; }
     public Vector2 Separation { get; set; }

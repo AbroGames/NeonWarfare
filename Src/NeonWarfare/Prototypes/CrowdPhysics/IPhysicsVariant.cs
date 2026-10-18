@@ -15,5 +15,5 @@ public interface IPhysicsVariant
     string FileStamp { get; }
 
     IBenchPlayerBody CreatePlayer();
-    IBenchBotBody CreateBot();
+    IBenchBotBody CreateBot(bool big);
 }

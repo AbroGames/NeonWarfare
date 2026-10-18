@@ -18,6 +18,16 @@ public static class BenchSpecs
     public const float BotSpeedMin = 150f;
     public const float BotSpeedMax = 250f;
 
+    /// <summary>A 4x-radius big bot; one spawns per <see cref="BotsPerBigBot"/> regular bots.</summary>
+    public const float BigBotRadius = 56f;
+
+    /// <summary>Area-proportional mass for the big bot: the solver lets it plow through the crowd instead
+    /// of being stopped by single small bodies (the prescribed velocity ignores mass either way).</summary>
+    public const float BigBotMass = 16f;
+
+    /// <summary>One big bot per this many regular ones; the big leads each batch of the spawn sequence.</summary>
+    public const int BotsPerBigBot = 100;
+
     public static readonly Vector2 ArenaHalfExtents = new(2000f, 1500f);
     public const float WallThickness = 40f;
 
@@ -38,6 +48,21 @@ public static class BenchSpecs
 
     public const int DefaultBotCount = 100;
     public const int BotsStep = 50;
+
+    // --- Visuals ---
+
+    /// <summary>
+    /// The pool an enemy circle is tinted with at spawn. Purely cosmetic: it never enters the physics
+    /// or the metrics, so the variant comparison stays fair.
+    /// </summary>
+    public static readonly Color[] BotColors =
+    {
+        new("ff3b3b"), // red
+        new("ff8c00"), // orange
+        new("ffe500"), // yellow
+        new("3bff6b"), // green
+        new("ff00e5"), // magenta
+    };
 
     // --- Scripted events (auto mode) ---
 
