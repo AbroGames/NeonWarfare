@@ -15,6 +15,8 @@ public class LayerReferenceTests
 {
     private const string HudMailbox = WorldLayers.WorldNamespace + ".Presentations.HudMailbox";
     private const string HudMailboxPost = "Post";
+    private const string CommandInbox = WorldLayers.WorldNamespace + ".ServerNetwork.CommandInbox";
+    private const string EnqueueFromDedicatedWindow = "EnqueueFromDedicatedWindow";
 
     private static readonly string[] ServicesTypes =
         ["NeonWarfare.Scripts.Services", "NeonWarfare.Scripts.Services/Global"];
@@ -22,7 +24,8 @@ public class LayerReferenceTests
     /// <summary>
     /// The composition root — <c>World</c> and the builder of its container — takes the global services, hands
     /// them to the world services through their constructors and wires up the layers of the configuration
-    /// (the console of the outbox, the event handlers): the one place in the World namespace that may.
+    /// (the dedicated window of the outbox, the event handlers, the command handlers and the network command
+    /// whitelist): the one place in the World namespace that may.
     /// </summary>
     private static readonly string[] CompositionRoots =
     [
@@ -158,6 +161,42 @@ public class LayerReferenceTests
                 {
                     string ownLayer = WorldLayers.LayerOf(type)?.ToString() ?? "a type outside the layers";
                     report.Add($"{GameAssembly.Describe(site.From)}: {ownLayer} posts to the HUD mailbox");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
+    /// A command enqueued from the dedicated window skips <c>Validate</c> and is processed as the server's own: any
+    /// other caller — a peer's packet, a node — would get that trust too.
+    /// </summary>
+    [Fact]
+    public void EnqueueFromDedicatedWindow_IsCalledOnlyFromDedicatedWindow()
+    {
+        FailureReport report = new("CommandInbox.EnqueueFromDedicatedWindow called from outside the dedicated window");
+        GameAssembly game = GameAssembly.Instance;
+
+        TypeDefinition inbox = game.FindByName(CommandInbox)
+                               ?? throw new InvalidOperationException($"{CommandInbox} is gone");
+        // Without it a rename would leave the rule nothing to check
+        Assert.Contains(inbox.Methods, method => method.Name == EnqueueFromDedicatedWindow);
+
+        foreach (TypeDefinition type in game.Types)
+        {
+            if (WorldLayers.LayerOf(type) == Layer.DedicatedWindow)
+            {
+                continue;
+            }
+
+            foreach (TypeReferenceSite site in TypeReferences.Of(type))
+            {
+                if (site.Type.FullName == CommandInbox
+                    && site.Via is MethodReference { Name: EnqueueFromDedicatedWindow })
+                {
+                    string ownLayer = WorldLayers.LayerOf(type)?.ToString() ?? "a type outside the layers";
+                    report.Add($"{GameAssembly.Describe(site.From)}: {ownLayer} enqueues as the dedicated window");
                 }
             }
         }

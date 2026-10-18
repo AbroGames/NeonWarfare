@@ -28,7 +28,7 @@ public class WorldServicesBuilderTests
     private const WorldLayer Host =
         Server | WorldLayer.Presentation | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
     private const WorldLayer DedicatedWithServerHud =
-        Server | WorldLayer.ServerHudPresentation | WorldLayer.Console | WorldLayer.ClientNetwork;
+        Server | WorldLayer.ServerHudPresentation | WorldLayer.DedicatedWindow | WorldLayer.ClientNetwork;
     private const WorldLayer HeadlessDedicated = Server;
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
@@ -43,12 +43,14 @@ public class WorldServicesBuilderTests
         AssertThat(provider.GetService<ChatSimulation>()).IsNull();
         AssertThat(provider.GetService<EventOutbox>()).IsNull();
         AssertThat(provider.GetService<PeerUidMap>()).IsNull();
+        AssertThat(provider.GetService<CommandInbox>()).IsNull();
+        AssertThat(provider.GetService<CommandDispatcher>()).IsNull();
         AssertThat(provider.GetService<ChatPresentation>()).IsNotNull();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Build_ServerConfigurations_HaveOutboxAndPeerMap()
+    public void Build_ServerConfigurations_HaveOutboxPeerMapAndCommandQueue()
     {
         foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
         {
@@ -56,15 +58,17 @@ public class WorldServicesBuilderTests
 
             AssertThat(provider.GetService<EventOutbox>()).IsNotNull();
             AssertThat(provider.GetService<PeerUidMap>()).IsNotNull();
+            AssertThat(provider.GetService<CommandInbox>()).IsNotNull();
+            AssertThat(provider.GetService<CommandDispatcher>()).IsNotNull();
         }
     }
 
     // The host's own client is a peer like any other; the headless server has nobody to show events to
     [TestCase]
     [RequireGodotRuntime]
-    public void Build_OnlyDedicatedWithServerHud_HasConsole()
+    public void Build_OnlyDedicatedWithServerHud_HasDedicatedWindow()
     {
-        foreach ((WorldLayer layers, bool hasConsole) in new[]
+        foreach ((WorldLayer layers, bool hasWindow) in new[]
                  {
                      (Host, false),
                      (DedicatedWithServerHud, true),
@@ -73,7 +77,8 @@ public class WorldServicesBuilderTests
         {
             using ServiceProvider provider = Build(layers);
 
-            AssertThat(provider.GetRequiredService<EventOutbox>().HasConsole).IsEqual(hasConsole);
+            AssertThat(provider.GetRequiredService<EventOutbox>().HasDedicatedWindow).IsEqual(hasWindow);
+            AssertThat(provider.GetService<DedicatedWindowCommandSender>() != null).IsEqual(hasWindow);
         }
     }
 
@@ -206,10 +211,13 @@ public class WorldServicesBuilderTests
     private static ServiceProvider Build(WorldLayer layers) =>
         new WorldServicesBuilder().Build(layers, Dependencies());
 
-    // The root gives the outbox of a ServerHud world its console and the dispatcher its handlers, so both come
-    // with any fixture
+    // The root gives the outbox of a ServerHud world its dedicated window, the event dispatcher and the command
+    // dispatcher their handlers, and the inbox its whitelist, so all of them come with any fixture
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
-        new([..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher)]);
+        new([
+            ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
+            typeof(CommandDispatcher),
+        ]);
 
     private static WorldDependencies Dependencies() =>
         new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec(), new ManualFrameProvider());

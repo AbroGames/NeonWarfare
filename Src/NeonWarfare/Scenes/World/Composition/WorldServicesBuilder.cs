@@ -68,9 +68,19 @@ public class WorldServicesBuilder
             provider.GetRequiredService<EventDispatcher>().Register(presentations, eventTypes);
         }
 
-        if (layers.HasFlag(WorldLayer.Console))
+        if (layers.HasFlag(WorldLayer.ServerNetwork))
         {
-            provider.GetRequiredService<EventOutbox>().AddConsole();
+            IEnumerable<object> handlers = selected
+                .Where(service => service.Attribute is CommandHandlerAttribute)
+                .Select(service => provider.GetRequiredService(service.Type));
+            var dispatcher = provider.GetRequiredService<CommandDispatcher>();
+            dispatcher.Register(handlers);
+            provider.GetRequiredService<CommandInbox>().Register(dispatcher.NetworkCommandTypes);
+        }
+
+        if (layers.HasFlag(WorldLayer.DedicatedWindow))
+        {
+            provider.GetRequiredService<EventOutbox>().AddDedicatedWindow();
         }
         return provider;
     }
