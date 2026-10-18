@@ -85,6 +85,38 @@ public class EventDispatcherTests
 
     [TestCase]
     [RequireGodotRuntime]
+    public void DispatchPacket_EventsPacket_ReachesHandlers()
+    {
+        var chat = new ChatPresentation(new HudMailbox(new ManualFrameProvider()));
+        EventDispatcher dispatcher = Dispatcher(chat);
+
+        dispatcher.DispatchPacket(Packet(ServerPacketKind.Events, Section(new ChatServerMessageEvent(1, "first"))));
+
+        AssertThat(chat.Entries).ContainsExactly(new ServerTextEntry(1, "first"));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void DispatchPacket_EmptyWrongKindOrTrailingBytes_ThrowsAndCallsNothing()
+    {
+        var chat = new ChatPresentation(new HudMailbox(new ManualFrameProvider()));
+        EventDispatcher dispatcher = Dispatcher(chat);
+        byte[] section = Section(new ChatServerMessageEvent(1, "first"));
+
+        foreach (byte[] packet in new[]
+                 {
+                     [],
+                     Packet((ServerPacketKind) 0, section),
+                     Packet(ServerPacketKind.Events, [..section, 0]),
+                 })
+        {
+            NetMessageCodecTests.AssertRejected(() => dispatcher.DispatchPacket(packet));
+        }
+        AssertThat(chat.Entries).IsEmpty();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
     public void Dispatch_PrivateHandlerOfBaseClass_IsCalled()
     {
         var derived = new DerivedPresentation();
@@ -117,10 +149,12 @@ public class EventDispatcherTests
         return buffer.WrittenSpan.ToArray();
     }
 
+    private static byte[] Packet(ServerPacketKind kind, byte[] section) => [(byte) kind, ..section];
+
     // A frame that never ends: everything posted during the test is still readable at its end
     private WorldDependencies Dependencies() =>
         new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider(),
-            AutoFree(new WorldPackedScenes())!);
+            AutoFree(new WorldPackedScenes())!, new RecordingClientsConnection());
 
     private class ThrowingPresentation
     {

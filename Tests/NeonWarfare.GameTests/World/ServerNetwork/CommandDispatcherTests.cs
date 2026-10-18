@@ -281,7 +281,7 @@ public class CommandDispatcherTests
 
     private WorldDependencies Dependencies() =>
         new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider(),
-            AutoFree(new WorldPackedScenes())!);
+            AutoFree(new WorldPackedScenes())!, new RecordingClientsConnection());
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {

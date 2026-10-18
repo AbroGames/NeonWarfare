@@ -48,7 +48,8 @@ public class ChatTests
         _provider = new WorldServicesBuilder().Build(
             Dedicated,
             new WorldDependencies(
-                new FixedTime(), persistence, session, _codec, new ManualFrameProvider(), _scenes));
+                new FixedTime(), persistence, session, _codec, new ManualFrameProvider(), _scenes,
+                new RecordingClientsConnection()));
         _outbox = _provider.GetRequiredService<EventOutbox>();
 
         JoinDirectly(persistence, session, "alice", "Alice", AlicePeer);

@@ -38,6 +38,7 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Codec);
         services.AddSingleton(dependencies.Frames);
         services.AddSingleton(dependencies.Scenes);
+        services.AddSingleton(dependencies.ClientsConnection);
 
         var selected = ScanWorldServices()
             .Where(service => layers.HasFlag(service.Attribute.Layer))
