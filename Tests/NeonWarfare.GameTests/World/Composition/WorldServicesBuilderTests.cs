@@ -11,6 +11,7 @@ using NeonWarfare.Scenes.World.Presentations;
 using NeonWarfare.Scenes.World.Protocol;
 using NeonWarfare.Scenes.World.ServerNetwork;
 using NeonWarfare.Scenes.World.Simulations;
+using NeonWarfare.Scenes.World.Simulations.ChatCommands;
 using static GdUnit4.Assertions;
 using GameWorld = NeonWarfare.Scenes.World.World;
 
@@ -134,6 +135,25 @@ public class WorldServicesBuilderTests
         }
     }
 
+    // The commands reach the facade through Register, not the constructor: nothing else would notice a missed call
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_ServerConfigurations_RegisterChatCommands()
+    {
+        foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
+        {
+            using ServiceProvider provider = Build(layers);
+
+            IEnumerable<IChatCommand> commands = provider.GetRequiredService<ChatSimulationFacade>().Commands;
+            AssertThat(commands.Select(command => command.GetType()))
+                .Contains(typeof(HelpChatCommandSimulationFacade));
+        }
+
+        using ServiceProvider client = Build(Client);
+        AssertThat(client.GetService<ChatSimulationFacade>()).IsNull();
+        AssertThat(client.GetService<HelpChatCommandSimulationFacade>()).IsNull();
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Build_HeadlessDedicated_HasOnlySimulation()
@@ -212,11 +232,12 @@ public class WorldServicesBuilderTests
         new WorldServicesBuilder().Build(layers, Dependencies());
 
     // The root gives the outbox of a ServerHud world its dedicated window, the event dispatcher and the command
-    // dispatcher their handlers, and the inbox its whitelist, so all of them come with any fixture
+    // dispatcher their handlers, the inbox its whitelist and the chat commands facade its commands, so all of them
+    // come with any fixture
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
-            typeof(CommandDispatcher),
+            typeof(CommandDispatcher), typeof(ChatSimulation), typeof(ChatSimulationFacade),
         ]);
 
     private static WorldDependencies Dependencies() =>
