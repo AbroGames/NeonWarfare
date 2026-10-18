@@ -85,13 +85,14 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
-| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows |
+| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `ServerNetwork` |
 | `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IJoinRequestHandler`); every handler is `[CommandHandler]` |
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
 | `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` called only from the Presentation |
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |
+| `Architecture/TickPriorityTests` | `int.MaxValue` physics priority only on `ServerTickNode`, in code and in no scene |
 | `Launch/LaunchProfilesTests` | Game profiles of `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
 | `Launch/MultiLaunchTests` | `.run/` configs ↔ the document and ↔ existing profiles; file name matches config name |
 | `Scenes/SceneResourceTests` | `res://` paths in scenes and `project.godot` resolve; a root script is the `.cs` beside its scene |

@@ -88,6 +88,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `World/ServerNetwork/CommandInboxTests` | A whitelisted packet comes out decoded with its peer; an event, a non-whitelisted, broken or over-long packet is dropped; arrival order across entry kinds |
 | `World/ServerNetwork/EventOutboxTests` | Routing to all, to one player; one peer keeps the order of publication |
 | `World/ServerNetwork/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |
+| `World/ServerNetwork/ServerTickLoopTests` | An event of a tick reaches the host's `ChatPresentation` through loopback only at its end; every peer with events gets an events packet, none without; a failing peer costs the others nothing; the tick counter; commands before sending |
 
 ## CI
 
