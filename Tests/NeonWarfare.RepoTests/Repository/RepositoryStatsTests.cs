@@ -30,14 +30,16 @@ public class RepositoryStatsTests
         report.AppendLine("Repository statistics");
         AppendTextDirectory(report, "Docs/", RepositoryPaths.DocsDirectory);
         AppendTextDirectory(report, "brain/", RepositoryPaths.BrainDirectory);
-        AppendCode(report, "*.cs (game)", RepositoryPaths.SourceFiles());
         AppendCode(
             report,
-            "*.cs (tests)",
-            RepositoryPaths.RepoTestFiles()
-                .Concat(RepositoryPaths.SmokeTestFiles())
-                .Concat(RepositoryPaths.GameTestFiles())
+            "*.cs (NeonWarfare)",
+            RepositoryPaths.SourceFiles()
+                .Where(path => RepositoryPaths.IsInside(path, RepositoryPaths.GameSourceDirectory))
                 .ToList());
+        AppendCode(report, "*.cs (GodotBox)", RepositoryPaths.GodotBoxFiles());
+        AppendCode(report, "*.cs (RepoTests)", RepositoryPaths.RepoTestFiles());
+        AppendCode(report, "*.cs (GameTests)", RepositoryPaths.GameTestFiles());
+        AppendCode(report, "*.cs (SmokeTests)", RepositoryPaths.SmokeTestFiles());
         AppendCode(report, "*.tscn", FilesWithExtension(allFiles, ".tscn"));
         report.AppendLine($"  messages.pot: {TemplateKeyCount()} keys");
         report.AppendLine($"  Assets/: {RepositoryPaths.AllFilesUnder(RepositoryPaths.AssetsDirectory).Count} files");
@@ -74,8 +76,7 @@ public class RepositoryStatsTests
 
     /// <summary>
     /// Files and lines of one group of sources. The .cs of the repository are split by project rather
-    /// than counted together: Src/ is the game, GodotBox included, Tests/ is the suite checking it, and a
-    /// single number hides which of the two is growing.
+    /// than counted together: a single number hides which of them is growing.
     /// </summary>
     private static void AppendCode(StringBuilder report, string label, IReadOnlyList<string> files)
     {
