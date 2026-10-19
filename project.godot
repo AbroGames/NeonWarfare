@@ -66,7 +66,6 @@ locale/translations=PackedStringArray("res://Assets/Locales/en.po", "res://Asset
 
 [physics]
 
-common/physics_ticks_per_second=60
 2d/default_gravity=0.0
 2d/default_gravity_vector=Vector2(0, 0)
 2d/default_linear_damp=0.0
