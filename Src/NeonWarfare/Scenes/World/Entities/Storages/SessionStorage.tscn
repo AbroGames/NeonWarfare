@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dy0m4kq4vjk7k"]
+
+[ext_resource type="Script" uid="uid://c4rdm28e50wrr" path="res://Src/NeonWarfare/Scenes/World/Entities/Storages/SessionStorage.cs" id="1_mcf5h"]
+
+[node name="SessionStorage" type="Node" unique_id=337621674]
+script = ExtResource("1_mcf5h")
