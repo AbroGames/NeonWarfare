@@ -21,8 +21,8 @@ namespace NeonWarfare.GameTests.World.Simulations;
 public class ChatTests
 {
     private const WorldLayer DedicatedWithServerHud =
-        WorldLayer.Simulation | WorldLayer.CommandHandler | WorldLayer.ServerNetwork | WorldLayer.Query
-        | WorldLayer.ServerHudPresentation | WorldLayer.DedicatedWindow | WorldLayer.ClientNetwork;
+        WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
+        | WorldLayer.Query | WorldLayer.ServerHudPresentation | WorldLayer.DedicatedWindow | WorldLayer.ClientNetwork;
 
     private const long Now = 1_700_000_000;
     private const int MaxLength = 1024;

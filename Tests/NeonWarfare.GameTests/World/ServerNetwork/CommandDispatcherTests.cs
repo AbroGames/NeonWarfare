@@ -18,8 +18,8 @@ namespace NeonWarfare.GameTests.World.ServerNetwork;
 [TestSuite]
 public class CommandDispatcherTests
 {
-    private const WorldLayer Host = WorldLayer.Simulation | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
-                                    | WorldLayer.Query | WorldLayer.Presentation
+    private const WorldLayer Host = WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler
+                                    | WorldLayer.ServerNetwork | WorldLayer.Query | WorldLayer.Presentation
                                     | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
 
     private const int AlicePeer = 2;

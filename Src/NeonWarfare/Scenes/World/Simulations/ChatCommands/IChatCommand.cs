@@ -2,7 +2,7 @@ using System;
 
 namespace NeonWarfare.Scenes.World.Simulations.ChatCommands;
 
-// Implemented by a [Simulation(Facade = true)] named *ChatCommandSimulationFacade: a command may change the state
+// Implemented by a [SimulationFacade] named *ChatCommandSimulationFacade: a command may change the state
 // through other facades, and the composition root passes every created one to ChatSimulationFacade.Register
 public interface IChatCommand
 {

@@ -27,7 +27,7 @@ public class ChatCommandTests
         {
             if (WorldLayers.DeclaredLayer(command) != Layer.SimulationFacade)
             {
-                report.Add($"{GameAssembly.Describe(command)}: is not marked [Simulation(Facade = true)], so the " +
+                report.Add($"{GameAssembly.Describe(command)}: is not marked [SimulationFacade], so the " +
                            "composition root never registers it");
             }
         }

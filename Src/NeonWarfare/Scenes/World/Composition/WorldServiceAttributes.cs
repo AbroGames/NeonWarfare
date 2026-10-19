@@ -10,9 +10,12 @@ public abstract class WorldServiceAttribute : Attribute
 
 public class SimulationAttribute : WorldServiceAttribute
 {
-    public bool Facade { get; init; }
-
     public override WorldLayer Layer => WorldLayer.Simulation;
+}
+
+public class SimulationFacadeAttribute : WorldServiceAttribute
+{
+    public override WorldLayer Layer => WorldLayer.SimulationFacade;
 }
 
 public class CommandHandlerAttribute : WorldServiceAttribute

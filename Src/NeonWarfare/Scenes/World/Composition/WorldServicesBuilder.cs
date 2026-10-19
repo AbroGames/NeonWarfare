@@ -70,7 +70,7 @@ public class WorldServicesBuilder
             provider.GetRequiredService<EventDispatcher>().Register(presentations, eventTypes);
         }
 
-        if (layers.HasFlag(WorldLayer.Simulation))
+        if (layers.HasFlag(WorldLayer.SimulationFacade))
         {
             IEnumerable<IChatCommand> commands = selected
                 .Select(service => provider.GetRequiredService(service.Type))

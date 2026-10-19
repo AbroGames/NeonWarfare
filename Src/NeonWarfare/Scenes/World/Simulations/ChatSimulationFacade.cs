@@ -15,7 +15,7 @@ namespace NeonWarfare.Scenes.World.Simulations;
 /// text is a chat message. Messages and replies are built and logged by <see cref="ChatSimulation"/>, which other
 /// facades call directly for their own server messages.
 /// </summary>
-[Simulation(Facade = true)]
+[SimulationFacade]
 public class ChatSimulationFacade(ChatSimulation chatSimulation)
 {
     private const string RanLog = "{sender} ran /{text}";
