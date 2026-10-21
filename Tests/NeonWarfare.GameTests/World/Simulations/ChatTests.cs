@@ -5,6 +5,7 @@ using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
 using NeonWarfare.Scenes.World.Commands;
 using NeonWarfare.Scenes.World.Composition;
+using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Protocol;
@@ -32,6 +33,7 @@ public class ChatTests
     private static readonly HashSet<Type> EventTypes = [typeof(ChatServerMessageEvent), typeof(ChatPlayerMessageEvent)];
 
     private NetMessageCodec _codec = null!;
+    private WorldPackedScenes _scenes = null!;
     private ServiceProvider _provider = null!;
     private EventOutbox _outbox = null!;
     private PlayerModel _bob = null!;
@@ -39,12 +41,14 @@ public class ChatTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _scenes = new WorldPackedScenes();
         var persistence = new PersistenceModel();
         var session = new SessionModel();
         _provider = new WorldServicesBuilder().Build(
             Dedicated,
-            new WorldDependencies(new FixedTime(), persistence, session, _codec, new ManualFrameProvider()));
+            new WorldDependencies(
+                new FixedTime(), persistence, session, _codec, new ManualFrameProvider(), _scenes));
         _outbox = _provider.GetRequiredService<EventOutbox>();
 
         JoinDirectly(persistence, session, "alice", "Alice", AlicePeer);
@@ -52,7 +56,11 @@ public class ChatTests
     }
 
     [AfterTest]
-    public void TearDown() => _provider.Dispose();
+    public void TearDown()
+    {
+        _provider.Dispose();
+        _scenes.Free();
+    }
 
     [TestCase]
     [RequireGodotRuntime]

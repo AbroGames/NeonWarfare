@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bpjqlqsxaute2" path="res://Src/NeonWarfare/Scenes/OldWorld/World.tscn" id="3_ln2h6"]
 [ext_resource type="PackedScene" uid="uid://dnb3y8rbdon8t" path="res://Src/NeonWarfare/Scenes/Screen/Hud/Hud.tscn" id="4_y3kpf"]
 [ext_resource type="PackedScene" uid="uid://dynvxo6o5hjgd" path="res://Src/NeonWarfare/Scenes/Screen/ServerHud/ServerHud.tscn" id="6_3k6gv"]
+[ext_resource type="PackedScene" uid="uid://cqtk5i2qwb0wp" path="res://Src/NeonWarfare/Scenes/World/Entities/WorldPackedScenes.tscn" id="7_p7g10"]
 
 [node name="Game" type="Node2D" unique_id=490647588]
 script = ExtResource("1_gwu2e")
@@ -16,8 +17,10 @@ script = ExtResource("2_y3kpf")
 [node name="HudContainer" type="CanvasLayer" parent="." unique_id=22132420]
 script = ExtResource("2_y3kpf")
 
-[node name="PackedScenes" type="Node" parent="." unique_id=2140663278]
+[node name="GamePackedScenes" type="Node" parent="." unique_id=1436436117]
 script = ExtResource("2_xbxml")
 World = ExtResource("3_ln2h6")
 Hud = ExtResource("4_y3kpf")
 ServerHud = ExtResource("6_3k6gv")
+
+[node name="WorldPackedScenes" parent="." unique_id=1307332324 instance=ExtResource("7_p7g10")]

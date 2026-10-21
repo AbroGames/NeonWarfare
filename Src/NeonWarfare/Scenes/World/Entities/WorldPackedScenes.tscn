@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cqtk5i2qwb0wp"]
+
+[ext_resource type="Script" uid="uid://bqyytxu4j6xkx" path="res://Src/NeonWarfare/Scenes/World/Entities/WorldPackedScenes.cs" id="1_pphtq"]
+[ext_resource type="PackedScene" uid="uid://dqfutju4p31k8" path="res://Src/NeonWarfare/Scenes/World/Entities/Surfaces/SafeSurface.tscn" id="2_cxrvn"]
+[ext_resource type="PackedScene" uid="uid://ci2dn8dnt3kav" path="res://Src/NeonWarfare/Scenes/Entities/Characters/Character.tscn" id="2_y673r"]
+[ext_resource type="PackedScene" uid="uid://cosu2yptj35os" path="res://Src/NeonWarfare/Scenes/Entities/Walls/Wall.tscn" id="3_gh6c2"]
+[ext_resource type="PackedScene" uid="uid://bweahxi5jb8om" path="res://Src/NeonWarfare/Scenes/World/Entities/Surfaces/BattleSurface.tscn" id="3_jmpcm"]
+
+[node name="WorldPackedScenes" type="Node" unique_id=1307332324]
+script = ExtResource("1_pphtq")
+SafeSurface = ExtResource("2_cxrvn")
+BattleSurface = ExtResource("3_jmpcm")
+Character = ExtResource("2_y673r")
+Wall = ExtResource("3_gh6c2")
