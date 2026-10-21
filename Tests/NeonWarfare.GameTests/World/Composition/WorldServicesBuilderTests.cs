@@ -7,9 +7,10 @@ using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Entities;
-using NeonWarfare.Scenes.World.Models;
+using NeonWarfare.Scenes.World.Entities.Storages;
 using NeonWarfare.Scenes.World.Presentations;
 using NeonWarfare.Scenes.World.Protocol;
+using NeonWarfare.Scenes.World.Queries;
 using NeonWarfare.Scenes.World.ServerNetwork;
 using NeonWarfare.Scenes.World.Simulations;
 using NeonWarfare.Scenes.World.Simulations.ChatCommands;
@@ -114,7 +115,7 @@ public class WorldServicesBuilderTests
     {
         UnrequestedPresentation.Created = 0;
 
-        using ServiceProvider provider = FixtureBuilder(typeof(UnrequestedPresentation)).Build(Host, Dependencies());
+        using ServiceProvider provider = Build(FixtureBuilder(typeof(UnrequestedPresentation)), Host);
 
         AssertThat(UnrequestedPresentation.Created).IsEqual(1);
     }
@@ -125,7 +126,7 @@ public class WorldServicesBuilderTests
     {
         foreach (WorldLayer layers in new[] { Client, Host, Dedicated })
         {
-            using ServiceProvider provider = FixtureBuilder(typeof(FixtureQuery)).Build(layers, Dependencies());
+            using ServiceProvider provider = Build(FixtureBuilder(typeof(FixtureQuery)), layers);
 
             // A bool: AssertThat dispatches dynamically and cannot bind a private fixture type
             AssertThat(provider.GetService<FixtureQuery>() != null).IsTrue();
@@ -140,9 +141,7 @@ public class WorldServicesBuilderTests
         string message = "";
         try
         {
-            FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB))
-                .Build(Host, Dependencies())
-                .Dispose();
+            Build(FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB)), Host).Dispose();
         }
         catch (AggregateException exception)
         {
@@ -158,7 +157,7 @@ public class WorldServicesBuilderTests
     {
         GameWorld world = AutoFree(new GameWorld())!;
 
-        AssertThat(world.InitPreReady(Host, Dependencies())).IsSame(world);
+        AssertThat(world.InitPreReady(Host, Dependencies(), WorldOrigin.New)).IsSame(world);
     }
 
     [TestCase]
@@ -168,24 +167,70 @@ public class WorldServicesBuilderTests
         GameWorld world = AutoFree(new GameWorld())!;
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
-        AssertThrown(() => world.InitPreReady(Host, Dependencies()))
+        AssertThrown(() => world.InitPreReady(Host, Dependencies(), WorldOrigin.New))
             .IsInstanceOf<InvalidOperationException>();
     }
 
-    private static ServiceProvider Build(WorldLayer layers) =>
-        new WorldServicesBuilder().Build(layers, Dependencies());
+    [TestCase]
+    [RequireGodotRuntime]
+    public void InitPreReady_NewWorld_SpawnsBothStoragesUnderTheWorld()
+    {
+        foreach (WorldLayer layers in new[] { Host, Dedicated })
+        {
+            GameWorld world = AutoFree(new GameWorld())!;
+
+            world.InitPreReady(layers, Dependencies(), WorldOrigin.New);
+
+            AssertThat(world.GetChildren().OfType<PersistenceStorage>().Count()).IsEqual(1);
+            AssertThat(world.GetChildren().OfType<SessionStorage>().Count()).IsEqual(1);
+        }
+    }
+
+    // Spawning is the origin's business: a loaded world gets its entities from the save, a client from the server
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_AnyConfiguration_SpawnsNothing()
+    {
+        foreach (WorldLayer layers in new[] { Client, Host, Dedicated })
+        {
+            Node root = AutoFree(new Node())!;
+
+            using ServiceProvider provider =
+                new WorldServicesBuilder().Build(layers, Dependencies(), new WorldRoot(root));
+
+            AssertThat(provider.GetRequiredService<IEntityFinder>().GetAll<Node>()).IsEmpty();
+            AssertThat(root.GetChildCount()).IsEqual(0);
+        }
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_Client_HasNoSpawnerNorNetIdGenerator()
+    {
+        using ServiceProvider provider = Build(Client);
+
+        AssertThat(provider.GetService<EntitySpawner>()).IsNull();
+        AssertThat(provider.GetService<NetIdGenerator>()).IsNull();
+        AssertThat(provider.GetService<NewWorldSimulationFacade>()).IsNull();
+    }
+
+    private static ServiceProvider Build(WorldLayer layers) => Build(new WorldServicesBuilder(), layers);
+
+    private static ServiceProvider Build(WorldServicesBuilder builder, WorldLayer layers) =>
+        builder.Build(layers, Dependencies(), new WorldRoot(AutoFree(new Node())!));
 
     // The root gives the event dispatcher and the command dispatcher their handlers, the inbox its whitelist and the
-    // chat commands facade its commands, so all of them come with any fixture
+    // chat commands facade its commands, so all of them come with any fixture, with what the dispatcher takes
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
             typeof(CommandDispatcher), typeof(ChatSimulation), typeof(ChatSimulationFacade),
+            typeof(PersistenceStorageQuery),
         ]);
 
     private static WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec(), new ManualFrameProvider(),
-            AutoFree(new WorldPackedScenes())!, new RecordingClientsConnection());
+        new(TimeProvider.System, Codec(), new ManualFrameProvider(), AutoFree(TestWorldScenes.Create())!,
+            new RecordingClientsConnection());
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);
 

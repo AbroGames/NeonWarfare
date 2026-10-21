@@ -15,7 +15,11 @@ public partial class WorldPackedScenes : GameCheckedAbstractStorage
     [ExportGroup("Surfaces")]
     [Export] [NotNull] public PackedScene SafeSurface { get; private set; }
     [Export] [NotNull] public PackedScene BattleSurface { get; private set; }
-    
+
+    [ExportGroup("Storages")]
+    [Export] [NotNull] public PackedScene PersistenceStorage { get; private set; }
+    [Export] [NotNull] public PackedScene SessionStorage { get; private set; }
+
     [ExportGroup("Entities")]
     [Export] [NotNull] public PackedScene Character { get; private set; }
     [Export] [NotNull] public PackedScene Wall { get; private set; }

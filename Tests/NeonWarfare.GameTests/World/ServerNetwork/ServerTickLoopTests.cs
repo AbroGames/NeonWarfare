@@ -1,4 +1,5 @@
 using GdUnit4;
+using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
@@ -11,7 +12,9 @@ using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Presentations;
 using NeonWarfare.Scenes.World.Protocol;
+using NeonWarfare.Scenes.World.Queries;
 using NeonWarfare.Scenes.World.ServerNetwork;
+using NeonWarfare.Scenes.World.Simulations;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.World.Presentations.ChatPresentation;
 
@@ -35,6 +38,7 @@ public class ServerTickLoopTests
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
+    private Node _root = null!;
     private RecordingClientsConnection _clientsConnection = null!;
     private ServiceProvider _provider = null!;
 
@@ -42,7 +46,8 @@ public class ServerTickLoopTests
     public void SetUp()
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
-        _scenes = new WorldPackedScenes();
+        _scenes = TestWorldScenes.Create();
+        _root = new Node();
         _clientsConnection = new RecordingClientsConnection();
     }
 
@@ -50,6 +55,7 @@ public class ServerTickLoopTests
     public void TearDown()
     {
         _provider.Dispose();
+        _root.Free();
         _scenes.Free();
     }
 
@@ -120,7 +126,7 @@ public class ServerTickLoopTests
     public void RunTick_PeerWithoutEvents_GetsNoPacket()
     {
         Build(new WorldServicesBuilder());
-        Outbox().PublishTo(Hello, _provider.GetRequiredService<PersistenceModel>().PlayerByUid["alice"]);
+        Outbox().PublishTo(Hello, Persistence().PlayerByUid["alice"]);
 
         Loop().RunTick();
 
@@ -173,23 +179,23 @@ public class ServerTickLoopTests
 
     private void Build(WorldServicesBuilder builder)
     {
-        var persistence = new PersistenceModel();
-        var session = new SessionModel();
         _provider = builder.Build(
             Host,
             new WorldDependencies(
-                new FixedTime(), persistence, session, _codec, new ManualFrameProvider(), _scenes, _clientsConnection));
+                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, _clientsConnection),
+            new WorldRoot(_root));
+        _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;
 
-        JoinDirectly(persistence, session, "host", "Host", HostPeer);
-        JoinDirectly(persistence, session, "alice", "Alice", AlicePeer);
+        JoinDirectly("host", "Host", HostPeer);
+        JoinDirectly("alice", "Alice", AlicePeer);
     }
 
     // Stands for the join of task 015
-    private void JoinDirectly(PersistenceModel persistence, SessionModel session, string uid, string nick, int peerId)
+    private void JoinDirectly(string uid, string nick, int peerId)
     {
-        persistence.AddPlayer(uid).Nick = nick;
-        session.OnlinePlayerUids.Add(uid);
+        Persistence().AddPlayer(uid).Nick = nick;
+        _provider.GetRequiredService<SessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
         _provider.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
         Outbox().AddPeer(peerId);
     }
@@ -197,6 +203,8 @@ public class ServerTickLoopTests
     private void Command(int peerId, string text) =>
         _provider.GetRequiredService<CommandInbox>()
             .EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
+
+    private PersistenceModel Persistence() => _provider.GetRequiredService<PersistenceStorageQuery>().Model;
 
     private ServerTickLoop Loop() => _provider.GetRequiredService<ServerTickLoop>();
 

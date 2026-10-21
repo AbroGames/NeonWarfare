@@ -1,5 +1,6 @@
 using System.Buffers;
 using GdUnit4;
+using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
@@ -9,6 +10,7 @@ using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Protocol;
+using NeonWarfare.Scenes.World.Queries;
 using NeonWarfare.Scenes.World.ServerNetwork;
 using NeonWarfare.Scenes.World.Simulations;
 using NeonWarfare.Scenes.World.Simulations.ChatCommands;
@@ -34,6 +36,7 @@ public class ChatTests
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
+    private Node _root = null!;
     private ServiceProvider _provider = null!;
     private EventOutbox _outbox = null!;
     private PlayerModel _bob = null!;
@@ -42,24 +45,25 @@ public class ChatTests
     public void SetUp()
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
-        _scenes = new WorldPackedScenes();
-        var persistence = new PersistenceModel();
-        var session = new SessionModel();
+        _scenes = TestWorldScenes.Create();
+        _root = new Node();
         _provider = new WorldServicesBuilder().Build(
             Dedicated,
             new WorldDependencies(
-                new FixedTime(), persistence, session, _codec, new ManualFrameProvider(), _scenes,
-                new RecordingClientsConnection()));
+                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, new RecordingClientsConnection()),
+            new WorldRoot(_root));
+        _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();
 
-        JoinDirectly(persistence, session, "alice", "Alice", AlicePeer);
-        _bob = JoinDirectly(persistence, session, "bob", "Bob", BobPeer);
+        JoinDirectly("alice", "Alice", AlicePeer);
+        _bob = JoinDirectly("bob", "Bob", BobPeer);
     }
 
     [AfterTest]
     public void TearDown()
     {
         _provider.Dispose();
+        _root.Free();
         _scenes.Free();
     }
 
@@ -198,12 +202,11 @@ public class ChatTests
     }
 
     // Stands for the join of task 015
-    private PlayerModel JoinDirectly(
-        PersistenceModel persistence, SessionModel session, string uid, string nick, int peerId)
+    private PlayerModel JoinDirectly(string uid, string nick, int peerId)
     {
-        PlayerModel player = persistence.AddPlayer(uid);
+        PlayerModel player = _provider.GetRequiredService<PersistenceStorageQuery>().Model.AddPlayer(uid);
         player.Nick = nick;
-        session.OnlinePlayerUids.Add(uid);
+        _provider.GetRequiredService<SessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
         _provider.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
         _outbox.AddPeer(peerId);
         return player;

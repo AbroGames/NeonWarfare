@@ -56,6 +56,22 @@ public class AbstractStorageTests
 
     [TestCase]
     [RequireGodotRuntime]
+    public void GetSceneId_IsTheIndexInTheList_UnknownSceneThrows()
+    {
+        SceneStorageFixture storage = AutoFree(new SceneStorageFixture())!;
+        storage.First = new PackedScene();
+        storage.Second = new PackedScene();
+        storage._Ready();
+        IReadOnlyList<PackedScene> scenes = storage.GetScenesList();
+
+        AssertThat(storage.GetSceneId(storage.First)).IsEqual(IndexOf(scenes, storage.First));
+        AssertThat(storage.GetSceneId(storage.Second)).IsEqual(IndexOf(scenes, storage.Second));
+        AssertThrown(() => storage.GetSceneId(new PackedScene())).IsInstanceOf<ArgumentException>();
+        AssertThrown(() => storage.GetSceneId(null!)).IsInstanceOf<ArgumentException>();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
     public void TryGetScene_ReturnsFalseForUnknownName()
     {
         SceneStorageFixture storage = AutoFree(new SceneStorageFixture())!;
@@ -64,4 +80,7 @@ public class AbstractStorageTests
 
         AssertThat(storage.TryGetScene("Unknown", out _)).IsFalse();
     }
+
+    private static int IndexOf(IReadOnlyList<PackedScene> scenes, PackedScene scene) =>
+        scenes.Select((candidate, index) => (candidate, index)).Single(pair => pair.candidate == scene).index;
 }

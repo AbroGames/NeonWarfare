@@ -7,9 +7,11 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// <summary>
 /// The table "layer → which layers it may accept in its constructor" from the network architecture plan.
 /// World services get their dependencies only through the constructor — no statics, no lookup by name —
-/// so checking constructor parameters catches every way one layer could reach another. Models and the
-/// types of <c>WorldDependencies</c> are open to every layer, except those with network side effects: they are
-/// handed to every World, but only the layer that owns sending may use them.
+/// so checking constructor parameters catches every way one layer could reach another. Models and the types of
+/// <c>WorldDependencies</c> are open to every layer, except those with side effects beyond the world: they are
+/// handed to every World, but only the layer that owns the effect may use them. What else the root registers —
+/// the other parameters of <c>WorldServicesBuilder.Build</c>, the entity registry — is open or restricted only by
+/// name here, so a new <c>Build</c> parameter needs a decision.
 /// Leaf simulations never call each other: an operation with all its effects lives in one facade, and a
 /// command handler goes through a facade too, or it would run half an operation. Shared reads go to queries.
 /// </summary>
@@ -17,6 +19,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class ConstructorLayerTests
 {
     private const string WorldDependencies = WorldLayers.WorldNamespace + ".Composition.WorldDependencies";
+    private const string WorldLayer = WorldLayers.WorldNamespace + ".Composition.WorldLayer";
+    private const string Builder = WorldLayers.WorldNamespace + ".Composition.WorldServicesBuilder";
+    private const string BuildMethod = "Build";
 
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
         new Dictionary<Layer, Layer[]>
@@ -24,18 +29,25 @@ public class ConstructorLayerTests
             [Layer.Simulation] = [Layer.Query, Layer.ServerNetwork],
             [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query, Layer.ServerNetwork],
             [Layer.CommandHandler] = [Layer.SimulationFacade, Layer.Query],
-            [Layer.ServerNetwork] = [Layer.ServerNetwork],
+            [Layer.ServerNetwork] = [Layer.ServerNetwork, Layer.Query],
             [Layer.Query] = [Layer.Query],
-            [Layer.ClientNetwork] = [Layer.ClientNetwork],
+            [Layer.ClientNetwork] = [Layer.ClientNetwork, Layer.Query],
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
         };
 
-    // The transport would let any layer send in the middle of the tick, past EventOutbox
     private static readonly IReadOnlyDictionary<string, Layer[]> RestrictedDependencies =
         new Dictionary<string, Layer[]>
         {
+            // The transport would let any layer send in the middle of the tick, past EventOutbox
             [WorldLayers.WorldNamespace + ".ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
+            // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
+            // nobody replicates into the world
+            [WorldLayers.WorldNamespace + ".Entities.EntityRegistry"] = [Layer.Simulation],
+            [WorldLayers.WorldNamespace + ".Entities.WorldRoot"] = [Layer.Simulation],
         };
+
+    // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it
+    private static readonly string[] OpenTypes = [WorldLayers.WorldNamespace + ".Entities.IEntityFinder"];
 
     [Fact]
     public void Constructors_TakeOnlyAllowedLayers()
@@ -43,10 +55,19 @@ public class ConstructorLayerTests
         FailureReport report = new("World service constructor parameters the layer table does not allow");
         GameAssembly game = GameAssembly.Instance;
         IReadOnlySet<string> dependencies = WorldDependencyTypes(game);
+        IReadOnlySet<string> buildParameters = BuildParameterTypes(game).ToHashSet(StringComparer.Ordinal);
+        IReadOnlySet<string> open = dependencies.Concat(OpenTypes).ToHashSet(StringComparer.Ordinal);
         // Otherwise a rename would leave the restriction nothing to check
-        foreach (string restricted in RestrictedDependencies.Keys.Where(name => !dependencies.Contains(name)))
+        foreach (string name in RestrictedDependencies.Keys.Concat(OpenTypes)
+                     .Where(name => game.FindByName(name) == null))
         {
-            report.Add($"{restricted} is restricted but is no longer a WorldDependencies type");
+            report.Add($"{name} is restricted or open but no longer exists");
+        }
+        foreach (string parameter in buildParameters
+                     .Where(name => !RestrictedDependencies.ContainsKey(name) && !OpenTypes.Contains(name)))
+        {
+            report.Add($"{parameter} is a Build parameter with no decision: list it in "
+                       + $"{nameof(RestrictedDependencies)} or {nameof(OpenTypes)}");
         }
 
         foreach (TypeDefinition type in game.Types)
@@ -73,7 +94,7 @@ public class ConstructorLayerTests
                         }
                         continue;
                     }
-                    if (dependencies.Contains(parameterType.FullName))
+                    if (open.Contains(parameterType.FullName))
                     {
                         continue;
                     }
@@ -92,8 +113,9 @@ public class ConstructorLayerTests
 
                     string what = parameterLayer is { } other ? $"a {other} service" : "neither a layer nor a model";
                     string allowed = AllowedParameterLayers[layer].Length == 0
-                        ? "only models and WorldDependencies"
-                        : string.Join(", ", AllowedParameterLayers[layer]) + ", models and WorldDependencies";
+                        ? "only models and the composition root's dependencies"
+                        : string.Join(", ", AllowedParameterLayers[layer])
+                          + ", models and the composition root's dependencies";
                     report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
                                $"'{parameter.Name}' of {GameAssembly.ShortName(parameterType)}, {what}; " +
                                $"a {layer} may take {allowed}");
@@ -145,5 +167,19 @@ public class ConstructorLayerTests
             && method.Parameters.All(parameter => parameter.ParameterType.FullName != WorldDependencies));
         return primary.Parameters.Select(parameter => parameter.ParameterType.FullName)
             .ToHashSet(StringComparer.Ordinal);
+    }
+
+    /// <summary>
+    /// The parameter types of <c>WorldServicesBuilder.Build</c> other than the layers and <c>WorldDependencies</c>:
+    /// what the World node itself hands to the container. Read from the method, as the record is.
+    /// </summary>
+    private static IEnumerable<string> BuildParameterTypes(GameAssembly game)
+    {
+        TypeDefinition builder = game.FindByName(Builder)
+                                 ?? throw new InvalidOperationException($"{Builder} is gone");
+        MethodDefinition build = builder.Methods.Single(method => method.Name == BuildMethod);
+        return build.Parameters
+            .Select(parameter => parameter.ParameterType.FullName)
+            .Where(name => name != WorldLayer && name != WorldDependencies);
     }
 }
