@@ -87,11 +87,6 @@ public class WorldServicesBuilder
             dispatcher.Register(handlers);
             provider.GetRequiredService<CommandInbox>().Register(dispatcher.NetworkCommandTypes);
         }
-
-        if (layers.HasFlag(WorldLayer.DedicatedWindow))
-        {
-            provider.GetRequiredService<EventOutbox>().AddDedicatedWindow();
-        }
         return provider;
     }
 

@@ -15,14 +15,14 @@ using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.World.Simulations;
 
-// The real game types through the composition root of a dedicated server with a window; commands go in through the
-// real inputs and the events are read back from the outbox, as a peer and the window would receive them
+// The real game types through the composition root of a dedicated server; commands go in through the real inbox and
+// the events are read back from the outbox, as a peer would receive them
 [TestSuite]
 public class ChatTests
 {
-    private const WorldLayer DedicatedWithServerHud =
+    private const WorldLayer Dedicated =
         WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
-        | WorldLayer.Query | WorldLayer.ServerHudPresentation | WorldLayer.DedicatedWindow | WorldLayer.ClientNetwork;
+        | WorldLayer.Query;
 
     private const long Now = 1_700_000_000;
     private const int MaxLength = 1024;
@@ -34,6 +34,7 @@ public class ChatTests
     private NetMessageCodec _codec = null!;
     private ServiceProvider _provider = null!;
     private EventOutbox _outbox = null!;
+    private PlayerModel _bob = null!;
 
     [BeforeTest]
     public void SetUp()
@@ -42,12 +43,12 @@ public class ChatTests
         var persistence = new PersistenceModel();
         var session = new SessionModel();
         _provider = new WorldServicesBuilder().Build(
-            DedicatedWithServerHud,
+            Dedicated,
             new WorldDependencies(new FixedTime(), persistence, session, _codec, new ManualFrameProvider()));
         _outbox = _provider.GetRequiredService<EventOutbox>();
 
         JoinDirectly(persistence, session, "alice", "Alice", AlicePeer);
-        JoinDirectly(persistence, session, "bob", "Bob", BobPeer);
+        _bob = JoinDirectly(persistence, session, "bob", "Bob", BobPeer);
     }
 
     [AfterTest]
@@ -55,12 +56,12 @@ public class ChatTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void PlayerMessage_ReachesEveryPeerAndTheWindow()
+    public void PlayerMessage_ReachesEveryPeer()
     {
-        FromAlice("hello");
+        From(AlicePeer, "hello");
 
         var expected = new ChatPlayerMessageEvent(Now, "alice", "Alice", "hello");
-        AssertAll([expected], [expected], [expected]);
+        AssertAll([expected], [expected]);
     }
 
     [TestCase]
@@ -73,9 +74,9 @@ public class ChatTests
                      "a\nb", "a\rb", "a\u2028b", "a\u2029b", "a\u202Eb", "a\u200Bb",
                  })
         {
-            FromAlice(text!);
+            From(AlicePeer, text!);
 
-            AssertAll([], [], []);
+            AssertAll([], []);
         }
     }
 
@@ -85,7 +86,7 @@ public class ChatTests
     {
         foreach (string text in new[] { new string('a', MaxLength), "привет, 世界 😀" })
         {
-            FromAlice(text);
+            From(AlicePeer, text);
 
             AssertThat(PeerEvents(BobPeer)).ContainsExactly(new ChatPlayerMessageEvent(Now, "alice", "Alice", text));
         }
@@ -95,65 +96,45 @@ public class ChatTests
     [RequireGodotRuntime]
     public void HelpFromPlayer_RepliesOnlyToThem()
     {
-        FromAlice("/help");
+        From(AlicePeer, "/help");
 
         IReadOnlyList<object> alice = PeerEvents(AlicePeer);
         AssertThat(alice.Count).IsEqual(1);
         AssertThat(((ChatServerMessageEvent) alice[0]).Text).Contains("'/help' -> ").NotContains("Admin commands");
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
-        AssertThat(WindowEvents()).IsEmpty();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void HelpFromWindow_RepliesOnlyToTheWindow()
+    public void HelpFromAdmin_ListsAdminCommands()
     {
-        FromWindow("/help");
+        _bob.IsAdmin = true;
 
-        IReadOnlyList<object> window = WindowEvents();
-        AssertThat(window.Count).IsEqual(1);
-        AssertThat(((ChatServerMessageEvent) window[0]).Text).Contains("'/help' -> ").Contains("Admin commands");
+        From(BobPeer, "/help");
+
+        IReadOnlyList<object> bob = PeerEvents(BobPeer);
+        AssertThat(bob.Count).IsEqual(1);
+        AssertThat(((ChatServerMessageEvent) bob[0]).Text).Contains("'/help' -> ").Contains("Admin commands");
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
-        AssertThat(PeerEvents(BobPeer)).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void WindowMessage_IsAServerMessageToAll()
-    {
-        FromWindow("restart soon");
-
-        var expected = new ChatServerMessageEvent(Now, "restart soon");
-        AssertAll([expected], [expected], [expected]);
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void InvalidWindowMessage_PublishesNothing()
-    {
-        FromWindow("a\tb");
-
-        AssertAll([], [], []);
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void UnknownCommand_RepliesNotFoundOnlyToTheSender()
     {
-        FromAlice("/nosuch arg");
+        From(AlicePeer, "/nosuch arg");
 
         IReadOnlyList<object> alice = PeerEvents(AlicePeer);
         AssertThat(alice.Count).IsEqual(1);
         AssertThat(((ChatServerMessageEvent) alice[0]).Text).Contains("'nosuch' not found");
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
-        AssertThat(WindowEvents()).IsEmpty();
     }
 
     // Hand-made facades below: the game has no admin command yet, and Register's checks need fixture commands
 
     [TestCase]
     [RequireGodotRuntime]
-    public void AdminCommand_RefusedToPlayerRunForWindowAndAdmin()
+    public void AdminCommand_RefusedToPlayerRunForAdmin()
     {
         var calls = new List<string>();
         (ChatSimulationFacade facade, EventOutbox outbox, PeerUidMap peers) = HandMade();
@@ -165,12 +146,11 @@ public class ChatTests
         peers.Bind(root.Uid, BobPeer);
         outbox.AddPeer(BobPeer);
 
-        facade.HandleInputFromPlayer(alice, "/admin x");
-        facade.HandleInputFromPlayer(root, "/ADMIN  y ");
-        facade.HandleInputFromDedicatedWindow("/admin z");
+        facade.HandleInput(alice, "/admin x");
+        facade.HandleInput(root, "/ADMIN  y ");
 
-        AssertThat(calls).ContainsExactly("admin y", "admin z");
-        IReadOnlyList<object> aliceEvents = Read(output => outbox.DrainPeerEvents(AlicePeer, output));
+        AssertThat(calls).ContainsExactly("root: admin y");
+        IReadOnlyList<object> aliceEvents = PeerEvents(outbox, AlicePeer);
         AssertThat(aliceEvents.Count).IsEqual(1);
         AssertThat(((ChatServerMessageEvent) aliceEvents[0]).Text).Contains("requires admin");
     }
@@ -204,7 +184,8 @@ public class ChatTests
     {
         (ChatSimulationFacade facade, _, _) = HandMade();
 
-        AssertThrown(() => facade.HandleInputFromDedicatedWindow("/help")).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => facade.HandleInput(new PlayerModel("alice"), "/help"))
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     // Stands for the join of task 015
@@ -219,24 +200,17 @@ public class ChatTests
         return player;
     }
 
-    private void FromAlice(string text)
+    private void From(int peerId, string text)
     {
         var inbox = _provider.GetRequiredService<CommandInbox>();
-        inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(new SendChatMessageCommand(text)));
+        inbox.EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
         _provider.GetRequiredService<CommandDispatcher>().ProcessAll();
     }
 
-    private void FromWindow(string text)
-    {
-        _provider.GetRequiredService<DedicatedWindowCommandSender>().Send(new SendChatMessageCommand(text));
-        _provider.GetRequiredService<CommandDispatcher>().ProcessAll();
-    }
-
-    private void AssertAll(object[] alice, object[] bob, object[] window)
+    private void AssertAll(object[] alice, object[] bob)
     {
         AssertEvents(PeerEvents(AlicePeer), alice);
         AssertEvents(PeerEvents(BobPeer), bob);
-        AssertEvents(WindowEvents(), window);
     }
 
     // ContainsExactly with no arguments passes for any list
@@ -249,14 +223,12 @@ public class ChatTests
         }
     }
 
-    private IReadOnlyList<object> PeerEvents(int peerId) => Read(output => _outbox.DrainPeerEvents(peerId, output));
+    private IReadOnlyList<object> PeerEvents(int peerId) => PeerEvents(_outbox, peerId);
 
-    private IReadOnlyList<object> WindowEvents() => Read(output => _outbox.DrainDedicatedWindowEvents(output));
-
-    private IReadOnlyList<object> Read(Action<ArrayBufferWriter<byte>> drain)
+    private IReadOnlyList<object> PeerEvents(EventOutbox outbox, int peerId)
     {
         var output = new ArrayBufferWriter<byte>();
-        drain(output);
+        outbox.DrainEvents(peerId, output);
         return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
     }
 
@@ -264,7 +236,6 @@ public class ChatTests
     {
         var peers = new PeerUidMap();
         var outbox = new EventOutbox(_codec, peers);
-        outbox.AddDedicatedWindow();
         return (new ChatSimulationFacade(new ChatSimulation(new FixedTime(), outbox)), outbox, peers);
     }
 
@@ -277,6 +248,6 @@ public class ChatTests
     {
         public string Description => "fixture";
 
-        public void Execute(bool isAdmin, Action<string> reply, string arguments) => Calls.Add($"{Name} {arguments}");
+        public void Execute(PlayerModel sender, string arguments) => Calls.Add($"{sender.Uid}: {Name} {arguments}");
     }
 }

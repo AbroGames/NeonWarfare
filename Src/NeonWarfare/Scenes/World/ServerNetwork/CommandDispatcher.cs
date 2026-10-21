@@ -13,7 +13,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.World.ServerNetwork;
 
 /// <summary>
-/// Drains <see cref="CommandInbox"/> in the server tick and hands every entry to the handler of its sender kind.
+/// Drains <see cref="CommandInbox"/> in the server tick and hands every entry to the handler of its command.
 /// The handlers are collected once, by the composition root, since MS.DI cannot inject "every
 /// <see cref="IPlayerCommandHandler{TCommand}"/>". "Joined or not" and "which player is this peer" are decided here,
 /// at tick time rather than on arrival: a join and a chat command of one peer in one tick must both pass, in order.
@@ -25,12 +25,7 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
     private const string NoPlayerLog =
         "{command} from peer {peerId} dropped: the peer is bound to {uid}, but there is no player with this uid";
     private const string RejoinLog = "{command} from peer {peerId} dropped: the peer has already joined as {uid}";
-    private const string NoPlayerHandlerLog = "{command} from peer {peerId} dropped: no player handler";
-    private const string NoDedicatedWindowHandlerLog =
-        "{command} from the dedicated window dropped: no dedicated-window handler";
     private const string NotValidLog = "{command} from peer {peerId} dropped: {handler} did not validate it";
-    private const string DedicatedWindowNotValidLog =
-        "{command} from the dedicated window dropped: {handler} did not validate it";
     private const string JoinRejectedLog = "{command} from peer {peerId} rejected by {handler}: {reason}";
     private const string JoinValidateFailedLog = "{handler} failed to validate {command}, the peer is rejected";
     private const string EntryFailedLog = "{entry} failed, the rest of the tick goes on";
@@ -38,35 +33,27 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
     private const string RegisteredError = "The command handlers are already registered.";
     private const string NotRegisteredError = "The command handlers are not registered yet.";
     private const string NoInterfaceError = "{0} is a [CommandHandler] but implements no command handler interface.";
-    private const string SecondHandlerError = "{0} and {1} both handle {2} from {3}.";
-    private const string UnknownEntryError = "{0} has no branch in ProcessAll.";
+    private const string SecondHandlerError = "{0} and {1} both handle {2}.";
+    private const string UnknownEntryError = "{0} has no branch in Process.";
     private const string NoJoinHandlerError =
         "JoinRequestCommand from peer {0} passed the inbox, but there is no join handler: the whitelist is miswired.";
+    private const string NoPlayerHandlerError =
+        "{0} from peer {1} passed the inbox, but there is no player handler: the whitelist is miswired.";
     private const string JoinAsPlayerCommandError =
         "{0} handles JoinRequestCommand as a player command, but a joining peer has no player yet: "
         + "implement IJoinRequestHandler instead.";
-    private const string PlayerSenderKind = "a player";
-    private const string PeerSenderKind = "a peer";
-    private const string DedicatedWindowSenderKind = "the dedicated window";
 
     private record PlayerHandler(
         string Name,
         Func<PlayerModel, Command, bool> Validate,
         Action<PlayerModel, Command> Process);
-    private record DedicatedWindowHandler(
-        string Name,
-        Func<Command, bool> Validate,
-        Action<Command> Process);
 
-    private static readonly MethodInfo WrapPlayerMethod =
-        typeof(CommandDispatcher).GetMethod(nameof(WrapPlayer), BindingFlags.Static | BindingFlags.NonPublic)!;
-    private static readonly MethodInfo WrapDedicatedWindowMethod =
-        typeof(CommandDispatcher).GetMethod(nameof(WrapDedicatedWindow), BindingFlags.Static | BindingFlags.NonPublic)!;
+    private static readonly MethodInfo WrapMethod =
+        typeof(CommandDispatcher).GetMethod(nameof(Wrap), BindingFlags.Static | BindingFlags.NonPublic)!;
 
     private readonly ILogger _log = LogFactory.GetForStatic<CommandDispatcher>();
 
     private readonly Dictionary<Type, PlayerHandler> _playerHandlerByType = new();
-    private readonly Dictionary<Type, DedicatedWindowHandler> _dedicatedWindowHandlerByType = new();
     private IJoinRequestHandler _joinHandler;
 
     /// <summary>
@@ -131,14 +118,11 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
     {
         switch (entry)
         {
-            case CommandInbox.FromPeer { Command: JoinRequestCommand join } fromPeer:
-                ProcessJoin(fromPeer.PeerId, join);
+            case CommandInbox.PeerCommand { Command: JoinRequestCommand join }:
+                ProcessJoin(entry.PeerId, join);
                 break;
-            case CommandInbox.FromPeer fromPeer:
-                ProcessFromPlayer(fromPeer.PeerId, fromPeer.Command);
-                break;
-            case CommandInbox.FromDedicatedWindow fromWindow:
-                ProcessFromDedicatedWindow(fromWindow.Command);
+            case CommandInbox.PeerCommand peerCommand:
+                ProcessFromPlayer(peerCommand.PeerId, peerCommand.Command);
                 break;
             case CommandInbox.PeerDisconnected:
                 //TODO 015 Leave
@@ -154,47 +138,32 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
         {
             if (_joinHandler != null)
             {
-                throw SecondHandler(_joinHandler.GetType().Name, handler, typeof(JoinRequestCommand), PeerSenderKind);
+                throw SecondHandler(_joinHandler.GetType().Name, handler, typeof(JoinRequestCommand));
             }
             _joinHandler = (IJoinRequestHandler) handler;
             return true;
         }
 
-        if (!implemented.IsGenericType)
+        if (!implemented.IsGenericType || implemented.GetGenericTypeDefinition() != typeof(IPlayerCommandHandler<>))
         {
             return false;
         }
 
-        Type definition = implemented.GetGenericTypeDefinition();
         Type commandType = implemented.GetGenericArguments()[0];
-        if (definition == typeof(IPlayerCommandHandler<>))
+        // ProcessAll routes every JoinRequestCommand to the join handler, so this one would never be called
+        if (commandType == typeof(JoinRequestCommand))
         {
-            // ProcessAll routes every JoinRequestCommand to the join handler, so this one would never be called
-            if (commandType == typeof(JoinRequestCommand))
-            {
-                throw new InvalidOperationException(JoinAsPlayerCommandError.FormatWith(handler.GetType().FullName));
-            }
-            if (_playerHandlerByType.TryGetValue(commandType, out PlayerHandler existing))
-            {
-                throw SecondHandler(existing.Name, handler, commandType, PlayerSenderKind);
-            }
-            _playerHandlerByType.Add(commandType, (PlayerHandler) Wrap(WrapPlayerMethod, commandType, handler));
-            return true;
+            throw new InvalidOperationException(JoinAsPlayerCommandError.FormatWith(handler.GetType().FullName));
         }
-
-        if (definition == typeof(IDedicatedWindowCommandHandler<>))
+        if (_playerHandlerByType.TryGetValue(commandType, out PlayerHandler existing))
         {
-            if (_dedicatedWindowHandlerByType.TryGetValue(commandType, out DedicatedWindowHandler existing))
-            {
-                throw SecondHandler(existing.Name, handler, commandType, DedicatedWindowSenderKind);
-            }
-            _dedicatedWindowHandlerByType.Add(
-                commandType,
-                (DedicatedWindowHandler) Wrap(WrapDedicatedWindowMethod, commandType, handler));
-            return true;
+            throw SecondHandler(existing.Name, handler, commandType);
         }
-
-        return false;
+        // Built once per handler through a generic method: no reflection per command, and the handler's own
+        // exception is not wrapped into a TargetInvocationException
+        var wrapped = (PlayerHandler) WrapMethod.MakeGenericMethod(commandType).Invoke(null, [handler])!;
+        _playerHandlerByType.Add(commandType, wrapped);
+        return true;
     }
 
     private void ProcessJoin(int peerId, JoinRequestCommand command)
@@ -254,10 +223,10 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
             return;
         }
 
+        // The inbox lets through only the commands with a handler, so this is a wiring error, not a peer's
         if (!_playerHandlerByType.TryGetValue(command.GetType(), out PlayerHandler handler))
         {
-            _log.Warning(NoPlayerHandlerLog, name, peerId);
-            return;
+            throw new InvalidOperationException(NoPlayerHandlerError.FormatWith(name, peerId));
         }
 
         if (!handler.Validate(sender, command))
@@ -269,40 +238,11 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
         handler.Process(sender, command);
     }
 
-    private void ProcessFromDedicatedWindow(Command command)
-    {
-        string name = command.GetType().Name;
-        if (!_dedicatedWindowHandlerByType.TryGetValue(command.GetType(), out DedicatedWindowHandler handler))
-        {
-            _log.Warning(NoDedicatedWindowHandlerLog, name);
-            return;
-        }
+    private static InvalidOperationException SecondHandler(string first, object second, Type command) =>
+        new(SecondHandlerError.FormatWith(first, second.GetType().Name, command.Name));
 
-        if (!handler.Validate(command))
-        {
-            _log.Warning(DedicatedWindowNotValidLog, name, handler.Name);
-            return;
-        }
-
-        handler.Process(command);
-    }
-
-    private static InvalidOperationException SecondHandler(string first, object second, Type command, string kind) =>
-        new(SecondHandlerError.FormatWith(first, second.GetType().Name, command.Name, kind));
-
-    // Built once per handler through a generic method: no reflection per command, and the handler's own exception
-    // is not wrapped into a TargetInvocationException
-    private static object Wrap(MethodInfo wrap, Type commandType, object handler) =>
-        wrap.MakeGenericMethod(commandType).Invoke(null, [handler])!;
-
-    private static PlayerHandler WrapPlayer<T>(IPlayerCommandHandler<T> handler) where T : Command =>
+    private static PlayerHandler Wrap<T>(IPlayerCommandHandler<T> handler) where T : Command =>
         new(handler.GetType().Name,
             (sender, command) => handler.Validate(sender, (T) command),
             (sender, command) => handler.Process(sender, (T) command));
-
-    private static DedicatedWindowHandler WrapDedicatedWindow<T>(IDedicatedWindowCommandHandler<T> handler)
-        where T : Command =>
-        new(handler.GetType().Name,
-            command => handler.Validate((T) command),
-            command => handler.Process((T) command));
 }

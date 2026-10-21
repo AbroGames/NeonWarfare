@@ -39,61 +39,26 @@ public class EventOutboxTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void PublishToAll_ReachesEveryPeerAndTheDedicatedWindow()
+    public void PublishToAll_ReachesEveryPeer()
     {
-        _outbox.AddDedicatedWindow();
         ChatServerMessageEvent common = Event("common");
 
         _outbox.PublishToAll(common);
 
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(common);
         AssertThat(PeerEvents(BobPeer)).ContainsExactly(common);
-        AssertThat(DedicatedWindowEvents()).ContainsExactly(common);
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void PublishTo_ReachesOnlyThatPlayersPeer()
     {
-        _outbox.AddDedicatedWindow();
         ChatServerMessageEvent personal = Event("personal");
 
         _outbox.PublishTo(personal, _alice);
 
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(personal);
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
-        AssertThat(DedicatedWindowEvents()).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void PublishToDedicatedWindow_ReachesOnlyTheDedicatedWindow()
-    {
-        _outbox.AddDedicatedWindow();
-        ChatServerMessageEvent reply = Event("reply");
-
-        _outbox.PublishToDedicatedWindow(reply);
-
-        AssertThat(DedicatedWindowEvents()).ContainsExactly(reply);
-        AssertThat(PeerEvents(AlicePeer)).IsEmpty();
-        AssertThat(PeerEvents(BobPeer)).IsEmpty();
-    }
-
-    // The headless dedicated server: the root never calls AddDedicatedWindow
-    [TestCase]
-    [RequireGodotRuntime]
-    public void NoDedicatedWindow_PeersStillGetEventsAndWindowEventsAreDropped()
-    {
-        ChatServerMessageEvent common = Event("common");
-
-        _outbox.PublishToAll(common);
-        _outbox.PublishToDedicatedWindow(Event("reply"));
-
-        AssertThat(_outbox.HasDedicatedWindow).IsFalse();
-        AssertThat(PeerEvents(AlicePeer)).ContainsExactly(common);
-        AssertThat(PeerEvents(BobPeer)).ContainsExactly(common);
-        AssertThrown(() => _outbox.DrainDedicatedWindowEvents(new ArrayBufferWriter<byte>()))
-            .IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
@@ -118,13 +83,10 @@ public class EventOutboxTests
     [RequireGodotRuntime]
     public void PublishTo_OfflinePlayer_TouchesNoBuffer()
     {
-        _outbox.AddDedicatedWindow();
-
         _outbox.PublishTo(Event("lost"), _offline);
 
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
-        AssertThat(DedicatedWindowEvents()).IsEmpty();
     }
 
     [TestCase]
@@ -138,13 +100,13 @@ public class EventOutboxTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void DrainPeerEvents_EmptiesTheBufferAndCountsTheEvents()
+    public void DrainEvents_EmptiesTheBufferAndCountsTheEvents()
     {
         _outbox.PublishToAll(Event("one"));
         _outbox.PublishToAll(Event("two"));
 
-        AssertThat(_outbox.DrainPeerEvents(AlicePeer, new ArrayBufferWriter<byte>())).IsEqual(2);
-        AssertThat(_outbox.DrainPeerEvents(AlicePeer, new ArrayBufferWriter<byte>())).IsEqual(0);
+        AssertThat(_outbox.DrainEvents(AlicePeer, new ArrayBufferWriter<byte>())).IsEqual(2);
+        AssertThat(_outbox.DrainEvents(AlicePeer, new ArrayBufferWriter<byte>())).IsEqual(0);
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
     }
 
@@ -170,19 +132,16 @@ public class EventOutboxTests
         _outbox.PublishToAll(Event("common"));
 
         AssertThat(_outbox.Peers).ContainsExactly(AlicePeer);
-        AssertThrown(() => _outbox.DrainPeerEvents(BobPeer, new ArrayBufferWriter<byte>()))
+        AssertThrown(() => _outbox.DrainEvents(BobPeer, new ArrayBufferWriter<byte>()))
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => _outbox.RemovePeer(BobPeer)).IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void AddPeerAndAddDedicatedWindow_Twice_Throw()
+    public void AddPeer_Twice_Throws()
     {
-        _outbox.AddDedicatedWindow();
-
         AssertThrown(() => _outbox.AddPeer(AlicePeer)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => _outbox.AddDedicatedWindow()).IsInstanceOf<InvalidOperationException>();
     }
 
     private void Join(PlayerModel player, int peerId)
@@ -196,14 +155,7 @@ public class EventOutboxTests
     private IReadOnlyList<object> PeerEvents(int peerId)
     {
         var output = new ArrayBufferWriter<byte>();
-        _outbox.DrainPeerEvents(peerId, output);
-        return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
-    }
-
-    private IReadOnlyList<object> DedicatedWindowEvents()
-    {
-        var output = new ArrayBufferWriter<byte>();
-        _outbox.DrainDedicatedWindowEvents(output);
+        _outbox.DrainEvents(peerId, output);
         return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
     }
 }

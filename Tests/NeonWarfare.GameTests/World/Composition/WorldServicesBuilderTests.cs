@@ -21,118 +21,70 @@ namespace NeonWarfare.GameTests.World.Composition;
 [TestSuite]
 public class WorldServicesBuilderTests
 {
-    private const WorldLayer Server =
+    private const WorldLayer Dedicated =
         WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
         | WorldLayer.Query;
 
-    private const WorldLayer Client =
-        WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
-    private const WorldLayer Host =
-        Server | WorldLayer.Presentation | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
-    private const WorldLayer DedicatedWithServerHud =
-        Server | WorldLayer.ServerHudPresentation | WorldLayer.DedicatedWindow | WorldLayer.ClientNetwork;
-    private const WorldLayer HeadlessDedicated = Server;
+    private const WorldLayer Client = WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ClientNetwork;
+    private const WorldLayer Host = Dedicated | WorldLayer.Presentation | WorldLayer.ClientNetwork;
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
     // a present handler means all three are there, an absent ChatSimulation means none is
-
     [TestCase]
     [RequireGodotRuntime]
-    public void Build_Client_HasOnlyPresentation()
+    public void Build_EachConfiguration_HasItsSimulationAndPresentation()
     {
-        using ServiceProvider provider = Build(Client);
-
-        AssertThat(provider.GetService<ChatSimulation>()).IsNull();
-        AssertThat(provider.GetService<EventOutbox>()).IsNull();
-        AssertThat(provider.GetService<PeerUidMap>()).IsNull();
-        AssertThat(provider.GetService<CommandInbox>()).IsNull();
-        AssertThat(provider.GetService<CommandDispatcher>()).IsNull();
-        AssertThat(provider.GetService<ChatPresentation>()).IsNotNull();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_ServerConfigurations_HaveOutboxPeerMapAndCommandQueue()
-    {
-        foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
-        {
-            using ServiceProvider provider = Build(layers);
-
-            AssertThat(provider.GetService<EventOutbox>()).IsNotNull();
-            AssertThat(provider.GetService<PeerUidMap>()).IsNotNull();
-            AssertThat(provider.GetService<CommandInbox>()).IsNotNull();
-            AssertThat(provider.GetService<CommandDispatcher>()).IsNotNull();
-        }
-    }
-
-    // The host's own client is a peer like any other; the headless server has nobody to show events to
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_OnlyDedicatedWithServerHud_HasDedicatedWindow()
-    {
-        foreach ((WorldLayer layers, bool hasWindow) in new[]
+        foreach ((WorldLayer layers, bool hasSimulation, bool hasPresentation) in new[]
                  {
-                     (Host, false),
-                     (DedicatedWithServerHud, true),
-                     (HeadlessDedicated, false),
+                     (Client, false, true),
+                     (Host, true, true),
+                     (Dedicated, true, false),
                  })
         {
             using ServiceProvider provider = Build(layers);
 
-            AssertThat(provider.GetRequiredService<EventOutbox>().HasDedicatedWindow).IsEqual(hasWindow);
-            AssertThat(provider.GetService<DedicatedWindowCommandSender>() != null).IsEqual(hasWindow);
+            AssertThat(provider.GetService<SendChatMessageHandler>() != null).IsEqual(hasSimulation);
+            AssertThat(provider.GetService<ChatSimulation>() != null).IsEqual(hasSimulation);
+            AssertThat(provider.GetService<ChatPresentation>() != null).IsEqual(hasPresentation);
         }
     }
 
-    // The two give the same chat services: ChatPresentation is RequiredByServerHud
     [TestCase]
     [RequireGodotRuntime]
-    public void Build_HostAndDedicatedWithServerHud_HaveSimulationAndPresentation()
+    public void Build_OnlyServerConfigurations_HaveOutboxPeerMapAndCommandQueue()
     {
-        foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud })
+        foreach ((WorldLayer layers, bool isServer) in new[]
+                 {
+                     (Client, false),
+                     (Host, true),
+                     (Dedicated, true),
+                 })
         {
             using ServiceProvider provider = Build(layers);
 
-            AssertThat(provider.GetService<SendChatMessageHandler>()).IsNotNull();
-            AssertThat(provider.GetService<ChatPresentation>()).IsNotNull();
+            AssertThat(provider.GetService<EventOutbox>() != null).IsEqual(isServer);
+            AssertThat(provider.GetService<PeerUidMap>() != null).IsEqual(isServer);
+            AssertThat(provider.GetService<CommandInbox>() != null).IsEqual(isServer);
+            AssertThat(provider.GetService<CommandDispatcher>() != null).IsEqual(isServer);
         }
     }
 
-    // Wherever a Presentation is, received events have to reach it
+    // Wherever a Presentation is, received events have to reach it, and ChatPresentation posts to the mailbox
     [TestCase]
     [RequireGodotRuntime]
-    public void Build_OnlyConfigurationsWithPresentation_HaveEventDispatcher()
+    public void Build_OnlyConfigurationsWithPresentation_HaveEventDispatcherAndHudMailbox()
     {
-        foreach ((WorldLayer layers, bool hasDispatcher) in new[]
+        foreach ((WorldLayer layers, bool hasPresentation) in new[]
                  {
                      (Client, true),
                      (Host, true),
-                     (DedicatedWithServerHud, true),
-                     (HeadlessDedicated, false),
+                     (Dedicated, false),
                  })
         {
             using ServiceProvider provider = Build(layers);
 
-            AssertThat(provider.GetService<EventDispatcher>() != null).IsEqual(hasDispatcher);
-        }
-    }
-
-    // ChatPresentation posts to it, so it goes wherever ChatPresentation does
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_OnlyConfigurationsWithPresentation_HaveHudMailbox()
-    {
-        foreach ((WorldLayer layers, bool hasMailbox) in new[]
-                 {
-                     (Client, true),
-                     (Host, true),
-                     (DedicatedWithServerHud, true),
-                     (HeadlessDedicated, false),
-                 })
-        {
-            using ServiceProvider provider = Build(layers);
-
-            AssertThat(provider.GetService<HudMailbox>() != null).IsEqual(hasMailbox);
+            AssertThat(provider.GetService<EventDispatcher>() != null).IsEqual(hasPresentation);
+            AssertThat(provider.GetService<HudMailbox>() != null).IsEqual(hasPresentation);
         }
     }
 
@@ -141,7 +93,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_ServerConfigurations_RegisterChatCommands()
     {
-        foreach (WorldLayer layers in new[] { Host, DedicatedWithServerHud, HeadlessDedicated })
+        foreach (WorldLayer layers in new[] { Host, Dedicated })
         {
             using ServiceProvider provider = Build(layers);
 
@@ -153,16 +105,6 @@ public class WorldServicesBuilderTests
         using ServiceProvider client = Build(Client);
         AssertThat(client.GetService<ChatSimulationFacade>()).IsNull();
         AssertThat(client.GetService<HelpChatCommandSimulationFacade>()).IsNull();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_HeadlessDedicated_HasOnlySimulation()
-    {
-        using ServiceProvider provider = Build(HeadlessDedicated);
-
-        AssertThat(provider.GetService<SendChatMessageHandler>()).IsNotNull();
-        AssertThat(provider.GetService<ChatPresentation>()).IsNull();
     }
 
     [TestCase]
@@ -180,7 +122,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_HasQueries()
     {
-        foreach (WorldLayer layers in new[] { Client, Host, DedicatedWithServerHud, HeadlessDedicated })
+        foreach (WorldLayer layers in new[] { Client, Host, Dedicated })
         {
             using ServiceProvider provider = FixtureBuilder(typeof(FixtureQuery)).Build(layers, Dependencies());
 
@@ -232,9 +174,8 @@ public class WorldServicesBuilderTests
     private static ServiceProvider Build(WorldLayer layers) =>
         new WorldServicesBuilder().Build(layers, Dependencies());
 
-    // The root gives the outbox of a ServerHud world its dedicated window, the event dispatcher and the command
-    // dispatcher their handlers, the inbox its whitelist and the chat commands facade its commands, so all of them
-    // come with any fixture
+    // The root gives the event dispatcher and the command dispatcher their handlers, the inbox its whitelist and the
+    // chat commands facade its commands, so all of them come with any fixture
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),

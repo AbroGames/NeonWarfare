@@ -1,5 +1,4 @@
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using NeonWarfare.RepoTests.Infrastructure;
 using Xunit;
 
@@ -17,11 +16,7 @@ public class CommandHandlerTests
     private const string CommandBase = CommandsNamespace + ".Command";
     private const string JoinCommand = CommandsNamespace + ".JoinRequestCommand";
     private const string PlayerHandler = HandlersNamespace + ".IPlayerCommandHandler`1";
-    private const string DedicatedWindowHandler = HandlersNamespace + ".IDedicatedWindowCommandHandler`1";
     private const string JoinHandler = HandlersNamespace + ".IJoinRequestHandler";
-    private const string DedicatedWindowSender =
-        WorldLayers.WorldNamespace + ".ServerNetwork.DedicatedWindowCommandSender";
-    private const string SendMethod = "Send";
 
     /// <summary>
     /// <c>JoinRequestCommand</c> goes to the <c>IJoinRequestHandler</c>: the joining peer has no player yet.
@@ -35,7 +30,7 @@ public class CommandHandlerTests
 
         List<TypeDefinition> commands = game.Types.Where(IsCommand).ToList();
         Assert.Contains(commands, command => command.FullName == JoinCommand);
-        IReadOnlySet<string> playerHandlers = HandledCommands(PlayerHandler);
+        IReadOnlySet<string> playerHandlers = PlayerHandledCommands();
 
         foreach (TypeDefinition command in commands)
         {
@@ -58,47 +53,6 @@ public class CommandHandlerTests
         report.AssertEmpty();
     }
 
-    [Fact]
-    public void DedicatedWindowCommands_HaveDedicatedWindowHandler()
-    {
-        FailureReport report = new("Commands sent from the dedicated window without a handler for it");
-        GameAssembly game = GameAssembly.Instance;
-
-        TypeDefinition sender = game.FindByName(DedicatedWindowSender)
-                                ?? throw new InvalidOperationException($"{DedicatedWindowSender} is gone");
-        // Nothing sends yet, and a renamed Send would leave the rule nothing to check
-        Assert.Contains(sender.Methods, method => method.Name == SendMethod && method.HasGenericParameters);
-        IReadOnlySet<string> windowHandlers = HandledCommands(DedicatedWindowHandler);
-
-        foreach (MethodDefinition method in game.Types.SelectMany(type => type.Methods).Where(m => m.HasBody))
-        {
-            foreach (Instruction instruction in method.Body.Instructions)
-            {
-                if (instruction.Operand is not GenericInstanceMethod
-                    {
-                        Name: SendMethod, DeclaringType.FullName: DedicatedWindowSender
-                    } send)
-                {
-                    continue;
-                }
-
-                TypeReference sent = send.GenericArguments[0];
-                if (game.Find(sent) is not { IsAbstract: false } command)
-                {
-                    report.Add($"{GameAssembly.Describe(method)}: sends {sent.FullName}, not a concrete command " +
-                               "type, so its handler cannot be checked");
-                }
-                else if (!windowHandlers.Contains(command.FullName))
-                {
-                    report.Add($"{GameAssembly.Describe(method)}: sends {command.Name}, which has no " +
-                               $"IDedicatedWindowCommandHandler<{command.Name}>");
-                }
-            }
-        }
-
-        report.AssertEmpty();
-    }
-
     /// <summary>
     /// The composition root passes the dispatcher only the services of the <c>[CommandHandler]</c> layer.
     /// </summary>
@@ -108,7 +62,7 @@ public class CommandHandlerTests
         FailureReport report = new("Command handlers outside the CommandHandler layer");
 
         List<TypeDefinition> handlers = HandlerTypes()
-            .Where(type => Interfaces(type).Any(implemented => HandlerInterface(implemented) != null))
+            .Where(type => Interfaces(type).Any(IsHandlerInterface))
             .ToList();
         Assert.NotEmpty(handlers);
         foreach (TypeDefinition handler in handlers)
@@ -143,15 +97,15 @@ public class CommandHandlerTests
         return false;
     }
 
-    /// <summary>The full names of the commands some type of the game implements the handler interface for.</summary>
-    private static IReadOnlySet<string> HandledCommands(string handlerInterface) =>
+    /// <summary>The full names of the commands some type of the game implements the player handler for.</summary>
+    private static IReadOnlySet<string> PlayerHandledCommands() =>
         HandlerTypes()
             .SelectMany(Interfaces)
             .OfType<GenericInstanceType>()
-            .Where(generic => generic.ElementType.FullName == handlerInterface)
+            .Where(generic => generic.ElementType.FullName == PlayerHandler)
             .Select(generic => generic.GenericArguments[0] is GenericParameter parameter
                 ? throw new NotSupportedException(
-                    $"{handlerInterface} is implemented for the type parameter {parameter.Name} of " +
+                    $"{PlayerHandler} is implemented for the type parameter {parameter.Name} of " +
                     $"{parameter.Owner}: a handler with a generic base is not supported by this test")
                 : generic.GenericArguments[0].FullName)
             .ToHashSet(StringComparer.Ordinal);
@@ -176,9 +130,6 @@ public class CommandHandlerTests
         }
     }
 
-    private static string? HandlerInterface(TypeReference implemented)
-    {
-        string name = implemented.GetElementType().FullName;
-        return name is PlayerHandler or DedicatedWindowHandler or JoinHandler ? name : null;
-    }
+    private static bool IsHandlerInterface(TypeReference implemented) =>
+        implemented.GetElementType().FullName is PlayerHandler or JoinHandler;
 }

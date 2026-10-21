@@ -18,8 +18,7 @@ namespace NeonWarfare.GameTests.World.ClientNetwork;
 [TestSuite]
 public class EventDispatcherTests
 {
-    private const WorldLayer Client = WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ServerHudPresentation
-                                      | WorldLayer.ClientNetwork;
+    private const WorldLayer Client = WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ClientNetwork;
 
     private static readonly HashSet<Type> EventTypes =
     [

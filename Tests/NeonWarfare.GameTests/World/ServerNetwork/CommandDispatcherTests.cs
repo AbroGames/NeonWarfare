@@ -20,7 +20,7 @@ public class CommandDispatcherTests
 {
     private const WorldLayer Host = WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler
                                     | WorldLayer.ServerNetwork | WorldLayer.Query | WorldLayer.Presentation
-                                    | WorldLayer.ServerHudPresentation | WorldLayer.ClientNetwork;
+                                    | WorldLayer.ClientNetwork;
 
     private const int AlicePeer = 2;
     private const string AliceUid = "alice";
@@ -169,50 +169,6 @@ public class CommandDispatcherTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ProcessAll_DedicatedWindowCommand_ReachesOnlyItsHandler()
-    {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), new WindowChatHandler(_calls));
-
-        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand("hi"));
-        dispatcher.ProcessAll();
-
-        AssertThat(_calls).ContainsExactly("validate window: hi", "process window: hi");
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ProcessAll_FailedDedicatedWindowValidate_DropsOnlyThatCommand()
-    {
-        CommandDispatcher dispatcher = Dispatcher(new WindowChatHandler(_calls));
-
-        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand(ThrowInValidate));
-        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand(Invalid));
-        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand("next"));
-        dispatcher.ProcessAll();
-
-        AssertThat(_calls).ContainsExactly(
-            $"validate window: {ThrowInValidate}",
-            $"validate window: {Invalid}",
-            "validate window: next",
-            "process window: next");
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ProcessAll_DedicatedWindowCommandWithoutHandler_IsDropped()
-    {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
-        JoinDirectly(AliceUid, AlicePeer);
-
-        _inbox.EnqueueFromDedicatedWindow(new SendChatMessageCommand("dropped"));
-        Chat(AlicePeer, "hi");
-        dispatcher.ProcessAll();
-
-        AssertThat(_calls).ContainsExactly("validate alice: hi", "process alice: hi");
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
     public void NetworkCommandTypes_HaveJoinOnlyWithJoinHandler()
     {
         AssertThat(Dispatcher(new PlayerChatHandler(_calls)).NetworkCommandTypes)
@@ -232,12 +188,11 @@ public class CommandDispatcherTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_SecondHandlerOfOneCommandAndSender_Throws()
+    public void Register_SecondHandlerOfOneCommand_Throws()
     {
         foreach (object[] handlers in new[]
                  {
                      new object[] { new PlayerChatHandler(_calls), new PlayerChatHandler(_calls) },
-                     [new WindowChatHandler(_calls), new WindowChatHandler(_calls)],
                      [JoinHandler(), JoinHandler()],
                  })
         {
@@ -292,7 +247,7 @@ public class CommandDispatcherTests
         AssertThat(whitelist).Contains(typeof(SendChatMessageCommand));
         AssertThat(whitelist.Where(type => !type.IsSubclassOf(typeof(Command)))).IsEmpty();
         AssertThat(whitelist.Contains(typeof(CommandInbox.PeerDisconnected))).IsFalse();
-        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.FromPeer(AlicePeer, chat));
+        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, chat));
     }
 
     private CommandDispatcher Dispatcher(params object[] handlers)
@@ -344,22 +299,6 @@ public class CommandDispatcherTests
             calls.Add($"process {sender.Uid}: {command.Text}");
             if (command.Text == ThrowInProcess) throw new InvalidOperationException("process failed");
         }
-    }
-
-    private class WindowChatHandler(List<string> calls) : IDedicatedWindowCommandHandler<SendChatMessageCommand>
-    {
-        public bool Validate(SendChatMessageCommand command)
-        {
-            calls.Add($"validate window: {command.Text}");
-            return command.Text switch
-            {
-                ThrowInValidate => throw new InvalidOperationException("validate failed"),
-                Invalid => false,
-                _ => true,
-            };
-        }
-
-        public void Process(SendChatMessageCommand command) => calls.Add($"process window: {command.Text}");
     }
 
     private class PlayerJoinHandler : IPlayerCommandHandler<JoinRequestCommand>

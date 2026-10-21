@@ -14,7 +14,7 @@ namespace NeonWarfare.Scenes.World.Presentations;
 /// loopback), both before <c>_Process</c> of the same frame number. A post after <c>_Process</c> (a timer,
 /// <c>CallDeferred</c>) is lost, and a read in <c>_PhysicsProcess</c> sees nothing.
 /// </remarks>
-[Presentation(RequiredByServerHud = true)]
+[Presentation]
 public class HudMailbox(FrameProvider frames)
 {
     private readonly List<Notice> _notices = [];
