@@ -76,17 +76,22 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | Test class | What it checks |
 | --- | --- |
 | `GodotBox/NodeContainerTests` | Storing, replacing and clearing the child; the replaced one is queued for deletion; `_Ready` adopts one child, throws on two |
-| `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady` |
+| `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady`; a scene's id is its index in the list |
 | `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
 | `World/ClientNetwork/EventDispatcherTests` | A received section reaches `ChatPresentation`, with a notice per entry; a throwing handler does not stop the batch; a broken section calls nothing; a private handler of a base class is found; a handler of a non-event type is rejected |
-| `World/Composition/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server; each gets its own services, created eagerly; queries in every one; the outbox and the command queue only on a server; the event dispatcher and the HUD mailbox wherever a Presentation is; chat commands registered on a server; a facade cycle is rejected |
+| `World/Composition/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server; each gets its own services, created eagerly; queries in every one; the outbox and the command queue only on a server; the event dispatcher and the HUD mailbox wherever a Presentation is; chat commands registered on a server; a facade cycle is rejected; `Build` spawns nothing, `InitPreReady` of a new world spawns both storages |
+| `World/Entities/EntityRegistryTests` | NetId ↔ node lookup, `SpawnedEvent`; `None`, a taken id or node rejected; removing or freeing a node or its ancestor takes it out; `GetAll` by class and base, in NetId order, a cached snapshot that never changes; `GetSingle` throws on none or several; `Exists` |
+| `World/Entities/EntitySpawnerTests` | A spawn goes under the root or under its parent entity with the next NetId; `initPreReady` runs before the tree, `SpawnedEvent` sees the node in the tree and the registry; an unknown parent, a scene outside the catalog or of another root type, a throwing `initPreReady` creates nothing |
 | `World/Presentations/HudMailboxTests` | Notices of one frame read back by type in post order, not removed; a new frame clears them |
 | `World/Protocol/NetMessageCodecTests` | Every command and event is mapped to a `ushort` id and round-trips; a not allowed, unknown or broken message is rejected; a section round-trips, a broken count is rejected |
 | `World/Protocol/ProtocolHasherTests` | The protocol hash is stable for one type list and changes with one more type |
+| `World/Queries/StorageQueryTests` | Each storage query returns the model of its storage; before the spawn it throws |
 | `World/Simulations/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; `/help` lists admin commands to an admin; the admin gate; `Register` rejects a second call, a duplicate or bad name |
+| `World/Simulations/NewWorldSimulationFacadeTests` | A new world spawns both storages under the root |
 | `World/ServerNetwork/CommandDispatcherTests` | A command of a peer without a player is dropped; a false or throwing `Validate` drops only that command, a throwing `Process` stops nothing; join then chat in one tick both pass, a repeated join is dropped; a player handler of the join is rejected at `Register`; the root's whitelist holds only commands |
 | `World/ServerNetwork/CommandInboxTests` | A whitelisted packet comes out decoded with its peer; an event, a non-whitelisted, broken or over-long packet is dropped; arrival order across entry kinds |
 | `World/ServerNetwork/EventOutboxTests` | Routing to all, to one player; one peer keeps the order of publication |
+| `World/ServerNetwork/NetIdGeneratorTests` | NetIds start at 1 and grow by one |
 | `World/ServerNetwork/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |
 | `World/ServerNetwork/ServerTickLoopTests` | An event of a tick reaches the host's `ChatPresentation` through loopback only at its end; every peer with events gets an events packet, none without; a failing peer costs the others nothing; the tick counter; commands before sending |
 
