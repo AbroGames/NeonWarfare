@@ -1,6 +1,3 @@
-using NeonWarfare.Scenes.World.Features.Players;
-
-
 namespace NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 
 // Implemented by a [SimulationFacade] named *ChatCommandSimulationFacade: a command may change the state
@@ -12,5 +9,5 @@ public interface IChatCommand
     string Description { get; }
     bool RequiresAdmin { get; }
 
-    void Execute(PlayerModel sender, string arguments);
+    void Execute(string senderUid, string arguments);
 }

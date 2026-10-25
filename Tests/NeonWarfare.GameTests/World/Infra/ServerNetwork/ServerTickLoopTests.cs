@@ -124,7 +124,7 @@ public class ServerTickLoopTests
     public void RunTick_PeerWithoutEvents_GetsNoPacket()
     {
         Build(new WorldServicesBuilder());
-        Outbox().PublishTo(Hello, Persistence().PlayerByUid["alice"]);
+        Outbox().PublishTo(Hello, "alice");
 
         Loop().RunTick();
 
@@ -219,16 +219,17 @@ public class ServerTickLoopTests
 
     // Publishes the way a Simulation does and looks at the host's chat right after, still inside the tick
     [CommandHandler]
-    private class PublishingHandler(EventOutbox outbox, ChatPresentation chat)
+    private class PublishingHandler(EventOutbox outbox, ChatPresentation chat, PlayerQuery players)
         : IPlayerCommandHandler<SendChatMessageCommand>
     {
         public int EntriesRightAfterPublish { get; private set; } = -1;
 
-        public bool Validate(PlayerModel sender, SendChatMessageCommand command) => true;
+        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(PlayerModel sender, SendChatMessageCommand command)
+        public void Process(string senderUid, SendChatMessageCommand command)
         {
-            outbox.PublishToAll(new ChatPlayerMessageEvent(Now, sender.Uid, sender.Nick, command.Text));
+            string nick = players.Get(senderUid).Nick;
+            outbox.PublishToAll(new ChatPlayerMessageEvent(Now, senderUid, nick, command.Text));
             EntriesRightAfterPublish = chat.Entries.Count;
         }
     }

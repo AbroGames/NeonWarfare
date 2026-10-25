@@ -2,7 +2,7 @@ using Godot;
 using MessagePack;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
 
 [MessagePackObject]
 public record JoinRequestCommand(

@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using Serilog;
@@ -38,20 +37,20 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
         }
     }
 
-    // A receiver is always online: callers pick receivers through PlayerQuery, and a command's sender cannot have
-    // left yet because commands and disconnections share one ordered queue. Breaking that is logged and dropped
+    // A receiver is always online: callers pick online receivers, and a command's sender cannot have left yet
+    // because commands and disconnections share one ordered queue. Breaking that is logged and dropped
     // rather than thrown, so the rest of the tick still goes out.
-    public void PublishTo(Event @event, PlayerModel receiver)
+    public void PublishTo(Event @event, string receiverUid)
     {
         byte[] encoded = codec.Encode(@event);
-        if (!peers.TryGetPeerId(receiver.Uid, out int peerId))
+        if (!peers.TryGetPeerId(receiverUid, out int peerId))
         {
-            _log.Error(OfflineReceiverLog, @event.GetType().Name, receiver.Uid);
+            _log.Error(OfflineReceiverLog, @event.GetType().Name, receiverUid);
             return;
         }
         if (!_bufferByPeerId.TryGetValue(peerId, out List<ReadOnlyMemory<byte>> buffer))
         {
-            throw new InvalidOperationException(NoPeerBufferError.FormatWith(receiver.Uid, peerId));
+            throw new InvalidOperationException(NoPeerBufferError.FormatWith(receiverUid, peerId));
         }
 
         buffer.Add(encoded);

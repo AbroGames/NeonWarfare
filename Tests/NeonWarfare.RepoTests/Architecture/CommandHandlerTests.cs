@@ -14,7 +14,7 @@ public class CommandHandlerTests
     private const string ProtocolNamespace = WorldLayers.WorldNamespace + ".Infra.Protocol";
     private const string HandlersNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork";
     private const string CommandBase = ProtocolNamespace + ".Command";
-    private const string JoinCommand = WorldLayers.WorldNamespace + ".Features.Players.JoinRequestCommand";
+    private const string JoinCommand = HandlersNamespace + ".JoinRequestCommand";
     private const string PlayerHandler = HandlersNamespace + ".IPlayerCommandHandler`1";
     private const string JoinHandler = HandlersNamespace + ".IJoinRequestHandler";
 

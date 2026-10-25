@@ -13,6 +13,8 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class LayerReferenceTests
 {
+    private const string InfraNamespace = WorldLayers.WorldNamespace + ".Infra";
+    private const string FeaturesNamespace = WorldLayers.WorldNamespace + ".Features";
     private const string HudMailbox = WorldLayers.WorldNamespace + ".Infra.Hud.HudMailbox";
     private const string HudMailboxPost = "Post";
 
@@ -132,6 +134,42 @@ public class LayerReferenceTests
     }
 
     /// <summary>
+    /// Infra is the machinery every feature plugs into through attributes and reflection, so it knows none of them:
+    /// the player is a uid there, and each feature looks its own state up by it.
+    /// </summary>
+    [Fact]
+    public void Infra_DoesNotReferenceFeatures()
+    {
+        FailureReport report = new("Infra referring to Features");
+        GameAssembly game = GameAssembly.Instance;
+
+        List<TypeDefinition> infra = game.Types.Where(type => InNamespace(type, InfraNamespace)).ToList();
+        // Without both a rename would leave the rule nothing to check
+        Assert.NotEmpty(infra);
+        Assert.Contains(game.Types, type => InNamespace(type, FeaturesNamespace));
+
+        foreach (TypeDefinition type in infra)
+        {
+            HashSet<string> reported = [];
+            foreach (TypeReferenceSite site in TypeReferences.Of(type))
+            {
+                if (!InNamespace(site.Type, FeaturesNamespace))
+                {
+                    continue;
+                }
+
+                string where = GameAssembly.Describe(site.From);
+                if (reported.Add($"{where}|{site.Type.FullName}"))
+                {
+                    report.Add($"{where}: refers to {GameAssembly.ShortName(site.Type)}");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
     /// The HUD mailbox is cleared by the frame number alone, which holds only while every post comes from an event
     /// handler, before <c>_Process</c>. A node or a widget posting would also make the HUD talk to itself.
     /// </summary>
@@ -164,6 +202,12 @@ public class LayerReferenceTests
         }
 
         report.AssertEmpty();
+    }
+
+    private static bool InNamespace(TypeReference type, string ns)
+    {
+        string own = GameAssembly.Outermost(type).Namespace;
+        return own == ns || own.StartsWith(ns + ".", StringComparison.Ordinal);
     }
 
     private static bool IsCompositionRoot(TypeDefinition type) =>

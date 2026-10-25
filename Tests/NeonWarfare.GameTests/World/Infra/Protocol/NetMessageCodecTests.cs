@@ -6,6 +6,7 @@ using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using NeonWarfare.Scripts.GlobalServices;
 using static GdUnit4.Assertions;
 
