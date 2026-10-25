@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bweahxi5jb8om"]
+
+[ext_resource type="Script" uid="uid://ddg3jvkrx4pr6" path="res://Src/NeonWarfare/Scenes/World/Features/Surfaces/BattleSurface.cs" id="1_jk1sa"]
+
+[node name="BattleSurface" type="Node2D" unique_id=433233452]
+script = ExtResource("1_jk1sa")

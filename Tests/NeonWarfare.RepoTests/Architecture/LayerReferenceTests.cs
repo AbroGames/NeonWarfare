@@ -13,7 +13,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class LayerReferenceTests
 {
-    private const string HudMailbox = WorldLayers.WorldNamespace + ".Presentations.HudMailbox";
+    private const string HudMailbox = WorldLayers.WorldNamespace + ".Infra.Hud.HudMailbox";
     private const string HudMailboxPost = "Post";
 
     private static readonly string[] ServicesTypes =
@@ -28,7 +28,7 @@ public class LayerReferenceTests
     private static readonly string[] CompositionRoots =
     [
         WorldLayers.WorldNamespace + ".World",
-        WorldLayers.WorldNamespace + ".Composition.WorldServicesBuilder",
+        WorldLayers.WorldNamespace + ".Infra.Composition.WorldServicesBuilder",
     ];
 
     /// <summary>

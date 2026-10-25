@@ -24,7 +24,7 @@ public static class WorldLayers
 {
     public const string WorldNamespace = "NeonWarfare.Scenes.World";
 
-    private const string CompositionNamespace = WorldNamespace + ".Composition";
+    private const string CompositionNamespace = WorldNamespace + ".Infra.Composition";
     private const string LayerAttributeBase = CompositionNamespace + ".WorldServiceAttribute";
     private const string ReplicatedAttribute = "RepliCAT.ReplicatedAttribute";
     private const string GodotObject = "Godot.GodotObject";

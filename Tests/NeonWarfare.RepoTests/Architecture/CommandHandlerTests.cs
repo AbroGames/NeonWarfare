@@ -11,10 +11,10 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class CommandHandlerTests
 {
-    private const string CommandsNamespace = WorldLayers.WorldNamespace + ".Commands";
-    private const string HandlersNamespace = WorldLayers.WorldNamespace + ".CommandHandlers";
-    private const string CommandBase = CommandsNamespace + ".Command";
-    private const string JoinCommand = CommandsNamespace + ".JoinRequestCommand";
+    private const string ProtocolNamespace = WorldLayers.WorldNamespace + ".Infra.Protocol";
+    private const string HandlersNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork";
+    private const string CommandBase = ProtocolNamespace + ".Command";
+    private const string JoinCommand = WorldLayers.WorldNamespace + ".Features.Players.JoinRequestCommand";
     private const string PlayerHandler = HandlersNamespace + ".IPlayerCommandHandler`1";
     private const string JoinHandler = HandlersNamespace + ".IJoinRequestHandler";
 

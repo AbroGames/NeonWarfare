@@ -11,7 +11,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class ChatCommandTests
 {
-    private const string ChatCommand = WorldLayers.WorldNamespace + ".Simulations.ChatCommands.IChatCommand";
+    private const string ChatCommand = WorldLayers.WorldNamespace + ".Features.Chat.Commands.IChatCommand";
 
     [Fact]
     public void ChatCommands_AreSimulationFacades()

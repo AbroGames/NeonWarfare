@@ -18,8 +18,8 @@ public class ConstructorWorldReadTests
     // A call through the interface is declared by it, a call on the class by the class
     private static readonly string[] Registries =
     [
-        WorldLayers.WorldNamespace + ".Entities.EntityRegistry",
-        WorldLayers.WorldNamespace + ".Entities.IEntityFinder",
+        WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry",
+        WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder",
     ];
 
     private static readonly string[] RegistryLookups =

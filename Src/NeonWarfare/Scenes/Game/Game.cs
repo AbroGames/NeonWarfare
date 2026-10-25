@@ -5,7 +5,8 @@ using KludgeBox.DI.Requests.ChildInjection;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
-using NeonWarfare.Scenes.World.Entities;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.PackedScenes;
 
 namespace NeonWarfare.Scenes.Game;
 

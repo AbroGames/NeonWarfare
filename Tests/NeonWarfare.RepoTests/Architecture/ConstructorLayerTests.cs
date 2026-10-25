@@ -18,9 +18,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class ConstructorLayerTests
 {
-    private const string WorldDependencies = WorldLayers.WorldNamespace + ".Composition.WorldDependencies";
-    private const string WorldLayer = WorldLayers.WorldNamespace + ".Composition.WorldLayer";
-    private const string Builder = WorldLayers.WorldNamespace + ".Composition.WorldServicesBuilder";
+    private const string WorldDependencies = WorldLayers.WorldNamespace + ".WorldDependencies";
+    private const string WorldLayer = WorldLayers.WorldNamespace + ".WorldLayer";
+    private const string Builder = WorldLayers.WorldNamespace + ".Infra.Composition.WorldServicesBuilder";
     private const string BuildMethod = "Build";
 
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
@@ -39,15 +39,15 @@ public class ConstructorLayerTests
         new Dictionary<string, Layer[]>
         {
             // The transport would let any layer send in the middle of the tick, past EventOutbox
-            [WorldLayers.WorldNamespace + ".ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
+            [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
             // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
             // nobody replicates into the world
-            [WorldLayers.WorldNamespace + ".Entities.EntityRegistry"] = [Layer.Simulation],
-            [WorldLayers.WorldNamespace + ".Entities.WorldRoot"] = [Layer.Simulation],
+            [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] = [Layer.Simulation],
+            [WorldLayers.WorldNamespace + ".Infra.Entities.WorldRoot"] = [Layer.Simulation],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it
-    private static readonly string[] OpenTypes = [WorldLayers.WorldNamespace + ".Entities.IEntityFinder"];
+    private static readonly string[] OpenTypes = [WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder"];
 
     [Fact]
     public void Constructors_TakeOnlyAllowedLayers()
