@@ -43,6 +43,8 @@ may be added as needed. Work with them through the `task` skill.
 - The user can run the game and read the Godot log. When verification
   requires launching Godot, ask the user to run it and paste the output.
 - Comment only *why* the code is here and works this way, never *what* it does. Keep comments rare.
+- Write comments as if the current code was always this way. No "X instead of Y, because…" — the
+  replaced version is history, not context.
 
 ## Review
 
