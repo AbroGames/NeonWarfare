@@ -9,7 +9,6 @@ using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
@@ -171,7 +170,7 @@ public class ChatTests
         var calls = new List<string>();
         (ChatSimulationFacade facade, EventOutbox outbox, PeerUidMap peers) = HandMade();
         facade.Register([new FixtureCommand("admin", RequiresAdmin: true, calls)]);
-        PlayerModel root = _provider.GetRequiredService<PersistenceStorageQuery>().Model.AddPlayer("root");
+        PlayerModel root = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer("root");
         root.Nick = "Root";
         root.IsAdmin = true;
         peers.Bind("alice", AlicePeer);
@@ -224,9 +223,9 @@ public class ChatTests
     // Stands for the join of task 015
     private PlayerModel JoinDirectly(string uid, string nick, int peerId)
     {
-        PlayerModel player = _provider.GetRequiredService<PersistenceStorageQuery>().Model.AddPlayer(uid);
+        PlayerModel player = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
         player.Nick = nick;
-        _provider.GetRequiredService<SessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
+        _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
         _provider.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
         _outbox.AddPeer(peerId);
         return player;

@@ -6,7 +6,6 @@ using NeonWarfare.GameTests.World.Infra.Protocol;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
@@ -34,9 +33,9 @@ public class CommandDispatcherTests
 
     private NetMessageCodec _codec = null!;
     private PeerUidMap _peers = null!;
-    private PersistenceStorage _persistenceStorage = null!;
-    private SessionStorage _sessionStorage = null!;
-    private PersistenceModel _persistence = null!;
+    private PlayersStorage _playersStorage = null!;
+    private PlayersSessionStorage _sessionStorage = null!;
+    private PlayersModel _playersModel = null!;
     private PlayerQuery _players = null!;
     private CommandInbox _inbox = null!;
     private List<string> _calls = null!;
@@ -46,13 +45,13 @@ public class CommandDispatcherTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _peers = new PeerUidMap();
-        _persistenceStorage = new PersistenceStorage();
-        _sessionStorage = new SessionStorage();
+        _playersStorage = new PlayersStorage();
+        _sessionStorage = new PlayersSessionStorage();
         var registry = new EntityRegistry();
-        registry.Register(new NetId(1), _persistenceStorage);
+        registry.Register(new NetId(1), _playersStorage);
         registry.Register(new NetId(2), _sessionStorage);
-        _persistence = _persistenceStorage.Model;
-        _players = new PlayerQuery(new PersistenceStorageQuery(registry), new SessionStorageQuery(registry));
+        _playersModel = _playersStorage.Model;
+        _players = new PlayerQuery(new PlayersStorageQuery(registry), new PlayersSessionStorageQuery(registry));
         _inbox = new CommandInbox(_codec);
         _calls = [];
     }
@@ -60,7 +59,7 @@ public class CommandDispatcherTests
     [AfterTest]
     public void TearDown()
     {
-        _persistenceStorage.Free();
+        _playersStorage.Free();
         _sessionStorage.Free();
     }
 
@@ -100,7 +99,7 @@ public class CommandDispatcherTests
         CommandDispatcher dispatcher = Dispatcher(new LookingUpHandler(_calls, _players));
         JoinDirectly(AliceUid, AlicePeer);
         JoinDirectly(BobUid, BobPeer);
-        _persistence.AddPlayer(BobUid).Nick = "Bob";
+        _playersModel.AddPlayer(BobUid).Nick = "Bob";
 
         Chat(AlicePeer, "lost");
         Chat(BobPeer, "hi");

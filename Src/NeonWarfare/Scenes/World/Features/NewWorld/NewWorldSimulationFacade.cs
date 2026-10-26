@@ -1,4 +1,4 @@
-using NeonWarfare.Scenes.World.Features.Storages;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 
@@ -14,7 +14,7 @@ public class NewWorldSimulationFacade(EntitySpawner spawner)
 {
     public void Create()
     {
-        spawner.SpawnOnRoot<PersistenceStorage>();
-        spawner.SpawnOnRoot<SessionStorage>();
+        spawner.SpawnOnRoot<PlayersStorage>();
+        spawner.SpawnOnRoot<PlayersSessionStorage>();
     }
 }

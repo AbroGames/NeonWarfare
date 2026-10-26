@@ -79,8 +79,8 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady`; a scene's id is its index in the list |
 | `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
 | `World/Features/Chat/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; `/help` lists admin commands to an admin; the admin gate; a bound peer without a player loses only its own message; `Register` rejects a second call, a duplicate or bad name |
-| `World/Features/NewWorld/NewWorldSimulationFacadeTests` | A new world spawns both storages under the root |
-| `World/Features/Storages/StorageQueryTests` | Each storage query returns the model of its storage; before the spawn it throws |
+| `World/Features/NewWorld/NewWorldSimulationFacadeTests` | A new world spawns both Players storages under the root |
+| `World/Features/Players/PlayersStorageQueryTests` | Each Players storage query returns the model of its storage; before the spawn it throws |
 | `World/Infra/ClientNetwork/EventDispatcherTests` | A received section reaches `ChatPresentation`, with a notice per entry; a throwing handler does not stop the batch; a broken section calls nothing; a private handler of a base class is found; a handler of a non-event type is rejected |
 | `World/Infra/Entities/EntityCatalogTests` | Kind ids: the scenes first, then the concrete node types in mapping order; a kind id of one catalog creates the same type in another built from the same build; unknown scene, type or id throw |
 | `World/Infra/Entities/EntityRegistryTests` | NetId ↔ node lookup, `SpawnedEvent`; `None`, a taken id or node rejected; removing or freeing a node or its ancestor takes it out; `GetAll` by class and base, in NetId order, a cached snapshot that never changes; `GetSingle` throws on none or several; `Exists` |
@@ -94,7 +94,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `World/Infra/ServerNetwork/EventOutboxTests` | Routing to all, to one player; one peer keeps the order of publication |
 | `World/Infra/ServerNetwork/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |
 | `World/Infra/ServerNetwork/ServerTickLoopTests` | An event of a tick reaches the host's `ChatPresentation` through loopback only at its end; every peer with events gets an events packet, none without; a failing peer costs the others nothing; the tick counter; commands before sending |
-| `World/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server; each gets its own services, created eagerly; queries in every one; the outbox and the command queue only on a server; the event dispatcher and the HUD mailbox wherever a Presentation is; chat commands registered on a server; a facade cycle is rejected; `Build` spawns nothing, `InitPreReady` of a new world spawns both storages |
+| `World/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server; each gets its own services, created eagerly; queries in every one; the outbox and the command queue only on a server; the event dispatcher and the HUD mailbox wherever a Presentation is; chat commands registered on a server; a facade cycle is rejected; `Build` spawns nothing, `InitPreReady` of a new world spawns both Players storages |
 
 ## CI
 

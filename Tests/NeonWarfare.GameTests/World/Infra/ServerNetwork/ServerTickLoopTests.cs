@@ -7,7 +7,6 @@ using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
@@ -193,8 +192,8 @@ public class ServerTickLoopTests
     // Stands for the join of task 015
     private void JoinDirectly(string uid, string nick, int peerId)
     {
-        Persistence().AddPlayer(uid).Nick = nick;
-        _provider.GetRequiredService<SessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
+        Players().AddPlayer(uid).Nick = nick;
+        _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
         _provider.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
         Outbox().AddPeer(peerId);
     }
@@ -203,7 +202,7 @@ public class ServerTickLoopTests
         _provider.GetRequiredService<CommandInbox>()
             .EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
 
-    private PersistenceModel Persistence() => _provider.GetRequiredService<PersistenceStorageQuery>().Model;
+    private PlayersModel Players() => _provider.GetRequiredService<PlayersStorageQuery>().Model;
 
     private ServerTickLoop Loop() => _provider.GetRequiredService<ServerTickLoop>();
 
