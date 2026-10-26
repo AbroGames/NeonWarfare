@@ -154,9 +154,12 @@ public class EventDispatcherTests
     private static byte[] Packet(ServerPacketKind kind, byte[] section) => [(byte) kind, ..section];
 
     // A frame that never ends: everything posted during the test is still readable at its end
-    private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, _codec, new ManualFrameProvider(), AutoFree(new WorldPackedScenes())!,
-            new RecordingClientsConnection());
+    private WorldDependencies Dependencies()
+    {
+        WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
+        return new(TimeProvider.System, _codec, new ManualFrameProvider(), scenes,
+            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection());
+    }
 
     private class ThrowingPresentation
     {

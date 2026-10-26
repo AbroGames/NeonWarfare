@@ -10,11 +10,11 @@ namespace NeonWarfare.Scenes.World.Features.NewWorld;
 /// client from the world snapshot.
 /// </summary>
 [SimulationFacade]
-public class NewWorldSimulationFacade(EntitySpawner spawner, WorldPackedScenes scenes)
+public class NewWorldSimulationFacade(EntitySpawner spawner)
 {
     public void Create()
     {
-        spawner.SpawnOnRoot<PersistenceStorage>(scenes.PersistenceStorage);
-        spawner.SpawnOnRoot<SessionStorage>(scenes.SessionStorage);
+        spawner.SpawnOnRoot<PersistenceStorage>();
+        spawner.SpawnOnRoot<SessionStorage>();
     }
 }

@@ -229,9 +229,12 @@ public class WorldServicesBuilderTests
             typeof(PlayerQuery), typeof(PersistenceStorageQuery), typeof(SessionStorageQuery),
         ]);
 
-    private static WorldDependencies Dependencies() =>
-        new(TimeProvider.System, Codec(), new ManualFrameProvider(), AutoFree(TestWorldScenes.Create())!,
-            new RecordingClientsConnection());
+    private static WorldDependencies Dependencies()
+    {
+        WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
+        return new(TimeProvider.System, Codec(), new ManualFrameProvider(), scenes,
+            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection());
+    }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);
 

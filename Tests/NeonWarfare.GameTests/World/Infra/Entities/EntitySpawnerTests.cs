@@ -24,7 +24,8 @@ public class EntitySpawnerTests
         _scenes = TestWorldScenes.Create();
         _registry = new EntityRegistry();
         _netIdGenerator = new NetIdGenerator();
-        _spawner = new EntitySpawner(_netIdGenerator, _registry, new WorldRoot(_root), _scenes);
+        _spawner = new EntitySpawner(
+            _netIdGenerator, _registry, new WorldRoot(_root), TestWorldScenes.CreateCatalog(_scenes));
     }
 
     [AfterTest]
@@ -38,19 +39,19 @@ public class EntitySpawnerTests
     [RequireGodotRuntime]
     public void Spawn_NoParent_GoesUnderTheRootWithTheFirstId()
     {
-        var storage = _spawner.SpawnOnRoot<PersistenceStorage>(_scenes.PersistenceStorage);
+        var entity = _spawner.SpawnOnRoot<Node>(_scenes.SafeSurface);
 
-        AssertThat(storage.GetParent()).IsSame(_root);
-        AssertThat(_registry.GetNode(new NetId(1))).IsSame(storage);
+        AssertThat(entity.GetParent()).IsSame(_root);
+        AssertThat(_registry.GetNode(new NetId(1))).IsSame(entity);
     }
 
     [TestCase]
     [RequireGodotRuntime]
     public void Spawn_UnderAnEntity_GoesUnderIt()
     {
-        var parent = _spawner.SpawnOnRoot<PersistenceStorage>(_scenes.PersistenceStorage);
+        var parent = _spawner.SpawnOnRoot<Node>(_scenes.SafeSurface);
 
-        var child = _spawner.Spawn<SessionStorage>(_scenes.SessionStorage, new NetId(1));
+        var child = _spawner.Spawn<Node>(_scenes.BattleSurface, new NetId(1));
 
         AssertThat(child.GetParent()).IsSame(parent);
         AssertThat(_registry.TryGetNetId(child, out NetId id)).IsTrue();
@@ -59,13 +60,43 @@ public class EntitySpawnerTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Spawn_UnknownParentOrSceneOutsideCatalog_ThrowsAndCreatesNothing()
+    public void SpawnByType_NoParent_GoesUnderTheRootWithTheFirstIdAndIsFound()
+    {
+        var storage = _spawner.SpawnOnRoot<PersistenceStorage>();
+
+        AssertThat(storage.GetParent()).IsSame(_root);
+        AssertThat(storage.Name.ToString()).IsEqual(nameof(PersistenceStorage));
+        AssertThat(_registry.GetNode(new NetId(1))).IsSame(storage);
+        AssertThat(_registry.GetSingle<PersistenceStorage>()).IsSame(storage);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SpawnByType_UnderAnEntity_GoesUnderItWithTheNextId()
+    {
+        var parent = _spawner.SpawnOnRoot<Node>(_scenes.SafeSurface);
+
+        var child = _spawner.Spawn<SessionStorage>(new NetId(1));
+
+        AssertThat(child.GetParent()).IsSame(parent);
+        AssertThat(_registry.TryGetNetId(child, out NetId id)).IsTrue();
+        AssertThat(id).IsEqual(new NetId(2));
+        AssertThat(_registry.GetSingle<SessionStorage>()).IsSame(child);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Spawn_UnknownParentOrKindOutsideCatalog_ThrowsAndCreatesNothing()
     {
         PackedScene foreign = TestWorldScenes.Pack(new Node());
 
-        AssertThrown(() => _spawner.Spawn<PersistenceStorage>(_scenes.PersistenceStorage, new NetId(42)))
+        AssertThrown(() => _spawner.Spawn<Node>(_scenes.SafeSurface, new NetId(42)))
+            .IsInstanceOf<KeyNotFoundException>();
+        AssertThrown(() => _spawner.Spawn<SessionStorage>(new NetId(42)))
             .IsInstanceOf<KeyNotFoundException>();
         AssertThrown(() => _spawner.SpawnOnRoot<Node>(foreign)).IsInstanceOf<ArgumentException>();
+        // An engine class: not in the game's type mapping
+        AssertThrown(() => _spawner.SpawnOnRoot<Node2D>()).IsInstanceOf<ArgumentException>();
 
         AssertThat(_root.GetChildCount()).IsEqual(0);
         AssertThat(_registry.GetAll<Node>()).IsEmpty();
@@ -78,7 +109,7 @@ public class EntitySpawnerTests
     {
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
-        AssertThrown(() => _spawner.SpawnOnRoot<SessionStorage>(_scenes.PersistenceStorage))
+        AssertThrown(() => _spawner.SpawnOnRoot<SessionStorage>(_scenes.SafeSurface))
             .IsInstanceOf<ArgumentException>()
             .StartsWithMessage("The root of");
 
@@ -93,7 +124,7 @@ public class EntitySpawnerTests
     [RequireGodotRuntime]
     public void Spawn_SpawnedEvent_SeesTheNodeInTheTreeAndInTheRegistry()
     {
-        var parent = _spawner.SpawnOnRoot<PersistenceStorage>(_scenes.PersistenceStorage);
+        var parent = _spawner.SpawnOnRoot<PersistenceStorage>();
         Node? parentSeen = null;
         bool byId = false, byNode = false, inAll = false;
         _registry.SpawnedEvent += (id, node) =>
@@ -104,7 +135,7 @@ public class EntitySpawnerTests
             inAll = _registry.GetAll<SessionStorage>().Contains(node);
         };
 
-        _spawner.Spawn<SessionStorage>(_scenes.SessionStorage, new NetId(1));
+        _spawner.Spawn<SessionStorage>(new NetId(1));
 
         AssertThat(parentSeen).IsSame(parent);
         AssertThat(byId).IsTrue();
@@ -119,7 +150,7 @@ public class EntitySpawnerTests
         SessionStorage? initialized = null;
         bool outOfTree = false, unregistered = false;
 
-        var storage = _spawner.SpawnOnRoot<SessionStorage>(_scenes.SessionStorage, node =>
+        var storage = _spawner.SpawnOnRoot<SessionStorage>(node =>
         {
             initialized = node;
             outOfTree = node.GetParent() == null;
@@ -138,7 +169,7 @@ public class EntitySpawnerTests
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
         AssertThrown(() => _spawner.SpawnOnRoot<SessionStorage>(
-                _scenes.SessionStorage, _ => throw new InvalidOperationException("init failed")))
+                _ => throw new InvalidOperationException("init failed")))
             .IsInstanceOf<InvalidOperationException>()
             .HasMessage("init failed");
 

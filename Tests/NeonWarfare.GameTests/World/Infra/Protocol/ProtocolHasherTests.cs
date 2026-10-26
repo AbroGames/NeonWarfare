@@ -17,8 +17,8 @@ public class ProtocolHasherTests
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
         var hasher = new ProtocolHasher(new Replicator(mapping));
 
-        AssertThat(hasher.Compute(mapping.Types, Scenes))
-            .IsEqual(hasher.Compute(mapping.Types.ToList(), Scenes.ToList()));
+        AssertThat(hasher.Compute(mapping.Types, Kinds))
+            .IsEqual(hasher.Compute(mapping.Types.ToList(), Kinds.ToList()));
     }
 
     [TestCase]
@@ -28,34 +28,50 @@ public class ProtocolHasherTests
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
         var hasher = new ProtocolHasher(new Replicator(mapping));
 
-        AssertThat(hasher.Compute(mapping.Types.Append(typeof(ExtraMessage)).ToList(), Scenes))
-            .IsNotEqual(hasher.Compute(mapping.Types, Scenes));
+        AssertThat(hasher.Compute(mapping.Types.Append(typeof(ExtraMessage)).ToList(), Kinds))
+            .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Compute_OneMoreScene_ChangesHash()
+    public void Compute_OneMoreKind_ChangesHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
         var hasher = new ProtocolHasher(new Replicator(mapping));
 
-        AssertThat(hasher.Compute(mapping.Types, Scenes.Append("res://Extra.tscn").ToList()))
-            .IsNotEqual(hasher.Compute(mapping.Types, Scenes));
+        AssertThat(hasher.Compute(mapping.Types, Kinds.Append("scene res://Extra.tscn").ToList()))
+            .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
     }
 
-    // The scene id is its index in the catalog
+    // The kind id is its index in the catalog
     [TestCase]
     [RequireGodotRuntime]
-    public void Compute_SwappedScenes_ChangesHash()
+    public void Compute_SwappedKinds_ChangesHash()
     {
         TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
         var hasher = new ProtocolHasher(new Replicator(mapping));
 
-        AssertThat(hasher.Compute(mapping.Types, Scenes.Reverse().ToList()))
-            .IsNotEqual(hasher.Compute(mapping.Types, Scenes));
+        AssertThat(hasher.Compute(mapping.Types, Kinds.Reverse().ToList()))
+            .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
     }
 
-    private static readonly string[] Scenes = ["res://Safe.tscn", "res://Battle.tscn"];
+    // A node type that stops being a kind (it became abstract, say) is still in the type list: only the kinds see it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Compute_TypeKindRemovedWithTheSameTypes_ChangesHash()
+    {
+        TypesMappingService mapping = NetMessageCodecTests.CreateMapping();
+        var hasher = new ProtocolHasher(new Replicator(mapping));
+
+        AssertThat(hasher.Compute(mapping.Types, Kinds.Where(kind => !kind.StartsWith("type ")).ToList()))
+            .IsNotEqual(hasher.Compute(mapping.Types, Kinds));
+    }
+
+    private static readonly string[] Kinds =
+    [
+        "scene res://Safe.tscn", "scene res://Battle.tscn",
+        "type NeonWarfare.Scenes.World.Features.Storages.SessionStorage",
+    ];
 
     // Stands for a message type added in a newer build
     private class ExtraMessage;

@@ -20,9 +20,9 @@ public class NewWorldSimulationFacadeTests
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         var registry = new EntityRegistry();
         var spawner = new EntitySpawner(
-            new NetIdGenerator(), registry, new WorldRoot(root), scenes);
+            new NetIdGenerator(), registry, new WorldRoot(root), TestWorldScenes.CreateCatalog(scenes));
 
-        new NewWorldSimulationFacade(spawner, scenes).Create();
+        new NewWorldSimulationFacade(spawner).Create();
 
         AssertThat(root.GetChildren())
             .ContainsExactly(registry.GetSingle<PersistenceStorage>(), registry.GetSingle<SessionStorage>());

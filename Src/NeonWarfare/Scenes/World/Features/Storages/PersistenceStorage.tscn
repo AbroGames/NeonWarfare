@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://dtakujp0t7r4e"]
-
-[ext_resource type="Script" uid="uid://cj2yguahs5hxl" path="res://Src/NeonWarfare/Scenes/World/Features/Storages/PersistenceStorage.cs" id="1_3m861"]
-
-[node name="PersistenceStorage" type="Node" unique_id=1368757753]
-script = ExtResource("1_3m861")

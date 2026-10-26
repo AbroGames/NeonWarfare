@@ -301,9 +301,12 @@ public class CommandDispatcherTests
     private void Join(int peerId, string uid) =>
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new JoinRequestCommand(1, uid, uid, Colors.Red)));
 
-    private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, _codec, new ManualFrameProvider(), AutoFree(TestWorldScenes.Create())!,
-            new RecordingClientsConnection());
+    private WorldDependencies Dependencies()
+    {
+        WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
+        return new(TimeProvider.System, _codec, new ManualFrameProvider(), scenes,
+            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection());
+    }
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {

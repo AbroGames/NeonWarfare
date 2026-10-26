@@ -50,7 +50,8 @@ public class ChatTests
         _provider = new WorldServicesBuilder().Build(
             Dedicated,
             new WorldDependencies(
-                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, new RecordingClientsConnection()),
+                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, TestWorldScenes.CreateCatalog(_scenes),
+                new RecordingClientsConnection()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();
