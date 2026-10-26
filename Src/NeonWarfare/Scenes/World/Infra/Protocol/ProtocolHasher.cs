@@ -14,7 +14,7 @@ namespace NeonWarfare.Scenes.World.Infra.Protocol;
 /// <summary>
 /// A hash of everything a peer of another build would read differently: the mapped types in id order, the
 /// MessagePack keys of every mapped [MessagePackObject] type, the RepliCAT schema of every mapped model and the
-/// resource paths of the <see cref="WorldPackedScenes"/> scenes in id order.
+/// resource paths of the scenes of the scene catalog in id order.
 /// </summary>
 public class ProtocolHasher(Replicator replicator)
 {

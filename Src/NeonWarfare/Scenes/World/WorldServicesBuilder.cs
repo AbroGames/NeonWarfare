@@ -38,6 +38,7 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Codec);
         services.AddSingleton(dependencies.Frames);
         services.AddSingleton(dependencies.Scenes);
+        services.AddSingleton<ISceneCatalog>(dependencies.Scenes);
         services.AddSingleton(dependencies.ClientsConnection);
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one

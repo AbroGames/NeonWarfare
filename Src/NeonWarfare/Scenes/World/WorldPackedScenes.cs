@@ -1,8 +1,7 @@
 using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
 using NeonWarfare.Scenes.Misc;
-using NeonWarfare.Scenes.World.Features.Storages;
-using NeonWarfare.Scenes.World.Features.Surfaces;
+using NeonWarfare.Scenes.World.Infra.Entities;
 
 namespace NeonWarfare.Scenes.World;
 
@@ -12,7 +11,7 @@ namespace NeonWarfare.Scenes.World;
 /// The id travels in spawn records and lies in saves, so the order is part of the protocol and goes into the
 /// protocol hash. Owned by Game, not World: the client needs the hash before its World exists.
 /// </summary>
-public partial class WorldPackedScenes : GameCheckedAbstractStorage
+public partial class WorldPackedScenes : GameCheckedAbstractStorage, ISceneCatalog
 {
     [ExportGroup("Surfaces")]
     [Export] [NotNull] public PackedScene SafeSurface { get; private set; }

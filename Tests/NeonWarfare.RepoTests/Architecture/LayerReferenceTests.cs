@@ -135,25 +135,28 @@ public class LayerReferenceTests
 
     /// <summary>
     /// Infra is the machinery every feature plugs into through attributes and reflection, so it knows none of them:
-    /// the player is a uid there, and each feature looks its own state up by it.
+    /// the player is a uid there, and each feature looks its own state up by it. Nor does it know the World root:
+    /// the root is the composition root that knows everything, Features included, so through it the rule would be
+    /// bypassed.
     /// </summary>
     [Fact]
-    public void Infra_DoesNotReferenceFeatures()
+    public void Infra_DoesNotReferenceFeaturesOrWorldRoot()
     {
-        FailureReport report = new("Infra referring to Features");
+        FailureReport report = new("Infra referring to Features or the World root");
         GameAssembly game = GameAssembly.Instance;
 
         List<TypeDefinition> infra = game.Types.Where(type => InNamespace(type, InfraNamespace)).ToList();
-        // Without both a rename would leave the rule nothing to check
+        // Without all three a rename would leave the rule nothing to check
         Assert.NotEmpty(infra);
         Assert.Contains(game.Types, type => InNamespace(type, FeaturesNamespace));
+        Assert.Contains(game.Types, IsWorldRoot);
 
         foreach (TypeDefinition type in infra)
         {
             HashSet<string> reported = [];
             foreach (TypeReferenceSite site in TypeReferences.Of(type))
             {
-                if (!InNamespace(site.Type, FeaturesNamespace))
+                if (!InNamespace(site.Type, FeaturesNamespace) && !IsWorldRoot(site.Type))
                 {
                     continue;
                 }
@@ -209,6 +212,9 @@ public class LayerReferenceTests
         string own = GameAssembly.Outermost(type).Namespace;
         return own == ns || own.StartsWith(ns + ".", StringComparison.Ordinal);
     }
+
+    private static bool IsWorldRoot(TypeReference type) =>
+        GameAssembly.Outermost(type).Namespace == WorldLayers.WorldNamespace;
 
     private static bool IsCompositionRoot(TypeDefinition type) =>
         GameAssembly.SelfAndEnclosing(type).Any(owner => CompositionRoots.Contains(owner.FullName));

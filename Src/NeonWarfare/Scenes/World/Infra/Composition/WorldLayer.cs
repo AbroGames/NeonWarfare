@@ -1,7 +1,6 @@
 using System;
-using NeonWarfare.Scenes.World.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World;
+namespace NeonWarfare.Scenes.World.Infra.Composition;
 
 [Flags]
 public enum WorldLayer
