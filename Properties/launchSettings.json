@@ -21,7 +21,7 @@
     "Server": {
       "commandName": "Executable",
       "executablePath": "%GODOT_EXE%",
-      "commandLineArgs": "--path \"./\" --server --world-render",
+      "commandLineArgs": "--path \"./\" --server",
       "workingDirectory": "."
     },
     "Autoconnect (1)": {

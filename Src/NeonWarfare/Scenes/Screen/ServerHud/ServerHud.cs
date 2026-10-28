@@ -1,14 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
-using NeonWarfare.Scenes.OldWorld.WorldServices.Performance;
+using NeonWarfare.Scenes.World.Features.Players;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;
 
+/// <summary>
+/// Only reads the World: no chat, no commands, no events.
+/// </summary>
 public partial class ServerHud : Control
 {
     
@@ -25,15 +27,15 @@ public partial class ServerHud : Control
     [Child] private Button SaveButton { get; set; }
     [Child] private LineEdit SaveLineEdit { get; set; }
     
-    private OldWorld.World _world;
+    private PlayerQuery _players;
     [Logger] private ILogger _log;
     
-    public ServerHud InitPreReady(OldWorld.World world)
+    public ServerHud InitPreReady(World.World world)
     {
         Di.Process(this);
         
         if (world == null) _log.Error("World must be not null");
-        _world = world;
+        _players = world.Get<PlayerQuery>();
         
         return this;
     }
@@ -41,42 +43,12 @@ public partial class ServerHud : Control
     public override void _Ready()
     {
         Di.Process(this);
-        
-        Test1Button.Pressed += () => { _world.Test1(); };
-        Test2Button.Pressed += () => { _world.Test2(); };
-        Test3Button.Pressed += () => { _world.Test3(); };
-        LogButton.Pressed += () => { Services.NodeTree.LogFullTree(_world); };
-
-        SaveButton.Pressed += () => { _world.DataSaveLoadService.Save(SaveLineEdit.Text); };
-        
-        _world.ChatService.SentNewMessageEvent += message => ChatLabel.Text += $"[{message.Nick}]: {message.Text}\n"; 
-        ChatSendButton.Pressed += () =>
-        {
-            _world.ChatService.TrySendNewMessage(ChatLineEdit.Text);
-            ChatLineEdit.Clear();
-        };
     }
 
     public override void _Process(double delta)
     {
-        InfoLabel.Text = _world.PerformanceService.Godot.GetManyLinesString() + "\n" +
-                         _world.PerformanceService.Sharp.GetTwoLinesString() + 
-                         _world.PerformanceService.ENet.GetTotalInfoOneLineString() + "\n" +
-                         GetPlayersENetInfo();
-    }
-    
-    private String GetPlayersENetInfo()
-    {
-        WorldENetPerformance.PeerInfo defaultPeerInfo = new WorldENetPerformance.PeerInfo(0, 0);
-        IEnumerable<String> playersInfo = _world.TemporaryData.PlayerUidByPeerId
-            .Select(kv =>
-            {
-                WorldENetPerformance.PeerInfo peerInfo = _world.PerformanceService.ENet.InfoByPeerId
-                    .GetValueOrDefault((int) kv.Key, defaultPeerInfo);
-                return $"{_world.FacadeService.GetPlayerData(kv.Key).Nick} " +
-                       $"(uid: {kv.Value}, peerId: {kv.Key}): " +
-                       $"ping {peerInfo.Ping} ms, packet loss {peerInfo.PacketLoss:N2}%";
-            });
-        return "Players:\n" + string.Join("\n", playersInfo);
+        IEnumerable<string> players = _players.OnlinePlayers()
+            .Select(player => $"{player.Nick} (uid: {player.Uid})");
+        InfoLabel.Text = "Players:\n" + string.Join("\n", players);
     }
 }

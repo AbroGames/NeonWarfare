@@ -39,8 +39,6 @@ nothing to do with the game's arguments.
 | `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
 | `--admin <uid>` | The UID of the player who will be granted administrator rights |
 | `--parent-pid <pid>` | The parent process PID; the server will shut down when the parent dies |
-| `--no-hud` | Do not render the `ServerHud` |
-| `--world-render` | Render the game world (by default the world is hidden and only the server console is visible) |
 
 The server flags are assembled back into a command line by
 `DedicatedServerArgs.GetArrayToStartDedicatedServer()` — this is exactly what the client uses to launch

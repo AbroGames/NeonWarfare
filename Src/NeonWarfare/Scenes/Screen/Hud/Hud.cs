@@ -22,10 +22,10 @@ public partial class Hud : Control
     [Child] private Button ExitButton { get; set; }
     [Child] private LineEdit SaveLineEdit { get; set; }
     
-    private OldWorld.World _world;
+    private World.World _world;
     [Logger] private ILogger _log;
     
-    public Hud InitPreReady(OldWorld.World world)
+    public Hud InitPreReady(World.World world)
     {
         Di.Process(this);
         
@@ -39,28 +39,8 @@ public partial class Hud : Control
     {
         Di.Process(this);
         
-        Test1Button.Pressed += () => { _world.Test1(); };
-        Test2Button.Pressed += () => { _world.Test2(); };
-        Test3Button.Pressed += () => { _world.Test3(); };
+        //TODO 017 chat
         LogButton.Pressed += () => { Services.NodeTree.LogFullTree(_world); };
-
         ExitButton.Pressed += () => { Services.MainScene.StartMainMenu(); };
-        SaveButton.Pressed += () => { _world.DataSaveLoadService.Save(SaveLineEdit.Text); };
-
-        _world.ChatService.SentNewMessageEvent += message => ChatLabel.Text += $"[{message.Nick}]: {message.Text}\n"; 
-        ChatSendButton.Pressed += () =>
-        {
-            _world.ChatService.TrySendNewMessage(ChatLineEdit.Text);
-            ChatLineEdit.Clear();
-        };
-    }
-
-    public override void _Process(double delta)
-    {
-        InfoLabel.Text = _world.PerformanceService.Godot.GetManyLinesString() + "\n" + 
-                         _world.PerformanceService.Sharp.GetTwoLinesString() +
-                         _world.PerformanceService.ENet.GetTotalInfoOneLineString() +
-                         _world.PerformanceService.ENet.GetServerPeerOneLineString() + "\n" + 
-                         _world.PerformanceService.Ping.GetManyLinesString();
     }
 }

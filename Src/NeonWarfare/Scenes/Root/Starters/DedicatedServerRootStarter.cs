@@ -37,7 +37,6 @@ public class DedicatedServerRootStarter : BaseRootStarter
             _dedicatedServerArgs.Port,
             _dedicatedServerArgs.Admin,
             _dedicatedServerArgs.ParentPid,
-            _dedicatedServerArgs.IsNoHud,
-            _dedicatedServerArgs.IsWorldRender);
+            !_dedicatedServerArgs.IsHeadless);
     }
 }

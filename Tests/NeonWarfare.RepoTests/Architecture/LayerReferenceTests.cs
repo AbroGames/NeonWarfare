@@ -134,6 +134,25 @@ public class LayerReferenceTests
     }
 
     /// <summary>
+    /// A command is a player's input: the server sending one would feed its own inbox and act as a player.
+    /// </summary>
+    [Fact]
+    public void SimulationGroup_NeverSendsCommands()
+    {
+        FailureReport report = new("Commands sent from the Simulation group");
+
+        foreach (CommandSends.Site site in CommandSends.All())
+        {
+            if (WorldLayers.LayerOf(site.Caller) is { } layer && WorldLayers.SimulationGroup.Contains(layer))
+            {
+                report.Add($"{GameAssembly.Describe(site.From)}: {layer} sends {site.Command.Name}");
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
     /// Infra is the machinery every feature plugs into through attributes and reflection, so it knows none of them:
     /// the player is a uid there, and each feature looks its own state up by it. Nor does it know the World root:
     /// the root is the composition root that knows everything, Features included, so through it the rule would be

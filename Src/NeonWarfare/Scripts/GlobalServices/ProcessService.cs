@@ -21,9 +21,7 @@ public class ProcessService
             port, 
             saveFileName, 
             adminUid, 
-            OS.GetProcessId(), 
-            false,
-            false);
+            OS.GetProcessId());
 
         return StartNewApplication(dedicatedServerArgs.GetArrayToStartDedicatedServer());
     }

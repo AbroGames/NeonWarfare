@@ -40,6 +40,8 @@ public class ConstructorLayerTests
         {
             // The transport would let any layer send in the middle of the tick, past EventOutbox
             [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
+            // Only PlayerCommandSender sends to the server, so every command passes one whitelisted path
+            [WorldLayers.WorldNamespace + ".Infra.ClientNetwork.IServerConnection"] = [Layer.ClientNetwork],
             // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
             // nobody replicates into the world
             [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] = [Layer.Simulation],

@@ -1,4 +1,5 @@
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 
 
@@ -6,10 +7,10 @@ namespace NeonWarfare.GameTests.World.Fixtures;
 
 /// <summary>
 /// Plays Game's part: records every packet and, once <see cref="Loopback"/> is set, hands the packets of the host's
-/// own peer to it synchronously, inside Send, as Game does. A disconnect is only recorded: the test enqueues the
-/// <c>PeerDisconnected</c> that ENet would report.
+/// own peer to it synchronously, inside Send, as Game does; the commands go to <see cref="CommandLoopback"/> the same
+/// way. A disconnect is only recorded: the test enqueues the <c>PeerDisconnected</c> that ENet would report.
 /// </summary>
-public class RecordingClientsConnection : IClientsConnection
+public class RecordingClientsConnection : IClientsConnection, IServerConnection
 {
     public const int HostPeer = 1;
 
@@ -17,8 +18,12 @@ public class RecordingClientsConnection : IClientsConnection
 
     public List<Sent> Packets { get; } = [];
 
+    public List<byte[]> Commands { get; } = [];
+
     // Set after the build: the fake goes into WorldDependencies before the container that holds the receiver exists
     public Action<ReadOnlyMemory<byte>>? Loopback { get; set; }
+
+    public Action<ReadOnlyMemory<byte>>? CommandLoopback { get; set; }
 
     public int? FailingPeer { get; set; }
 
@@ -39,6 +44,13 @@ public class RecordingClientsConnection : IClientsConnection
         {
             Loopback?.Invoke(copy);
         }
+    }
+
+    public void Send(ReadOnlySpan<byte> packet)
+    {
+        byte[] copy = packet.ToArray();
+        Commands.Add(copy);
+        CommandLoopback?.Invoke(copy);
     }
 
     public void Disconnect(int peerId) => Disconnected.Add(peerId);

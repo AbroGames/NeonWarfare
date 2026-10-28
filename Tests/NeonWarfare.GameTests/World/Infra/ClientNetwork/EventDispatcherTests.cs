@@ -20,7 +20,6 @@ namespace NeonWarfare.GameTests.World.Infra.ClientNetwork;
 [TestSuite]
 public class EventDispatcherTests
 {
-    private const WorldLayer Client = WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ClientNetwork;
 
     private static readonly HashSet<Type> EventTypes =
     [
@@ -42,7 +41,7 @@ public class EventDispatcherTests
     public void Dispatch_ChatEvents_ReachChatPresentationInOrder()
     {
         using ServiceProvider provider = new WorldServicesBuilder().Build(
-            Client, Dependencies(), new WorldRoot(AutoFree(new Node())!));
+            WorldLayer.Client, Dependencies(), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
             new PlayerJoinedEvent(1, "alice", "Alice"),
             new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
@@ -158,7 +157,8 @@ public class EventDispatcherTests
     {
         WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
         return new(TimeProvider.System, _codec, new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection());
+            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
+            new RecordingClientsConnection());
     }
 
     private class ThrowingPresentation

@@ -23,9 +23,6 @@ namespace NeonWarfare.GameTests.World.Features.Players;
 [TestSuite]
 public class PlayerJoinLeaveTests
 {
-    private const WorldLayer Host = WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler
-                                    | WorldLayer.ServerNetwork | WorldLayer.Query | WorldLayer.Presentation
-                                    | WorldLayer.ClientNetwork;
 
     private const long Now = 1_700_000_000;
     private const int HostPeer = RecordingClientsConnection.HostPeer;
@@ -53,10 +50,10 @@ public class PlayerJoinLeaveTests
         _root = new Node();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _provider = new WorldServicesBuilder().Build(
-            Host,
+            WorldLayer.Host,
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, new ManualFrameProvider(), _scenes,
-                TestWorldScenes.CreateCatalog(_scenes), _clientsConnection),
+                TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
     }

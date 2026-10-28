@@ -15,5 +15,9 @@ public enum WorldLayer
     Query = 1 << 4,
 
     ClientNetwork = 1 << 5,
-    Presentation = 1 << 6
+    Presentation = 1 << 6,
+
+    Dedicated = Simulation | SimulationFacade | CommandHandler | ServerNetwork | Query,
+    Client = Query | ClientNetwork | Presentation,
+    Host = Dedicated | Client
 }

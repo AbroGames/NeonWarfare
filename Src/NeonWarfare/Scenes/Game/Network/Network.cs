@@ -1,40 +1,61 @@
+using System;
+using System.Linq;
 using Godot;
+using Humanizer;
 using KludgeBox.DI.Requests.LoggerInjection;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Network;
 
+/// <summary>
+/// ENet only: raw packets and connection events, no RPC. Knows nothing of the World, <c>Game</c> routes between them.
+/// </summary>
+// ReSharper disable once Godot.MissingParameterlessConstructor
 public partial class Network(Node multiplayerRoot) : Node
 {
+    private const string SendFailedError = "Sending {0} bytes to peer {1} failed: {2}";
+    private const string NotServerError = "Only a server disconnects peers";
+    private const string AlreadyGoneLog = "Peer {peerId} not disconnected: it is already gone";
 
-    public static readonly int MaxSyncPacketSize = 1350 * 32;
-    
-    public MultiplayerApi Api { get; private set; }
-    public NetworkStateMachine StateMachine { get; } = new();
-    
+    public event Action<int> PeerConnectedEvent;
+    public event Action<int> PeerDisconnectedEvent;
+    public event Action<int, byte[]> PacketReceivedEvent;
+    public event Action ConnectedToServerEvent;
+    public event Action ConnectionFailedEvent;
+    public event Action ServerDisconnectedEvent;
+
+    public bool IsServer { get; private set; }
+
+    /// <summary>
+    /// A client whose connection to the server is up.
+    /// </summary>
+    public bool IsConnectedToServer { get; private set; }
+
+    private SceneMultiplayer _api;
+    private bool _isInitialized;
+
     [Logger] private ILogger _log;
 
     public override void _Ready()
     {
         Di.Process(this);
-        
+
         Net.SetGameNetwork(this);
-        
+
         // A fresh multiplayer per Game, so that old handlers and lambdas cannot outlive the session
-        GetTree().SetMultiplayer(new SceneMultiplayer(), multiplayerRoot.GetPath());
-        // The tree keeps a custom multiplayer until it is explicitly unset, even after the node is freed.
-        // Game's own TreeExiting comes after all its children have exited, so spawners and synchronizers
-        // still see this multiplayer when they unregister.
-        // Not in Shutdown(): Network is Game's last child, so it exits first, before World.
+        _api = new SceneMultiplayer();
+        GetTree().SetMultiplayer(_api, multiplayerRoot.GetPath());
+        // The tree keeps a custom multiplayer until it is explicitly unset, even after the node is freed
         multiplayerRoot.TreeExiting += ReleaseMultiplayer;
 
-        Api = GetMultiplayer();
-        Api.ConnectedToServer += ConnectedToServerEvent;
-        Api.PeerConnected += PeerConnectedEvent;
-        Api.ConnectionFailed += ConnectionFailedEvent;
-        Api.PeerDisconnected += PeerDisconnectedEvent;
-        Api.ServerDisconnected += ServerDisconnectedEvent;
-        (Api as SceneMultiplayer)?.SetMaxSyncPacketSize(MaxSyncPacketSize);
+        _api.ConnectedToServer += MultiplayerConnectedToServer;
+        _api.PeerConnected += MultiplayerPeerConnected;
+        _api.ConnectionFailed += MultiplayerConnectionFailed;
+        _api.PeerDisconnected += MultiplayerPeerDisconnected;
+        _api.ServerDisconnected += MultiplayerServerDisconnected;
+        _api.PeerPacket += MultiplayerPeerPacket;
+        // A client talks only to the server: a packet from another client must not reach it through the relay
+        _api.ServerRelay = false;
     }
 
     /// <summary>Try to connect to the server</summary>
@@ -47,30 +68,29 @@ public partial class Network(Node multiplayerRoot) : Node
     /// </returns>
     public Error ConnectToServer(string host, int port)
     {
-        if (!StateMachine.CanInitialize)
+        if (_isInitialized)
         {
-            _log.Error("Can't initialize network in current state: {state}", StateMachine.CurrentState);
+            _log.Error("Can't initialize network: it is already initialized");
             return Error.AlreadyInUse;
         }
-        
+
         _log.Information("Connecting to the server at {host}:{port}", host, port);
 
-        StateMachine.SetState(NetworkStateMachine.State.Connecting);
+        _isInitialized = true;
         var peer = new ENetMultiplayerPeer();
         var error = peer.CreateClient(host, port);
-        Api.MultiplayerPeer = peer;
-		
+        _api.MultiplayerPeer = peer;
+
         if (error != Error.Ok)
         {
             _log.Error("Failed to connect to the server: {error}", error);
         }
-        return error; 
+        return error;
     }
-    
+
     /// <summary>
-    /// Try to host server.<br/>
-    /// If server hosted with <c>refuseNewConnections = true</c>, you must call <c>OpenServer()</c>
-    /// after hosting process.
+    /// Try to host server. The server refuses new connections until <see cref="OpenServer"/>, so no client knocks on
+    /// a World that does not exist yet.
     /// </summary>
     /// <returns>
     /// Returns <see cref="Godot.Error.Ok"/> if a server was created.<br/>
@@ -79,71 +99,103 @@ public partial class Network(Node multiplayerRoot) : Node
     /// <see cref="Godot.Error.CantCreate"/> if the server could not be created.<br/>
     /// <see cref="Godot.Error.AlreadyInUse"/> if the server already hosted.<br/>
     /// </returns>
-    public Error HostServer(int port, bool refuseNewConnections = false, int maxClients = 32)
+    public Error HostServer(int port, int maxClients = 32)
     {
-        if (!StateMachine.CanInitialize)
+        if (_isInitialized)
         {
-            _log.Error("Can't initialize network in current state: {state}", StateMachine.CurrentState);
+            _log.Error("Can't initialize network: it is already initialized");
             return Error.AlreadyInUse;
         }
-        
+
         _log.Information("Starting server on port {port}", port);
-        
-        StateMachine.SetState(NetworkStateMachine.State.Hosting);
+
+        _isInitialized = true;
         var peer = new ENetMultiplayerPeer();
         var error = peer.CreateServer(port, maxClients);
-        peer.RefuseNewConnections = refuseNewConnections;
-        Api.MultiplayerPeer = peer;
+        peer.RefuseNewConnections = true;
+        _api.MultiplayerPeer = peer;
 
         if (error == Error.Ok)
         {
-            StateMachine.SetState(NetworkStateMachine.State.Hosted);
+            IsServer = true;
             _log.Information("Started server successfully");
         }
         else
         {
             _log.Error("Failed to start server: {error}", error);
         }
-        
+
         return error;
     }
 
     public void OpenServer()
     {
-        if (!StateMachine.IsServer)
+        if (!IsServer)
         {
-            _log.Error("Can't open server in current state: {state}", StateMachine.CurrentState);
+            _log.Error("Can't open server: the server is not hosted");
             return;
         }
-        
-        Api.MultiplayerPeer.RefuseNewConnections = false;
+
+        _api.MultiplayerPeer.RefuseNewConnections = false;
     }
-    
+
+    /// <summary>
+    /// Reliable and ordered, on <see cref="Consts.TransferChannel.Default"/>.
+    /// </summary>
+    public void Send(int peerId, ReadOnlySpan<byte> packet)
+    {
+        Error error = _api.SendBytes(
+            packet, peerId, MultiplayerPeer.TransferModeEnum.Reliable, (int) Consts.TransferChannel.Default);
+        if (error != Error.Ok)
+        {
+            throw new InvalidOperationException(SendFailedError.FormatWith(packet.Length, peerId, error));
+        }
+    }
+
+    /// <summary>
+    /// After the packets already queued for the peer, so a rejection reaches it.
+    /// </summary>
+    public void Disconnect(int peerId)
+    {
+        if (!IsServer) throw new InvalidOperationException(NotServerError);
+        // Already gone between the ticks: its peer_disconnected is reported, and GetPeer of it would be null
+        if (!_api.GetPeers().Contains(peerId))
+        {
+            _log.Warning(AlreadyGoneLog, peerId);
+            return;
+        }
+
+        //TODO 031 verify that the queued packets leave first and peer_disconnected still follows
+        ((ENetMultiplayerPeer) _api.MultiplayerPeer).GetPeer(peerId).PeerDisconnectLater();
+    }
+
     public override void _Notification(int id)
     {
         if (id == NotificationExitTree) Shutdown();
     }
-    
+
     private void Shutdown()
     {
         Net.RemoveGameNetwork();
-        
-        if (Api.HasMultiplayerPeer() && Api.GetMultiplayerPeer() is not OfflineMultiplayerPeer)
+        IsConnectedToServer = false;
+
+        if (_api.HasMultiplayerPeer() && _api.GetMultiplayerPeer() is not OfflineMultiplayerPeer)
         {
             _log.Information("Shutting down network...");
 
-            Api.MultiplayerPeer.RefuseNewConnections = true;
-            if (StateMachine.IsServer)
+            _api.MultiplayerPeer.RefuseNewConnections = true;
+            if (IsServer)
             {
-                foreach (var peer in Api.GetPeers())
+                foreach (var peer in _api.GetPeers())
                 {
-                    Api.MultiplayerPeer.DisconnectPeer(peer);
+                    _api.MultiplayerPeer.DisconnectPeer(peer);
                 }
             }
-            Api.MultiplayerPeer.Close();
-            Api.MultiplayerPeer = new OfflineMultiplayerPeer();
-            StateMachine.SetState(NetworkStateMachine.State.NotInitialized);
-            
+            _api.MultiplayerPeer.Close();
+            _api.MultiplayerPeer = new OfflineMultiplayerPeer();
+            IsServer = false;
+            _isInitialized = false;
+
             _log.Information("Network shutdown successful");
         }
     }
@@ -152,41 +204,46 @@ public partial class Network(Node multiplayerRoot) : Node
     {
         SceneTree tree = multiplayerRoot.GetTree();
         NodePath path = multiplayerRoot.GetPath();
-        if (tree.GetMultiplayer(path) == Api)
+        if (tree.GetMultiplayer(path) == _api)
         {
             tree.SetMultiplayer(null, path);
         }
     }
 
-    private void ConnectedToServerEvent()
+    private void MultiplayerConnectedToServer()
     {
-        StateMachine.SetState(NetworkStateMachine.State.Connected);
-        _log.Information("Connected to the server successfully. My peer id: {id}", Api.GetUniqueId());
+        IsConnectedToServer = true;
+        _log.Information("Connected to the server successfully. My peer id: {id}", _api.GetUniqueId());
+        ConnectedToServerEvent?.Invoke();
     }
 
-    private void ConnectionFailedEvent()
+    private void MultiplayerConnectionFailed()
     {
-        StateMachine.SetState(NetworkStateMachine.State.Disconnected);
         _log.Error("Connection to the server failed");
-        
+
         Shutdown();
+        ConnectionFailedEvent?.Invoke();
     }
 
-    private void ServerDisconnectedEvent()
+    private void MultiplayerServerDisconnected()
     {
-        StateMachine.SetState(NetworkStateMachine.State.Disconnected);
         _log.Information("Server disconnected");
-        
+
         Shutdown();
+        ServerDisconnectedEvent?.Invoke();
     }
-    
-    private void PeerConnectedEvent(long id)
+
+    private void MultiplayerPeerConnected(long id)
     {
         _log.Information("Network peer connected: {id}", id);
+        if (IsServer) PeerConnectedEvent?.Invoke((int) id);
     }
-    
-    private void PeerDisconnectedEvent(long id)
+
+    private void MultiplayerPeerDisconnected(long id)
     {
         _log.Information("Network peer disconnected: {id}", id);
+        if (IsServer) PeerDisconnectedEvent?.Invoke((int) id);
     }
+
+    private void MultiplayerPeerPacket(long id, byte[] packet) => PacketReceivedEvent?.Invoke((int) id, packet);
 }

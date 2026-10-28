@@ -97,7 +97,7 @@ client (`StartSyncWithServer()`).
 |---|---|---|---|
 | `SingleplayerGameStarter` | `StartSingleplayerGame(saveFileName)` | none, `Network` is not created; the process is its own server | A single-player game from the menu, `--auto-start` (+ `--auto-start-savefile`) |
 | `HostMultiplayerGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: false)` | an ENet server in this same process | Hosting "from inside the client" |
-| `HostMultiplayerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | an ENet server in this same process | A dedicated server (`--server`) |
+| `DedicatedServerGameStarter` | `HostMultiplayerGameAsDedicatedServer(...)` | an ENet server in this same process | A dedicated server (`--server`) |
 | `ConnectToMultiplayerGameStarter` | `ConnectToMultiplayerGame(host, port)` | an ENet client, the host is a remote process | Connecting to a server from the menu, `--auto-connect` |
 | `HostDedicatedServerAndConnectGameStarter` | `HostMultiplayerGameAsClient(..., createDedicatedServerProcess: true)` | an ENet client + a child server process | Hosting with an out-of-process server: brings up a second OS process |
 
@@ -117,8 +117,8 @@ Four protected methods that all the starters use:
 * **`SetLastGame(...)` / `AddLastGameUpdaterToSaveEvent(...)`** — writing the session into
   `resume-game.json`. The second subscribes to `SaveSuccessServerEvent` and updates the record with the
   new save name, so "Continue" after a manual save leads to the current file.
-* **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu; both start with a
-  `Net.IsClient()` check, since a dedicated server has no menu.
+* **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu; never called by
+  `DedicatedServerGameStarter`, since a dedicated server has no menu.
 
 ### 1. `SingleplayerGameStarter`
 
@@ -132,12 +132,12 @@ own authority and `Net.IsServer()` returns `true`.
    their own game.
 5. `ClientStartWorld(...)` — the same handshake as in a networked game, just local.
 
-### 2. `HostMultiplayerGameStarter`
+### 2. `HostMultiplayerGameStarter` and `DedicatedServerGameStarter`
 
-An ENet server **in this same process**, for two completely different cases: hosting "from inside the
-client" (`HostMultiplayerGameAsClient`) and a dedicated server (`HostMultiplayerGameAsDedicatedServer`).
-The difference is in the constructor flags rather than in a separate class: `saveFileName`, `port`,
-`adminUid`, `parentPid`, `serverHudRender`, `worldRender`, `mustSetLastGame`, `startedAsDedicated`.
+An ENet server **in this same process**. The common steps live in `BaseHostGameStarter`; the descendants
+differ in the world layers, the screen and what happens after `OpenServer()`: hosting "from inside the
+client" (`HostMultiplayerGameStarter`) joins its own player, a dedicated server
+(`DedicatedServerGameStarter`) has none and adds the parent-process watchdog of step 2.
 
 1. The `Loading` loading screen.
 2. With `parentPid` — a `ProcessDeadChecker` (a GodotBox node) on `Game`: it watches the parent process

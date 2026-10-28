@@ -34,9 +34,7 @@ public class NetworkService : KludgeBox.Godot.Services.NetworkService
     {
         bool isConnected = Services.MainScene.MainSceneIsGame() &&
                            _network != null &&
-                           _network.StateMachine != null &&
-                           _network.StateMachine.IsActiveGameState &&
-                           _network.StateMachine.IsClient;
+                           _network.IsConnectedToServer;
         
         return !isConnected;
     }

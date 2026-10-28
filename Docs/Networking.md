@@ -87,7 +87,7 @@ single-player game — in single player there is no `Network` node at all, and `
 
 The `World` and all of its sub-entities are built by the game starter, before the peers meet:
 
-* **Server** ([HostMultiplayerGameStarter](../Src/NeonWarfare/Scenes/Game/Starters/HostMultiplayerGameStarter.cs)) —
+* **Server** ([BaseHostGameStarter](../Src/NeonWarfare/Scenes/Game/Starters/BaseHostGameStarter.cs)) —
   `AddNetwork()`, `AddWorld()`, then `HostServer(port, refuseNewConnections: true)`: the port is open
   but closed for business. Only afterwards comes `ServerStartWorld()` → `StartNewGame()` / `LoadGame()`
   → `Tree.SetSafeSurface()`, which creates the `SafeSurface`, hangs a `SafeSurface-MultiplayerSpawner`

@@ -1,5 +1,6 @@
 using System;
 using GodotBox.Godot;
+using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
@@ -12,4 +13,5 @@ public record WorldDependencies(
     FrameProvider Frames,
     WorldPackedScenes Scenes,
     EntityCatalog Entities,
-    IClientsConnection ClientsConnection);
+    IClientsConnection ClientsConnection,
+    IServerConnection ServerConnection);
