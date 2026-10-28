@@ -6,7 +6,8 @@ namespace NeonWarfare.GameTests.World.Fixtures;
 
 /// <summary>
 /// Plays Game's part: records every packet and, once <see cref="Loopback"/> is set, hands the packets of the host's
-/// own peer to it synchronously, inside Send, as Game does.
+/// own peer to it synchronously, inside Send, as Game does. A disconnect is only recorded: the test enqueues the
+/// <c>PeerDisconnected</c> that ENet would report.
 /// </summary>
 public class RecordingClientsConnection : IClientsConnection
 {
@@ -20,6 +21,10 @@ public class RecordingClientsConnection : IClientsConnection
     public Action<ReadOnlyMemory<byte>>? Loopback { get; set; }
 
     public int? FailingPeer { get; set; }
+
+    public List<int> Disconnected { get; } = [];
+
+    public int? LocalPeerId { get; set; }
 
     public void Send(int peerId, ReadOnlySpan<byte> packet)
     {
@@ -35,4 +40,6 @@ public class RecordingClientsConnection : IClientsConnection
             Loopback?.Invoke(copy);
         }
     }
+
+    public void Disconnect(int peerId) => Disconnected.Add(peerId);
 }

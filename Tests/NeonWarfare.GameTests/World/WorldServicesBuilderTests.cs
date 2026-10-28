@@ -224,7 +224,7 @@ public class WorldServicesBuilderTests
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
-            typeof(CommandDispatcher), typeof(ChatSimulation), typeof(ChatSimulationFacade),
+            typeof(CommandDispatcher), typeof(PeerGatekeeper), typeof(ChatSimulation), typeof(ChatSimulationFacade),
             typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
         ]);
 

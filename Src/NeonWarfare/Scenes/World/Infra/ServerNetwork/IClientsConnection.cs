@@ -17,4 +17,15 @@ public interface IClientsConnection
     /// peer, so an implementation that sends or loops back later must copy them first.
     /// </summary>
     void Send(int peerId, ReadOnlySpan<byte> packet);
+
+    /// <summary>
+    /// After the packets already sent to the peer, so a rejection reaches it. <c>peer_disconnected</c> follows as
+    /// for any other disconnection.
+    /// </summary>
+    void Disconnect(int peerId);
+
+    /// <summary>
+    /// The host's own peer, <c>null</c> on a dedicated server.
+    /// </summary>
+    int? LocalPeerId { get; }
 }

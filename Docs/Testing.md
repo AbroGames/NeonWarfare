@@ -88,7 +88,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `ServerNetwork`, `EntityRegistry` and `WorldRoot` only in `Simulation`; every `Build` parameter is open or restricted explicitly |
 | `Architecture/ConstructorWorldReadTests` | No world service constructor calls a query or an `EntityRegistry` lookup |
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |
-| `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IJoinRequestHandler`); every handler is `[CommandHandler]` |
+| `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IJoinRequestHandler`); exactly one join and one peer disconnected handler; every handler is `[CommandHandler]` |
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
 | `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` called only from the Presentation |

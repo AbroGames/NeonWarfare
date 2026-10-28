@@ -1,4 +1,4 @@
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.World.Infra.Protocol;
 
 
 namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
@@ -7,8 +7,9 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
 // for any command would let commands bypass "the sender is a joined player". Validate checks the fields a client
 // fills (the body comes from untrusted input); a false result rejects the peer with JoinRejected, since a silent
 // drop would leave the client waiting for the handshake timeout.
+// It is the pair for IPeerDisconnectedHandler.
 public interface IJoinRequestHandler
 {
-    bool Validate(int peerId, JoinRequestCommand command, out string reason);
-    void Process(int peerId, JoinRequestCommand command);
+    bool Validate(JoinRequestCommand command, out JoinRejectReason reason);
+    void Process(JoinRequestCommand command);
 }
