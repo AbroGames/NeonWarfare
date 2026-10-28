@@ -22,15 +22,18 @@ public partial class Hud : Control
     [Child] private Button ExitButton { get; set; }
     [Child] private LineEdit SaveLineEdit { get; set; }
     
-    private World.World _world;
+    private World.World.IReader _reader;
+    private World.World.ICommandSender _commands;
     [Logger] private ILogger _log;
     
-    public Hud InitPreReady(World.World world)
+    public Hud InitPreReady(World.World.IReader reader, World.World.ICommandSender commands)
     {
         Di.Process(this);
         
-        if (world == null) _log.Error("World must be not null");
-        _world = world;
+        if (reader == null) _log.Error("Reader must be not null");
+        if (commands == null) _log.Error("Command sender must be not null");
+        _reader = reader;
+        _commands = commands;
         
         return this;
     }
@@ -40,7 +43,7 @@ public partial class Hud : Control
         Di.Process(this);
         
         //TODO 017 chat
-        LogButton.Pressed += () => { Services.NodeTree.LogFullTree(_world); };
+        LogButton.Pressed += () => { Services.NodeTree.LogFullTree(GetTree().Root); };
         ExitButton.Pressed += () => { Services.MainScene.StartMainMenu(); };
     }
 }

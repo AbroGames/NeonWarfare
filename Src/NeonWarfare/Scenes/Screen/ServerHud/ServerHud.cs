@@ -30,12 +30,12 @@ public partial class ServerHud : Control
     private PlayerQuery _players;
     [Logger] private ILogger _log;
     
-    public ServerHud InitPreReady(World.World world)
+    public ServerHud InitPreReady(World.World.IReader reader)
     {
         Di.Process(this);
         
-        if (world == null) _log.Error("World must be not null");
-        _players = world.Get<PlayerQuery>();
+        if (reader == null) _log.Error("Reader must be not null");
+        _players = reader.Get<PlayerQuery>();
         
         return this;
     }
