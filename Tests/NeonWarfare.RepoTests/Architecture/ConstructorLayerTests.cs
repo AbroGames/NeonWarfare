@@ -8,7 +8,8 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// The table "layer → which layers it may accept in its constructor" from the network architecture plan.
 /// World services get their dependencies only through the constructor — no statics, no lookup by name —
 /// so checking constructor parameters catches every way one layer could reach another. Models and the
-/// types of <c>WorldDependencies</c> are open to every layer.
+/// types of <c>WorldDependencies</c> are open to every layer, except those with network side effects: they are
+/// handed to every World, but only the layer that owns sending may use them.
 /// Leaf simulations never call each other: an operation with all its effects lives in one facade, and a
 /// command handler goes through a facade too, or it would run half an operation. Shared reads go to queries.
 /// </summary>
@@ -29,12 +30,24 @@ public class ConstructorLayerTests
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
         };
 
+    // The transport would let any layer send in the middle of the tick, past EventOutbox
+    private static readonly IReadOnlyDictionary<string, Layer[]> RestrictedDependencies =
+        new Dictionary<string, Layer[]>
+        {
+            [WorldLayers.WorldNamespace + ".ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
+        };
+
     [Fact]
     public void Constructors_TakeOnlyAllowedLayers()
     {
         FailureReport report = new("World service constructor parameters the layer table does not allow");
         GameAssembly game = GameAssembly.Instance;
         IReadOnlySet<string> dependencies = WorldDependencyTypes(game);
+        // Otherwise a rename would leave the restriction nothing to check
+        foreach (string restricted in RestrictedDependencies.Keys.Where(name => !dependencies.Contains(name)))
+        {
+            report.Add($"{restricted} is restricted but is no longer a WorldDependencies type");
+        }
 
         foreach (TypeDefinition type in game.Types)
         {
@@ -50,6 +63,16 @@ public class ConstructorLayerTests
                 foreach (ParameterDefinition parameter in constructor.Parameters)
                 {
                     TypeReference parameterType = parameter.ParameterType;
+                    if (RestrictedDependencies.TryGetValue(parameterType.FullName, out Layer[]? owners))
+                    {
+                        if (!owners.Contains(layer))
+                        {
+                            report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
+                                       $"'{parameter.Name}' of {GameAssembly.ShortName(parameterType)}, " +
+                                       $"which only {string.Join(", ", owners)} may take");
+                        }
+                        continue;
+                    }
                     if (dependencies.Contains(parameterType.FullName))
                     {
                         continue;

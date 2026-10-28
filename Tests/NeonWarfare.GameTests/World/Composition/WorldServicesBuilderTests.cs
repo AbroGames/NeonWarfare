@@ -185,7 +185,7 @@ public class WorldServicesBuilderTests
 
     private static WorldDependencies Dependencies() =>
         new(TimeProvider.System, new PersistenceModel(), new SessionModel(), Codec(), new ManualFrameProvider(),
-            AutoFree(new WorldPackedScenes())!);
+            AutoFree(new WorldPackedScenes())!, new RecordingClientsConnection());
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);
 
