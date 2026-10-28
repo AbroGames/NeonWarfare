@@ -82,6 +82,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `World/Features/NewWorld/NewWorldSimulationFacadeTests` | A new world spawns both Players storages under the root |
 | `World/Features/Players/PlayerJoinLeaveTests` | Join stores the player online, everyone gets the event, the joiner too; a returning player keeps nick and color; leave; displacement by uid; every `Validate` rule rejects with its reason; a uid of `UidGenerator` passes |
 | `World/Features/Players/PlayersStorageQueryTests` | Each Players storage query returns the model of its storage; before the spawn it throws |
+| `World/Features/Players/PlayersStorageReplicationTests` | Both Players storages reach every client by delta and a late one by snapshot plus delta: players, their fields, the online set |
 | `World/Infra/ClientNetwork/EventDispatcherTests` | A received section reaches `ChatPresentation`, with a notice per entry; a throwing handler does not stop the batch; a broken section calls nothing; a private handler of a base class is found; a handler of a non-event type is rejected |
 | `World/Infra/Entities/EntityCatalogTests` | Kind ids: the scenes first, then the concrete node types in mapping order; a kind id of one catalog creates the same type in another built from the same build; unknown scene, type or id throw |
 | `World/Infra/Entities/EntityRegistryTests` | NetId ↔ node lookup, `SpawnedEvent`; `None`, a taken id or node rejected; removing or freeing a node or its ancestor takes it out; `GetAll` by class and base, in NetId order, a cached snapshot that never changes; `GetSingle` throws on none or several; `Exists` |
@@ -99,6 +100,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `World/Infra/ServerNetwork/Peers/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |
 | `World/Infra/ServerNetwork/Tick/ServerTickLoopTests` | An event of a tick reaches the host's `ChatPresentation` through loopback only at its end; every peer with events gets an events packet, none without; a failing peer costs the others nothing; the tick counter; commands before sending; the handshake timeout after the commands |
 | `World/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server; each gets its own services, created eagerly; queries in every one; the outbox and the command queue only on a server; the event dispatcher and the HUD mailbox wherever a Presentation is; chat commands registered on a server; a facade cycle is rejected; `Build` spawns nothing, `InitPreReady` of a new world spawns both Players storages |
+| `World/ReplicatedTypesTests` | Every game type with a `[Replicated]` member, nodes included, round-trips a delta and a snapshot with its default values |
 
 ## CI
 
