@@ -75,10 +75,9 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 
 | Test class | What it checks |
 | --- | --- |
-| `Game/GameProtocolTests` | The session's catalog is built from a ready `WorldPackedScenes`: its scene kinds in order, the codec's hash over its descriptors; a not ready one throws |
 | `GodotBox/NodeContainerTests` | Storing, replacing and clearing the child; the replaced one is queued for deletion; `_Ready` adopts one child, throws on two |
 | `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady`; a scene's id is its index in the list |
-| `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
+| `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` |
 | `World/Features/Chat/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; `/help` lists admin commands to an admin; the admin gate; a bound peer without a player loses only its own message; `Register` rejects a second call, a duplicate or bad name |
 | `World/Features/NewWorld/NewWorldSimulationFacadeTests` | A new world spawns both Players storages under the root |
 | `World/Features/Players/PlayerJoinLeaveTests` | Join stores the player online, everyone gets the event, the joiner too; a returning player keeps nick and color; leave; displacement by uid; every `Validate` rule rejects with its reason; a uid of `UidGenerator` passes |

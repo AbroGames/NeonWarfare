@@ -245,5 +245,8 @@ public partial class Network(Node multiplayerRoot) : Node
         if (IsServer) PeerDisconnectedEvent?.Invoke((int) id);
     }
 
-    private void MultiplayerPeerPacket(long id, byte[] packet) => PacketReceivedEvent?.Invoke((int) id, packet);
+    private void MultiplayerPeerPacket(long id, byte[] packet)
+    {
+        PacketReceivedEvent?.Invoke((int) id, packet);
+    } 
 }

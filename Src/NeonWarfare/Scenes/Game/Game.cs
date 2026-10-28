@@ -16,6 +16,7 @@ using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scripts.GlobalServices;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game;
@@ -26,6 +27,16 @@ namespace NeonWarfare.Scenes.Game;
 /// </summary>
 public partial class Game : Node2D, IClientsConnection, IServerConnection
 {
+    /// <summary>
+    /// The screen created together with the World and dying with it.
+    /// </summary>
+    public enum Screen
+    {
+        None,
+        Hud,
+        ServerHud
+    }
+
     private const int ServerPeerId = Consts.Global.ServerId;
 
     private const string NoWorldLog = "Packet from peer {peerId} dropped: there is no World yet";
@@ -34,6 +45,8 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     private const string HostDisconnectedLog = "The host's own peer is disconnected: the host has no player";
     private const string NoNetworkError = "Peer {0} is not the host's own, but there is no network";
     private const string NoServerError = "There is no server to send to";
+    private const string NotInTreeError =
+        "Game must be in the tree before Init: WorldPackedScenes fills its scene list in _Ready";
 
     [Child] private NodeContainer WorldContainer { get; set; }
     [Child] private NodeContainer HudContainer { get; set; }
@@ -58,36 +71,40 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     public override void _Ready()
     {
         Di.Process(this);
-
-        // A client writes its join before it has a World, so the protocol objects belong to the session
-        (_entities, _codec) = GameProtocol.Create(WorldPackedScenes, Services.TypesMapping);
     }
 
     public void Init(BaseGameStarter gameStarter)
     {
+        if (!IsInsideTree()) throw new InvalidOperationException(NotInTreeError);
+
+        // A client writes its join before it has a World, so the protocol objects belong to the session
+        _entities = new EntityCatalog(WorldPackedScenes.GetScenesList(), Services.TypesMapping.Types);
+        _codec = new NetMessageCodec(Services.TypesMapping, _entities.Descriptors);
+
         gameStarter.Init(this);
     }
 
-    public World.World AddWorld(WorldLayer layers, WorldOrigin origin, GameScreen screen)
+    public World.World AddWorld(WorldLayer layers, WorldOrigin origin, Screen screen)
     {
         _layers = layers;
         var dependencies = new WorldDependencies(
-            TimeProvider.System, _codec, FrameProvider.Engine, WorldPackedScenes, _entities, this, this);
+            TimeProvider.System, _codec, FrameProvider.Engine, WorldPackedScenes, _entities,
+            this, this);
         _world = new World.World().InitPreReady(layers, dependencies, origin);
         _world.SetName("World");
         WorldContainer.ChangeStoredNode(_world);
 
         switch (screen)
         {
-            case GameScreen.None:
+            case Screen.None:
                 HudContainer.ClearStoredNode();
                 break;
-            case GameScreen.Hud:
+            case Screen.Hud:
                 Hud hud = GamePackedScenes.Hud.Instantiate<Hud>().InitPreReady(_world, _world);
                 hud.SetName("Hud");
                 HudContainer.ChangeStoredNode(hud);
                 break;
-            case GameScreen.ServerHud:
+            case Screen.ServerHud:
                 ServerHud serverHud = GamePackedScenes.ServerHud.Instantiate<ServerHud>().InitPreReady(_world);
                 serverHud.SetName("ServerHud");
                 HudContainer.ChangeStoredNode(serverHud);
@@ -119,7 +136,8 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
         {
             _world.OnClientConnected(localPeerId);
         }
-        ((IServerConnection) this).Send(_codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, uid, nick, color)));
+        ((IServerConnection) this).Send(_codec.Encode(
+            new JoinRequestCommand(_codec.ProtocolHash, uid, nick, color)));
     }
 
     int? IClientsConnection.LocalPeerId => LocalPeerId;

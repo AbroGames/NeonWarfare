@@ -1,11 +1,11 @@
 using Godot;
 using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
-using NeonWarfare.Scenes.Misc;
+using GodotBox.Godot.Nodes;
 
 namespace NeonWarfare.Scenes.Game;
 
-public partial class GamePackedScenes : GameCheckedAbstractStorage
+public partial class GamePackedScenes : CheckedAbstractStorage
 {
     
     [Export] [NotNull] public PackedScene Hud { get; private set; }

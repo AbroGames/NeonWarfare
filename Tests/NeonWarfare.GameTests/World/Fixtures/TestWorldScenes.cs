@@ -13,14 +13,6 @@ public static class TestWorldScenes
 {
     public static WorldPackedScenes Create()
     {
-        WorldPackedScenes scenes = CreateNotReady();
-        scenes._Ready();
-        return scenes;
-    }
-
-    /// <summary>The scenes are set, but the list is empty until <c>_Ready</c>, as in the game.</summary>
-    public static WorldPackedScenes CreateNotReady()
-    {
         var scenes = new WorldPackedScenes();
         IEnumerable<PropertyInfo> exports = typeof(WorldPackedScenes)
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -30,6 +22,7 @@ public static class TestWorldScenes
         {
             scenes.Set(export.Name, Pack(new Node()));
         }
+        scenes._Ready();
         return scenes;
     }
 

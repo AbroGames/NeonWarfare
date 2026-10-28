@@ -38,8 +38,7 @@ Src/                                  Code and scenes of the Godot project; a na
     │   │   ├── Infra/                Feature-independent machinery: layer attributes, entities and NetId, protocol, network, HUD mailbox; refers to nothing in Features/ or the World root
     │   │   └── Features/             One folder per feature with all its layers and models next to their nodes: Chat, Players, NewWorld…
     │   ├── Entities/                 Game objects: characters (controllers, stats, effects), walls
-    │   ├── Screen/                   UI: the main menu, HUD, server console, loading screen
-    │   └── Misc/                     Game-side descendants of the GodotBox nodes (GameCheckedAbstractStorage)
+    │   └── Screen/                   UI: the main menu, HUD, server console, loading screen
     └── Scripts/                      Code without scenes
         ├── Content/                  Game entity stats, loading screen types, cmd args; no reading or processing logic
         ├── GlobalServices/           Global services

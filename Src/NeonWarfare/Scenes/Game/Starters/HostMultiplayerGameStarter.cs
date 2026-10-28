@@ -19,7 +19,7 @@ public class HostMultiplayerGameStarter(
 
     protected override void AddWorld(Game game)
     {
-        game.AddWorld(WorldLayer.Host, WorldOrigin.New, GameScreen.Hud);
+        game.AddWorld(WorldLayer.Host, WorldOrigin.New, Game.Screen.Hud);
     }
 
     protected override void OnServerOpened(Game game)
