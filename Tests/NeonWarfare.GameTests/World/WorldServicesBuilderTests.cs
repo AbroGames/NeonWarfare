@@ -13,7 +13,9 @@ using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Hud;
 using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using static GdUnit4.Assertions;
 using GameWorld = NeonWarfare.Scenes.World.World;
 
@@ -68,6 +70,8 @@ public class WorldServicesBuilderTests
             AssertThat(provider.GetService<PeerUidMap>() != null).IsEqual(isServer);
             AssertThat(provider.GetService<CommandInbox>() != null).IsEqual(isServer);
             AssertThat(provider.GetService<CommandDispatcher>() != null).IsEqual(isServer);
+            AssertThat(provider.GetService<CommandHandlerRegistry>() != null).IsEqual(isServer);
+            AssertThat(provider.GetService<PeerSessions>() != null).IsEqual(isServer);
         }
     }
 
@@ -219,12 +223,12 @@ public class WorldServicesBuilderTests
     private static ServiceProvider Build(WorldServicesBuilder builder, WorldLayer layers) =>
         builder.Build(layers, Dependencies(), new WorldRoot(AutoFree(new Node())!));
 
-    // The root gives the event dispatcher and the command dispatcher their handlers, the inbox its whitelist and the
-    // chat commands facade its commands, so all of them come with any fixture, with what the chat takes
+    // The root gives the event dispatcher and the command handler registry their handlers and the chat commands
+    // facade its commands, so all of them come with any fixture, with what the chat takes
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
-            ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
-            typeof(CommandDispatcher), typeof(PeerGatekeeper), typeof(ChatSimulation), typeof(ChatSimulationFacade),
+            ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher),
+            typeof(CommandHandlerRegistry), typeof(ChatSimulation), typeof(ChatSimulationFacade),
             typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
         ]);
 

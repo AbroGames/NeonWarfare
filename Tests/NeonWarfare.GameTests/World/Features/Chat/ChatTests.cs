@@ -12,7 +12,9 @@ using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.World.Features.Chat;

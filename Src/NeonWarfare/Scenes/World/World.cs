@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
 
 namespace NeonWarfare.Scenes.World;
 

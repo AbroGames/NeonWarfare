@@ -2,7 +2,7 @@ using System;
 using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.Features.Players;

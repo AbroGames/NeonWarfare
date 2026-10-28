@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Linq;
 using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 
 namespace NeonWarfare.Scenes.World.Features.Chat;
 
