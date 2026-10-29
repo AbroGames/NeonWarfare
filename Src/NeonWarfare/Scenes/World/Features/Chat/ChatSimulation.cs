@@ -18,7 +18,7 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
     public void SendMessageAsPlayerToAll(string senderUid, string text)
     {
         PlayerModel sender = players.Get(senderUid);
-        _log.Information(PlayerToAllLog, sender.Nick, sender.Uid, text);
+        _log.Information(PlayerToAllLog, sender.Nick, sender.Uid, ToOneLine(text));
         var message = new ChatPlayerMessageEvent(NowUnixSeconds(), sender.Uid, sender.Nick, text);
         outbox.PublishToAll(message);
     }
@@ -26,10 +26,13 @@ public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, Playe
     public void SendMessageAsServerToPlayer(string text, string receiverUid)
     {
         PlayerModel receiver = players.Get(receiverUid);
-        _log.Information(ServerToPlayerLog, receiver.Nick, receiver.Uid, text);
+        _log.Information(ServerToPlayerLog, receiver.Nick, receiver.Uid, ToOneLine(text));
         var message = new ChatServerMessageEvent(NowUnixSeconds(), text);
         outbox.PublishTo(message, receiverUid);
     }
+
+    // A log record is one line: a continuation line has no time or source, and grep loses it
+    private string ToOneLine(string text) => text.ReplaceLineEndings("\\n");
 
     private long NowUnixSeconds() => timeProvider.GetUtcNow().ToUnixTimeSeconds();
 }

@@ -14,8 +14,7 @@ public static class CommandSends
     public sealed record Site(TypeDefinition Caller, IMemberDefinition From, TypeReference Command);
 
     /// <summary>
-    /// Throws when the sender or its method is gone: a rename must not leave the rules nothing to check. The set
-    /// itself may be empty.
+    /// Throws when the sender or its method is gone or nothing calls it: the rules must never have nothing to check.
     /// </summary>
     public static IReadOnlyList<Site> All()
     {
@@ -43,6 +42,10 @@ public static class CommandSends
                     : call.GenericArguments[0];
                 sites.Add(new Site(type, site.From, command));
             }
+        }
+        if (sites.Count == 0)
+        {
+            throw new InvalidOperationException($"Nothing calls {Sender}.{SendMethod}<TCommand>");
         }
         return sites;
     }

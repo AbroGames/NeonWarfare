@@ -72,6 +72,15 @@ msgstr "Type a message or command starting with /"
 msgid "HUD__CHAT_SEND_BUTTON"
 msgstr "Send"
 
+msgid "HUD__CHAT_SERVER_NICK"
+msgstr "SERVER"
+
+msgid "HUD__CHAT_PLAYER_JOINED"
+msgstr "joined the game"
+
+msgid "HUD__CHAT_PLAYER_LEFT"
+msgstr "left the game"
+
 msgid "HUD__SAVE_BUTTON"
 msgstr "Save"
 
