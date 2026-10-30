@@ -9,6 +9,7 @@ using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
+using NeonWarfare.Scenes.World.Infra.ClientReplication;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Hud;
@@ -16,6 +17,8 @@ using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
+using RepliCAT;
 using static GdUnit4.Assertions;
 using GameWorld = NeonWarfare.Scenes.World.World;
 
@@ -85,6 +88,25 @@ public class WorldServicesBuilderTests
 
             AssertThat(provider.GetService<EventDispatcher>() != null).IsEqual(hasPresentation);
             AssertThat(provider.GetService<HudMailbox>() != null).IsEqual(hasPresentation);
+        }
+    }
+
+    // The host's Simulation already wrote the state a remote client applies
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_OnlyRemoteClient_AppliesStatePackets_OnlyServers_WriteThem()
+    {
+        foreach ((WorldLayer layers, bool applies, bool writes) in new[]
+                 {
+                     (WorldLayer.Client, true, false),
+                     (WorldLayer.Host, false, true),
+                     (WorldLayer.Dedicated, false, true),
+                 })
+        {
+            using ServiceProvider provider = Build(layers);
+
+            AssertThat(provider.GetService<StateApplier>() != null).IsEqual(applies);
+            AssertThat(provider.GetService<StateReplicator>() != null).IsEqual(writes);
         }
     }
 
@@ -229,7 +251,8 @@ public class WorldServicesBuilderTests
     private static WorldDependencies Dependencies()
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
-        return new(TimeProvider.System, Codec(), new ManualFrameProvider(), scenes,
+        return new(TimeProvider.System, Codec(),
+            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }

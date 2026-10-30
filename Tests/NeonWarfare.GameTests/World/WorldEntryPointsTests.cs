@@ -11,6 +11,7 @@ using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
+using RepliCAT;
 using static GdUnit4.Assertions;
 using GameWorld = NeonWarfare.Scenes.World.World;
 
@@ -138,7 +139,8 @@ public class WorldEntryPointsTests
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         var dependencies = new WorldDependencies(
-            new ManualTimeProvider(Now), _codec, new ManualFrameProvider(), scenes,
+            new ManualTimeProvider(Now), _codec,
+            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), _connection, _connection);
         return AutoFree(new GameWorld())!.InitPreReady(layers, dependencies, WorldOrigin.New);
     }

@@ -10,6 +10,7 @@ using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.World.Infra.ServerNetwork.Commands;
@@ -145,7 +146,8 @@ public class CommandHandlerRegistryTests
     private static WorldDependencies Dependencies(NetMessageCodec codec)
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
-        return new(TimeProvider.System, codec, new ManualFrameProvider(), scenes,
+        return new(TimeProvider.System, codec,
+            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }

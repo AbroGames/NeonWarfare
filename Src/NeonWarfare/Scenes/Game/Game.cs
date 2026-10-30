@@ -17,6 +17,7 @@ using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scripts.GlobalServices;
+using RepliCAT;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Game;
@@ -60,6 +61,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     private WorldLayer _layers;
     private EntityCatalog _entities;
     private NetMessageCodec _codec;
+    private Replicator _replicator;
 
     // The host is the server and a client in one process, its own peer is the server's
     private int? LocalPeerId => _layers.HasFlag(WorldLayer.ServerNetwork | WorldLayer.ClientNetwork)
@@ -80,6 +82,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
         // A client writes its join before it has a World, so the protocol objects belong to the session
         _entities = new EntityCatalog(WorldPackedScenes.GetScenesList(), Services.TypesMapping.Types);
         _codec = new NetMessageCodec(Services.TypesMapping, _entities.Descriptors);
+        _replicator = new Replicator(Services.TypesMapping);
 
         gameStarter.Init(this);
     }
@@ -88,7 +91,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     {
         _layers = layers;
         var dependencies = new WorldDependencies(
-            TimeProvider.System, _codec, FrameProvider.Engine, WorldPackedScenes, _entities,
+            TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
             this, this);
         _world = new World.World().InitPreReady(layers, dependencies, origin);
         _world.SetName("World");

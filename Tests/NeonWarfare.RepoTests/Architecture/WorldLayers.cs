@@ -13,6 +13,7 @@ public enum Layer
     Query,
     ClientNetwork,
     Presentation,
+    ClientReplication,
 }
 
 /// <summary>
@@ -43,6 +44,7 @@ public static class WorldLayers
             [CompositionNamespace + ".QueryAttribute"] = Layer.Query,
             [CompositionNamespace + ".ClientNetworkAttribute"] = Layer.ClientNetwork,
             [CompositionNamespace + ".PresentationAttribute"] = Layer.Presentation,
+            [CompositionNamespace + ".ClientReplicationAttribute"] = Layer.ClientReplication,
         };
 
     /// <summary>The layers whose code runs only where the Simulation does and may reach it.</summary>

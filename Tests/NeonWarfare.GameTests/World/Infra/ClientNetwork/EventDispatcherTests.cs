@@ -12,6 +12,7 @@ using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Hud;
 using NeonWarfare.Scenes.World.Infra.Protocol;
+using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.World.Features.Chat.ChatPresentation;
 
@@ -156,7 +157,8 @@ public class EventDispatcherTests
     private WorldDependencies Dependencies()
     {
         WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
-        return new(TimeProvider.System, _codec, new ManualFrameProvider(), scenes,
+        return new(TimeProvider.System, _codec,
+            new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }

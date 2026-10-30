@@ -33,6 +33,7 @@ public class ConstructorLayerTests
             [Layer.Query] = [Layer.Query],
             [Layer.ClientNetwork] = [Layer.ClientNetwork, Layer.Query],
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
+            [Layer.ClientReplication] = [Layer.ClientReplication, Layer.Query],
         };
 
     private static readonly IReadOnlyDictionary<string, Layer[]> RestrictedDependencies =
@@ -42,6 +43,8 @@ public class ConstructorLayerTests
             [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
             // Only PlayerCommandSender sends to the server, so every command passes one whitelisted path
             [WorldLayers.WorldNamespace + ".Infra.ClientNetwork.IServerConnection"] = [Layer.ClientNetwork],
+            // A delta written or applied past the state packet would move a baseline the clients never follow
+            ["RepliCAT.Replicator"] = [Layer.ServerNetwork, Layer.ClientReplication],
             // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
             // nobody replicates into the world
             [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] = [Layer.Simulation],
@@ -64,7 +67,7 @@ public class ConstructorLayerTests
         IReadOnlySet<string> open = dependencies.Concat(OpenTypes).ToHashSet(StringComparer.Ordinal);
         // Otherwise a rename would leave the restriction nothing to check
         foreach (string name in RestrictedDependencies.Keys.Concat(OpenTypes)
-                     .Where(name => game.FindByName(name) == null))
+                     .Where(name => game.FindByName(name) == null && !dependencies.Contains(name)))
         {
             report.Add($"{name} is restricted or open but no longer exists");
         }

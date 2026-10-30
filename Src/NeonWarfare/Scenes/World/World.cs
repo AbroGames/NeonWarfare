@@ -6,6 +6,7 @@ using KludgeBox.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
+using NeonWarfare.Scenes.World.Infra.ClientReplication;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
@@ -38,6 +39,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     private const string NotInitializedError = "World is not initialized";
     private const string NoLayerError = "World has no {0} layer";
     private const string NotExposedError = "{0} is not a [Query] or [Presentation] service";
+    private const string NotWorldServiceError = "{0} has no world layer attribute";
     private const string EmptyPacketError = "The packet is empty.";
     private const string UnknownKindError = "Unknown server packet kind {0}.";
     private const string JoinRejectedLengthError = "A join rejection is {0} bytes long, {1} expected.";
@@ -78,34 +80,33 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     /// <summary>
     /// The only way the outside of the World sends commands.
     /// </summary>
-    public PlayerCommandSender Commands => Service<PlayerCommandSender>(WorldLayer.ClientNetwork);
+    public PlayerCommandSender Commands => Service<PlayerCommandSender>();
 
     /// <summary>
     /// What the outside of the World may read: the Simulation and the network machinery are never handed out.
     /// </summary>
     public T Get<T>() where T : class
     {
-        if (ExposedLayer<T>.Value is not { } layer)
+        if (ServiceLayer<T>.Attribute is not (QueryAttribute or PresentationAttribute))
         {
             throw new InvalidOperationException(NotExposedError.FormatWith(typeof(T).FullName));
         }
 
-        return Service<T>(layer);
+        return Service<T>();
     }
 
     public void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
-        Service<CommandInbox>(WorldLayer.ServerNetwork).EnqueueFromPeer(peerId, packet);
+        Service<CommandInbox>().EnqueueFromPeer(peerId, packet);
 
     public void OnClientConnected(int peerId) =>
-        Service<PeerGatekeeper>(WorldLayer.ServerNetwork).OnPeerConnected(peerId);
+        Service<PeerGatekeeper>().OnPeerConnected(peerId);
 
     public void OnClientDisconnected(int peerId) =>
-        Service<CommandInbox>(WorldLayer.ServerNetwork).EnqueuePeerDisconnected(peerId);
+        Service<CommandInbox>().EnqueuePeerDisconnected(peerId);
 
     /// <exception cref="NetMessageFormatException">The packet is broken or of an unknown kind.</exception>
     public void ReceiveFromServer(ReadOnlyMemory<byte> packet)
     {
-        var events = Service<EventDispatcher>(WorldLayer.ClientNetwork);
         if (packet.IsEmpty)
         {
             throw new NetMessageFormatException(EmptyPacketError);
@@ -114,7 +115,10 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         switch ((ServerPacketKind) packet.Span[0])
         {
             case ServerPacketKind.Events:
-                events.DispatchPacket(packet);
+                Service<EventDispatcher>().DispatchPacket(packet);
+                break;
+            case ServerPacketKind.State:
+                Service<StateApplier>().ApplyPacket(packet);
                 break;
             case ServerPacketKind.JoinRejected:
                 if (packet.Length != JoinRejectedLength)
@@ -135,21 +139,22 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         if (what == NotificationPredelete) _services?.Dispose();
     }
 
-    private T Service<T>(WorldLayer layer) where T : class
+    private T Service<T>() where T : class
     {
         if (_services == null) throw new InvalidOperationException(NotInitializedError);
+        if (ServiceLayer<T>.Attribute is not { Layer: var layer })
+        {
+            throw new InvalidOperationException(NotWorldServiceError.FormatWith(typeof(T).FullName));
+        }
         if (!_layers.HasFlag(layer)) throw new InvalidOperationException(NoLayerError.FormatWith(layer));
 
         return _services.GetRequiredService<T>();
     }
 
     // Reflection once per type rather than on every call
-    private static class ExposedLayer<T>
+    private static class ServiceLayer<T>
     {
-        public static readonly WorldLayer? Value =
-            typeof(T).GetCustomAttribute<WorldServiceAttribute>(inherit: false)
-                is (QueryAttribute or PresentationAttribute) and var attribute
-                ? attribute.Layer
-                : null;
+        public static readonly WorldServiceAttribute Attribute =
+            typeof(T).GetCustomAttribute<WorldServiceAttribute>(inherit: false);
     }
 }
