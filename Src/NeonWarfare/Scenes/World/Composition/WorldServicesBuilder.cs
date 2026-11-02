@@ -5,6 +5,7 @@ using System.Reflection;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.World.ClientNetwork;
+using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.ServerNetwork;
 using NeonWarfare.Scenes.World.Simulations;
@@ -29,16 +30,19 @@ public class WorldServicesBuilder
         _candidates = candidates;
     }
 
-    public ServiceProvider Build(WorldLayer layers, WorldDependencies dependencies)
+    public ServiceProvider Build(WorldLayer layers, WorldDependencies dependencies, WorldRoot root)
     {
         var services = new ServiceCollection();
         services.AddSingleton(dependencies.Time);
-        services.AddSingleton(dependencies.Persistence);
-        services.AddSingleton(dependencies.Session);
         services.AddSingleton(dependencies.Codec);
         services.AddSingleton(dependencies.Frames);
         services.AddSingleton(dependencies.Scenes);
         services.AddSingleton(dependencies.ClientsConnection);
+        services.AddSingleton(root);
+        // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one
+        // layer. Every layer reads it through IEntityFinder, only the spawning one registers
+        services.AddSingleton<EntityRegistry>();
+        services.AddSingleton<IEntityFinder>(provider => provider.GetRequiredService<EntityRegistry>());
 
         var selected = ScanWorldServices()
             .Where(service => layers.HasFlag(service.Attribute.Layer))

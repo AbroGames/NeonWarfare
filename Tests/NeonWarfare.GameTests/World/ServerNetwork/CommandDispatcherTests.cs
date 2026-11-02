@@ -7,9 +7,11 @@ using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Commands;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Entities;
+using NeonWarfare.Scenes.World.Entities.Storages;
 using NeonWarfare.Scenes.World.Events;
 using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Protocol;
+using NeonWarfare.Scenes.World.Queries;
 using NeonWarfare.Scenes.World.ServerNetwork;
 using static GdUnit4.Assertions;
 
@@ -32,6 +34,8 @@ public class CommandDispatcherTests
 
     private NetMessageCodec _codec = null!;
     private PeerUidMap _peers = null!;
+    private PersistenceStorage _storage = null!;
+    private PersistenceStorageQuery _persistenceQuery = null!;
     private PersistenceModel _persistence = null!;
     private CommandInbox _inbox = null!;
     private List<string> _calls = null!;
@@ -41,9 +45,19 @@ public class CommandDispatcherTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _peers = new PeerUidMap();
-        _persistence = new PersistenceModel();
+        _storage = new PersistenceStorage();
+        var registry = new EntityRegistry();
+        registry.Register(new NetId(1), _storage);
+        _persistenceQuery = new PersistenceStorageQuery(registry);
+        _persistence = _storage.Model;
         _inbox = new CommandInbox(_codec);
         _calls = [];
+    }
+
+    [AfterTest]
+    public void TearDown()
+    {
+        _storage.Free();
     }
 
     [TestCase]
@@ -197,7 +211,7 @@ public class CommandDispatcherTests
                      [JoinHandler(), JoinHandler()],
                  })
         {
-            var dispatcher = new CommandDispatcher(_inbox, _peers, _persistence);
+            var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
 
             AssertThrown(() => dispatcher.Register(handlers)).IsInstanceOf<InvalidOperationException>();
         }
@@ -207,7 +221,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Register_ObjectImplementingNoHandler_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistence);
+        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
 
         AssertThrown(() => dispatcher.Register([new object()])).IsInstanceOf<InvalidOperationException>();
     }
@@ -217,7 +231,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Register_PlayerHandlerOfJoinRequest_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistence);
+        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
 
         AssertThrown(() => dispatcher.Register([new PlayerJoinHandler()])).IsInstanceOf<InvalidOperationException>();
     }
@@ -226,7 +240,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_BeforeRegister_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistence);
+        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
 
         AssertThrown(() => dispatcher.ProcessAll()).IsInstanceOf<InvalidOperationException>();
     }
@@ -237,7 +251,8 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Build_Host_WhitelistHasOnlyCommandsAndReachesTheInbox()
     {
-        using ServiceProvider provider = new WorldServicesBuilder().Build(Host, Dependencies());
+        using ServiceProvider provider = new WorldServicesBuilder().Build(
+            Host, Dependencies(), new WorldRoot(AutoFree(new Node())!));
         IReadOnlySet<Type> whitelist = provider.GetRequiredService<CommandDispatcher>().NetworkCommandTypes;
         var inbox = provider.GetRequiredService<CommandInbox>();
         var chat = new SendChatMessageCommand("hi");
@@ -260,7 +275,7 @@ public class CommandDispatcherTests
 
     private CommandDispatcher NewDispatcher(params object[] handlers)
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistence);
+        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
         dispatcher.Register(handlers);
         return dispatcher;
     }
@@ -280,8 +295,8 @@ public class CommandDispatcherTests
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new JoinRequestCommand(1, uid, uid, Colors.Red)));
 
     private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider(),
-            AutoFree(new WorldPackedScenes())!, new RecordingClientsConnection());
+        new(TimeProvider.System, _codec, new ManualFrameProvider(), AutoFree(TestWorldScenes.Create())!,
+            new RecordingClientsConnection());
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {

@@ -6,8 +6,11 @@ using NeonWarfare.Scenes.World.Models;
 namespace NeonWarfare.Scenes.World.Queries;
 
 [Query]
-public class PlayerQuery(PersistenceModel persistence, SessionModel session)
+public class PlayerQuery(PersistenceStorageQuery persistence, SessionStorageQuery session)
 {
-    public IEnumerable<PlayerModel> OnlinePlayers() =>
-        session.OnlinePlayerUids.Select(uid => persistence.PlayerByUid[uid]);
+    public IEnumerable<PlayerModel> OnlinePlayers()
+    {
+        PersistenceModel model = persistence.Model;
+        return session.Model.OnlinePlayerUids.Select(uid => model.PlayerByUid[uid]);
+    }
 }

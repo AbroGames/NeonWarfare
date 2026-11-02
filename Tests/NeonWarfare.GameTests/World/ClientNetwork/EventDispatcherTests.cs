@@ -1,5 +1,6 @@
 using System.Buffers;
 using GdUnit4;
+using Godot;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Protocol;
@@ -7,7 +8,6 @@ using NeonWarfare.Scenes.World.ClientNetwork;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Entities;
 using NeonWarfare.Scenes.World.Events;
-using NeonWarfare.Scenes.World.Models;
 using NeonWarfare.Scenes.World.Notices;
 using NeonWarfare.Scenes.World.Presentations;
 using NeonWarfare.Scenes.World.Protocol;
@@ -40,7 +40,8 @@ public class EventDispatcherTests
     [RequireGodotRuntime]
     public void Dispatch_ChatEvents_ReachChatPresentationInOrder()
     {
-        using ServiceProvider provider = new WorldServicesBuilder().Build(Client, Dependencies());
+        using ServiceProvider provider = new WorldServicesBuilder().Build(
+            Client, Dependencies(), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
             new PlayerJoinedEvent(1, "alice", "Alice"),
             new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
@@ -153,8 +154,8 @@ public class EventDispatcherTests
 
     // A frame that never ends: everything posted during the test is still readable at its end
     private WorldDependencies Dependencies() =>
-        new(TimeProvider.System, new PersistenceModel(), new SessionModel(), _codec, new ManualFrameProvider(),
-            AutoFree(new WorldPackedScenes())!, new RecordingClientsConnection());
+        new(TimeProvider.System, _codec, new ManualFrameProvider(), AutoFree(new WorldPackedScenes())!,
+            new RecordingClientsConnection());
 
     private class ThrowingPresentation
     {

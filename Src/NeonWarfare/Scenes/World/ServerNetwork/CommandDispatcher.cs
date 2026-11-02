@@ -8,6 +8,7 @@ using NeonWarfare.Scenes.World.CommandHandlers;
 using NeonWarfare.Scenes.World.Commands;
 using NeonWarfare.Scenes.World.Composition;
 using NeonWarfare.Scenes.World.Models;
+using NeonWarfare.Scenes.World.Queries;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.ServerNetwork;
@@ -19,7 +20,7 @@ namespace NeonWarfare.Scenes.World.ServerNetwork;
 /// at tick time rather than on arrival: a join and a chat command of one peer in one tick must both pass, in order.
 /// </summary>
 [ServerNetwork]
-public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, PersistenceModel persistence)
+public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, PersistenceStorageQuery persistence)
 {
     private const string NotJoinedLog = "{command} from peer {peerId} dropped: the peer has not joined";
     private const string NoPlayerLog =
@@ -217,7 +218,7 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
             return;
         }
         // A bound peer always has a player: this is a broken join or leave, not a peer's misbehaviour
-        if (!persistence.PlayerByUid.TryGetValue(uid, out PlayerModel sender))
+        if (!persistence.Model.PlayerByUid.TryGetValue(uid, out PlayerModel sender))
         {
             _log.Error(NoPlayerLog, name, peerId, uid);
             return;
