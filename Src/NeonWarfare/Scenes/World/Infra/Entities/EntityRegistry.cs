@@ -38,6 +38,8 @@ public class EntityRegistry : IEntityFinder
 
     public event Action<NetId, Node> SpawnedEvent;
 
+    public event Action<NetId, Node> DespawnedEvent;
+
     public void Register(NetId id, Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
@@ -118,5 +120,7 @@ public class EntityRegistry : IEntityFinder
         {
             if (cache.Members.Remove(entry.Id)) cache.Snapshot = null;
         }
+
+        DespawnedEvent?.Invoke(entry.Id, node);
     }
 }

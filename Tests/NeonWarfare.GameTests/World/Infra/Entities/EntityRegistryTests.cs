@@ -58,16 +58,20 @@ public class EntityRegistryTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void RemoveChild_TakesTheNodeOut()
+    public void RemoveChild_TakesTheNodeOut_RaisesDespawnedEvent()
     {
         Node parent = InTree();
         Node node = AutoFree(new Node())!;
         parent.AddChild(node);
         _registry.Register(new NetId(1), node);
+        var raised = new List<(NetId, Node, bool)>();
+        _registry.DespawnedEvent += (id, despawned) =>
+            raised.Add((id, despawned, _registry.TryGetNode(id, out _)));
 
         parent.RemoveChild(node);
 
         AssertGone(new NetId(1), node);
+        AssertThat(raised).ContainsExactly((new NetId(1), node, false));
     }
 
     [TestCase]
@@ -102,12 +106,15 @@ public class EntityRegistryTests
         _registry.Register(new NetId(1), child);
         _registry.Register(new NetId(2), grandchild);
         _registry.Register(new NetId(3), sibling);
+        var raised = new List<NetId>();
+        _registry.DespawnedEvent += (id, _) => raised.Add(id);
 
         subtree.Free();
 
         AssertThat(_registry.TryGetNode(new NetId(1), out _)).IsFalse();
         AssertThat(_registry.TryGetNode(new NetId(2), out _)).IsFalse();
         AssertThat(_registry.GetAll<Node>()).ContainsExactly(sibling);
+        AssertThat(raised).ContainsExactlyInAnyOrder(new NetId(1), new NetId(2));
     }
 
     [TestCase]

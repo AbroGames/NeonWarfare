@@ -16,6 +16,13 @@ public interface IEntityFinder
     /// </summary>
     event Action<NetId, Node> SpawnedEvent;
 
+    /// <summary>
+    /// Raised once the node is out of the registry, inside its <c>TreeExiting</c>: the node is still in the tree and
+    /// may be in the middle of being freed, so a subscriber must not change the tree. Freeing a whole World raises it
+    /// for every entity.
+    /// </summary>
+    event Action<NetId, Node> DespawnedEvent;
+
     bool TryGetNode(NetId id, out Node node);
 
     Node GetNode(NetId id);
