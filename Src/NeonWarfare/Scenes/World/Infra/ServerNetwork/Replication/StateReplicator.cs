@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Humanizer;
 using KludgeBox.Logging;
@@ -33,6 +34,8 @@ public class StateReplicator
     private const string DeltaFailedLog = "The delta of {netId} failed, the other entities are still written";
     private const string SpawnedSinceSendError =
         "{0} entities spawned since the last send: the snapshot is written right after TryWrite.";
+    private const string StateLostError =
+        "The state of {0} was lost with a failed delta: a save without it would load them empty.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<StateReplicator>();
 
@@ -44,6 +47,8 @@ public class StateReplicator
     private readonly SortedSet<long> _spawned = [];
     // Their baselines stay until the end of the tick: the set of baselines is the set of entities at the last send
     private readonly List<NetId> _despawned = [];
+    // A failed delta resets the baseline: a snapshot takes the state from the next delta, a save has none to take
+    private readonly SortedSet<long> _stateLost = [];
 
     // Kind and parent are kept from the spawn: a despawned entity may be out of the registry before the next send
     private record Entry(ReplicationBaseline Baseline, int KindId, NetId Parent, bool Saved);
@@ -70,7 +75,11 @@ public class StateReplicator
     /// </returns>
     public bool TryWrite(long tick, BitWriter writer)
     {
-        _despawned.ForEach(id => _entryById.Remove(id.Value));
+        _despawned.ForEach(id =>
+        {
+            _entryById.Remove(id.Value);
+            _stateLost.Remove(id.Value);
+        });
         LastSentTick = tick;
 
         int start = writer.BitPosition;
@@ -110,9 +119,20 @@ public class StateReplicator
     /// The records of <see cref="WriteSnapshot"/>, but a <see cref="NotSavedAttribute"/> entity goes without state.
     /// Between ticks too: an entity that has left the tree since the send is still written, from its baseline.
     /// </summary>
-    /// <exception cref="InvalidOperationException">An entity has spawned since the last send.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// An entity has spawned since the last send, or a saved entity has had no successful delta since its last failed
+    /// one.
+    /// </exception>
     /// <exception cref="ReplicationException">A manual member cannot be written.</exception>
-    public void WriteSave(BitWriter writer) => WriteAll(writer, saving: true);
+    public void WriteSave(BitWriter writer)
+    {
+        List<long> lost = _stateLost.Where(id => _entryById[id].Saved).ToList();
+        if (lost.Count > 0)
+        {
+            throw new InvalidOperationException(StateLostError.FormatWith(string.Join(", ", lost)));
+        }
+        WriteAll(writer, saving: true);
+    }
 
     private void WriteAll(BitWriter writer, bool saving)
     {
@@ -188,12 +208,15 @@ public class StateReplicator
     {
         try
         {
-            return _replicator.TryWriteDelta(_entryById[id.Value].Baseline, writer);
+            bool written = _replicator.TryWriteDelta(_entryById[id.Value].Baseline, writer);
+            _stateLost.Remove(id.Value);
+            return written;
         }
         catch (ReplicationException e)
         {
             // RepliCAT has reset the baseline, so the next delta of this entity is complete
             _log.Error(e, DeltaFailedLog, id);
+            _stateLost.Add(id.Value);
             return false;
         }
     }
