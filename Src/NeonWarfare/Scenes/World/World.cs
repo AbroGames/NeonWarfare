@@ -12,6 +12,7 @@ using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
 using Serilog;
 
@@ -42,6 +43,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     private const string NotWorldServiceError = "{0} has no world layer attribute";
     private const string EmptyPacketError = "The packet is empty.";
     private const string UnknownKindError = "Unknown server packet kind {0}.";
+    private const string SecondSnapshotError = "A snapshot for a World that already has one.";
     private const string JoinRejectedLengthError = "A join rejection is {0} bytes long, {1} expected.";
 
     private const int JoinRejectedLength = 2;
@@ -51,6 +53,10 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     private ServiceProvider _services;
     private WorldLayer _layers;
 
+    /// <exception cref="NetMessageFormatException">The snapshot of <see cref="WorldOrigin.FromSnapshot"/> is broken:
+    /// the World is half built and must be freed.</exception>
+    /// <exception cref="SaveFormatException">The save of <see cref="WorldOrigin.FromSave"/> is broken or of another
+    /// version (<see cref="SaveVersionMismatchException"/>): the World must be freed.</exception>
     public World InitPreReady(WorldLayer layers, WorldDependencies dependencies, WorldOrigin origin)
     {
         if (_services != null) throw new InvalidOperationException("World is already initialized");
@@ -65,6 +71,12 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         {
             case WorldOrigin.NewWorld:
                 _services.GetRequiredService<NewWorldSimulationFacade>().Create();
+                break;
+            case WorldOrigin.FromSnapshot snapshot:
+                Service<StateApplier>().ApplySnapshot(snapshot.Packet);
+                break;
+            case WorldOrigin.FromSave save:
+                Service<SaveLoader>().Load(save.Save);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
@@ -120,6 +132,8 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
             case ServerPacketKind.State:
                 Service<StateApplier>().ApplyPacket(packet);
                 break;
+            case ServerPacketKind.Snapshot:
+                throw new NetMessageFormatException(SecondSnapshotError);
             case ServerPacketKind.JoinRejected:
                 if (packet.Length != JoinRejectedLength)
                 {

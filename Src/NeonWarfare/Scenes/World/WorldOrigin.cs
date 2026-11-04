@@ -1,3 +1,5 @@
+using System;
+
 namespace NeonWarfare.Scenes.World;
 
 /// <summary>
@@ -11,4 +13,10 @@ public abstract record WorldOrigin
 
     /// <summary>A world created from nothing, on the server.</summary>
     public sealed record NewWorld : WorldOrigin;
+
+    /// <summary>The world of a remote client, from the snapshot the server sends it on joining.</summary>
+    public sealed record FromSnapshot(ReadOnlyMemory<byte> Packet) : WorldOrigin;
+
+    /// <summary>A world loaded from a save, on the server.</summary>
+    public sealed record FromSave(ReadOnlyMemory<byte> Save) : WorldOrigin;
 }

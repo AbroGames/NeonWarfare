@@ -24,7 +24,8 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
 /// </list>
 /// A delta carries no length, so the client must know every NetId in the packet. The state is captured here, at the
 /// end of the tick, not at spawn. One packet for every peer: a written delta has already moved its baseline.
-/// The same records of every entity, without the packet header, make the snapshot: <see cref="WriteSnapshot"/>.
+/// The same records of every entity, without the packet header, make the snapshot: <see cref="WriteSnapshot"/>, and
+/// the save: <see cref="WriteSave"/>.
 /// </summary>
 [ServerNetwork]
 public class StateReplicator
@@ -45,7 +46,7 @@ public class StateReplicator
     private readonly List<NetId> _despawned = [];
 
     // Kind and parent are kept from the spawn: a despawned entity may be out of the registry before the next send
-    private record Entry(ReplicationBaseline Baseline, int KindId, NetId Parent);
+    private record Entry(ReplicationBaseline Baseline, int KindId, NetId Parent, bool Saved);
 
     public StateReplicator(IEntityFinder entities, Replicator replicator)
     {
@@ -54,6 +55,11 @@ public class StateReplicator
         entities.SpawnedEvent += OnEntitySpawned;
         entities.DespawnedEvent += OnEntityDespawned;
     }
+
+    /// <summary>
+    /// The tick of the last <see cref="TryWrite"/>: the baselines are the state at its end.
+    /// </summary>
+    public long LastSentTick { get; private set; }
 
     /// <summary>
     /// Called every tick, whether anyone gets the packet or not: the baselines stay equal to the state at the end of
@@ -65,6 +71,7 @@ public class StateReplicator
     public bool TryWrite(long tick, BitWriter writer)
     {
         _despawned.ForEach(id => _entryById.Remove(id.Value));
+        LastSentTick = tick;
 
         int start = writer.BitPosition;
         writer.WriteBits((byte) ServerPacketKind.State, 8);
@@ -97,7 +104,17 @@ public class StateReplicator
     /// An entity has spawned since the last send: it has no state yet, and the next packet would spawn it again.
     /// </exception>
     /// <exception cref="ReplicationException">A manual member cannot be written.</exception>
-    public void WriteSnapshot(BitWriter writer)
+    public void WriteSnapshot(BitWriter writer) => WriteAll(writer, saving: false);
+
+    /// <summary>
+    /// The records of <see cref="WriteSnapshot"/>, but a <see cref="NotSavedAttribute"/> entity goes without state.
+    /// Between ticks too: an entity that has left the tree since the send is still written, from its baseline.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">An entity has spawned since the last send.</exception>
+    /// <exception cref="ReplicationException">A manual member cannot be written.</exception>
+    public void WriteSave(BitWriter writer) => WriteAll(writer, saving: true);
+
+    private void WriteAll(BitWriter writer, bool saving)
     {
         if (_spawned.Count > 0)
         {
@@ -106,7 +123,8 @@ public class StateReplicator
 
         foreach ((long id, Entry entry) in _entryById)
         {
-            WriteSpawnRecord(id, entry, writer, () => _replicator.TryWriteSnapshot(entry.Baseline, writer));
+            WriteSpawnRecord(id, entry, writer,
+                () => (!saving || entry.Saved) && _replicator.TryWriteSnapshot(entry.Baseline, writer));
         }
         writer.WriteVarUInt((ulong) NetId.None.Value);
     }
@@ -183,7 +201,9 @@ public class StateReplicator
     private void OnEntitySpawned(NetId id, Node node)
     {
         NetId parent = _entities.TryGetNetId(node.GetParent(), out NetId parentId) ? parentId : NetId.None;
-        _entryById.Add(id.Value, new Entry(_replicator.CreateBaseline(node), _entities.GetKindId(id), parent));
+        bool saved = !Attribute.IsDefined(node.GetType(), typeof(NotSavedAttribute), inherit: false);
+        _entryById.Add(id.Value,
+            new Entry(_replicator.CreateBaseline(node), _entities.GetKindId(id), parent, saved));
         _spawned.Add(id.Value);
     }
 

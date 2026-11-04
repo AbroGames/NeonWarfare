@@ -47,6 +47,9 @@ public class WorldServicesBuilder
         // layer. Every layer reads it through IEntityFinder, only the spawning one registers
         services.AddSingleton<EntityRegistry>();
         services.AddSingleton<IEntityFinder>(provider => provider.GetRequiredService<EntityRegistry>());
+        // By hand too: the one spawn besides EntitySpawner, shared by the client's state applier and the server's
+        // load, which are of different layers
+        services.AddSingleton<EntityRecordReader>();
 
         var selected = ScanWorldServices()
             .Where(service => layers.HasFlag(service.Attribute.Layer))

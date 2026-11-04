@@ -50,6 +50,9 @@ public class ConstructorLayerTests
             [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] =
                 [Layer.Simulation, Layer.ClientReplication],
             [WorldLayers.WorldNamespace + ".Infra.Entities.WorldRoot"] = [Layer.Simulation, Layer.ClientReplication],
+            // Spawns with the NetIds of its records: the client's state applier and the server's load of a save
+            [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRecordReader"] =
+                [Layer.ServerNetwork, Layer.ClientReplication],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it

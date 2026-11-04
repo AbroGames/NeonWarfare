@@ -70,6 +70,11 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
 
     private bool HasWorld => _world != null && IsInstanceValid(_world);
 
+    /// <summary>
+    /// A remote client without a World got the server's join snapshot: the World is created from it.
+    /// </summary>
+    public event Action<byte[]> WorldSnapshotReceivedEvent;
+
     public override void _Ready()
     {
         Di.Process(this);
@@ -89,11 +94,22 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
 
     public World.World AddWorld(WorldLayer layers, WorldOrigin origin, Screen screen)
     {
-        _layers = layers;
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
             this, this);
-        _world = new World.World().InitPreReady(layers, dependencies, origin);
+        var world = new World.World();
+        try
+        {
+            world.InitPreReady(layers, dependencies, origin);
+        }
+        catch
+        {
+            // Outside the tree nothing else frees it, nor the entities a snapshot has already spawned in it
+            world.Free();
+            throw;
+        }
+        _layers = layers;
+        _world = world;
         _world.SetName("World");
         WorldContainer.ChangeStoredNode(_world);
 
@@ -195,20 +211,34 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
 
     private void PacketReceivedEvent(int peerId, byte[] packet)
     {
-        //TODO 021b a client gets its World from the first snapshot
-        if (!HasWorld)
-        {
-            _log.Debug(NoWorldLog, peerId);
-            return;
-        }
         if (_network.IsServer)
         {
-            _world.ReceiveFromClient(peerId, packet);
+            if (HasWorld)
+            {
+                _world.ReceiveFromClient(peerId, packet);
+            }
+            else
+            {
+                _log.Debug(NoWorldLog, peerId);
+            }
             return;
         }
         if (peerId != ServerPeerId)
         {
             _log.Warning(NotFromServerLog, peerId);
+            return;
+        }
+        if (!HasWorld)
+        {
+            // The subscriber creates the World inside the call, before the events packet of the join tick arrives
+            if (packet.Length > 0 && packet[0] == (byte) ServerPacketKind.Snapshot)
+            {
+                WorldSnapshotReceivedEvent?.Invoke(packet);
+            }
+            else
+            {
+                _log.Debug(NoWorldLog, peerId);
+            }
             return;
         }
 
