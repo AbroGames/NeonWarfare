@@ -29,6 +29,10 @@ public interface IEntityFinder
 
     bool TryGetNetId(Node node, out NetId id);
 
+    /// <summary>The <see cref="EntityCatalog"/> kind the entity was created from.</summary>
+    /// <exception cref="KeyNotFoundException">The NetId is not registered.</exception>
+    int GetKindId(NetId id);
+
     /// <summary>
     /// Every registered node that is a <typeparamref name="T"/>, base classes and interfaces included, ordered by
     /// NetId. The same instance is returned while the set is unchanged; a returned list never changes.

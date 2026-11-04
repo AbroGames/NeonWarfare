@@ -53,7 +53,7 @@ public class TickStateReplicationTests
         _scenes = TestWorldScenes.Create();
         // The test kinds after the game's: the same catalog on both sides
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
-            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode)]);
+            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode)]);
         _serverRoot = InTree(new Node());
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = new WorldServicesBuilder()
@@ -219,6 +219,26 @@ public class TickStateReplicationTests
         Node clientChild = AliceNode(ServerId(child));
         AssertThat(clientChild.GetParent()).IsSame(AliceNode(ServerId(parent)));
         AssertThat(((CounterNode) clientChild).Value).IsEqual(5);
+    }
+
+    // The first delta threw: the record goes without state, and the models section of the next packet brings it all
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SpawnWhoseFirstDeltaFailed_ReachesTheClient_TheStateComesNextTick()
+    {
+        Tick();
+        var broken = Spawner().SpawnOnRoot<UnmappedPartNode>();
+        var next = Spawner().SpawnOnRoot<CounterNode>(counter => counter.Value = 3);
+
+        Tick();
+
+        var client = (UnmappedPartNode) AliceNode(ServerId(broken));
+        AssertThat(((CounterNode) AliceNode(ServerId(next))).Value).IsEqual(3);
+        broken.Part = new UnmappedPartNode.MappedPart { Value = 7 };
+
+        Tick();
+
+        AssertThat(client.Part.Value).IsEqual(7);
     }
 
     // Done when: despawn
@@ -649,4 +669,17 @@ public partial class FixedPartNode : Node
 public partial class CounterNode : Node
 {
     [Replicated] public int Value;
+}
+
+// Its first delta throws: the runtime type of the part is not in the type mapping
+public partial class UnmappedPartNode : Node
+{
+    public class MappedPart
+    {
+        [Replicated] public int Value;
+    }
+
+    public class UnmappedPart : MappedPart;
+
+    [Replicated] public MappedPart Part = new UnmappedPart();
 }

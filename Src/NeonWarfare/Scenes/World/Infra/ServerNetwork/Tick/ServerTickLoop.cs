@@ -51,7 +51,7 @@ public class ServerTickLoop(
         commands.ProcessAll();
         gatekeeper.DisconnectExpired();
         //TODO Tick() of the facades with a time rule, once the first one appears
-        //TODO 021/022 deferred join and save snapshots
+        //TODO 021a/022a deferred join and save snapshots
         SendState(joinedBefore);
         SendEvents();
     }

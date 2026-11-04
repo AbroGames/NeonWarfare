@@ -24,7 +24,7 @@ public class ConnectToMultiplayerGameStarter(
         
         Network.Network network = game.AddNetwork();
 
-        //TODO 021 the World comes from the first snapshot, until then the connecting screen stays
+        //TODO 021b the World comes from the first snapshot, until then the connecting screen stays
         void ConnectedToServerEvent()
         {
             if (!IsGameAlive(game)) return;
