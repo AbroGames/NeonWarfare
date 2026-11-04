@@ -50,8 +50,8 @@ public class CommandDispatcherTests
         _playersStorage = new PlayersStorage();
         _sessionStorage = new PlayersSessionStorage();
         var registry = new EntityRegistry();
-        registry.Register(new NetId(1), _playersStorage);
-        registry.Register(new NetId(2), _sessionStorage);
+        registry.Register(new NetId(1), _playersStorage, 0);
+        registry.Register(new NetId(2), _sessionStorage, 0);
         _playersModel = _playersStorage.Model;
         _players = new PlayerQuery(new PlayersStorageQuery(registry), new PlayersSessionStorageQuery(registry));
         _handlers = new CommandHandlerRegistry();

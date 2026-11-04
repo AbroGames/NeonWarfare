@@ -46,9 +46,10 @@ public class ConstructorLayerTests
             // A delta written or applied past the state packet would move a baseline the clients never follow
             ["RepliCAT.Replicator"] = [Layer.ServerNetwork, Layer.ClientReplication],
             // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
-            // nobody replicates into the world
-            [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] = [Layer.Simulation],
-            [WorldLayers.WorldNamespace + ".Infra.Entities.WorldRoot"] = [Layer.Simulation],
+            // nobody replicates into the world. The client's state applier is the spawn of a remote client
+            [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] =
+                [Layer.Simulation, Layer.ClientReplication],
+            [WorldLayers.WorldNamespace + ".Infra.Entities.WorldRoot"] = [Layer.Simulation, Layer.ClientReplication],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it

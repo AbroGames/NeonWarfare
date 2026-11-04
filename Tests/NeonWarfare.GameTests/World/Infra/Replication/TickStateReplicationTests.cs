@@ -23,8 +23,8 @@ using GameWorld = NeonWarfare.Scenes.World.World;
 namespace NeonWarfare.GameTests.World.Infra.Replication;
 
 // A host and Alice's remote client, both through the real composition root, joined by the fake transport the way
-// Game joins them. Until 020 spawns entities on clients, Alice's storages are created here and registered under the
-// server's NetIds; until 021 she has no snapshot, so she joins before the first tick, whose deltas are complete
+// Game joins them. Until 021 she has no snapshot, so she joins before the first tick, which spawns the storages on her
+// client. Both Worlds are in the tree: a despawned node leaves the registry on TreeExiting
 [TestSuite]
 public class TickStateReplicationTests
 {
@@ -38,7 +38,9 @@ public class TickStateReplicationTests
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
+    private EntityCatalog _catalog = null!;
     private Node _serverRoot = null!;
+    private Node _aliceRoot = null!;
     private RecordingClientsConnection _connection = null!;
     private ServiceProvider _server = null!;
     private ServiceProvider _alice = null!;
@@ -49,7 +51,10 @@ public class TickStateReplicationTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _scenes = TestWorldScenes.Create();
-        _serverRoot = new Node();
+        // The test kinds after the game's: the same catalog on both sides
+        _catalog = new EntityCatalog(_scenes.GetScenesList(),
+            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode)]);
+        _serverRoot = InTree(new Node());
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = new WorldServicesBuilder()
             .Build(WorldLayer.Host, Dependencies(_connection), new WorldRoot(_serverRoot));
@@ -151,15 +156,105 @@ public class TickStateReplicationTests
     public void StatePacket_HasOnlyTheChangedEntities()
     {
         Tick();
-        AssertThat(NetIdsIn(StatePacket(AlicePeer)))
-            .ContainsExactly(ServerId<PlayersStorage>(), ServerId<PlayersSessionStorage>());
+        AssertThat(Parse(StatePacket(AlicePeer)).Models).IsEmpty();
         _connection.Packets.Clear();
 
         Online().Remove(HostUid);
         Tick();
 
-        AssertThat(NetIdsIn(StatePacket(AlicePeer))).ContainsExactly(ServerId<PlayersSessionStorage>());
+        StateRecords records = Parse(StatePacket(AlicePeer));
+        AssertThat(records.Spawns).IsEmpty();
+        AssertThat(records.Models).ContainsExactly(ServerId<PlayersSessionStorage>());
+        AssertThat(records.Despawns).IsEmpty();
         AssertThat(AliceOnline()).ContainsExactly(AliceUid);
+    }
+
+    // Done when: PlayersStorage and SessionStorage appear on the client with their models
+    [TestCase]
+    [RequireGodotRuntime]
+    public void FirstTick_SpawnsTheStoragesOnTheClient_WithTheirModels()
+    {
+        Tick();
+
+        AssertThat(Parse(StatePacket(AlicePeer)).Spawns.Select(spawn => spawn.Id))
+            .ContainsExactly(ServerId<PlayersStorage>(), ServerId<PlayersSessionStorage>());
+        AssertClientCopy<PlayersStorage>();
+        AssertClientCopy<PlayersSessionStorage>();
+        AssertThat(_alice.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[AliceUid].Nick)
+            .IsEqual("Alice");
+        AssertThat(AliceOnline()).ContainsExactlyInAnyOrder(HostUid, AliceUid);
+    }
+
+    // Done when: spawn. The state is the one at the end of the tick, and it is there before the node enters the tree
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Spawn_ReachesTheClientWithTheStateAtTheEndOfTheTick_AppliedBeforeItEntersTheTree()
+    {
+        Tick();
+        var server = Spawner().SpawnOnRoot<CounterNode>(counter => counter.Value = 1);
+        server.Value = 2;
+        int? valueOnEnter = null;
+        _aliceRoot.ChildEnteredTree += child => valueOnEnter = ((CounterNode) child).Value;
+
+        Tick();
+
+        var client = (CounterNode) AliceNode(ServerId(server));
+        AssertThat(client.Value).IsEqual(2);
+        AssertThat(valueOnEnter).IsEqual(2);
+        AssertThat(client.GetParent()).IsSame(_aliceRoot);
+        AssertThat(AliceRegistry().GetKindId(ServerId(server))).IsEqual(_catalog.GetKindId(typeof(CounterNode)));
+    }
+
+    // Done when: a nested parent. The parent's record comes first, so the child finds it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SpawnUnderAParentSpawnedInTheSameTick_IsUnderTheClientCopyOfIt()
+    {
+        Tick();
+        var parent = Spawner().SpawnOnRoot<CounterNode>();
+        var child = Spawner().Spawn<CounterNode>(ServerId(parent), counter => counter.Value = 5);
+
+        Tick();
+
+        Node clientChild = AliceNode(ServerId(child));
+        AssertThat(clientChild.GetParent()).IsSame(AliceNode(ServerId(parent)));
+        AssertThat(((CounterNode) clientChild).Value).IsEqual(5);
+    }
+
+    // Done when: despawn
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Despawn_TakesTheEntityWithItsChildrenOutOfTheClient()
+    {
+        var parent = Spawner().SpawnOnRoot<CounterNode>();
+        var child = Spawner().Spawn<CounterNode>(ServerId(parent));
+        NetId parentId = ServerId(parent), childId = ServerId(child);
+        Tick();
+        Node clientParent = AliceNode(parentId);
+        _connection.Packets.Clear();
+
+        Spawner().Despawn(parent);
+        Tick();
+
+        AssertThat(Parse(StatePacket(AlicePeer)).Despawns).ContainsExactlyInAnyOrder(parentId, childId);
+        AssertThat(AliceRegistry().TryGetNode(parentId, out _)).IsFalse();
+        AssertThat(AliceRegistry().TryGetNode(childId, out _)).IsFalse();
+        AssertThat(_aliceRoot.GetChildren()).NotContains(clientParent);
+        AssertThat(AliceRegistry().GetAll<Node>()).HasSize(2);
+    }
+
+    // Done when: spawn and despawn in the same tick. No client has heard of it, so there is nothing to tell
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SpawnAndDespawnInTheSameTick_SendNothing()
+    {
+        Tick();
+        _connection.Packets.Clear();
+
+        Spawner().Despawn(Spawner().SpawnOnRoot<CounterNode>(counter => counter.Value = 1));
+        Tick();
+
+        AssertThat(_connection.Packets).IsEmpty();
     }
 
     // Changed, then despawned in the same tick: a delta for it would reach a client that is about to lose it
@@ -167,24 +262,16 @@ public class TickStateReplicationTests
     [RequireGodotRuntime]
     public void EntityDespawnedInTheTick_HasNoDeltaInIt()
     {
-        _connection.Receivers.Clear();
-        // In the tree: a node leaves the registry on TreeExiting
-        Node parent = AutoFree(new Node())!;
-        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(parent);
-        var node = new CounterNode { Value = 1 };
-        parent.AddChild(node);
-        var id = new NetId(1000);
-        _server.GetRequiredService<EntityRegistry>().Register(id, node);
+        var node = Spawner().SpawnOnRoot<CounterNode>(counter => counter.Value = 1);
         Tick();
-        AssertThat(NetIdsIn(StatePacket(AlicePeer))).Contains(id);
         _connection.Packets.Clear();
 
         node.Value = 2;
         Online().Remove(HostUid);
-        node.Free();
+        Spawner().Despawn(node);
         Tick();
 
-        AssertThat(NetIdsIn(StatePacket(AlicePeer))).ContainsExactly(ServerId<PlayersSessionStorage>());
+        AssertThat(Parse(StatePacket(AlicePeer)).Models).ContainsExactly(ServerId<PlayersSessionStorage>());
     }
 
     [TestCase]
@@ -205,10 +292,10 @@ public class TickStateReplicationTests
     [RequireGodotRuntime]
     public void ApplyPacket_UnknownNetId_Throws()
     {
-        var writer = new BitWriter();
-        writer.WriteBits((byte) ServerPacketKind.State, 8);
-        writer.WriteVarUInt(1);
+        BitWriter writer = PacketStart();
+        writer.WriteVarUInt(0);
         writer.WriteVarUInt(999);
+        writer.WriteVarUInt(0);
         writer.WriteVarUInt(0);
 
         NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(writer.ToArray()));
@@ -218,9 +305,9 @@ public class TickStateReplicationTests
     [RequireGodotRuntime]
     public void ApplyPacket_TruncatedDelta_Throws()
     {
-        var writer = new BitWriter();
-        writer.WriteBits((byte) ServerPacketKind.State, 8);
-        writer.WriteVarUInt(1);
+        Tick();
+        BitWriter writer = PacketStart();
+        writer.WriteVarUInt(0);
         writer.WriteVarUInt((ulong) ServerId<PlayersStorage>().Value);
 
         NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(writer.ToArray()));
@@ -230,9 +317,66 @@ public class TickStateReplicationTests
     [RequireGodotRuntime]
     public void ApplyPacket_NoEndOfTheModelsSection_Throws()
     {
-        byte[] packet = [(byte) ServerPacketKind.State, 1];
+        byte[] packet = [(byte) ServerPacketKind.State, 1, 0];
 
         NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(packet));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplyPacket_NoEndOfTheDespawnsSection_Throws()
+    {
+        byte[] packet = [(byte) ServerPacketKind.State, 1, 0, 0];
+
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(packet));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplyPacket_SpawnOfARegisteredNetId_Throws()
+    {
+        Tick();
+
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(
+            SpawnPacket(ServerId<PlayersStorage>(), _catalog.GetKindId(typeof(PlayersStorage)), NetId.None)));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplyPacket_SpawnOfAnUnknownKind_Throws()
+    {
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(
+            SpawnPacket(new NetId(1000), _catalog.Descriptors.Count, NetId.None)));
+
+        AssertThat(AliceRegistry().TryGetNode(new NetId(1000), out _)).IsFalse();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplyPacket_SpawnUnderAnUnregisteredParent_Throws()
+    {
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(
+            SpawnPacket(new NetId(1000), _catalog.GetKindId(typeof(CounterNode)), new NetId(999))));
+
+        AssertThat(_aliceRoot.GetChildCount()).IsEqual(0);
+    }
+
+    // Checked before the first removal: a broken despawns section takes nothing out
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplyPacket_DespawnOfAnUnregisteredNetId_Throws_RemovesNothing()
+    {
+        Tick();
+        BitWriter writer = PacketStart();
+        writer.WriteVarUInt(0);
+        writer.WriteVarUInt(0);
+        writer.WriteVarUInt((ulong) ServerId<PlayersStorage>().Value);
+        writer.WriteVarUInt(999);
+        writer.WriteVarUInt(0);
+
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplyPacket(writer.ToArray()));
+
+        AssertClientCopy<PlayersStorage>();
     }
 
     [TestCase]
@@ -257,11 +401,10 @@ public class TickStateReplicationTests
         var client = new FixedPartNode();
         _clientNodes.Add(server);
         _clientNodes.Add(client);
-        _alice.GetRequiredService<EntityRegistry>().Register(id, client);
+        AliceRegistry().Register(id, client, 0);
         var replicator = new Replicator(NetMessageCodecTests.CreateMapping());
-        var writer = new BitWriter();
-        writer.WriteBits((byte) ServerPacketKind.State, 8);
-        writer.WriteVarUInt(1);
+        BitWriter writer = PacketStart();
+        writer.WriteVarUInt(0);
         writer.WriteVarUInt((ulong) id.Value);
         AssertThat(replicator.TryWriteDelta(replicator.CreateBaseline(server), writer)).IsTrue();
         writer.WriteVarUInt(0);
@@ -307,22 +450,14 @@ public class TickStateReplicationTests
 
     private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
         new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
-            new ManualFrameProvider(), _scenes, TestWorldScenes.CreateCatalog(_scenes), connection, connection);
+            new ManualFrameProvider(), _scenes, _catalog, connection, connection);
 
-    // The client gets its storages as 020 will spawn them: the same kinds under the server's NetIds
     private ServiceProvider ClientOf(int peerId)
     {
-        var root = new Node();
-        _clientNodes.Add(root);
+        _aliceRoot = InTree(new Node());
+        _clientNodes.Add(_aliceRoot);
         ServiceProvider client = new WorldServicesBuilder([..GameTypes(), typeof(JoinRecorder)])
-            .Build(WorldLayer.Client, Dependencies(new RecordingClientsConnection()), new WorldRoot(root));
-        var registry = client.GetRequiredService<EntityRegistry>();
-        foreach (Node serverNode in _server.GetRequiredService<IEntityFinder>().GetAll<Node>())
-        {
-            var node = (Node) Activator.CreateInstance(serverNode.GetType())!;
-            _clientNodes.Add(node);
-            registry.Register(ServerId(serverNode), node);
-        }
+            .Build(WorldLayer.Client, Dependencies(new RecordingClientsConnection()), new WorldRoot(_aliceRoot));
 
         var applier = client.GetRequiredService<StateApplier>();
         var events = client.GetRequiredService<EventDispatcher>();
@@ -367,6 +502,51 @@ public class TickStateReplicationTests
 
     private StateApplier Applier() => _alice.GetRequiredService<StateApplier>();
 
+    private EntitySpawner Spawner() => _server.GetRequiredService<EntitySpawner>();
+
+    private EntityRegistry AliceRegistry() => _alice.GetRequiredService<EntityRegistry>();
+
+    private Node AliceNode(NetId id) => AliceRegistry().GetNode(id);
+
+    // The same NetId and kind on both sides, right under the World root
+    private void AssertClientCopy<T>() where T : Node
+    {
+        NetId id = ServerId<T>();
+        var client = AliceRegistry().GetSingle<T>();
+        AssertThat(AliceRegistry().TryGetNetId(client, out NetId clientId)).IsTrue();
+        AssertThat(clientId).IsEqual(id);
+        AssertThat(AliceRegistry().GetKindId(id)).IsEqual(_server.GetRequiredService<IEntityFinder>().GetKindId(id));
+        AssertThat(client.GetParent()).IsSame(_aliceRoot);
+    }
+
+    private static BitWriter PacketStart()
+    {
+        var writer = new BitWriter();
+        writer.WriteBits((byte) ServerPacketKind.State, 8);
+        writer.WriteVarUInt(1);
+        return writer;
+    }
+
+    // One spawn record without state, then empty models and despawns sections
+    private static byte[] SpawnPacket(NetId id, int kindId, NetId parent)
+    {
+        BitWriter writer = PacketStart();
+        writer.WriteVarUInt((ulong) id.Value);
+        writer.WriteVarUInt((ulong) kindId);
+        writer.WriteVarUInt((ulong) parent.Value);
+        writer.WriteBool(false);
+        writer.WriteVarUInt(0);
+        writer.WriteVarUInt(0);
+        writer.WriteVarUInt(0);
+        return writer.ToArray();
+    }
+
+    private static Node InTree(Node node)
+    {
+        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(node);
+        return node;
+    }
+
     private List<ServerPacketKind> Kinds(int peerId) =>
         _connection.Packets
             .Where(sent => sent.PeerId == peerId)
@@ -385,29 +565,48 @@ public class TickStateReplicationTests
     private NetId ServerId<T>() where T : Node =>
         ServerId(_server.GetRequiredService<IEntityFinder>().GetSingle<T>());
 
-    // Every delta is applied to a scratch node of its server kind: a delta has no length to skip it by
-    private List<NetId> NetIdsIn(byte[] packet)
+    private record SpawnRecord(NetId Id, int KindId, NetId Parent);
+
+    private record StateRecords(List<SpawnRecord> Spawns, List<NetId> Models, List<NetId> Despawns);
+
+    // Every delta is applied to a scratch node of its kind: a delta has no length to skip it by
+    private StateRecords Parse(byte[] packet)
     {
-        var replicator = new Replicator(NetMessageCodecTests.CreateMapping());
         var finder = _server.GetRequiredService<IEntityFinder>();
         var reader = new BitReader(packet);
         reader.ReadBits(8);
         reader.ReadVarUInt();
-        List<NetId> ids = [];
+        var records = new StateRecords([], [], []);
         for (ulong id = reader.ReadVarUInt(); id != 0; id = reader.ReadVarUInt())
         {
-            ids.Add(new NetId((long) id));
-            var scratch = (Node) Activator.CreateInstance(finder.GetNode(ids[^1]).GetType())!;
-            try
-            {
-                replicator.Apply(scratch, ref reader);
-            }
-            finally
-            {
-                scratch.Free();
-            }
+            var spawn = new SpawnRecord(
+                new NetId((long) id), (int) reader.ReadVarUInt(), new NetId((long) reader.ReadVarUInt()));
+            records.Spawns.Add(spawn);
+            if (reader.ReadBool()) SkipDelta(spawn.KindId, ref reader);
         }
-        return ids;
+        for (ulong id = reader.ReadVarUInt(); id != 0; id = reader.ReadVarUInt())
+        {
+            records.Models.Add(new NetId((long) id));
+            SkipDelta(finder.GetKindId(records.Models[^1]), ref reader);
+        }
+        for (ulong id = reader.ReadVarUInt(); id != 0; id = reader.ReadVarUInt())
+        {
+            records.Despawns.Add(new NetId((long) id));
+        }
+        return records;
+    }
+
+    private void SkipDelta(int kindId, ref BitReader reader)
+    {
+        Node scratch = _catalog.Create(kindId);
+        try
+        {
+            new Replicator(NetMessageCodecTests.CreateMapping()).Apply(scratch, ref reader);
+        }
+        finally
+        {
+            scratch.Free();
+        }
     }
 
     private static Type[] GameTypes() => typeof(WorldServicesBuilder).Assembly.GetTypes();
