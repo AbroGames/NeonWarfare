@@ -1,5 +1,6 @@
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
+using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 
 
@@ -31,13 +32,16 @@ public class RecordingClientsConnection : IClientsConnection, IServerConnection
 
     public int? FailingPeer { get; set; }
 
+    // Null: every packet to FailingPeer fails
+    public ServerPacketKind? FailingKind { get; set; }
+
     public List<int> Disconnected { get; } = [];
 
     public int? LocalPeerId { get; set; }
 
     public void Send(int peerId, ReadOnlySpan<byte> packet)
     {
-        if (peerId == FailingPeer)
+        if (peerId == FailingPeer && (FailingKind == null || packet[0] == (byte) FailingKind))
         {
             throw new InvalidOperationException($"send to peer {peerId} failed");
         }

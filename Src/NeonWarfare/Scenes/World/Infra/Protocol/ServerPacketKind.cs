@@ -5,7 +5,8 @@ namespace NeonWarfare.Scenes.World.Infra.Protocol;
 /// </summary>
 public enum ServerPacketKind : byte
 {
-    State = 1,
-    Events = 2,
-    JoinRejected = 3
+    Snapshot = 1,
+    State = 2,
+    Events = 3,
+    JoinRejected = 4
 }
