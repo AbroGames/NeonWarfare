@@ -31,15 +31,22 @@ public class DedicatedServerGameStarter(
         base.Init(game);
     }
 
-    protected override void AddWorld(Game game)
+    protected override World.World AddWorld(Game game, WorldOrigin origin)
     {
         World.World world = game.AddWorld(
-            WorldLayer.Dedicated, WorldOrigin.New, serverHud ? Game.Screen.ServerHud : Game.Screen.None);
+            WorldLayer.Dedicated, origin, serverHud ? Game.Screen.ServerHud : Game.Screen.None);
         world.SetVisible(false);
+        return world;
     }
 
     // A server without a port has nobody to serve
     protected override void OnHostingFailed(Error error)
+    {
+        Services.MainScene.Shutdown();
+    }
+
+    // Starting a new world instead would overwrite the save on exit
+    protected override void OnLoadFailed(string message)
     {
         Services.MainScene.Shutdown();
     }

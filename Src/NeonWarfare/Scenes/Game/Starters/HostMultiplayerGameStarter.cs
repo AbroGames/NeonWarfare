@@ -17,10 +17,8 @@ public class HostMultiplayerGameStarter(
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string HostingFailedMessage = "Failed to start server: {0}";
 
-    protected override void AddWorld(Game game)
-    {
-        game.AddWorld(WorldLayer.Host, WorldOrigin.New, Game.Screen.Hud);
-    }
+    protected override World.World AddWorld(Game game, WorldOrigin origin) =>
+        game.AddWorld(WorldLayer.Host, origin, Game.Screen.Hud);
 
     protected override void OnServerOpened(Game game)
     {
@@ -31,5 +29,10 @@ public class HostMultiplayerGameStarter(
     protected override void OnHostingFailed(Error error)
     {
         GoToMenuAndShowError(HostingFailedMessage.FormatWith(error));
+    }
+
+    protected override void OnLoadFailed(string message)
+    {
+        GoToMenuAndShowError(message);
     }
 }

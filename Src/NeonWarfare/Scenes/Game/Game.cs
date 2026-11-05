@@ -96,7 +96,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this);
+            this, this, Services.SaveLoad);
         var world = new World.World();
         try
         {

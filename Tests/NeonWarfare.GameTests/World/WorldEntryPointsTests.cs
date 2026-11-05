@@ -59,12 +59,12 @@ public class WorldEntryPointsTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Commands_LoopBackAsPacketFromHostPeer()
+    public void Send_LoopsBackAsPacketFromHostPeer()
     {
         GameWorld world = HostWorld();
         JoinHost(world);
 
-        world.Commands.Send(new SendChatMessageCommand("hello"));
+        world.Send(new SendChatMessageCommand("hello"));
         Tick(world);
 
         AssertThat(_connection.Commands.Count).IsEqual(2);
@@ -114,7 +114,8 @@ public class WorldEntryPointsTests
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.OnClientConnected(HostPeer)).IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.OnClientDisconnected(HostPeer)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => { _ = dedicated.Commands; }).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => dedicated.Send(new SendChatMessageCommand("hello")))
+            .IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]

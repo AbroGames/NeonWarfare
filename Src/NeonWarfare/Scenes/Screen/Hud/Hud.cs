@@ -5,6 +5,7 @@ using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Players;
+using NeonWarfare.Scenes.World.Features.Saves;
 using NeonWarfare.Scenes.World.Infra.Hud;
 using Serilog;
 
@@ -31,6 +32,8 @@ public partial class Hud : Control
     private World.World.IReader _reader;
     private World.World.ICommandSender _commands;
     private PlayerQuery _players;
+    // The uid this process joined with, see BaseGameStarter.SendJoinRequest
+    private string _localUid;
     [Logger] private ILogger _log;
     
     public Hud InitPreReady(World.World.IReader reader, World.World.ICommandSender commands)
@@ -42,6 +45,7 @@ public partial class Hud : Control
         _reader = reader;
         _commands = commands;
         _players = reader.Get<PlayerQuery>();
+        _localUid = Services.GameSettings.GetSettings().PlayerUid;
         
         return this;
     }
@@ -57,12 +61,18 @@ public partial class Hud : Control
         ChatLineEdit.TextSubmitted += _ => SendChat();
         LogButton.Pressed += () => { Services.NodeTree.LogFullTree(GetTree().Root); };
         ExitButton.Pressed += () => { Services.MainScene.StartMainMenu(); };
+        SaveButton.Pressed += () => _commands.Send(new SaveCommand(SaveLineEdit.Text));
     }
 
     public override void _Process(double delta)
     {
         InfoLabel.Text = "Players:\n"
                          + string.Join("\n", _players.OnlinePlayers().Select(player => player.Nick));
+
+        // The server drops a save from anyone else without a reply
+        bool isAdmin = _players.OnlinePlayers().Any(player => player.Uid == _localUid && player.IsAdmin);
+        SaveButton.Visible = isAdmin;
+        SaveLineEdit.Visible = isAdmin;
 
         if (_reader.Get<HudMailbox>().Read<ChatEntryAddedNotice>().Count == 0) return;
 
@@ -75,7 +85,7 @@ public partial class Hud : Control
         string text = ChatLineEdit.Text;
         if (string.IsNullOrWhiteSpace(text)) return;
 
-        _commands.Commands.Send(new SendChatMessageCommand(text));
+        _commands.Send(new SendChatMessageCommand(text));
         ChatLineEdit.Clear();
     }
 

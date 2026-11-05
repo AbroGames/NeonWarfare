@@ -33,7 +33,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     /// </summary>
     public interface ICommandSender
     {
-        PlayerCommandSender Commands { get; }
+        void Send<TCommand>(TCommand command) where TCommand : Command;
     }
 
     private const string JoinRejectedLog = "The server rejected the join: {reason}";
@@ -69,14 +69,16 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
 
         switch (origin)
         {
-            case WorldOrigin.NewWorld:
+            case WorldOrigin.NewWorld newWorld:
                 _services.GetRequiredService<NewWorldSimulationFacade>().Create();
+                Service<SaveService>().Init(newWorld.SaveFileName);
                 break;
             case WorldOrigin.FromSnapshot snapshot:
                 Service<StateApplier>().ApplySnapshot(snapshot.Packet);
                 break;
             case WorldOrigin.FromSave save:
                 Service<SaveLoader>().Load(save.Save);
+                Service<SaveService>().Init(save.SaveFileName);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
@@ -90,9 +92,20 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     }
 
     /// <summary>
+    /// After every save file the server writes, with its name. Only on a World with
+    /// <see cref="WorldLayer.ServerNetwork"/>.
+    /// </summary>
+    public event Action<string> SavedEvent
+    {
+        add => Service<SaveService>().SavedEvent += value;
+        remove => Service<SaveService>().SavedEvent -= value;
+    }
+
+    /// <summary>
     /// The only way the outside of the World sends commands.
     /// </summary>
-    public PlayerCommandSender Commands => Service<PlayerCommandSender>();
+    public void Send<TCommand>(TCommand command) where TCommand : Command =>
+        Service<PlayerCommandSender>().Send(command);
 
     /// <summary>
     /// What the outside of the World may read: the Simulation and the network machinery are never handed out.
@@ -150,6 +163,12 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
 
     public override void _Notification(int what)
     {
+        // Between ticks: Quit() only sets a flag, the tree is torn down after the physics step, so the baselines are
+        // the end of the last tick. The services live until predelete, which comes after the exit
+        if (what == NotificationExitTree && _layers.HasFlag(WorldLayer.ServerNetwork))
+        {
+            Service<SaveService>().SaveOnExit();
+        }
         if (what == NotificationPredelete) _services?.Dispose();
     }
 
