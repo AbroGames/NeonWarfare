@@ -28,6 +28,7 @@ namespace NeonWarfare.GameTests.World;
 [TestSuite]
 public class WorldServicesBuilderTests
 {
+    private const string SaveFileName = "save";
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
     // a present handler means all three are there, an absent ChatSimulation means none is
@@ -177,7 +178,8 @@ public class WorldServicesBuilderTests
     {
         GameWorld world = AutoFree(new GameWorld())!;
 
-        AssertThat(world.InitPreReady(WorldLayer.Host, Dependencies(), WorldOrigin.New)).IsSame(world);
+        AssertThat(world.InitPreReady(WorldLayer.Host, Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
+            .IsSame(world);
     }
 
     [TestCase]
@@ -187,7 +189,7 @@ public class WorldServicesBuilderTests
         GameWorld world = AutoFree(new GameWorld())!;
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
-        AssertThrown(() => world.InitPreReady(WorldLayer.Host, Dependencies(), WorldOrigin.New))
+        AssertThrown(() => world.InitPreReady(WorldLayer.Host, Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -199,7 +201,7 @@ public class WorldServicesBuilderTests
         {
             GameWorld world = AutoFree(new GameWorld())!;
 
-            world.InitPreReady(layers, Dependencies(), WorldOrigin.New);
+            world.InitPreReady(layers, Dependencies(), new WorldOrigin.NewWorld(SaveFileName));
 
             AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
             AssertThat(world.GetChildren().OfType<PlayersSessionStorage>().Count()).IsEqual(1);
@@ -254,7 +256,7 @@ public class WorldServicesBuilderTests
         return new(TimeProvider.System, Codec(),
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection());
+            new RecordingClientsConnection(), new RecordingSaveFiles());
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

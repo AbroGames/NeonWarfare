@@ -206,7 +206,7 @@ public class ServerTickLoopTests
             new WorldDependencies(
                 _time, _codec, new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
-                _clientsConnection, _clientsConnection),
+                _clientsConnection, _clientsConnection, new RecordingSaveFiles()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;

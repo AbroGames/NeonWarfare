@@ -52,7 +52,7 @@ public class ChatTests
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
-                new RecordingClientsConnection(), new RecordingClientsConnection()),
+                new RecordingClientsConnection(), new RecordingClientsConnection(), new RecordingSaveFiles()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();
