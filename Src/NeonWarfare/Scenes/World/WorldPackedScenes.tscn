@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cqtk5i2qwb0wp"]
 
-[ext_resource type="Script" uid="uid://bqyytxu4j6xkx" path="res://Src/NeonWarfare/Scenes/World/PackedScenes/WorldPackedScenes.cs" id="1_vq362"]
+[ext_resource type="Script" uid="uid://bqyytxu4j6xkx" path="res://Src/NeonWarfare/Scenes/World/WorldPackedScenes.cs" id="1_vq362"]
 [ext_resource type="PackedScene" uid="uid://dqfutju4p31k8" path="res://Src/NeonWarfare/Scenes/World/Features/Surfaces/SafeSurface.tscn" id="2_ka3et"]
 [ext_resource type="PackedScene" uid="uid://bweahxi5jb8om" path="res://Src/NeonWarfare/Scenes/World/Features/Surfaces/BattleSurface.tscn" id="3_kc23t"]
 [ext_resource type="PackedScene" uid="uid://dtakujp0t7r4e" path="res://Src/NeonWarfare/Scenes/World/Features/Storages/PersistenceStorage.tscn" id="4_vq362"]

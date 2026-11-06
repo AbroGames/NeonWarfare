@@ -4,7 +4,7 @@ using NeonWarfare.Scenes.Misc;
 using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Features.Surfaces;
 
-namespace NeonWarfare.Scenes.World.PackedScenes;
+namespace NeonWarfare.Scenes.World;
 
 /// <summary>
 /// The scenes World spawns. A scene's id is its index in

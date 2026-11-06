@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using MessagePack;
-using NeonWarfare.Scenes.World.PackedScenes;
 using RepliCAT;
 
 namespace NeonWarfare.Scenes.World.Infra.Protocol;

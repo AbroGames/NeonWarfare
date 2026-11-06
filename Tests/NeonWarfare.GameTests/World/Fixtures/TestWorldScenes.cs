@@ -2,7 +2,6 @@ using System.Reflection;
 using Godot;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Storages;
-using NeonWarfare.Scenes.World.PackedScenes;
 
 namespace NeonWarfare.GameTests.World.Fixtures;
 

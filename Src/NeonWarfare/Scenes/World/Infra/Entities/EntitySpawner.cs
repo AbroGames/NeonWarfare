@@ -2,7 +2,6 @@ using System;
 using Godot;
 using Humanizer;
 using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.PackedScenes;
 
 namespace NeonWarfare.Scenes.World.Infra.Entities;
 

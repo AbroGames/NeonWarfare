@@ -4,7 +4,6 @@ using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.PackedScenes;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.World.Infra.Entities;
