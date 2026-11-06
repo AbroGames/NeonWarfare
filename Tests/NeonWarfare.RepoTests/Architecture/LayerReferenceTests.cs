@@ -28,7 +28,7 @@ public class LayerReferenceTests
     private static readonly string[] CompositionRoots =
     [
         WorldLayers.WorldNamespace + ".World",
-        WorldLayers.WorldNamespace + ".Infra.Composition.WorldServicesBuilder",
+        WorldLayers.WorldNamespace + ".WorldServicesBuilder",
     ];
 
     /// <summary>

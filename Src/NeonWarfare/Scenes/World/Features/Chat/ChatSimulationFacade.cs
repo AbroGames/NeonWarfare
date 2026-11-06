@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Chat.Commands;
+using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using Serilog;

@@ -5,7 +5,7 @@ using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.GameTests.World.Infra.Protocol;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Chat;
-using NeonWarfare.Scenes.World.Features.Chat.Commands;
+using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
@@ -17,7 +17,7 @@ using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using static GdUnit4.Assertions;
 using GameWorld = NeonWarfare.Scenes.World.World;
 
-namespace NeonWarfare.GameTests.World.Infra.Composition;
+namespace NeonWarfare.GameTests.World;
 
 // In the engine on purpose: the point is that MS.DI works inside a Godot process
 [TestSuite]

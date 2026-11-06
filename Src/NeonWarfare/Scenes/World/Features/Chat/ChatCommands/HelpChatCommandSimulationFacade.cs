@@ -4,7 +4,7 @@ using Humanizer;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Features.Chat.Commands;
+namespace NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 
 [SimulationFacade]
 public class HelpChatCommandSimulationFacade(ChatSimulationFacade chatFacade, ChatSimulation chatSimulation)

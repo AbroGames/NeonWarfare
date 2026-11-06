@@ -20,7 +20,7 @@ public class ConstructorLayerTests
 {
     private const string WorldDependencies = WorldLayers.WorldNamespace + ".WorldDependencies";
     private const string WorldLayer = WorldLayers.WorldNamespace + ".WorldLayer";
-    private const string Builder = WorldLayers.WorldNamespace + ".Infra.Composition.WorldServicesBuilder";
+    private const string Builder = WorldLayers.WorldNamespace + ".WorldServicesBuilder";
     private const string BuildMethod = "Build";
 
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
