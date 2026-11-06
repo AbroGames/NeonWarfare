@@ -13,7 +13,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class NotSavedEntityTests
 {
-    private const string NotSavedAttribute = WorldLayers.WorldNamespace + ".Entities.NotSavedAttribute";
+    private const string NotSavedAttribute = WorldLayers.WorldNamespace + ".Infra.Entities.NotSavedAttribute";
     private const string ReplicatedAttribute = "RepliCAT.ReplicatedAttribute";
 
     [Fact]

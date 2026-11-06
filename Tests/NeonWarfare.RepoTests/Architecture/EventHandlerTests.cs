@@ -12,8 +12,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class EventHandlerTests
 {
-    private const string EventHandlerAttribute = WorldLayers.WorldNamespace + ".ClientNetwork.EventHandlerAttribute";
-    private const string EventBase = WorldLayers.WorldNamespace + ".Events.Event";
+    private const string EventHandlerAttribute =
+        WorldLayers.WorldNamespace + ".Infra.ClientNetwork.EventHandlerAttribute";
+    private const string EventBase = WorldLayers.WorldNamespace + ".Infra.Protocol.Event";
     private const string HandlerName = "Handle";
 
     [Fact]

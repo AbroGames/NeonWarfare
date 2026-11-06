@@ -1,10 +1,10 @@
 using System;
 using Godot;
 using Microsoft.Extensions.DependencyInjection;
-using NeonWarfare.Scenes.World.Composition;
-using NeonWarfare.Scenes.World.Entities;
-using NeonWarfare.Scenes.World.ServerNetwork;
-using NeonWarfare.Scenes.World.Simulations;
+using NeonWarfare.Scenes.World.Features.NewWorld;
+using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.World.Infra.Entities;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 
 namespace NeonWarfare.Scenes.World;
 

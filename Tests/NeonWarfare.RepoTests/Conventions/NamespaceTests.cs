@@ -60,8 +60,8 @@ public class NamespaceTests
     /// <summary>
     /// Derived from the path rather than hardcoded, so a new folder needs no change here. The path is
     /// taken relative to Src/ with no prefix of its own — NeonWarfare.csproj has an empty RootNamespace:
-    /// Src/NeonWarfare/Scenes/World/WorldServices/Chat/WorldChatService.cs →
-    /// NeonWarfare.Scenes.World.WorldServices.Chat,
+    /// Src/NeonWarfare/Scenes/World/Features/Chat/ChatSimulation.cs →
+    /// NeonWarfare.Scenes.World.Features.Chat,
     /// Src/GodotBox/Godot/Nodes/Background.cs → GodotBox.Godot.Nodes.
     /// </summary>
     private static string ExpectedNamespace(string relativePath)

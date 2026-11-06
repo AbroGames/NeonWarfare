@@ -1,4 +1,6 @@
-using NeonWarfare.Scenes.World.ServerNetwork;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+
 
 namespace NeonWarfare.GameTests.World.Fixtures;
 

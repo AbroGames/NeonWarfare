@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://dqfutju4p31k8"]
-
-[ext_resource type="Script" uid="uid://bu00q35a7ytlp" path="res://Src/NeonWarfare/Scenes/World/Entities/Surfaces/SafeSurface.cs" id="1_0p3p0"]
-
-[node name="SafeSurface" type="Node2D" unique_id=443075598]
-script = ExtResource("1_0p3p0")
