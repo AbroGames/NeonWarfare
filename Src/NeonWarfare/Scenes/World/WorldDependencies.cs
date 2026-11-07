@@ -9,6 +9,7 @@ using RepliCAT;
 
 namespace NeonWarfare.Scenes.World;
 
+/// <param name="SaveFiles"><c>null</c> on a remote client: it has no save file.</param>
 public record WorldDependencies(
     TimeProvider Time,
     NetMessageCodec Codec,

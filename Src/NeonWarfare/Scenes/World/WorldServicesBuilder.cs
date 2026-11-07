@@ -20,6 +20,7 @@ public class WorldServicesBuilder
 {
     private const string SeveralLayersError = "{0} has more than one layer attribute: {1}";
     private const string NotConcreteError = "{0} has a layer attribute but is abstract or generic";
+    private const string NoSaveFilesError = "A World with the ServerNetwork layer needs the save files.";
 
     private readonly IEnumerable<Type> _candidates;
 
@@ -42,7 +43,15 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Entities);
         services.AddSingleton(dependencies.ClientsConnection);
         services.AddSingleton(dependencies.ServerConnection);
-        services.AddSingleton(dependencies.SaveFiles);
+        // Only a server World saves
+        if (dependencies.SaveFiles != null)
+        {
+            services.AddSingleton(dependencies.SaveFiles);
+        }
+        else if (layers.HasFlag(WorldLayer.ServerNetwork))
+        {
+            throw new ArgumentException(NoSaveFilesError, nameof(dependencies));
+        }
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one
         // layer. Every layer reads it through IEntityFinder, only the spawning one registers

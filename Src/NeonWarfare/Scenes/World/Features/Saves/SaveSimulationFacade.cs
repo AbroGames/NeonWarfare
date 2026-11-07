@@ -1,4 +1,3 @@
-using System.Linq;
 using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Features.Chat;
@@ -22,16 +21,10 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
     {
         PlayerModel sender = players.Get(senderUid);
         _log.Information(SaveLog, sender.Nick, sender.Uid, fileName);
+        
+        // The reply comes at the end of the tick and is not guaranteed: the sender may have left by then
         saveService.RequestSave(fileName,
-            () => Reply(SavedReply.FormatWith(fileName), senderUid),
-            _ => Reply(FailedReply.FormatWith(fileName), senderUid));
-    }
-
-    // The reply comes at the end of the tick, and a leave queued after the command has run by then
-    private void Reply(string text, string senderUid)
-    {
-        if (players.OnlinePlayers().All(player => player.Uid != senderUid)) return;
-
-        chatSimulation.SendMessageAsServerToPlayer(text, senderUid);
+            () => chatSimulation.SendMessageAsServerToPlayer(SavedReply.FormatWith(fileName), senderUid),
+            _ => chatSimulation.SendMessageAsServerToPlayer(FailedReply.FormatWith(fileName), senderUid));
     }
 }

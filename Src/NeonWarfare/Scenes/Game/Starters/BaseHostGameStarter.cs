@@ -1,5 +1,6 @@
 using Godot;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
@@ -35,22 +36,20 @@ public abstract class BaseHostGameStarter(
         }
 
         //TODO 028 adminUid
-        World.World world = AddServerWorld(saveFileName, origin => AddWorld(game, origin), out string loadError);
+        ISaveFiles saveFiles = mustSetLastGame ? SaveFilesUpdatingLastGame(lastGame) : Services.SaveLoad;
+        World.World world = AddServerWorld(
+            saveFileName, origin => AddWorld(game, origin, saveFiles), out string loadError);
         if (world == null)
         {
             OnLoadFailed(loadError);
             return;
-        }
-        if (mustSetLastGame)
-        {
-            UpdateLastGameOnSave(world, lastGame);
         }
 
         network.OpenServer();
         OnServerOpened(game);
     }
 
-    protected abstract World.World AddWorld(Game game, WorldOrigin origin);
+    protected abstract World.World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles);
 
     protected virtual void OnServerOpened(Game game) { }
 

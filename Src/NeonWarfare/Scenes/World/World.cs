@@ -88,17 +88,11 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         {
             AddChild(new ServerTickNode().InitPreReady(_services.GetRequiredService<ServerTickLoop>().RunTick));
         }
+        if (layers.HasFlag(WorldLayer.ServerNetwork))
+        {
+            AddChild(new SaveOnExitNode().InitPreReady(Service<SaveService>().SaveOnExit));
+        }
         return this;
-    }
-
-    /// <summary>
-    /// After every save file the server writes, with its name. Only on a World with
-    /// <see cref="WorldLayer.ServerNetwork"/>.
-    /// </summary>
-    public event Action<string> SavedEvent
-    {
-        add => Service<SaveService>().SavedEvent += value;
-        remove => Service<SaveService>().SavedEvent -= value;
     }
 
     /// <summary>
@@ -163,12 +157,6 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
 
     public override void _Notification(int what)
     {
-        // Between ticks: Quit() only sets a flag, the tree is torn down after the physics step, so the baselines are
-        // the end of the last tick. The services live until predelete, which comes after the exit
-        if (what == NotificationExitTree && _layers.HasFlag(WorldLayer.ServerNetwork))
-        {
-            Service<SaveService>().SaveOnExit();
-        }
         if (what == NotificationPredelete) _services?.Dispose();
     }
 

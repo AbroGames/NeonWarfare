@@ -17,6 +17,7 @@ using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
 using RepliCAT;
 using static GdUnit4.Assertions;
@@ -234,6 +235,23 @@ public class WorldServicesBuilderTests
         AssertThat(provider.GetService<EntitySpawner>()).IsNull();
         AssertThat(provider.GetService<NetIdGenerator>()).IsNull();
         AssertThat(provider.GetService<NewWorldSimulationFacade>()).IsNull();
+    }
+
+    // A remote client has no save file
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_WithoutSaveFiles_OnlyRemoteClient()
+    {
+        WorldDependencies noSaveFiles = Dependencies() with { SaveFiles = null! };
+        var root = new WorldRoot(AutoFree(new Node())!);
+
+        using ServiceProvider client = new WorldServicesBuilder().Build(WorldLayer.Client, noSaveFiles, root);
+        AssertThat(client.GetService<ISaveFiles>()).IsNull();
+        foreach (WorldLayer server in new[] { WorldLayer.Host, WorldLayer.Dedicated })
+        {
+            AssertThrown(() => new WorldServicesBuilder().Build(server, noSaveFiles, root))
+                .IsInstanceOf<ArgumentException>();
+        }
     }
 
     private static ServiceProvider Build(WorldLayer layers) => Build(new WorldServicesBuilder(), layers);

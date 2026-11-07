@@ -48,7 +48,8 @@ public class ConnectToMultiplayerGameStarter(
             if (!IsGameAlive(game)) return;
             try
             {
-                game.AddWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud);
+                game.AddWorld(
+                    WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud, saveFiles: null);
             }
             catch (NetMessageFormatException e)
             {
