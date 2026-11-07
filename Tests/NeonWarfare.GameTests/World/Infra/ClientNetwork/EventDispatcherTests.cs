@@ -42,7 +42,7 @@ public class EventDispatcherTests
     public void Dispatch_ChatEvents_ReachChatPresentationInOrder()
     {
         using ServiceProvider provider = new WorldServicesBuilder().Build(
-            WorldLayer.Client, Dependencies(), new WorldRoot(AutoFree(new Node())!));
+            WorldLayer.Client, Dependencies(WorldLayer.Client), new WorldRoot(AutoFree(new Node())!));
         byte[] section = Section(
             new PlayerJoinedEvent(1, "alice", "Alice"),
             new ChatPlayerMessageEvent(2, "alice", "Alice", "hi"),
@@ -154,13 +154,13 @@ public class EventDispatcherTests
     private static byte[] Packet(ServerPacketKind kind, byte[] section) => [(byte) kind, ..section];
 
     // A frame that never ends: everything posted during the test is still readable at its end
-    private WorldDependencies Dependencies()
+    private WorldDependencies Dependencies(WorldLayer layers)
     {
         WorldPackedScenes scenes = AutoFree(new WorldPackedScenes())!;
         return new(TimeProvider.System, _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles());
+            new RecordingClientsConnection(), new RecordingSaveFiles(), TestLocalPlayer.For(layers));
     }
 
     private class ThrowingPresentation

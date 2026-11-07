@@ -1,3 +1,4 @@
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -20,8 +21,10 @@ public class SingleplayerGameStarter(
         ResumableGame lastGame = ResumableGame.GetSingleplayer(saveFileName);
         SetLastGame(lastGame);
         ISaveFiles saveFiles = SaveFilesUpdatingLastGame(lastGame);
+        LocalPlayer localPlayer = ReadLocalPlayer();
         World.World world = AddServerWorld(
-            saveFileName, origin => game.AddWorld(WorldLayer.Host, origin, Game.Screen.Hud, saveFiles),
+            saveFileName,
+            origin => game.AddWorld(WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, localPlayer),
             out string loadError);
         if (world == null)
         {
@@ -29,7 +32,7 @@ public class SingleplayerGameStarter(
             return;
         }
 
-        SendJoinRequest(game);
+        game.SendJoinRequest(localPlayer);
         Services.LoadingScreen.Clear();
     }
 }

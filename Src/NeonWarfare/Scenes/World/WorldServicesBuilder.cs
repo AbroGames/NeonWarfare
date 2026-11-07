@@ -21,6 +21,8 @@ public class WorldServicesBuilder
     private const string SeveralLayersError = "{0} has more than one layer attribute: {1}";
     private const string NotConcreteError = "{0} has a layer attribute but is abstract or generic";
     private const string NoSaveFilesError = "A World with the ServerNetwork layer needs the save files.";
+    private const string NoLocalPlayerError = "A World with the Presentation layer needs the local player.";
+    private const string UnexpectedLocalPlayerError = "A World without the Presentation layer has no local player.";
 
     private readonly IEnumerable<Type> _candidates;
 
@@ -51,6 +53,15 @@ public class WorldServicesBuilder
         else if (layers.HasFlag(WorldLayer.ServerNetwork))
         {
             throw new ArgumentException(NoSaveFilesError, nameof(dependencies));
+        }
+        if (layers.HasFlag(WorldLayer.Presentation) != (dependencies.LocalPlayer != null))
+        {
+            string error = dependencies.LocalPlayer == null ? NoLocalPlayerError : UnexpectedLocalPlayerError;
+            throw new ArgumentException(error, nameof(dependencies));
+        }
+        if (dependencies.LocalPlayer != null)
+        {
+            services.AddSingleton(dependencies.LocalPlayer);
         }
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one
