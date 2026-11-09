@@ -101,6 +101,22 @@ public static class WorldLayers
     public static bool IsReplicated(ICustomAttributeProvider member) =>
         member.CustomAttributes.Any(attribute => attribute.AttributeType.FullName == ReplicatedAttribute);
 
+    /// <summary>True when one of the base classes of the type, not the type itself, is the given one.</summary>
+    public static bool DerivesFrom(TypeDefinition type, string baseFullName)
+    {
+        for (TypeReference? current = type.BaseType;
+             current != null;
+             current = GameAssembly.Instance.Find(current)?.BaseType)
+        {
+            if (current.FullName == baseFullName)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /// <summary>True when the type is under <see cref="WorldNamespace"/> or one of its sub-namespaces.</summary>
     public static bool InWorldNamespace(TypeReference type)
     {

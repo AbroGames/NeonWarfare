@@ -5,9 +5,9 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Docs;
 
 /// <summary>
-/// Docs/Services.md is the map of both service registries. Neither of them is enumerable from the code
-/// at a glance — the global one is a list of static fields, the world one is a folder of classes — so
-/// the tables are what a reader actually goes by, and nothing makes them follow a rename.
+/// Docs/Services.md is the map of the global service registry. It is not enumerable from the code at a
+/// glance — it is a list of static fields — so the table is what a reader actually goes by, and nothing
+/// makes it follow a rename.
 /// </summary>
 public class ServicesDocTests
 {
@@ -15,24 +15,13 @@ public class ServicesDocTests
 
     private const string GlobalServicesHeading = "Global services";
 
-    private const string WorldServicesHeading = "World services";
-
     private const string ServicesClass = "Services";
 
     private const string ServicesPrefix = "Services.";
 
-    private const string ServiceSuffix = "Service";
-
     private const int FieldColumn = 0;
 
     private const int ClassColumn = 1;
-
-    /// <summary>
-    /// Not a world service despite living in the folder: it is not a child node of World, is not
-    /// registered anywhere, and is constructed by the AI pathfinding through a constructor with
-    /// arguments (see Pathfinder.cs). A row in the world services table would say something untrue.
-    /// </summary>
-    private static readonly string[] NotWorldServices = ["NavigationService"];
 
     [Fact]
     public void DocumentedGlobalServices_ExistInServicesClass()
@@ -77,52 +66,6 @@ public class ServicesDocTests
             documented,
             mentioned,
             field => $"Services.{field} — add a table row or name it in the paragraph above");
-
-        report.AssertEmpty();
-    }
-
-    [Fact]
-    public void WorldServiceClasses_AreDocumented()
-    {
-        FailureReport report = new($"World service classes missing from the Docs/{DocumentName} table");
-
-        CrossCheck.ReportMissing(
-            report,
-            DeclaredWorldServices().Order(StringComparer.Ordinal),
-            DocumentedWorldServices(),
-            NotWorldServices,
-            service => $"{service} — add a row, or list it in NotWorldServices with the reason");
-
-        report.AssertEmpty();
-    }
-
-    [Fact]
-    public void NotWorldServices_ListsDeclaredClasses()
-    {
-        CrossCheck.AssertExemptionsExist(
-            nameof(NotWorldServices),
-            NotWorldServices,
-            DeclaredWorldServices().Contains,
-            $"no such class under {RepositoryPaths.Relative(RepositoryPaths.WorldServiceDirectory)}/");
-    }
-
-    [Fact]
-    public void DocumentedWorldServices_ExistAsClasses()
-    {
-        IReadOnlySet<string> declared = DeclaredWorldServices();
-        FailureReport report = new($"Docs/{DocumentName} names world services that no class backs");
-
-        foreach (string service in DocumentedWorldServices().Order(StringComparer.Ordinal))
-        {
-            // Only the names shaped like a world service: the Purpose cells also mention Godot types
-            // such as MultiplayerSpawner, which are nobody's service.
-            if (service.StartsWith("World", StringComparison.Ordinal)
-                && service.EndsWith(ServiceSuffix, StringComparison.Ordinal)
-                && !declared.Contains(service))
-            {
-                report.Add($"{service} — renamed or deleted, the row is stale");
-            }
-        }
 
         report.AssertEmpty();
     }
@@ -178,21 +121,6 @@ public class ServicesDocTests
             }
         }
     }
-
-    /// <summary>Everything written in backticks in the world services table, cells included.</summary>
-    private static IReadOnlySet<string> DocumentedWorldServices() =>
-        Table(WorldServicesHeading, "the world registry is gone", "Service", "Purpose").Rows
-            .SelectMany(row => row.SelectMany(MarkdownDocument.CodeSpans))
-            .ToHashSet(StringComparer.Ordinal);
-
-    /// <summary>The classes under Scenes/OldWorld/WorldServices whose name marks them as a service.</summary>
-    private static IReadOnlySet<string> DeclaredWorldServices() =>
-        RepositoryPaths.WorldServiceFiles()
-            .Select(CSharpFile.Load)
-            .SelectMany(file => file.Nodes<ClassDeclarationSyntax>())
-            .Select(declaration => declaration.Identifier.ValueText)
-            .Where(name => name.EndsWith(ServiceSuffix, StringComparison.Ordinal))
-            .ToHashSet(StringComparer.Ordinal);
 
     /// <summary>
     /// Code spans of the prose that comes before the table of a section. What follows the table is a

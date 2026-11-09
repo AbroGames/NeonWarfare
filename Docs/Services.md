@@ -18,7 +18,7 @@ Some come from KludgeBox (`Di`, `Rand`, `Math`, `NodeTree`, `I18N`, `AutoScaling
 | `Services.GameSettings` | `GameSettingsService` | Client settings + the temporary `--nick` / `--uid` |
 | `Services.DedicatedServerSettings` | `DedicatedServerSettingsService` | Dedicated server settings |
 | `Services.MenuGameSettings` | `MenuGameSettingsService` | The bridge between `GameSettings` and the settings screen model |
-| `Services.SaveLoad` | `SaveLoadService` | Save files, `SaveException` / `LoadException` |
+| `Services.SaveLoad` | `SaveLoadService` | Save files, `SaveException` / `LoadException`; the `ISaveFiles` of a server World |
 | `Services.LastGame` | `ResumableGameService` | The last session for the "Continue" button (`ResumableGame`) |
 | `Services.Process` | `ProcessService` | Launching the dedicated server child process |
 | `Services.IconsStorage` | `IconsStorageService` | Icon identifiers |
@@ -41,32 +41,5 @@ with instances of its own and no global using — see [Code style conventions](C
 
 ## World services
 
-Child nodes of `World`. `World` itself implements `IServiceProvider` and registers them in a dictionary
-by type in `_EnterTree()` — before `_Ready()` runs on the children. This is exactly what makes the
-`[SceneService]` injection up the tree possible.
-
-| Service | Purpose |
-|---|---|
-| `WorldServerStartStopService` | The server-side start: new game / loading, initialization of the synchronizer and the commands |
-| `WorldClientStartStopService` | The client-side start: synchronization with the server, the loading screen, ping |
-| `WorldSynchronizerService` | The client handshake, player validation, the initial world transfer |
-| `WorldMultiplayerSpawnerService` | Attaching a `MultiplayerSpawner` to nodes |
-| `WorldDataSaveLoadService` | Saving / loading, save permissions, autosave |
-| `WorldDataSerializerService` | (De)serialization of `WorldPersistenceData` |
-| `WorldChatService` | Chat, chat history, interceptors |
-| `WorldCommandService` | Chat commands, automatic pickup of all `ICommandProcessor`s from the assembly |
-| `WorldPlayerService` / `WorldEnemyService` | Spawning players and bots (a shared base, `WorldCharacterService`) |
-| `WorldPerformanceService` | Godot / .NET / ENet / ping metrics |
-| `WorldFacadeService` | A facade for frequent aggregate queries (player data, online/offline, `IsAdmin`) |
-
-> [!NOTE]
-> `World` is the service storage. Every service may reference other services and is a point of
-> interaction with the system: by calling its method you should get a consistent state of the whole
-> system, not just of that one service.
-
-Adding a service means three edits at once, and nothing but a run will tell you that one was missed:
-a field in `World.cs`, an entry in the list in `World._EnterTree()`, and a node in `World.tscn` with
-the script attached and **named exactly like the field**.
-
-The **node** names of these services in `World.tscn` go without the `World` prefix (`ChatService`, not
-`WorldChatService`) — see [Scene tree](Scene-tree.md).
+The services of a World are not global: the World builds them in its own container by their layer attributes, and
+none of them reaches `Services.*` — see [World](World.md).

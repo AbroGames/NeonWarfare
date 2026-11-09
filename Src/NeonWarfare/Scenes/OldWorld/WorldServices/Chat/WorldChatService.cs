@@ -26,7 +26,7 @@ public partial class WorldChatService : Node
 
     public void TrySendNewMessage(string text, int receiverId = BroadcastId)
         => RpcId(ServerId, MethodName.TrySendNewMessageRpc, text, receiverId);
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = (int) Consts.TransferChannel.Chat)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void TrySendNewMessageRpc(string text, int receiverId)
     {
         int senderId = GetMultiplayer().GetRemoteSenderId();
@@ -48,7 +48,7 @@ public partial class WorldChatService : Node
     
     private void NotifyAboutNewMessage(ChatMessage chatMessage, int receiverId)
         => RpcId(receiverId, MethodName.NotifyAboutNewMessageRpc, Serialize(chatMessage));
-    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.Chat)]
+    [Rpc(CallLocal = true)]
     private void NotifyAboutNewMessageRpc(byte[] chatMessageBytes)
     {
         ChatMessage chatMessage = Deserialize<ChatMessage>(chatMessageBytes);

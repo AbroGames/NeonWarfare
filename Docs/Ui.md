@@ -87,11 +87,19 @@ pushes a `ConfirmDialogPage` when they differ.
 
 ## The in-game HUD and the loading screen
 
-`Hud` (the client) and `ServerHud` (the server console) — both receive the `World` through
-`InitPreReady(world)` **before** being added to the tree, because they need it earlier than `_Ready()`.
-Which of the two to create is decided by the game starter (see [Startup flow](Startup-flow.md)).
-Both are still debug-grade: performance counters, chat, save, test buttons; `Hud` additionally has
-the exit-to-menu button.
+The screen is created by `Game.AddWorld` together with the World and dies with it; the starter picks it
+(`Game.Screen`: `Hud`, `ServerHud` or none, see [Startup flow](Startup-flow.md)). Both get the World **before** being
+added to the tree, through `InitPreReady`, and only through its two interfaces:
+
+* `Hud.InitPreReady(reader, commands)` — `World.IReader` and `World.ICommandSender`: it reads and sends commands
+  (`SendChatMessageCommand`, `SaveCommand`);
+* `ServerHud.InitPreReady(reader)` — reads only: the online players. No chat, no commands, no events.
+
+`IReader.Get<T>()` hands out only `[Query]` and `[Presentation]` services (see [World](World.md)). A screen polls in
+`_Process`: models and queries every frame, and one-frame notices through `HudMailbox.Read<T>()` — on a
+`ChatEntryAddedNotice` the `Hud` re-reads `ChatPresentation.Entries` and translates the entries with `Tr`. Both
+screens are temporary and debug-grade: `Hud` shows the players, the chat, the save (to an admin), test buttons and
+the exit to the menu; `ServerHud` — the player list.
 
 The loading screen (`LoadingScreen`) lives in a separate `CanvasLayer` at the very top and supports an
 optional cancel button — the connection to a server uses it, so that the wait can be interrupted.
