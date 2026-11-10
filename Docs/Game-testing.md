@@ -78,7 +78,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `GodotBox/NodeContainerTests` | Storing, replacing and clearing the child; the replaced one is queued for deletion; `_Ready` adopts one child, throws on two |
 | `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady`; a scene's id is its index in the list |
 | `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
-| `World/Features/Chat/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; `/help` lists admin commands to an admin; the admin gate; `Register` rejects a second call, a duplicate or bad name |
+| `World/Features/Chat/ChatTests` | A player message goes to all; invalid text, line breaks and format characters included, is dropped; a command replies only to its sender; `/help` lists admin commands to an admin; the admin gate; a bound peer without a player loses only its own message; `Register` rejects a second call, a duplicate or bad name |
 | `World/Features/NewWorld/NewWorldSimulationFacadeTests` | A new world spawns both storages under the root |
 | `World/Features/Storages/StorageQueryTests` | Each storage query returns the model of its storage; before the spawn it throws |
 | `World/Infra/ClientNetwork/EventDispatcherTests` | A received section reaches `ChatPresentation`, with a notice per entry; a throwing handler does not stop the batch; a broken section calls nothing; a private handler of a base class is found; a handler of a non-event type is rejected |
@@ -88,7 +88,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `World/Infra/Hud/HudMailboxTests` | Notices of one frame read back by type in post order, not removed; a new frame clears them |
 | `World/Infra/Protocol/NetMessageCodecTests` | Every command and event is mapped to a `ushort` id and round-trips; a not allowed, unknown or broken message is rejected; a section round-trips, a broken count is rejected |
 | `World/Infra/Protocol/ProtocolHasherTests` | The protocol hash is stable for one type list and changes with one more type |
-| `World/Infra/ServerNetwork/CommandDispatcherTests` | A command of a peer without a player is dropped; a false or throwing `Validate` drops only that command, a throwing `Process` stops nothing; join then chat in one tick both pass, a repeated join is dropped; a player handler of the join is rejected at `Register`; the root's whitelist holds only commands |
+| `World/Infra/ServerNetwork/CommandDispatcherTests` | A command of a not joined peer is dropped, of a bound one reaches the handler with its uid; a throwing player lookup in a handler drops only that command; a false or throwing `Validate` drops only that command, a throwing `Process` stops nothing; join then chat in one tick both pass, a repeated join is dropped; a player handler of the join is rejected at `Register`; the root's whitelist holds only commands |
 | `World/Infra/ServerNetwork/CommandInboxTests` | A whitelisted packet comes out decoded with its peer; an event, a non-whitelisted, broken or over-long packet is dropped; arrival order across entry kinds |
 | `World/Infra/ServerNetwork/EventOutboxTests` | Routing to all, to one player; one peer keeps the order of publication |
 | `World/Infra/ServerNetwork/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |

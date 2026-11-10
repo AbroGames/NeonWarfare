@@ -7,6 +7,7 @@ using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.NewWorld;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
@@ -220,12 +221,12 @@ public class WorldServicesBuilderTests
         builder.Build(layers, Dependencies(), new WorldRoot(AutoFree(new Node())!));
 
     // The root gives the event dispatcher and the command dispatcher their handlers, the inbox its whitelist and the
-    // chat commands facade its commands, so all of them come with any fixture, with what the dispatcher takes
+    // chat commands facade its commands, so all of them come with any fixture, with what the chat takes
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
             typeof(CommandDispatcher), typeof(ChatSimulation), typeof(ChatSimulationFacade),
-            typeof(PersistenceStorageQuery),
+            typeof(PlayerQuery), typeof(PersistenceStorageQuery), typeof(SessionStorageQuery),
         ]);
 
     private static WorldDependencies Dependencies() =>

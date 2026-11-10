@@ -7,8 +7,8 @@ using NeonWarfare.Scenes.World.Infra.Composition;
 namespace NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 
 [SimulationFacade]
-public class HelpChatCommandSimulationFacade(ChatSimulationFacade chatFacade, ChatSimulation chatSimulation)
-    : IChatCommand
+public class HelpChatCommandSimulationFacade(
+    ChatSimulationFacade chatFacade, ChatSimulation chatSimulation, PlayerQuery players) : IChatCommand
 {
     private const string PlayerCommandsMessage = "\nPlayer commands:\n{0}";
     private const string AdminCommandsMessage = "\nAdmin commands:\n{0}";
@@ -18,17 +18,17 @@ public class HelpChatCommandSimulationFacade(ChatSimulationFacade chatFacade, Ch
     public string Description => "Show list of available commands.";
     public bool RequiresAdmin => false;
 
-    public void Execute(PlayerModel sender, string arguments)
+    public void Execute(string senderUid, string arguments)
     {
         string message = PlayerCommandsMessage.FormatWith(
             ListOf(chatFacade.Commands.Where(command => !command.RequiresAdmin)));
-        if (sender.IsAdmin)
+        if (players.Get(senderUid).IsAdmin)
         {
             message += AdminCommandsMessage.FormatWith(
                 ListOf(chatFacade.Commands.Where(command => command.RequiresAdmin)));
         }
 
-        chatSimulation.SendMessageAsServerToPlayer(message, sender);
+        chatSimulation.SendMessageAsServerToPlayer(message, senderUid);
     }
 
     private static string ListOf(IEnumerable<IChatCommand> commands) =>

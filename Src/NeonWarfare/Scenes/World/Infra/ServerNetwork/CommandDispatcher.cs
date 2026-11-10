@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using Serilog;
@@ -15,15 +13,14 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
 /// <summary>
 /// Drains <see cref="CommandInbox"/> in the server tick and hands every entry to the handler of its command.
 /// The handlers are collected once, by the composition root, since MS.DI cannot inject "every
-/// <see cref="IPlayerCommandHandler{TCommand}"/>". "Joined or not" and "which player is this peer" are decided here,
-/// at tick time rather than on arrival: a join and a chat command of one peer in one tick must both pass, in order.
+/// <see cref="IPlayerCommandHandler{TCommand}"/>". "Joined or not" is decided here, at tick time rather than on
+/// arrival: a join and a chat command of one peer in one tick must both pass, in order. A handler gets the bound uid
+/// and looks its own state up by it.
 /// </summary>
 [ServerNetwork]
-public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, PersistenceStorageQuery persistence)
+public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers)
 {
     private const string NotJoinedLog = "{command} from peer {peerId} dropped: the peer has not joined";
-    private const string NoPlayerLog =
-        "{command} from peer {peerId} dropped: the peer is bound to {uid}, but there is no player with this uid";
     private const string RejoinLog = "{command} from peer {peerId} dropped: the peer has already joined as {uid}";
     private const string NotValidLog = "{command} from peer {peerId} dropped: {handler} did not validate it";
     private const string JoinRejectedLog = "{command} from peer {peerId} rejected by {handler}: {reason}";
@@ -45,8 +42,8 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
 
     private record PlayerHandler(
         string Name,
-        Func<PlayerModel, Command, bool> Validate,
-        Action<PlayerModel, Command> Process);
+        Func<string, Command, bool> Validate,
+        Action<string, Command> Process);
 
     private static readonly MethodInfo WrapMethod =
         typeof(CommandDispatcher).GetMethod(nameof(Wrap), BindingFlags.Static | BindingFlags.NonPublic)!;
@@ -216,12 +213,6 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
             _log.Warning(NotJoinedLog, name, peerId);
             return;
         }
-        // A bound peer always has a player: this is a broken join or leave, not a peer's misbehaviour
-        if (!persistence.Model.PlayerByUid.TryGetValue(uid, out PlayerModel sender))
-        {
-            _log.Error(NoPlayerLog, name, peerId, uid);
-            return;
-        }
 
         // The inbox lets through only the commands with a handler, so this is a wiring error, not a peer's
         if (!_playerHandlerByType.TryGetValue(command.GetType(), out PlayerHandler handler))
@@ -229,13 +220,13 @@ public class CommandDispatcher(CommandInbox inbox, PeerUidMap peers, Persistence
             throw new InvalidOperationException(NoPlayerHandlerError.FormatWith(name, peerId));
         }
 
-        if (!handler.Validate(sender, command))
+        if (!handler.Validate(uid, command))
         {
             _log.Warning(NotValidLog, name, peerId, handler.Name);
             return;
         }
 
-        handler.Process(sender, command);
+        handler.Process(uid, command);
     }
 
     private static InvalidOperationException SecondHandler(string first, object second, Type command) =>

@@ -11,7 +11,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.World.Features.Chat;
 
 [SimulationFacade]
-public class ChatSimulationFacade(ChatSimulation chatSimulation)
+public class ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery players)
 {
     private const string RanLog = "{nick} ({uid}) ran /{text}";
     private const string NotFoundReply = "Command '{0}' not found. Use '/help' to see the list of commands.";
@@ -56,22 +56,24 @@ public class ChatSimulationFacade(ChatSimulation chatSimulation)
         _commandByName = commandByName;
     }
 
-    public void HandleInput(PlayerModel sender, string text)
+    public void HandleInput(string senderUid, string text)
     {
         if (text.StartsWith('/'))
         {
-            ExecuteChatCommand(sender, text[1..]);
+            ExecuteChatCommand(senderUid, text[1..]);
             return;
         }
-        chatSimulation.SendMessageAsPlayerToAll(sender, text);
+        chatSimulation.SendMessageAsPlayerToAll(senderUid, text);
     }
 
-    private void ExecuteChatCommand(PlayerModel sender, string text)
+    private void ExecuteChatCommand(string senderUid, string text)
     {
         if (_commandByName == null)
         {
             throw new InvalidOperationException(NotRegisteredError);
         }
+
+        PlayerModel sender = players.Get(senderUid);
 
         // A command is not a chat message, so ChatSimulation never logs it, we have to log it here
         _log.Information(RanLog, sender.Nick, sender.Uid, text);
@@ -86,15 +88,15 @@ public class ChatSimulationFacade(ChatSimulation chatSimulation)
 
         if (!_commandByName.TryGetValue(name, out IChatCommand command))
         {
-            chatSimulation.SendMessageAsServerToPlayer(NotFoundReply.FormatWith(name), sender);
+            chatSimulation.SendMessageAsServerToPlayer(NotFoundReply.FormatWith(name), senderUid);
             return;
         }
         if (command.RequiresAdmin && !sender.IsAdmin)
         {
-            chatSimulation.SendMessageAsServerToPlayer(RequiresAdminReply.FormatWith(name), sender);
+            chatSimulation.SendMessageAsServerToPlayer(RequiresAdminReply.FormatWith(name), senderUid);
             return;
         }
 
-        command.Execute(sender, arguments);
+        command.Execute(senderUid, arguments);
     }
 }

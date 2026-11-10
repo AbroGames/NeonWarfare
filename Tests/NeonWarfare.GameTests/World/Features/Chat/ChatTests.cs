@@ -142,6 +142,24 @@ public class ChatTests
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
     }
 
+    // Bound to a peer, but the uid has no player: a broken join or leave costs only the message of that peer
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Message_FromBoundPeerWithoutPlayer_DropsOnlyIt()
+    {
+        const int ghostPeer = 4;
+        _provider.GetRequiredService<PeerUidMap>().Bind("ghost", ghostPeer);
+        _outbox.AddPeer(ghostPeer);
+        var inbox = _provider.GetRequiredService<CommandInbox>();
+
+        inbox.EnqueueFromPeer(ghostPeer, _codec.Encode(new SendChatMessageCommand("lost")));
+        inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(new SendChatMessageCommand("hi")));
+        _provider.GetRequiredService<CommandDispatcher>().ProcessAll();
+
+        var expected = new ChatPlayerMessageEvent(Now, "alice", "Alice", "hi");
+        AssertAll([expected], [expected]);
+    }
+
     // Hand-made facades below: the game has no admin command yet, and Register's checks need fixture commands
 
     [TestCase]
@@ -151,15 +169,16 @@ public class ChatTests
         var calls = new List<string>();
         (ChatSimulationFacade facade, EventOutbox outbox, PeerUidMap peers) = HandMade();
         facade.Register([new FixtureCommand("admin", RequiresAdmin: true, calls)]);
-        var alice = new PlayerModel("alice") { Nick = "Alice" };
-        var root = new PlayerModel("root") { Nick = "Root", IsAdmin = true };
-        peers.Bind(alice.Uid, AlicePeer);
+        PlayerModel root = _provider.GetRequiredService<PersistenceStorageQuery>().Model.AddPlayer("root");
+        root.Nick = "Root";
+        root.IsAdmin = true;
+        peers.Bind("alice", AlicePeer);
         outbox.AddPeer(AlicePeer);
         peers.Bind(root.Uid, BobPeer);
         outbox.AddPeer(BobPeer);
 
-        facade.HandleInput(alice, "/admin x");
-        facade.HandleInput(root, "/ADMIN  y ");
+        facade.HandleInput("alice", "/admin x");
+        facade.HandleInput(root.Uid, "/ADMIN  y ");
 
         AssertThat(calls).ContainsExactly("root: admin y");
         IReadOnlyList<object> aliceEvents = PeerEvents(outbox, AlicePeer);
@@ -196,7 +215,7 @@ public class ChatTests
     {
         (ChatSimulationFacade facade, _, _) = HandMade();
 
-        AssertThrown(() => facade.HandleInput(new PlayerModel("alice"), "/help"))
+        AssertThrown(() => facade.HandleInput("alice", "/help"))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -243,11 +262,13 @@ public class ChatTests
         return _codec.ReadSection(output.WrittenMemory, EventTypes, out _);
     }
 
+    // Players come from the container's storages, the outbox and the peers are the facade's own
     private (ChatSimulationFacade, EventOutbox, PeerUidMap) HandMade()
     {
         var peers = new PeerUidMap();
         var outbox = new EventOutbox(_codec, peers);
-        return (new ChatSimulationFacade(new ChatSimulation(new FixedTime(), outbox)), outbox, peers);
+        var players = _provider.GetRequiredService<PlayerQuery>();
+        return (new ChatSimulationFacade(new ChatSimulation(new FixedTime(), outbox, players), players), outbox, peers);
     }
 
     private class FixedTime : TimeProvider
@@ -259,6 +280,6 @@ public class ChatTests
     {
         public string Description => "fixture";
 
-        public void Execute(PlayerModel sender, string arguments) => Calls.Add($"{sender.Uid}: {Name} {arguments}");
+        public void Execute(string senderUid, string arguments) => Calls.Add($"{senderUid}: {Name} {arguments}");
     }
 }

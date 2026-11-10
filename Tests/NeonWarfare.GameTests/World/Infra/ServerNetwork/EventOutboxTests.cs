@@ -21,9 +21,9 @@ public class EventOutboxTests
     private static readonly HashSet<Type> EventTypes =
         [typeof(ChatServerMessageEvent), typeof(ChatPlayerMessageEvent), typeof(PlayerJoinedEvent)];
 
-    private readonly PlayerModel _alice = new("alice");
-    private readonly PlayerModel _bob = new("bob");
-    private readonly PlayerModel _offline = new("offline");
+    private const string Alice = "alice";
+    private const string Bob = "bob";
+    private const string Offline = "offline";
 
     private NetMessageCodec _codec = null!;
     private PeerUidMap _peers = null!;
@@ -35,8 +35,8 @@ public class EventOutboxTests
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _peers = new PeerUidMap();
         _outbox = new EventOutbox(_codec, _peers);
-        Join(_alice, AlicePeer);
-        Join(_bob, BobPeer);
+        Join(Alice, AlicePeer);
+        Join(Bob, BobPeer);
     }
 
     [TestCase]
@@ -57,7 +57,7 @@ public class EventOutboxTests
     {
         ChatServerMessageEvent personal = Event("personal");
 
-        _outbox.PublishTo(personal, _alice);
+        _outbox.PublishTo(personal, Alice);
 
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(personal);
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
@@ -73,9 +73,9 @@ public class EventOutboxTests
         ChatServerMessageEvent fourth = Event("fourth");
 
         _outbox.PublishToAll(first);
-        _outbox.PublishTo(second, _alice);
+        _outbox.PublishTo(second, Alice);
         _outbox.PublishToAll(third);
-        _outbox.PublishTo(fourth, _alice);
+        _outbox.PublishTo(fourth, Alice);
 
         AssertThat(PeerEvents(AlicePeer)).ContainsExactly(first, second, third, fourth);
         AssertThat(PeerEvents(BobPeer)).ContainsExactly(first, third);
@@ -85,7 +85,7 @@ public class EventOutboxTests
     [RequireGodotRuntime]
     public void PublishTo_OfflinePlayer_TouchesNoBuffer()
     {
-        _outbox.PublishTo(Event("lost"), _offline);
+        _outbox.PublishTo(Event("lost"), Offline);
 
         AssertThat(PeerEvents(AlicePeer)).IsEmpty();
         AssertThat(PeerEvents(BobPeer)).IsEmpty();
@@ -95,9 +95,9 @@ public class EventOutboxTests
     [RequireGodotRuntime]
     public void PublishTo_BoundPeerWithoutBuffer_Throws()
     {
-        _peers.Bind(_offline.Uid, 4);
+        _peers.Bind(Offline, 4);
 
-        AssertThrown(() => _outbox.PublishTo(Event("lost"), _offline)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => _outbox.PublishTo(Event("lost"), Offline)).IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
@@ -117,7 +117,7 @@ public class EventOutboxTests
     public void AddPeer_Later_GetsNoEarlierEvents()
     {
         _outbox.PublishToAll(Event("before"));
-        Join(new PlayerModel("carol"), 4);
+        Join("carol", 4);
         ChatServerMessageEvent after = Event("after");
 
         _outbox.PublishToAll(after);
@@ -146,9 +146,9 @@ public class EventOutboxTests
         AssertThrown(() => _outbox.AddPeer(AlicePeer)).IsInstanceOf<InvalidOperationException>();
     }
 
-    private void Join(PlayerModel player, int peerId)
+    private void Join(string uid, int peerId)
     {
-        _peers.Bind(player.Uid, peerId);
+        _peers.Bind(uid, peerId);
         _outbox.AddPeer(peerId);
     }
 

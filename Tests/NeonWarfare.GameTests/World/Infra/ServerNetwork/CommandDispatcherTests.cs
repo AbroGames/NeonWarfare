@@ -24,6 +24,8 @@ public class CommandDispatcherTests
 
     private const int AlicePeer = 2;
     private const string AliceUid = "alice";
+    private const int BobPeer = 3;
+    private const string BobUid = "bob";
 
     private const string Invalid = "invalid";
     private const string ThrowInValidate = "throw in validate";
@@ -31,9 +33,10 @@ public class CommandDispatcherTests
 
     private NetMessageCodec _codec = null!;
     private PeerUidMap _peers = null!;
-    private PersistenceStorage _storage = null!;
-    private PersistenceStorageQuery _persistenceQuery = null!;
+    private PersistenceStorage _persistenceStorage = null!;
+    private SessionStorage _sessionStorage = null!;
     private PersistenceModel _persistence = null!;
+    private PlayerQuery _players = null!;
     private CommandInbox _inbox = null!;
     private List<string> _calls = null!;
 
@@ -42,11 +45,13 @@ public class CommandDispatcherTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _peers = new PeerUidMap();
-        _storage = new PersistenceStorage();
+        _persistenceStorage = new PersistenceStorage();
+        _sessionStorage = new SessionStorage();
         var registry = new EntityRegistry();
-        registry.Register(new NetId(1), _storage);
-        _persistenceQuery = new PersistenceStorageQuery(registry);
-        _persistence = _storage.Model;
+        registry.Register(new NetId(1), _persistenceStorage);
+        registry.Register(new NetId(2), _sessionStorage);
+        _persistence = _persistenceStorage.Model;
+        _players = new PlayerQuery(new PersistenceStorageQuery(registry), new SessionStorageQuery(registry));
         _inbox = new CommandInbox(_codec);
         _calls = [];
     }
@@ -54,7 +59,8 @@ public class CommandDispatcherTests
     [AfterTest]
     public void TearDown()
     {
-        _storage.Free();
+        _persistenceStorage.Free();
+        _sessionStorage.Free();
     }
 
     [TestCase]
@@ -69,31 +75,37 @@ public class CommandDispatcherTests
         AssertThat(_calls).IsEmpty();
     }
 
-    // Bound to a peer, but the uid has no PlayerModel: the handler would get no sender
     [TestCase]
     [RequireGodotRuntime]
-    public void ProcessAll_PeerWithoutPlayerModel_IsDropped()
-    {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
-        _peers.Bind(AliceUid, AlicePeer);
-
-        Chat(AlicePeer, "hi");
-        dispatcher.ProcessAll();
-
-        AssertThat(_calls).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ProcessAll_JoinedPlayer_ValidatesThenProcesses()
+    public void ProcessAll_BoundPeers_ReachHandlerWithTheirUids()
     {
         CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls));
         JoinDirectly(AliceUid, AlicePeer);
+        JoinDirectly(BobUid, BobPeer);
 
-        Chat(AlicePeer, "hi");
+        Chat(BobPeer, "hi");
+        Chat(AlicePeer, "hello");
         dispatcher.ProcessAll();
 
-        AssertThat(_calls).ContainsExactly("validate alice: hi", "process alice: hi");
+        AssertThat(_calls).ContainsExactly(
+            "validate bob: hi", "process bob: hi", "validate alice: hello", "process alice: hello");
+    }
+
+    // Bound to a peer, but the uid has no player: a broken join or leave, which the lookup throws on
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_ThrowingLookupInHandler_DropsOnlyThatCommand()
+    {
+        CommandDispatcher dispatcher = Dispatcher(new LookingUpHandler(_calls, _players));
+        JoinDirectly(AliceUid, AlicePeer);
+        JoinDirectly(BobUid, BobPeer);
+        _persistence.AddPlayer(BobUid).Nick = "Bob";
+
+        Chat(AlicePeer, "lost");
+        Chat(BobPeer, "hi");
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("Bob: hi");
     }
 
     [TestCase]
@@ -172,7 +184,7 @@ public class CommandDispatcherTests
         CommandDispatcher dispatcher = Dispatcher(JoinHandler());
 
         Join(AlicePeer, Invalid);
-        Join(3, ThrowInValidate);
+        Join(BobPeer, ThrowInValidate);
         dispatcher.ProcessAll();
 
         AssertThat(_calls).ContainsExactly($"validate join {Invalid}", $"validate join {ThrowInValidate}");
@@ -208,7 +220,7 @@ public class CommandDispatcherTests
                      [JoinHandler(), JoinHandler()],
                  })
         {
-            var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
+            var dispatcher = new CommandDispatcher(_inbox, _peers);
 
             AssertThrown(() => dispatcher.Register(handlers)).IsInstanceOf<InvalidOperationException>();
         }
@@ -218,7 +230,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Register_ObjectImplementingNoHandler_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
+        var dispatcher = new CommandDispatcher(_inbox, _peers);
 
         AssertThrown(() => dispatcher.Register([new object()])).IsInstanceOf<InvalidOperationException>();
     }
@@ -228,7 +240,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Register_PlayerHandlerOfJoinRequest_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
+        var dispatcher = new CommandDispatcher(_inbox, _peers);
 
         AssertThrown(() => dispatcher.Register([new PlayerJoinHandler()])).IsInstanceOf<InvalidOperationException>();
     }
@@ -237,7 +249,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_BeforeRegister_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
+        var dispatcher = new CommandDispatcher(_inbox, _peers);
 
         AssertThrown(() => dispatcher.ProcessAll()).IsInstanceOf<InvalidOperationException>();
     }
@@ -272,18 +284,15 @@ public class CommandDispatcherTests
 
     private CommandDispatcher NewDispatcher(params object[] handlers)
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers, _persistenceQuery);
+        var dispatcher = new CommandDispatcher(_inbox, _peers);
         dispatcher.Register(handlers);
         return dispatcher;
     }
 
-    private FakeJoinHandler JoinHandler() => new(_calls, _peers, _persistence);
+    private FakeJoinHandler JoinHandler() => new(_calls, _peers);
 
-    private void JoinDirectly(string uid, int peerId)
-    {
-        _persistence.AddPlayer(uid);
-        _peers.Bind(uid, peerId);
-    }
+    // The dispatcher looks only at the binding: whether the player exists is the handler's lookup
+    private void JoinDirectly(string uid, int peerId) => _peers.Bind(uid, peerId);
 
     private void Chat(int peerId, string text) =>
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
@@ -297,9 +306,9 @@ public class CommandDispatcherTests
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {
-        public bool Validate(PlayerModel sender, SendChatMessageCommand command)
+        public bool Validate(string senderUid, SendChatMessageCommand command)
         {
-            calls.Add($"validate {sender.Uid}: {command.Text}");
+            calls.Add($"validate {senderUid}: {command.Text}");
             return command.Text switch
             {
                 ThrowInValidate => throw new InvalidOperationException("validate failed"),
@@ -308,22 +317,31 @@ public class CommandDispatcherTests
             };
         }
 
-        public void Process(PlayerModel sender, SendChatMessageCommand command)
+        public void Process(string senderUid, SendChatMessageCommand command)
         {
-            calls.Add($"process {sender.Uid}: {command.Text}");
+            calls.Add($"process {senderUid}: {command.Text}");
             if (command.Text == ThrowInProcess) throw new InvalidOperationException("process failed");
         }
     }
 
-    private class PlayerJoinHandler : IPlayerCommandHandler<JoinRequestCommand>
+    private class LookingUpHandler(List<string> calls, PlayerQuery players)
+        : IPlayerCommandHandler<SendChatMessageCommand>
     {
-        public bool Validate(PlayerModel sender, JoinRequestCommand command) => true;
+        public bool Validate(string senderUid, SendChatMessageCommand command) => true;
 
-        public void Process(PlayerModel sender, JoinRequestCommand command) { }
+        public void Process(string senderUid, SendChatMessageCommand command) =>
+            calls.Add($"{players.Get(senderUid).Nick}: {command.Text}");
     }
 
-    // Stands for the join of task 015: binds the peer and adds the player, which is all the dispatcher looks at
-    private class FakeJoinHandler(List<string> calls, PeerUidMap peers, PersistenceModel persistence)
+    private class PlayerJoinHandler : IPlayerCommandHandler<JoinRequestCommand>
+    {
+        public bool Validate(string senderUid, JoinRequestCommand command) => true;
+
+        public void Process(string senderUid, JoinRequestCommand command) { }
+    }
+
+    // Stands for the join of task 015: binds the peer, which is all the dispatcher looks at
+    private class FakeJoinHandler(List<string> calls, PeerUidMap peers)
         : IJoinRequestHandler
     {
         public bool Validate(int peerId, JoinRequestCommand command, out string reason)
@@ -341,7 +359,6 @@ public class CommandDispatcherTests
         public void Process(int peerId, JoinRequestCommand command)
         {
             calls.Add($"process join {command.Uid}");
-            persistence.AddPlayer(command.Uid);
             peers.Bind(command.Uid, peerId);
         }
     }

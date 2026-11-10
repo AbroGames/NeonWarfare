@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Linq;
-using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 
@@ -12,7 +11,7 @@ public class SendChatMessageHandler(ChatSimulationFacade chatSimulationFacade)
 {
     private const int MessageMaxLength = 1024;
 
-    public bool Validate(PlayerModel sender, SendChatMessageCommand command)
+    public bool Validate(string senderUid, SendChatMessageCommand command)
     {
         string text = command.Text;
         if (string.IsNullOrWhiteSpace(text) || text.Length > MessageMaxLength)
@@ -23,8 +22,8 @@ public class SendChatMessageHandler(ChatSimulationFacade chatSimulationFacade)
         return !text.Any(IsForbiddenChar);
     }
 
-    public void Process(PlayerModel sender, SendChatMessageCommand command) =>
-        chatSimulationFacade.HandleInput(sender, command.Text);
+    public void Process(string senderUid, SendChatMessageCommand command) =>
+        chatSimulationFacade.HandleInput(senderUid, command.Text);
 
     private static bool IsForbiddenChar(char c) =>
         char.GetUnicodeCategory(c) is UnicodeCategory.Control or UnicodeCategory.Format
