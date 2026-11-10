@@ -66,6 +66,16 @@ public sealed class GameAssembly
         }
     }
 
+    /// <summary>A lambda closure, a state machine or another type the compiler made, nested in it or not.</summary>
+    public static bool IsCompilerGenerated(TypeDefinition type) =>
+        SelfAndEnclosing(type).Any(owner => owner.Name.StartsWith('<') || HasCompilerGeneratedAttribute(owner));
+
+    /// <summary>A lambda body, a local function or a member the compiler wrote, or any method of such a type.</summary>
+    public static bool IsCompilerGenerated(MethodDefinition method) =>
+        method.Name.StartsWith('<')
+        || HasCompilerGeneratedAttribute(method)
+        || IsCompilerGenerated(method.DeclaringType);
+
     /// <summary><c>Outer.Inner</c> without the namespace, for failure messages.</summary>
     public static string ShortName(TypeReference type) =>
         type.DeclaringType == null ? type.Name : $"{ShortName(type.DeclaringType)}.{type.Name}";
@@ -90,6 +100,10 @@ public sealed class GameAssembly
             ? name
             : $"{RepositoryPaths.Relative(point.Document.Url)}:{point.StartLine} ({name})";
     }
+
+    private static bool HasCompilerGeneratedAttribute(ICustomAttributeProvider provider) =>
+        provider.CustomAttributes.Any(attribute =>
+            attribute.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 
     private static SequencePoint? FirstSequencePoint(MethodDefinition method)
     {

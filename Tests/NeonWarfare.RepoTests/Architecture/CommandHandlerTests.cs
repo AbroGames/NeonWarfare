@@ -11,10 +11,8 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class CommandHandlerTests
 {
-    private const string ProtocolNamespace = WorldLayers.WorldNamespace + ".Infra.Protocol";
     private const string CommandsNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Commands";
     private const string PeersNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Peers";
-    private const string CommandBase = ProtocolNamespace + ".Command";
     private const string JoinCommand = PeersNamespace + ".JoinRequestCommand";
     private const string PlayerHandler = CommandsNamespace + ".IPlayerCommandHandler`1";
     private const string JoinHandler = PeersNamespace + ".IJoinRequestHandler";
@@ -129,25 +127,8 @@ public class CommandHandlerTests
         report.AssertEmpty();
     }
 
-    private static bool IsCommand(TypeDefinition type)
-    {
-        if (type.IsAbstract || type.IsNested)
-        {
-            return false;
-        }
-
-        for (TypeReference? current = type.BaseType;
-             current != null;
-             current = GameAssembly.Instance.Find(current)?.BaseType)
-        {
-            if (current.FullName == CommandBase)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    private static bool IsCommand(TypeDefinition type) =>
+        type is { IsAbstract: false, IsNested: false } && WorldLayers.DerivesFrom(type, WorldLayers.CommandBase);
 
     /// <summary>The full names of the commands some type of the game implements the player handler for.</summary>
     private static IReadOnlySet<string> PlayerHandledCommands() =>

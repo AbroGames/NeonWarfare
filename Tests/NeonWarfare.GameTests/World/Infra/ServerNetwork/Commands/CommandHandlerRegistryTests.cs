@@ -133,7 +133,7 @@ public class CommandHandlerRegistryTests
         AssertThat(whitelist).Contains(typeof(SendChatMessageCommand), typeof(JoinRequestCommand));
         AssertThat(whitelist.Where(type => !type.IsSubclassOf(typeof(Command)))).IsEmpty();
         AssertThat(whitelist.Contains(typeof(CommandInbox.PeerDisconnected))).IsFalse();
-        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, chat));
+        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(AlicePeer, chat));
     }
 
     private static CommandHandlerRegistry Registered(params object[] handlers)

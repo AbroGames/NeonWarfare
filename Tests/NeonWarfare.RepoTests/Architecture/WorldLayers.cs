@@ -24,6 +24,11 @@ public enum Layer
 public static class WorldLayers
 {
     public const string WorldNamespace = "NeonWarfare.Scenes.World";
+    public const string FeaturesNamespace = WorldNamespace + ".Features";
+    public const string CommandBase = WorldNamespace + ".Infra.Protocol.Command";
+    public const string EventBase = WorldNamespace + ".Infra.Protocol.Event";
+    public const string NoticeBase = WorldNamespace + ".Infra.Hud.Notice";
+    public const string EventHandlerAttribute = WorldNamespace + ".Infra.ClientNetwork.EventHandlerAttribute";
 
     private const string CompositionNamespace = WorldNamespace + ".Infra.Composition";
     private const string LayerAttributeBase = CompositionNamespace + ".WorldServiceAttribute";
@@ -123,6 +128,16 @@ public static class WorldLayers
         string ns = GameAssembly.Outermost(type).Namespace;
         return ns == WorldNamespace || ns.StartsWith(WorldNamespace + ".", StringComparison.Ordinal);
     }
+
+    /// <summary>True when the type is under <see cref="FeaturesNamespace"/> or one of its sub-namespaces.</summary>
+    public static bool InFeaturesNamespace(TypeReference type)
+    {
+        string ns = GameAssembly.Outermost(type).Namespace;
+        return ns == FeaturesNamespace || ns.StartsWith(FeaturesNamespace + ".", StringComparison.Ordinal);
+    }
+
+    public static bool IsEventHandler(MethodDefinition method) =>
+        method.CustomAttributes.Any(attribute => attribute.AttributeType.FullName == EventHandlerAttribute);
 
     /// <summary>Every concrete layer attribute declared by the game.</summary>
     public static IEnumerable<TypeDefinition> LayerAttributeTypes() =>

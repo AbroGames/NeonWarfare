@@ -11,7 +11,9 @@ state by uid or NetId and read it through its `[Query]`; a feature is never refe
 Nothing is registered by hand: the composition root finds a feature by its types (see [World](World.md#layers)).
 
 * **Services** — a class with a layer attribute (`[Simulation]`, `[SimulationFacade]`, `[Query]`,
-  `[Presentation]`, …) is created in every World that has the layer.
+  `[Presentation]`, …) is created in every World that has the layer. Its name ends with the layer: `*Simulation`,
+  `*SimulationFacade`, `*Handler` for `[CommandHandler]`, `*Query`, `*Presentation`; a command, an event and a
+  notice end with `Command`, `Event`, `Notice` (`WorldNamingTests`, both ways).
 * **Commands** — a `Command` record with MessagePack keys and a `[CommandHandler]` implementing
   `IPlayerCommandHandler<T>`: the handler is what puts the command on the whitelist. The HUD sends it through
   `World.Send<T>`.

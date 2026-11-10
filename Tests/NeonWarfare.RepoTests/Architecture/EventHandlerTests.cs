@@ -12,9 +12,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class EventHandlerTests
 {
-    private const string EventHandlerAttribute =
-        WorldLayers.WorldNamespace + ".Infra.ClientNetwork.EventHandlerAttribute";
-    private const string EventBase = WorldLayers.WorldNamespace + ".Infra.Protocol.Event";
+    private const string EventBase = WorldLayers.EventBase;
     private const string HandlerName = "Handle";
 
     [Fact]
@@ -73,26 +71,8 @@ public class EventHandlerTests
     // The same rule WorldServicesBuilder uses to collect the event types: any other parameter makes Register throw
     private static bool IsEventType(TypeReference type) =>
         GameAssembly.Instance.Find(type) is { IsNested: false, IsAbstract: false } definition
-        && DerivesFromEvent(definition);
-
-    private static bool DerivesFromEvent(TypeDefinition type)
-    {
-        for (TypeReference? current = type.BaseType;
-             current != null;
-             current = GameAssembly.Instance.Find(current)?.BaseType)
-        {
-            if (current.FullName == EventBase)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+        && WorldLayers.DerivesFrom(definition, EventBase);
 
     private static IEnumerable<MethodDefinition> Handlers() =>
-        GameAssembly.Instance.Types
-            .SelectMany(type => type.Methods)
-            .Where(method => method.CustomAttributes.Any(attribute =>
-                attribute.AttributeType.FullName == EventHandlerAttribute));
+        GameAssembly.Instance.Types.SelectMany(type => type.Methods).Where(WorldLayers.IsEventHandler);
 }

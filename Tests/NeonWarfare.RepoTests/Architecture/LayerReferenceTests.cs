@@ -14,7 +14,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class LayerReferenceTests
 {
     private const string InfraNamespace = WorldLayers.WorldNamespace + ".Infra";
-    private const string FeaturesNamespace = WorldLayers.WorldNamespace + ".Features";
+    private const string FeaturesNamespace = WorldLayers.FeaturesNamespace;
     private const string HudMailbox = WorldLayers.WorldNamespace + ".Infra.Hud.HudMailbox";
     private const string HudMailboxPost = "Post";
 
@@ -193,32 +193,51 @@ public class LayerReferenceTests
 
     /// <summary>
     /// The HUD mailbox is cleared by the frame number alone, which holds only while every post comes from an event
-    /// handler, before <c>_Process</c>. A node or a widget posting would also make the HUD talk to itself.
+    /// handler, before <c>_Process</c>. So every method that reaches <c>Post</c> is an <c>[EventHandler]</c> or a
+    /// private helper of one: a public method could be called by a node, which would make the HUD talk to itself, and
+    /// a lambda, an <c>async</c> method or a helper taken as a delegate may run after <c>_Process</c>, and the
+    /// notice is lost.
     /// </summary>
     [Fact]
-    public void HudMailboxPost_IsCalledOnlyFromPresentations()
+    public void HudMailboxPost_IsReachedOnlyFromEventHandlers()
     {
-        FailureReport report = new("HudMailbox.Post called from outside the Presentation");
+        FailureReport report = new("HudMailbox.Post reached from outside the event handlers");
         GameAssembly game = GameAssembly.Instance;
 
         TypeDefinition mailbox = game.FindByName(HudMailbox)
                                  ?? throw new InvalidOperationException($"{HudMailbox} is gone");
-        // Without it a rename would leave the rule nothing to check
-        Assert.Contains(mailbox.Methods, method => method.Name == HudMailboxPost);
+        HashSet<MethodDefinition> posts = mailbox.Methods.Where(method => method.Name == HudMailboxPost).ToHashSet();
+        // Without them a rename would leave the rule nothing to check
+        Assert.NotEmpty(posts);
+        HashSet<MethodDefinition> reaching = MethodCalls.Reaching(posts);
+        Assert.NotEmpty(reaching);
 
-        foreach (TypeDefinition type in game.Types)
+        foreach (MethodDefinition method in reaching)
         {
-            if (WorldLayers.LayerOf(type) == Layer.Presentation)
+            if (WorldLayers.IsEventHandler(method))
             {
                 continue;
             }
 
-            foreach (TypeReferenceSite site in TypeReferences.Of(type))
+            string where = GameAssembly.Describe(method);
+            if (GameAssembly.IsCompilerGenerated(method))
             {
-                if (site.Type.FullName == HudMailbox && site.Via is MethodReference { Name: HudMailboxPost })
+                report.Add($"{where}: a lambda, a local function or an async method reaches Post");
+            }
+            else if (!method.IsPrivate)
+            {
+                report.Add($"{where}: is not private, so something besides an event handler may call it");
+            }
+        }
+
+        foreach (MethodDefinition method in game.Types.SelectMany(type => type.Methods))
+        {
+            foreach (MethodCalls.Call call in MethodCalls.Of(method))
+            {
+                if (call.AsDelegate && (reaching.Contains(call.Target) || posts.Contains(call.Target)))
                 {
-                    string ownLayer = WorldLayers.LayerOf(type)?.ToString() ?? "a type outside the layers";
-                    report.Add($"{GameAssembly.Describe(site.From)}: {ownLayer} posts to the HUD mailbox");
+                    report.Add($"{GameAssembly.Describe(method)}: takes {call.Target.Name} as a delegate, which " +
+                               "may run after _Process");
                 }
             }
         }

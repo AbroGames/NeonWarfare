@@ -69,7 +69,7 @@ public partial class Hud : Control
                          + string.Join("\n", _players.OnlinePlayers().Select(player => player.Nick));
 
         // The server drops a save from anyone else without a reply
-        bool isAdmin = _localPlayer.TryGetPlayer()?.IsAdmin == true;
+        bool isAdmin = _localPlayer.Player?.IsAdmin == true;
         SaveButton.Visible = isAdmin;
         SaveLineEdit.Visible = isAdmin;
 

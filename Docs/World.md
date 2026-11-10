@@ -62,7 +62,8 @@ and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]
 
 * leaf simulations never call each other, a command handler calls only facades;
 * only the Simulation writes models and publishes events, and only inside the tick;
-* events reach only `[EventHandler]` methods of the Presentation, `HudMailbox.Post` is called only from there;
+* events reach only `[EventHandler]` methods of the Presentation, `HudMailbox.Post` is reached only from them;
+* a Presentation exposes only property getters, and they change nothing (`HudMailbox` aside);
 * no World service touches `Services.*` (`Di` aside): only the composition root does and passes what is needed;
 * a service reads no entity in its constructor: when it is built, the world is still empty.
 

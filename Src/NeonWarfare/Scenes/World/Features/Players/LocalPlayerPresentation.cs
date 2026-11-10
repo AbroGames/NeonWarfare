@@ -11,6 +11,6 @@ public class LocalPlayerPresentation(LocalPlayer localPlayer, PlayerQuery player
 {
     public string Uid => localPlayer.Uid;
 
-    /// <returns><c>null</c> while the player is not online: before its join is applied or after it leaves.</returns>
-    public PlayerModel TryGetPlayer() => players.TryGetOnline(Uid);
+    /// <value><c>null</c> while the player is not online: before its join is applied or after it leaves.</value>
+    public PlayerModel Player => players.TryGetOnline(Uid);
 }
