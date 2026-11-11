@@ -40,7 +40,7 @@ public sealed class NetMessageCodec
 
     public ulong ProtocolHash { get; }
 
-    /// <param name="scenePaths">The resource paths of the <see cref="WorldPackedScenes"/> scenes, in id order.</param>
+    /// <param name="scenePaths">The resource paths of the scenes of the scene catalog, in id order.</param>
     public NetMessageCodec(TypesMappingService mapping, IReadOnlyList<string> scenePaths)
     {
         _mapping = mapping;

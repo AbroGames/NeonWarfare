@@ -6,12 +6,12 @@ using NeonWarfare.Scenes.World.Infra.Composition;
 namespace NeonWarfare.Scenes.World.Infra.Entities;
 
 /// <summary>
-/// Creates an entity on the server: a scene of <see cref="WorldPackedScenes"/>, a fresh NetId, a place in the tree
+/// Creates an entity on the server: a scene of the <see cref="ISceneCatalog"/>, a fresh NetId, a place in the tree
 /// and in the registry.
 /// </summary>
 [Simulation]
 public class EntitySpawner(
-    NetIdGenerator netIdGenerator, EntityRegistry registry, WorldRoot root, WorldPackedScenes scenes)
+    NetIdGenerator netIdGenerator, EntityRegistry registry, WorldRoot root, ISceneCatalog scenes)
 {
     private const string WrongTypeError = "The root of {0} is {1}, not {2}.";
 

@@ -10,6 +10,7 @@ using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Features.Storages;
+using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;

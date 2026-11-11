@@ -19,7 +19,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class ConstructorLayerTests
 {
     private const string WorldDependencies = WorldLayers.WorldNamespace + ".WorldDependencies";
-    private const string WorldLayer = WorldLayers.WorldNamespace + ".WorldLayer";
+    private const string WorldLayer = WorldLayers.WorldNamespace + ".Infra.Composition.WorldLayer";
     private const string Builder = WorldLayers.WorldNamespace + ".WorldServicesBuilder";
     private const string BuildMethod = "Build";
 
@@ -47,7 +47,11 @@ public class ConstructorLayerTests
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it
-    private static readonly string[] OpenTypes = [WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder"];
+    private static readonly string[] OpenTypes =
+    [
+        WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder",
+        WorldLayers.WorldNamespace + ".Infra.Entities.ISceneCatalog",
+    ];
 
     [Fact]
     public void Constructors_TakeOnlyAllowedLayers()
