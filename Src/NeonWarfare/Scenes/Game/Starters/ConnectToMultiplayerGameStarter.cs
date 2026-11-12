@@ -28,6 +28,7 @@ public class ConnectToMultiplayerGameStarter(
     private const string WorldCreationFailedMessage = "Failed to enter the world received from the server";
     private const string BrokenSnapshotLog = "The join snapshot from the server is broken";
     private const string WorldCreationFailedLog = "Creating the World from the join snapshot failed";
+    private const string EnteredWorldLog = "Entered the world from the join snapshot";
 
     private readonly ILogger _log = LogFactory.GetForStatic<ConnectToMultiplayerGameStarter>();
 
@@ -68,6 +69,7 @@ public class ConnectToMultiplayerGameStarter(
                 GoToMenuAndShowError(WorldCreationFailedMessage);
                 return;
             }
+            _log.Information(EnteredWorldLog);
             Services.LoadingScreen.Clear();
         }
 

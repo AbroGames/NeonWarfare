@@ -137,6 +137,7 @@ public partial class Network(Node multiplayerRoot) : Node
         }
 
         _api.MultiplayerPeer.RefuseNewConnections = false;
+        _log.Information("Server opened");
     }
 
     /// <summary>

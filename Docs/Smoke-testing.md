@@ -31,7 +31,7 @@ Godot runs already compiled assemblies. The suite takes about 25 s. Not run in C
    it got where it was sent) before the next starts, so clients launch only after the server is up.
 2. Everything lingers for 3 s to catch errors after a successful start.
 3. Optional `Departure`: the leaver alone is stopped, a witness must print its milestone (the server:
-   `Network peer disconnected`), the rest linger again. This is the only path where a client tears down a
+   `Player left: <nick> (<uid>)`), the rest linger again. This is the only path where a client tears down a
    live world on exit and the server sees a player leave.
 4. The rest are stopped in launch order — so without a `Departure` the server always goes first and
    clients quit from the menu.

@@ -14,9 +14,9 @@ public class PlayerSimulationFacade(
     PlayersStorageQuery players,
     PlayersSessionStorageQuery session)
 {
-    private const string NewPlayerLog = "New player {nick} ({uid})";
-    private const string JoinedLog = "{nick} ({uid}) joined";
-    private const string LeftLog = "{nick} ({uid}) left";
+    private const string NewPlayerLog = "New player: {nick} ({uid})";
+    private const string JoinedLog = "Player joined: {nick} ({uid})";
+    private const string LeftLog = "Player left: {nick} ({uid})";
 
     private readonly ILogger _log = LogFactory.GetForStatic<PlayerSimulationFacade>();
 
