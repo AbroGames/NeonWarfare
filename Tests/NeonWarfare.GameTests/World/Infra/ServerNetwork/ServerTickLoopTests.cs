@@ -180,7 +180,8 @@ public class ServerTickLoopTests
         _provider = builder.Build(
             Host,
             new WorldDependencies(
-                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, _clientsConnection),
+                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, TestWorldScenes.CreateCatalog(_scenes),
+                _clientsConnection),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;

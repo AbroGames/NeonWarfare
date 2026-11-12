@@ -1,13 +1,13 @@
 using System.Reflection;
 using Godot;
+using NeonWarfare.GameTests.World.Infra.Protocol;
 using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Features.Storages;
+using NeonWarfare.Scenes.World.Infra.Entities;
 
 namespace NeonWarfare.GameTests.World.Fixtures;
 
 /// <summary>
-/// A ready <see cref="WorldPackedScenes"/> without the game's <c>res://</c>: the storages are packed from their
-/// classes, so the server spawn works, and every other scene is an empty node of its own.
+/// A ready <see cref="WorldPackedScenes"/> without the game's <c>res://</c>: every scene is an empty node of its own.
 /// </summary>
 public static class TestWorldScenes
 {
@@ -20,17 +20,15 @@ public static class TestWorldScenes
                                && property.IsDefined(typeof(ExportAttribute)));
         foreach (PropertyInfo export in exports)
         {
-            Node content = export.Name switch
-            {
-                nameof(WorldPackedScenes.PersistenceStorage) => new PersistenceStorage(),
-                nameof(WorldPackedScenes.SessionStorage) => new SessionStorage(),
-                _ => new Node(),
-            };
-            scenes.Set(export.Name, Pack(content));
+            scenes.Set(export.Name, Pack(new Node()));
         }
         scenes._Ready();
         return scenes;
     }
+
+    /// <summary>The catalog of <paramref name="scenes"/> and the game's node types, as the game builds it.</summary>
+    public static EntityCatalog CreateCatalog(WorldPackedScenes scenes) =>
+        new(scenes.GetScenesList(), NetMessageCodecTests.CreateMapping().Types);
 
     public static PackedScene Pack(Node content)
     {

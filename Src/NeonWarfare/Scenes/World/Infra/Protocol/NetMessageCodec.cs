@@ -40,11 +40,11 @@ public sealed class NetMessageCodec
 
     public ulong ProtocolHash { get; }
 
-    /// <param name="scenePaths">The resource paths of the scenes of the scene catalog, in id order.</param>
-    public NetMessageCodec(TypesMappingService mapping, IReadOnlyList<string> scenePaths)
+    /// <param name="entityKinds">The <see cref="Entities.EntityCatalog.Descriptors"/>.</param>
+    public NetMessageCodec(TypesMappingService mapping, IReadOnlyList<string> entityKinds)
     {
         _mapping = mapping;
-        ProtocolHash = new ProtocolHasher(new Replicator(mapping)).Compute(mapping.Types, scenePaths);
+        ProtocolHash = new ProtocolHasher(new Replicator(mapping)).Compute(mapping.Types, entityKinds);
     }
 
     public void Write(IBufferWriter<byte> output, object message)

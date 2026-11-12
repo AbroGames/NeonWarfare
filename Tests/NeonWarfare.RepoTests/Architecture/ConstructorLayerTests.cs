@@ -50,7 +50,6 @@ public class ConstructorLayerTests
     private static readonly string[] OpenTypes =
     [
         WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder",
-        WorldLayers.WorldNamespace + ".Infra.Entities.ISceneCatalog",
     ];
 
     [Fact]

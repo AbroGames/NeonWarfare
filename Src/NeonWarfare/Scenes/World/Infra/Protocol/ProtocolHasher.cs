@@ -14,14 +14,14 @@ namespace NeonWarfare.Scenes.World.Infra.Protocol;
 /// <summary>
 /// A hash of everything a peer of another build would read differently: the mapped types in id order, the
 /// MessagePack keys of every mapped [MessagePackObject] type, the RepliCAT schema of every mapped model and the
-/// resource paths of the scenes of the scene catalog in id order.
+/// descriptors of the entity kinds in kind id order.
 /// </summary>
 public class ProtocolHasher(Replicator replicator)
 {
     private const BindingFlags DeclaredInstanceMembers =
         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
-    public ulong Compute(IReadOnlyList<Type> mappedTypes, IReadOnlyList<string> scenePaths)
+    public ulong Compute(IReadOnlyList<Type> mappedTypes, IReadOnlyList<string> entityKinds)
     {
         var text = new StringBuilder();
         foreach (Type type in mappedTypes)
@@ -45,11 +45,10 @@ public class ProtocolHasher(Replicator replicator)
             }
         }
 
-        // A scene id travels in spawn records and lies in saves; the path, not a property name, so a different
-        // scene under the same name is seen too
-        foreach (string path in scenePaths)
+        // A kind id travels in spawn records and lies in saves
+        foreach (string kind in entityKinds)
         {
-            text.Append("scene ").Append(path).Append('\n');
+            text.Append("kind ").Append(kind).Append('\n');
         }
 
         byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString()));

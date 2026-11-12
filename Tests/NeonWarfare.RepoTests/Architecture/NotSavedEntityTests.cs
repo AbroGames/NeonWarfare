@@ -6,7 +6,7 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
-/// The save keeps a <c>[NotSaved]</c> entity without its state, and a load gets it fresh from its scene. Its
+/// The save keeps a <c>[NotSaved]</c> entity without its state, and a load creates it fresh from its kind. Its
 /// replicated members are then whatever the constructor makes of them: a member that is not a readonly field set
 /// there could be null after a load, and RepliCAT could not fill it on a client either.
 /// </summary>
