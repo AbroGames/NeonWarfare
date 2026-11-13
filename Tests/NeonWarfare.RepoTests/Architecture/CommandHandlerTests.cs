@@ -5,19 +5,20 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
-/// The network command whitelist is built from the handlers <c>CommandDispatcher</c> was given, so a command
+/// The network command whitelist is built from the handlers <c>CommandHandlerRegistry</c> was given, so a command
 /// without a handler, or a handler the composition root never passed, is silently dropped at run time.
 /// </summary>
 [Collection(GameAssembly.Collection)]
 public class CommandHandlerTests
 {
     private const string ProtocolNamespace = WorldLayers.WorldNamespace + ".Infra.Protocol";
-    private const string HandlersNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork";
+    private const string CommandsNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Commands";
+    private const string PeersNamespace = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Peers";
     private const string CommandBase = ProtocolNamespace + ".Command";
-    private const string JoinCommand = HandlersNamespace + ".JoinRequestCommand";
-    private const string PlayerHandler = HandlersNamespace + ".IPlayerCommandHandler`1";
-    private const string JoinHandler = HandlersNamespace + ".IJoinRequestHandler";
-    private const string DisconnectedHandler = HandlersNamespace + ".IPeerDisconnectedHandler";
+    private const string JoinCommand = PeersNamespace + ".JoinRequestCommand";
+    private const string PlayerHandler = CommandsNamespace + ".IPlayerCommandHandler`1";
+    private const string JoinHandler = PeersNamespace + ".IJoinRequestHandler";
+    private const string DisconnectedHandler = PeersNamespace + ".IPeerDisconnectedHandler";
 
     /// <summary>
     /// <c>JoinRequestCommand</c> goes to the <c>IJoinRequestHandler</c>: the joining peer has no player yet.
@@ -54,8 +55,8 @@ public class CommandHandlerTests
     }
 
     /// <summary>
-    /// <c>CommandDispatcher.Register</c> takes one of each and only in a pair, but only at run time: without them a
-    /// peer could neither join nor leave.
+    /// <c>CommandHandlerRegistry.Register</c> takes one of each and only in a pair, but only at run time: without
+    /// them a peer could neither join nor leave.
     /// </summary>
     [Fact]
     public void JoinAndDisconnectedHandlers_HaveExactlyOneImplementation()

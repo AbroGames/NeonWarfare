@@ -10,7 +10,7 @@ using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 
 namespace NeonWarfare.Scenes.World;
 
@@ -91,9 +91,7 @@ public class WorldServicesBuilder
             IEnumerable<object> handlers = selected
                 .Where(service => service.Attribute is CommandHandlerAttribute)
                 .Select(service => provider.GetRequiredService(service.Type));
-            var dispatcher = provider.GetRequiredService<CommandDispatcher>();
-            dispatcher.Register(handlers);
-            provider.GetRequiredService<CommandInbox>().Register(dispatcher.NetworkCommandTypes);
+            provider.GetRequiredService<CommandHandlerRegistry>().Register(handlers);
         }
         return provider;
     }

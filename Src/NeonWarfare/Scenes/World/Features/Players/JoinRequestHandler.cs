@@ -3,7 +3,7 @@ using System.Linq;
 using Godot;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 
 namespace NeonWarfare.Scenes.World.Features.Players;
 
