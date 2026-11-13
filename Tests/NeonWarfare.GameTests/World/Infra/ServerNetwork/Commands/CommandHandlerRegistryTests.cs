@@ -149,7 +149,9 @@ public class CommandHandlerRegistryTests
         return new(TimeProvider.System, codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles(), TestLocalPlayer.For(WorldLayer.Host));
+            new RecordingClientsConnection(), new RecordingSaveFiles(),
+            TestWorldDependencies.LocalPlayer(WorldLayer.Host),
+            TestWorldDependencies.Admin(WorldLayer.Host));
     }
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>

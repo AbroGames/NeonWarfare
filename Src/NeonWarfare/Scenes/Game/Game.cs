@@ -96,12 +96,14 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     /// <param name="saveFiles">Where a server World saves, <c>null</c> for a remote client.</param>
     /// <param name="localPlayer">The one passed to <see cref="SendJoinRequest"/>, <c>null</c> on a dedicated
     /// server.</param>
+    /// <param name="admin"><c>null</c> for a remote client.</param>
     public World.World AddWorld(
-        WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles, LocalPlayer localPlayer)
+        WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles, LocalPlayer localPlayer,
+        WorldAdmin admin)
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this, saveFiles, localPlayer);
+            this, this, saveFiles, localPlayer, admin);
         var world = new World.World();
         try
         {

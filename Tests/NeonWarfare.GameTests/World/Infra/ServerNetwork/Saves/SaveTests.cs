@@ -299,6 +299,50 @@ public class SaveTests
         AssertThat(Players(loaded).PlayerByUid.Keys).ContainsExactlyInAnyOrder(HostUid, AliceUid);
     }
 
+    // Done when: after save and load the admin uid still grants admin — to a player the save already has
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Load_AdminUid_GrantsTheRightsToAPlayerOfTheSave()
+    {
+        Tick(_server);
+        AssertThat(Players(_server).PlayerByUid[AliceUid].IsAdmin).IsFalse();
+
+        ServiceProvider loaded = Load(Saver().Write(), adminUid: AliceUid);
+        JoinAsPeer(loaded, AliceUid, "Alice", AlicePeer);
+        JoinAsPeer(loaded, BobUid, "Bob", BobPeer);
+
+        AssertThat(Players(loaded).PlayerByUid[AliceUid].IsAdmin).IsTrue();
+        AssertThat(Players(loaded).PlayerByUid[BobUid].IsAdmin).IsFalse();
+    }
+
+    // Done when: a dedicated server without an admin uid has no admin
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Load_NoAdminUid_NobodyBecomesAdmin()
+    {
+        Tick(_server);
+
+        ServiceProvider loaded = Load(Saver().Write());
+        JoinAsPeer(loaded, AliceUid, "Alice", AlicePeer);
+        JoinAsPeer(loaded, BobUid, "Bob", BobPeer);
+
+        AssertThat(Players(loaded).PlayerByUid.Values.Where(player => player.IsAdmin)).IsEmpty();
+    }
+
+    // The rights live in the save: a restart with another admin uid does not take them
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Load_AdminOfTheSave_StaysAdmin()
+    {
+        Players(_server).PlayerByUid[AliceUid].IsAdmin = true;
+        Tick(_server);
+
+        ServiceProvider loaded = Load(Saver().Write(), adminUid: BobUid);
+        JoinAsPeer(loaded, AliceUid, "Alice", AlicePeer);
+
+        AssertThat(Players(loaded).PlayerByUid[AliceUid].IsAdmin).IsTrue();
+    }
+
     // The loaded entities are spawned ones for the replicator: the first tick has their full state
     [TestCase]
     [RequireGodotRuntime]
@@ -329,22 +373,33 @@ public class SaveTests
             .ContainsExactly(BobUid);
     }
 
-    private ServiceProvider Build(WorldLayer layers, RecordingClientsConnection connection, out Node root)
+    private void JoinAsPeer(ServiceProvider server, string uid, string nick, int peerId)
+    {
+        server.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId,
+            _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, uid, nick, Colors.White)));
+        server.GetRequiredService<CommandDispatcher>().ProcessAll();
+    }
+
+    private ServiceProvider Build(
+        WorldLayer layers, RecordingClientsConnection connection, out Node root, string? adminUid = null)
     {
         root = new Node();
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(root);
         _roots.Add(root);
         var dependencies = new WorldDependencies(new ManualTimeProvider(Now), _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
-            connection, connection, new RecordingSaveFiles(), TestLocalPlayer.For(layers));
+            connection, connection, new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
+            TestWorldDependencies.Admin(layers, adminUid));
         ServiceProvider provider = new WorldServicesBuilder().Build(layers, dependencies, new WorldRoot(root));
         _providers.Add(provider);
         return provider;
     }
 
-    private ServiceProvider Load(byte[] save, RecordingClientsConnection? connection = null)
+    private ServiceProvider Load(
+        byte[] save, RecordingClientsConnection? connection = null, string? adminUid = null)
     {
-        ServiceProvider loaded = Build(WorldLayer.Dedicated, connection ?? new RecordingClientsConnection(), out _);
+        ServiceProvider loaded = Build(
+            WorldLayer.Dedicated, connection ?? new RecordingClientsConnection(), out _, adminUid);
         loaded.GetRequiredService<SaveLoader>().Load(save);
         return loaded;
     }

@@ -73,19 +73,16 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
 
-        string adminUid = Services.GameSettings.GetSettings().PlayerUid;
-        
         if (createDedicatedServerProcess)
         {
             game.Init(new HostDedicatedServerAndConnectGameStarter(
                 saveFileName: saveFileName, 
                 port: port, 
-                adminUid: adminUid, 
                 showWindow: true));
         }
         else
         {
-            game.Init(new HostMultiplayerGameStarter(saveFileName: saveFileName, port: port, adminUid: adminUid));
+            game.Init(new HostMultiplayerGameStarter(saveFileName: saveFileName, port: port));
         }
     }
     

@@ -24,7 +24,8 @@ public class SingleplayerGameStarter(
         LocalPlayer localPlayer = ReadLocalPlayer();
         World.World world = AddServerWorld(
             saveFileName,
-            origin => game.AddWorld(WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, localPlayer),
+            origin => game.AddWorld(
+                WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, localPlayer, new WorldAdmin(localPlayer.Uid)),
             out string loadError);
         if (world == null)
         {

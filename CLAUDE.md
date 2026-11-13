@@ -21,7 +21,8 @@ found by searching for a class or attribute name.
 ## Do not edit by hand
 
 `.godot/`, `*.uid` and `*.tscn` are maintained by the Godot editor. Never create or modify them
-manually — ask the user to make the change in the editor instead.
+manually — ask the user to make the change in the editor instead.  
+Exception: `*.uid` under `Tests/` may be edited by hand.
 
 ## Tasks
 

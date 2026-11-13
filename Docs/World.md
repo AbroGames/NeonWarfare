@@ -26,9 +26,9 @@ on a remote client. A World is never empty: a remote client creates it only from
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
 `WorldDependencies` is what `Game` hands to every service: `TimeProvider`, `NetMessageCodec`, `Replicator`,
-`FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections, `ISaveFiles` (`null` on a remote client)
-and `LocalPlayer` (`null` on a dedicated server). With the Simulation the World also adds `ServerTickNode`, with the
-server network `SaveOnExitNode`.
+`FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections, `ISaveFiles` (`null` on a remote client),
+`LocalPlayer` (`null` on a dedicated server) and `WorldAdmin` (`null` on a remote client). With the Simulation the
+World also adds `ServerTickNode`, with the server network `SaveOnExitNode`.
 
 ## Layers
 
