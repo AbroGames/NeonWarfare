@@ -8,8 +8,6 @@ The DI from KludgeBox is used. Practically every class calls `Di.Process(this)` 
 | Attribute | What it injects |
 |---|---|
 | `[Child]` | A child node by field name (or `[Child(By.Type)]` — by type) |
-| `[Parent]` | A parent node of the required type |
-| `[SceneService]` | A service from the nearest `IServiceProvider` up the tree (that is, from `World`) |
 | `[Logger]` | A `Serilog.ILogger` configured for the current class |
 | `[NotNull]` | A check that an `[Export]` field is filled in in the editor (in `CheckedAbstractStorage`) |
 

@@ -77,7 +77,7 @@ public class SaveLoadServiceTests
     {
         Write(Path() + ".backup", Old);
 
-        _service.Init();
+        _service.Init(false);
 
         AssertThat(_service.GetAllSaveFiles().Select(file => file.FileName)).ContainsExactly(FileName);
         AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
@@ -92,7 +92,7 @@ public class SaveLoadServiceTests
         Write(Path(), New);
         Write(Path() + ".backup", Old);
 
-        _service.Init();
+        _service.Init(false);
 
         AssertThat(_service.LoadFromDisk(FileName)).IsEqual(New);
     }
@@ -104,7 +104,7 @@ public class SaveLoadServiceTests
         _service.SaveToDisk(Old, FileName);
         Write(Path() + ".tmp", New);
 
-        _service.Init();
+        _service.Init(false);
 
         AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
         AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);

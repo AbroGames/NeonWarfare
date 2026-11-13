@@ -19,38 +19,17 @@ Game (Node2D)                                      A single game session (single
 ├── PackedScenes (GamePackedScenes)                Prototypes of the scenes created in Game: World, Hud, ServerHud
 └── Network                                        Created from code, lives together with Game
 
-World (Node2D, IServiceProvider)                   The game world and all of its services
-├── Tree (WorldTree)                               The game tree with all the objects
-│   └── Surface (SafeSurface | BattleSurface)      The current location
-│       └── Character, Wall, ...                   Game objects, synchronized by MultiplayerSpawner
-├── PersistenceData                                Data that goes into the save
-├── TemporaryData                                  Data of the current session
-├── ChatService, PlayerService, ...                The world services, each a direct child of World
-├── SyncedPackedScenes                             Prototypes of scenes that are synchronized from server to client on spawn
-└── ClientPackedScenes                             Prototypes of purely client-side (visual) scenes
+World (Node2D)                                     The game world, its services are plain C# objects, see World.md
+├── ServerTickNode                                 With the Simulation: runs the server tick
+├── SaveOnExitNode                                 With the server network: the save on exit
+└── PlayersStorage, PlayersSessionStorage, ...   The root entities, spawned by EntitySpawner
 ```
 
-**The client and the server use the very same scene tree.** The role is determined at runtime through
-`Net.IsServer()` / `Net.IsClient()` and through the `Net.DoClient(...)`, `Net.DoServerClient(...)`,
-`Net.DoServerNotServer(...)` etc. helpers.
+Which parts of the World exist on a client, a host or a dedicated server is decided by its layers, not
+by runtime checks — see [World](World.md#layers).
 
 The control flow rule: **calls go down the tree, events (`event` / signals) go up.** The parent knows
-about its children, the child does not know about its parent (the exception is an explicit `[Parent]`
-injection in the world services). So `World` knows nothing about `Hud` and talks to it through events
-only: not one of `World`'s own tasks needs the `Hud`.
+about its children, the child does not know about its parent. So `World` knows nothing about `Hud` and talks
+to it through events only: not one of `World`'s own tasks needs the `Hud`.
 
 The question to ask before adding a link: *does class X need class Y to do its own job?*
-
-## Node naming
-
-The nodes of the world services in `World.tscn` are named **without the `World` prefix**: `ChatService`,
-`PlayerService`, `SynchronizerService` — even though the classes are named `WorldChatService`,
-`WorldPlayerService`, `WorldSynchronizerService`.
-
-*A deliberate deviation from the "a scene and its handler are named the same" rule.* `[Child]` injects
-**by field name**, so the node names must match the property names in `World.cs`, not the class names.
-The `World` prefix in the class is needed to make the name unambiguous across the whole assembly; inside
-`World.tscn` it would be noise (`World/WorldChatService`).
-
-The practical consequence: **renaming a property in `World.cs` breaks the injection** until the node in
-`World.tscn` is renamed too, and vice versa. The compiler does not catch this.

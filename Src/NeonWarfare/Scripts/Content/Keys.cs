@@ -1,6 +1,6 @@
 using Godot;
 
-namespace NeonWarfare.Scenes.Entities.Characters.Controller.Player;
+namespace NeonWarfare.Scripts.Content;
 
 public static class Keys
 {
@@ -15,7 +15,6 @@ public static class Keys
     public static readonly StringName AttackSecondary = "KeyAttackSecondary";
     
     // UI
-    //TODO Вынести куда-то? Оставить здесь только действия связанные с управлением Character-ом?
     public static readonly StringName UiUp = "ui_up";
     public static readonly StringName UiDown = "ui_down";
     public static readonly StringName UiLeft = "ui_left";

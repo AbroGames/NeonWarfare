@@ -17,7 +17,7 @@ public class DedicatedServerRootStarter : BaseRootStarter
         
         _dedicatedServerArgs = DedicatedServerArgs.GetFromCmd(CmdArgsService);
         
-        Services.Net.Init(true);
+        Services.SaveLoad.Init(true);
         Services.LastGame.Init();
         Services.DedicatedServerSettings.Init();
         

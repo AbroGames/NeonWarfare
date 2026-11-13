@@ -26,11 +26,6 @@ public partial class Network(Node multiplayerRoot) : Node
 
     public bool IsServer { get; private set; }
 
-    /// <summary>
-    /// A client whose connection to the server is up.
-    /// </summary>
-    public bool IsConnectedToServer { get; private set; }
-
     private SceneMultiplayer _api;
     private bool _isInitialized;
 
@@ -39,8 +34,6 @@ public partial class Network(Node multiplayerRoot) : Node
     public override void _Ready()
     {
         Di.Process(this);
-
-        Net.SetGameNetwork(this);
 
         // A fresh multiplayer per Game, so that old handlers and lambdas cannot outlive the session
         _api = new SceneMultiplayer();
@@ -177,9 +170,6 @@ public partial class Network(Node multiplayerRoot) : Node
 
     private void Shutdown()
     {
-        Net.RemoveGameNetwork();
-        IsConnectedToServer = false;
-
         if (_api.HasMultiplayerPeer() && _api.GetMultiplayerPeer() is not OfflineMultiplayerPeer)
         {
             _log.Information("Shutting down network...");
@@ -213,7 +203,6 @@ public partial class Network(Node multiplayerRoot) : Node
 
     private void MultiplayerConnectedToServer()
     {
-        IsConnectedToServer = true;
         _log.Information("Connected to the server successfully. My peer id: {id}", _api.GetUniqueId());
         ConnectedToServerEvent?.Invoke();
     }

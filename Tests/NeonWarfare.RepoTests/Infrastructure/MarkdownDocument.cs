@@ -6,7 +6,7 @@ namespace NeonWarfare.RepoTests.Infrastructure;
 /// <summary>
 /// A parsed markdown file: raw content for the formatting checks, plus links, headings and tables taken
 /// from a sanitized copy where fenced blocks and inline code spans are blanked out. Sanitizing matters —
-/// Docs/Code-style.md contains things like <c>[Rpc(...)]</c> inside code, and README.md has
+/// Docs/World.md contains things like <c>[Query]</c> inside code, and README.md has
 /// <c>`[Child]`</c>; parsing those as links would produce phantom failures.
 /// </summary>
 public sealed class MarkdownDocument

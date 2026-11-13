@@ -6,7 +6,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
 /// Who may refer to whom, over every reference in the compiled code rather than over source text:
-/// <c>Net.IsServer()</c> reaches <c>Services</c> through <c>global using static Services.Global</c> without
+/// <c>Di.Process(this)</c> reaches <c>Services</c> through <c>global using static Services.Global</c> without
 /// the word <c>Services</c> anywhere in the file, and a lambda or an async method is a separate
 /// compiler-generated type that a syntax check would have to attribute by hand.
 /// </summary>

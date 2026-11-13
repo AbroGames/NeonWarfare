@@ -58,7 +58,7 @@ public class CodeStyleTests
 
     /// <summary>
     /// "New global imports are added only there" from Docs/Services.md. A global using is invisible at
-    /// the use site — the code simply says <c>Net.IsServer()</c> — so scattering the declarations makes
+    /// the use site — the code simply says <c>Di.Process(this)</c> — so scattering the declarations makes
     /// it impossible to tell where a name comes from.
     /// </summary>
     [Fact]

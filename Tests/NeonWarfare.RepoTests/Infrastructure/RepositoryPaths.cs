@@ -129,7 +129,7 @@ public static class RepositoryPaths
 
     /// <summary>The only place that names an input action.</summary>
     public static string InputActionsPath { get; } =
-        Path.Combine(GameSourceDirectory, "Scenes", "Entities", "Characters", "Controller", "Player", "Keys.cs");
+        Path.Combine(GameSourceDirectory, "Scripts", "Content", "Keys.cs");
 
     /// <summary>The localization template — the same keys as the .po files, with empty translations.</summary>
     public static string LocaleTemplatePath { get; } = Path.Combine(LocalesDirectory, "messages.pot");
