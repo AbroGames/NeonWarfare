@@ -49,7 +49,8 @@ public class ChatTests
         _provider = new WorldServicesBuilder().Build(
             Dedicated,
             new WorldDependencies(
-                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, TestWorldScenes.CreateCatalog(_scenes),
+                new ManualTimeProvider(Now), _codec, new ManualFrameProvider(), _scenes,
+                TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
@@ -220,7 +221,7 @@ public class ChatTests
             .IsInstanceOf<InvalidOperationException>();
     }
 
-    // Stands for the join of task 015
+    // Past the join, whose events would mix with the chat's
     private PlayerModel JoinDirectly(string uid, string nick, int peerId)
     {
         PlayerModel player = _provider.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(uid);
@@ -269,12 +270,8 @@ public class ChatTests
         var peers = new PeerUidMap();
         var outbox = new EventOutbox(_codec, peers);
         var players = _provider.GetRequiredService<PlayerQuery>();
-        return (new ChatSimulationFacade(new ChatSimulation(new FixedTime(), outbox, players), players), outbox, peers);
-    }
-
-    private class FixedTime : TimeProvider
-    {
-        public override DateTimeOffset GetUtcNow() => DateTimeOffset.FromUnixTimeSeconds(Now);
+        var chatSimulation = new ChatSimulation(new ManualTimeProvider(Now), outbox, players);
+        return (new ChatSimulationFacade(chatSimulation, players), outbox, peers);
     }
 
     private record FixtureCommand(string Name, bool RequiresAdmin, List<string> Calls) : IChatCommand

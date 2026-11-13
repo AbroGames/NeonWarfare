@@ -37,6 +37,7 @@ public class ServerTickLoopTests
     private WorldPackedScenes _scenes = null!;
     private Node _root = null!;
     private RecordingClientsConnection _clientsConnection = null!;
+    private ManualTimeProvider _time = null!;
     private ServiceProvider _provider = null!;
 
     [BeforeTest]
@@ -46,6 +47,7 @@ public class ServerTickLoopTests
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _clientsConnection = new RecordingClientsConnection();
+        _time = new ManualTimeProvider(Now);
     }
 
     [AfterTest]
@@ -174,12 +176,34 @@ public class ServerTickLoopTests
             .ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
     }
 
+    // The deadline passes between the ticks: the join that came in time is processed before the timeout is checked
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RunTick_PeerNotJoinedByTheDeadline_IsDisconnectedAtTheEnd()
+    {
+        const int latePeer = 3;
+        const int joiningPeer = 4;
+        Build(new WorldServicesBuilder());
+        var gatekeeper = _provider.GetRequiredService<PeerGatekeeper>();
+        gatekeeper.OnPeerConnected(latePeer);
+        gatekeeper.OnPeerConnected(joiningPeer);
+        var join = new JoinRequestCommand(_codec.ProtocolHash, "BobBobBobB-Bbbbbbbbbb", "Bob", Colors.White);
+        _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(joiningPeer, _codec.Encode(join));
+
+        _time.Now += PeerGatekeeper.HandshakeTimeout;
+        Loop().RunTick();
+
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(latePeer);
+        AssertThat(_provider.GetRequiredService<PeerUidMap>().TryGetUid(joiningPeer, out _)).IsTrue();
+    }
+
     private void Build(WorldServicesBuilder builder)
     {
         _provider = builder.Build(
             Host,
             new WorldDependencies(
-                new FixedTime(), _codec, new ManualFrameProvider(), _scenes, TestWorldScenes.CreateCatalog(_scenes),
+                _time, _codec, new ManualFrameProvider(), _scenes,
+                TestWorldScenes.CreateCatalog(_scenes),
                 _clientsConnection),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
@@ -189,7 +213,7 @@ public class ServerTickLoopTests
         JoinDirectly("alice", "Alice", AlicePeer);
     }
 
-    // Stands for the join of task 015
+    // Past the join, whose events would mix with the ones under test
     private void JoinDirectly(string uid, string nick, int peerId)
     {
         Players().AddPlayer(uid).Nick = nick;
@@ -211,11 +235,6 @@ public class ServerTickLoopTests
     private ChatPresentation Chat() => _provider.GetRequiredService<ChatPresentation>();
 
     private static Type[] GameTypes() => typeof(WorldServicesBuilder).Assembly.GetTypes();
-
-    private class FixedTime : TimeProvider
-    {
-        public override DateTimeOffset GetUtcNow() => DateTimeOffset.FromUnixTimeSeconds(Now);
-    }
 
     // Publishes the way a Simulation does and looks at the host's chat right after, still inside the tick
     [CommandHandler]

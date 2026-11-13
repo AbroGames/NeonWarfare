@@ -27,13 +27,13 @@
     "Autoconnect (1)": {
       "commandName": "Executable",
       "executablePath": "%GODOT_EXE%",
-      "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer1 --nick TestPlayer1",
+      "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer-AAAAAAAAAA --nick TestPlayer1",
       "workingDirectory": "."
     },
     "Autoconnect (2)": {
       "commandName": "Executable",
       "executablePath": "%GODOT_EXE%",
-      "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer2 --nick TestPlayer2",
+      "commandLineArgs": "--path \"./\" --auto-connect --uid TestPlayer-BBBBBBBBBB --nick TestPlayer2",
       "workingDirectory": "."
     },
     "All tests": {

@@ -60,7 +60,7 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     {
         int port = FreePort.Take();
 
-        SmokeRun.Run(Server(port), Client("client-1", port), Client("client-2", port));
+        SmokeRun.Run(Server(port), FirstClient(port), SecondClient(port));
     }
 
     /// <summary>
@@ -74,24 +74,28 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
         int port = FreePort.Take();
 
         SmokeRun.Run(
-            [Server(port), Client("client-1", port), Client("client-2", port)],
+            [Server(port), FirstClient(port), SecondClient(port)],
             new Departure(Leaver: "client-1", Witness: "server", Milestone: PeerDisconnected));
     }
 
     private static GameLaunch Server(int port) =>
         new("server", ["--server", "--port", port.ToString()], [ServerStarted]);
 
+    private static GameLaunch FirstClient(int port) => Client("client-1", "SmokeTestA-Aaaaaaaaaa", port);
+
+    private static GameLaunch SecondClient(int port) => Client("client-2", "SmokeTestB-Bbbbbbbbbb", port);
+
     /// <summary>
-    /// The nickname doubles as the uid and must be 3 to 25 characters long, or the server rejects the
-    /// sync — "client-1" fits.
+    /// The name doubles as the nickname and must be 3 to 25 characters long, or the server rejects the
+    /// sync — "client-1" fits. The uid follows the format of the generated ones.
     /// </summary>
-    private static GameLaunch Client(string name, int port) => new(
+    private static GameLaunch Client(string name, string uid, int port) => new(
         name,
         [
             "--auto-connect",
             "--auto-connect-ip", "127.0.0.1",
             "--auto-connect-port", port.ToString(),
-            "--uid", name,
+            "--uid", uid,
             "--nick", name,
         ],
         [ConnectedToServer, WorldSynced]);

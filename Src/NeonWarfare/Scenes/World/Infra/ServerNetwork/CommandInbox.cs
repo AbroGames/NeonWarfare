@@ -14,10 +14,12 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
 /// and never reaches the queue; whatever depends on the world state is left to <see cref="CommandDispatcher"/>.
 /// </summary>
 [ServerNetwork]
-public class CommandInbox(NetMessageCodec codec)
+public class CommandInbox(NetMessageCodec codec, PeerGatekeeper gatekeeper)
 {
     private const string RejectedPacketLog = "Packet from peer {peerId} dropped: {reason}";
     private const string TrailingBytesReason = "{0} of {1} bytes read, a packet carries one command";
+    private const string ProtocolMismatchLog =
+        "JoinRequestCommand from peer {peerId} has protocol hash {theirs}, the server has {ours}";
     private const string RegisteredError = "The network command types are already registered.";
     private const string NotRegisteredError = "The network command types are not registered yet.";
 
@@ -64,6 +66,15 @@ public class CommandInbox(NetMessageCodec codec)
         if (bytesRead != packet.Length)
         {
             _log.Warning(RejectedPacketLog, peerId, TrailingBytesReason.FormatWith(bytesRead, packet.Length));
+            return;
+        }
+
+        // A protocol check, not a game rule, so it is not the join handler's: a client of another build is rejected
+        // before its join can reach the world
+        if (command is JoinRequestCommand join && join.ProtocolHash != codec.ProtocolHash)
+        {
+            _log.Warning(ProtocolMismatchLog, peerId, join.ProtocolHash, codec.ProtocolHash);
+            gatekeeper.Reject(peerId, JoinRejectReason.ProtocolMismatch);
             return;
         }
 

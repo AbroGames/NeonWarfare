@@ -17,11 +17,11 @@ public class CommandHandlerTests
     private const string JoinCommand = HandlersNamespace + ".JoinRequestCommand";
     private const string PlayerHandler = HandlersNamespace + ".IPlayerCommandHandler`1";
     private const string JoinHandler = HandlersNamespace + ".IJoinRequestHandler";
+    private const string DisconnectedHandler = HandlersNamespace + ".IPeerDisconnectedHandler";
 
     /// <summary>
     /// <c>JoinRequestCommand</c> goes to the <c>IJoinRequestHandler</c>: the joining peer has no player yet.
     /// </summary>
-    //TODO 015 require an IJoinRequestHandler implementation once the Join facade exists
     [Fact]
     public void EveryCommand_HasNetworkHandler()
     {
@@ -47,6 +47,30 @@ public class CommandHandlerTests
             {
                 report.Add($"{GameAssembly.Describe(command)}: no IPlayerCommandHandler<{command.Name}>, so the " +
                            "server rejects it from the network");
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
+    /// <c>CommandDispatcher.Register</c> takes one of each and only in a pair, but only at run time: without them a
+    /// peer could neither join nor leave.
+    /// </summary>
+    [Fact]
+    public void JoinAndDisconnectedHandlers_HaveExactlyOneImplementation()
+    {
+        FailureReport report = new("Join and peer disconnected handlers that are not exactly one");
+
+        foreach (string handlerInterface in new[] { JoinHandler, DisconnectedHandler })
+        {
+            List<TypeDefinition> implementations = HandlerTypes()
+                .Where(type => Interfaces(type).Any(implemented => implemented.FullName == handlerInterface))
+                .ToList();
+            if (implementations.Count != 1)
+            {
+                string found = string.Join(", ", implementations.Select(GameAssembly.Describe));
+                report.Add($"{handlerInterface}: {implementations.Count} implementations, one expected ({found})");
             }
         }
 
@@ -131,5 +155,5 @@ public class CommandHandlerTests
     }
 
     private static bool IsHandlerInterface(TypeReference implemented) =>
-        implemented.GetElementType().FullName is PlayerHandler or JoinHandler;
+        implemented.GetElementType().FullName is PlayerHandler or JoinHandler or DisconnectedHandler;
 }

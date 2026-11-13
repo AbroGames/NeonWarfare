@@ -22,17 +22,25 @@ public class CommandDispatcherTests
                                     | WorldLayer.ServerNetwork | WorldLayer.Query | WorldLayer.Presentation
                                     | WorldLayer.ClientNetwork;
 
+    private const int HostPeer = RecordingClientsConnection.HostPeer;
+    private const string HostUid = "host";
     private const int AlicePeer = 2;
     private const string AliceUid = "alice";
     private const int BobPeer = 3;
     private const string BobUid = "bob";
+    private const int AliceSecondPeer = 4;
 
     private const string Invalid = "invalid";
     private const string ThrowInValidate = "throw in validate";
     private const string ThrowInProcess = "throw in process";
+    private const string ThrowInLeave = "throw in leave";
+    private const string ProcessedJoin = "process join alice: bound, buffer";
 
     private NetMessageCodec _codec = null!;
     private PeerUidMap _peers = null!;
+    private RecordingClientsConnection _clientsConnection = null!;
+    private PeerGatekeeper _gatekeeper = null!;
+    private EventOutbox _outbox = null!;
     private PlayersStorage _playersStorage = null!;
     private PlayersSessionStorage _sessionStorage = null!;
     private PlayersModel _playersModel = null!;
@@ -45,6 +53,9 @@ public class CommandDispatcherTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _peers = new PeerUidMap();
+        _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
+        _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
+        _outbox = new EventOutbox(_codec, _peers);
         _playersStorage = new PlayersStorage();
         _sessionStorage = new PlayersSessionStorage();
         var registry = new EntityRegistry();
@@ -52,7 +63,7 @@ public class CommandDispatcherTests
         registry.Register(new NetId(2), _sessionStorage);
         _playersModel = _playersStorage.Model;
         _players = new PlayerQuery(new PlayersStorageQuery(registry), new PlayersSessionStorageQuery(registry));
-        _inbox = new CommandInbox(_codec);
+        _inbox = new CommandInbox(_codec, _gatekeeper);
         _calls = [];
     }
 
@@ -159,9 +170,24 @@ public class CommandDispatcherTests
 
         AssertThat(_calls).ContainsExactly(
             "validate join alice",
-            "process join alice",
+            ProcessedJoin,
             "validate alice: hi",
             "process alice: hi");
+    }
+
+    // The join handler publishes the join events, which the joiner must get too
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_Join_BindsThePeerAndCreatesItsBufferBeforeProcess()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+
+        Join(AlicePeer, AliceUid);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("validate join alice", ProcessedJoin);
+        AssertBound(AlicePeer, AliceUid);
+        AssertThat(_clientsConnection.Disconnected).IsEmpty();
     }
 
     [TestCase]
@@ -174,12 +200,14 @@ public class CommandDispatcherTests
         Join(AlicePeer, "other");
         dispatcher.ProcessAll();
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "process join alice");
+        AssertThat(_calls).ContainsExactly("validate join alice", ProcessedJoin);
+        AssertBound(AlicePeer, AliceUid);
+        AssertThat(_clientsConnection.Disconnected).IsEmpty();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ProcessAll_FailedJoinValidate_DoesNotProcessTheJoin()
+    public void ProcessAll_FailedJoinValidate_RejectsAndDisconnectsThePeer()
     {
         CommandDispatcher dispatcher = Dispatcher(JoinHandler());
 
@@ -188,7 +216,158 @@ public class CommandDispatcherTests
         dispatcher.ProcessAll();
 
         AssertThat(_calls).ContainsExactly($"validate join {Invalid}", $"validate join {ThrowInValidate}");
-        AssertThat(_peers.TryGetUid(AlicePeer, out _)).IsFalse();
+        AssertNotBound(AlicePeer);
+        AssertNotBound(BobPeer);
+        // The exception text stays in the log: the peer gets only the neutral code
+        AssertThat(Rejections()).ContainsExactly(
+            (AlicePeer, JoinRejectReason.InvalidNick), (BobPeer, JoinRejectReason.InternalError));
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, BobPeer);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_ThrowingJoinProcess_RollsTheJoinBackAndRejects()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+
+        Join(AlicePeer, ThrowInProcess);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly(
+            $"validate join {ThrowInProcess}", $"process join {ThrowInProcess}: bound, buffer");
+        AssertNotBound(AlicePeer);
+        AssertThat(_peers.TryGetPeerId(ThrowInProcess, out _)).IsFalse();
+        AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.InternalError));
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_JoinWithUidOfAnotherPeer_DisplacesIt()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+        Join(AlicePeer, AliceUid);
+        dispatcher.ProcessAll();
+        _calls.Clear();
+
+        Join(AliceSecondPeer, AliceUid);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", ProcessedJoin);
+        AssertNotBound(AlicePeer);
+        AssertBound(AliceSecondPeer, AliceUid);
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+        AssertThat(Rejections()).IsEmpty();
+    }
+
+    // Unbound and without a deadline, the old peer would otherwise stay connected until it leaves on its own
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_ThrowingLeaveOfDisplacedPeer_StillDisconnectsIt()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+        Join(AlicePeer, ThrowInLeave);
+        dispatcher.ProcessAll();
+
+        Join(AliceSecondPeer, ThrowInLeave);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).Contains($"leave {ThrowInLeave}");
+        AssertNotBound(AlicePeer);
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+    }
+
+    // Between the disconnect and its peer_disconnected the displaced peer still sends: it must not displace back
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_DisplacedPeer_IsIgnoredUntilItsDisconnection()
+    {
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), JoinHandler());
+        Join(AlicePeer, AliceUid);
+        dispatcher.ProcessAll();
+        _calls.Clear();
+
+        Join(AliceSecondPeer, AliceUid);
+        Join(AlicePeer, AliceUid);
+        Chat(AlicePeer, "still here");
+        _inbox.EnqueuePeerDisconnected(AlicePeer);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", ProcessedJoin);
+        AssertBound(AliceSecondPeer, AliceUid);
+        AssertThat(_gatekeeper.IsDisconnecting(AlicePeer)).IsFalse();
+    }
+
+    // The host cannot reconnect from another peer, so it is never displaced
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_JoinWithTheHostsUid_IsRejected()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+        Join(HostPeer, HostUid);
+        dispatcher.ProcessAll();
+        _calls.Clear();
+
+        Join(AlicePeer, HostUid);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("validate join host");
+        AssertBound(HostPeer, HostUid);
+        AssertNotBound(AlicePeer);
+        AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.UidInUse));
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_JoinedPeerDisconnected_LeavesAndLosesBindingAndBuffer()
+    {
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), JoinHandler());
+        Join(AlicePeer, AliceUid);
+        dispatcher.ProcessAll();
+        _calls.Clear();
+
+        _inbox.EnqueuePeerDisconnected(AlicePeer);
+        Chat(AlicePeer, "after leaving");
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("leave alice");
+        AssertNotBound(AlicePeer);
+        AssertThat(_peers.TryGetPeerId(AliceUid, out _)).IsFalse();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_NotJoinedPeerDisconnected_CallsNoHandler()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+        Join(AlicePeer, Invalid);
+        dispatcher.ProcessAll();
+        _calls.Clear();
+
+        _inbox.EnqueuePeerDisconnected(AlicePeer);
+        _inbox.EnqueuePeerDisconnected(BobPeer);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).IsEmpty();
+        AssertThat(_gatekeeper.IsDisconnecting(AlicePeer)).IsFalse();
+    }
+
+    // A peer left bound would block its uid until the server restarts
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_ThrowingLeave_StillUnbindsThePeer()
+    {
+        CommandDispatcher dispatcher = Dispatcher(JoinHandler());
+        Join(AlicePeer, ThrowInLeave);
+        dispatcher.ProcessAll();
+
+        _inbox.EnqueuePeerDisconnected(AlicePeer);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).Contains($"leave {ThrowInLeave}");
+        AssertNotBound(AlicePeer);
+        AssertThat(_peers.TryGetPeerId(ThrowInLeave, out _)).IsFalse();
     }
 
     [TestCase]
@@ -218,11 +397,25 @@ public class CommandDispatcherTests
                  {
                      new object[] { new PlayerChatHandler(_calls), new PlayerChatHandler(_calls) },
                      [JoinHandler(), JoinHandler()],
+                     [JoinHandler(), new LeaveOnlyHandler()],
                  })
         {
-            var dispatcher = new CommandDispatcher(_inbox, _peers);
+            CommandDispatcher dispatcher = Unregistered();
 
             AssertThrown(() => dispatcher.Register(handlers)).IsInstanceOf<InvalidOperationException>();
+        }
+    }
+
+    // A joined peer could never leave, or a leave handler would wait for joins that never come
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Register_JoinAndLeaveHandlersNotInPair_Throws()
+    {
+        foreach (object handler in new object[] { new JoinOnlyHandler(), new LeaveOnlyHandler() })
+        {
+            CommandDispatcher dispatcher = Unregistered();
+
+            AssertThrown(() => dispatcher.Register([handler])).IsInstanceOf<InvalidOperationException>();
         }
     }
 
@@ -230,7 +423,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Register_ObjectImplementingNoHandler_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers);
+        CommandDispatcher dispatcher = Unregistered();
 
         AssertThrown(() => dispatcher.Register([new object()])).IsInstanceOf<InvalidOperationException>();
     }
@@ -240,7 +433,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void Register_PlayerHandlerOfJoinRequest_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers);
+        CommandDispatcher dispatcher = Unregistered();
 
         AssertThrown(() => dispatcher.Register([new PlayerJoinHandler()])).IsInstanceOf<InvalidOperationException>();
     }
@@ -249,7 +442,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_BeforeRegister_Throws()
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers);
+        CommandDispatcher dispatcher = Unregistered();
 
         AssertThrown(() => dispatcher.ProcessAll()).IsInstanceOf<InvalidOperationException>();
     }
@@ -269,7 +462,7 @@ public class CommandDispatcherTests
         inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(new ChatServerMessageEvent(1, "an event")));
         inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(chat));
 
-        AssertThat(whitelist).Contains(typeof(SendChatMessageCommand));
+        AssertThat(whitelist).Contains(typeof(SendChatMessageCommand), typeof(JoinRequestCommand));
         AssertThat(whitelist.Where(type => !type.IsSubclassOf(typeof(Command)))).IsEmpty();
         AssertThat(whitelist.Contains(typeof(CommandInbox.PeerDisconnected))).IsFalse();
         AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, chat));
@@ -284,12 +477,14 @@ public class CommandDispatcherTests
 
     private CommandDispatcher NewDispatcher(params object[] handlers)
     {
-        var dispatcher = new CommandDispatcher(_inbox, _peers);
+        CommandDispatcher dispatcher = Unregistered();
         dispatcher.Register(handlers);
         return dispatcher;
     }
 
-    private FakeJoinHandler JoinHandler() => new(_calls, _peers);
+    private CommandDispatcher Unregistered() => new(_inbox, _peers, _outbox, _gatekeeper);
+
+    private FakeJoinHandler JoinHandler() => new(_calls, _peers, _outbox);
 
     // The dispatcher looks only at the binding: whether the player exists is the handler's lookup
     private void JoinDirectly(string uid, int peerId) => _peers.Bind(uid, peerId);
@@ -298,7 +493,27 @@ public class CommandDispatcherTests
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
 
     private void Join(int peerId, string uid) =>
-        _inbox.EnqueueFromPeer(peerId, _codec.Encode(new JoinRequestCommand(1, uid, uid, Colors.Red)));
+        _inbox.EnqueueFromPeer(
+            peerId, _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, uid, uid, Colors.Red)));
+
+    private void AssertBound(int peerId, string uid)
+    {
+        AssertThat(_peers.TryGetUid(peerId, out string? bound)).IsTrue();
+        AssertThat(bound).IsEqual(uid);
+        AssertThat(_outbox.Peers).Contains(peerId);
+    }
+
+    private void AssertNotBound(int peerId)
+    {
+        AssertThat(_peers.TryGetUid(peerId, out _)).IsFalse();
+        AssertThat(_outbox.Peers.Contains(peerId)).IsFalse();
+    }
+
+    private List<(int, JoinRejectReason)> Rejections() =>
+        _clientsConnection.Packets
+            .Where(sent => sent.Packet[0] == (byte) ServerPacketKind.JoinRejected)
+            .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Packet[1]))
+            .ToList();
 
     private WorldDependencies Dependencies()
     {
@@ -343,14 +558,14 @@ public class CommandDispatcherTests
         public void Process(string senderUid, JoinRequestCommand command) { }
     }
 
-    // Stands for the join of task 015: binds the peer, which is all the dispatcher looks at
-    private class FakeJoinHandler(List<string> calls, PeerUidMap peers)
-        : IJoinRequestHandler
+    // Records whether the dispatcher has bound the peer and created its buffer by the time of Process
+    private class FakeJoinHandler(List<string> calls, PeerUidMap peers, EventOutbox outbox)
+        : IJoinRequestHandler, IPeerDisconnectedHandler
     {
-        public bool Validate(int peerId, JoinRequestCommand command, out string reason)
+        public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
         {
             calls.Add($"validate join {command.Uid}");
-            reason = "rejected";
+            reason = JoinRejectReason.InvalidNick;
             return command.Uid switch
             {
                 ThrowInValidate => throw new InvalidOperationException("validate failed"),
@@ -359,10 +574,34 @@ public class CommandDispatcherTests
             };
         }
 
-        public void Process(int peerId, JoinRequestCommand command)
+        public void Process(JoinRequestCommand command)
         {
-            calls.Add($"process join {command.Uid}");
-            peers.Bind(command.Uid, peerId);
+            bool bound = peers.TryGetPeerId(command.Uid, out int peerId);
+            string buffer = bound && outbox.Peers.Contains(peerId) ? "buffer" : "no buffer";
+            calls.Add($"process join {command.Uid}: {(bound ? "bound" : "not bound")}, {buffer}");
+            if (command.Uid == ThrowInProcess) throw new InvalidOperationException("process failed");
         }
+
+        public void Process(string uid)
+        {
+            calls.Add($"leave {uid}");
+            if (uid == ThrowInLeave) throw new InvalidOperationException("leave failed");
+        }
+    }
+
+    private class JoinOnlyHandler : IJoinRequestHandler
+    {
+        public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
+        {
+            reason = default;
+            return true;
+        }
+
+        public void Process(JoinRequestCommand command) { }
+    }
+
+    private class LeaveOnlyHandler : IPeerDisconnectedHandler
+    {
+        public void Process(string uid) { }
     }
 }

@@ -13,7 +13,11 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
 /// Everything the Simulation published during the tick leaves at its end, the host's own peer included.
 /// </summary>
 [ServerNetwork]
-public class ServerTickLoop(CommandDispatcher commands, EventOutbox outbox, IClientsConnection clientsConnection)
+public class ServerTickLoop(
+    CommandDispatcher commands,
+    PeerGatekeeper gatekeeper,
+    EventOutbox outbox,
+    IClientsConnection clientsConnection)
 {
     private const string SendFailedLog = "Events packet for peer {peerId} failed, the other peers still get theirs";
 
@@ -30,6 +34,7 @@ public class ServerTickLoop(CommandDispatcher commands, EventOutbox outbox, ICli
     {
         CurrentTick++;
         commands.ProcessAll();
+        gatekeeper.DisconnectExpired();
         //TODO Tick() of the facades with a time rule, once the first one appears
         //TODO 021/022 deferred join and save snapshots
         SendEvents();
