@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using NeonWarfare.Scenes.World.Features.Players;
 using RepliCAT;
 
-namespace NeonWarfare.Scenes.World.Features.Storages;
+namespace NeonWarfare.Scenes.World.Features.Players;
 
-public class PersistenceModel
+public class PlayersModel
 {
     public IReadOnlyDictionary<string, PlayerModel> PlayerByUid => _playerByUid;
     [Replicated] private readonly ReplicatedDictionary<string, PlayerModel> _playerByUid = new();

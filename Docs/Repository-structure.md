@@ -36,7 +36,7 @@ Src/                                  Code and scenes of the Godot project; a na
     │   │       └── Surfaces/         Surfaces (locations): Safe, Battle
     │   ├── World/                    The new world under construction, will replace OldWorld/
     │   │   ├── Infra/                Feature-independent machinery: layer attributes, entities and NetId, protocol, network, HUD mailbox; refers to nothing in Features/ or the World root
-    │   │   └── Features/             One folder per feature with all its layers and models next to their nodes: Chat, Players, Storages…
+    │   │   └── Features/             One folder per feature with all its layers and models next to their nodes: Chat, Players, NewWorld…
     │   ├── Entities/                 Game objects: characters (controllers, stats, effects), walls
     │   ├── Screen/                   UI: the main menu, HUD, server console, loading screen
     │   └── Misc/                     Game-side descendants of the GodotBox nodes (GameCheckedAbstractStorage)

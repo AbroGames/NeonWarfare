@@ -5,7 +5,7 @@ namespace NeonWarfare.Scenes.World.Features.Players;
 
 public class PlayerModel
 {
-    // Immutable after construction so that PersistenceModel can keep PlayerByUid[uid].Uid == uid
+    // Immutable after construction so that PlayersModel can keep PlayerByUid[uid].Uid == uid
     [field: Replicated] public string Uid { get; private set; }
     [Replicated] public string Nick;
     [Replicated] public Color Color;

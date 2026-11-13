@@ -8,7 +8,6 @@ using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Features.Storages;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
@@ -182,8 +181,8 @@ public class WorldServicesBuilderTests
 
             world.InitPreReady(layers, Dependencies(), WorldOrigin.New);
 
-            AssertThat(world.GetChildren().OfType<PersistenceStorage>().Count()).IsEqual(1);
-            AssertThat(world.GetChildren().OfType<SessionStorage>().Count()).IsEqual(1);
+            AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
+            AssertThat(world.GetChildren().OfType<PlayersSessionStorage>().Count()).IsEqual(1);
         }
     }
 
@@ -226,7 +225,7 @@ public class WorldServicesBuilderTests
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher), typeof(CommandInbox),
             typeof(CommandDispatcher), typeof(ChatSimulation), typeof(ChatSimulationFacade),
-            typeof(PlayerQuery), typeof(PersistenceStorageQuery), typeof(SessionStorageQuery),
+            typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
         ]);
 
     private static WorldDependencies Dependencies()

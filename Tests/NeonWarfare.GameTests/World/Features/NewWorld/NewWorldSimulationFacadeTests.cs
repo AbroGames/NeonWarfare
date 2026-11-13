@@ -3,7 +3,7 @@ using Godot;
 using NeonWarfare.GameTests.World.Fixtures;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.NewWorld;
-using NeonWarfare.Scenes.World.Features.Storages;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using static GdUnit4.Assertions;
 
@@ -25,6 +25,6 @@ public class NewWorldSimulationFacadeTests
         new NewWorldSimulationFacade(spawner).Create();
 
         AssertThat(root.GetChildren())
-            .ContainsExactly(registry.GetSingle<PersistenceStorage>(), registry.GetSingle<SessionStorage>());
+            .ContainsExactly(registry.GetSingle<PlayersStorage>(), registry.GetSingle<PlayersSessionStorage>());
     }
 }
