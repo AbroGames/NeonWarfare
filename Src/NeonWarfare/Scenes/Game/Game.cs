@@ -83,7 +83,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
                 HudContainer.ClearStoredNode();
                 break;
             case GameScreen.Hud:
-                Hud hud = GamePackedScenes.Hud.Instantiate<Hud>().InitPreReady(_world);
+                Hud hud = GamePackedScenes.Hud.Instantiate<Hud>().InitPreReady(_world, _world);
                 hud.SetName("Hud");
                 HudContainer.ChangeStoredNode(hud);
                 break;

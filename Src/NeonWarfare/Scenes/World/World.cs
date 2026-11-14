@@ -16,8 +16,24 @@ using Serilog;
 
 namespace NeonWarfare.Scenes.World;
 
-public partial class World : Node2D
+public partial class World : Node2D, World.IReader, World.ICommandSender
 {
+    /// <summary>
+    /// What a screen reads from the World.
+    /// </summary>
+    public interface IReader
+    {
+        T Get<T>() where T : class;
+    }
+
+    /// <summary>
+    /// How a screen of a playing peer acts on the World.
+    /// </summary>
+    public interface ICommandSender
+    {
+        PlayerCommandSender Commands { get; }
+    }
+
     private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string NotInitializedError = "World is not initialized";
     private const string NoLayerError = "World has no {0} layer";
