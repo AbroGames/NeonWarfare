@@ -43,7 +43,8 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new SingleplayerGameStarter(saveFileName));
+        game.Init(new SingleplayerGameStarter(
+            saveFileName: saveFileName));
     }
     
     public void ConnectToMultiplayerGame(string host = null, int? port = null)
@@ -52,7 +53,10 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new ConnectToMultiplayerGameStarter(host, port, true));
+        game.Init(new ConnectToMultiplayerGameStarter(
+            host: host, 
+            port: port, 
+            mustSetLastGame: true));
     }
     
     /// <summary>
@@ -73,11 +77,15 @@ public class MainSceneService
         
         if (createDedicatedServerProcess)
         {
-            game.Init(new HostDedicatedServerAndConnectGameStarter(saveFileName, port, adminUid, true));
+            game.Init(new HostDedicatedServerAndConnectGameStarter(
+                saveFileName: saveFileName, 
+                port: port, 
+                adminUid: adminUid, 
+                showWindow: true));
         }
         else
         {
-            game.Init(new HostMultiplayerGameStarter(saveFileName, port, adminUid, null,false, true, true, false));
+            game.Init(new HostMultiplayerGameStarter(saveFileName: saveFileName, port: port, adminUid: adminUid));
         }
     }
     
@@ -89,17 +97,13 @@ public class MainSceneService
     /// <param name="adminUid">This user can manage the server</param>
     /// <param name="parentPid">If this process is a dedicated server created from a client,
     /// use the PID of the client process.</param>
-    /// <param name="noHudRender">Don't show ServerHud. Could be used in a dedicated server
-    /// to show only the world game scene.</param>
-    /// <param name="worldRender">Show the game scene behind gui. Could be disabled
-    /// in a dedicated server to show only the ServerHud.</param>
+    /// <param name="serverHud">Show the ServerHud: false for a server without a window.</param>
     public void HostMultiplayerGameAsDedicatedServer(
         string saveFileName,
         int? port = null,
         string adminUid = null,
         int? parentPid = null,
-        bool noHudRender = false,
-        bool worldRender = false)
+        bool serverHud = true)
     {
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
@@ -108,8 +112,13 @@ public class MainSceneService
         // Don't set LastGame in dedicated server started from console
         bool mustSetLastGame = parentPid.HasValue;
         
-        game.Init(new HostMultiplayerGameStarter(
-            saveFileName, port, adminUid, parentPid, !noHudRender, worldRender, mustSetLastGame, true));
+        game.Init(new DedicatedServerGameStarter(
+            saveFileName: saveFileName, 
+            port: port, 
+            adminUid: adminUid, 
+            parentPid: parentPid,
+            serverHud: serverHud, 
+            mustSetLastGame: mustSetLastGame));
         Services.LoadingScreen.Clear();
     }
 

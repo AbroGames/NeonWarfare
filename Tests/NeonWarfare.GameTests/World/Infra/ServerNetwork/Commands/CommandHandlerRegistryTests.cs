@@ -17,9 +17,6 @@ namespace NeonWarfare.GameTests.World.Infra.ServerNetwork.Commands;
 [TestSuite]
 public class CommandHandlerRegistryTests
 {
-    private const WorldLayer Host = WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler
-                                    | WorldLayer.ServerNetwork | WorldLayer.Query | WorldLayer.Presentation
-                                    | WorldLayer.ClientNetwork;
 
     private const int AlicePeer = 2;
 
@@ -124,7 +121,7 @@ public class CommandHandlerRegistryTests
     {
         var codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         using ServiceProvider provider = new WorldServicesBuilder().Build(
-            Host, Dependencies(codec), new WorldRoot(AutoFree(new Node())!));
+            WorldLayer.Host, Dependencies(codec), new WorldRoot(AutoFree(new Node())!));
         IReadOnlySet<Type> whitelist = provider.GetRequiredService<CommandHandlerRegistry>().NetworkCommandTypes;
         var inbox = provider.GetRequiredService<CommandInbox>();
         var chat = new SendChatMessageCommand("hi");
@@ -149,7 +146,8 @@ public class CommandHandlerRegistryTests
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new(TimeProvider.System, codec, new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection());
+            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
+            new RecordingClientsConnection());
     }
 
     private class ChatHandler : IPlayerCommandHandler<SendChatMessageCommand>

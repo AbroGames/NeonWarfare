@@ -14,7 +14,7 @@
   `HostDedicatedServerAndConnectGameStarter`. When the `Game` scene is destroyed, it kills the server
   process by the stored PID.
 * **A server started from the client** — that same process was passed `--parent-pid`, and
-  `HostMultiplayerGameStarter` attaches a `ProcessDeadChecker` (also a node from GodotBox) to `Game`.
+  `DedicatedServerGameStarter` attaches a `ProcessDeadChecker` (also a node from GodotBox) to `Game`.
   It periodically checks whether the parent is alive and calls `MainScene.Shutdown()` if the client has
   disappeared from the OS.
 * **Saving the world** — `WorldServerShutdowner` catches `NotificationExitTree` and calls

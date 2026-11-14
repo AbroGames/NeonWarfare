@@ -55,6 +55,33 @@ public class CommandHandlerTests
     }
 
     /// <summary>
+    /// The server takes from a player only the commands with a player handler, and the join only from a peer that has
+    /// not joined: <c>Game</c> sends it itself, before a remote client has a World.
+    /// </summary>
+    [Fact]
+    public void SentCommands_HavePlayerHandler()
+    {
+        FailureReport report = new("Commands sent by PlayerCommandSender that the server never takes from a player");
+        IReadOnlySet<string> playerHandlers = PlayerHandledCommands();
+
+        foreach (CommandSends.Site site in CommandSends.All())
+        {
+            string where = GameAssembly.Describe(site.From);
+            if (site.Command.FullName == JoinCommand)
+            {
+                report.Add($"{where}: sends {site.Command.Name}, which only Game sends");
+            }
+            else if (!playerHandlers.Contains(site.Command.FullName))
+            {
+                report.Add($"{where}: sends {site.Command.Name}, which has no " +
+                           $"IPlayerCommandHandler<{site.Command.Name}>, so the server rejects it");
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
     /// <c>CommandHandlerRegistry.Register</c> takes one of each and only in a pair, but only at run time: without
     /// them a peer could neither join nor leave.
     /// </summary>

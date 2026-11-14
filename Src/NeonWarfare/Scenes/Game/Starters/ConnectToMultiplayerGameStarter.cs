@@ -4,6 +4,9 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
+/// <summary>
+/// An ENet client connecting to a server in another process or machine.
+/// </summary>
 public class ConnectToMultiplayerGameStarter(
     string host,
     int? port,
@@ -20,16 +23,12 @@ public class ConnectToMultiplayerGameStarter(
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
         
         Network.Network network = game.AddNetwork();
-        OldWorld.World world = game.AddWorld();
-        game.AddHud();
 
-        // Use inner function for detach this function after connecting to server,
-        // otherwise we have memory leak for world.SynchronizerService
+        //TODO 021 the World comes from the first snapshot, until then the connecting screen stays
         void ConnectedToServerEvent()
         {
             if (!IsGameAlive(game)) return;
-            game.GetMultiplayer().ConnectedToServer -= ConnectedToServerEvent;
-            ClientStartWorld(world);
+            SendJoinRequest(game);
         }
         
         // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
@@ -47,9 +46,10 @@ public class ConnectToMultiplayerGameStarter(
             GoToMenuAndShowError(DisconnectedFromServerMessage);
         }
 
-        game.GetMultiplayer().ConnectedToServer += ConnectedToServerEvent;
-        game.GetMultiplayer().ConnectionFailed += ConnectionFailedEvent;
-        game.GetMultiplayer().ServerDisconnected += ServerDisconnectedEvent;
+        // Events of Network, which dies with the game, so the handlers need no unsubscribing
+        network.ConnectedToServerEvent += ConnectedToServerEvent;
+        network.ConnectionFailedEvent += ConnectionFailedEvent;
+        network.ServerDisconnectedEvent += ServerDisconnectedEvent;
 
         if (mustSetLastGame)
         {

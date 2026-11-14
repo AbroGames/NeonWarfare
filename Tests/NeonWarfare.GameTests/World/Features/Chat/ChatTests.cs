@@ -24,9 +24,6 @@ namespace NeonWarfare.GameTests.World.Features.Chat;
 [TestSuite]
 public class ChatTests
 {
-    private const WorldLayer Dedicated =
-        WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
-        | WorldLayer.Query;
 
     private const long Now = 1_700_000_000;
     private const int MaxLength = 1024;
@@ -49,11 +46,11 @@ public class ChatTests
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _provider = new WorldServicesBuilder().Build(
-            Dedicated,
+            WorldLayer.Dedicated,
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec, new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
-                new RecordingClientsConnection()),
+                new RecordingClientsConnection(), new RecordingClientsConnection()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();

@@ -3,12 +3,15 @@ using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
+/// <summary>
+/// Launches a dedicated server as a child process and connects to it as an ordinary client.
+/// </summary>
 public class HostDedicatedServerAndConnectGameStarter(
     string saveFileName,
     int? port,
     string adminUid,
     bool showWindow
-    ) : ConnectToMultiplayerGameStarter(Localhost, port, false)
+    ) : ConnectToMultiplayerGameStarter(host: Localhost, port: port, mustSetLastGame: false)
 {
     private readonly int? _port = port;
 

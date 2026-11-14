@@ -25,9 +25,6 @@ namespace NeonWarfare.GameTests.World.Infra.ServerNetwork.Tick;
 [TestSuite]
 public class ServerTickLoopTests
 {
-    private const WorldLayer Host = WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler
-                                    | WorldLayer.ServerNetwork | WorldLayer.Query | WorldLayer.Presentation
-                                    | WorldLayer.ClientNetwork;
 
     private const long Now = 1_700_000_000;
     private const int HostPeer = RecordingClientsConnection.HostPeer;
@@ -203,11 +200,11 @@ public class ServerTickLoopTests
     private void Build(WorldServicesBuilder builder)
     {
         _provider = builder.Build(
-            Host,
+            WorldLayer.Host,
             new WorldDependencies(
                 _time, _codec, new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
-                _clientsConnection),
+                _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;

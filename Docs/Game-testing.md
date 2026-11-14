@@ -75,6 +75,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 
 | Test class | What it checks |
 | --- | --- |
+| `Game/GameProtocolTests` | The session's catalog is built from a ready `WorldPackedScenes`: its scene kinds in order, the codec's hash over its descriptors; a not ready one throws |
 | `GodotBox/NodeContainerTests` | Storing, replacing and clearing the child; the replaced one is queued for deletion; `_Ready` adopts one child, throws on two |
 | `GodotBox/AbstractStorageTests` | Only exported `PackedScene` properties are registered, after `_PreReady`; a scene's id is its index in the list |
 | `GodotBox/CheckedAbstractStorageTests` | A null `[NotNullStrict]` member fails `_Ready` through `GetDi()` |
@@ -100,6 +101,7 @@ One row per `[TestSuite]` class, path relative to `Tests/NeonWarfare.GameTests/`
 | `World/Infra/ServerNetwork/Peers/PeerUidMapTests` | uid ↔ peerId lookup both ways, unbind, a uid or a peer bound twice throws |
 | `World/Infra/ServerNetwork/Tick/ServerTickLoopTests` | An event of a tick reaches the host's `ChatPresentation` through loopback only at its end; every peer with events gets an events packet, none without; a failing peer costs the others nothing; the tick counter; commands before sending; the handshake timeout after the commands |
 | `World/WorldServicesBuilderTests` | The world container builds for client, host, dedicated server; each gets its own services, created eagerly; queries in every one; the outbox and the command queue only on a server; the event dispatcher and the HUD mailbox wherever a Presentation is; chat commands registered on a server; a facade cycle is rejected; `Build` spawns nothing, `InitPreReady` of a new world spawns both Players storages |
+| `World/WorldEntryPointsTests` | A join through the server entry points reaches the host's `ChatPresentation` through loopback; `Commands` loops back as the host's peer; a join rejection does not reach the event dispatcher, a broken packet throws; an entry point without its layer throws, `Commands` included; `Get` hands out only queries and Presentation of the World's layers |
 | `World/ReplicatedTypesTests` | Every game type with a `[Replicated]` member, nodes included, round-trips a delta and a snapshot with its default values |
 
 ## CI

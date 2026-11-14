@@ -25,12 +25,6 @@ namespace NeonWarfare.GameTests.World;
 [TestSuite]
 public class WorldServicesBuilderTests
 {
-    private const WorldLayer Dedicated =
-        WorldLayer.Simulation | WorldLayer.SimulationFacade | WorldLayer.CommandHandler | WorldLayer.ServerNetwork
-        | WorldLayer.Query;
-
-    private const WorldLayer Client = WorldLayer.Query | WorldLayer.Presentation | WorldLayer.ClientNetwork;
-    private const WorldLayer Host = Dedicated | WorldLayer.Presentation | WorldLayer.ClientNetwork;
 
     // Handler → facade → simulation are constructor-injected and ValidateOnBuild rejects a broken chain:
     // a present handler means all three are there, an absent ChatSimulation means none is
@@ -40,9 +34,9 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool hasSimulation, bool hasPresentation) in new[]
                  {
-                     (Client, false, true),
-                     (Host, true, true),
-                     (Dedicated, true, false),
+                     (WorldLayer.Client, false, true),
+                     (WorldLayer.Host, true, true),
+                     (WorldLayer.Dedicated, true, false),
                  })
         {
             using ServiceProvider provider = Build(layers);
@@ -59,9 +53,9 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool isServer) in new[]
                  {
-                     (Client, false),
-                     (Host, true),
-                     (Dedicated, true),
+                     (WorldLayer.Client, false),
+                     (WorldLayer.Host, true),
+                     (WorldLayer.Dedicated, true),
                  })
         {
             using ServiceProvider provider = Build(layers);
@@ -82,9 +76,9 @@ public class WorldServicesBuilderTests
     {
         foreach ((WorldLayer layers, bool hasPresentation) in new[]
                  {
-                     (Client, true),
-                     (Host, true),
-                     (Dedicated, false),
+                     (WorldLayer.Client, true),
+                     (WorldLayer.Host, true),
+                     (WorldLayer.Dedicated, false),
                  })
         {
             using ServiceProvider provider = Build(layers);
@@ -99,7 +93,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_ServerConfigurations_RegisterChatCommands()
     {
-        foreach (WorldLayer layers in new[] { Host, Dedicated })
+        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.Dedicated })
         {
             using ServiceProvider provider = Build(layers);
 
@@ -108,7 +102,7 @@ public class WorldServicesBuilderTests
                 .Contains(typeof(HelpChatCommandSimulationFacade));
         }
 
-        using ServiceProvider client = Build(Client);
+        using ServiceProvider client = Build(WorldLayer.Client);
         AssertThat(client.GetService<ChatSimulationFacade>()).IsNull();
         AssertThat(client.GetService<HelpChatCommandSimulationFacade>()).IsNull();
     }
@@ -119,7 +113,7 @@ public class WorldServicesBuilderTests
     {
         UnrequestedPresentation.Created = 0;
 
-        using ServiceProvider provider = Build(FixtureBuilder(typeof(UnrequestedPresentation)), Host);
+        using ServiceProvider provider = Build(FixtureBuilder(typeof(UnrequestedPresentation)), WorldLayer.Host);
 
         AssertThat(UnrequestedPresentation.Created).IsEqual(1);
     }
@@ -128,7 +122,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_HasQueries()
     {
-        foreach (WorldLayer layers in new[] { Client, Host, Dedicated })
+        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host, WorldLayer.Dedicated })
         {
             using ServiceProvider provider = Build(FixtureBuilder(typeof(FixtureQuery)), layers);
 
@@ -145,7 +139,7 @@ public class WorldServicesBuilderTests
         string message = "";
         try
         {
-            Build(FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB)), Host).Dispose();
+            Build(FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB)), WorldLayer.Host).Dispose();
         }
         catch (AggregateException exception)
         {
@@ -161,7 +155,7 @@ public class WorldServicesBuilderTests
     {
         GameWorld world = AutoFree(new GameWorld())!;
 
-        AssertThat(world.InitPreReady(Host, Dependencies(), WorldOrigin.New)).IsSame(world);
+        AssertThat(world.InitPreReady(WorldLayer.Host, Dependencies(), WorldOrigin.New)).IsSame(world);
     }
 
     [TestCase]
@@ -171,7 +165,7 @@ public class WorldServicesBuilderTests
         GameWorld world = AutoFree(new GameWorld())!;
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
-        AssertThrown(() => world.InitPreReady(Host, Dependencies(), WorldOrigin.New))
+        AssertThrown(() => world.InitPreReady(WorldLayer.Host, Dependencies(), WorldOrigin.New))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -179,7 +173,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void InitPreReady_NewWorld_SpawnsBothStoragesUnderTheWorld()
     {
-        foreach (WorldLayer layers in new[] { Host, Dedicated })
+        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.Dedicated })
         {
             GameWorld world = AutoFree(new GameWorld())!;
 
@@ -195,7 +189,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_SpawnsNothing()
     {
-        foreach (WorldLayer layers in new[] { Client, Host, Dedicated })
+        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host, WorldLayer.Dedicated })
         {
             Node root = AutoFree(new Node())!;
 
@@ -211,7 +205,7 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_Client_HasNoSpawnerNorNetIdGenerator()
     {
-        using ServiceProvider provider = Build(Client);
+        using ServiceProvider provider = Build(WorldLayer.Client);
 
         AssertThat(provider.GetService<EntitySpawner>()).IsNull();
         AssertThat(provider.GetService<NetIdGenerator>()).IsNull();
@@ -236,7 +230,8 @@ public class WorldServicesBuilderTests
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new(TimeProvider.System, Codec(), new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection());
+            TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
+            new RecordingClientsConnection());
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

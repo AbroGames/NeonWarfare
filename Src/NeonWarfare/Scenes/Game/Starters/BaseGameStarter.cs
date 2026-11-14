@@ -1,9 +1,11 @@
-using System;
-using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
+using NeonWarfare.Scripts.GlobalServices.Settings;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
+/// <summary>
+/// Brings one game session up inside a fresh <see cref="Game"/>.
+/// </summary>
 public abstract class BaseGameStarter
 {
     protected const string Localhost = Consts.Localhost;
@@ -17,60 +19,27 @@ public abstract class BaseGameStarter
         Services.LastGame.SetLastGame(lastGame);
     }
 
-    protected void AddLastGameUpdaterToSaveEvent(OldWorld.World world, ResumableGame lastGame)
+    protected void SendJoinRequest(Game game)
     {
-        world.DataSaveLoadService.SaveSuccessServerEvent += saveName =>
-        {
-            Services.LastGame.SetLastGame(lastGame with { SaveName = saveName });
-        };
-    }
-    
-    protected void ServerStartWorld(OldWorld.World world, string saveFileName, string adminUid)
-    {
-        if (saveFileName == null) throw new ArgumentNullException(nameof(saveFileName));
-
-        if (!Services.SaveLoad.CheckFileExists(saveFileName))
-        {
-            world.ServerStartStopService.StartNewGame(saveFileName, adminUid);
-        }
-        else
-        {
-            try
-            {
-                world.ServerStartStopService.LoadGame(saveFileName, adminUid);
-            }
-            catch (SaveLoadService.LoadException loadException)
-            {
-                Net.DoClient(() => GoToMenuAndShowError(loadException.Message));
-            }
-        }
-    }
-
-    protected void ClientStartWorld(OldWorld.World world)
-    {
-        world.ClientStartStopService.StartSyncWithServer(GoToMenuAndShowError);
+        GameSettings settings = Services.GameSettings.GetSettings();
+        game.SendJoinRequest(settings.PlayerUid, settings.PlayerNick, settings.PlayerColor);
     }
 
     /// <summary>
-    /// This method calls only on client.<br/>
-    /// Log error message to logger must be early, because this method calls only on client,
-    /// but we want log error message on client and server. So, we can't log error message here.
+    /// Not for a dedicated server: it has no menu.<br/>
+    /// The error is logged by whoever detected it, so the server side of the failure gets logged too.
     /// </summary>
     protected void GoToMenuAndShowError(string message)
     {
-        if (!Net.IsClient()) throw new InvalidOperationException("Can only be executed on the client");
-        
         Services.MainScene.StartMainMenu(message);
         Services.LoadingScreen.Clear();
     }
     
     /// <summary>
-    /// This method calls only on client.<br/>
+    /// Not for a dedicated server: it has no menu.
     /// </summary>
     protected void GoToMenu()
     {
-        if (!Net.IsClient()) throw new InvalidOperationException("Can only be executed on the client");
-        
         Services.MainScene.StartMainMenu();
         Services.LoadingScreen.Clear();
     }
