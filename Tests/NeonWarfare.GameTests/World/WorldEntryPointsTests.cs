@@ -78,13 +78,12 @@ public class WorldEntryPointsTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ReceiveFromServer_JoinRejected_DoesNotReachTheEventDispatcher()
+    public void ReceiveFromServer_JoinRejected_Throws()
     {
         GameWorld world = HostWorld();
 
-        world.ReceiveFromServer(new[] { (byte) ServerPacketKind.JoinRejected, (byte) JoinRejectReason.InvalidNick });
-
-        AssertThat(world.Get<ChatPresentation>().Entries).IsEmpty();
+        AssertThrown(() => world.ReceiveFromServer(JoinRejectedPacket.Write(JoinRejectReason.InvalidNick)))
+            .IsInstanceOf<NetMessageFormatException>();
     }
 
     [TestCase]
@@ -93,11 +92,7 @@ public class WorldEntryPointsTests
     {
         GameWorld world = HostWorld();
 
-        foreach (byte[] packet in new[]
-                 {
-                     [], [(byte) 0], [(byte) ServerPacketKind.JoinRejected],
-                     new[] { (byte) ServerPacketKind.JoinRejected, (byte) 1, (byte) 1 },
-                 })
+        foreach (byte[] packet in new byte[][] { [], [0] })
         {
             AssertThrown(() => world.ReceiveFromServer(packet)).IsInstanceOf<NetMessageFormatException>();
         }

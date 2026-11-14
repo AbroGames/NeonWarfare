@@ -97,6 +97,7 @@ public class ConnectToMultiplayerGameStarter(
         game.WorldSnapshotReceivedEvent += WorldSnapshotReceivedEvent;
         network.ConnectionFailedEvent += ConnectionFailedEvent;
         network.ServerDisconnectedEvent += ServerDisconnectedEvent;
+        GoToMenuOnJoinRejected(game);
 
         if (mustSetLastGame)
         {
@@ -109,10 +110,5 @@ public class ConnectToMultiplayerGameStarter(
         {
             ConnectionFailedEvent();
         }
-    }
-    
-    private bool IsGameAlive(Game game)
-    {
-        return GodotObject.IsInstanceValid(game) && !game.IsQueuedForDeletion();
     }
 }

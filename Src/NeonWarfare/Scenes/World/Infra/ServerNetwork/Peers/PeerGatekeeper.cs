@@ -60,7 +60,7 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
         // A failed send must not leave the rejected peer connected
         try
         {
-            clientsConnection.Send(peerId, [(byte) ServerPacketKind.JoinRejected, (byte) reason]);
+            clientsConnection.Send(peerId, JoinRejectedPacket.Write(reason));
         }
         finally
         {

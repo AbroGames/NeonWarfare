@@ -1,7 +1,9 @@
 using System;
+using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Features.Players;
+using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
@@ -76,6 +78,36 @@ public abstract class BaseGameStarter
         GameSettings settings = Services.GameSettings.GetSettings();
         return new LocalPlayer(settings.PlayerUid, settings.PlayerNick, settings.PlayerColor);
     }
+
+    protected static bool IsGameAlive(Game game)
+    {
+        return GodotObject.IsInstanceValid(game) && !game.IsQueuedForDeletion();
+    }
+
+    /// <summary>
+    /// For every process with a player of its own: a refused join leaves a remote client on the connecting screen
+    /// and a host in a World without its player. <see cref="Game"/> dies with the handler.
+    /// </summary>
+    protected void GoToMenuOnJoinRejected(Game game)
+    {
+        // Game has already logged the reason
+        game.JoinRejectedEvent += reason =>
+        {
+            if (IsGameAlive(game)) GoToMenuAndShowError(JoinRejectedMessage(reason));
+        };
+    }
+
+    private static string JoinRejectedMessage(JoinRejectReason reason) => Services.I18N.Tr(reason switch
+    {
+        JoinRejectReason.ProtocolMismatch => "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH",
+        JoinRejectReason.InvalidUid => "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID",
+        JoinRejectReason.InvalidNick => "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK",
+        JoinRejectReason.InvalidColor => "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR",
+        JoinRejectReason.UidInUse => "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE",
+        JoinRejectReason.InternalError => "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR",
+        // A server of another build may send a code this one does not know
+        _ => "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
+    });
 
     /// <summary>
     /// Not for a dedicated server: it has no menu.<br/>
