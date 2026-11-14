@@ -93,6 +93,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
 | `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` called only from the Presentation |
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |
+| `Architecture/ReplicatedMemberTests` | `[Replicated]` only on fields, never on a plain collection: RepliCAT ones only |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |
 | `Architecture/TickPriorityTests` | `int.MaxValue` physics priority only on `ServerTickNode`, in code and in no scene |
 | `Launch/LaunchProfilesTests` | Game profiles of `launchSettings.json` ↔ [Quick start](Quick-start.md): profiles, arguments, order, `--path` |
