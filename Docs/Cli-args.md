@@ -7,7 +7,8 @@ The arguments are described in `Src/NeonWarfare/Scripts/Content/CmdArgs/` and ar
 `OS.GetCmdlineArgs()` from deep inside the code is not allowed.
 
 The first one is Godot's standard `--path "./"` argument — it points at the project folder and has
-nothing to do with the game's arguments.
+nothing to do with the game's arguments. Godot's `--headless` runs without a window; the engine consumes it, so
+the dedicated server detects this mode by `DisplayServer.GetName()` and creates no `ServerHud`.
 
 **Common** (`CommonArgs`):
 
@@ -34,7 +35,6 @@ nothing to do with the game's arguments.
 | Flag | Description |
 |---|---|
 | `--server` | Run the process as a dedicated server (selects `DedicatedServerRootStarter`) |
-| `--headless` | Godot's own flag: run without a window. The engine consumes it, so the server detects this mode by `DisplayServer.GetName()` and creates no `ServerHud` |
 | `--port <port>` | The port the server listens on (if the flag is not passed, then `25566`) |
 | `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
 | `--admin <uid>` | The UID of the player who will be granted administrator rights |
@@ -42,5 +42,5 @@ nothing to do with the game's arguments.
 
 The server flags are assembled back into a command line by
 `DedicatedServerArgs.GetArrayToStartDedicatedServer()` — this is exactly what the client uses to launch
-an out-of-process server, passing it `--parent-pid` with its own PID and `--headless` when no server window is
-wanted.
+an out-of-process server, passing it `--parent-pid` with its own PID. `ProcessService` adds `--headless` when no
+server window is wanted.

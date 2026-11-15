@@ -12,8 +12,6 @@ public readonly record struct DedicatedServerArgs(
 {
     public static readonly string DedicatedServerFlag = "--server";
     
-    // Godot consumes its own flag and never passes it on to OS.GetCmdlineArgs(), so it is only ever written
-    public static readonly string HeadlessFlag = "--headless";
     public static readonly string PortParam = "--port";
     public static readonly string SaveFileNameParam = "--savefile";
     public static readonly string AdminParam = "--admin";
@@ -30,14 +28,13 @@ public readonly record struct DedicatedServerArgs(
         );
     }
 
-    public string[] GetArrayToStartDedicatedServer(bool headless)
+    public string[] GetArrayToStartDedicatedServer()
     {
         List<string> listParams = [];
         
         listParams.Add(DedicatedServerFlag);
         listParams.AddRange([PortParam, Port.ToString()]);
         
-        if (headless) listParams.Add(HeadlessFlag);
         if (SaveFileName != null) listParams.AddRange([SaveFileNameParam, SaveFileName]);
         if (Admin != null) listParams.AddRange([AdminParam, Admin]);
         if (ParentPid.HasValue) listParams.AddRange([ParentPidParam, ParentPid.ToString()]);

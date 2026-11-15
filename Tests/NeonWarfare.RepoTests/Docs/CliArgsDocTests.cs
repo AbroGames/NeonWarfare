@@ -27,10 +27,10 @@ public class CliArgsDocTests
     private static readonly string[] FlagTableColumns = ["Flag", "Description"];
 
     /// <summary>
-    /// Godot's own arguments. <c>--path</c> points at the project folder and has nothing to do with the
-    /// game's flags; the document says so in a paragraph of its own rather than in a table row.
+    /// Godot's own arguments, consumed by the engine and never parsed by the game; the document describes
+    /// them in a paragraph of its own rather than in a table row.
     /// </summary>
-    private static readonly string[] NotOurFlags = ["--path"];
+    private static readonly string[] NotOurFlags = ["--path", "--headless"];
 
     [Fact]
     public void CmdArgFlags_AreDocumented()

@@ -6,6 +6,9 @@ namespace NeonWarfare.Scripts.GlobalServices;
 public class ProcessService
 {
     
+    // Godot's own flag, not a game argument: the engine consumes it before the game sees the command line
+    private const string GodotHeadlessFlag = "--headless";
+    
     public int StartNewApplication(string[] arguments)
     {
         return OS.CreateInstance(arguments);
@@ -22,6 +25,7 @@ public class ProcessService
             adminUid, 
             OS.GetProcessId());
 
-        return StartNewApplication(dedicatedServerArgs.GetArrayToStartDedicatedServer(headless: !showWindow));
+        string[] arguments = dedicatedServerArgs.GetArrayToStartDedicatedServer();
+        return StartNewApplication(showWindow ? arguments : [..arguments, GodotHeadlessFlag]);
     }
 }
