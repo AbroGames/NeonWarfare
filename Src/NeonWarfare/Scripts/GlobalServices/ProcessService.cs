@@ -17,12 +17,11 @@ public class ProcessService
             false); // Dedicated server never uses Godot console
         DedicatedServerArgs dedicatedServerArgs = new DedicatedServerArgs(
             commonArgs,
-            !showWindow, 
             port, 
             saveFileName, 
             adminUid, 
             OS.GetProcessId());
 
-        return StartNewApplication(dedicatedServerArgs.GetArrayToStartDedicatedServer());
+        return StartNewApplication(dedicatedServerArgs.GetArrayToStartDedicatedServer(headless: !showWindow));
     }
 }

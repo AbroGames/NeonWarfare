@@ -5,7 +5,6 @@ namespace NeonWarfare.Scripts.Content.CmdArgs;
 
 public readonly record struct DedicatedServerArgs(
     CommonArgs CommonArgs,
-    bool IsHeadless, 
     int? Port, 
     string SaveFileName, 
     string Admin, 
@@ -13,6 +12,7 @@ public readonly record struct DedicatedServerArgs(
 {
     public static readonly string DedicatedServerFlag = "--server";
     
+    // Godot consumes its own flag and never passes it on to OS.GetCmdlineArgs(), so it is only ever written
     public static readonly string HeadlessFlag = "--headless";
     public static readonly string PortParam = "--port";
     public static readonly string SaveFileNameParam = "--savefile";
@@ -23,7 +23,6 @@ public readonly record struct DedicatedServerArgs(
     {
         return new DedicatedServerArgs(
             CommonArgs.GetFromCmd(argsService),
-            argsService.ContainsInCmdArgs(HeadlessFlag),
             argsService.GetIntFromCmdArgs(PortParam),
             argsService.GetStringFromCmdArgs(SaveFileNameParam),
             argsService.GetStringFromCmdArgs(AdminParam),
@@ -31,14 +30,14 @@ public readonly record struct DedicatedServerArgs(
         );
     }
 
-    public string[] GetArrayToStartDedicatedServer()
+    public string[] GetArrayToStartDedicatedServer(bool headless)
     {
         List<string> listParams = [];
         
         listParams.Add(DedicatedServerFlag);
         listParams.AddRange([PortParam, Port.ToString()]);
         
-        if (IsHeadless) listParams.Add(HeadlessFlag);
+        if (headless) listParams.Add(HeadlessFlag);
         if (SaveFileName != null) listParams.AddRange([SaveFileNameParam, SaveFileName]);
         if (Admin != null) listParams.AddRange([AdminParam, Admin]);
         if (ParentPid.HasValue) listParams.AddRange([ParentPidParam, ParentPid.ToString()]);

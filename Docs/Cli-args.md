@@ -34,7 +34,7 @@ nothing to do with the game's arguments.
 | Flag | Description |
 |---|---|
 | `--server` | Run the process as a dedicated server (selects `DedicatedServerRootStarter`) |
-| `--headless` | Run without a window and without `ServerHud` |
+| `--headless` | Godot's own flag: run without a window. The engine consumes it, so the server detects this mode by `DisplayServer.GetName()` and creates no `ServerHud` |
 | `--port <port>` | The port the server listens on (if the flag is not passed, then `25566`) |
 | `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
 | `--admin <uid>` | The UID of the player who will be granted administrator rights |
@@ -42,4 +42,5 @@ nothing to do with the game's arguments.
 
 The server flags are assembled back into a command line by
 `DedicatedServerArgs.GetArrayToStartDedicatedServer()` — this is exactly what the client uses to launch
-an out-of-process server, passing it `--parent-pid` with its own PID.
+an out-of-process server, passing it `--parent-pid` with its own PID and `--headless` when no server window is
+wanted.

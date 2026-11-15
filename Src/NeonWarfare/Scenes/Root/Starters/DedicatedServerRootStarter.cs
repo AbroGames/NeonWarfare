@@ -1,3 +1,4 @@
+using Godot;
 using KludgeBox.DI.Requests.LoggerInjection;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
@@ -6,6 +7,9 @@ namespace NeonWarfare.Scenes.Root.Starters;
 
 public class DedicatedServerRootStarter : BaseRootStarter
 {
+    
+    // The engine reports a windowless run itself: Godot keeps its --headless flag out of the command line we see
+    private const string HeadlessDisplayServer = "headless";
     
     private DedicatedServerArgs _dedicatedServerArgs;
     [Logger] private ILogger _log;
@@ -37,6 +41,6 @@ public class DedicatedServerRootStarter : BaseRootStarter
             _dedicatedServerArgs.Port,
             _dedicatedServerArgs.Admin,
             _dedicatedServerArgs.ParentPid,
-            !_dedicatedServerArgs.IsHeadless);
+            DisplayServer.GetName() != HeadlessDisplayServer);
     }
 }

@@ -24,6 +24,12 @@
       "commandLineArgs": "--path \"./\" --server",
       "workingDirectory": "."
     },
+    "Server (headless)": {
+      "commandName": "Executable",
+      "executablePath": "%GODOT_EXE%",
+      "commandLineArgs": "--path \"./\" --server --headless",
+      "workingDirectory": "."
+    },
     "Autoconnect (1)": {
       "commandName": "Executable",
       "executablePath": "%GODOT_EXE%",
