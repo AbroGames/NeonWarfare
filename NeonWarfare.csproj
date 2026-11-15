@@ -13,10 +13,6 @@
         <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
     </ItemGroup>
 
-    <PropertyGroup>
-        <NoWarn>CS0649</NoWarn>
-    </PropertyGroup>
-
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
         <ItemGroup>
             <DirectoriesToCreate Include="$(ProjectDir)bin\win-64" />

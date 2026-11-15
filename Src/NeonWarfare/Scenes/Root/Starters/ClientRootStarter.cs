@@ -1,4 +1,4 @@
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using Serilog;
@@ -9,7 +9,7 @@ public class ClientRootStarter : BaseRootStarter
 {
 
 	private ClientArgs _clientArgs;
-	[Logger] private ILogger _log;
+	private readonly ILogger _log = LogFactory.GetForStatic<ClientRootStarter>();
 	
     public override void Init(RootData rootData)
     {

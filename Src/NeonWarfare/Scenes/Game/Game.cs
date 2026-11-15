@@ -5,7 +5,7 @@ using GodotBox.Godot;
 using GodotBox.Godot.Nodes;
 using Humanizer;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
@@ -56,7 +56,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     [Child] private GamePackedScenes GamePackedScenes { get; set; }
     [Child] private WorldPackedScenes WorldPackedScenes { get; set; }
 
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<Game>();
 
     private Network.Network _network;
     private World.World _world;

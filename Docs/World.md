@@ -67,9 +67,6 @@ and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]
 * no World service touches `Services.*` (`Di` aside): only the composition root does and passes what is needed;
 * a service reads no entity in its constructor: when it is built, the world is still empty.
 
-The logger of a World service is `LogFactory.GetForStatic<T>()`, not `[Logger]`: the container creates services
-through constructors, `Di.Process` never runs on them.
-
 ## The container
 
 `WorldServicesBuilder.Build` (Microsoft.Extensions.DependencyInjection, `ValidateOnBuild`) registers the

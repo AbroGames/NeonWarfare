@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Features.Saves;
@@ -33,12 +33,10 @@ public partial class Hud : Control
     private World.World.ICommandSender _commands;
     private PlayerQuery _players;
     private LocalPlayerPresentation _localPlayer;
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<Hud>();
     
     public Hud InitPreReady(World.World.IReader reader, World.World.ICommandSender commands)
     {
-        Di.Process(this);
-        
         if (reader == null) _log.Error("Reader must be not null");
         if (commands == null) _log.Error("Command sender must be not null");
         _reader = reader;

@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Reflection;
 using KludgeBox.Core;
-using KludgeBox.DI.Requests.LoggerInjection;
 using KludgeBox.Logging;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
@@ -16,12 +15,10 @@ public abstract class BaseRootStarter
     protected readonly CmdArgsService CmdArgsService = new();
     
     private CommonArgs _commonArgs;
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<BaseRootStarter>();
 
     public virtual void Init(RootData rootData)
     {
-        Di.Process(this);
-        
         _commonArgs = CommonArgs.GetFromCmd(CmdArgsService);
         
         LogFactory.GodotPushEnable = _commonArgs.GodotLogPush;

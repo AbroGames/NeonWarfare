@@ -41,12 +41,12 @@ Packages of the game test project (`Tests/NeonWarfare.GameTests/NeonWarfare.Game
 | `Microsoft.NET.Test.Sdk` | The VSTest host, enables the `dotnet test` target |
 
 Coming in transitively through KludgeBox and used directly in the code: **Serilog** — logging
-(`[Logger] private ILogger _log`); **Humanizer** — substitution into string templates
-(`FormatWith(...)`).
+(`LogFactory.GetForStatic<T>()`, see [Code style conventions](Code-style.md#logging)); **Humanizer** —
+substitution into string templates (`FormatWith(...)`).
 
 **KludgeBox and GodotBox.** KludgeBox is referenced as a NuGet package, so its sources are not in this
 repository and searching it will not find declarations of its types: the DI core (`DependencyInjector`,
-`[Child]`, `[Logger]`, `[NotNull]`), logging, the services of the [global registry](Services.md) (`I18N`,
+`[Child]`, `[NotNull]`), logging, the services of the [global registry](Services.md) (`I18N`,
 `Rand`, `NodeTree`, …), the Godot extensions pulled in by `GlobalUsings.cs` and so on. The path to the
 library's source code is stored in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
 
@@ -56,12 +56,11 @@ The Godot nodes built on top of it are **not** in the package: they live in this
 registry `GodotBoxServices`. GodotBox is a reusable layer that must not depend on the game — see
 [Code style conventions](Code-style.md#namespaces).
 
-Two build details. The `CS0649` warning is suppressed (`NoWarn` in `.csproj`): the fields are filled by
-DI rather than by a constructor, and the compiler considers them unused. And `NeonWarfare.csproj` turns
-the default `Compile` glob off (`EnableDefaultCompileItems` set to `false`) and lists its sources itself:
-`<Compile Include="Src/**/*.cs" />`. The game project's directory is the repository root, so the default
-glob (`**/*.cs`) would otherwise pull the test files into the game assembly, and it would fail on the
-xUnit types; all the game code lives in `Src/`. `Godot.NET.Sdk` already turns the default `None` glob off,
-so the `None` items for `README.md`, `Docs/`, `Assets/` and `launchSettings.json` are listed explicitly.
-The test projects build on their own; in `ExportDebug` and `ExportRelease` they are excluded from the
-solution build so that the Godot editor and the game export do not touch them.
+One build detail: `NeonWarfare.csproj` turns the default `Compile` glob off (`EnableDefaultCompileItems` set
+to `false`) and lists its sources itself: `<Compile Include="Src/**/*.cs" />`. The game project's directory is
+the repository root, so the default glob (`**/*.cs`) would otherwise pull the test files into the game
+assembly, and it would fail on the xUnit types; all the game code lives in `Src/`. `Godot.NET.Sdk` already
+turns the default `None` glob off, so the `None` items for `README.md`, `Docs/`, `Assets/` and
+`launchSettings.json` are listed explicitly. The test projects build on their own; in `ExportDebug` and
+`ExportRelease` they are excluded from the solution build so that the Godot editor and the game export do not
+touch them.

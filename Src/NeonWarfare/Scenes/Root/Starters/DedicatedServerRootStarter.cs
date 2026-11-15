@@ -1,5 +1,5 @@
 using Godot;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using NeonWarfare.Scripts.Content.CmdArgs;
 using Serilog;
 
@@ -12,7 +12,7 @@ public class DedicatedServerRootStarter : BaseRootStarter
     private const string HeadlessDisplayServer = "headless";
     
     private DedicatedServerArgs _dedicatedServerArgs;
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<DedicatedServerRootStarter>();
     
     public override void Init(RootData rootData)
     {

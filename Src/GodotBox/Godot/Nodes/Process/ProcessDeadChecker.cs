@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Godot;
 using KludgeBox.Core.Cooldown;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using Serilog;
 
 namespace GodotBox.Godot.Nodes.Process;
@@ -17,12 +17,10 @@ public partial class ProcessDeadChecker : Node
     
     private readonly AutoCooldown _processDeadCheckCooldown = new(5);
     
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<ProcessDeadChecker>();
     
     public ProcessDeadChecker(int processPid, Action actionWhenDead, Func<int, string> logMessageGenerator = null)
     {
-        GodotBoxServices.Di.Process(this);
-        
         _processPid = processPid;
         _actionWhenDead = actionWhenDead;
         if (logMessageGenerator != null) _logMessageGenerator = logMessageGenerator;

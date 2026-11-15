@@ -1,20 +1,15 @@
 using Godot;
-using KludgeBox.DI.Requests.LoggerInjection;
+using KludgeBox.Logging;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.Menu.PagesSystem;
 
 public partial class PageContainer : Control
 {
-    [Logger] private ILogger _log;
+    private readonly ILogger _log = LogFactory.GetForStatic<PageContainer>();
     
     public IPage RootPage { get; private set; }
     public IPage CurrentPage { get; private set; }
-
-    public override void _Ready()
-    {
-        Di.Process(this);
-    }
 
     public void SetRootPage(IPage page)
     {
