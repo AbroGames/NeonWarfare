@@ -59,6 +59,8 @@ public class ConstructorLayerTests
             [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.IDedicatedServerOwner"] = [Layer.SimulationFacade],
             // Who the host is must not change what the server does: the server logic treats every player alike
             [WorldLayers.WorldNamespace + ".Features.Players.LocalPlayer"] = [Layer.Presentation],
+            // Creating the UI is the answer to the player's own join, which only the client side receives
+            [WorldLayers.WorldNamespace + ".Features.Players.ILocalPlayerOwner"] = [Layer.Presentation],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it

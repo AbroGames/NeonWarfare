@@ -34,7 +34,7 @@ public class SingleplayerGameStarter(
         }
 
         GoToMenuOnJoinRejected(game);
+        ClearLoadingScreenOnJoined(game);
         game.SendJoinRequest(localPlayer);
-        Services.LoadingScreen.Clear();
     }
 }

@@ -677,7 +677,8 @@ public class TickStateReplicationTests
         new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
             new ManualFrameProvider(), _scenes, _catalog, connection, connection, new RecordingSaveFiles(),
             TestWorldDependencies.LocalPlayer(layers), TestWorldDependencies.Admin(layers),
-            TestWorldDependencies.DedicatedServerOwner(layers));
+            TestWorldDependencies.DedicatedServerOwner(layers),
+            TestWorldDependencies.LocalPlayerOwner(layers));
 
     private ServiceProvider ClientOf(int peerId, out Node root)
     {

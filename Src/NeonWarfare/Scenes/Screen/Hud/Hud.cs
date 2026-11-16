@@ -59,6 +59,9 @@ public partial class Hud : Control
         LogButton.Pressed += () => { Services.NodeTree.LogFullTree(GetTree().Root); };
         ExitButton.Pressed += () => { Services.MainScene.StartMainMenu(); };
         SaveButton.Pressed += () => _commands.Send(new SaveCommand(SaveLineEdit.Text));
+
+        // The Hud is created right after the join's own chat line, whose notice must not be the only trigger
+        RenderChat();
     }
 
     public override void _Process(double delta)
@@ -67,15 +70,18 @@ public partial class Hud : Control
                          + string.Join("\n", _players.OnlinePlayers().Select(player => player.Nick));
 
         // The server drops a save from anyone else without a reply
-        bool isAdmin = _localPlayer.Player?.IsAdmin == true;
+        bool isAdmin = _localPlayer.Player.IsAdmin;
         SaveButton.Visible = isAdmin;
         SaveLineEdit.Visible = isAdmin;
 
         if (_reader.Get<HudMailbox>().Read<ChatEntryAddedNotice>().Count == 0) return;
 
+        RenderChat();
+    }
+
+    private void RenderChat() =>
         ChatLabel.Text = string.Join("\n",
             _reader.Get<ChatPresentation>().Entries.Select(entry => FormatChatLine(entry, key => Tr(key))));
-    }
 
     private void SendChat()
     {

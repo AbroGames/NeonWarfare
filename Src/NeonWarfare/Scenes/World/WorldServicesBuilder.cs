@@ -23,6 +23,8 @@ public class WorldServicesBuilder
     private const string NoSaveFilesError = "A World with the ServerNetwork layer needs the save files.";
     private const string NoLocalPlayerError = "A World with the Presentation layer needs the local player.";
     private const string UnexpectedLocalPlayerError = "A World without the Presentation layer has no local player.";
+    private const string NoLocalPlayerOwnerError = "A World with the local player needs its owner.";
+    private const string UnexpectedLocalPlayerOwnerError = "A World without the local player has no owner of it.";
     private const string NoAdminError = "A World with the Simulation layer needs the admin, even one without a uid.";
     private const string UnexpectedAdminError = "A World without the Simulation layer has no admin.";
     private const string NoDedicatedServerOwnerError = "A dedicated server World needs the owner of its process.";
@@ -63,9 +65,17 @@ public class WorldServicesBuilder
             string error = dependencies.LocalPlayer == null ? NoLocalPlayerError : UnexpectedLocalPlayerError;
             throw new ArgumentException(error, nameof(dependencies));
         }
+        if ((dependencies.LocalPlayer != null) != (dependencies.LocalPlayerOwner != null))
+        {
+            string error = dependencies.LocalPlayerOwner == null
+                ? NoLocalPlayerOwnerError
+                : UnexpectedLocalPlayerOwnerError;
+            throw new ArgumentException(error, nameof(dependencies));
+        }
         if (dependencies.LocalPlayer != null)
         {
             services.AddSingleton(dependencies.LocalPlayer);
+            services.AddSingleton(dependencies.LocalPlayerOwner);
         }
         if (layers.HasFlag(WorldLayer.Simulation) != (dependencies.Admin != null))
         {

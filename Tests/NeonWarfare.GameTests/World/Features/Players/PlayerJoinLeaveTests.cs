@@ -36,7 +36,7 @@ public class PlayerJoinLeaveTests
     private const string AliceUid = "AliceAlice-Aaaaaaaaaa";
     private const string BobUid = "BobBobBobB-Bbbbbbbbbb";
 
-    private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent)];
+    private static readonly HashSet<Type> EventTypes = [typeof(LocalizedChatMessageEvent), typeof(PlayerJoinedEvent)];
     private static readonly Color Pink = new(1, 0.5f, 0.8f);
 
     private NetMessageCodec _codec = null!;
@@ -76,8 +76,9 @@ public class PlayerJoinLeaveTests
         AssertThat(alice.Nick).IsEqual("Alice");
         AssertThat(alice.Color).IsEqual(Pink);
         AssertThat(Online()).ContainsExactlyInAnyOrder(HostUid, AliceUid);
-        AssertThat(PeerEvents(HostPeer)).ContainsExactly(Joined("Host"), Joined("Alice"));
-        AssertThat(PeerEvents(AlicePeer)).ContainsExactly(Joined("Alice"));
+        object[] bothJoined = [..Joined(HostUid, "Host"), ..Joined(AliceUid, "Alice")];
+        AssertThat(PeerEvents(HostPeer)).ContainsExactly(bothJoined);
+        AssertThat(PeerEvents(AlicePeer)).ContainsExactly(Joined(AliceUid, "Alice"));
     }
 
     [TestCase]
@@ -95,7 +96,7 @@ public class PlayerJoinLeaveTests
         PlayerModel alice = Players().PlayerByUid[AliceUid];
         AssertThat(alice.Nick).IsEqual("Alice");
         AssertThat(alice.Color).IsEqual(Pink);
-        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined("Alice"));
+        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined(AliceUid, "Alice"));
     }
 
     // Done when: the player with the admin uid is admin after join; another player is not
@@ -160,8 +161,9 @@ public class PlayerJoinLeaveTests
         Tick();
 
         AssertThat(Online()).ContainsExactlyInAnyOrder(AliceUid, BobUid);
-        AssertThat(PeerEvents(BobPeer)).ContainsExactly(Left("Alice"), Joined("Alice"));
-        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined("Alice"));
+        object[] displaced = [Left("Alice"), ..Joined(AliceUid, "Alice")];
+        AssertThat(PeerEvents(BobPeer)).ContainsExactly(displaced);
+        AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined(AliceUid, "Alice"));
         AssertThat(Outbox().Peers).ContainsExactlyInAnyOrder(BobPeer, AliceSecondPeer);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
@@ -269,7 +271,8 @@ public class PlayerJoinLeaveTests
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection,
                 new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-                TestWorldDependencies.Admin(layers, adminUid), dedicatedServerOwner),
+                TestWorldDependencies.Admin(layers, adminUid), dedicatedServerOwner,
+                TestWorldDependencies.LocalPlayerOwner(layers)),
             new WorldRoot(_root));
         provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         return provider;
@@ -314,7 +317,8 @@ public class PlayerJoinLeaveTests
             .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Packet[1]))
             .ToList();
 
-    private static LocalizedChatMessageEvent Joined(string nick) => new(Now, "HUD__CHAT_PLAYER_JOINED", [nick]);
+    private static object[] Joined(string uid, string nick) =>
+        [new LocalizedChatMessageEvent(Now, "HUD__CHAT_PLAYER_JOINED", [nick]), new PlayerJoinedEvent(uid)];
 
     private static LocalizedChatMessageEvent Left(string nick) => new(Now, "HUD__CHAT_PLAYER_LEFT", [nick]);
 }

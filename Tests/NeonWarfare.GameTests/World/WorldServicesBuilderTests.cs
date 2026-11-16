@@ -275,6 +275,25 @@ public class WorldServicesBuilderTests
             .IsInstanceOf<ArgumentException>();
     }
 
+    // Without the owner the local player's join would leave the loading screen forever
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_LocalPlayerOwner_OnlyAndAlwaysWithLocalPlayer()
+    {
+        var root = new WorldRoot(AutoFree(new Node())!);
+
+        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host })
+        {
+            WorldDependencies noOwner = Dependencies(layers) with { LocalPlayerOwner = null! };
+            AssertThrown(() => new WorldServicesBuilder().Build(layers, noOwner, root))
+                .IsInstanceOf<ArgumentException>();
+        }
+        WorldDependencies dedicatedWithOwner =
+            Dependencies(WorldLayer.Dedicated) with { LocalPlayerOwner = new RecordingLocalPlayerOwner() };
+        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, dedicatedWithOwner, root))
+            .IsInstanceOf<ArgumentException>();
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Build_Admin_OnlyAndAlwaysWithSimulation()
@@ -332,7 +351,8 @@ public class WorldServicesBuilderTests
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection(), new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers));
+            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers),
+            TestWorldDependencies.LocalPlayerOwner(layers));
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

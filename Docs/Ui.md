@@ -87,9 +87,9 @@ pushes a `ConfirmDialogPage` when they differ.
 
 ## The in-game HUD and the loading screen
 
-The screen is created by `Game.AddWorld` together with the World and dies with it; the starter picks it
-(`Game.Screen`: `Hud`, `ServerHud` or none, see [Startup flow](Startup-flow.md)). Both get the World **before** being
-added to the tree, through `InitPreReady`, and only through its two interfaces:
+The screen dies with the World; the starter picks it (`Game.Screen`: `Hud`, `ServerHud` or none, see
+[Startup flow](Startup-flow.md)). `ServerHud` comes with the World, `Hud` only once this process's player has joined.
+Both get the World **before** being added to the tree, through `InitPreReady`, and only through its two interfaces:
 
 * `Hud.InitPreReady(reader, commands)` — `World.IReader` and `World.ICommandSender`: it reads and sends commands
   (`SendChatMessageCommand`, `SaveCommand`);

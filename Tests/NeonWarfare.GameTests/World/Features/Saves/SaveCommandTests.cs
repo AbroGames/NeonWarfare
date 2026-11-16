@@ -64,7 +64,8 @@ public class SaveCommandTests
                 new Replicator(NetMessageCodecTests.CreateMapping()), _frames, _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _connection, _connection, _files,
                 TestWorldDependencies.LocalPlayer(WorldLayer.Host), TestWorldDependencies.Admin(WorldLayer.Host),
-                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host)),
+                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host),
+                TestWorldDependencies.LocalPlayerOwner(WorldLayer.Host)),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _server.GetRequiredService<SaveService>().Init("old");

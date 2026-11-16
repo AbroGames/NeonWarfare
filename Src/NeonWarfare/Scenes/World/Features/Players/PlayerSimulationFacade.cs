@@ -3,6 +3,7 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.Features.Players;
@@ -10,6 +11,7 @@ namespace NeonWarfare.Scenes.World.Features.Players;
 [SimulationFacade]
 public class PlayerSimulationFacade(
     ChatSimulation chat,
+    EventOutbox outbox,
     PlayersStorageQuery players,
     PlayersSessionStorageQuery session,
     WorldAdmin admin,
@@ -46,6 +48,7 @@ public class PlayerSimulationFacade(
         session.Model.OnlinePlayerUids.Add(uid);
         _log.Information(JoinedLog, player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, player.Nick);
+        outbox.PublishToAll(new PlayerJoinedEvent(uid));
     }
 
     public void Leave(string uid)

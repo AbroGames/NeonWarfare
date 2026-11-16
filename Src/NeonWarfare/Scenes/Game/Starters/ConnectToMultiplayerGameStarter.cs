@@ -43,7 +43,8 @@ public class ConnectToMultiplayerGameStarter(
         
         Network.Network network = game.AddNetwork();
 
-        // The World comes from the first snapshot, until then the connecting screen stays
+        // The World comes from the first snapshot and the Hud with the join right after it, until then the connecting
+        // screen stays
         void ConnectedToServerEvent()
         {
             if (!IsGameAlive(game)) return;
@@ -74,7 +75,6 @@ public class ConnectToMultiplayerGameStarter(
                 return;
             }
             _log.Information(EnteredWorldLog);
-            Services.LoadingScreen.Clear();
         }
 
         // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
@@ -98,6 +98,7 @@ public class ConnectToMultiplayerGameStarter(
         network.ConnectionFailedEvent += ConnectionFailedEvent;
         network.ServerDisconnectedEvent += ServerDisconnectedEvent;
         GoToMenuOnJoinRejected(game);
+        ClearLoadingScreenOnJoined(game);
 
         if (mustSetLastGame)
         {

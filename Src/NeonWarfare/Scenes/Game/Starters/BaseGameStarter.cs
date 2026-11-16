@@ -97,6 +97,18 @@ public abstract class BaseGameStarter
         };
     }
 
+    /// <summary>
+    /// For every process with a player of its own: the <see cref="Game.Screen.Hud"/> appears only with the join,
+    /// and until then the loading screen covers the World.
+    /// </summary>
+    protected void ClearLoadingScreenOnJoined(Game game)
+    {
+        game.LocalPlayerJoinedEvent += () =>
+        {
+            if (IsGameAlive(game)) Services.LoadingScreen.Clear();
+        };
+    }
+
     private static string JoinRejectedMessage(JoinRejectReason reason) => Services.I18N.Tr(reason switch
     {
         JoinRejectReason.ProtocolMismatch => "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH",

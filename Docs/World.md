@@ -27,9 +27,9 @@ or snapshot throws from `InitPreReady`, and the caller frees the World.
 
 `WorldDependencies` is what `Game` hands to every service: `TimeProvider`, `NetMessageCodec`, `Replicator`,
 `FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections, `ISaveFiles` (`null` on a remote client),
-`LocalPlayer` (`null` on a dedicated server), `WorldAdmin` (`null` on a remote client) and `IDedicatedServerOwner`
-(only on a dedicated server). With the Simulation the World also adds `ServerTickNode`, with the server network
-`SaveOnExitNode`.
+`LocalPlayer` and `ILocalPlayerOwner` (`null` on a dedicated server), `WorldAdmin` (`null` on a remote client) and
+`IDedicatedServerOwner` (only on a dedicated server). With the Simulation the World also adds `ServerTickNode`, with
+the server network `SaveOnExitNode`.
 
 ## Layers
 
@@ -59,7 +59,8 @@ Every layer may also take the models and the `WorldDependencies` types, except t
 world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[ServerNetwork]`;
 `IDedicatedServerOwner` — `[SimulationFacade]`; `IServerConnection` —
 `[ClientNetwork]`; `Replicator`, `EntityRecordReader` — `[ServerNetwork]`, `[ClientReplication]`; `EntityRegistry`
-and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer` — `[Presentation]`.
+and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
+`ILocalPlayerOwner` — `[Presentation]`.
 `IEntityFinder` is open to all. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
 
 * leaf simulations never call each other, a command handler calls only facades;

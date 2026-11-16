@@ -54,7 +54,8 @@ public class ChatTests
                 TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection(), new RecordingClientsConnection(), new RecordingSaveFiles(),
                 LocalPlayer: null, TestWorldDependencies.Admin(WorldLayer.Dedicated),
-                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Dedicated)),
+                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Dedicated),
+                TestWorldDependencies.LocalPlayerOwner(WorldLayer.Dedicated)),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();

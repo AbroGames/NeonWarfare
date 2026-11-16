@@ -115,12 +115,13 @@ sequenceDiagram
     C->>G: JoinRequestCommand(protocolHash, uid, nick, color)
     G->>W: ReceiveFromClient: hash check, into the inbox
     Note over W: next tick
-    W->>W: PeerSessions.Join: Validate, bind uid,<br/>event buffer, Process → join message
+    W->>W: PeerSessions.Join: Validate, bind uid,<br/>event buffer, Process → join message, PlayerJoinedEvent
     W-->>O: State packet: the tick's changes (OnlinePlayerUids)
     W-->>C: Snapshot: every entity at the end of the tick
-    C->>C: Game.WorldSnapshotReceivedEvent → World from the snapshot, Hud
-    W-->>C: Events packet: LocalizedChatMessageEvent (joined)
-    W-->>O: Events packet: LocalizedChatMessageEvent (joined)
+    C->>C: Game.WorldSnapshotReceivedEvent → World from the snapshot
+    W-->>C: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
+    C->>C: its own PlayerJoinedEvent → Hud, the loading screen is cleared
+    W-->>O: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
     Note over C: from the next tick on: State, then Events, like everyone
 ```
 
