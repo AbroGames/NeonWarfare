@@ -18,7 +18,7 @@ public class SingleplayerGameStarter(
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         //TODO 022 load the save
-        game.AddWorld(WorldLayer.Host, WorldOrigin.New, GameScreen.Hud);
+        game.AddWorld(WorldLayer.Host, WorldOrigin.New, Game.Screen.Hud);
         SetLastGame(ResumableGame.GetSingleplayer(saveFileName));
         SendJoinRequest(game);
         Services.LoadingScreen.Clear();

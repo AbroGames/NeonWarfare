@@ -1,6 +1,6 @@
 using Godot;
 using KludgeBox.DI.Requests.NotNullCheck;
-using NeonWarfare.Scenes.Misc;
+using GodotBox.Godot.Nodes;
 using NeonWarfare.Scenes.World.Infra.Entities;
 
 namespace NeonWarfare.Scenes.World;
@@ -10,7 +10,7 @@ namespace NeonWarfare.Scenes.World;
 /// order of the properties, is the order of the scene kinds of the <see cref="EntityCatalog"/>, so it is part of the
 /// protocol. Owned by Game, not World: the client needs the hash before its World exists.
 /// </summary>
-public partial class WorldPackedScenes : GameCheckedAbstractStorage
+public partial class WorldPackedScenes : CheckedAbstractStorage
 {
     [ExportGroup("Surfaces")]
     [Export] [NotNull] public PackedScene SafeSurface { get; private set; }

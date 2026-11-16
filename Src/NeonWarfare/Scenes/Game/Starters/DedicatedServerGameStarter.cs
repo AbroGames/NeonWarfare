@@ -34,7 +34,7 @@ public class DedicatedServerGameStarter(
     protected override void AddWorld(Game game)
     {
         World.World world = game.AddWorld(
-            WorldLayer.Dedicated, WorldOrigin.New, serverHud ? GameScreen.ServerHud : GameScreen.None);
+            WorldLayer.Dedicated, WorldOrigin.New, serverHud ? Game.Screen.ServerHud : Game.Screen.None);
         world.SetVisible(false);
     }
 

@@ -1,5 +1,3 @@
-using KludgeBox.DI;
-
 namespace GodotBox.Godot.Nodes;
 
 /// <summary>
@@ -11,8 +9,6 @@ public abstract partial class CheckedAbstractStorage : AbstractStorage
 {
     public override void _PreReady()
     {
-        GetDi().Process(this);
+        GodotBoxServices.Di.Process(this);
     }
-
-    public abstract DependencyInjector GetDi();
 }

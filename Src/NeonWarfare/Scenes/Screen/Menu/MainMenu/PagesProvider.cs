@@ -2,7 +2,7 @@ using System;
 using Godot;
 using GodotBox;
 using KludgeBox.DI.Requests.NotNullCheck;
-using NeonWarfare.Scenes.Misc;
+using GodotBox.Godot.Nodes;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.ConfirmDialog;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.Message;
 using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.PlayerSettings;
@@ -10,7 +10,7 @@ using NeonWarfare.Scenes.Screen.Menu.MainMenu.Pages.SettingsCategory;
 
 namespace NeonWarfare.Scenes.Screen.Menu.MainMenu;
 
-public partial class PagesProvider : GameCheckedAbstractStorage
+public partial class PagesProvider : CheckedAbstractStorage
 {
 	[Export] [NotNull] public PackedScene MainPageScene { get; private set; }
 	[Export] [NotNull] public PackedScene ServerListPageScene { get; private set; }
