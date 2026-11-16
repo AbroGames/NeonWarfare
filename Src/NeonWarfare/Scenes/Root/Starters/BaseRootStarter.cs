@@ -31,7 +31,7 @@ public abstract class BaseRootStarter
         Services.LoadingScreen.Init(rootData.LoadingScreenContainer, rootData.PackedScenes.LoadingScreen);
         Services.MainScene.Init(
             rootData.MainSceneContainer, rootData.PackedScenes.Game, rootData.PackedScenes.MainMenu);
-        Services.TerminationSignals.Init();
+        Services.QuitRequests.Init(rootData.SceneTree);
         Services.I18N.Init(rootData.SceneTree);
     }
 

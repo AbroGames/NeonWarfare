@@ -116,7 +116,6 @@ public abstract class BaseGameStarter
     protected void GoToMenuAndShowError(string message)
     {
         Services.MainScene.StartMainMenu(message);
-        Services.LoadingScreen.Clear();
     }
 
     /// <summary>
@@ -125,6 +124,5 @@ public abstract class BaseGameStarter
     protected void GoToMenu()
     {
         Services.MainScene.StartMainMenu();
-        Services.LoadingScreen.Clear();
     }
 }

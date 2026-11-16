@@ -53,7 +53,8 @@ public class ChatTests
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection(), new RecordingClientsConnection(), new RecordingSaveFiles(),
-                LocalPlayer: null, TestWorldDependencies.Admin(WorldLayer.Dedicated)),
+                LocalPlayer: null, TestWorldDependencies.Admin(WorldLayer.Dedicated),
+                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Dedicated)),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();

@@ -32,7 +32,7 @@ auto-scaling) and `Start()` (the scenario, through `Services.MainScene.*`). `Roo
    are built from (`NetMessageCodec`, `EntityCatalog`).
 6. `Services.LoadingScreen.Init(...)`, `Services.MainScene.Init(...)` — the services get the `Root`
    containers and the scene prototypes.
-7. `Services.TerminationSignals.Init()` — only after `MainScene`, which the handler calls
+7. `Services.QuitRequests.Init(sceneTree)` — only after `MainScene`, which the handlers call
    (see [Shutdown](Shutdown.md)).
 8. `Services.I18N.Init(sceneTree)`.
 
@@ -61,7 +61,7 @@ someone else's server, hosting "from inside the client". `Init()` after `base.In
 |---|---|
 | `--auto-start` | `MainScene.StartSingleplayerGame(...)`. The save name comes from `--auto-start-savefile`, and without that flag — a generated `SaveLoad.GenNewSaveFileName()` |
 | `--auto-connect` | `MainScene.ConnectToMultiplayerGame(--auto-connect-ip, --auto-connect-port)` |
-| otherwise | `MainScene.StartMainMenu()` + `LoadingScreen.Clear()` |
+| otherwise | `MainScene.StartMainMenu()`, which clears the loading screen once the menu is shown |
 
 ### `DedicatedServerRootStarter`
 
@@ -142,8 +142,9 @@ the World, the screen and what happens on a failure and after `OpenServer()`.
 
 1. The `Loading` loading screen.
 2. Only the dedicated server, with `parentPid`: a `ProcessDeadChecker` (a GodotBox node) on `Game` calls
-   `MainScene.Shutdown()` when the parent process dies, so a child server is not left hanging after the client is
-   closed (see [Shutdown](Shutdown.md)).
+   `MainScene.Shutdown()` when the parent process dies, and so does the admin leaving (the starter is the World's
+   `IDedicatedServerOwner`), so a child server is not left hanging after the client is closed (see
+   [Shutdown](Shutdown.md)).
 3. `AddNetwork()`; `mustSetLastGame` → a write into `resume-game.json` (a server started from the console has
    none).
 4. `network.HostServer(port ?? 25566)` — the port is open but refuses connections. An error (a busy port, say) →
@@ -187,12 +188,10 @@ A **second OS process** plus an ordinary client connection to it. A descendant o
 1. `Services.Process.StartNewDedicatedServerApplication(...)` launches a process with `--server`, `--port`,
    `--savefile`, `--admin` (the uid of the `LocalPlayer` this starter joins with) and **`--parent-pid` with the PID of
    the current process**. `--headless` is set when the server window is not requested; log mirroring into the Godot
-   console is never passed to the dedicated server.
-2. A `ProcessShutdowner` (a GodotBox node) with the server's PID is attached to `Game`: the child process is killed
-   when `Game` is destroyed.
-3. `base.Init(game)` — from here on this is an ordinary connection to `127.0.0.1`.
-4. The write into `resume-game.json` is done manually **after** `base.Init`, as "own server". That is exactly why
+   console is never passed to the dedicated server. `ProcessService` keeps the PID to wait for the process to exit.
+2. `base.Init(game)` — from here on this is an ordinary connection to `127.0.0.1`.
+3. The write into `resume-game.json` is done manually **after** `base.Init`, as "own server". That is exactly why
    `mustSetLastGame: false` went to the base constructor: otherwise the base would have recorded "connecting to
    someone else's server" and "Continue" would stop bringing up a server.
 
-Both nodes that kill this process pair, and from which side each works, are in [Shutdown](Shutdown.md).
+How this process pair is stopped is in [Shutdown](Shutdown.md).

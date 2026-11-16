@@ -46,7 +46,8 @@ public class SaveServiceTests
                 new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []),
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, catalog,
                 connection, connection, _files, LocalPlayer: null,
-                TestWorldDependencies.Admin(WorldLayer.Dedicated)),
+                TestWorldDependencies.Admin(WorldLayer.Dedicated),
+                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Dedicated)),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _service = _server.GetRequiredService<SaveService>();

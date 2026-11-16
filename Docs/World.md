@@ -27,8 +27,9 @@ or snapshot throws from `InitPreReady`, and the caller frees the World.
 
 `WorldDependencies` is what `Game` hands to every service: `TimeProvider`, `NetMessageCodec`, `Replicator`,
 `FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections, `ISaveFiles` (`null` on a remote client),
-`LocalPlayer` (`null` on a dedicated server) and `WorldAdmin` (`null` on a remote client). With the Simulation the
-World also adds `ServerTickNode`, with the server network `SaveOnExitNode`.
+`LocalPlayer` (`null` on a dedicated server), `WorldAdmin` (`null` on a remote client) and `IDedicatedServerOwner`
+(only on a dedicated server). With the Simulation the World also adds `ServerTickNode`, with the server network
+`SaveOnExitNode`.
 
 ## Layers
 
@@ -55,7 +56,8 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | Client |
 
 Every layer may also take the models and the `WorldDependencies` types, except those with an effect beyond the
-world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[ServerNetwork]`; `IServerConnection` —
+world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[ServerNetwork]`;
+`IDedicatedServerOwner` — `[SimulationFacade]`; `IServerConnection` —
 `[ClientNetwork]`; `Replicator`, `EntityRecordReader` — `[ServerNetwork]`, `[ClientReplication]`; `EntityRegistry`
 and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer` — `[Presentation]`.
 `IEntityFinder` is open to all. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
@@ -120,6 +122,7 @@ models. `WorldDocTests` checks the tables both ways.
 | Type | What it is |
 |---|---|
 | `IClientsConnection` | The transport to the clients, implemented by `Game`; the host's own peer is looped back synchronously |
+| `IDedicatedServerOwner` | `AdminLeft()`, implemented by `DedicatedServerGameStarter`, see [Shutdown](Shutdown.md) |
 | `ServerTickLoop` | One server tick, see [Networking](Networking.md#the-server-tick); the tick counter |
 | `ServerTickNode` | Calls `RunTick` last in the physics step |
 | `CommandInbox` | The commands and disconnections since the last tick, decoded on arrival |

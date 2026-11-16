@@ -52,7 +52,7 @@ library's source code is stored in the `KLUDGEBOX_SRC` ENV variable — that is 
 
 The Godot nodes built on top of it are **not** in the package: they live in this repository, in
 `Src/GodotBox/` (namespaces `GodotBox.*`) — `NodeContainer`, `AbstractStorage`, `CheckedAbstractStorage`,
-`Background`, `Camera` with its shifts, `ProcessShutdowner`, `ProcessDeadChecker`, plus its own service
+`Background`, `Camera` with its shifts, `ProcessDeadChecker`, plus its own service
 registry `GodotBoxServices`. GodotBox is a reusable layer that must not depend on the game — see
 [Code style conventions](Code-style.md#namespaces).
 

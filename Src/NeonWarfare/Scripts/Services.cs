@@ -8,7 +8,6 @@ using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.KnownServers;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
-using TerminationSignalsService = NeonWarfare.Scripts.GlobalServices.TerminationSignalsService;
 using TypesMappingService = NeonWarfare.Scripts.GlobalServices.TypesMappingService;
 
 namespace NeonWarfare.Scripts;
@@ -28,10 +27,10 @@ public static class Services
     public static MembersScanner MembersScanner => Di.MembersScanner;
     
     // Services from game, but extended KludgeBox services
-    public static readonly TerminationSignalsService TerminationSignals = new();
     public static readonly TypesMappingService TypesMapping = new();
     
     // Services from game
+    public static readonly QuitRequestsService QuitRequests = new();
     public static readonly ProcessService Process = new();
     public static readonly LoadingScreenService LoadingScreen = new();
     public static readonly MainSceneService MainScene = new();

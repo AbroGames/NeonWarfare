@@ -104,13 +104,14 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     /// <param name="localPlayer">The one passed to <see cref="SendJoinRequest"/>, <c>null</c> on a dedicated
     /// server.</param>
     /// <param name="admin"><c>null</c> for a remote client.</param>
+    /// <param name="dedicatedServerOwner">Only for a dedicated server.</param>
     public World.World AddWorld(
         WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles, LocalPlayer localPlayer,
-        WorldAdmin admin)
+        WorldAdmin admin, IDedicatedServerOwner dedicatedServerOwner = null)
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this, saveFiles, localPlayer, admin);
+            this, this, saveFiles, localPlayer, admin, dedicatedServerOwner);
         var world = new World.World();
         try
         {

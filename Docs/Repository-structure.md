@@ -17,7 +17,7 @@ Src/                                  Code and scenes of the Godot project; a na
 │   └── Godot/
 │       └── Nodes/                    NodeContainer, AbstractStorage, CheckedAbstractStorage, Background
 │           ├── Camera/               Camera2D with pluggable shifts: shake, manual shake, punch
-│           └── Process/              ProcessShutdowner, ProcessDeadChecker
+│           └── Process/              ProcessDeadChecker
 └── NeonWarfare/                      The game itself
     ├── Scenes/                       Scenes (.tscn) and their handlers (.cs) — kept next to each other, in one folder
     │   ├── Root/                     The application entry point and the client and server starters

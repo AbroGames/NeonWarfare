@@ -20,6 +20,7 @@ public class ClientRootStarter : BaseRootStarter
         
         Services.SaveLoad.Init(false);
         Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
+        Services.Process.Init(rootData.SceneTree);
         Services.LastGame.Init();
         Services.KnownServers.Init();
         
@@ -52,7 +53,6 @@ public class ClientRootStarter : BaseRootStarter
         else
         {
 	        Services.MainScene.StartMainMenu();
-	        Services.LoadingScreen.Clear();
         }
     }
 }

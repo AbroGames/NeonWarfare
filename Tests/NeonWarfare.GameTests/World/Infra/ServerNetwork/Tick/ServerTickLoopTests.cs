@@ -208,7 +208,8 @@ public class ServerTickLoopTests
                 TestWorldScenes.CreateCatalog(_scenes),
                 _clientsConnection, _clientsConnection, new RecordingSaveFiles(),
                 TestWorldDependencies.LocalPlayer(WorldLayer.Host),
-                TestWorldDependencies.Admin(WorldLayer.Host)),
+                TestWorldDependencies.Admin(WorldLayer.Host),
+                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host)),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;
