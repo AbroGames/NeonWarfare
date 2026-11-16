@@ -120,9 +120,11 @@ public static class RepositoryPaths
     /// <summary>The registry of all global services.</summary>
     public static string ServicesPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Services.cs");
 
+    /// <summary>The World: its root files, Infra/ and Features/ — see Docs/World.md.</summary>
+    public static string WorldDirectory { get; } = Path.Combine(GameSourceDirectory, "Scenes", "World");
+
     /// <summary>The features of the World, one folder each — see Docs/World-features.md.</summary>
-    public static string WorldFeaturesDirectory { get; } =
-        Path.Combine(GameSourceDirectory, "Scenes", "World", "Features");
+    public static string WorldFeaturesDirectory { get; } = Path.Combine(WorldDirectory, "Features");
 
     /// <summary>The only place that declares a transfer channel — Consts.TransferChannel.</summary>
     public static string ConstsPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Consts.cs");
@@ -270,6 +272,27 @@ public static class RepositoryPaths
     /// <summary><see cref="AllFiles"/> narrowed to one directory and everything below it.</summary>
     public static IReadOnlyList<string> AllFilesUnder(string directory) =>
         AllFiles().Where(path => IsInside(path, directory)).ToList();
+
+    /// <summary>
+    /// Every folder holding a file of <see cref="AllFiles"/> under <paramref name="root"/>, and every folder above
+    /// it up to the root, relative to the root with forward slashes: <c>Chat/ChatCommands</c>. Asked from git, so an
+    /// empty folder left on disk is not listed.
+    /// </summary>
+    public static IReadOnlySet<string> FoldersUnder(string root)
+    {
+        HashSet<string> folders = new(StringComparer.Ordinal);
+        foreach (string file in AllFilesUnder(root))
+        {
+            for (string? folder = Path.GetDirectoryName(file);
+                 folder != null && IsInside(folder, root);
+                 folder = Path.GetDirectoryName(folder))
+            {
+                folders.Add(Path.GetRelativePath(root, folder).Replace(Path.DirectorySeparatorChar, '/'));
+            }
+        }
+
+        return folders;
+    }
 
     /// <summary>True when <paramref name="absolutePath"/> is inside <paramref name="directory"/>.</summary>
     public static bool IsInside(string absolutePath, string directory) =>

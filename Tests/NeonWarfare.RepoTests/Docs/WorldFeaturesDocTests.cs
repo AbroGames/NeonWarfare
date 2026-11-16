@@ -57,27 +57,8 @@ public class WorldFeaturesDocTests
         report.AssertEmpty();
     }
 
-    /// <summary>
-    /// Every folder holding a file of the repository under World/Features, and every folder above it, relative to
-    /// World/Features with forward slashes: <c>Chat/ChatCommands</c>. Asked from git, so an empty folder left on disk
-    /// is not a feature.
-    /// </summary>
-    private static IReadOnlySet<string> DeclaredFolders()
-    {
-        string root = RepositoryPaths.WorldFeaturesDirectory;
-        HashSet<string> folders = new(StringComparer.Ordinal);
-        foreach (string file in RepositoryPaths.AllFilesUnder(root))
-        {
-            for (string? folder = Path.GetDirectoryName(file);
-                 folder != null && RepositoryPaths.IsInside(folder, root);
-                 folder = Path.GetDirectoryName(folder))
-            {
-                folders.Add(Path.GetRelativePath(root, folder).Replace(Path.DirectorySeparatorChar, '/'));
-            }
-        }
-
-        return folders;
-    }
+    private static IReadOnlySet<string> DeclaredFolders() =>
+        RepositoryPaths.FoldersUnder(RepositoryPaths.WorldFeaturesDirectory);
 
     private static IReadOnlyList<string> DocumentedFolders() => Table().CodeSpanColumn(FolderColumn).ToList();
 

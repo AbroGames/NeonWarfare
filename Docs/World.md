@@ -81,101 +81,24 @@ every `IChatCommand` to `ChatSimulationFacade.Register`, every `[CommandHandler]
 `CommandHandlerRegistry.Register`. Adding a service is one class with a layer attribute; nothing else is edited. The
 GameTests build the container for every configuration.
 
-## Inventory
+## Folders
 
-Every top-level type of `World/*.cs` and `World/Infra/`, except the `Command`, `Event` and `Notice` records and the
-models. `WorldDocTests` checks the tables both ways.
+Every folder of `World/`, except the inside of `Features/`. `WorldDocTests` checks the table both ways.
 
-### Root
-
-| Type | What it is |
+| Folder | What it holds |
 |---|---|
-| `World` | The World node and composition root, see [above](#the-world-node) |
-| `WorldDependencies` | What `Game` hands to every service |
-| `WorldOrigin` | New, from a save or from the join snapshot |
-| `WorldPackedScenes` | The scenes the World spawns; their order is the scene part of `EntityCatalog`, owned by `Game` |
-| `WorldServicesBuilder` | Builds the container; separate from `World` so a test can build every configuration |
-
-### Composition
-
-| Type | What it is |
-|---|---|
-| `WorldLayer` | The layer flags and the three configurations |
-| `WorldServiceAttribute` | The base of the layer attributes, holds the `WorldLayer` |
-| `SimulationAttribute`, `SimulationFacadeAttribute`, `CommandHandlerAttribute`, `ServerNetworkAttribute`, `QueryAttribute`, `ClientNetworkAttribute`, `PresentationAttribute`, `ClientReplicationAttribute` | One per layer, see [Layers](#layers) |
-
-### Protocol
-
-| Type | What it is |
-|---|---|
-| `Command` | The base of every command, for typing only: the whitelist comes from the handlers |
-| `Event` | The base of every event, for typing only: the client reads only the known event types |
-| `NetMessageCodec` | A message is a `ushort` type id and a MessagePack body; sections of several; the protocol hash |
-| `NetMessageFormatException` | A packet that cannot be read |
-| `ProtocolHasher` | The hash of the mapped types, MessagePack keys, RepliCAT schemas and entity kinds |
-| `ServerPacketKind` | The first byte of a server packet |
-| `JoinRejectReason` | Why a join is refused, a code the client shows in its own language |
-| `JoinRejectedPacket` | The layout of the `JoinRejected` packet, the same in every build |
-| `ColorFormatter` | MessagePack formatter of Godot `Color` |
-
-### ServerNetwork
-
-| Type | What it is |
-|---|---|
-| `IClientsConnection` | The transport to the clients, implemented by `Game`; the host's own peer is looped back synchronously |
-| `IDedicatedServerOwner` | `AdminLeft()`, implemented by `DedicatedServerGameStarter`, see [Shutdown](Shutdown.md) |
-| `ServerTickLoop` | One server tick, see [Networking](Networking.md#the-server-tick); the tick counter |
-| `ServerTickNode` | Calls `RunTick` last in the physics step |
-| `CommandInbox` | The commands and disconnections since the last tick, decoded on arrival |
-| `CommandDispatcher` | Drains the inbox in the tick and routes every entry |
-| `CommandHandlerRegistry` | Every network handler and the command whitelist built from them |
-| `IPlayerCommandHandler<TCommand>` | `Validate` and `Process` of a command from a joined player, by uid |
-| `IJoinRequestHandler` | Validates and processes a join; the peer has no player yet |
-| `IPeerDisconnectedHandler` | The pair of the join: a joined peer leaves or is displaced |
-| `PeerGatekeeper` | Handshake deadline, rejection, disconnection of peers |
-| `PeerSessions` | Join, displacement and leave of a peer, in the tick |
-| `PeerUidMap` | Peer ↔ uid of the joined players, never replicated |
-| `EventOutbox` | The events of the tick, one buffer per joined peer |
-| `StateReplicator` | The state packet, the join snapshot and the save records, from the RepliCAT baselines |
-| `SaveService` | The save file of the World, "save as" at the end of the tick, the save on exit |
-| `SaveWriter` | Writes the save: protocol hash, next NetId, tick, records |
-| `SaveLoader` | Fills a new World from a save |
-| `SaveOnExitNode` | Saves when the World leaves the tree |
-| `ISaveFiles` | The save files on disk and the autosave setting, owned by the process |
-| `SaveFormatException`, `SaveVersionMismatchException` | A broken save, a save of another protocol hash |
-
-### ClientNetwork
-
-| Type | What it is |
-|---|---|
-| `IServerConnection` | The transport to the server, implemented by `Game`; on the host a loopback |
-| `PlayerCommandSender` | Encodes a command and sends it: the only sender in the World |
-| `EventDispatcher` | Reads an events packet and calls the `[EventHandler]` methods |
-| `EventHandlerAttribute` | Marks a private `Handle(TEvent)` of a Presentation |
-
-### ClientReplication
-
-| Type | What it is |
-|---|---|
-| `StateApplier` | Applies a state packet and the join snapshot on a remote client |
-
-### Entities
-
-| Type | What it is |
-|---|---|
-| `NetId` | The network identity of an entity; `NetId.None` is "nothing" and the World root |
-| `NetIdGenerator` | Hands out NetIds in order, restored from a save |
-| `EntityRegistry` | NetId ↔ node ↔ kind of every spawned entity |
-| `IEntityFinder` | The read side of the registry, open to every layer |
-| `EntityCatalog` | The kind id of every entity: scenes, then node types; owned by `Game` |
-| `EntitySpawner` | The only spawn on the server, and the despawn |
-| `EntityRecordReader` | Spawns from records with their NetIds: snapshot, state packet, save |
-| `WorldRoot` | The node a root entity is added to, instead of the whole `World` |
-| `NotSavedAttribute` | An entity the save keeps without its state |
-
-### Hud
-
-| Type | What it is |
-|---|---|
-| `HudMailbox` | One-frame notices from the Presentation to the HUD |
-| `Notice` | The base of every notice; never leaves the process |
+| `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
+| `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
+| `Infra/Composition` | `WorldLayer` — the layer flags and the three configurations; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
+| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |
+| `Infra/ServerNetwork` | The server side; `IClientsConnection` — the transport to the clients, implemented by `Game`, the host's own peer looped back synchronously; `IDedicatedServerOwner`, see [Shutdown](Shutdown.md) |
+| `Infra/ServerNetwork/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
+| `Infra/ServerNetwork/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
+| `Infra/ServerNetwork/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerUidMap` (never replicated), `JoinRequestCommand`, `IJoinRequestHandler` and `IPeerDisconnectedHandler` |
+| `Infra/ServerNetwork/Events` | `EventOutbox` — the events of the tick, one buffer per joined peer |
+| `Infra/ServerNetwork/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
+| `Infra/ServerNetwork/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `ISaveFiles` (owned by the process), `SaveFormatException`, `SaveVersionMismatchException` |
+| `Infra/ClientNetwork` | `IServerConnection` (a loopback on the host), `PlayerCommandSender` — the only sender in the World, `EventDispatcher` and `EventHandlerAttribute` |
+| `Infra/ClientReplication` | `StateApplier` — the state packets and the join snapshot of a remote client |
+| `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `Game`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
+| `Infra/Hud` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |
