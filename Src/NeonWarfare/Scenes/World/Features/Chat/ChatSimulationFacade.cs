@@ -13,7 +13,7 @@ namespace NeonWarfare.Scenes.World.Features.Chat;
 [SimulationFacade]
 public class ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery players)
 {
-    private const string RanLog = "{nick} ({uid}) ran /{text}";
+    private const string RanLog = "{nick} ({uid}) ran command /{text}";
     private const string NotFoundReply = "Command '{0}' not found. Use '/help' to see the list of commands.";
     private const string RequiresAdminReply = "Command '{0}' requires admin status.";
 

@@ -1,6 +1,10 @@
+using System;
+using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.DI.Requests.LoggerInjection;
+using NeonWarfare.Scenes.World.Features.Chat;
+using NeonWarfare.Scenes.World.Infra.Hud;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.Hud;
@@ -10,6 +14,7 @@ public partial class Hud : Control
     
     [Child] private Label InfoLabel { get; set; }
     
+    [Child] private ScrollContainer ChatScrollContainer { get; set; }
     [Child] private Label ChatLabel { get; set; }
     [Child] private LineEdit ChatLineEdit { get; set; }
     [Child] private Button ChatSendButton { get; set; }
@@ -42,8 +47,39 @@ public partial class Hud : Control
     {
         Di.Process(this);
         
-        //TODO 017 chat
+        // The scroll bar learns the new height only after the label's layout, so the scroll follows its change
+        ScrollBar chatScrollBar = ChatScrollContainer.GetVScrollBar();
+        chatScrollBar.Changed += () => ChatScrollContainer.ScrollVertical = (int) chatScrollBar.MaxValue;
+        ChatSendButton.Pressed += SendChat;
+        ChatLineEdit.TextSubmitted += _ => SendChat();
         LogButton.Pressed += () => { Services.NodeTree.LogFullTree(GetTree().Root); };
         ExitButton.Pressed += () => { Services.MainScene.StartMainMenu(); };
     }
+
+    public override void _Process(double delta)
+    {
+        if (_reader.Get<HudMailbox>().Read<ChatEntryAddedNotice>().Count == 0) return;
+
+        ChatLabel.Text = string.Join("\n",
+            _reader.Get<ChatPresentation>().Entries.Select(entry => FormatChatLine(entry, key => Tr(key))));
+    }
+
+    private void SendChat()
+    {
+        string text = ChatLineEdit.Text;
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        _commands.Commands.Send(new SendChatMessageCommand(text));
+        ChatLineEdit.Clear();
+    }
+
+    public static string FormatChatLine(ChatPresentation.ChatEntry entry, Func<string, string> tr) =>
+        entry switch
+        {
+            ChatPresentation.PlayerMessageEntry message => $"[{message.SenderNick}]: {message.Text}",
+            ChatPresentation.ServerTextEntry message => $"[{tr("HUD__CHAT_SERVER_NICK")}]: {message.Text}",
+            ChatPresentation.PlayerJoinedEntry joined => $"{joined.Nick} {tr("HUD__CHAT_PLAYER_JOINED")}",
+            ChatPresentation.PlayerLeftEntry left => $"{left.Nick} {tr("HUD__CHAT_PLAYER_LEFT")}",
+            _ => throw new ArgumentOutOfRangeException(nameof(entry), entry, null)
+        };
 }
