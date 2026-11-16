@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using NeonWarfare.RepoTests.Infrastructure;
 using Xunit;
 
@@ -118,6 +119,41 @@ public class LocaleFilesTests
 
         report.AssertEmpty();
     }
+
+    /// <summary>
+    /// A translation with arguments is filled by string.Format on the client (Docs/Chat-and-commands.md).
+    /// A locale that drops or renumbers a {n} shows the raw key instead, and only in that language.
+    /// </summary>
+    [Fact]
+    public void Translations_HaveTheSamePlaceholdersInEveryLocale()
+    {
+        IReadOnlyList<PoFile> files = RepositoryPaths.LocaleFiles().Select(PoFile.Load).ToList();
+        FailureReport report = new("Locales disagree on the {n} placeholders of a key");
+
+        foreach (IGrouping<string, (string Where, string Placeholders)> key in files
+                     .SelectMany(file => file.Entries.Select(entry => (
+                         entry.Key,
+                         Where: $"{file.RelativePath}:{entry.Line}",
+                         Placeholders: Placeholders(entry.Translation))))
+                     .GroupBy(found => found.Key, found => (found.Where, found.Placeholders), StringComparer.Ordinal)
+                     .Where(key => key.Select(found => found.Placeholders).Distinct().Count() > 1)
+                     .OrderBy(key => key.Key, StringComparer.Ordinal))
+        {
+            report.Add($"'{key.Key}': "
+                       + string.Join("; ", key.Select(found => $"{found.Where} {found.Placeholders}")));
+        }
+
+        report.AssertEmpty();
+    }
+
+    private static string Placeholders(string translation) =>
+        "[" + string.Join(", ", PlaceholderRegex.Matches(translation)
+            .Select(match => match.Groups["index"].Value)
+            .Distinct()
+            .Order(StringComparer.Ordinal)
+            .Select(index => $"{{{index}}}")) + "]";
+
+    private static readonly Regex PlaceholderRegex = new(@"\{(?<index>\d+)(?:[,:][^}]*)?\}", RegexOptions.Compiled);
 
     /// <summary>
     /// messages.pot is the template every locale is filled in from. A translation that leaks into it

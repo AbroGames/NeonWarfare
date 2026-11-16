@@ -1,17 +1,15 @@
-using System;
 using Godot;
 using KludgeBox.Logging;
+using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using Serilog;
 
 namespace NeonWarfare.Scenes.World.Features.Players;
 
 [SimulationFacade]
 public class PlayerSimulationFacade(
-    TimeProvider timeProvider,
-    EventOutbox outbox,
+    ChatSimulation chat,
     PlayersStorageQuery players,
     PlayersSessionStorageQuery session,
     WorldAdmin admin,
@@ -22,6 +20,8 @@ public class PlayerSimulationFacade(
     private const string JoinedLog = "Player joined: {nick} ({uid})";
     private const string LeftLog = "Player left: {nick} ({uid})";
     private const string AdminGrantedLog = "Player is the admin of the world: {nick} ({uid})";
+    private const string JoinedMessageKey = "HUD__CHAT_PLAYER_JOINED";
+    private const string LeftMessageKey = "HUD__CHAT_PLAYER_LEFT";
 
     private readonly ILogger _log = LogFactory.GetForStatic<PlayerSimulationFacade>();
 
@@ -45,7 +45,7 @@ public class PlayerSimulationFacade(
 
         session.Model.OnlinePlayerUids.Add(uid);
         _log.Information(JoinedLog, player.Nick, uid);
-        outbox.PublishToAll(new PlayerJoinedEvent(NowUnixSeconds(), uid, player.Nick));
+        chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, player.Nick);
     }
 
     public void Leave(string uid)
@@ -53,9 +53,7 @@ public class PlayerSimulationFacade(
         PlayerModel player = players.Model.PlayerByUid[uid];
         session.Model.OnlinePlayerUids.Remove(uid);
         _log.Information(LeftLog, player.Nick, uid);
-        outbox.PublishToAll(new PlayerLeftEvent(NowUnixSeconds(), uid, player.Nick));
+        chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, player.Nick);
         if (uid == admin.Uid) dedicatedServerOwner?.AdminLeft();
     }
-
-    private long NowUnixSeconds() => timeProvider.GetUtcNow().ToUnixTimeSeconds();
 }

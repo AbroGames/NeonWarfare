@@ -20,7 +20,7 @@ public class EventOutboxTests
     private const int BobPeer = 3;
 
     private static readonly HashSet<Type> EventTypes =
-        [typeof(ChatServerMessageEvent), typeof(ChatPlayerMessageEvent), typeof(PlayerJoinedEvent)];
+        [typeof(ChatServerMessageEvent), typeof(ChatPlayerMessageEvent), typeof(LocalizedChatMessageEvent)];
 
     private const string Alice = "alice";
     private const string Bob = "bob";
@@ -70,7 +70,7 @@ public class EventOutboxTests
     {
         ChatServerMessageEvent first = Event("first");
         ChatServerMessageEvent second = Event("second");
-        var third = new PlayerJoinedEvent(3, "carol", "Carol");
+        var third = new LocalizedChatMessageEvent(3, "key", ["Carol"]);
         ChatServerMessageEvent fourth = Event("fourth");
 
         _outbox.PublishToAll(first);

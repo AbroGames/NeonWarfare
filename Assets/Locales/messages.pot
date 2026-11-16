@@ -98,6 +98,12 @@ msgstr ""
 msgid "HUD__CHAT_PLAYER_LEFT"
 msgstr ""
 
+msgid "HUD__CHAT_GAME_SAVED"
+msgstr ""
+
+msgid "HUD__CHAT_GAME_SAVE_FAILED"
+msgstr ""
+
 msgid "HUD__SAVE_BUTTON"
 msgstr ""
 

@@ -20,6 +20,7 @@ public class NetMessageCodecTests
     private static readonly Dictionary<Type, object> SampleByType = new()
     {
         [typeof(string)] = "sample",
+        [typeof(string[])] = new[] { "first", "second" },
         [typeof(long)] = 1_700_000_000L,
         [typeof(ulong)] = 0xFEDC_BA98_7654_3210UL,
         [typeof(Color)] = new Color(0.1f, 0.2f, 0.3f, 0.4f),
@@ -100,7 +101,7 @@ public class NetMessageCodecTests
     {
         var codec = new NetMessageCodec(CreateMapping(), []);
         var buffer = new ArrayBufferWriter<byte>();
-        codec.Write(buffer, new PlayerJoinedEvent(1, "uid", "nick"));
+        codec.Write(buffer, new LocalizedChatMessageEvent(1, "key", ["nick"]));
 
         AssertRejected(() => codec.Read(buffer.WrittenMemory, AllowedCommands(), out _));
     }
@@ -133,8 +134,8 @@ public class NetMessageCodecTests
     public void Section_RoundTrips()
     {
         var codec = new NetMessageCodec(CreateMapping(), []);
-        object[] messages = [new SendChatMessageCommand("hello"), new PlayerJoinedEvent(1, "uid", "nick")];
-        HashSet<Type> allowed = [typeof(SendChatMessageCommand), typeof(PlayerJoinedEvent)];
+        object[] messages = [new SendChatMessageCommand("hello"), new LocalizedChatMessageEvent(1, "key", ["nick"])];
+        HashSet<Type> allowed = [typeof(SendChatMessageCommand), typeof(LocalizedChatMessageEvent)];
 
         foreach (object[] section in new[] { [], messages })
         {

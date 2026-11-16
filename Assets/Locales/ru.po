@@ -98,10 +98,16 @@ msgid "HUD__CHAT_SERVER_NICK"
 msgstr "СЕРВЕР"
 
 msgid "HUD__CHAT_PLAYER_JOINED"
-msgstr "заходит в игру"
+msgstr "{0} заходит в игру"
 
 msgid "HUD__CHAT_PLAYER_LEFT"
-msgstr "покидает игру"
+msgstr "{0} покидает игру"
+
+msgid "HUD__CHAT_GAME_SAVED"
+msgstr "Игра сохранена как '{0}'."
+
+msgid "HUD__CHAT_GAME_SAVE_FAILED"
+msgstr "Не удалось сохранить игру как '{0}'."
 
 msgid "HUD__SAVE_BUTTON"
 msgstr "Сохранить"

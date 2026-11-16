@@ -33,6 +33,10 @@ A new `.po` is then registered in the Godot project settings, under Localization
 > [Chat and commands](Chat-and-commands.md). Commands are an admin tool that is used extremely rarely,
 > so keeping their texts in `.po` makes no sense.
 
+A message the server sends into the chat travels as a key and is translated on the client, see
+[Chat and commands](Chat-and-commands.md#localized-server-messages). Its `{0}`, `{1}`, … must be the same in every
+locale (`LocaleFilesTests`).
+
 ## Locale selection
 
 The current locale is set in `RootStarter` **after** the settings are loaded but **before** the loading

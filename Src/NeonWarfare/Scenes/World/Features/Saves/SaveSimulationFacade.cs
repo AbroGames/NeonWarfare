@@ -1,4 +1,3 @@
-using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Features.Chat;
 using NeonWarfare.Scenes.World.Features.Players;
@@ -12,8 +11,8 @@ namespace NeonWarfare.Scenes.World.Features.Saves;
 public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSimulation, PlayerQuery players)
 {
     private const string SaveLog = "{nick} ({uid}) saves the game as '{fileName}'";
-    private const string SavedReply = "The game is saved as '{0}'.";
-    private const string FailedReply = "Saving the game as '{0}' failed.";
+    private const string SavedMessageKey = "HUD__CHAT_GAME_SAVED";
+    private const string SaveFailedMessageKey = "HUD__CHAT_GAME_SAVE_FAILED";
 
     private readonly ILogger _log = LogFactory.GetForStatic<SaveSimulationFacade>();
 
@@ -24,7 +23,7 @@ public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSi
         
         // The reply comes at the end of the tick and is not guaranteed: the sender may have left by then
         saveService.RequestSave(fileName,
-            () => chatSimulation.SendMessageAsServerToPlayer(SavedReply.FormatWith(fileName), senderUid),
-            _ => chatSimulation.SendMessageAsServerToPlayer(FailedReply.FormatWith(fileName), senderUid));
+            () => chatSimulation.SendLocalizedMessageAsServerToPlayer(senderUid, SavedMessageKey, fileName),
+            _ => chatSimulation.SendLocalizedMessageAsServerToPlayer(senderUid, SaveFailedMessageKey, fileName));
     }
 }
