@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.World.Infra.Protocol;
+namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
 /// Why the server refused a join. A code rather than a text: the client shows it in its own language.

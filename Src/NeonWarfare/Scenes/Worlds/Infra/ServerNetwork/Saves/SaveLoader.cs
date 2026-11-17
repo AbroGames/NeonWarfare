@@ -1,13 +1,13 @@
 using System;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Tick;
 using RepliCAT;
 using RepliCAT.Bits;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 
 /// <summary>
 /// Fills an empty world from the save of <see cref="SaveWriter"/>: every entity with its saved NetId, then the NetId

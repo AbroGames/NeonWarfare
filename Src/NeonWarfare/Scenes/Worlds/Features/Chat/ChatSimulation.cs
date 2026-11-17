@@ -1,11 +1,11 @@
 using System;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Features.Chat;
+namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 [Simulation]
 public class ChatSimulation(TimeProvider timeProvider, EventOutbox outbox, PlayerQuery players)

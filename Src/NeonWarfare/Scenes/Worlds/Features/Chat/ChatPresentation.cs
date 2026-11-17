@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeonWarfare.Scenes.World.Infra.ClientNetwork;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Hud;
+using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Hud;
 
-namespace NeonWarfare.Scenes.World.Features.Chat;
+namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 [Presentation]
 public class ChatPresentation(HudMailbox hudMailbox)

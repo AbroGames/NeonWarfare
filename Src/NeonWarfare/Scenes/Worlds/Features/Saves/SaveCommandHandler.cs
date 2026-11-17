@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
-namespace NeonWarfare.Scenes.World.Features.Saves;
+namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 
 // Only an admin is shown the save controls, so a refused command gets no reply
 [CommandHandler]

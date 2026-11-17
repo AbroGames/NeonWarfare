@@ -1,8 +1,8 @@
 using System;
 using Godot;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Tick;
 
 /// <summary>
 /// Drives the server tick from the physics step. Last in the physics step.

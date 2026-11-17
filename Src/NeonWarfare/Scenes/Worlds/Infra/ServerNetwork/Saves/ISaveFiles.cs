@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 
 /// <summary>
 /// The save files on disk and the autosave setting, owned by the process rather than by a World.

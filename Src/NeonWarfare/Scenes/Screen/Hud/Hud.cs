@@ -3,10 +3,11 @@ using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Chat;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Features.Saves;
-using NeonWarfare.Scenes.World.Infra.Hud;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Features.Saves;
+using NeonWarfare.Scenes.Worlds.Infra.Hud;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.Hud;
@@ -29,13 +30,13 @@ public partial class Hud : Control
     [Child] private Button ExitButton { get; set; }
     [Child] private LineEdit SaveLineEdit { get; set; }
     
-    private World.World.IReader _reader;
-    private World.World.ICommandSender _commands;
+    private World.IReader _reader;
+    private World.ICommandSender _commands;
     private PlayerQuery _players;
     private LocalPlayerPresentation _localPlayer;
     private readonly ILogger _log = LogFactory.GetForStatic<Hud>();
     
-    public Hud InitPreReady(World.World.IReader reader, World.World.ICommandSender commands)
+    public Hud InitPreReady(World.IReader reader, World.ICommandSender commands)
     {
         if (reader == null) _log.Error("Reader must be not null");
         if (commands == null) _log.Error("Command sender must be not null");

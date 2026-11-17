@@ -1,6 +1,6 @@
 using Humanizer;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 
 /// <summary>
 /// A save written by a build of another protocol: its records would read as garbage, so none is read.

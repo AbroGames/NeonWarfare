@@ -1,8 +1,8 @@
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
 public interface IPlayerCommandHandler<TCommand> where TCommand : Command
 {

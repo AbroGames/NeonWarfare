@@ -1,6 +1,7 @@
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
@@ -22,7 +23,7 @@ public class SingleplayerGameStarter(
         SetLastGame(lastGame);
         ISaveFiles saveFiles = SaveFilesUpdatingLastGame(lastGame);
         LocalPlayer localPlayer = ReadLocalPlayer();
-        World.World world = AddServerWorld(
+        World world = AddServerWorld(
             saveFileName,
             origin => game.AddWorld(
                 WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, localPlayer, new WorldAdmin(localPlayer.Uid)),

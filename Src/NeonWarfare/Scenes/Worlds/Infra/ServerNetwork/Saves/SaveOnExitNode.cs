@@ -1,7 +1,7 @@
 using System;
 using Godot;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 
 /// <summary>
 /// Saves a server World when it leaves the tree: on quit and on the way back to the menu.

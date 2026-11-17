@@ -1,6 +1,6 @@
 using GdUnit4;
 using HudScreen = NeonWarfare.Scenes.Screen.Hud.Hud;
-using NeonWarfare.Scenes.World.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Chat;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Screen.Hud;

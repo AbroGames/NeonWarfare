@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.World;
+namespace NeonWarfare.Scenes.Worlds;
 
 /// <summary>
 /// Where the state of a World comes from. A server World also learns here the save file it saves to.

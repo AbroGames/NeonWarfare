@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.World.Infra.ClientNetwork;
+namespace NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
 
 /// <summary>
 /// The transport to the server, owned by <c>Game</c>. On the host <c>Game</c> hands the packet to its own World

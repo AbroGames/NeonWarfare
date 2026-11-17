@@ -2,11 +2,11 @@
 
 [← Project README](../README.md)
 
-The World (`Src/NeonWarfare/Scenes/World/`) is one game world: its entities, the services working on them and the
+The World (`Src/NeonWarfare/Scenes/Worlds/`) is one game world: its entities, the services working on them and the
 network machinery that depends on the save. It is created by the game starter inside `Game` and dies with it, its
-screen (`Hud` / `ServerHud`) with it. `World/Infra/` is the machinery shared by every feature; the game itself lives
-in `World/Features/` — see [World features](World-features.md). The packets and flows are in
-[Networking](Networking.md).
+screen (`Hud` / `ServerHud`) with it. `Worlds/Infra/` is the machinery shared by every feature; the game itself lives
+in `Worlds/Features/` — see [World features](World-features.md). The packets and flows are in
+[Networking](Networking.md). The folder is plural so that its namespace does not share the name of the `World` class.
 
 ## The World node
 
@@ -83,7 +83,7 @@ GameTests build the container for every configuration.
 
 ## Folders
 
-Every folder of `World/`, except the inside of `Features/`. `WorldDocTests` checks the table both ways.
+Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` checks the table both ways.
 
 | Folder | What it holds |
 |---|---|

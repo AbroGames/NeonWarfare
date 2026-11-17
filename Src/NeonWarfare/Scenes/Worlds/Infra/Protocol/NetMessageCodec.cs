@@ -9,7 +9,7 @@ using MessagePack.Resolvers;
 using NeonWarfare.Scripts.GlobalServices;
 using RepliCAT;
 
-namespace NeonWarfare.Scenes.World.Infra.Protocol;
+namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
 /// The format of a network message: a little-endian <c>ushort</c> type id from <see cref="TypesMappingService"/>

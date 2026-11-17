@@ -1,9 +1,9 @@
 using Godot;
 using Humanizer;
-using NeonWarfare.Scenes.World;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
@@ -28,7 +28,7 @@ public class HostMultiplayerGameStarter(
         base.Init(game);
     }
 
-    protected override World.World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles) =>
+    protected override World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles) =>
         game.AddWorld(
             WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, _localPlayer, new WorldAdmin(_localPlayer.Uid));
 

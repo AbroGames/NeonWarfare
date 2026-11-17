@@ -4,7 +4,7 @@ using System.Linq;
 using Godot;
 using Humanizer;
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// NetId, kind and node of every spawned entity. A node leaves on <c>TreeExiting</c>, which Godot propagates to every

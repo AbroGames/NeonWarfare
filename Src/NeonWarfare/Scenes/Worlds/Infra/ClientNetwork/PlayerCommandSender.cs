@@ -1,7 +1,7 @@
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
-namespace NeonWarfare.Scenes.World.Infra.ClientNetwork;
+namespace NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
 
 /// <summary>
 /// The only sender of commands in the World. <c>JoinRequestCommand</c> does not go through it: <c>Game</c> sends the

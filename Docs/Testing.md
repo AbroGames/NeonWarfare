@@ -67,8 +67,8 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Docs/CliArgsDocTests` | Flag table of [Command-line arguments](Cli-args.md) ↔ `Scripts/Content/CmdArgs/` |
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj`; the smoke project takes only the xUnit three |
 | `Docs/ServicesDocTests` | The global services table of [Services](Services.md) ↔ `Scripts/Services.cs` |
-| `Docs/WorldDocTests` | Folder table of [World](World.md) ↔ the folders of `World/` outside `Features/`, both ways |
-| `Docs/WorldFeaturesDocTests` | Folder table of [World features](World-features.md) ↔ the folders of `World/Features/`, both ways |
+| `Docs/WorldDocTests` | Folder table of [World](World.md) ↔ the folders of `Worlds/` outside `Features/`, both ways |
+| `Docs/WorldFeaturesDocTests` | Folder table of [World features](World-features.md) ↔ the folders of `Worlds/Features/`, both ways |
 | `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.RepoTests/`, both ways |
 | `Docs/GameTestingDocTests` | Coverage table of [Game testing](Game-testing.md) ↔ the `[TestSuite]` classes of `Tests/NeonWarfare.GameTests/`, both ways |
 | `Docs/SmokeTestingDocTests` | Scenario table of [Smoke testing](Smoke-testing.md) ↔ the tests of `Tests/NeonWarfare.SmokeTests/` |

@@ -1,9 +1,9 @@
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 
-namespace NeonWarfare.Scenes.World.Features.NewWorld;
+namespace NeonWarfare.Scenes.Worlds.Features.NewWorld;
 
 /// <summary>
 /// Spawns what a world has from its start. Only a new world: a loaded one gets these entities from the save, a

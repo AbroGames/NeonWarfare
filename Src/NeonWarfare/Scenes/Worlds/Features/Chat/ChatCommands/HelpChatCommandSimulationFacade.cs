@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
+namespace NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 
 [SimulationFacade]
 public class HelpChatCommandSimulationFacade(

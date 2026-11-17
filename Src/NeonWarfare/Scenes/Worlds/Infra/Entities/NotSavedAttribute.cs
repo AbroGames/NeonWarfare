@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// An entity the save keeps without its state: the save writes only its kind, NetId and parent, and a load creates

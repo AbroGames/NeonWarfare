@@ -5,7 +5,7 @@ using Humanizer;
 using KludgeBox.Logging;
 using Serilog;
 
-namespace NeonWarfare.Scenes.Game.Network;
+namespace NeonWarfare.Scenes.Game;
 
 /// <summary>
 /// ENet only: raw packets and connection events, no RPC. Knows nothing of the World, <c>Game</c> routes between them.

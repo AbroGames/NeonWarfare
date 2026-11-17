@@ -1,12 +1,12 @@
 using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Chat;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [SimulationFacade]
 public class PlayerSimulationFacade(

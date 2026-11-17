@@ -1,5 +1,5 @@
 using GdUnit4;
-using NeonWarfare.GameTests.World.Fixtures;
+using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.Scenes.Game.Starters;
 using static GdUnit4.Assertions;
 

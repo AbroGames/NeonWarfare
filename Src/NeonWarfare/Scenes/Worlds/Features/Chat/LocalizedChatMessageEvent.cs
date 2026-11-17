@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using MessagePack;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
-namespace NeonWarfare.Scenes.World.Features.Chat;
+namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 /// <summary>
 /// A server message the receiver translates itself: Tr on the server would use the server's language.

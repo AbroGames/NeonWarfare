@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.World.Infra.Composition;
+namespace NeonWarfare.Scenes.Worlds.Infra.Composition;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public abstract class WorldServiceAttribute(WorldLayer layer) : Attribute

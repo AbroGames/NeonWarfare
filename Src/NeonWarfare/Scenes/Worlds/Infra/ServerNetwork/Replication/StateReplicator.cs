@@ -4,14 +4,14 @@ using System.Linq;
 using Godot;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using RepliCAT;
 using RepliCAT.Bits;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Replication;
 
 /// <summary>
 /// Writes the state packet of the tick: the kind byte, the tick number (varuint), then three sections, each closed by

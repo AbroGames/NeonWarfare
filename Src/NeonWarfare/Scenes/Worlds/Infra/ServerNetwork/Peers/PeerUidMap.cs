@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Humanizer;
-using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
 /// <summary>
 /// Which peer each joined player is on. Not replicated: the model knows only the uid, and the server network

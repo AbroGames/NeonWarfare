@@ -3,12 +3,12 @@ using System.Buffers;
 using System.Collections.Generic;
 using Humanizer;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
 
 /// <summary>
 /// Events from the Simulation to the clients, sent at the end of the tick. Not a bus: nothing on the server

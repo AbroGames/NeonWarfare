@@ -3,7 +3,8 @@ using System.Linq;
 using Godot;
 using KludgeBox.DI.Requests.ChildInjection;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Players;
+using NeonWarfare.Scenes.Worlds;
+using NeonWarfare.Scenes.Worlds.Features.Players;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Screen.ServerHud;
@@ -30,7 +31,7 @@ public partial class ServerHud : Control
     private PlayerQuery _players;
     private readonly ILogger _log = LogFactory.GetForStatic<ServerHud>();
     
-    public ServerHud InitPreReady(World.World.IReader reader)
+    public ServerHud InitPreReady(World.IReader reader)
     {
         if (reader == null) _log.Error("Reader must be not null");
         _players = reader.Get<PlayerQuery>();

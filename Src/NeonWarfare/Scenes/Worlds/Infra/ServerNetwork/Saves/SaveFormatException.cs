@@ -1,6 +1,6 @@
 using System;
 
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 
 /// <summary>
 /// A save cannot be read: it is truncated, broken, or of another version (<see cref="SaveVersionMismatchException"/>).

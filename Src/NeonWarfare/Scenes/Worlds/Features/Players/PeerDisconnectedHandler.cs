@@ -1,7 +1,7 @@
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
 
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [CommandHandler]
 public class PeerDisconnectedHandler(PlayerSimulationFacade playerSimulationFacade) : IPeerDisconnectedHandler

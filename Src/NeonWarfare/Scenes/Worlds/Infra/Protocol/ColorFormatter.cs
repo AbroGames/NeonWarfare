@@ -2,12 +2,12 @@ using Godot;
 using Humanizer;
 using MessagePack;
 using MessagePack.Formatters;
-using NeonWarfare.Scenes.World.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 // Lets the MessagePack source generator and analyzer accept Color members of [MessagePackObject] types
 [assembly: MessagePackKnownFormatter(typeof(ColorFormatter))]
 
-namespace NeonWarfare.Scenes.World.Infra.Protocol;
+namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 public sealed class ColorFormatter : IMessagePackFormatter<Color>
 {

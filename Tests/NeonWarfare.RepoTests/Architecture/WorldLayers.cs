@@ -23,7 +23,7 @@ public enum Layer
 /// </summary>
 public static class WorldLayers
 {
-    public const string WorldNamespace = "NeonWarfare.Scenes.World";
+    public const string WorldNamespace = "NeonWarfare.Scenes.Worlds";
     public const string FeaturesNamespace = WorldNamespace + ".Features";
     public const string CommandBase = WorldNamespace + ".Infra.Protocol.Command";
     public const string EventBase = WorldNamespace + ".Infra.Protocol.Event";

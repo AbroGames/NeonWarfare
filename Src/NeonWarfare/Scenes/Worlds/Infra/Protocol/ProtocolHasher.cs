@@ -9,7 +9,7 @@ using System.Text;
 using MessagePack;
 using RepliCAT;
 
-namespace NeonWarfare.Scenes.World.Infra.Protocol;
+namespace NeonWarfare.Scenes.Worlds.Infra.Protocol;
 
 /// <summary>
 /// A hash of everything a peer of another build would read differently: the mapped types in id order, the

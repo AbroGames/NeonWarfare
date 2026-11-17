@@ -2,9 +2,9 @@
 
 [← Project README](../README.md)
 
-`Src/NeonWarfare/Scenes/World/Features/` holds the game itself, one folder per feature. A feature owns everything of
+`Src/NeonWarfare/Scenes/Worlds/Features/` holds the game itself, one folder per feature. A feature owns everything of
 its own: its commands, events, notices, models, storages and services of every layer. Other features refer to its
-state by uid or NetId and read it through its `[Query]`; a feature is never referred to from `World/Infra/`.
+state by uid or NetId and read it through its `[Query]`; a feature is never referred to from `Worlds/Infra/`.
 
 ## How a feature plugs in
 
@@ -29,7 +29,7 @@ Nothing is registered by hand: the composition root finds a feature by its types
 
 ## Folders
 
-Every folder under `World/Features/`, nested ones included. `WorldFeaturesDocTests` checks the table both ways.
+Every folder under `Worlds/Features/`, nested ones included. `WorldFeaturesDocTests` checks the table both ways.
 
 | Folder | What it holds |
 |---|---|

@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.World.Infra.ServerNetwork;
+namespace NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
 
 /// <summary>
 /// What owns the process of a dedicated server World, owned by its starter. The World only reports; whether the

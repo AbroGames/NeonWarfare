@@ -4,15 +4,15 @@ using System.Linq;
 using System.Reflection;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
-using NeonWarfare.Scenes.World.Features.Chat;
-using NeonWarfare.Scenes.World.Features.Chat.ChatCommands;
-using NeonWarfare.Scenes.World.Infra.ClientNetwork;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.Entities;
-using NeonWarfare.Scenes.World.Infra.Protocol;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
+using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.Entities;
+using NeonWarfare.Scenes.Worlds.Infra.Protocol;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
 
-namespace NeonWarfare.Scenes.World;
+namespace NeonWarfare.Scenes.Worlds;
 
 // Separate from World only so that a test can build the container for every configuration;
 // the game reaches the container through World alone

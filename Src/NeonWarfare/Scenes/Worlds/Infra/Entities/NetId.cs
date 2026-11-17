@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.World.Infra.Entities;
+namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 
 /// <summary>
 /// The network identity of an entity: the same on the server and on every client, never reused within a world.

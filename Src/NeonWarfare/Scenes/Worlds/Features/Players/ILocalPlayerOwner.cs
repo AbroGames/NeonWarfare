@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.World.Features.Players;
+namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 /// <summary>
 /// What shows this process's player its World, owned by <c>Game</c>. The World only reports; the UI is created by

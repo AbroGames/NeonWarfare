@@ -1,11 +1,11 @@
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.World.Features.Chat;
-using NeonWarfare.Scenes.World.Features.Players;
-using NeonWarfare.Scenes.World.Infra.Composition;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds.Features.Chat;
+using NeonWarfare.Scenes.Worlds.Features.Players;
+using NeonWarfare.Scenes.Worlds.Infra.Composition;
+using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
 using Serilog;
 
-namespace NeonWarfare.Scenes.World.Features.Saves;
+namespace NeonWarfare.Scenes.Worlds.Features.Saves;
 
 [SimulationFacade]
 public class SaveSimulationFacade(SaveService saveService, ChatSimulation chatSimulation, PlayerQuery players)
