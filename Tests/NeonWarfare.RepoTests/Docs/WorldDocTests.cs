@@ -4,7 +4,7 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Docs;
 
 /// <summary>
-/// The folder table of Docs/World.md is the map of the World machinery: the services of <c>World/Infra/</c> are found
+/// The folder table of Docs/World.md is the map of the World machinery: the services of <c>Worlds/Infra/</c> are found
 /// by their attributes and never named together anywhere in the code, so a new folder, or a renamed one, leaves the
 /// document behind silently. The inside of <c>Features/</c> is the table of Docs/World-features.md.
 /// </summary>

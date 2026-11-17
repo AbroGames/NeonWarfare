@@ -20,7 +20,7 @@ public class WorldFeaturesDocTests
     [Fact]
     public void FeatureFolders_AreListedInTheTable()
     {
-        FailureReport report = new($"Folders of World/Features missing from the table of Docs/{DocumentName}");
+        FailureReport report = new($"Folders of Worlds/Features missing from the table of Docs/{DocumentName}");
 
         CrossCheck.ReportMissing(
             report,
@@ -34,7 +34,7 @@ public class WorldFeaturesDocTests
     [Fact]
     public void TableRows_PointToExistingFolders()
     {
-        FailureReport report = new($"Rows of Docs/{DocumentName} that no folder of World/Features backs");
+        FailureReport report = new($"Rows of Docs/{DocumentName} that no folder of Worlds/Features backs");
 
         CrossCheck.ReportMissing(
             report,
