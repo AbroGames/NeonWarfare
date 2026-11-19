@@ -15,6 +15,7 @@ using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.World.Features.Chat;
@@ -48,7 +49,8 @@ public class ChatTests
         _provider = new WorldServicesBuilder().Build(
             WorldLayer.Dedicated,
             new WorldDependencies(
-                new ManualTimeProvider(Now), _codec, new ManualFrameProvider(), _scenes,
+                new ManualTimeProvider(Now), _codec,
+                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 new RecordingClientsConnection(), new RecordingClientsConnection()),
             new WorldRoot(_root));

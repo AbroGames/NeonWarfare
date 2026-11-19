@@ -14,6 +14,7 @@ using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scripts.GlobalServices.Settings;
+using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.World.Features.Players;
@@ -52,7 +53,8 @@ public class PlayerJoinLeaveTests
         _provider = new WorldServicesBuilder().Build(
             WorldLayer.Host,
             new WorldDependencies(
-                new ManualTimeProvider(Now), _codec, new ManualFrameProvider(), _scenes,
+                new ManualTimeProvider(Now), _codec,
+                new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();

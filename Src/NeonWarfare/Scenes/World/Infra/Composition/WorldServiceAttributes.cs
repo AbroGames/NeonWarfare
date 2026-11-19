@@ -21,3 +21,5 @@ public class QueryAttribute() : WorldServiceAttribute(WorldLayer.Query);
 public class ClientNetworkAttribute() : WorldServiceAttribute(WorldLayer.ClientNetwork);
 
 public class PresentationAttribute() : WorldServiceAttribute(WorldLayer.Presentation);
+
+public class ClientReplicationAttribute() : WorldServiceAttribute(WorldLayer.ClientReplication);

@@ -15,13 +15,15 @@ using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
+using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.World.Features.Chat.ChatPresentation;
 
 namespace NeonWarfare.GameTests.World.Infra.ServerNetwork.Tick;
 
 // A host through the real composition root: the fake transport delivers the host's own packets to its own
-// EventDispatcher, as Game does, so the host's chat is filled the way a remote client's is
+// EventDispatcher, as Game does, so the host's chat is filled the way a remote client's is. The state packets are
+// covered by TickStateReplicationTests
 [TestSuite]
 public class ServerTickLoopTests
 {
@@ -46,7 +48,7 @@ public class ServerTickLoopTests
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _scenes = TestWorldScenes.Create();
         _root = new Node();
-        _clientsConnection = new RecordingClientsConnection();
+        _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _time = new ManualTimeProvider(Now);
     }
 
@@ -97,11 +99,9 @@ public class ServerTickLoopTests
 
         Loop().RunTick();
 
-        AssertThat(_clientsConnection.Packets.Select(sent => sent.PeerId))
-            .ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
-        foreach (RecordingClientsConnection.Sent sent in _clientsConnection.Packets)
+        AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
+        foreach (RecordingClientsConnection.Sent sent in EventPackets())
         {
-            AssertThat(sent.Packet[0]).IsEqual((byte) ServerPacketKind.Events);
             IReadOnlyList<object> events = _codec.ReadSection(sent.Packet.AsMemory(1..), EventTypes, out int read);
             AssertThat(read).IsEqual(sent.Packet.Length - 1);
             AssertThat(events).ContainsExactly(Hello);
@@ -113,6 +113,9 @@ public class ServerTickLoopTests
     public void RunTick_WithoutEvents_SendsNothing()
     {
         Build(new WorldServicesBuilder());
+        // The first tick sends the joined peers the whole state
+        Loop().RunTick();
+        _clientsConnection.Packets.Clear();
 
         Loop().RunTick();
 
@@ -129,7 +132,7 @@ public class ServerTickLoopTests
 
         Loop().RunTick();
 
-        AssertThat(_clientsConnection.Packets.Select(sent => sent.PeerId)).ContainsExactly(AlicePeer);
+        AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactly(AlicePeer);
     }
 
     // The failing peer is the remote one, so the host's chat shows whether the other peer still got its packet
@@ -172,8 +175,7 @@ public class ServerTickLoopTests
         Loop().RunTick();
 
         AssertThat(Chat().Entries).ContainsExactly(new PlayerMessageEntry(Now, "alice", "Alice", "hi"));
-        AssertThat(_clientsConnection.Packets.Select(sent => sent.PeerId))
-            .ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
+        AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
     }
 
     // The deadline passes between the ticks: the join that came in time is processed before the timeout is checked
@@ -202,7 +204,7 @@ public class ServerTickLoopTests
         _provider = builder.Build(
             WorldLayer.Host,
             new WorldDependencies(
-                _time, _codec, new ManualFrameProvider(), _scenes,
+                _time, _codec, new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
                 _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
@@ -227,6 +229,9 @@ public class ServerTickLoopTests
             .EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
 
     private PlayersModel Players() => _provider.GetRequiredService<PlayersStorageQuery>().Model;
+
+    private IEnumerable<RecordingClientsConnection.Sent> EventPackets() =>
+        _clientsConnection.Packets.Where(sent => sent.Packet[0] == (byte) ServerPacketKind.Events);
 
     private ServerTickLoop Loop() => _provider.GetRequiredService<ServerTickLoop>();
 
