@@ -10,13 +10,10 @@ using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
+using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.GlobalServices;
 using RepliCAT;
 using Serilog;
@@ -68,7 +65,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
     private Replicator _replicator;
 
     // The host is the server and a client in one process, its own peer is the server's
-    private int? LocalPeerId => _layers.HasFlag(WorldLayer.ServerNetwork | WorldLayer.ClientNetwork)
+    private int? LocalPeerId => _layers.HasFlag(WorldLayer.Server | WorldLayer.Client)
         ? ServerPeerId
         : null;
 

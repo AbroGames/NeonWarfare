@@ -12,9 +12,10 @@ using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
+using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 

@@ -14,8 +14,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class LayerReferenceTests
 {
     private const string InfraNamespace = WorldLayers.WorldNamespace + ".Infra";
+    private const string PortsNamespace = WorldLayers.WorldNamespace + ".Ports";
     private const string FeaturesNamespace = WorldLayers.FeaturesNamespace;
-    private const string HudMailbox = WorldLayers.WorldNamespace + ".Infra.Hud.HudMailbox";
+    private const string HudMailbox = WorldLayers.WorldNamespace + ".Infra.Presentation.HudMailbox";
     private const string HudMailboxPost = "Post";
 
     private static readonly string[] ServicesTypes =
@@ -93,7 +94,7 @@ public class LayerReferenceTests
 
     /// <summary>
     /// "Presentation and Input never reference Simulation", as a whitelist: a type of the Simulation group —
-    /// the server network layer included — is referred to only from the group itself. Whatever is outside
+    /// the Server layer included — is referred to only from the group itself. Whatever is outside
     /// it — Presentation, nodes, HUD, the transport — runs where the Simulation may not exist at all, on a client.
     /// </summary>
     [Fact]
@@ -156,21 +157,24 @@ public class LayerReferenceTests
     /// Infra is the machinery every feature plugs into through attributes and reflection, so it knows none of them:
     /// the player is a uid there, and each feature looks its own state up by it. Nor does it know the World root:
     /// the root is the composition root that knows everything, Features included, so through it the rule would be
-    /// bypassed.
+    /// bypassed. The ports are the World's side of its boundary with the process, which Infra implements against,
+    /// so the same holds for them.
     /// </summary>
     [Fact]
-    public void Infra_DoesNotReferenceFeaturesOrWorldRoot()
+    public void InfraAndPorts_DoNotReferenceFeaturesOrWorldRoot()
     {
-        FailureReport report = new("Infra referring to Features or the World root");
+        FailureReport report = new("Infra or Ports referring to Features or the World root");
         GameAssembly game = GameAssembly.Instance;
 
         List<TypeDefinition> infra = game.Types.Where(type => InNamespace(type, InfraNamespace)).ToList();
-        // Without all three a rename would leave the rule nothing to check
+        List<TypeDefinition> ports = game.Types.Where(type => InNamespace(type, PortsNamespace)).ToList();
+        // Without all four a rename would leave the rule nothing to check
         Assert.NotEmpty(infra);
+        Assert.NotEmpty(ports);
         Assert.Contains(game.Types, type => InNamespace(type, FeaturesNamespace));
         Assert.Contains(game.Types, IsWorldRoot);
 
-        foreach (TypeDefinition type in infra)
+        foreach (TypeDefinition type in infra.Concat(ports))
         {
             HashSet<string> reported = [];
             foreach (TypeReferenceSite site in TypeReferences.Of(type))

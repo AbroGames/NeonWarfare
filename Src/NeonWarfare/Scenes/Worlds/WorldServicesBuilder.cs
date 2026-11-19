@@ -6,11 +6,11 @@ using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 
 namespace NeonWarfare.Scenes.Worlds;
 
@@ -20,7 +20,7 @@ public class WorldServicesBuilder
 {
     private const string SeveralLayersError = "{0} has more than one layer attribute: {1}";
     private const string NotConcreteError = "{0} has a layer attribute but is abstract or generic";
-    private const string NoSaveFilesError = "A World with the ServerNetwork layer needs the save files.";
+    private const string NoSaveFilesError = "A World with the Server layer needs the save files.";
     private const string NoLocalPlayerError = "A World with the Presentation layer needs the local player.";
     private const string UnexpectedLocalPlayerError = "A World without the Presentation layer has no local player.";
     private const string NoLocalPlayerOwnerError = "A World with the local player needs its owner.";
@@ -56,7 +56,7 @@ public class WorldServicesBuilder
         {
             services.AddSingleton(dependencies.SaveFiles);
         }
-        else if (layers.HasFlag(WorldLayer.ServerNetwork))
+        else if (layers.HasFlag(WorldLayer.Server))
         {
             throw new ArgumentException(NoSaveFilesError, nameof(dependencies));
         }
@@ -128,7 +128,7 @@ public class WorldServicesBuilder
             provider.GetRequiredService(type);
         }
 
-        if (layers.HasFlag(WorldLayer.ClientNetwork))
+        if (layers.HasFlag(WorldLayer.Client))
         {
             IEnumerable<object> presentations = selected
                 .Where(service => service.Attribute is PresentationAttribute)
@@ -147,7 +147,7 @@ public class WorldServicesBuilder
             provider.GetRequiredService<ChatSimulationFacade>().Register(commands);
         }
 
-        if (layers.HasFlag(WorldLayer.ServerNetwork))
+        if (layers.HasFlag(WorldLayer.Server))
         {
             IEnumerable<object> handlers = selected
                 .Where(service => service.Attribute is CommandHandlerAttribute)

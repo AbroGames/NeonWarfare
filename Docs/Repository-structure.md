@@ -23,6 +23,7 @@ Src/                                  Code and scenes of the Godot project; a na
     │   ├── Root/                     The application entry point and the client and server starters
     │   ├── Game/                     The game session: a wrapper for the network and the game mode starters
     │   ├── Worlds/                   The game world: one per game session, built from a set of layers
+    │   │   ├── Ports/                What the owning process supplies: the connections, the save files, the owners, LocalPlayer, WorldAdmin
     │   │   ├── Infra/                Feature-independent machinery: layer attributes, entities and NetId, protocol, network, HUD mailbox; refers to nothing in Features/ or the World root
     │   │   └── Features/             One folder per feature with all its layers and models next to their nodes: Chat, Players, NewWorld…
     │   ├── Screen/                   UI: the main menu, HUD, server console, loading screen

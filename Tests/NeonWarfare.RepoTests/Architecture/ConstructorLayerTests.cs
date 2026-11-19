@@ -26,12 +26,12 @@ public class ConstructorLayerTests
     private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedParameterLayers =
         new Dictionary<Layer, Layer[]>
         {
-            [Layer.Simulation] = [Layer.Query, Layer.ServerNetwork],
-            [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query, Layer.ServerNetwork],
+            [Layer.Simulation] = [Layer.Query, Layer.Server],
+            [Layer.SimulationFacade] = [Layer.Simulation, Layer.SimulationFacade, Layer.Query, Layer.Server],
             [Layer.CommandHandler] = [Layer.SimulationFacade, Layer.Query],
-            [Layer.ServerNetwork] = [Layer.ServerNetwork, Layer.Query],
+            [Layer.Server] = [Layer.Server, Layer.Query],
             [Layer.Query] = [Layer.Query],
-            [Layer.ClientNetwork] = [Layer.ClientNetwork, Layer.Query],
+            [Layer.Client] = [Layer.Client, Layer.Query],
             [Layer.Presentation] = [Layer.Presentation, Layer.Query],
             [Layer.ClientReplication] = [Layer.ClientReplication, Layer.Query],
         };
@@ -40,11 +40,11 @@ public class ConstructorLayerTests
         new Dictionary<string, Layer[]>
         {
             // The transport would let any layer send in the middle of the tick, past EventOutbox
-            [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.IClientsConnection"] = [Layer.ServerNetwork],
+            [WorldLayers.WorldNamespace + ".Ports.IClientsConnection"] = [Layer.Server],
             // Only PlayerCommandSender sends to the server, so every command passes one whitelisted path
-            [WorldLayers.WorldNamespace + ".Infra.ClientNetwork.IServerConnection"] = [Layer.ClientNetwork],
+            [WorldLayers.WorldNamespace + ".Ports.IServerConnection"] = [Layer.Client],
             // A delta written or applied past the state packet would move a baseline the clients never follow
-            ["RepliCAT.Replicator"] = [Layer.ServerNetwork, Layer.ClientReplication],
+            ["RepliCAT.Replicator"] = [Layer.Server, Layer.ClientReplication],
             // Registering or placing a node past the spawn would take a NetId past the generator or put an entity
             // nobody replicates into the world. The client's state applier is the spawn of a remote client
             [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRegistry"] =
@@ -52,15 +52,15 @@ public class ConstructorLayerTests
             [WorldLayers.WorldNamespace + ".Infra.Entities.WorldRoot"] = [Layer.Simulation, Layer.ClientReplication],
             // Spawns with the NetIds of its records: the client's state applier and the server's load of a save
             [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRecordReader"] =
-                [Layer.ServerNetwork, Layer.ClientReplication],
+                [Layer.Server, Layer.ClientReplication],
             // A write past SaveService would put a file on disk that the save file name and LastGame never follow
-            [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Saves.ISaveFiles"] = [Layer.ServerNetwork],
+            [WorldLayers.WorldNamespace + ".Ports.ISaveFiles"] = [Layer.Server],
             // Stopping the process is an operation's decision, never a leaf's or the network machinery's
-            [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.IDedicatedServerOwner"] = [Layer.SimulationFacade],
+            [WorldLayers.WorldNamespace + ".Ports.IDedicatedServerOwner"] = [Layer.SimulationFacade],
             // Who the host is must not change what the server does: the server logic treats every player alike
-            [WorldLayers.WorldNamespace + ".Features.Players.LocalPlayer"] = [Layer.Presentation],
+            [WorldLayers.WorldNamespace + ".Ports.LocalPlayer"] = [Layer.Presentation],
             // Creating the UI is the answer to the player's own join, which only the client side receives
-            [WorldLayers.WorldNamespace + ".Features.Players.ILocalPlayerOwner"] = [Layer.Presentation],
+            [WorldLayers.WorldNamespace + ".Ports.ILocalPlayerOwner"] = [Layer.Presentation],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it

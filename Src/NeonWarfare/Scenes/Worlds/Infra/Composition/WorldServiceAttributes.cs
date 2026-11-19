@@ -14,11 +14,11 @@ public class SimulationFacadeAttribute() : WorldServiceAttribute(WorldLayer.Simu
 
 public class CommandHandlerAttribute() : WorldServiceAttribute(WorldLayer.CommandHandler);
 
-public class ServerNetworkAttribute() : WorldServiceAttribute(WorldLayer.ServerNetwork);
+public class ServerAttribute() : WorldServiceAttribute(WorldLayer.Server);
 
 public class QueryAttribute() : WorldServiceAttribute(WorldLayer.Query);
 
-public class ClientNetworkAttribute() : WorldServiceAttribute(WorldLayer.ClientNetwork);
+public class ClientAttribute() : WorldServiceAttribute(WorldLayer.Client);
 
 public class PresentationAttribute() : WorldServiceAttribute(WorldLayer.Presentation);
 

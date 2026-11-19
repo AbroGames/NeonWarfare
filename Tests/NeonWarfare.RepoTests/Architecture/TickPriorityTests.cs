@@ -12,7 +12,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 [Collection(GameAssembly.Collection)]
 public class TickPriorityTests
 {
-    private const string TickNode = WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Tick.ServerTickNode";
+    private const string TickNode = WorldLayers.WorldNamespace + ".Infra.Server.Tick.ServerTickNode";
     private const string PrioritySetter = "set_ProcessPhysicsPriority";
     private const string ScenePriority = "process_physics_priority";
 

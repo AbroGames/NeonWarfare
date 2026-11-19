@@ -2,8 +2,8 @@ using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
+using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;

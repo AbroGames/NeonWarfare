@@ -18,14 +18,14 @@ public class ProducedMessageTests
     private const string CommandBase = WorldLayers.WorldNamespace + ".Infra.Protocol.Command";
     private const string CloneMethod = "<Clone>$";
     private const string EventHandlerAttribute =
-        WorldLayers.WorldNamespace + ".Infra.ClientNetwork.EventHandlerAttribute";
+        WorldLayers.WorldNamespace + ".Infra.Client.Events.EventHandlerAttribute";
 
     /// <summary>
     /// <c>JoinRequestCommand</c> is sent by <c>Game.SendJoinRequest</c> before a remote client has a World, so no
     /// command sender ever carries it; it must still be built somewhere.
     /// </summary>
     private static readonly string[] SentPastCommandSenders =
-        [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Peers.JoinRequestCommand"];
+        [WorldLayers.WorldNamespace + ".Infra.Protocol.JoinRequestCommand"];
 
     [Fact]
     public void Events_AreConstructedOnlyInSimulation()

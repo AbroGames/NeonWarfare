@@ -1,7 +1,6 @@
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork;
+using NeonWarfare.Scenes.Worlds.Ports;
 
 
 namespace NeonWarfare.GameTests.Worlds.Fixtures;

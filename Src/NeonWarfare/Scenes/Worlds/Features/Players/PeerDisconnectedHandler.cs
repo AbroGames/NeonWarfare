@@ -1,5 +1,5 @@
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 

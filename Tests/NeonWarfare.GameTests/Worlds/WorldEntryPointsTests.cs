@@ -7,14 +7,15 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.ClientNetwork;
+using NeonWarfare.Scenes.Worlds.Infra.Client;
+using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Peers;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Saves;
-using NeonWarfare.Scenes.Worlds.Infra.ServerNetwork.Tick;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
+using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -123,7 +124,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
 
-        World client = CreateWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
         AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Nick))
             .ContainsExactlyInAnyOrder("Host", "Remote");
@@ -137,7 +138,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
         byte[] snapshot = RemoteSnapshot();
-        World client = CreateWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot));
+        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(snapshot));
 
         AssertThrown(() => client.ReceiveFromServer(snapshot)).IsInstanceOf<NetMessageFormatException>();
     }
@@ -209,7 +210,7 @@ public class WorldEntryPointsTests
         World host = HostWorld();
         JoinHost(host);
         JoinRemote(host);
-        World client = InTree(CreateWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot())));
+        World client = InTree(CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot())));
 
         client.GetParent().RemoveChild(client);
 
@@ -317,7 +318,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
 
-        World client = CreateWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
         PlayerModel player = client.Get<LocalPlayerPresentation>().Player;
         AssertThat(player.Uid).IsEqual(RemoteUid);
@@ -336,7 +337,7 @@ public class WorldEntryPointsTests
             .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Events)
             .Packet;
         var owner = new RecordingLocalPlayerOwner();
-        World client = CreateWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()), owner);
+        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot()), owner);
         AssertThat(owner.JoinedCount).IsEqual(0);
 
         client.ReceiveFromServer(events);
@@ -372,7 +373,7 @@ public class WorldEntryPointsTests
         LocalPlayer? localPlayer = layers switch
         {
             WorldLayer.Host => HostPlayer,
-            WorldLayer.Client => RemotePlayer,
+            WorldLayer.RemoteClient => RemotePlayer,
             _ => null,
         };
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;

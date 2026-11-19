@@ -8,7 +8,7 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Entities;
 /// <summary>
 /// Hands out <see cref="NetId"/>s on the server: 1, 2, … in order, never <see cref="NetId.None"/>, never twice.
 /// </summary>
-[ServerNetwork]
+[Server]
 public class NetIdGenerator
 {
     private const string AlreadyUsedError = "{0} NetIds are already handed out: a restore comes before the first.";
