@@ -14,7 +14,7 @@ namespace NeonWarfare.RepoTests.Localization;
 public partial class JoinRejectedTextTests
 {
     private const string InvalidNickKey = "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK";
-    private const string JoinRequestHandler = WorldLayers.WorldNamespace + ".Features.Players.JoinRequestHandler";
+    private const string PlayerSessionHandler = WorldLayers.WorldNamespace + ".Features.Players.PlayerSessionHandler";
     private const string NickMinLength = "NickMinLength";
     private const string NickMaxLength = "NickMaxLength";
 
@@ -24,8 +24,8 @@ public partial class JoinRejectedTextTests
     {
         PoFile file = PoFile.Load(RepositoryPaths.Absolute(relativePath));
         PoEntry entry = file.Entries.Single(entry => entry.Key == InvalidNickKey);
-        TypeDefinition handler = GameAssembly.Instance.FindByName(JoinRequestHandler)
-                                 ?? throw new InvalidOperationException($"{JoinRequestHandler} is not found");
+        TypeDefinition handler = GameAssembly.Instance.FindByName(PlayerSessionHandler)
+                                 ?? throw new InvalidOperationException($"{PlayerSessionHandler} is not found");
 
         int[] expected = [Constant(handler, NickMinLength), Constant(handler, NickMaxLength)];
         int[] actual = Number().Matches(entry.Translation).Select(match => int.Parse(match.Value)).ToArray();

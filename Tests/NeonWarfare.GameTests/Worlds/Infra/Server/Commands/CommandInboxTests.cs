@@ -29,7 +29,7 @@ public class CommandInboxTests
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _clientsConnection = new RecordingClientsConnection();
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), new PeerUidMap());
-        // No join handler on purpose: a command type without a handler must be rejected too
+        // No session handler on purpose: a command type without a handler must be rejected too
         _inbox = Inbox(new ChatHandler());
     }
 
@@ -126,7 +126,7 @@ public class CommandInboxTests
         AssertThrown(() => inbox.EnqueueFromPeer(AlicePeer, packet)).IsInstanceOf<InvalidOperationException>();
     }
 
-    private CommandInbox JoinInbox() => Inbox(new JoinLeaveHandler());
+    private CommandInbox JoinInbox() => Inbox(new SessionHandler());
 
     private CommandInbox Inbox(params object[] handlers)
     {
@@ -142,16 +142,16 @@ public class CommandInboxTests
         public void Process(string senderUid, SendChatMessageCommand command) { }
     }
 
-    private class JoinLeaveHandler : IJoinRequestHandler, IPeerDisconnectedHandler
+    private class SessionHandler : IPeerSessionHandler
     {
-        public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
+        public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
         {
             reason = default;
             return true;
         }
 
-        public void Process(JoinRequestCommand command) { }
+        public void Join(JoinRequestCommand command) { }
 
-        public void Process(string uid) { }
+        public void Leave(string uid) { }
     }
 }

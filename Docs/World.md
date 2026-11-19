@@ -46,9 +46,9 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 
 | Attribute | What lives there | The constructor may take | Configurations |
 |---|---|---|---|
-| `[Simulation]` | A leaf: one side effect (a model write, or an event with its log), no decisions (`ChatSimulation`) | `[Query]`, `[Server]` | Host, Dedicated |
-| `[SimulationFacade]` | A finished operation: checks, decisions, order of steps (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[Server]` | Host, Dedicated |
-| `[CommandHandler]` | `IPlayerCommandHandler<T>`, `IJoinRequestHandler`, `IPeerDisconnectedHandler`: validate and call a facade | Facades, `[Query]` | Host, Dedicated |
+| `[Simulation]` | An optional leaf: one side effect (a model write, or an event with its log), no decisions; made only when several facades share it or it holds an invariant beyond the model (`ChatSimulation`, `EntitySpawner`) | `[Query]`, `[Server]` | Host, Dedicated |
+| `[SimulationFacade]` | A finished operation: checks, decisions, order of steps; writes and publishes itself or through leaves (`PlayerSimulationFacade`) | `[Simulation]`, facades, `[Query]`, `[Server]` | Host, Dedicated |
+| `[CommandHandler]` | `IPlayerCommandHandler<T>`, `IPeerSessionHandler`: validate and call a facade | Facades, `[Query]` | Host, Dedicated |
 | `[Server]` | Tick loop, inbox and dispatcher, peers, outbox, replicator, saves, NetIds | `[Server]`, `[Query]` | Host, Dedicated |
 | `[Query]` | Pure reads and calculations over models, no writes (`PlayerQuery`, `*StorageQuery`) | `[Query]` | All |
 | `[Client]` | `EventDispatcher`, `PlayerCommandSender` | `[Client]`, `[Query]` | RemoteClient, Host |
@@ -95,7 +95,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
 | `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
-| `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerUidMap` (never replicated), `IJoinRequestHandler` and `IPeerDisconnectedHandler` |
+| `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerUidMap` (never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — the events of the tick, one buffer per joined peer |
 | `Infra/Server/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
 | `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |

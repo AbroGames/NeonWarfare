@@ -11,7 +11,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
-using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeJoinHandler;
+using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Commands;
 
@@ -25,6 +25,7 @@ public class CommandDispatcherTests
     private const int BobPeer = 3;
     private const string BobUid = "bob";
     private const int AliceSecondPeer = 4;
+    private const string ThrowInProcess = "throw in process";
 
     private NetMessageCodec _codec = null!;
     private PeerUidMap _peers = null!;
@@ -153,7 +154,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_ChatBeforeJoinDropped_JoinThenChatInOneTickBothProcessed()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), JoinHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
 
         Chat(AlicePeer, "too early");
         Join(AlicePeer, AliceUid);
@@ -162,7 +163,7 @@ public class CommandDispatcherTests
 
         AssertThat(_calls).ContainsExactly(
             "validate join alice",
-            Processed(AliceUid),
+            Joined(AliceUid),
             "validate alice: hi",
             "process alice: hi");
     }
@@ -172,7 +173,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_DisplacedPeer_IsIgnoredUntilItsDisconnection()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), JoinHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
         Join(AlicePeer, AliceUid);
         dispatcher.ProcessAll();
         _calls.Clear();
@@ -183,7 +184,7 @@ public class CommandDispatcherTests
         _inbox.EnqueuePeerDisconnected(AlicePeer);
         dispatcher.ProcessAll();
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Processed(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
         AssertBound(AliceSecondPeer, AliceUid);
         AssertThat(_gatekeeper.IsDisconnecting(AlicePeer)).IsFalse();
     }
@@ -192,7 +193,7 @@ public class CommandDispatcherTests
     [RequireGodotRuntime]
     public void ProcessAll_JoinedPeerDisconnected_LeavesAndLosesBindingAndBuffer()
     {
-        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), JoinHandler());
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
         Join(AlicePeer, AliceUid);
         dispatcher.ProcessAll();
         _calls.Clear();
@@ -224,7 +225,7 @@ public class CommandDispatcherTests
     private CommandDispatcher Unregistered() =>
         new(_inbox, _handlers, new PeerSessions(_handlers, _peers, _outbox, _gatekeeper), _peers, _gatekeeper);
 
-    private FakeJoinHandler JoinHandler() => new(_calls, _peers, _outbox);
+    private FakeSessionHandler SessionHandler() => new(_calls, _peers, _outbox);
 
     // The dispatcher looks only at the binding: whether the player exists is the handler's lookup
     private void JoinDirectly(string uid, int peerId) => _peers.Bind(uid, peerId);

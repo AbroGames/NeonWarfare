@@ -20,12 +20,9 @@ public class CommandHandlerRegistry
     private const string NotRegisteredError = "The command handlers are not registered yet.";
     private const string NoInterfaceError = "{0} is a [CommandHandler] but implements no command handler interface.";
     private const string SecondHandlerError = "{0} and {1} both handle {2}.";
-    private const string UnpairedJoinError =
-        "There is a join handler without a peer disconnected handler, or the reverse: a joined peer must be able "
-        + "to leave, and only a joined one can.";
     private const string JoinAsPlayerCommandError =
         "{0} handles JoinRequestCommand as a player command, but a joining peer has no player yet: "
-        + "implement IJoinRequestHandler instead.";
+        + "implement IPeerSessionHandler instead.";
 
     public record PlayerHandler(
         string Name,
@@ -38,16 +35,12 @@ public class CommandHandlerRegistry
     private readonly Dictionary<Type, PlayerHandler> _playerHandlerByType = new();
     private IReadOnlySet<Type> _networkCommandTypes;
 
-    /// <summary>
-    /// <c>null</c> when the world has none; then <see cref="DisconnectedHandler"/> is <c>null</c> too.
-    /// </summary>
-    public IJoinRequestHandler JoinHandler { get; private set; }
-
-    public IPeerDisconnectedHandler DisconnectedHandler { get; private set; }
+    /// <summary><c>null</c> when the world has none.</summary>
+    public IPeerSessionHandler SessionHandler { get; private set; }
 
     /// <summary>
     /// The commands a peer may send: those with a player handler, and <see cref="JoinRequestCommand"/> when there
-    /// is a join handler. Everything else is rejected by <see cref="CommandInbox"/> before its body is read.
+    /// is a session handler. Everything else is rejected by <see cref="CommandInbox"/> before its body is read.
     /// </summary>
     public IReadOnlySet<Type> NetworkCommandTypes =>
         _networkCommandTypes ?? throw new InvalidOperationException(NotRegisteredError);
@@ -75,13 +68,8 @@ public class CommandHandlerRegistry
             }
         }
 
-        if ((JoinHandler == null) != (DisconnectedHandler == null))
-        {
-            throw new InvalidOperationException(UnpairedJoinError);
-        }
-
         HashSet<Type> networkTypes = _playerHandlerByType.Keys.ToHashSet();
-        if (JoinHandler != null)
+        if (SessionHandler != null)
         {
             networkTypes.Add(typeof(JoinRequestCommand));
         }
@@ -93,23 +81,13 @@ public class CommandHandlerRegistry
 
     private bool TryRegister(object handler, Type implemented)
     {
-        if (implemented == typeof(IJoinRequestHandler))
+        if (implemented == typeof(IPeerSessionHandler))
         {
-            if (JoinHandler != null)
+            if (SessionHandler != null)
             {
-                throw SecondHandler(JoinHandler.GetType().Name, handler, typeof(JoinRequestCommand));
+                throw SecondHandler(SessionHandler.GetType().Name, handler, typeof(JoinRequestCommand));
             }
-            JoinHandler = (IJoinRequestHandler) handler;
-            return true;
-        }
-        if (implemented == typeof(IPeerDisconnectedHandler))
-        {
-            if (DisconnectedHandler != null)
-            {
-                string first = DisconnectedHandler.GetType().Name;
-                throw SecondHandler(first, handler, typeof(CommandInbox.PeerDisconnected));
-            }
-            DisconnectedHandler = (IPeerDisconnectedHandler) handler;
+            SessionHandler = (IPeerSessionHandler) handler;
             return true;
         }
 
@@ -119,7 +97,7 @@ public class CommandHandlerRegistry
         }
 
         Type commandType = implemented.GetGenericArguments()[0];
-        // CommandDispatcher routes every JoinRequestCommand to the join handler, so this one would never be called
+        // CommandDispatcher routes every JoinRequestCommand to the session handler, so this one would never be called
         if (commandType == typeof(JoinRequestCommand))
         {
             throw new InvalidOperationException(JoinAsPlayerCommandError.FormatWith(handler.GetType().FullName));

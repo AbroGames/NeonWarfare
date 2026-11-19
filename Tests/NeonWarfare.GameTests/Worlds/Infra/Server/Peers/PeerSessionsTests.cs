@@ -8,7 +8,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
-using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeJoinHandler;
+using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
 
 namespace NeonWarfare.GameTests.Worlds.Infra.Server.Peers;
 
@@ -40,18 +40,18 @@ public class PeerSessionsTests
         _outbox = new EventOutbox(_codec, _peers);
         _calls = [];
         var handlers = new CommandHandlerRegistry();
-        handlers.Register([new FakeJoinHandler(_calls, _peers, _outbox)]);
+        handlers.Register([new FakeSessionHandler(_calls, _peers, _outbox)]);
         _sessions = new PeerSessions(handlers, _peers, _outbox, _gatekeeper);
     }
 
-    // The join handler publishes the join events, which the joiner must get too
+    // The session handler publishes the join events, which the joiner must get too
     [TestCase]
     [RequireGodotRuntime]
-    public void Join_BindsThePeerAndCreatesItsBufferBeforeProcess()
+    public void Join_BindsThePeerAndCreatesItsBufferBeforeJoin()
     {
         Join(AlicePeer, AliceUid);
 
-        AssertThat(_calls).ContainsExactly("validate join alice", Processed(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", Joined(AliceUid));
         AssertBound(AlicePeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).IsEmpty();
     }
@@ -63,7 +63,7 @@ public class PeerSessionsTests
         Join(AlicePeer, AliceUid);
         Join(AlicePeer, "other");
 
-        AssertThat(_calls).ContainsExactly("validate join alice", Processed(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", Joined(AliceUid));
         AssertBound(AlicePeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).IsEmpty();
     }
@@ -86,13 +86,13 @@ public class PeerSessionsTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Join_ThrowingProcess_RollsTheJoinBackAndRejects()
+    public void Join_ThrowingJoin_RollsTheJoinBackAndRejects()
     {
-        Join(AlicePeer, ThrowInProcess);
+        Join(AlicePeer, ThrowInJoin);
 
-        AssertThat(_calls).ContainsExactly($"validate join {ThrowInProcess}", Processed(ThrowInProcess));
+        AssertThat(_calls).ContainsExactly($"validate join {ThrowInJoin}", Joined(ThrowInJoin));
         AssertNotBound(AlicePeer);
-        AssertThat(_peers.TryGetPeerId(ThrowInProcess, out _)).IsFalse();
+        AssertThat(_peers.TryGetPeerId(ThrowInJoin, out _)).IsFalse();
         AssertThat(Rejections()).ContainsExactly((AlicePeer, JoinRejectReason.InternalError));
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
@@ -106,7 +106,7 @@ public class PeerSessionsTests
 
         Join(AliceSecondPeer, AliceUid);
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Processed(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
         AssertNotBound(AlicePeer);
         AssertBound(AliceSecondPeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
@@ -189,7 +189,7 @@ public class PeerSessionsTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Join_WithoutJoinHandler_Throws()
+    public void Join_WithoutSessionHandler_Throws()
     {
         var handlers = new CommandHandlerRegistry();
         handlers.Register([]);

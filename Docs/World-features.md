@@ -34,7 +34,7 @@ Every folder under `Worlds/Features/`, nested ones included. `WorldFeaturesDocTe
 | Folder | What it holds |
 |---|---|
 | `NewWorld` | `NewWorldSimulationFacade`: spawns what a new world starts with — the storages of every feature |
-| `Players` | Players and their sessions: `PlayersStorage` (saved `PlayersModel` of `PlayerModel` by uid), `PlayersSessionStorage` (`[NotSaved]`, the online uids), join and leave (`JoinRequestHandler`, `PeerDisconnectedHandler` → `PlayerSimulationFacade`), `PlayerQuery`, `LocalPlayerPresentation` — passes this process's own `PlayerJoinedEvent` to `ILocalPlayerOwner` (`Game`), which only then creates the UI; the admin flag granted by `WorldAdmin` is never revoked: it is saved |
+| `Players` | Players and their sessions: `PlayersStorage` (saved `PlayersModel` of `PlayerModel` by uid), `PlayersSessionStorage` (`[NotSaved]`, the online uids), join and leave (`PlayerSessionHandler` → `PlayerSimulationFacade`), `PlayerQuery`, `LocalPlayerPresentation` — passes this process's own `PlayerJoinedEvent` to `ILocalPlayerOwner` (`Game`), which only then creates the UI; the admin flag granted by `WorldAdmin` is never revoked: it is saved |
 | `Chat` | `SendChatMessageCommand` → `SendChatMessageHandler` → `ChatSimulationFacade` → `ChatSimulation`, the chat events, `ChatPresentation` with the history and `ChatEntryAddedNotice` |
 | `Chat/ChatCommands` | `IChatCommand` and the chat commands, one class each |
 | `Saves` | "Save as": `SaveCommand` (admin only) → `SaveCommandHandler` → `SaveSimulationFacade` → `SaveService`, the reply in the chat |

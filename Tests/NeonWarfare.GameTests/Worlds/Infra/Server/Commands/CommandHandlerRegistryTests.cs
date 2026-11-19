@@ -26,23 +26,22 @@ public class CommandHandlerRegistryTests
     public void Register_FindsEveryHandlerOfAnObject()
     {
         var chat = new ChatHandler();
-        var joinLeave = new JoinLeaveHandler();
+        var session = new SessionHandler();
 
-        CommandHandlerRegistry registry = Registered(chat, joinLeave);
+        CommandHandlerRegistry registry = Registered(chat, session);
 
-        AssertThat(registry.JoinHandler).IsSame(joinLeave);
-        AssertThat(registry.DisconnectedHandler).IsSame(joinLeave);
+        AssertThat(registry.SessionHandler).IsSame(session);
         AssertThat(registry.TryGetPlayerHandler(typeof(SendChatMessageCommand), out var handler)).IsTrue();
         AssertThat(handler.Name).IsEqual(nameof(ChatHandler));
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void NetworkCommandTypes_HaveJoinOnlyWithJoinHandler()
+    public void NetworkCommandTypes_HaveJoinOnlyWithSessionHandler()
     {
         AssertThat(Registered(new ChatHandler()).NetworkCommandTypes)
             .ContainsExactlyInAnyOrder(typeof(SendChatMessageCommand));
-        AssertThat(Registered(new ChatHandler(), new JoinLeaveHandler()).NetworkCommandTypes)
+        AssertThat(Registered(new ChatHandler(), new SessionHandler()).NetworkCommandTypes)
             .ContainsExactlyInAnyOrder(typeof(SendChatMessageCommand), typeof(JoinRequestCommand));
     }
 
@@ -72,26 +71,12 @@ public class CommandHandlerRegistryTests
         foreach (object[] handlers in new[]
                  {
                      new object[] { new ChatHandler(), new ChatHandler() },
-                     [new JoinLeaveHandler(), new JoinLeaveHandler()],
-                     [new JoinLeaveHandler(), new LeaveOnlyHandler()],
+                     [new SessionHandler(), new SessionHandler()],
                  })
         {
             var registry = new CommandHandlerRegistry();
 
             AssertThrown(() => registry.Register(handlers)).IsInstanceOf<InvalidOperationException>();
-        }
-    }
-
-    // A joined peer could never leave, or a leave handler would wait for joins that never come
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Register_JoinAndLeaveHandlersNotInPair_Throws()
-    {
-        foreach (object handler in new object[] { new JoinOnlyHandler(), new LeaveOnlyHandler() })
-        {
-            var registry = new CommandHandlerRegistry();
-
-            AssertThrown(() => registry.Register([handler])).IsInstanceOf<InvalidOperationException>();
         }
     }
 
@@ -104,7 +89,7 @@ public class CommandHandlerRegistryTests
         AssertThrown(() => registry.Register([new object()])).IsInstanceOf<InvalidOperationException>();
     }
 
-    // CommandDispatcher routes every join to the join handler: a player handler of it would silently never run
+    // CommandDispatcher routes every join to the session handler: a player handler of it would silently never run
     [TestCase]
     [RequireGodotRuntime]
     public void Register_PlayerHandlerOfJoinRequest_Throws()
@@ -169,32 +154,16 @@ public class CommandHandlerRegistryTests
         public void Process(string senderUid, JoinRequestCommand command) { }
     }
 
-    private class JoinLeaveHandler : IJoinRequestHandler, IPeerDisconnectedHandler
+    private class SessionHandler : IPeerSessionHandler
     {
-        public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
+        public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
         {
             reason = default;
             return true;
         }
 
-        public void Process(JoinRequestCommand command) { }
+        public void Join(JoinRequestCommand command) { }
 
-        public void Process(string uid) { }
-    }
-
-    private class JoinOnlyHandler : IJoinRequestHandler
-    {
-        public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
-        {
-            reason = default;
-            return true;
-        }
-
-        public void Process(JoinRequestCommand command) { }
-    }
-
-    private class LeaveOnlyHandler : IPeerDisconnectedHandler
-    {
-        public void Process(string uid) { }
+        public void Leave(string uid) { }
     }
 }

@@ -77,7 +77,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot`, same `{n}` everywhere |
 | `Localization/LocalizationUsageTests` | Keys ↔ usages in `.cs` and `.tscn`, both ways |
-| `Localization/JoinRejectedTextTests` | The numbers of the invalid nick text in every translation are `JoinRequestHandler`'s nick length limits |
+| `Localization/JoinRejectedTextTests` | The numbers of the invalid nick text in every translation are `PlayerSessionHandler`'s nick length limits |
 | `Conventions/NamespaceTests` | Namespace matches the folder path relative to `Src/` |
 | `Conventions/GodotBoxIndependenceTests` | `Src/GodotBox` compiles without the game |
 | `Conventions/CmdArgsContractTests` | Flags, parsing and `CmdArgsService` stay where [Cli args](Cli-args.md) says |
@@ -90,7 +90,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles` only in `Server`; every `Build` parameter is open or restricted explicitly |
 | `Architecture/ConstructorWorldReadTests` | No world service constructor calls a query or an `EntityRegistry` lookup |
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |
-| `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IJoinRequestHandler`); exactly one join and one peer disconnected handler; every handler is `[CommandHandler]` |
+| `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IPeerSessionHandler`); exactly one session handler; every handler is `[CommandHandler]` |
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
 | `Architecture/ProducedMessageTests` | Every event is constructed only in the Simulation and has an `[EventHandler]`; every command is sent |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |

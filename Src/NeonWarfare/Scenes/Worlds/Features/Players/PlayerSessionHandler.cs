@@ -8,7 +8,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [CommandHandler]
-public class JoinRequestHandler(PlayerSimulationFacade playerSimulationFacade) : IJoinRequestHandler
+public class PlayerSessionHandler(PlayerSimulationFacade playerSimulationFacade) : IPeerSessionHandler
 {
     // The format of the client's uid generator, two groups of Latin letters joined by a dash
     private const int UidGroupLength = 10;
@@ -18,7 +18,7 @@ public class JoinRequestHandler(PlayerSimulationFacade playerSimulationFacade) :
     // Darker colors are lost on the dark background of the game
     private const float ColorMinLuminance = 0.2f;
 
-    public bool Validate(JoinRequestCommand command, out JoinRejectReason reason)
+    public bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason)
     {
         if (!IsValidUid(command.Uid))
         {
@@ -40,8 +40,10 @@ public class JoinRequestHandler(PlayerSimulationFacade playerSimulationFacade) :
         return true;
     }
 
-    public void Process(JoinRequestCommand command) =>
+    public void Join(JoinRequestCommand command) =>
         playerSimulationFacade.Join(command.Uid, command.Nick, command.Color);
+
+    public void Leave(string uid) => playerSimulationFacade.Leave(uid);
 
     private static bool IsValidUid(string uid)
     {
