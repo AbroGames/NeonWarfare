@@ -135,9 +135,12 @@ Review the work done for the task — the diff, plus the code around it — agai
   list or the entry points changed) — a missing doc update is a finding;
 - those doc edits are as short as they can be — bloat is a finding too.
 
-`plan.md` is not binding on the reviewer. A plan is written before the code exists, and a
-decision that looked right then can prove wrong once implemented — question it, and
-report a flawed plan decision as a finding even if the code follows the plan faithfully.
+Conformance is not the whole review. Judge every decision behind the work — in `task.md`,
+in `plan.md`, and those made during implementation — on its own merits. A decision that
+looked right before the code existed can prove wrong once implemented. If something was
+planned badly, or turned out badly in practice (awkward design, fragile code, a better
+approach now visible), report it as a finding, even when the code faithfully follows
+`task.md` and `plan.md`.
 
 Write `review.md`:
 
