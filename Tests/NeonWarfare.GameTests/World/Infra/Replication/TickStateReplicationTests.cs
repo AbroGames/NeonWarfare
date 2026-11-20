@@ -162,6 +162,31 @@ public class TickStateReplicationTests
         AssertThat(AliceOnline()).ContainsExactly(AliceUid);
     }
 
+    // Changed, then despawned in the same tick: a delta for it would reach a client that is about to lose it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void EntityDespawnedInTheTick_HasNoDeltaInIt()
+    {
+        _connection.Receivers.Clear();
+        // In the tree: a node leaves the registry on TreeExiting
+        Node parent = AutoFree(new Node())!;
+        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(parent);
+        var node = new CounterNode { Value = 1 };
+        parent.AddChild(node);
+        var id = new NetId(1000);
+        _server.GetRequiredService<EntityRegistry>().Register(id, node);
+        Tick();
+        AssertThat(NetIdsIn(StatePacket(AlicePeer))).Contains(id);
+        _connection.Packets.Clear();
+
+        node.Value = 2;
+        Online().Remove(HostUid);
+        node.Free();
+        Tick();
+
+        AssertThat(NetIdsIn(StatePacket(AlicePeer))).ContainsExactly(ServerId<PlayersSessionStorage>());
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void StatePacket_TickNumberFollowsTheKind()
@@ -420,4 +445,9 @@ public partial class FixedPartNode : Node
     }
 
     public FixedPartNode(Part part) => Fixed = part;
+}
+
+public partial class CounterNode : Node
+{
+    [Replicated] public int Value;
 }

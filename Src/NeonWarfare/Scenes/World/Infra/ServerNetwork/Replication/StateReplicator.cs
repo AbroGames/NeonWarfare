@@ -21,20 +21,19 @@ public class StateReplicator
 {
     private const string DeltaFailedLog = "The delta of {netId} failed, the other entities are still written";
 
-    private record Tracked(Node Node, ReplicationBaseline Baseline);
-
     private readonly ILogger _log = LogFactory.GetForStatic<StateReplicator>();
 
-    private readonly IEntityFinder _entities;
     private readonly Replicator _replicator;
     // By NetId: the order is the same on every run, so the packet is too
-    private readonly SortedDictionary<long, Tracked> _trackedById = new();
+    private readonly SortedDictionary<long, ReplicationBaseline> _baselineById = new();
+    // Their baselines stay until the end of the tick: the set of baselines is the set of entities at the last send
+    private readonly List<NetId> _despawned = [];
 
     public StateReplicator(IEntityFinder entities, Replicator replicator)
     {
-        _entities = entities;
         _replicator = replicator;
-        _entities.SpawnedEvent += OnEntitySpawned;
+        entities.SpawnedEvent += OnEntitySpawned;
+        entities.DespawnedEvent += OnEntityDespawned;
     }
 
     /// <summary>
@@ -44,25 +43,21 @@ public class StateReplicator
     /// <returns><c>false</c> when no model changed: the writer is left as it was, and nothing is sent.</returns>
     public bool TryWrite(long tick, BitWriter writer)
     {
+        _despawned.ForEach(id => _baselineById.Remove(id.Value));
+        _despawned.Clear();
+
         int start = writer.BitPosition;
         writer.WriteBits((byte) ServerPacketKind.State, 8);
         writer.WriteVarUInt((ulong) tick);
 
         bool written = false;
-        List<long> gone = null;
-        foreach ((long id, Tracked tracked) in _trackedById)
+        foreach ((long id, ReplicationBaseline baseline) in _baselineById)
         {
-            if (!_entities.TryGetNode(new NetId(id), out Node node) || node != tracked.Node)
-            {
-                (gone ??= []).Add(id);
-                continue;
-            }
-
             int recordStart = writer.BitPosition;
             writer.WriteVarUInt((ulong) id);
             try
             {
-                if (_replicator.TryWriteDelta(tracked.Baseline, writer))
+                if (_replicator.TryWriteDelta(baseline, writer))
                 {
                     written = true;
                     continue;
@@ -75,7 +70,6 @@ public class StateReplicator
             }
             writer.Rewind(recordStart);
         }
-        gone?.ForEach(id => _trackedById.Remove(id));
 
         if (!written)
         {
@@ -87,6 +81,7 @@ public class StateReplicator
         return true;
     }
 
-    private void OnEntitySpawned(NetId id, Node node) =>
-        _trackedById.Add(id.Value, new Tracked(node, _replicator.CreateBaseline(node)));
+    private void OnEntitySpawned(NetId id, Node node) => _baselineById.Add(id.Value, _replicator.CreateBaseline(node));
+
+    private void OnEntityDespawned(NetId id, Node node) => _despawned.Add(id);
 }
