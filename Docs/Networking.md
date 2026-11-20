@@ -16,7 +16,7 @@ World; their layers and the World itself are in [World](World.md).
 * **`Game`** ([Scenes/Game/Game.cs](../Src/NeonWarfare/Scenes/Game/Game.cs)) — the transport of the World: it
   implements `IClientsConnection` (server → clients) and `IServerConnection` (client → server) and routes the
   packets and connection events of `Network` into `World.ReceiveFromClient` / `ReceiveFromServer` /
-  `OnClientConnected` / `OnClientDisconnected`. `Game` also owns what the client needs before its World exists:
+  `AddClient` / `RemoveClient`. `Game` also owns what the client needs before its World exists:
   `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
   `Game` hands it to its own World synchronously, inside the call. So the host's commands pass the same decoding and
@@ -75,7 +75,7 @@ ENet delivers a fragmented reliable packet whole, so a client applies a tick ato
 
 A client applies a packet at once, in `peer_packet`, with no queue: `StateApplier` the state, `EventDispatcher` the
 events. The host gets only its events packet: its Simulation has already written the state.
-`JoinRejected` never reaches a World: `Game` reads it, with or without a World, and raises `JoinRejectedEvent`; the
+`JoinRejected` never reaches a World: `Game` reads it, with or without a World, and raises `Game.JoinRejected`; the
 starter leaves for the menu with the reason, on a remote client and on a host refused its own join alike.
 
 Events are published only by the Simulation, into `EventOutbox` (`PublishToAll` / `PublishTo(uid)`), one buffer per
@@ -111,14 +111,14 @@ sequenceDiagram
 
     Note over C: loading screen Connecting, no World yet
     C->>G: ENet connect
-    G->>W: OnClientConnected: handshake deadline
+    G->>W: AddClient: handshake deadline
     C->>G: JoinRequestCommand(protocolHash, uid, nick, color)
     G->>W: ReceiveFromClient: hash check, into the inbox
     Note over W: next tick
     W->>W: PeerSessions.Join: Validate, bind uid,<br/>event buffer, Process → join message, PlayerJoinedEvent
     W-->>O: State packet: the tick's changes (OnlinePlayerUids)
     W-->>C: Snapshot: every entity at the end of the tick
-    C->>C: Game.WorldSnapshotReceivedEvent → World from the snapshot
+    C->>C: Game.WorldSnapshotReceived → World from the snapshot
     W-->>C: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
     C->>C: its own PlayerJoinedEvent → Hud, the loading screen is cleared
     W-->>O: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent
@@ -134,7 +134,7 @@ the tick, so "snapshot, then the next state packet" is consistent. The chat hist
 * **`NetId`** — the network identity of an entity, the same on the server and every client: a monotonic `long` from
   `NetIdGenerator`, never reused, `NetId.None` for "nothing" and for the World root as a parent.
 * **`EntityRegistry`** — NetId ↔ node ↔ kind of every spawned entity, read by every layer through `IEntityFinder`
-  (`GetSingle<T>`, `GetAll<T>`, `SpawnedEvent`, `DespawnedEvent`). A node leaves it on `TreeExiting`, its subtree
+  (`GetSingle<T>`, `GetAll<T>`, `Spawned`, `Despawned`). A node leaves it on `TreeExiting`, its subtree
   with it.
 * **`EntityCatalog`** — the kind id of every entity: the scenes of `WorldPackedScenes` in order, then every concrete
   `Node` type of the type mapping with a parameterless constructor. The id travels in spawn records and lies in

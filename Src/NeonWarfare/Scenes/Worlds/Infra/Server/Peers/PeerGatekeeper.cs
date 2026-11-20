@@ -29,7 +29,7 @@ public class PeerGatekeeper(IClientsConnection clientsConnection, TimeProvider t
     private readonly Dictionary<int, DateTimeOffset> _deadlineByPeerId = new();
     private readonly HashSet<int> _disconnecting = [];
 
-    public void OnPeerConnected(int peerId)
+    public void StartHandshake(int peerId)
     {
         _deadlineByPeerId[peerId] = timeProvider.GetUtcNow() + HandshakeTimeout;
     }

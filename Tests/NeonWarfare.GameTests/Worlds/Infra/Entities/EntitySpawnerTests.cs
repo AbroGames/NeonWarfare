@@ -170,12 +170,12 @@ public class EntitySpawnerTests
     // Subscribers look the entity up and reach its parent: both must be in place when the event is raised
     [TestCase]
     [RequireGodotRuntime]
-    public void Spawn_SpawnedEvent_SeesTheNodeInTheTreeAndInTheRegistry()
+    public void Spawn_Spawned_SeesTheNodeInTheTreeAndInTheRegistry()
     {
         var parent = _spawner.SpawnOnRoot<PlayersStorage>();
         Node? parentSeen = null;
         bool byId = false, byNode = false, inAll = false;
-        _registry.SpawnedEvent += (id, node) =>
+        _registry.Spawned += (id, node) =>
         {
             parentSeen = node.GetParent();
             byId = _registry.TryGetNode(id, out Node found) && found == node;

@@ -45,13 +45,13 @@ public class ConnectToMultiplayerGameStarter(
 
         // The World comes from the first snapshot and the Hud with the join right after it, until then the connecting
         // screen stays
-        void ConnectedToServerEvent()
+        void OnConnectedToServer()
         {
             if (!IsGameAlive(game)) return;
             game.SendJoinRequest(localPlayer);
         }
         
-        void WorldSnapshotReceivedEvent(byte[] snapshot)
+        void OnWorldSnapshotReceived(byte[] snapshot)
         {
             if (!IsGameAlive(game)) return;
             try
@@ -78,7 +78,7 @@ public class ConnectToMultiplayerGameStarter(
         }
 
         // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
-        void ConnectionFailedEvent()
+        void OnConnectionFailed()
         {
             if (!IsGameAlive(game)) return;
             GoToMenuAndShowError(ConnectionFailedMessage);
@@ -86,17 +86,17 @@ public class ConnectToMultiplayerGameStarter(
     
         // Server disconnected (the connection was successful, but the server disconnected us).
         // This may also happen several hours after the connection.
-        void ServerDisconnectedEvent()
+        void OnServerDisconnected()
         {
             if (!IsGameAlive(game)) return;
             GoToMenuAndShowError(DisconnectedFromServerMessage);
         }
 
         // Events of Network and Game, which die with the game, so the handlers need no unsubscribing
-        network.ConnectedToServerEvent += ConnectedToServerEvent;
-        game.WorldSnapshotReceivedEvent += WorldSnapshotReceivedEvent;
-        network.ConnectionFailedEvent += ConnectionFailedEvent;
-        network.ServerDisconnectedEvent += ServerDisconnectedEvent;
+        network.ConnectedToServer += OnConnectedToServer;
+        game.WorldSnapshotReceived += OnWorldSnapshotReceived;
+        network.ConnectionFailed += OnConnectionFailed;
+        network.ServerDisconnected += OnServerDisconnected;
         GoToMenuOnJoinRejected(game);
         ClearLoadingScreenOnJoined(game);
 
@@ -109,7 +109,7 @@ public class ConnectToMultiplayerGameStarter(
         Error error = network.ConnectToServer(host ?? DefaultHost, port ?? DefaultPort);
         if (error != Error.Ok)
         {
-            ConnectionFailedEvent();
+            OnConnectionFailed();
         }
     }
 }

@@ -29,8 +29,12 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
 
 ## Methods
 
-* The `On…` prefix marks a method that **must** be called from the outside (`World.OnClientConnected`,
-  `PeerGatekeeper.OnPeerConnected`) — it is not called from within its class.
+* `Event` names only a protocol record (`PlayerJoinedEvent`); `Handle` / `…Handler` only its handler
+  (`[EventHandler] Handle`, `IPlayerCommandHandler.Handle`). A C# event has no suffix (`Network.PeerConnected`,
+  `Game.LocalPlayerJoined`), its handler is a private `On<Event>` (`OnPeerConnected`); a hook the base class
+  calls when something has happened is a protected `On…` (`OnLoadFailed`). A method called from the outside
+  is named by what it does (`World.AddClient`, `PeerGatekeeper.StartHandshake`). Checked in
+  `Root/`, `Game/`, `Worlds/` by `EventNamingTests`.
 * No static game logic: it goes into the [world services or `Services`](Services.md). Statics are left
   for extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings
   (de)serialization.
@@ -71,11 +75,11 @@ translatable — see [Localization](Localization.md).
 A handler whose delegate target is a node (its method, or a local function capturing only `this`) needs
 no manual `-=`: Godot disconnects it when the node is freed. Any other handler (a closure over other
 objects, a method of a plain C# class) is detached by hand, so it is written as a local function
-(`GetMultiplayer().ConnectedToServer -= ConnectedToServerEvent`). This is a frequent cause of leaks
+(`GetMultiplayer().ConnectedToServer -= OnConnectedToServer`). This is a frequent cause of leaks
 during the Game → MainMenu transition, so such places are accompanied by a comment.
 
 An `Action` is never held in a `static` field: its subscribers are then never released. It is raised
-through `PlayerConnectedEvent?.Invoke(...)`, and is declared with the `event` keyword when only its own
+through `PlayerConnected?.Invoke(...)`, and is declared with the `event` keyword when only its own
 class raises it.
 
 After a change to a `GameStarter`, the leak is checked by hand: run

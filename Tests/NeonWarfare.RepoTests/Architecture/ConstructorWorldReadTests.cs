@@ -9,7 +9,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// The container creates every world service eagerly, before any entity exists: on the server the storages are
 /// spawned only after that, on a client they arrive with the world snapshot. So a service constructor that reads
 /// the world — through a query or a lookup of the entity registry — reads an empty one. Subscribing to
-/// <c>IEntityFinder.SpawnedEvent</c> is fine: it reads nothing yet. Only a direct call is caught, not one made
+/// <c>IEntityFinder.Spawned</c> is fine: it reads nothing yet. Only a direct call is caught, not one made
 /// through another method.
 /// </summary>
 [Collection(GameAssembly.Collection)]

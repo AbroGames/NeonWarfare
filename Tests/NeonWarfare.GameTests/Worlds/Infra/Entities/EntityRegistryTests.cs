@@ -20,11 +20,11 @@ public class EntityRegistryTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void Register_LooksUpBothWays_RaisesSpawnedEvent()
+    public void Register_LooksUpBothWays_RaisesSpawned()
     {
         Node node = AutoFree(new Node())!;
         var raised = new List<(NetId, Node)>();
-        _registry.SpawnedEvent += (id, registered) => raised.Add((id, registered));
+        _registry.Spawned += (id, registered) => raised.Add((id, registered));
 
         _registry.Register(new NetId(7), node, 0);
 
@@ -44,7 +44,7 @@ public class EntityRegistryTests
         Node second = AutoFree(new Node())!;
         _registry.Register(new NetId(1), first, 0);
         int raised = 0;
-        _registry.SpawnedEvent += (_, _) => raised++;
+        _registry.Spawned += (_, _) => raised++;
 
         AssertThrown(() => _registry.Register(NetId.None, second, 0)).IsInstanceOf<ArgumentException>();
         AssertThrown(() => _registry.Register(new NetId(1), second, 0)).IsInstanceOf<InvalidOperationException>();
@@ -70,14 +70,14 @@ public class EntityRegistryTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void RemoveChild_TakesTheNodeOut_RaisesDespawnedEvent()
+    public void RemoveChild_TakesTheNodeOut_RaisesDespawned()
     {
         Node parent = InTree();
         Node node = AutoFree(new Node())!;
         parent.AddChild(node);
         _registry.Register(new NetId(1), node, 0);
         var raised = new List<(NetId, Node, bool)>();
-        _registry.DespawnedEvent += (id, despawned) =>
+        _registry.Despawned += (id, despawned) =>
             raised.Add((id, despawned, _registry.TryGetNode(id, out _)));
 
         parent.RemoveChild(node);
@@ -119,7 +119,7 @@ public class EntityRegistryTests
         _registry.Register(new NetId(2), grandchild, 0);
         _registry.Register(new NetId(3), sibling, 0);
         var raised = new List<NetId>();
-        _registry.DespawnedEvent += (id, _) => raised.Add(id);
+        _registry.Despawned += (id, _) => raised.Add(id);
 
         subtree.Free();
 

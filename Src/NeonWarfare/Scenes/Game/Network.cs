@@ -17,12 +17,12 @@ public partial class Network(Node multiplayerRoot) : Node
     private const string NotServerError = "Only a server disconnects peers";
     private const string AlreadyGoneLog = "Peer {peerId} not disconnected: it is already gone";
 
-    public event Action<int> PeerConnectedEvent;
-    public event Action<int> PeerDisconnectedEvent;
-    public event Action<int, byte[]> PacketReceivedEvent;
-    public event Action ConnectedToServerEvent;
-    public event Action ConnectionFailedEvent;
-    public event Action ServerDisconnectedEvent;
+    public event Action<int> PeerConnected;
+    public event Action<int> PeerDisconnected;
+    public event Action<int, byte[]> PacketReceived;
+    public event Action ConnectedToServer;
+    public event Action ConnectionFailed;
+    public event Action ServerDisconnected;
 
     public bool IsServer { get; private set; }
 
@@ -37,14 +37,14 @@ public partial class Network(Node multiplayerRoot) : Node
         _api = new SceneMultiplayer();
         GetTree().SetMultiplayer(_api, multiplayerRoot.GetPath());
         // The tree keeps a custom multiplayer until it is explicitly unset, even after the node is freed
-        multiplayerRoot.TreeExiting += ReleaseMultiplayer;
+        multiplayerRoot.TreeExiting += OnMultiplayerRootTreeExiting;
 
-        _api.ConnectedToServer += MultiplayerConnectedToServer;
-        _api.PeerConnected += MultiplayerPeerConnected;
-        _api.ConnectionFailed += MultiplayerConnectionFailed;
-        _api.PeerDisconnected += MultiplayerPeerDisconnected;
-        _api.ServerDisconnected += MultiplayerServerDisconnected;
-        _api.PeerPacket += MultiplayerPeerPacket;
+        _api.ConnectedToServer += OnMultiplayerConnectedToServer;
+        _api.PeerConnected += OnMultiplayerPeerConnected;
+        _api.ConnectionFailed += OnMultiplayerConnectionFailed;
+        _api.PeerDisconnected += OnMultiplayerPeerDisconnected;
+        _api.ServerDisconnected += OnMultiplayerServerDisconnected;
+        _api.PeerPacket += OnMultiplayerPeerPacket;
         // A client talks only to the server: a packet from another client must not reach it through the relay
         _api.ServerRelay = false;
     }
@@ -190,7 +190,7 @@ public partial class Network(Node multiplayerRoot) : Node
         }
     }
 
-    private void ReleaseMultiplayer()
+    private void OnMultiplayerRootTreeExiting()
     {
         SceneTree tree = multiplayerRoot.GetTree();
         NodePath path = multiplayerRoot.GetPath();
@@ -200,42 +200,42 @@ public partial class Network(Node multiplayerRoot) : Node
         }
     }
 
-    private void MultiplayerConnectedToServer()
+    private void OnMultiplayerConnectedToServer()
     {
         _log.Information("Connected to the server successfully. My peer id: {id}", _api.GetUniqueId());
-        ConnectedToServerEvent?.Invoke();
+        ConnectedToServer?.Invoke();
     }
 
-    private void MultiplayerConnectionFailed()
+    private void OnMultiplayerConnectionFailed()
     {
         _log.Error("Connection to the server failed");
 
         Shutdown();
-        ConnectionFailedEvent?.Invoke();
+        ConnectionFailed?.Invoke();
     }
 
-    private void MultiplayerServerDisconnected()
+    private void OnMultiplayerServerDisconnected()
     {
         _log.Information("Server disconnected");
 
         Shutdown();
-        ServerDisconnectedEvent?.Invoke();
+        ServerDisconnected?.Invoke();
     }
 
-    private void MultiplayerPeerConnected(long id)
+    private void OnMultiplayerPeerConnected(long id)
     {
         _log.Information("Network peer connected: {id}", id);
-        if (IsServer) PeerConnectedEvent?.Invoke((int) id);
+        if (IsServer) PeerConnected?.Invoke((int) id);
     }
 
-    private void MultiplayerPeerDisconnected(long id)
+    private void OnMultiplayerPeerDisconnected(long id)
     {
         _log.Information("Network peer disconnected: {id}", id);
-        if (IsServer) PeerDisconnectedEvent?.Invoke((int) id);
+        if (IsServer) PeerDisconnected?.Invoke((int) id);
     }
 
-    private void MultiplayerPeerPacket(long id, byte[] packet)
+    private void OnMultiplayerPeerPacket(long id, byte[] packet)
     {
-        PacketReceivedEvent?.Invoke((int) id, packet);
+        PacketReceived?.Invoke((int) id, packet);
     } 
 }

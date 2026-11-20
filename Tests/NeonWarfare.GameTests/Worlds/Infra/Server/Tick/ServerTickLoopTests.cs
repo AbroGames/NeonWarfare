@@ -188,8 +188,8 @@ public class ServerTickLoopTests
         const int joiningPeer = 4;
         Build(new WorldServicesBuilder());
         var gatekeeper = _provider.GetRequiredService<PeerGatekeeper>();
-        gatekeeper.OnPeerConnected(latePeer);
-        gatekeeper.OnPeerConnected(joiningPeer);
+        gatekeeper.StartHandshake(latePeer);
+        gatekeeper.StartHandshake(joiningPeer);
         var join = new JoinRequestCommand(_codec.ProtocolHash, "BobBobBobB-Bbbbbbbbbb", "Bob", Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(joiningPeer, _codec.Encode(join));
 

@@ -92,7 +92,7 @@ public abstract class BaseGameStarter
     protected void GoToMenuOnJoinRejected(Game game)
     {
         // Game has already logged the reason
-        game.JoinRejectedEvent += reason =>
+        game.JoinRejected += reason =>
         {
             if (IsGameAlive(game)) GoToMenuAndShowError(JoinRejectedMessage(reason));
         };
@@ -104,7 +104,7 @@ public abstract class BaseGameStarter
     /// </summary>
     protected void ClearLoadingScreenOnJoined(Game game)
     {
-        game.LocalPlayerJoinedEvent += () =>
+        game.LocalPlayerJoined += () =>
         {
             if (IsGameAlive(game)) Services.LoadingScreen.Clear();
         };
