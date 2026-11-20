@@ -8,10 +8,11 @@ namespace NeonWarfare.RepoTests.Architecture;
 /// The table "layer → which layers it may accept in its constructor" from the network architecture plan.
 /// World services get their dependencies only through the constructor — no statics, no lookup by name —
 /// so checking constructor parameters catches every way one layer could reach another. Models and the types of
-/// <c>WorldDependencies</c> are open to every layer, except those with side effects beyond the world: they are
-/// handed to every World, but only the layer that owns the effect may use them. What else the root registers —
-/// the other parameters of <c>WorldServicesBuilder.Build</c>, the entity registry — is open or restricted only by
-/// name here, so a new <c>Build</c> parameter needs a decision.
+/// <c>WorldDependencies</c> and of the <c>WorldSetup</c> records are open to every layer, except those with side
+/// effects beyond the world: they are handed to the World, but only the layer that owns the effect may use them.
+/// What else the root registers —
+/// the other parameters of <c>WorldServicesBuilder.Build</c>, the entity registry — is open or restricted only
+/// by name here, so a new <c>Build</c> parameter needs a decision.
 /// Leaf simulations never call each other: an operation with all its effects lives in one facade, and a
 /// command handler goes through a facade too, or it would run half an operation. Shared reads go to queries.
 /// </summary>
@@ -19,7 +20,7 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class ConstructorLayerTests
 {
     private const string WorldDependencies = WorldLayers.WorldNamespace + ".WorldDependencies";
-    private const string WorldLayer = WorldLayers.WorldNamespace + ".Infra.Composition.WorldLayer";
+    private const string WorldSetup = WorldLayers.WorldNamespace + ".WorldSetup";
     private const string Builder = WorldLayers.WorldNamespace + ".WorldServicesBuilder";
     private const string BuildMethod = "Build";
 
@@ -56,14 +57,15 @@ public class ConstructorLayerTests
             // A write past SaveService would put a file on disk that the save file name and LastGame never follow
             [WorldLayers.WorldNamespace + ".Ports.ISaveFiles"] = [Layer.Server],
             // Stopping the process is an operation's decision, never a leaf's or the network machinery's
-            [WorldLayers.WorldNamespace + ".Ports.IDedicatedServerOwner"] = [Layer.SimulationFacade],
+            [WorldLayers.WorldNamespace + ".Ports.IServerOwner"] = [Layer.SimulationFacade],
             // Who the host is must not change what the server does: the server logic treats every player alike
             [WorldLayers.WorldNamespace + ".Ports.LocalPlayer"] = [Layer.Presentation],
             // Creating the UI is the answer to the player's own join, which only the client side receives
             [WorldLayers.WorldNamespace + ".Ports.ILocalPlayerOwner"] = [Layer.Presentation],
         };
 
-    // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it
+    // Open to every layer besides the WorldDependencies and WorldSetup types: what the root registers itself, or a
+    // view of it
     private static readonly string[] OpenTypes =
     [
         WorldLayers.WorldNamespace + ".Infra.Entities.IEntityFinder",
@@ -146,6 +148,32 @@ public class ConstructorLayerTests
         report.AssertEmpty();
     }
 
+    /// <summary>
+    /// MS.DI fills an optional parameter with its default when nothing is registered, so a dependency missing from
+    /// the configuration would go unnoticed instead of failing the build of the container.
+    /// </summary>
+    [Fact]
+    public void Constructors_HaveNoOptionalParameters()
+    {
+        FailureReport report = new("Optional parameters of world service constructors");
+        GameAssembly game = GameAssembly.Instance;
+
+        foreach (TypeDefinition type in game.Types.Where(type => WorldLayers.DeclaredLayer(type) != null))
+        {
+            foreach (MethodDefinition constructor in type.Methods.Where(method => method.IsConstructor
+                         && !method.IsStatic && method.IsPublic))
+            {
+                foreach (ParameterDefinition parameter in constructor.Parameters
+                             .Where(parameter => parameter.IsOptional || parameter.HasDefault))
+                {
+                    report.Add($"{GameAssembly.Describe(constructor)}: '{parameter.Name}' is optional");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
     [Fact]
     public void LayerTable_CoversEveryLayerAttribute()
     {
@@ -173,25 +201,37 @@ public class ConstructorLayerTests
     }
 
     /// <summary>
-    /// The parameter types of the <c>WorldDependencies</c> record — what the composition root hands to every
-    /// service. Read from the record, so a new dependency needs no edit here.
+    /// The parameter types of the <c>WorldDependencies</c> record and of the <c>WorldSetup</c> records — what the
+    /// composition root hands to the services. Read from the records, so a new dependency needs no edit here.
     /// </summary>
     private static IReadOnlySet<string> WorldDependencyTypes(GameAssembly game)
     {
-        TypeDefinition record = game.FindByName(WorldDependencies)
-                                ?? throw new InvalidOperationException($"{WorldDependencies} is gone");
+        TypeDefinition dependencies = game.FindByName(WorldDependencies)
+                                      ?? throw new InvalidOperationException($"{WorldDependencies} is gone");
+        TypeDefinition setup = game.FindByName(WorldSetup)
+                               ?? throw new InvalidOperationException($"{WorldSetup} is gone");
+        List<TypeDefinition> setups = setup.NestedTypes
+            .Where(nested => nested.BaseType?.FullName == WorldSetup)
+            .ToList();
+        // Otherwise a rename of the base would leave every setup parameter undecided
+        Assert.NotEmpty(setups);
 
-        // The record also has a copy constructor taking itself.
-        MethodDefinition primary = record.Methods.Single(method =>
-            method.IsConstructor && !method.IsStatic && method.IsPublic
-            && method.Parameters.All(parameter => parameter.ParameterType.FullName != WorldDependencies));
-        return primary.Parameters.Select(parameter => parameter.ParameterType.FullName)
+        return setups.Prepend(dependencies)
+            .SelectMany(record => PrimaryConstructor(record).Parameters)
+            .Select(parameter => parameter.ParameterType.FullName)
             .ToHashSet(StringComparer.Ordinal);
     }
 
+    // A record also has a copy constructor taking itself
+    private static MethodDefinition PrimaryConstructor(TypeDefinition record) =>
+        record.Methods.Single(method =>
+            method.IsConstructor && !method.IsStatic && method.IsPublic
+            && method.Parameters.All(parameter => parameter.ParameterType.FullName != record.FullName));
+
     /// <summary>
-    /// The parameter types of <c>WorldServicesBuilder.Build</c> other than the layers and <c>WorldDependencies</c>:
-    /// what the World node itself hands to the container. Read from the method, as the record is.
+    /// The parameter types of <c>WorldServicesBuilder.Build</c> other than <c>WorldSetup</c> and
+    /// <c>WorldDependencies</c>: what the World node itself hands to the container. Read from the method, as the
+    /// records are.
     /// </summary>
     private static IEnumerable<string> BuildParameterTypes(GameAssembly game)
     {
@@ -200,6 +240,6 @@ public class ConstructorLayerTests
         MethodDefinition build = builder.Methods.Single(method => method.Name == BuildMethod);
         return build.Parameters
             .Select(parameter => parameter.ParameterType.FullName)
-            .Where(name => name != WorldLayer && name != WorldDependencies);
+            .Where(name => name != WorldSetup && name != WorldDependencies);
     }
 }

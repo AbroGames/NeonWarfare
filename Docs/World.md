@@ -14,7 +14,7 @@ in `Worlds/Features/` — see [World features](World-features.md). The packets a
 
 | Member | Who calls it |
 |---|---|
-| `InitPreReady(layers, dependencies, origin)` | `Game.AddWorld`, before the World enters the tree: builds every service, then fills the world |
+| `InitPreReady(setup, dependencies, origin)` | `Game.AddWorld`, before the World enters the tree: builds every service, then fills the world |
 | `Send<TCommand>(command)` | The `Hud`, through `World.ICommandSender`: the only way a command leaves the World |
 | `Get<T>()` | The screens, through `World.IReader`: only `[Query]` and `[Presentation]` services are handed out |
 | `ReceiveFromClient`, `AddClient`, `RemoveClient` | `Game`, on a server: packets and connection events of the peers |
@@ -25,22 +25,23 @@ what a world starts with; `FromSave(save, saveFileName)` — `SaveLoader`; `From
 on a remote client. A World is never empty: a remote client creates it only from the first snapshot. A broken save
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
-`WorldDependencies` is what `Game` hands to every service: `TimeProvider`, `NetMessageCodec`, `Replicator`,
-`FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections, `ISaveFiles` (`null` on a remote client),
-`LocalPlayer` and `ILocalPlayerOwner` (`null` on a dedicated server), `WorldAdmin` (`null` on a remote client) and
-`IDedicatedServerOwner` (only on a dedicated server); the ones the owning process supplies are in `Ports/`. With the
-Simulation the World also adds `ServerTickNode`, with the Server layer `SaveOnExitNode`.
+`WorldDependencies` is what `Game` hands to every World, none of it `null`: `TimeProvider`, `NetMessageCodec`,
+`Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections and `ILocalPlayerOwner`.
+`WorldSetup` adds the ports of its configuration, see [Layers](#layers); the ones the owning process supplies are in
+`Ports/`. With the Simulation the World also adds `ServerTickNode`, with the Server layer `SaveOnExitNode`.
 
 ## Layers
 
-A service belongs to exactly one layer, set by its attribute. The starter passes the set of layers
-(`[Flags] enum WorldLayer`), never a role; a layer brings no other one with it:
+A service belongs to exactly one layer, set by its attribute. The starter chooses a configuration — a closed
+`WorldSetup` record: a set of layers (`[Flags] enum WorldLayer`) and the ports that configuration needs. A layer brings
+no other one with it. Only the composition root knows the setup: it is not in the container, and no service refers to
+it (`LayerReferenceTests`), so a service sees its layer and the ports, never the configuration:
 
-| Configuration | `WorldLayer` | Used by |
-|---|---|---|
-| `RemoteClient` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
-| `Host` | `Dedicated \| RemoteClient` without `ClientReplication` | Single player and hosting from inside the client |
-| `Dedicated` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
+| `WorldSetup` | Ports | `WorldLayer` | Used by |
+|---|---|---|---|
+| `RemoteClient` | `LocalPlayer` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
+| `Host` | `ISaveFiles`, `LocalPlayer` (also the `WorldAdmin`), `IServerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
+| `Dedicated` | `ISaveFiles`, `WorldAdmin`, `IServerOwner` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
 
 The host has no `ClientReplication`: its Simulation writes the very models its Presentation reads.
 
@@ -55,9 +56,9 @@ The host has no `ClientReplication`: its Simulation writes the very models its P
 | `[Presentation]` | Event handlers and what the HUD reads (`ChatPresentation`, `HudMailbox`) | `[Presentation]`, `[Query]` | RemoteClient, Host |
 | `[ClientReplication]` | `StateApplier`: the state packets of a remote client | `[ClientReplication]`, `[Query]` | RemoteClient |
 
-Every layer may also take the models and the `WorldDependencies` types, except those with an effect beyond the
-world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[Server]`;
-`IDedicatedServerOwner` — `[SimulationFacade]`; `IServerConnection` —
+Every layer may also take the models, the `WorldDependencies` and the `WorldSetup` types, except those with an
+effect beyond the world, which only their owner takes: `IClientsConnection`, `ISaveFiles` — `[Server]`;
+`IServerOwner` — `[SimulationFacade]`; `IServerConnection` —
 `[Client]`; `Replicator`, `EntityRecordReader` — `[Server]`, `[ClientReplication]`; `EntityRegistry`
 and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]`; `LocalPlayer`,
 `ILocalPlayerOwner` — `[Presentation]`.
@@ -73,13 +74,14 @@ and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]
 ## The container
 
 `WorldServicesBuilder.Build` (Microsoft.Extensions.DependencyInjection, `ValidateOnBuild`) registers the
-`WorldDependencies`, the `WorldRoot`, and by hand `EntityRegistry` (also as `IEntityFinder`) and
-`EntityRecordReader` — they belong to no single layer. Then it scans the layer attributes of the assembly, keeps the
-classes of the selected layers and creates every one of them eagerly: a Presentation with only event handlers is
-taken by no constructor. Last, it passes what MS.DI cannot inject: the Presentation to `EventDispatcher.Register`,
-every `IChatCommand` to `ChatSimulationFacade.Register`, every `[CommandHandler]` to
-`CommandHandlerRegistry.Register`. Adding a service is one class with a layer attribute; nothing else is edited. The
-GameTests build the container for every configuration.
+`WorldDependencies`, the ports of the `WorldSetup`, the `WorldRoot`, and by hand `EntityRegistry` (also as
+`IEntityFinder`) and `EntityRecordReader` — they belong to no single layer. Then it scans the layer attributes of the
+assembly, keeps the classes of the selected layers and creates every one of them eagerly: a Presentation with only event
+handlers is taken by no constructor. Last, it passes what MS.DI cannot inject: the Presentation to
+`EventDispatcher.Register`, every `IChatCommand` to `ChatSimulationFacade.Register`, every `[CommandHandler]` to
+`CommandHandlerRegistry.Register`. Adding a service is one class with a layer attribute; nothing else is edited. No
+constructor of a service has an optional parameter: MS.DI would fill it silently. The GameTests build the container for
+every configuration.
 
 ## Folders
 
@@ -88,9 +90,9 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | Folder | What it holds |
 |---|---|
 | `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
-| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` (implemented by `Game`, the host's own peer looped back synchronously), `IServerConnection` (a loopback on the host), `ISaveFiles`, `IDedicatedServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner`, `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
+| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` (implemented by `Game`, the host's own peer looped back synchronously), `IServerConnection` (a loopback on the host), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner`, `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
-| `Infra/Composition` | `WorldLayer` — the layer flags and the three configurations; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
+| `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRequestCommand`, `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
 | `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |

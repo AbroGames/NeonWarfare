@@ -6,7 +6,6 @@ using NeonWarfare.GameTests.Worlds.Infra.Protocol;
 using NeonWarfare.GameTests.Worlds.Infra.Server.Replication;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
@@ -41,14 +40,11 @@ public class SaveServiceTests
         _files = new RecordingSaveFiles();
         var connection = new RecordingClientsConnection();
         _server = new WorldServicesBuilder().Build(
-            WorldLayer.Dedicated,
+            TestWorldSetups.Dedicated(saveFiles: _files),
             new WorldDependencies(new ManualTimeProvider(0),
                 new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []),
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, catalog,
-                connection, connection, _files, LocalPlayer: null,
-                TestWorldDependencies.Admin(WorldLayer.Dedicated),
-                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Dedicated),
-                TestWorldDependencies.LocalPlayerOwner(WorldLayer.Dedicated)),
+                connection, connection, new RecordingLocalPlayerOwner()),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _service = _server.GetRequiredService<SaveService>();

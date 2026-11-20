@@ -10,7 +10,6 @@ using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
@@ -59,15 +58,13 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
 
     private Network _network;
     private World _world;
-    private WorldLayer _layers;
+    private WorldSetup _setup;
     private EntityCatalog _entities;
     private NetMessageCodec _codec;
     private Replicator _replicator;
 
     // The host is the server and a client in one process, its own peer is the server's
-    private int? LocalPeerId => _layers.HasFlag(WorldLayer.Server | WorldLayer.Client)
-        ? ServerPeerId
-        : null;
+    private int? LocalPeerId => _setup is WorldSetup.Host ? ServerPeerId : null;
 
     private bool HasWorld => _world != null && IsInstanceValid(_world);
 
@@ -106,22 +103,15 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
         gameStarter.Init(this);
     }
 
-    /// <param name="saveFiles">Where a server World saves, <c>null</c> for a remote client.</param>
-    /// <param name="localPlayer">The one passed to <see cref="SendJoinRequest"/>, <c>null</c> on a dedicated
-    /// server.</param>
-    /// <param name="admin"><c>null</c> for a remote client.</param>
-    /// <param name="dedicatedServerOwner">Only for a dedicated server.</param>
-    public World AddWorld(
-        WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles, LocalPlayer localPlayer,
-        WorldAdmin admin, IDedicatedServerOwner dedicatedServerOwner = null)
+    public World AddWorld(WorldSetup setup, WorldOrigin origin, Screen screen)
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this, saveFiles, localPlayer, admin, dedicatedServerOwner, localPlayer == null ? null : this);
+            this, this, this);
         var world = new World();
         try
         {
-            world.InitPreReady(layers, dependencies, origin);
+            world.InitPreReady(setup, dependencies, origin);
         }
         catch
         {
@@ -129,7 +119,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection, ILoca
             world.Free();
             throw;
         }
-        _layers = layers;
+        _setup = setup;
         _world = world;
         _world.SetName("World");
         WorldContainer.ChangeStoredNode(_world);

@@ -15,7 +15,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 using static NeonWarfare.Scenes.Worlds.Features.Chat.ChatPresentation;
@@ -203,15 +202,11 @@ public class ServerTickLoopTests
     private void Build(WorldServicesBuilder builder)
     {
         _provider = builder.Build(
-            WorldLayer.Host,
+            TestWorldSetups.Host(),
             new WorldDependencies(
                 _time, _codec, new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
-                _clientsConnection, _clientsConnection, new RecordingSaveFiles(),
-                TestWorldDependencies.LocalPlayer(WorldLayer.Host),
-                TestWorldDependencies.Admin(WorldLayer.Host),
-                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Host),
-                TestWorldDependencies.LocalPlayerOwner(WorldLayer.Host)),
+                _clientsConnection, _clientsConnection, new RecordingLocalPlayerOwner()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;

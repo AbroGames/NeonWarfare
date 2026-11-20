@@ -9,13 +9,11 @@ using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.Chat.ChatCommands;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -48,15 +46,12 @@ public class ChatTests
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _provider = new WorldServicesBuilder().Build(
-            WorldLayer.Dedicated,
+            TestWorldSetups.Dedicated(),
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes),
-                new RecordingClientsConnection(), new RecordingClientsConnection(), new RecordingSaveFiles(),
-                LocalPlayer: null, TestWorldDependencies.Admin(WorldLayer.Dedicated),
-                TestWorldDependencies.DedicatedServerOwner(WorldLayer.Dedicated),
-                TestWorldDependencies.LocalPlayerOwner(WorldLayer.Dedicated)),
+                new RecordingClientsConnection(), new RecordingClientsConnection(), new RecordingLocalPlayerOwner()),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         _outbox = _provider.GetRequiredService<EventOutbox>();

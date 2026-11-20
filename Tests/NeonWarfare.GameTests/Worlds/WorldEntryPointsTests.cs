@@ -9,7 +9,6 @@ using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Events;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
@@ -103,7 +102,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void EntryPoints_WithoutTheirLayer_Throw()
     {
-        World dedicated = CreateWorld(WorldLayer.Dedicated);
+        World dedicated = CreateWorld(DedicatedSetup());
         World notInitialized = AutoFree(new World())!;
 
         AssertThrown(() => dedicated.ReceiveFromServer(new byte[] { (byte) ServerPacketKind.Events }))
@@ -124,7 +123,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
 
-        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
         AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Nick))
             .ContainsExactlyInAnyOrder("Host", "Remote");
@@ -138,7 +137,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
         byte[] snapshot = RemoteSnapshot();
-        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(snapshot));
+        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(snapshot));
 
         AssertThrown(() => client.ReceiveFromServer(snapshot)).IsInstanceOf<NetMessageFormatException>();
     }
@@ -149,7 +148,7 @@ public class WorldEntryPointsTests
     {
         byte[] save = HostSave(_codec);
 
-        World loaded = CreateWorld(WorldLayer.Dedicated, new WorldOrigin.FromSave(save, SaveFileName));
+        World loaded = CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save, SaveFileName));
 
         AssertThat(loaded.Get<PlayersStorageQuery>().Model.PlayerByUid[HostUid].Nick).IsEqual("Host");
     }
@@ -175,7 +174,7 @@ public class WorldEntryPointsTests
         byte[] save = HostSave(new NetMessageCodec(NetMessageCodecTests.CreateMapping(), ["Another kind"]));
         World world = AutoFree(new World())!;
 
-        AssertThrown(() => world.InitPreReady(WorldLayer.Dedicated, Dependencies(WorldLayer.Dedicated),
+        AssertThrown(() => world.InitPreReady(DedicatedSetup(), Dependencies(),
                 new WorldOrigin.FromSave(save, SaveFileName)))
             .IsInstanceOf<SaveVersionMismatchException>();
     }
@@ -194,7 +193,7 @@ public class WorldEntryPointsTests
         RecordingSaveFiles.Written save = _saveFiles.Files.Single();
         AssertThat(save.FileName).IsEqual(SaveFileName);
 
-        World loaded = InTree(CreateWorld(WorldLayer.Dedicated, new WorldOrigin.FromSave(save.Data, loadedFileName)));
+        World loaded = InTree(CreateWorld(DedicatedSetup(), new WorldOrigin.FromSave(save.Data, loadedFileName)));
         AssertThat(loaded.Get<PlayersStorageQuery>().Model.PlayerByUid[HostUid].Nick).IsEqual("Host");
         Tick(loaded);
         loaded.GetParent().RemoveChild(loaded);
@@ -210,7 +209,7 @@ public class WorldEntryPointsTests
         World host = HostWorld();
         JoinHost(host);
         JoinRemote(host);
-        World client = InTree(CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot())));
+        World client = InTree(CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot())));
 
         client.GetParent().RemoveChild(client);
 
@@ -223,7 +222,7 @@ public class WorldEntryPointsTests
     public void Get_OnlyQueryAndPresentationOfItsLayers()
     {
         World host = HostWorld();
-        World dedicated = CreateWorld(WorldLayer.Dedicated);
+        World dedicated = CreateWorld(DedicatedSetup());
 
         AssertThat(host.Get<PlayerQuery>()).IsNotNull();
         AssertThat(host.Get<ChatPresentation>()).IsNotNull();
@@ -318,7 +317,7 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
 
-        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
         PlayerModel player = client.Get<LocalPlayerPresentation>().Player;
         AssertThat(player.Uid).IsEqual(RemoteUid);
@@ -337,7 +336,7 @@ public class WorldEntryPointsTests
             .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Events)
             .Packet;
         var owner = new RecordingLocalPlayerOwner();
-        World client = CreateWorld(WorldLayer.RemoteClient, new WorldOrigin.FromSnapshot(RemoteSnapshot()), owner);
+        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()), owner);
         AssertThat(owner.JoinedCount).IsEqual(0);
 
         client.ReceiveFromServer(events);
@@ -349,40 +348,38 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void LocalPlayer_OnADedicatedServer_DoesNotExist()
     {
-        World dedicated = CreateWorld(WorldLayer.Dedicated);
+        World dedicated = CreateWorld(DedicatedSetup());
 
         AssertThrown(() => dedicated.Get<LocalPlayerPresentation>()).IsInstanceOf<InvalidOperationException>();
     }
 
     private World HostWorld(WorldOrigin? origin = null, ILocalPlayerOwner? owner = null)
     {
-        World world = CreateWorld(WorldLayer.Host, origin, owner);
+        World world = CreateWorld(HostSetup(), origin, owner);
         _connection.Loopback = packet => world.ReceiveFromServer(packet);
         _connection.CommandLoopback = packet => world.ReceiveFromClient(HostPeer, packet);
         return world;
     }
 
-    private World CreateWorld(WorldLayer layers, WorldOrigin? origin = null, ILocalPlayerOwner? owner = null) =>
+    private World CreateWorld(WorldSetup setup, WorldOrigin? origin = null, ILocalPlayerOwner? owner = null) =>
         AutoFree(new World())!.InitPreReady(
-            layers, Dependencies(layers, owner: owner), origin ?? new WorldOrigin.NewWorld(SaveFileName));
+            setup, Dependencies(owner: owner), origin ?? new WorldOrigin.NewWorld(SaveFileName));
+
+    private WorldSetup.Host HostSetup() => TestWorldSetups.Host(HostPlayer, _saveFiles);
 
     // A client World here is always the remote player's, made from its join snapshot
-    private WorldDependencies Dependencies(
-        WorldLayer layers, NetMessageCodec? codec = null, ILocalPlayerOwner? owner = null)
+    private static WorldSetup.RemoteClient RemoteClientSetup() => TestWorldSetups.RemoteClient(RemotePlayer);
+
+    private WorldSetup.Dedicated DedicatedSetup() => TestWorldSetups.Dedicated(saveFiles: _saveFiles);
+
+    private WorldDependencies Dependencies(NetMessageCodec? codec = null, ILocalPlayerOwner? owner = null)
     {
-        LocalPlayer? localPlayer = layers switch
-        {
-            WorldLayer.Host => HostPlayer,
-            WorldLayer.RemoteClient => RemotePlayer,
-            _ => null,
-        };
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new WorldDependencies(
             new ManualTimeProvider(Now), codec ?? _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), _connection, _connection, _saveFiles, localPlayer,
-            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers),
-            owner ?? TestWorldDependencies.LocalPlayerOwner(layers));
+            TestWorldScenes.CreateCatalog(scenes), _connection, _connection,
+            owner ?? new RecordingLocalPlayerOwner());
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way
@@ -390,7 +387,7 @@ public class WorldEntryPointsTests
     {
         Node root = AutoFree(new Node())!;
         using ServiceProvider host = new WorldServicesBuilder()
-            .Build(WorldLayer.Host, Dependencies(WorldLayer.Host, codec), new WorldRoot(root));
+            .Build(HostSetup(), Dependencies(codec), new WorldRoot(root));
         host.GetRequiredService<NewWorldSimulationFacade>().Create();
         host.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(HostUid).Nick = "Host";
         host.GetRequiredService<ServerTickLoop>().RunTick();

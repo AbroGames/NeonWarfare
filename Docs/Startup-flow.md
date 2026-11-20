@@ -92,8 +92,8 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
 `Game`'s methods:
 
 * **`AddNetwork()`** — creates `Network` (ENet); single player has none.
-* **`AddWorld(layers, origin, screen, saveFiles, localPlayer)`** — builds the World from the layer set and the
-  origin (see [World](World.md)), puts it into `WorldContainer` and creates its screen: `ServerHud` or none at once,
+* **`AddWorld(setup, origin, screen)`** — builds the World from the configuration (`WorldSetup`) and the origin
+  (see [World](World.md)), puts it into `WorldContainer` and creates its screen: `ServerHud` or none at once,
   `Hud` only once this process's player has joined. A World that throws while being built is freed.
 * **`SendJoinRequest(localPlayer)`** — the join of this process's player. On the host its own peer first
   "connects", so it passes the same gatekeeper as a remote one (see [Networking](Networking.md#join-and-leave)).
@@ -129,7 +129,8 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
   cleared.
 
 The admin of a server World (`WorldAdmin`) is the uid of the host's `LocalPlayer`, or `--admin` of a dedicated
-server.
+server. Every server starter is the World's `IServerOwner`: the host ones ignore `AdminLeft()`, since their admin is
+their own player.
 
 ### 1. `SingleplayerGameStarter`
 
@@ -137,7 +138,8 @@ A host without `Network`: its only peer is its own.
 
 1. The `Loading` loading screen.
 2. `resume-game.json` — the "single-player game" mode, with the save files that keep it current.
-3. `AddServerWorld(...)` → `AddWorld(Host, origin, Hud, ...)`. A load error → back to the menu with the message.
+3. `AddServerWorld(...)` → `AddWorld(Host(saveFiles, localPlayer, this), origin, Hud)`. A load error → back to the
+   menu with the message.
 4. `GoToMenuOnJoinRejected(game)`, `ClearLoadingScreenOnJoined(game)`, `SendJoinRequest(localPlayer)`. The join is
    applied in the next tick.
 
@@ -149,7 +151,7 @@ the World, the screen and what happens on a failure and after `OpenServer()`.
 1. The `Loading` loading screen.
 2. Only the dedicated server, with `parentPid`: a `ProcessDeadChecker` (a GodotBox node) on `Game` calls
    `MainScene.Shutdown()` when the parent process dies, and so does the admin leaving (the starter is the World's
-   `IDedicatedServerOwner`), so a child server is not left hanging after the client is closed (see
+   `IServerOwner`), so a child server is not left hanging after the client is closed (see
    [Shutdown](Shutdown.md)).
 3. `AddNetwork()`; `mustSetLastGame` → a write into `resume-game.json` (a server started from the console has
    none).
@@ -174,7 +176,7 @@ Connecting to someone else's server. Parameters: `host`, `port`, `mustSetLastGam
 2. `AddNetwork()`, `ReadLocalPlayer()`. **No World yet**: it is created from the server's join snapshot.
 3. Subscriptions to the events of `Network` and `Game`, which die with the `Game`, so nothing unsubscribes:
    * `ConnectedToServer` → `SendJoinRequest(localPlayer)`;
-   * `WorldSnapshotReceived` → `AddWorld(Client, FromSnapshot(snapshot), Hud, null, localPlayer)`; a broken
+   * `WorldSnapshotReceived` → `AddWorld(RemoteClient(localPlayer), FromSnapshot(snapshot), Hud)`; a broken
      snapshot or a failure to build the World → back to the menu with the error;
    * `ConnectionFailed` → to the menu with "Connection to the server failed" (no answer within the timeout);
    * `ServerDisconnected` → to the menu with "Server disconnected" (can arrive even hours into the game);

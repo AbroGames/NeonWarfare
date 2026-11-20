@@ -13,7 +13,7 @@
   — the way out when a shutdown hangs.
 * **The server child process** — `OS.Kill` is SIGKILL / `TerminateProcess`, with no autosave, so the client never
   asks the server to stop: freeing the `Game` closes the connection, the admin leaves, and `PlayerSimulationFacade`
-  reports it through `IDedicatedServerOwner.AdminLeft()`. `DedicatedServerGameStarter` started with `--parent-pid`
+  reports it through `IServerOwner.AdminLeft()`. `DedicatedServerGameStarter` started with `--parent-pid`
   then calls `MainScene.Shutdown()`; one started from the console keeps running. On the client
   `MainScene.StartMainMenu()` and `Shutdown()` go on only through `Services.Process.WaitForDedicatedServerExit`:
   the "Stopping the server" loading screen until the process exits, `OS.Kill` after 10 s.

@@ -18,6 +18,7 @@ public class LayerReferenceTests
     private const string FeaturesNamespace = WorldLayers.FeaturesNamespace;
     private const string HudMailbox = WorldLayers.WorldNamespace + ".Infra.Presentation.HudMailbox";
     private const string HudMailboxPost = "Post";
+    private const string WorldSetup = WorldLayers.WorldNamespace + ".WorldSetup";
 
     private static readonly string[] ServicesTypes =
         ["NeonWarfare.Scripts.Services", "NeonWarfare.Scripts.Services/Global"];
@@ -127,6 +128,35 @@ public class LayerReferenceTests
                 {
                     string ownLayer = WorldLayers.LayerOf(type)?.ToString() ?? "a type outside the layers";
                     report.Add($"{where}: {ownLayer} refers to {GameAssembly.ShortName(referenced)} ({layer})");
+                }
+            }
+        }
+
+        report.AssertEmpty();
+    }
+
+    /// <summary>
+    /// The configuration is the composition root's choice of layers and ports: a service that saw it could branch on
+    /// the role of the process, and the layers would stop being what decides what runs.
+    /// </summary>
+    [Fact]
+    public void WorldServices_DoNotReferenceWorldSetup()
+    {
+        FailureReport report = new("World services referring to the World configuration");
+        GameAssembly game = GameAssembly.Instance;
+        // Without it a rename would leave the rule nothing to check
+        Assert.NotNull(game.FindByName(WorldSetup));
+
+        foreach (TypeDefinition type in game.Types.Where(type => WorldLayers.LayerOf(type) != null))
+        {
+            HashSet<string> reported = [];
+            foreach (TypeReferenceSite site in TypeReferences.Of(type))
+            {
+                string where = GameAssembly.Describe(site.From);
+                if (GameAssembly.Outermost(site.Type).FullName == WorldSetup
+                    && reported.Add($"{where}|{site.Type.FullName}"))
+                {
+                    report.Add($"{where}: {WorldLayers.LayerOf(type)} refers to {GameAssembly.ShortName(site.Type)}");
                 }
             }
         }

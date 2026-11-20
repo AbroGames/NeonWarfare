@@ -18,7 +18,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -36,14 +35,15 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_EachConfiguration_HasItsSimulationAndPresentation()
     {
-        foreach ((WorldLayer layers, bool hasSimulation, bool hasPresentation) in new[]
+        foreach ((WorldSetup setup, bool hasSimulation, bool hasPresentation) in
+                 new (WorldSetup, bool, bool)[]
                  {
-                     (WorldLayer.RemoteClient, false, true),
-                     (WorldLayer.Host, true, true),
-                     (WorldLayer.Dedicated, true, false),
+                     (TestWorldSetups.RemoteClient(), false, true),
+                     (TestWorldSetups.Host(), true, true),
+                     (TestWorldSetups.Dedicated(), true, false),
                  })
         {
-            using ServiceProvider provider = Build(layers);
+            using ServiceProvider provider = Build(setup);
 
             AssertThat(provider.GetService<SendChatMessageHandler>() != null).IsEqual(hasSimulation);
             AssertThat(provider.GetService<ChatSimulation>() != null).IsEqual(hasSimulation);
@@ -55,14 +55,14 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_OnlyServerConfigurations_HaveOutboxPeerMapAndCommandQueue()
     {
-        foreach ((WorldLayer layers, bool isServer) in new[]
+        foreach ((WorldSetup setup, bool isServer) in new (WorldSetup, bool)[]
                  {
-                     (WorldLayer.RemoteClient, false),
-                     (WorldLayer.Host, true),
-                     (WorldLayer.Dedicated, true),
+                     (TestWorldSetups.RemoteClient(), false),
+                     (TestWorldSetups.Host(), true),
+                     (TestWorldSetups.Dedicated(), true),
                  })
         {
-            using ServiceProvider provider = Build(layers);
+            using ServiceProvider provider = Build(setup);
 
             AssertThat(provider.GetService<EventOutbox>() != null).IsEqual(isServer);
             AssertThat(provider.GetService<PeerUidMap>() != null).IsEqual(isServer);
@@ -78,14 +78,14 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_OnlyConfigurationsWithPresentation_HaveEventDispatcherAndHudMailbox()
     {
-        foreach ((WorldLayer layers, bool hasPresentation) in new[]
+        foreach ((WorldSetup setup, bool hasPresentation) in new (WorldSetup, bool)[]
                  {
-                     (WorldLayer.RemoteClient, true),
-                     (WorldLayer.Host, true),
-                     (WorldLayer.Dedicated, false),
+                     (TestWorldSetups.RemoteClient(), true),
+                     (TestWorldSetups.Host(), true),
+                     (TestWorldSetups.Dedicated(), false),
                  })
         {
-            using ServiceProvider provider = Build(layers);
+            using ServiceProvider provider = Build(setup);
 
             AssertThat(provider.GetService<EventDispatcher>() != null).IsEqual(hasPresentation);
             AssertThat(provider.GetService<HudMailbox>() != null).IsEqual(hasPresentation);
@@ -97,14 +97,14 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_OnlyRemoteClient_AppliesStatePackets_OnlyServers_WriteThem()
     {
-        foreach ((WorldLayer layers, bool applies, bool writes) in new[]
+        foreach ((WorldSetup setup, bool applies, bool writes) in new (WorldSetup, bool, bool)[]
                  {
-                     (WorldLayer.RemoteClient, true, false),
-                     (WorldLayer.Host, false, true),
-                     (WorldLayer.Dedicated, false, true),
+                     (TestWorldSetups.RemoteClient(), true, false),
+                     (TestWorldSetups.Host(), false, true),
+                     (TestWorldSetups.Dedicated(), false, true),
                  })
         {
-            using ServiceProvider provider = Build(layers);
+            using ServiceProvider provider = Build(setup);
 
             AssertThat(provider.GetService<StateApplier>() != null).IsEqual(applies);
             AssertThat(provider.GetService<StateReplicator>() != null).IsEqual(writes);
@@ -116,16 +116,16 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_ServerConfigurations_RegisterChatCommands()
     {
-        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.Dedicated })
+        foreach (WorldSetup setup in new WorldSetup[] { TestWorldSetups.Host(), TestWorldSetups.Dedicated() })
         {
-            using ServiceProvider provider = Build(layers);
+            using ServiceProvider provider = Build(setup);
 
             IEnumerable<IChatCommand> commands = provider.GetRequiredService<ChatSimulationFacade>().Commands;
             AssertThat(commands.Select(command => command.GetType()))
                 .Contains(typeof(HelpChatCommandSimulationFacade));
         }
 
-        using ServiceProvider client = Build(WorldLayer.RemoteClient);
+        using ServiceProvider client = Build(TestWorldSetups.RemoteClient());
         AssertThat(client.GetService<ChatSimulationFacade>()).IsNull();
         AssertThat(client.GetService<HelpChatCommandSimulationFacade>()).IsNull();
     }
@@ -136,7 +136,8 @@ public class WorldServicesBuilderTests
     {
         UnrequestedPresentation.Created = 0;
 
-        using ServiceProvider provider = Build(FixtureBuilder(typeof(UnrequestedPresentation)), WorldLayer.Host);
+        using ServiceProvider provider =
+            Build(FixtureBuilder(typeof(UnrequestedPresentation)), TestWorldSetups.Host());
 
         AssertThat(UnrequestedPresentation.Created).IsEqual(1);
     }
@@ -145,9 +146,9 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_HasQueries()
     {
-        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host, WorldLayer.Dedicated })
+        foreach (WorldSetup setup in AllSetups())
         {
-            using ServiceProvider provider = Build(FixtureBuilder(typeof(FixtureQuery)), layers);
+            using ServiceProvider provider = Build(FixtureBuilder(typeof(FixtureQuery)), setup);
 
             // A bool: AssertThat dispatches dynamically and cannot bind a private fixture type
             AssertThat(provider.GetService<FixtureQuery>() != null).IsTrue();
@@ -162,7 +163,7 @@ public class WorldServicesBuilderTests
         string message = "";
         try
         {
-            Build(FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB)), WorldLayer.Host).Dispose();
+            Build(FixtureBuilder(typeof(CyclicFacadeA), typeof(CyclicFacadeB)), TestWorldSetups.Host()).Dispose();
         }
         catch (AggregateException exception)
         {
@@ -179,7 +180,7 @@ public class WorldServicesBuilderTests
         World world = AutoFree(new World())!;
 
         AssertThat(world.InitPreReady(
-                WorldLayer.Host, Dependencies(WorldLayer.Host), new WorldOrigin.NewWorld(SaveFileName)))
+                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
             .IsSame(world);
     }
 
@@ -191,7 +192,7 @@ public class WorldServicesBuilderTests
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
         AssertThrown(() => world.InitPreReady(
-                WorldLayer.Host, Dependencies(WorldLayer.Host), new WorldOrigin.NewWorld(SaveFileName)))
+                TestWorldSetups.Host(), Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -199,11 +200,11 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void InitPreReady_NewWorld_SpawnsBothStoragesUnderTheWorld()
     {
-        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.Dedicated })
+        foreach (WorldSetup setup in new WorldSetup[] { TestWorldSetups.Host(), TestWorldSetups.Dedicated() })
         {
             World world = AutoFree(new World())!;
 
-            world.InitPreReady(layers, Dependencies(layers), new WorldOrigin.NewWorld(SaveFileName));
+            world.InitPreReady(setup, Dependencies(), new WorldOrigin.NewWorld(SaveFileName));
 
             AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
             AssertThat(world.GetChildren().OfType<PlayersSessionStorage>().Count()).IsEqual(1);
@@ -215,12 +216,12 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_AnyConfiguration_SpawnsNothing()
     {
-        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host, WorldLayer.Dedicated })
+        foreach (WorldSetup setup in AllSetups())
         {
             Node root = AutoFree(new Node())!;
 
             using ServiceProvider provider =
-                new WorldServicesBuilder().Build(layers, Dependencies(layers), new WorldRoot(root));
+                new WorldServicesBuilder().Build(setup, Dependencies(), new WorldRoot(root));
 
             AssertThat(provider.GetRequiredService<IEntityFinder>().GetAll<Node>()).IsEmpty();
             AssertThat(root.GetChildCount()).IsEqual(0);
@@ -231,109 +232,20 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_Client_HasNoSpawnerNorNetIdGenerator()
     {
-        using ServiceProvider provider = Build(WorldLayer.RemoteClient);
+        using ServiceProvider provider = Build(TestWorldSetups.RemoteClient());
 
         AssertThat(provider.GetService<EntitySpawner>()).IsNull();
         AssertThat(provider.GetService<NetIdGenerator>()).IsNull();
         AssertThat(provider.GetService<NewWorldSimulationFacade>()).IsNull();
     }
 
-    // A remote client has no save file
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_WithoutSaveFiles_OnlyRemoteClient()
-    {
-        var root = new WorldRoot(AutoFree(new Node())!);
+    private static ServiceProvider Build(WorldSetup setup) => Build(new WorldServicesBuilder(), setup);
 
-        using ServiceProvider client = new WorldServicesBuilder()
-            .Build(WorldLayer.RemoteClient, Dependencies(WorldLayer.RemoteClient) with { SaveFiles = null! }, root);
-        AssertThat(client.GetService<ISaveFiles>()).IsNull();
-        foreach (WorldLayer server in new[] { WorldLayer.Host, WorldLayer.Dedicated })
-        {
-            WorldDependencies noSaveFiles = Dependencies(server) with { SaveFiles = null! };
-            AssertThrown(() => new WorldServicesBuilder().Build(server, noSaveFiles, root))
-                .IsInstanceOf<ArgumentException>();
-        }
-    }
+    private static ServiceProvider Build(WorldServicesBuilder builder, WorldSetup setup) =>
+        builder.Build(setup, Dependencies(), new WorldRoot(AutoFree(new Node())!));
 
-    // A dedicated server has no player of its own, and every World with a Presentation has one
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_LocalPlayer_OnlyAndAlwaysWithPresentation()
-    {
-        var root = new WorldRoot(AutoFree(new Node())!);
-        WorldDependencies withLocalPlayer = Dependencies(WorldLayer.Host);
-
-        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host })
-        {
-            WorldDependencies noLocalPlayer = Dependencies(layers) with { LocalPlayer = null! };
-            AssertThrown(() => new WorldServicesBuilder().Build(layers, noLocalPlayer, root))
-                .IsInstanceOf<ArgumentException>();
-        }
-        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, withLocalPlayer, root))
-            .IsInstanceOf<ArgumentException>();
-    }
-
-    // Without the owner the local player's join would leave the loading screen forever
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_LocalPlayerOwner_OnlyAndAlwaysWithLocalPlayer()
-    {
-        var root = new WorldRoot(AutoFree(new Node())!);
-
-        foreach (WorldLayer layers in new[] { WorldLayer.RemoteClient, WorldLayer.Host })
-        {
-            WorldDependencies noOwner = Dependencies(layers) with { LocalPlayerOwner = null! };
-            AssertThrown(() => new WorldServicesBuilder().Build(layers, noOwner, root))
-                .IsInstanceOf<ArgumentException>();
-        }
-        WorldDependencies dedicatedWithOwner =
-            Dependencies(WorldLayer.Dedicated) with { LocalPlayerOwner = new RecordingLocalPlayerOwner() };
-        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, dedicatedWithOwner, root))
-            .IsInstanceOf<ArgumentException>();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_Admin_OnlyAndAlwaysWithSimulation()
-    {
-        var root = new WorldRoot(AutoFree(new Node())!);
-
-        foreach (WorldLayer layers in new[] { WorldLayer.Dedicated, WorldLayer.Host })
-        {
-            WorldDependencies noAdmin = Dependencies(layers) with { Admin = null! };
-            AssertThrown(() => new WorldServicesBuilder().Build(layers, noAdmin, root))
-                .IsInstanceOf<ArgumentException>();
-        }
-        WorldDependencies clientWithAdmin =
-            Dependencies(WorldLayer.RemoteClient) with { Admin = new WorldAdmin(null!) };
-        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.RemoteClient, clientWithAdmin, root))
-            .IsInstanceOf<ArgumentException>();
-    }
-
-    // The host's admin is the process itself, so only a dedicated server reports the admin leaving
-    [TestCase]
-    [RequireGodotRuntime]
-    public void Build_DedicatedServerOwner_OnlyAndAlwaysOnDedicated()
-    {
-        var root = new WorldRoot(AutoFree(new Node())!);
-        var owner = new RecordingDedicatedServerOwner();
-
-        WorldDependencies noOwner = Dependencies(WorldLayer.Dedicated) with { DedicatedServerOwner = null! };
-        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, noOwner, root))
-            .IsInstanceOf<ArgumentException>();
-        foreach (WorldLayer layers in new[] { WorldLayer.Host, WorldLayer.RemoteClient })
-        {
-            WorldDependencies withOwner = Dependencies(layers) with { DedicatedServerOwner = owner };
-            AssertThrown(() => new WorldServicesBuilder().Build(layers, withOwner, root))
-                .IsInstanceOf<ArgumentException>();
-        }
-    }
-
-    private static ServiceProvider Build(WorldLayer layers) => Build(new WorldServicesBuilder(), layers);
-
-    private static ServiceProvider Build(WorldServicesBuilder builder, WorldLayer layers) =>
-        builder.Build(layers, Dependencies(layers), new WorldRoot(AutoFree(new Node())!));
+    private static WorldSetup[] AllSetups() =>
+        [TestWorldSetups.RemoteClient(), TestWorldSetups.Host(), TestWorldSetups.Dedicated()];
 
     // The root gives the event dispatcher and the command handler registry their handlers and the chat commands
     // facade its commands, so all of them come with any fixture, with what the chat takes
@@ -344,15 +256,13 @@ public class WorldServicesBuilderTests
             typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
         ]);
 
-    private static WorldDependencies Dependencies(WorldLayer layers)
+    private static WorldDependencies Dependencies()
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new(TimeProvider.System, Codec(),
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-            TestWorldDependencies.Admin(layers), TestWorldDependencies.DedicatedServerOwner(layers),
-            TestWorldDependencies.LocalPlayerOwner(layers));
+            new RecordingClientsConnection(), new RecordingLocalPlayerOwner());
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

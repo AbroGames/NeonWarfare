@@ -88,14 +88,14 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/EventNamingTests` | In `Root/`, `Game/`, `Worlds/`: no `…Event` C# event, `On…` methods private or protected, a subscribed method is `On…` |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
-| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles` only in `Server`; every `Build` parameter is open or restricted explicitly |
+| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles` only in `Server`; every `Build` parameter is open or restricted explicitly; no optional parameter |
 | `Architecture/ConstructorWorldReadTests` | No world service constructor calls a query or an `EntityRegistry` lookup |
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |
 | `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IPeerSessionHandler`); exactly one session handler; every handler is `[CommandHandler]` |
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
 | `Architecture/ProducedMessageTests` | Every event is constructed only in the Simulation and has an `[EventHandler]`; every command is sent |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
-| `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` reached only from event handlers and their private helpers |
+| `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); no service refers to `WorldSetup`; Simulation referred to only by its group; `HudMailbox.Post` reached only from event handlers and their private helpers |
 | `Architecture/PresentationSurfaceTests` | A `[Presentation]` exposes only property getters, which write no field and reach no event handler code |
 | `Architecture/WorldNamingTests` | `Command` / `Event` / `Notice` types ↔ the same suffix in the World; layer attribute ↔ suffix in `Features/` |
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |

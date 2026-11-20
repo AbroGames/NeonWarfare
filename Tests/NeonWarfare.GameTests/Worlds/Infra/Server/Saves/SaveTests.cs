@@ -9,7 +9,6 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Client.Replication;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
@@ -17,7 +16,6 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
-using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using RepliCAT.Bits;
 using static GdUnit4.Assertions;
@@ -54,7 +52,7 @@ public class SaveTests
             [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode),
                 typeof(ManualTextNode)]);
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
-        _server = Build(WorldLayer.Host, _connection, out _);
+        _server = Build(TestWorldSetups.Host(), _connection, out _);
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
 
         JoinDirectly(_server, HostUid, "Host", HostPeer);
@@ -122,7 +120,7 @@ public class SaveTests
         byte[] save = Saver().Write();
         ulong foreign = _codec.ProtocolHash ^ 1;
         BinaryPrimitives.WriteUInt64LittleEndian(save, foreign);
-        ServiceProvider loaded = Build(WorldLayer.Dedicated, new RecordingClientsConnection(), out _);
+        ServiceProvider loaded = Build(TestWorldSetups.Dedicated(), new RecordingClientsConnection(), out _);
 
         var error = AssertThrows<SaveVersionMismatchException>(
             () => loaded.GetRequiredService<SaveLoader>().Load(save));
@@ -353,7 +351,7 @@ public class SaveTests
         Tick(_server);
         var connection = new RecordingClientsConnection();
         ServiceProvider loaded = Load(Saver().Write(), connection);
-        ServiceProvider bob = Build(WorldLayer.RemoteClient, new RecordingClientsConnection(), out _);
+        ServiceProvider bob = Build(TestWorldSetups.RemoteClient(), new RecordingClientsConnection(), out _);
         var applier = bob.GetRequiredService<StateApplier>();
         // Only the snapshot: Bob's events are not under test
         connection.Receivers[BobPeer] = packet =>
@@ -381,18 +379,15 @@ public class SaveTests
         server.GetRequiredService<CommandDispatcher>().ProcessAll();
     }
 
-    private ServiceProvider Build(
-        WorldLayer layers, RecordingClientsConnection connection, out Node root, string? adminUid = null)
+    private ServiceProvider Build(WorldSetup setup, RecordingClientsConnection connection, out Node root)
     {
         root = new Node();
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(root);
         _roots.Add(root);
         var dependencies = new WorldDependencies(new ManualTimeProvider(Now), _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, _catalog,
-            connection, connection, new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-            TestWorldDependencies.Admin(layers, adminUid), TestWorldDependencies.DedicatedServerOwner(layers),
-            TestWorldDependencies.LocalPlayerOwner(layers));
-        ServiceProvider provider = new WorldServicesBuilder().Build(layers, dependencies, new WorldRoot(root));
+            connection, connection, new RecordingLocalPlayerOwner());
+        ServiceProvider provider = new WorldServicesBuilder().Build(setup, dependencies, new WorldRoot(root));
         _providers.Add(provider);
         return provider;
     }
@@ -401,7 +396,7 @@ public class SaveTests
         byte[] save, RecordingClientsConnection? connection = null, string? adminUid = null)
     {
         ServiceProvider loaded = Build(
-            WorldLayer.Dedicated, connection ?? new RecordingClientsConnection(), out _, adminUid);
+            TestWorldSetups.Dedicated(adminUid), connection ?? new RecordingClientsConnection(), out _);
         loaded.GetRequiredService<SaveLoader>().Load(save);
         return loaded;
     }
@@ -409,7 +404,7 @@ public class SaveTests
     // A broken save, not a foreign one
     private void AssertBroken(byte[] save)
     {
-        ServiceProvider loaded = Build(WorldLayer.Dedicated, new RecordingClientsConnection(), out _);
+        ServiceProvider loaded = Build(TestWorldSetups.Dedicated(), new RecordingClientsConnection(), out _);
 
         var error = AssertThrows<SaveFormatException>(() => loaded.GetRequiredService<SaveLoader>().Load(save));
 

@@ -51,15 +51,15 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     /// the World is half built and must be freed.</exception>
     /// <exception cref="SaveFormatException">The save of <see cref="WorldOrigin.FromSave"/> is broken or of another
     /// version (<see cref="SaveVersionMismatchException"/>): the World must be freed.</exception>
-    public World InitPreReady(WorldLayer layers, WorldDependencies dependencies, WorldOrigin origin)
+    public World InitPreReady(WorldSetup setup, WorldDependencies dependencies, WorldOrigin origin)
     {
         if (_services != null) throw new InvalidOperationException("World is already initialized");
         if (IsInsideTree()) throw new InvalidOperationException("World must be initialized before it enters the tree");
 
         // Every service is created here, before the world has any entity, so none can read the world in its
         // constructor; the origin fills the world only after that
-        _services = new WorldServicesBuilder().Build(layers, dependencies, new WorldRoot(this));
-        _layers = layers;
+        _services = new WorldServicesBuilder().Build(setup, dependencies, new WorldRoot(this));
+        _layers = setup.Layers;
 
         switch (origin)
         {
@@ -78,11 +78,11 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
                 throw new ArgumentOutOfRangeException(nameof(origin), origin, null);
         }
 
-        if (layers.HasFlag(WorldLayer.Simulation))
+        if (_layers.HasFlag(WorldLayer.Simulation))
         {
             AddChild(new ServerTickNode().InitPreReady(_services.GetRequiredService<ServerTickLoop>().RunTick));
         }
-        if (layers.HasFlag(WorldLayer.Server))
+        if (_layers.HasFlag(WorldLayer.Server))
         {
             AddChild(new SaveOnExitNode().InitPreReady(Service<SaveService>().SaveOnExit));
         }

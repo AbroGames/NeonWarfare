@@ -8,7 +8,6 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Features.NewWorld;
 using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
@@ -43,6 +42,7 @@ public class PlayerJoinLeaveTests
     private Node _root = null!;
     private RecordingClientsConnection _clientsConnection = null!;
     private ServiceProvider _provider = null!;
+    private RecordingServerOwner _owner = null!;
 
     [BeforeTest]
     public void SetUp()
@@ -51,7 +51,8 @@ public class PlayerJoinLeaveTests
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
-        _provider = Build(WorldLayer.Host, HostUid, dedicatedServerOwner: null);
+        _owner = new RecordingServerOwner();
+        _provider = Build(TestWorldSetups.Host(TestWorldSetups.LocalPlayer(HostUid), owner: _owner));
     }
 
     [AfterTest]
@@ -246,8 +247,8 @@ public class PlayerJoinLeaveTests
     {
         _provider.Dispose();
         _clientsConnection = new RecordingClientsConnection();
-        var owner = new RecordingDedicatedServerOwner();
-        _provider = Build(WorldLayer.Dedicated, AliceUid, owner);
+        var owner = new RecordingServerOwner();
+        _provider = Build(TestWorldSetups.Dedicated(AliceUid, owner: owner));
         Join(AlicePeer, AliceUid, "Alice");
         Join(BobPeer, BobUid, "Bob");
         Tick();
@@ -261,17 +262,33 @@ public class PlayerJoinLeaveTests
         AssertThat(owner.AdminLeftCount).IsEqual(1);
     }
 
-    private ServiceProvider Build(WorldLayer layers, string adminUid, IDedicatedServerOwner? dedicatedServerOwner)
+    // The host's admin is its own player: the report reaches the starter, which decides that nothing stops
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Leave_AdminOfHost_IsReportedToTheOwner()
+    {
+        Join(HostPeer, HostUid, "Host");
+        Join(AlicePeer, AliceUid, "Alice");
+        Tick();
+
+        Disconnect(AlicePeer);
+        Tick();
+        AssertThat(_owner.AdminLeftCount).IsEqual(0);
+
+        Disconnect(HostPeer);
+        Tick();
+        AssertThat(_owner.AdminLeftCount).IsEqual(1);
+    }
+
+    private ServiceProvider Build(WorldSetup setup)
     {
         ServiceProvider provider = new WorldServicesBuilder().Build(
-            layers,
+            setup,
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection,
-                new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
-                TestWorldDependencies.Admin(layers, adminUid), dedicatedServerOwner,
-                TestWorldDependencies.LocalPlayerOwner(layers)),
+                new RecordingLocalPlayerOwner()),
             new WorldRoot(_root));
         provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         return provider;
