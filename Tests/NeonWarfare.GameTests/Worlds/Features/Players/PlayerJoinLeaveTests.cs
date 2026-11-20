@@ -287,8 +287,7 @@ public class PlayerJoinLeaveTests
             new WorldDependencies(
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
-                TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection,
-                new RecordingLocalPlayerOwner()),
+                TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
         provider.GetRequiredService<NewWorldSimulationFacade>().Create();
         return provider;

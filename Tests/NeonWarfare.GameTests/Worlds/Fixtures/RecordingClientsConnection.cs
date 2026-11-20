@@ -6,12 +6,12 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.GameTests.Worlds.Fixtures;
 
 /// <summary>
-/// Plays Game's part: records every packet and, once <see cref="Loopback"/> is set, hands the packets of the host's
-/// own peer to it synchronously, inside Send, as Game does; the commands go to <see cref="CommandLoopback"/> the same
-/// way. The packets of a remote peer go to its entry in <see cref="Receivers"/>, also inside Send: ENet keeps the
-/// order of a reliable channel, so a client World gets them as if in <c>poll</c>. A join rejection is only recorded:
-/// Game reads it itself, it never reaches a World. A disconnect is only recorded too: the test enqueues the
-/// <c>PeerDisconnected</c> that ENet would report.
+/// Plays the transport's part: records every packet and, once <see cref="Loopback"/> is set, hands the packets of the
+/// host's own peer to it synchronously, inside Send, as the host's transport does; the commands go to
+/// <see cref="CommandLoopback"/> the same way. The packets of a remote peer go to its entry in
+/// <see cref="Receivers"/>, also inside Send: ENet keeps the order of a reliable channel, so a client World gets them
+/// as if in <c>poll</c>. A join rejection is only recorded: the transport reads it itself, it never reaches a World.
+/// A disconnect is only recorded too: the test enqueues the <c>PeerDisconnected</c> that ENet would report.
 /// </summary>
 public class RecordingClientsConnection : IClientsConnection, IServerConnection
 {

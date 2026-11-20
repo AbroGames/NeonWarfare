@@ -20,7 +20,7 @@ using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Worlds;
 
-// The World root as Game drives it: the fake transport loops the host's own packets back into the entry points
+// The World root as the transports drive it: the fake one loops the host's own packets back into the entry points
 [TestSuite]
 public class WorldEntryPointsTests
 {
@@ -109,8 +109,8 @@ public class WorldEntryPointsTests
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.ReceiveFromClient(HostPeer, new byte[] { 0 }))
             .IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => notInitialized.AddClient(HostPeer)).IsInstanceOf<InvalidOperationException>();
-        AssertThrown(() => notInitialized.RemoveClient(HostPeer)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => notInitialized.StartHandshake(HostPeer)).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => notInitialized.QueueDisconnection(HostPeer)).IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => dedicated.Send(new SendChatMessageCommand("hello")))
             .IsInstanceOf<InvalidOperationException>();
     }
@@ -274,7 +274,7 @@ public class WorldEntryPointsTests
         AssertThat(localPlayer.Player.Nick).IsEqual("Host");
     }
 
-    // Done when: a rejected host join goes to the failure path, Game's JoinRejected, and the UI never appears
+    // Done when: a rejected host join goes to the failure path, the transport's JoinRejected, and the UI never appears
     [TestCase]
     [RequireGodotRuntime]
     public void LocalPlayer_OnAHostWithRejectedJoin_IsNeverReported()
@@ -283,7 +283,7 @@ public class WorldEntryPointsTests
         World world = HostWorld(owner: owner);
         var invalid = new LocalPlayer(HostUid, "", Colors.White);
 
-        world.AddClient(HostPeer);
+        world.StartHandshake(HostPeer);
         ((IServerConnection) _connection).Send(_codec.Encode(invalid.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
 
@@ -301,7 +301,7 @@ public class WorldEntryPointsTests
         World world = HostWorld();
         JoinHost(world);
 
-        world.RemoveClient(HostPeer);
+        world.QueueDisconnection(HostPeer);
         Tick(world);
 
         AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
@@ -336,7 +336,7 @@ public class WorldEntryPointsTests
             .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Events)
             .Packet;
         var owner = new RecordingLocalPlayerOwner();
-        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(RemoteSnapshot()), owner);
+        World client = CreateWorld(RemoteClientSetup(owner), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
         AssertThat(owner.JoinedCount).IsEqual(0);
 
         client.ReceiveFromServer(events);
@@ -355,31 +355,31 @@ public class WorldEntryPointsTests
 
     private World HostWorld(WorldOrigin? origin = null, ILocalPlayerOwner? owner = null)
     {
-        World world = CreateWorld(HostSetup(), origin, owner);
+        World world = CreateWorld(HostSetup(owner), origin);
         _connection.Loopback = packet => world.ReceiveFromServer(packet);
         _connection.CommandLoopback = packet => world.ReceiveFromClient(HostPeer, packet);
         return world;
     }
 
-    private World CreateWorld(WorldSetup setup, WorldOrigin? origin = null, ILocalPlayerOwner? owner = null) =>
-        AutoFree(new World())!.InitPreReady(
-            setup, Dependencies(owner: owner), origin ?? new WorldOrigin.NewWorld(SaveFileName));
+    private World CreateWorld(WorldSetup setup, WorldOrigin? origin = null) =>
+        AutoFree(new World())!.InitPreReady(setup, Dependencies(), origin ?? new WorldOrigin.NewWorld(SaveFileName));
 
-    private WorldSetup.Host HostSetup() => TestWorldSetups.Host(HostPlayer, _saveFiles);
+    private WorldSetup.Host HostSetup(ILocalPlayerOwner? owner = null) =>
+        TestWorldSetups.Host(HostPlayer, _saveFiles, localPlayerOwner: owner);
 
     // A client World here is always the remote player's, made from its join snapshot
-    private static WorldSetup.RemoteClient RemoteClientSetup() => TestWorldSetups.RemoteClient(RemotePlayer);
+    private static WorldSetup.RemoteClient RemoteClientSetup(ILocalPlayerOwner? owner = null) =>
+        TestWorldSetups.RemoteClient(RemotePlayer, owner);
 
     private WorldSetup.Dedicated DedicatedSetup() => TestWorldSetups.Dedicated(saveFiles: _saveFiles);
 
-    private WorldDependencies Dependencies(NetMessageCodec? codec = null, ILocalPlayerOwner? owner = null)
+    private WorldDependencies Dependencies(NetMessageCodec? codec = null)
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new WorldDependencies(
             new ManualTimeProvider(Now), codec ?? _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), _connection, _connection,
-            owner ?? new RecordingLocalPlayerOwner());
+            TestWorldScenes.CreateCatalog(scenes), _connection, _connection);
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way
@@ -394,18 +394,18 @@ public class WorldEntryPointsTests
         return host.GetRequiredService<SaveWriter>().Write();
     }
 
-    // As Game joins the host's own player
+    // As the host's transport joins its own player
     private void JoinHost(World world)
     {
-        world.AddClient(HostPeer);
+        world.StartHandshake(HostPeer);
         ((IServerConnection) _connection).Send(_codec.Encode(HostPlayer.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
     }
 
-    // As Game hands a remote peer to the World; the snapshot is recorded, not delivered
+    // As the server transport hands a remote peer to the World; the snapshot is recorded, not delivered
     private void JoinRemote(World world)
     {
-        world.AddClient(RemotePeer);
+        world.StartHandshake(RemotePeer);
         world.ReceiveFromClient(RemotePeer, _codec.Encode(RemotePlayer.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
     }

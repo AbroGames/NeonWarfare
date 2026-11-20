@@ -14,11 +14,11 @@ in `Worlds/Features/` — see [World features](World-features.md). The packets a
 
 | Member | Who calls it |
 |---|---|
-| `InitPreReady(setup, dependencies, origin)` | `Game.AddWorld`, before the World enters the tree: builds every service, then fills the world |
+| `InitPreReady(setup, dependencies, origin)` | `Game.Add…World`, before the World enters the tree: builds every service, then fills the world |
 | `Send<TCommand>(command)` | The `Hud`, through `World.ICommandSender`: the only way a command leaves the World |
 | `Get<T>()` | The screens, through `World.IReader`: only `[Query]` and `[Presentation]` services are handed out |
-| `ReceiveFromClient`, `AddClient`, `RemoveClient` | `Game`, on a server: packets and connection events of the peers |
-| `ReceiveFromServer` | `Game`, on a client: a state, events or join rejection packet |
+| `ReceiveFromClient`, `StartHandshake`, `QueueDisconnection` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
+| `ReceiveFromServer` | `ClientTransport`, and `HostTransport` for the host's own peer: a state or events packet |
 
 `WorldOrigin` says where the state comes from: `NewWorld(saveFileName)` — `NewWorldSimulationFacade.Create()` spawns
 what a world starts with; `FromSave(save, saveFileName)` — `SaveLoader`; `FromSnapshot(packet)` — the join snapshot,
@@ -26,7 +26,7 @@ on a remote client. A World is never empty: a remote client creates it only from
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
 `WorldDependencies` is what `Game` hands to every World, none of it `null`: `TimeProvider`, `NetMessageCodec`,
-`Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog`, both connections and `ILocalPlayerOwner`.
+`Replicator`, `FrameProvider`, `WorldPackedScenes`, `EntityCatalog` and both connections.
 `WorldSetup` adds the ports of its configuration, see [Layers](#layers); the ones the owning process supplies are in
 `Ports/`. With the Simulation the World also adds `ServerTickNode`, with the Server layer `SaveOnExitNode`.
 
@@ -39,8 +39,8 @@ it (`LayerReferenceTests`), so a service sees its layer and the ports, never the
 
 | `WorldSetup` | Ports | `WorldLayer` | Used by |
 |---|---|---|---|
-| `RemoteClient` | `LocalPlayer` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
-| `Host` | `ISaveFiles`, `LocalPlayer` (also the `WorldAdmin`), `IServerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
+| `RemoteClient` | `LocalPlayer`, `ILocalPlayerOwner` | `Query \| Client \| Presentation \| ClientReplication` | A client connected to a remote server |
+| `Host` | `ISaveFiles`, `LocalPlayer` (also the `WorldAdmin`), `IServerOwner`, `ILocalPlayerOwner` | `Dedicated`'s layers `\| Client \| Presentation` | Single player and hosting from inside the client |
 | `Dedicated` | `ISaveFiles`, `WorldAdmin`, `IServerOwner` | `Simulation \| SimulationFacade \| CommandHandler \| Server \| Query` | A dedicated server, with `ServerHud` or without |
 
 The host has no `ClientReplication`: its Simulation writes the very models its Presentation reads.
@@ -90,7 +90,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | Folder | What it holds |
 |---|---|
 | `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
-| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` (implemented by `Game`, the host's own peer looped back synchronously), `IServerConnection` (a loopback on the host), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner`, `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
+| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by the starter), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRequestCommand`, `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |
@@ -104,5 +104,5 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
 | `Infra/Client/Events` | `EventDispatcher` and `EventHandlerAttribute` |
 | `Infra/Client/Replication` | `StateApplier` — the state packets and the join snapshot of a remote client |
-| `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `Game`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
+| `Infra/Entities` | `NetId` (`NetId.None` is "nothing" and the World root), `NetIdGenerator`, `EntityRegistry` and its read side `IEntityFinder`, `EntityCatalog` (owned by `GameProtocol`), `EntitySpawner` — the only spawn on the server, `EntityRecordReader`, `WorldRoot`, `NotSavedAttribute` |
 | `Infra/Presentation` | `HudMailbox` and `Notice` — one-frame notices from the Presentation to the HUD, never leaving the process |

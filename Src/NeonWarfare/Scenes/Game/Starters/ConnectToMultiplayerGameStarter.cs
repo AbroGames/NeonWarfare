@@ -1,7 +1,6 @@
 using System;
 using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -17,9 +16,8 @@ public class ConnectToMultiplayerGameStarter(
     string host,
     int? port,
     bool mustSetLastGame
-    ) : BaseGameStarter
+    ) : BaseGameStarter, ILocalPlayerOwner
 {
-    
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
@@ -31,32 +29,30 @@ public class ConnectToMultiplayerGameStarter(
 
     private readonly ILogger _log = LogFactory.GetForStatic<ConnectToMultiplayerGameStarter>();
 
+    private Game _game;
+
     public override void Init(Game game)
     {
         Connect(game, ReadLocalPlayer());
     }
 
+    public void Joined() => ShowHudOnJoined(_game);
+
+    public void JoinRejected(JoinRejectReason reason) => GoToMenuOnJoinRejected(_game, reason);
+
     protected void Connect(Game game, LocalPlayer localPlayer)
     {
+        _game = game;
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
-        
-        Network network = game.AddNetwork();
 
         // The World comes from the first snapshot and the Hud with the join right after it, until then the connecting
         // screen stays
-        void OnConnectedToServer()
-        {
-            if (!IsGameAlive(game)) return;
-            game.SendJoinRequest(localPlayer);
-        }
-        
         void OnWorldSnapshotReceived(byte[] snapshot)
         {
             if (!IsGameAlive(game)) return;
             try
             {
-                game.AddWorld(
-                    new WorldSetup.RemoteClient(localPlayer), new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud);
+                game.AddClientWorld(snapshot);
             }
             catch (NetMessageFormatException e)
             {
@@ -90,13 +86,10 @@ public class ConnectToMultiplayerGameStarter(
             GoToMenuAndShowError(DisconnectedFromServerMessage);
         }
 
-        // Events of Network and Game, which die with the game, so the handlers need no unsubscribing
-        network.ConnectedToServer += OnConnectedToServer;
-        game.WorldSnapshotReceived += OnWorldSnapshotReceived;
+        Network network = game.AddClientNetwork(localPlayer, this, OnWorldSnapshotReceived);
+        // Events of Network, which dies with the game, so the handlers need no unsubscribing
         network.ConnectionFailed += OnConnectionFailed;
         network.ServerDisconnected += OnServerDisconnected;
-        GoToMenuOnJoinRejected(game);
-        ClearLoadingScreenOnJoined(game);
 
         if (mustSetLastGame)
         {

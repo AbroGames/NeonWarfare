@@ -49,7 +49,7 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   skip. Ten exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, Godot's `--path` (not our flag), the composition
   root — `World` and `WorldServicesBuilder` as one entry (takes `Services` and wires every layer),
-  `Services.Di`, `JoinRequestCommand` (sent by `Game`, not by a command sender), `IChatCommand` (a chat
+  `Services.Di`, `JoinRequestCommand` (sent by the transports, not by a command sender), `IChatCommand` (a chat
   command, not a `Command`), `HudMailbox` (its
   `Post` / `Read<T>` are the mailbox itself), the `All tests` launch profile (does not start the game).
   Each has a test failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).

@@ -20,7 +20,7 @@ public abstract class BaseHostGameStarter(
     {
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
-        Network network = game.AddNetwork();
+        Network network = game.AddServerNetwork();
         ResumableGame lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated);
         if (mustSetLastGame)
         {
@@ -44,12 +44,9 @@ public abstract class BaseHostGameStarter(
         }
 
         network.OpenServer();
-        OnServerOpened(game);
     }
 
     protected abstract World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles);
-
-    protected virtual void OnServerOpened(Game game) { }
 
     // Network has already logged the error
     protected virtual void OnHostingFailed(Error error) { }

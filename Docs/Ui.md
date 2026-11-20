@@ -87,7 +87,7 @@ pushes a `ConfirmDialogPage` when they differ.
 
 ## The in-game HUD and the loading screen
 
-The screen dies with the World; the starter picks it (`Game.Screen`: `Hud`, `ServerHud` or none, see
+The screen dies with the World; the starter shows it (`Game.ShowHud` / `ShowServerHud`, see
 [Startup flow](Startup-flow.md)). `ServerHud` comes with the World, `Hud` only once this process's player has joined.
 Both get the World **before** being added to the tree, through `InitPreReady`, and only through its two interfaces:
 

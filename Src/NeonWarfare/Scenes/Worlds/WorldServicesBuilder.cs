@@ -66,7 +66,6 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Entities);
         services.AddSingleton(dependencies.ClientsConnection);
         services.AddSingleton(dependencies.ServerConnection);
-        services.AddSingleton(dependencies.LocalPlayerOwner);
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one
         // layer. Every layer reads it through IEntityFinder, only the spawning one registers
@@ -80,17 +79,19 @@ public class WorldServicesBuilder
         {
             case WorldSetup.RemoteClient remoteClient:
                 services.AddSingleton(remoteClient.LocalPlayer);
+                services.AddSingleton(remoteClient.LocalPlayerOwner);
                 break;
             case WorldSetup.Host host:
                 services.AddSingleton(host.SaveFiles);
                 services.AddSingleton(host.LocalPlayer);
                 services.AddSingleton(host.Admin);
-                services.AddSingleton(host.Owner);
+                services.AddSingleton(host.ServerOwner);
+                services.AddSingleton(host.LocalPlayerOwner);
                 break;
             case WorldSetup.Dedicated dedicated:
                 services.AddSingleton(dedicated.SaveFiles);
                 services.AddSingleton(dedicated.Admin);
-                services.AddSingleton(dedicated.Owner);
+                services.AddSingleton(dedicated.ServerOwner);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(setup), setup, null);

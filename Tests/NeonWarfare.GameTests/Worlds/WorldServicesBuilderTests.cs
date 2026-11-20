@@ -262,7 +262,7 @@ public class WorldServicesBuilderTests
         return new(TimeProvider.System, Codec(),
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingLocalPlayerOwner());
+            new RecordingClientsConnection());
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);
