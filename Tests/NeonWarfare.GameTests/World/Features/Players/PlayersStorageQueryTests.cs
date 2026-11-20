@@ -16,8 +16,8 @@ public class PlayersStorageQueryTests
         var registry = new EntityRegistry();
         PlayersStorage players = AutoFree(new PlayersStorage())!;
         PlayersSessionStorage session = AutoFree(new PlayersSessionStorage())!;
-        registry.Register(new NetId(1), players);
-        registry.Register(new NetId(2), session);
+        registry.Register(new NetId(1), players, 0);
+        registry.Register(new NetId(2), session, 0);
 
         AssertThat(new PlayersStorageQuery(registry).Model).IsSame(players.Model);
         AssertThat(new PlayersSessionStorageQuery(registry).Model).IsSame(session.Model);

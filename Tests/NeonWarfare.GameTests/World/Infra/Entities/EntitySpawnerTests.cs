@@ -84,6 +84,54 @@ public class EntitySpawnerTests
         AssertThat(_registry.GetSingle<PlayersSessionStorage>()).IsSame(child);
     }
 
+    // The kind goes into spawn records and saves: it is the only way back from a node to its scene
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Spawn_RegistersTheCatalogKind()
+    {
+        EntityCatalog catalog = TestWorldScenes.CreateCatalog(_scenes);
+
+        _spawner.SpawnOnRoot<Node>(_scenes.BattleSurface);
+        _spawner.SpawnOnRoot<PlayersSessionStorage>();
+
+        AssertThat(_registry.GetKindId(new NetId(1))).IsEqual(catalog.GetKindId(_scenes.BattleSurface));
+        AssertThat(_registry.GetKindId(new NetId(2))).IsEqual(catalog.GetKindId(typeof(PlayersSessionStorage)));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Despawn_TakesTheSubtreeOutOfTheTreeAndTheRegistry_FreesItLater()
+    {
+        // In the tree: a node leaves the registry on TreeExiting
+        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(_root);
+        var parent = _spawner.SpawnOnRoot<PlayersStorage>();
+        var child = _spawner.Spawn<PlayersSessionStorage>(new NetId(1));
+        var sibling = _spawner.SpawnOnRoot<PlayersSessionStorage>();
+
+        _spawner.Despawn(parent);
+
+        AssertThat(parent.GetParent()).IsNull();
+        AssertThat(parent.IsQueuedForDeletion()).IsTrue();
+        AssertThat(_registry.GetAll<Node>()).ContainsExactly(sibling);
+        AssertThat(_registry.TryGetNetId(child, out _)).IsFalse();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Despawn_UnregisteredOrOutsideTheTree_ThrowsAndLeavesIt()
+    {
+        var registered = _spawner.SpawnOnRoot<PlayersStorage>();
+        var plain = new Node();
+        _root.AddChild(plain);
+
+        AssertThrown(() => _spawner.Despawn(plain)).IsInstanceOf<ArgumentException>();
+        AssertThrown(() => _spawner.Despawn(registered)).IsInstanceOf<InvalidOperationException>();
+
+        AssertThat(plain.GetParent()).IsSame(_root);
+        AssertThat(registered.GetParent()).IsSame(_root);
+        AssertThat(_registry.GetAll<Node>()).ContainsExactly(registered);
+    }
+
     [TestCase]
     [RequireGodotRuntime]
     public void Spawn_UnknownParentOrKindOutsideCatalog_ThrowsAndCreatesNothing()
