@@ -7,13 +7,15 @@ namespace NeonWarfare.Scenes.World.Infra.Entities;
 
 /// <summary>
 /// Creates an entity on the server: a kind of the <see cref="EntityCatalog"/> (a scene, or a node type with no
-/// scene of its own), a fresh NetId, a place in the tree and in the registry.
+/// scene of its own), a fresh NetId, a place in the tree and in the registry. Despawns it too.
 /// </summary>
 [Simulation]
 public class EntitySpawner(
     NetIdGenerator netIdGenerator, EntityRegistry registry, WorldRoot root, EntityCatalog catalog)
 {
     private const string WrongTypeError = "The root of {0} is {1}, not {2}.";
+    private const string NotRegisteredError = "{0} is not a registered entity.";
+    private const string OutOfTreeError = "{0} is outside the tree: the registry would not see it leave.";
 
     public T SpawnOnRoot<T>(PackedScene scene, Action<T> initPreReady = null) where T : Node =>
         Spawn(scene, NetId.None, initPreReady);
@@ -73,7 +75,27 @@ public class EntitySpawner(
         }
 
         // Last, so a SpawnedEvent subscriber finds the node already in its place
-        registry.Register(id, node);
+        registry.Register(id, node, kindId);
         return node;
+    }
+
+    /// <summary>
+    /// Removes the entity with its whole subtree, every registered descendant included. The node is freed at the end
+    /// of the frame.
+    /// </summary>
+    public void Despawn(Node node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        if (!registry.TryGetNetId(node, out _))
+        {
+            throw new ArgumentException(NotRegisteredError.FormatWith(node.Name), nameof(node));
+        }
+        if (!node.IsInsideTree())
+        {
+            throw new InvalidOperationException(OutOfTreeError.FormatWith(node.Name));
+        }
+
+        node.GetParent().RemoveChild(node);
+        node.QueueFree();
     }
 }

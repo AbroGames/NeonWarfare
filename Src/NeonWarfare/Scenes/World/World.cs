@@ -126,7 +126,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
                     throw new NetMessageFormatException(
                         JoinRejectedLengthError.FormatWith(packet.Length, JoinRejectedLength));
                 }
-                //TODO 021 show the reason to the player
+                //TODO 031 show the reason to the player
                 _log.Error(JoinRejectedLog, (JoinRejectReason) packet.Span[1]);
                 break;
             default:

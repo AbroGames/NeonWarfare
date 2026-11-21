@@ -195,7 +195,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
 
     private void PacketReceivedEvent(int peerId, byte[] packet)
     {
-        //TODO 021 a client gets its World from the first snapshot
+        //TODO 021b a client gets its World from the first snapshot
         if (!HasWorld)
         {
             _log.Debug(NoWorldLog, peerId);

@@ -7,7 +7,7 @@ using Humanizer;
 namespace NeonWarfare.Scenes.World.Infra.Entities;
 
 /// <summary>
-/// NetId and node of every spawned entity. A node leaves on <c>TreeExiting</c>, which Godot propagates to every
+/// NetId, kind and node of every spawned entity. A node leaves on <c>TreeExiting</c>, which Godot propagates to every
 /// descendant, so freeing or removing an ancestor takes the whole registered subtree out.
 /// </summary>
 public class EntityRegistry : IEntityFinder
@@ -21,7 +21,7 @@ public class EntityRegistry : IEntityFinder
         "Expected exactly one {0}, found {1}. An entity the world has from its start is missing only before the "
         + "World is initialized or the world snapshot is applied: do not read it in a service constructor.";
 
-    private record Entry(NetId Id, Action OnTreeExiting);
+    private record Entry(NetId Id, int KindId, Action OnTreeExiting);
 
     // Members are kept up to date from the first request on; the snapshot is rebuilt lazily after a change, so
     // a caller iterating it may spawn or despawn freely
@@ -40,7 +40,8 @@ public class EntityRegistry : IEntityFinder
 
     public event Action<NetId, Node> DespawnedEvent;
 
-    public void Register(NetId id, Node node)
+    /// <param name="kindId">The <see cref="EntityCatalog"/> kind the node was created from.</param>
+    public void Register(NetId id, Node node, int kindId)
     {
         ArgumentNullException.ThrowIfNull(node);
         if (id == NetId.None) throw new ArgumentException(NoneError.FormatWith(node.Name), nameof(id));
@@ -56,7 +57,7 @@ public class EntityRegistry : IEntityFinder
         // A closure over the registry, not a node method: Godot would not disconnect it, so Remove does
         void OnTreeExiting() => Remove(node);
         _nodeById.Add(id, node);
-        _entryByNode.Add(node, new Entry(id, OnTreeExiting));
+        _entryByNode.Add(node, new Entry(id, kindId, OnTreeExiting));
         node.TreeExiting += OnTreeExiting;
         foreach (TypeCache cache in _cacheByType.Values.Where(cache => cache.Type.IsInstanceOfType(node)))
         {
@@ -73,6 +74,8 @@ public class EntityRegistry : IEntityFinder
         _nodeById.TryGetValue(id, out Node node)
             ? node
             : throw new KeyNotFoundException(NotFoundError.FormatWith(id));
+
+    public int GetKindId(NetId id) => _entryByNode[GetNode(id)].KindId;
 
     public bool TryGetNetId(Node node, out NetId id)
     {
