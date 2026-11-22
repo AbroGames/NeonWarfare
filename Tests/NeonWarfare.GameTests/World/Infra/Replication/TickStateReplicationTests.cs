@@ -14,6 +14,7 @@ using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
 using RepliCAT;
 using RepliCAT.Bits;
@@ -23,8 +24,8 @@ using GameWorld = NeonWarfare.Scenes.World.World;
 namespace NeonWarfare.GameTests.World.Infra.Replication;
 
 // A host and Alice's remote client, both through the real composition root, joined by the fake transport the way
-// Game joins them. Until 021 she has no snapshot, so she joins before the first tick, which spawns the storages on her
-// client. Both Worlds are in the tree: a despawned node leaves the registry on TreeExiting
+// Game joins them. Alice joins before the first tick, which spawns the storages on her client; Bob, when a test needs
+// him, joins through a snapshot. Every World is in the tree: a despawned node leaves the registry on TreeExiting
 [TestSuite]
 public class TickStateReplicationTests
 {
@@ -32,9 +33,13 @@ public class TickStateReplicationTests
     private const int HostPeer = RecordingClientsConnection.HostPeer;
     private const int AlicePeer = 2;
     private const int BobPeer = 3;
+    private const int CarolPeer = 4;
+    private const int DavePeer = 5;
     private const string HostUid = "HostHostHo-Hhhhhhhhhh";
     private const string AliceUid = "AliceAlice-Aaaaaaaaaa";
     private const string BobUid = "BobBobBobB-Bbbbbbbbbb";
+    private const string CarolUid = "CarolCarol-Cccccccccc";
+    private const string DaveUid = "DaveDaveDa-Dddddddddd";
 
     private NetMessageCodec _codec = null!;
     private WorldPackedScenes _scenes = null!;
@@ -44,6 +49,7 @@ public class TickStateReplicationTests
     private RecordingClientsConnection _connection = null!;
     private ServiceProvider _server = null!;
     private ServiceProvider _alice = null!;
+    private readonly List<ServiceProvider> _clients = [];
     private readonly List<Node> _clientNodes = [];
 
     [BeforeTest]
@@ -53,7 +59,8 @@ public class TickStateReplicationTests
         _scenes = TestWorldScenes.Create();
         // The test kinds after the game's: the same catalog on both sides
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
-            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode)]);
+            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode),
+                typeof(ManualTextNode)]);
         _serverRoot = InTree(new Node());
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = new WorldServicesBuilder()
@@ -61,7 +68,7 @@ public class TickStateReplicationTests
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _connection.Loopback = _server.GetRequiredService<EventDispatcher>().DispatchPacket;
 
-        _alice = ClientOf(AlicePeer);
+        _alice = ClientOf(AlicePeer, out _aliceRoot);
         JoinDirectly(HostUid, "Host", HostPeer);
         JoinDirectly(AliceUid, "Alice", AlicePeer);
     }
@@ -69,7 +76,8 @@ public class TickStateReplicationTests
     [AfterTest]
     public void TearDown()
     {
-        _alice.Dispose();
+        _clients.ForEach(client => client.Dispose());
+        _clients.Clear();
         _server.Dispose();
         _clientNodes.ForEach(node => node.Free());
         _clientNodes.Clear();
@@ -105,19 +113,27 @@ public class TickStateReplicationTests
             .ContainsExactly(new JoinRecorder.Sight(BobUid, true, "Bob"));
     }
 
-    // Done when: a peer joined in this tick gets no state packet of this tick
+    // Done when: in the join tick the joiner receives the snapshot and then its events packet, and no state packet
     [TestCase]
     [RequireGodotRuntime]
-    public void PeerJoinedInTheTick_GetsOnlyTheEventsOfIt_TheStateFromTheNextTick()
+    public void PeerJoinedInTheTick_GetsTheSnapshotThenItsEvents_NoStatePacket()
     {
+        var counter = Spawner().SpawnOnRoot<CounterNode>(node => node.Value = 1);
         Tick();
         _connection.Packets.Clear();
+        ServiceProvider bob = ClientOf(BobPeer, out _);
 
+        counter.Value = 2;
         Join(BobPeer, BobUid, "Bob");
         Tick();
 
-        AssertThat(Kinds(BobPeer)).ContainsExactly(ServerPacketKind.Events);
+        AssertThat(Kinds(BobPeer)).ContainsExactly(ServerPacketKind.Snapshot, ServerPacketKind.Events);
         AssertThat(Kinds(AlicePeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
+        AssertClientHasTheServerEntities(bob);
+        AssertThat(((CounterNode) bob.GetRequiredService<EntityRegistry>().GetNode(ServerId(counter))).Value)
+            .IsEqual(2);
+        AssertThat(bob.GetRequiredService<JoinRecorder>().Seen)
+            .ContainsExactly(new JoinRecorder.Sight(BobUid, true, "Bob"));
         _connection.Packets.Clear();
 
         Players().PlayerByUid[BobUid].Nick = "Robert";
@@ -125,6 +141,183 @@ public class TickStateReplicationTests
 
         AssertThat(Kinds(BobPeer)).ContainsExactly(ServerPacketKind.State);
         AssertThat(Kinds(AlicePeer)).ContainsExactly(ServerPacketKind.State);
+        AssertThat(bob.GetRequiredService<PlayersStorageQuery>().Model.PlayerByUid[BobUid].Nick).IsEqual("Robert");
+    }
+
+    // Done when: one spawned in this tick is in the snapshot, with the state at the end of the tick
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SnapshotOfTheJoinTick_HasTheEntitiesSpawnedInIt()
+    {
+        Tick();
+        ServiceProvider bob = ClientOf(BobPeer, out _);
+
+        Join(BobPeer, BobUid, "Bob");
+        var parent = Spawner().SpawnOnRoot<CounterNode>(node => node.Value = 1);
+        var child = Spawner().Spawn<CounterNode>(ServerId(parent), node => node.Value = 3);
+        parent.Value = 2;
+        Tick();
+
+        var registry = bob.GetRequiredService<EntityRegistry>();
+        Node clientParent = registry.GetNode(ServerId(parent));
+        AssertThat(((CounterNode) clientParent).Value).IsEqual(2);
+        AssertThat(((CounterNode) registry.GetNode(ServerId(child))).Value).IsEqual(3);
+        AssertThat(registry.GetNode(ServerId(child)).GetParent()).IsSame(clientParent);
+    }
+
+    // Done when: an entity despawned after the last send is still in the snapshot. Kind and parent come from the spawn:
+    // the registry has neither any more
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SnapshotBetweenTicks_HasTheEntitiesDespawnedAfterTheLastSend()
+    {
+        var parent = Spawner().SpawnOnRoot<CounterNode>(node => node.Value = 1);
+        var child = Spawner().Spawn<CounterNode>(ServerId(parent), node => node.Value = 3);
+        NetId parentId = ServerId(parent), childId = ServerId(child);
+        Tick();
+
+        Spawner().Despawn(parent);
+        byte[] snapshot = SnapshotPacket();
+
+        AssertThat(_server.GetRequiredService<IEntityFinder>().TryGetNode(parentId, out _)).IsFalse();
+        ServiceProvider bob = ClientOf(BobPeer, out _);
+        bob.GetRequiredService<StateApplier>().ApplySnapshot(snapshot);
+        var registry = bob.GetRequiredService<EntityRegistry>();
+        AssertThat(((CounterNode) registry.GetNode(parentId)).Value).IsEqual(1);
+        AssertThat(registry.GetNode(childId).GetParent()).IsSame(registry.GetNode(parentId));
+        AssertThat(registry.GetKindId(childId)).IsEqual(_catalog.GetKindId(typeof(CounterNode)));
+    }
+
+    // It would go into the snapshot without state, and the next state packet would spawn it again
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SnapshotWithASpawnSinceTheLastSend_Throws()
+    {
+        Tick();
+        Spawner().SpawnOnRoot<CounterNode>(node => node.Value = 1);
+
+        AssertThrown(() => _server.GetRequiredService<StateReplicator>().WriteSnapshot(new BitWriter()))
+            .IsInstanceOf<InvalidOperationException>();
+    }
+
+    // The host's World is the server's own: it has every entity already
+    [TestCase]
+    [RequireGodotRuntime]
+    public void HostJoiningThroughTheLoopback_GetsNoSnapshot()
+    {
+        _server.GetRequiredService<CommandInbox>().EnqueuePeerDisconnected(HostPeer);
+        Tick();
+        _connection.Packets.Clear();
+
+        Join(HostPeer, HostUid, "Host");
+        Tick();
+
+        AssertThat(Kinds(HostPeer)).ContainsExactly(ServerPacketKind.Events);
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
+    }
+
+    // Without a consistent snapshot the joiner's models would drift from the next deltas; the peers already in
+    // the world are not affected
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SnapshotWriteFailed_RejectsEveryPeerJoinedInTheTick()
+    {
+        var node = Spawner().SpawnOnRoot<ManualTextNode>();
+        Tick();
+        _connection.Packets.Clear();
+        // Unmarked, so no delta writes it: only the snapshot, which writes manual members from the live object
+        node.Text = new string('x', 70_000);
+
+        Join(BobPeer, BobUid, "Bob");
+        Join(CarolPeer, CarolUid, "Carol");
+        Tick();
+
+        byte[] rejection = [(byte) ServerPacketKind.JoinRejected, (byte) JoinRejectReason.InternalError];
+        AssertThat(_connection.Packets.Where(sent => sent.PeerId == BobPeer).Select(sent => sent.Packet))
+            .ContainsExactly(rejection);
+        AssertThat(_connection.Packets.Where(sent => sent.PeerId == CarolPeer).Select(sent => sent.Packet))
+            .ContainsExactly(rejection);
+        AssertThat(_connection.Disconnected).ContainsExactlyInAnyOrder(BobPeer, CarolPeer);
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
+        _connection.Packets.Clear();
+
+        // Until their peer_disconnected they stay joined, and Dave's join is an event for them too
+        Join(DavePeer, DaveUid, "Dave");
+        Tick();
+
+        AssertThat(Kinds(BobPeer)).IsEmpty();
+        AssertThat(Kinds(CarolPeer)).IsEmpty();
+        AssertThat(Kinds(AlicePeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void SnapshotSendFailed_DisconnectsOnlyThatPeer_WithoutItsEvents()
+    {
+        Tick();
+        _connection.Packets.Clear();
+        _connection.FailingPeer = BobPeer;
+        _connection.FailingKind = ServerPacketKind.Snapshot;
+
+        Join(BobPeer, BobUid, "Bob");
+        Join(CarolPeer, CarolUid, "Carol");
+        Tick();
+
+        AssertThat(_connection.Disconnected).ContainsExactly(BobPeer);
+        AssertThat(Kinds(BobPeer)).IsEmpty();
+        AssertThat(Kinds(CarolPeer)).ContainsExactly(ServerPacketKind.Snapshot, ServerPacketKind.Events);
+        _connection.Packets.Clear();
+
+        Join(DavePeer, DaveUid, "Dave");
+        Tick();
+
+        AssertThat(Kinds(BobPeer)).IsEmpty();
+        AssertThat(Kinds(CarolPeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplySnapshot_NotASnapshot_Throws()
+    {
+        byte[] packet = [(byte) ServerPacketKind.State, 1, 0];
+
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplySnapshot(packet));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplySnapshot_NoEndOfTheRecords_Throws()
+    {
+        byte[] packet = [(byte) ServerPacketKind.Snapshot, 1];
+
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplySnapshot(packet));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplySnapshot_TrailingBytes_Throws()
+    {
+        Tick();
+        byte[] packet = [..SnapshotPacket(), 0, 0];
+        ServiceProvider bob = ClientOf(BobPeer, out _);
+
+        NetMessageCodecTests.AssertRejected(() => bob.GetRequiredService<StateApplier>().ApplySnapshot(packet));
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ApplySnapshot_RecordOfAnUnknownKind_Throws()
+    {
+        var writer = new BitWriter();
+        writer.WriteBits((byte) ServerPacketKind.Snapshot, 8);
+        writer.WriteVarUInt(1);
+        writer.WriteVarUInt(1000);
+        writer.WriteVarUInt((ulong) _catalog.Descriptors.Count);
+        writer.WriteVarUInt(0);
+        writer.WriteBool(false);
+        writer.WriteVarUInt(0);
+
+        NetMessageCodecTests.AssertRejected(() => Applier().ApplySnapshot(writer.ToArray()));
     }
 
     [TestCase]
@@ -439,11 +632,21 @@ public class TickStateReplicationTests
     {
         JoinDirectly(BobUid, "Bob", BobPeer);
         _connection.FailingPeer = AlicePeer;
+        _connection.FailingKind = ServerPacketKind.State;
+        Join(CarolPeer, CarolUid, "Carol");
 
         Tick();
 
         AssertThat(_connection.Disconnected).ContainsExactly(AlicePeer);
-        AssertThat(Kinds(BobPeer)).ContainsExactly(ServerPacketKind.State);
+        AssertThat(Kinds(AlicePeer)).IsEmpty();
+        AssertThat(Kinds(BobPeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
+        _connection.Packets.Clear();
+
+        Join(DavePeer, DaveUid, "Dave");
+        Tick();
+
+        AssertThat(Kinds(AlicePeer)).IsEmpty();
+        AssertThat(Kinds(BobPeer)).ContainsExactly(ServerPacketKind.State, ServerPacketKind.Events);
     }
 
     [TestCase]
@@ -472,24 +675,29 @@ public class TickStateReplicationTests
         new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
             new ManualFrameProvider(), _scenes, _catalog, connection, connection);
 
-    private ServiceProvider ClientOf(int peerId)
+    private ServiceProvider ClientOf(int peerId, out Node root)
     {
-        _aliceRoot = InTree(new Node());
-        _clientNodes.Add(_aliceRoot);
+        root = InTree(new Node());
+        _clientNodes.Add(root);
         ServiceProvider client = new WorldServicesBuilder([..GameTypes(), typeof(JoinRecorder)])
-            .Build(WorldLayer.Client, Dependencies(new RecordingClientsConnection()), new WorldRoot(_aliceRoot));
+            .Build(WorldLayer.Client, Dependencies(new RecordingClientsConnection()), new WorldRoot(root));
+        _clients.Add(client);
 
         var applier = client.GetRequiredService<StateApplier>();
         var events = client.GetRequiredService<EventDispatcher>();
         _connection.Receivers[peerId] = packet =>
         {
-            if (packet.Span[0] == (byte) ServerPacketKind.State)
+            switch ((ServerPacketKind) packet.Span[0])
             {
-                applier.ApplyPacket(packet);
-            }
-            else
-            {
-                events.DispatchPacket(packet);
+                case ServerPacketKind.State:
+                    applier.ApplyPacket(packet);
+                    break;
+                case ServerPacketKind.Snapshot:
+                    applier.ApplySnapshot(packet);
+                    break;
+                default:
+                    events.DispatchPacket(packet);
+                    break;
             }
         };
         return client;
@@ -527,6 +735,35 @@ public class TickStateReplicationTests
     private EntityRegistry AliceRegistry() => _alice.GetRequiredService<EntityRegistry>();
 
     private Node AliceNode(NetId id) => AliceRegistry().GetNode(id);
+
+    // The same NetIds on both sides, each of the same kind and under the copy of the same parent
+    private void AssertClientHasTheServerEntities(ServiceProvider client)
+    {
+        var server = _server.GetRequiredService<IEntityFinder>();
+        var registry = client.GetRequiredService<EntityRegistry>();
+        IReadOnlyList<Node> serverNodes = server.GetAll<Node>();
+        AssertThat(registry.GetAll<Node>()).HasSize(serverNodes.Count);
+        foreach (Node node in serverNodes)
+        {
+            NetId id = ServerId(node);
+            Node copy = registry.GetNode(id);
+            AssertThat(registry.GetKindId(id)).IsEqual(server.GetKindId(id));
+            NetId parent = server.TryGetNetId(node.GetParent(), out NetId parentId) ? parentId : NetId.None;
+            NetId copyParent =
+                registry.TryGetNetId(copy.GetParent(), out NetId copyParentId) ? copyParentId : NetId.None;
+            AssertThat(copyParent).IsEqual(parent);
+        }
+    }
+
+    // The join snapshot as the tick loop frames it
+    private byte[] SnapshotPacket()
+    {
+        var writer = new BitWriter();
+        writer.WriteBits((byte) ServerPacketKind.Snapshot, 8);
+        writer.WriteVarUInt(1);
+        _server.GetRequiredService<StateReplicator>().WriteSnapshot(writer);
+        return writer.ToArray();
+    }
 
     // The same NetId and kind on both sides, right under the World root
     private void AssertClientCopy<T>() where T : Node
@@ -669,6 +906,11 @@ public partial class FixedPartNode : Node
 public partial class CounterNode : Node
 {
     [Replicated] public int Value;
+}
+
+public partial class ManualTextNode : Node
+{
+    [Replicated(Manual = true)] public string Text = "";
 }
 
 // Its first delta throws: the runtime type of the part is not in the type mapping

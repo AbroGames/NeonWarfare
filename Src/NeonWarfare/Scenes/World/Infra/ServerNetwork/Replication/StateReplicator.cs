@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Godot;
+using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
@@ -22,22 +24,28 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
 /// </list>
 /// A delta carries no length, so the client must know every NetId in the packet. The state is captured here, at the
 /// end of the tick, not at spawn. One packet for every peer: a written delta has already moved its baseline.
+/// The same records of every entity, without the packet header, make the snapshot: <see cref="WriteSnapshot"/>.
 /// </summary>
 [ServerNetwork]
 public class StateReplicator
 {
     private const string DeltaFailedLog = "The delta of {netId} failed, the other entities are still written";
+    private const string SpawnedSinceSendError =
+        "{0} entities spawned since the last send: the snapshot is written right after TryWrite.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<StateReplicator>();
 
     private readonly IEntityFinder _entities;
     private readonly Replicator _replicator;
     // By NetId: the order is the same on every run, so the packet is too
-    private readonly SortedDictionary<long, ReplicationBaseline> _baselineById = new();
+    private readonly SortedDictionary<long, Entry> _entryById = new();
     // By NetId, so a parent spawned in the same tick comes before its child
     private readonly SortedSet<long> _spawned = [];
     // Their baselines stay until the end of the tick: the set of baselines is the set of entities at the last send
     private readonly List<NetId> _despawned = [];
+
+    // Kind and parent are kept from the spawn: a despawned entity may be out of the registry before the next send
+    private record Entry(ReplicationBaseline Baseline, int KindId, NetId Parent);
 
     public StateReplicator(IEntityFinder entities, Replicator replicator)
     {
@@ -56,7 +64,7 @@ public class StateReplicator
     /// </returns>
     public bool TryWrite(long tick, BitWriter writer)
     {
-        _despawned.ForEach(id => _baselineById.Remove(id.Value));
+        _despawned.ForEach(id => _entryById.Remove(id.Value));
 
         int start = writer.BitPosition;
         writer.WriteBits((byte) ServerPacketKind.State, 8);
@@ -77,34 +85,62 @@ public class StateReplicator
         return true;
     }
 
+    /// <summary>
+    /// Every entity as it was at the last send, by NetId: the same record as in the spawns section of the state
+    /// packet, closed by <see cref="NetId.None"/>. No packet kind and no tick: the caller frames it. Written right
+    /// after <see cref="TryWrite"/>, before anything spawns: "the snapshot, then the next state packet" is then
+    /// consistent, because it is built from the baselines, not from the live entities. An entity despawned since the
+    /// send is still in it, and the next packet despawns it. An entity whose delta was never written goes without
+    /// state; its full state comes with its next delta.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// An entity has spawned since the last send: it has no state yet, and the next packet would spawn it again.
+    /// </exception>
+    /// <exception cref="ReplicationException">A manual member cannot be written.</exception>
+    public void WriteSnapshot(BitWriter writer)
+    {
+        if (_spawned.Count > 0)
+        {
+            throw new InvalidOperationException(SpawnedSinceSendError.FormatWith(_spawned.Count));
+        }
+
+        foreach ((long id, Entry entry) in _entryById)
+        {
+            WriteSpawnRecord(id, entry, writer, () => _replicator.TryWriteSnapshot(entry.Baseline, writer));
+        }
+        writer.WriteVarUInt((ulong) NetId.None.Value);
+    }
+
     private void WriteSpawns(BitWriter writer)
     {
         foreach (long id in _spawned)
         {
-            var netId = new NetId(id);
-            Node node = _entities.GetNode(netId);
-            NetId parent = _entities.TryGetNetId(node.GetParent(), out NetId parentId) ? parentId : NetId.None;
-            writer.WriteVarUInt((ulong) id);
-            writer.WriteVarUInt((ulong) _entities.GetKindId(netId));
-            writer.WriteVarUInt((ulong) parent.Value);
-
             // No delta for a kind with no replicated member, nor for a first delta that threw: RepliCAT has reset the
             // baseline, so the models section of the next packet carries the full state
-            int stateBit = writer.BitPosition;
-            writer.WriteBool(true);
-            if (!TryWriteDelta(netId, writer))
-            {
-                writer.Rewind(stateBit);
-                writer.WriteBool(false);
-            }
+            WriteSpawnRecord(id, _entryById[id], writer, () => TryWriteDelta(new NetId(id), writer));
         }
         writer.WriteVarUInt((ulong) NetId.None.Value);
+    }
+
+    private static void WriteSpawnRecord(long id, Entry entry, BitWriter writer, Func<bool> tryWriteState)
+    {
+        writer.WriteVarUInt((ulong) id);
+        writer.WriteVarUInt((ulong) entry.KindId);
+        writer.WriteVarUInt((ulong) entry.Parent.Value);
+
+        int stateBit = writer.BitPosition;
+        writer.WriteBool(true);
+        if (!tryWriteState())
+        {
+            writer.Rewind(stateBit);
+            writer.WriteBool(false);
+        }
     }
 
     private bool WriteModels(BitWriter writer)
     {
         bool written = false;
-        foreach (long id in _baselineById.Keys)
+        foreach (long id in _entryById.Keys)
         {
             if (_spawned.Contains(id)) continue;
 
@@ -134,7 +170,7 @@ public class StateReplicator
     {
         try
         {
-            return _replicator.TryWriteDelta(_baselineById[id.Value], writer);
+            return _replicator.TryWriteDelta(_entryById[id.Value].Baseline, writer);
         }
         catch (ReplicationException e)
         {
@@ -146,7 +182,8 @@ public class StateReplicator
 
     private void OnEntitySpawned(NetId id, Node node)
     {
-        _baselineById.Add(id.Value, _replicator.CreateBaseline(node));
+        NetId parent = _entities.TryGetNetId(node.GetParent(), out NetId parentId) ? parentId : NetId.None;
+        _entryById.Add(id.Value, new Entry(_replicator.CreateBaseline(node), _entities.GetKindId(id), parent));
         _spawned.Add(id.Value);
     }
 
@@ -155,7 +192,7 @@ public class StateReplicator
     {
         if (_spawned.Remove(id.Value))
         {
-            _baselineById.Remove(id.Value);
+            _entryById.Remove(id.Value);
             return;
         }
         _despawned.Add(id);

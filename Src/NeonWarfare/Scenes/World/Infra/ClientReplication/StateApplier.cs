@@ -15,20 +15,20 @@ namespace NeonWarfare.Scenes.World.Infra.ClientReplication;
 /// the events packet of the same tick follows it on the same channel, so its handlers see the models already updated.
 /// The client's side of the spawner: an entity is created empty from its kind, gets its state, then its place in the
 /// tree and in the registry — the order of the server's spawn, so <c>_Ready</c> and the registry's subscribers see it
-/// configured.
+/// configured. The join snapshot is the same spawn records, with every entity.
 /// </summary>
 [ClientReplication]
 public class StateApplier(EntityRegistry registry, WorldRoot root, EntityCatalog catalog, Replicator replicator)
 {
     private const string EmptyPacketError = "The packet is empty.";
-    private const string NotStatePacketError = "The packet kind is {0}, not a state packet.";
-    private const string SpawnTakenError = "The state packet spawns {0}, which is already registered.";
-    private const string UnknownKindError = "The state packet spawns {0} of kind {1}, which is not in the catalog.";
-    private const string UnknownParentError = "The state packet spawns {0} under {1}, which is not registered.";
+    private const string WrongKindError = "The packet kind is {0}, not {1}.";
+    private const string SpawnTakenError = "The packet spawns {0}, which is already registered.";
+    private const string UnknownKindError = "The packet spawns {0} of kind {1}, which is not in the catalog.";
+    private const string UnknownParentError = "The packet spawns {0} under {1}, which is not registered.";
     private const string UnknownNetIdError = "The state packet has a delta for {0}, which is not registered.";
     private const string UnknownDespawnError = "The state packet despawns {0}, which is not registered.";
-    private const string BrokenPacketError = "The state packet is broken.";
-    private const string TrailingBitsError = "{0} bits left after the end of the state packet.";
+    private const string BrokenPacketError = "The packet is broken.";
+    private const string TrailingBitsError = "{0} bits left after the end of the packet.";
 
     /// <summary>
     /// Not atomic: the records before a broken one are already applied.
@@ -36,25 +36,9 @@ public class StateApplier(EntityRegistry registry, WorldRoot root, EntityCatalog
     /// <exception cref="NetMessageFormatException">The packet is not a state packet or is broken.</exception>
     public void ApplyPacket(ReadOnlyMemory<byte> packet)
     {
-        ReadOnlySpan<byte> span = packet.Span;
-        if (span.IsEmpty)
+        Read(packet, ServerPacketKind.State, (ref BitReader reader) =>
         {
-            throw new NetMessageFormatException(EmptyPacketError);
-        }
-        if (span[0] != (byte) ServerPacketKind.State)
-        {
-            throw new NetMessageFormatException(NotStatePacketError.FormatWith(span[0]));
-        }
-
-        try
-        {
-            var reader = new BitReader(span[1..]);
-            //TODO TickTimer: keep the tick number
-            reader.ReadVarUInt();
-            for (NetId id = ReadNetId(ref reader); id != NetId.None; id = ReadNetId(ref reader))
-            {
-                Spawn(id, ref reader);
-            }
+            ReadSpawns(ref reader);
             for (NetId id = ReadNetId(ref reader); id != NetId.None; id = ReadNetId(ref reader))
             {
                 if (!registry.TryGetNode(id, out Node node))
@@ -64,6 +48,38 @@ public class StateApplier(EntityRegistry registry, WorldRoot root, EntityCatalog
                 replicator.Apply(node, ref reader);
             }
             Despawn(ref reader);
+        });
+    }
+
+    /// <summary>
+    /// Spawns every entity of the world from the join snapshot. Not atomic either.
+    /// </summary>
+    /// <exception cref="NetMessageFormatException">The packet is not a snapshot or is broken.</exception>
+    public void ApplySnapshot(ReadOnlyMemory<byte> packet)
+    {
+        Read(packet, ServerPacketKind.Snapshot, ReadSpawns);
+    }
+
+    private delegate void BodyReader(ref BitReader reader);
+
+    private static void Read(ReadOnlyMemory<byte> packet, ServerPacketKind kind, BodyReader readBody)
+    {
+        ReadOnlySpan<byte> span = packet.Span;
+        if (span.IsEmpty)
+        {
+            throw new NetMessageFormatException(EmptyPacketError);
+        }
+        if (span[0] != (byte) kind)
+        {
+            throw new NetMessageFormatException(WrongKindError.FormatWith(span[0], kind));
+        }
+
+        try
+        {
+            var reader = new BitReader(span[1..]);
+            //TODO TickTimer: keep the tick number
+            reader.ReadVarUInt();
+            readBody(ref reader);
 
             if (reader.RemainingBits >= 8)
             {
@@ -74,6 +90,14 @@ public class StateApplier(EntityRegistry registry, WorldRoot root, EntityCatalog
         catch (ReplicationException e)
         {
             throw new NetMessageFormatException(BrokenPacketError, e);
+        }
+    }
+
+    private void ReadSpawns(ref BitReader reader)
+    {
+        for (NetId id = ReadNetId(ref reader); id != NetId.None; id = ReadNetId(ref reader))
+        {
+            Spawn(id, ref reader);
         }
     }
 
