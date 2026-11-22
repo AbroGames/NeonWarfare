@@ -20,6 +20,8 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private const float ZoomMax = 3f;
     private const float WanderArrivalDistance = 40f;
     private const float OutsideMargin = 60f;
+    private const float CrowdDampingFullRadius = 150f;
+    private const float CrowdDampingZeroRadius = 400f;
 
     [Logger] private ILogger _log;
 
@@ -58,6 +60,19 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private bool _projectilesEnabled;
     private bool _hurtboxesEnabled;
     private int _projectileRate = BenchSpecs.DefaultProjectileRate;
+    private bool _cameraInPhysics;
+
+    // The first value of each list is the original BenchSpecs behaviour, so the auto suites stay comparable.
+    private static readonly float[] SeparationStrengths = [BenchSpecs.SeparationStrength, 200f, 100f, 800f, 1200f, 1600f];
+    private static readonly float[] SeparationSmoothings = [1f, 0.5f, 0.25f, 0.1f];
+    private static readonly float[] SeparationRangeFactors = [1f, 1.25f, 1.5f];
+    private int _separationStrengthIndex;
+    private int _separationSmoothingIndex;
+    private int _separationRangeIndex;
+    private bool _pressureRelief;
+    private bool _separationAveraged;
+    private CrowdDampingMode _crowdDamping = CrowdDampingMode.Off;
+    private bool _slowTicks;
 
     // The scripted auto-mode behaviour, all of it driven by the current BenchConfig; in manual mode the
     // defaults never fire (no explosions, no wall drops, the player from the keyboard, facing from the mouse).
@@ -159,7 +174,9 @@ public partial class PhysicsBenchmarkRoot : Node2D
         foreach (BotUnit unit in _bots)
         {
             unit.Knockback *= knockbackDecay;
-            unit.Body.ApplyVelocity(unit.Intent + unit.Separation + unit.Knockback);
+            Vector2 intent = _pressureRelief ? RelievePressure(unit.Intent, unit.Separation) : unit.Intent;
+            intent *= CrowdDampingScale(unit);
+            unit.Body.ApplyVelocity(intent + unit.Separation + unit.Knockback);
 
             Vector2 actualVelocity = unit.Body.LastDisplacement / dt;
             _metrics.AddBotMovement(actualVelocity, unit.PreviousActualVelocity, unit.MaxSpeed);
@@ -187,6 +204,13 @@ public partial class PhysicsBenchmarkRoot : Node2D
             _metrics.AddOutsideSample(CountBotsOutsideArena());
         }
 
+        // Godot interpolates Camera2D between the positions it holds at the tick ends, the same way it does
+        // the bodies, so the camera moves only here.
+        if (_cameraInPhysics)
+        {
+            _camera.Position = _player.Position;
+        }
+
         _metrics.AddTickCallbackTime((Time.GetTicksUsec() - startUsec) / 1000f);
     }
 
@@ -203,7 +227,10 @@ public partial class PhysicsBenchmarkRoot : Node2D
             _playerFacing = (GetGlobalMousePosition() - _player.Position).Angle();
             _player.SetFacing(_playerFacing);
         }
-        _camera.Position = _player.Position;
+        if (!_cameraInPhysics)
+        {
+            _camera.Position = _player.Position;
+        }
         _camera.Zoom = new Vector2(_zoom, _zoom);
 
         _metrics.OnFrame();
@@ -231,10 +258,12 @@ public partial class PhysicsBenchmarkRoot : Node2D
         _log.Information(
             "TPS {tps:F1} | physics {engineAvg:F2}/{engineP95:F2}/{engineMax:F2} ms | " +
             "callbacks {callbackAvg:F2}/{callbackMax:F2} ms | FPS {fps:F0} | jitter {jitter:F4} | " +
-            "flips {flips:P1} | pairs {pairs:F0} | bots {bots} | projectiles {projectiles} | outside {outside}",
+            "flips {flips:P1} | pairs {pairs:F0} | bots {bots} | projectiles {projectiles} | outside {outside} | " +
+            "steer {steer} B {blocking} C {selfCollide} | {tuning}",
             window.Tps, window.EnginePhysicsMsAvg, window.EnginePhysicsMsP95, window.EnginePhysicsMsMax,
             window.TickCallbackMsAvg, window.TickCallbackMsMax, window.Fps, window.JitterIndex,
-            window.FlipShare, window.CollisionPairsAvg, _bots.Count, _projectilesAlive, CountBotsOutsideArena());
+            window.FlipShare, window.CollisionPairsAvg, _bots.Count, _projectilesAlive, CountBotsOutsideArena(),
+            _steering, _playerBlocksEnemies, _enemiesSelfCollide, BuildTuningText().Replace('\n', ' '));
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -284,8 +313,37 @@ public partial class PhysicsBenchmarkRoot : Node2D
                     _projectileRate = Math.Max(
                         BenchSpecs.ProjectileRateStep, _projectileRate - BenchSpecs.ProjectileRateStep);
                     break;
-                case Key.Braceright:
+                case Key.Bracketright:
                     _projectileRate += BenchSpecs.ProjectileRateStep;
+                    break;
+                case Key.I:
+                    GetTree().PhysicsInterpolation = !GetTree().PhysicsInterpolation;
+                    break;
+                case Key.V:
+                    _cameraInPhysics = !_cameraInPhysics;
+                    break;
+                case Key.J:
+                    _separationStrengthIndex = (_separationStrengthIndex + 1) % SeparationStrengths.Length;
+                    break;
+                case Key.L:
+                    _separationSmoothingIndex = (_separationSmoothingIndex + 1) % SeparationSmoothings.Length;
+                    break;
+                case Key.O:
+                    _separationRangeIndex = (_separationRangeIndex + 1) % SeparationRangeFactors.Length;
+                    break;
+                case Key.Y:
+                    _crowdDamping = (CrowdDampingMode)(((int)_crowdDamping + 1) % 4);
+                    break;
+                case Key.T:
+                    // At 10 ticks per second an interpolated body still moves smoothly, a non-interpolated one visibly steps.
+                    _slowTicks = !_slowTicks;
+                    Engine.PhysicsTicksPerSecond = _slowTicks ? 10 : 60;
+                    break;
+                case Key.N:
+                    _separationAveraged = !_separationAveraged;
+                    break;
+                case Key.U:
+                    _pressureRelief = !_pressureRelief;
                     break;
                 case Key.F:
                     CreateWallAt(GetGlobalMousePosition(), _playerFacing);
@@ -295,6 +353,12 @@ public partial class PhysicsBenchmarkRoot : Node2D
                     break;
                 case Key.R:
                     ResetBots();
+                    break;
+                default:
+                    if (_variant.HandleTuningKey(key.Keycode) == TuningKeyResult.RecreatePlayer)
+                    {
+                        RecreatePlayer();
+                    }
                     break;
             }
 
@@ -611,9 +675,53 @@ public partial class PhysicsBenchmarkRoot : Node2D
         }
     }
 
+    /// <summary>
+    /// Weakens the intent by the part of it the separation already pushes against, so a bot packed into the
+    /// pile stops pressing on its neighbours instead of fighting the push every tick.
+    /// </summary>
+    private static Vector2 RelievePressure(Vector2 intent, Vector2 separation)
+    {
+        float intentSpeed = intent.Length();
+        if (intentSpeed < 0.01f)
+        {
+            return intent;
+        }
+
+        float opposing = -separation.Dot(intent / intentSpeed);
+        return opposing <= 0f ? intent : intent * (1f - Math.Clamp(opposing / intentSpeed, 0f, 1f));
+    }
+
+    /// <summary>
+    /// Slows a bot down by how many neighbours press on it, so the pile core stops pushing towards the player and
+    /// stops compressing. Front counts only the neighbours ahead along the intent, and NearPlayer fades the
+    /// density damping out with the distance to the player, so a chasing crowd keeps its speed.
+    /// </summary>
+    private float CrowdDampingScale(BotUnit unit)
+    {
+        float density = Math.Clamp(1f - (unit.Crowding - 2) * 0.15f, 0.2f, 1f);
+        switch (_crowdDamping)
+        {
+            case CrowdDampingMode.Density:
+                return density;
+            case CrowdDampingMode.Front:
+                return Math.Clamp(1f - (unit.FrontCrowding - 1) * 0.3f, 0.2f, 1f);
+            case CrowdDampingMode.NearPlayer:
+                float distance = unit.Body.Position.DistanceTo(_player.Position);
+                float weight = 1f - Math.Clamp((distance - CrowdDampingFullRadius)
+                    / (CrowdDampingZeroRadius - CrowdDampingFullRadius), 0f, 1f);
+                return Mathf.Lerp(1f, density, weight);
+            default:
+                return 1f;
+        }
+    }
+
     private void SeparateBots()
     {
         float range = 2f * BenchSpecs.BotRadius;
+        // The push starts before the bodies touch when the range factor is above 1; the metrics keep the real contact range.
+        float pushRange = range * SeparationRangeFactors[_separationRangeIndex];
+        float strength = SeparationStrengths[_separationStrengthIndex];
+        float smoothing = SeparationSmoothings[_separationSmoothingIndex];
         _grid.Rebuild(_bots);
 
         double tickOverlapSum = 0;
@@ -623,9 +731,12 @@ public partial class PhysicsBenchmarkRoot : Node2D
         for (int i = 0; i < _bots.Count; i++)
         {
             BotUnit unit = _bots[i];
-            _grid.CollectNeighbours(unit.Body.Position, range, _neighbours);
+            _grid.CollectNeighbours(unit.Body.Position, pushRange, _neighbours);
 
             Vector2 push = Vector2.Zero;
+            int pushers = 0;
+            int frontPushers = 0;
+            Vector2 intentDirection = unit.Intent.Normalized();
             foreach (int neighbourIndex in _neighbours)
             {
                 if (neighbourIndex == i)
@@ -639,18 +750,19 @@ public partial class PhysicsBenchmarkRoot : Node2D
                 {
                     // Perfectly stacked bots have no direction to separate along; nudge them randomly
                     // so a pile does not fuse into one point forever.
-                    push += RandomUnitVector() * BenchSpecs.SeparationStrength * 0.5f;
+                    push += RandomUnitVector() * strength * 0.5f;
                     continue;
                 }
 
-                float overlap = range - distance;
-                if (overlap <= 0f)
+                float pushOverlap = pushRange - distance;
+                if (pushOverlap <= 0f)
                 {
                     continue;
                 }
 
                 // Every pair shows up from both sides; count it once for the penetration metrics.
-                if (neighbourIndex > i)
+                float overlap = range - distance;
+                if (overlap > 0f && neighbourIndex > i)
                 {
                     tickOverlapSum += overlap;
                     tickOverlapPairs++;
@@ -660,11 +772,24 @@ public partial class PhysicsBenchmarkRoot : Node2D
                     }
                 }
 
-                push += offset / distance
-                        * (BenchSpecs.SeparationStrength * overlap / range);
+                push += offset / distance * (strength * pushOverlap / pushRange);
+                pushers++;
+                if ((-offset / distance).Dot(intentDirection) > 0.5f)
+                {
+                    frontPushers++;
+                }
             }
 
-            unit.Separation = push.LimitLength(BenchSpecs.SeparationClamp);
+            // The summed push overshoots in the dense core, where its per-tick gain grows with the neighbour
+            // count; the average keeps that gain the same for any crowd density.
+            if (_separationAveraged && pushers > 0)
+            {
+                push /= pushers;
+            }
+
+            unit.Crowding = pushers;
+            unit.FrontCrowding = frontPushers;
+            unit.Separation = unit.Separation.Lerp(push.LimitLength(BenchSpecs.SeparationClamp), smoothing);
         }
 
         if (tickOverlapPairs > 0)
@@ -747,6 +872,22 @@ public partial class PhysicsBenchmarkRoot : Node2D
         {
             unit.WanderTarget = RandomArenaPoint();
         }
+    }
+
+    private void RecreatePlayer()
+    {
+        Vector2 position = _player.Position;
+        // Removed from the tree right away, so the old body never collides with the new one.
+        _bodiesContainer.RemoveChild(_player.Node);
+        _player.Node.QueueFree();
+
+        _player = _variant.CreatePlayer();
+        _player.SetContinuousCollision(_options.Ccd);
+        _player.SetFacing(_playerFacing);
+        ApplyPlayerBlocking();
+        ((Node2D)_player.Node).Position = position;
+        _bodiesContainer.AddChild(_player.Node);
+        _player.PlaceAt(position);
     }
 
     private void ApplyPlayerBlocking()
@@ -966,13 +1107,30 @@ public partial class PhysicsBenchmarkRoot : Node2D
                + $"steer {_steering} | B {_playerBlocksEnemies} | C {_enemiesSelfCollide}"
                + $" | P {_projectilesEnabled} ({_projectileRate}/s) | H {_hurtboxesEnabled}"
                + $" | auto {_autoEnabled}{auto}\n"
+               + BuildTuningText() + "\n"
                + metrics;
     }
+
+    private string BuildTuningText() =>
+        $"I interp {GetTree().PhysicsInterpolation} | V camera {(_cameraInPhysics ? "physics" : "process")}"
+        + $" | {_variant.TuningText}\n"
+        + $"J strength {SeparationStrengths[_separationStrengthIndex]:0}"
+        + $" | L smoothing {SeparationSmoothings[_separationSmoothingIndex]:0.##}"
+        + $" | O range x{SeparationRangeFactors[_separationRangeIndex]:0.##}"
+        + $" | N averaged {_separationAveraged} | Y crowd damping {_crowdDamping} | T ticks {Engine.PhysicsTicksPerSecond} | U relief {_pressureRelief}";
 
     /// <summary>A runtime wall plus its age, for the stuck metric and the auto wall-drop lifetime.</summary>
     private sealed class RuntimeWall
     {
         public required BenchWall Wall { get; init; }
         public double Age { get; set; }
+    }
+
+    private enum CrowdDampingMode
+    {
+        Off,
+        Density,
+        Front,
+        NearPlayer,
     }
 }

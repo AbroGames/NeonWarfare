@@ -10,8 +10,10 @@ public partial class RigidBodyBenchPlayer : RigidBodyBenchBody, IBenchPlayerBody
     private bool _blocksEnemies;
     private float _facing;
 
-    public RigidBodyBenchPlayer() : base(BenchSpecs.PlayerRadius, BenchLayers.Player)
+    /// <summary>The solver splits a contact impulse by mass, so a heavy player is barely shoved by the crowd.</summary>
+    public RigidBodyBenchPlayer(float mass) : base(BenchSpecs.PlayerRadius, BenchLayers.Player)
     {
+        Mass = mass;
     }
 
     public void SetFacing(float angleRadians)
