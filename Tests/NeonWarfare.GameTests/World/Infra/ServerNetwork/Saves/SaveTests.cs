@@ -50,7 +50,8 @@ public class SaveTests
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _scenes = TestWorldScenes.Create();
         _catalog = new EntityCatalog(_scenes.GetScenesList(),
-            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(ManualTextNode)]);
+            [..NetMessageCodecTests.CreateMapping().Types, typeof(CounterNode), typeof(UnmappedPartNode),
+                typeof(ManualTextNode)]);
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = Build(WorldLayer.Host, _connection, out _);
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
@@ -254,6 +255,27 @@ public class SaveTests
         AssertThat(_connection.Packets.Where(sent => sent.PeerId == AlicePeer)
                 .Select(sent => (ServerPacketKind) sent.Packet[0]))
             .Contains(ServerPacketKind.Events);
+    }
+
+    // A failed delta has reset the baseline, so the entity has no state to save until a delta succeeds: the save fails
+    // instead of loading it empty
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RequestSave_SavedEntityWhoseDeltaFailed_GoesToFailedUntilADeltaSucceeds()
+    {
+        Tick(_server);
+        var broken = Spawner(_server).SpawnOnRoot<UnmappedPartNode>();
+        List<Exception> failed = [];
+        Saver().RequestSave(_ => throw new InvalidOperationException("written"), failed.Add);
+
+        Tick(_server);
+
+        AssertThat(failed).HasSize(1);
+        broken.Part = new UnmappedPartNode.MappedPart { Value = 7 };
+        Tick(_server);
+        ServiceProvider loaded = Load(Saver().Write());
+        var copy = (UnmappedPartNode) loaded.GetRequiredService<IEntityFinder>().GetNode(Id(_server, broken));
+        AssertThat(copy.Part.Value).IsEqual(7);
     }
 
     // The autosave on exit: the World is leaving the tree, the entities have left the registry, the baselines remain
