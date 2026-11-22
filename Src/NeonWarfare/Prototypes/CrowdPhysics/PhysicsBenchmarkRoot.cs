@@ -22,6 +22,10 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private const float OutsideMargin = 60f;
     private const float CrowdDampingFullRadius = 150f;
     private const float CrowdDampingZeroRadius = 400f;
+    private const float DemoCrowdGap = 125f;
+
+    private static readonly (Vector2 Direction, float Seconds)[] DemoLegs =
+        [(Vector2.Right, 4f), (Vector2.Down, 4f), (Vector2.Left, 3f), (Vector2.Up, 2f)];
 
     [Logger] private ILogger _log;
 
@@ -48,6 +52,8 @@ public partial class PhysicsBenchmarkRoot : Node2D
 
     private int _initialBotCount = BenchSpecs.DefaultBotCount;
     private bool _autoEnabled;
+    private bool _demo;
+    private int _demoTick;
     private BenchRunOptions _options = new(null, null, 1, false, false);
     private float _zoom = 1f;
     private float _playerFacing;
@@ -69,12 +75,15 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private bool _cameraInPhysics;
 
     // The first value of each list is the original BenchSpecs behaviour, so the auto suites stay comparable.
-    private static readonly float[] SeparationStrengths = [BenchSpecs.SeparationStrength, 200f, 100f, 800f, 1200f, 1600f];
-    private static readonly float[] SeparationSmoothings = [1f, 0.5f, 0.25f, 0.1f];
-    private static readonly float[] SeparationRangeFactors = [1f, 1.25f, 1.5f];
+    private static readonly float[] SeparationStrengths = [BenchSpecs.SeparationStrength, 2400f, 3200f];
+    private static readonly float[] SeparationSmoothings = [1f, 0.1f, 0.01f];
+    private static readonly float[] SeparationRangeFactors = [1f, 2f, 2.5f];
     private int _separationStrengthIndex;
     private int _separationSmoothingIndex;
     private int _separationRangeIndex;
+    private float _separationStrength = SeparationStrengths[0];
+    private float _separationSmoothing = SeparationSmoothings[0];
+    private float _separationRange = SeparationRangeFactors[0];
     private bool _pressureRelief;
     private bool _separationAveraged;
     private CrowdDampingMode _crowdDamping = CrowdDampingMode.Off;
@@ -98,14 +107,29 @@ public partial class PhysicsBenchmarkRoot : Node2D
     internal ILogger Log => _log;
 
     /// <summary>Called by the starter before the node enters the tree: plain parameters, no cmd args here.</summary>
-    public void InitBenchArgs(int botCount, bool autoBenchmark, BenchRunOptions options)
+    public void InitBenchArgs(int botCount, bool autoBenchmark, bool demo, BenchRunOptions options)
     {
         _initialBotCount = botCount;
         _autoEnabled = autoBenchmark;
+        _demo = demo;
         _options = options;
         // The repetition offsets the seed: same repetition on both variants gets the same pile
         // formation, different repetitions get genuinely different ones.
         _rng.Seed = (ulong)(BenchSpecs.RandomSeed + options.Repetition);
+    }
+
+    /// <summary>The starting separation tuning from the command line; a null value keeps the first value of its key's list.</summary>
+    public void InitSeparation(float? strength, float? smoothing, float? range, bool averaged, string crowdDamping)
+    {
+        if (crowdDamping != null && Enum.TryParse(crowdDamping, true, out CrowdDampingMode mode))
+        {
+            _crowdDamping = mode;
+        }
+
+        _separationStrength = strength ?? _separationStrength;
+        _separationSmoothing = smoothing ?? _separationSmoothing;
+        _separationRange = range ?? _separationRange;
+        _separationAveraged = averaged;
     }
 
     public override void _Ready()
@@ -142,7 +166,15 @@ public partial class PhysicsBenchmarkRoot : Node2D
             _auto = new AutoBenchmark(this, suiteName, configs, _options);
         }
 
+        if (_demo)
+        {
+            // The demo is compared by eye between runs, so it uses the smooth camera from the start.
+            _cameraInPhysics = true;
+        }
+
         BuildTree();
+        _log.Information("Started: demo {demo} | bots {bots} | {tuning}",
+            _demo, _bots.Count, BuildTuningText().Replace('\n', ' '));
 
         _metrics.WindowCompletedEvent += OnWindowCompleted;
         _auto?.Start();
@@ -159,7 +191,9 @@ public partial class PhysicsBenchmarkRoot : Node2D
         ulong startUsec = Time.GetTicksUsec();
         float dt = (float)delta;
 
-        Vector2 playerCommand = _auto != null ? AutoPlayerCommand(dt) : ReadKeyboardMove();
+        Vector2 playerCommand = _demo ? DemoPlayerCommand()
+            : _auto != null ? AutoPlayerCommand(dt)
+            : ReadKeyboardMove();
         _player.ApplyVelocity(playerCommand);
         if (_playerMotion == PlayerMotionMode.Kite && playerCommand != Vector2.Zero)
         {
@@ -182,7 +216,8 @@ public partial class PhysicsBenchmarkRoot : Node2D
             unit.Knockback *= knockbackDecay;
             Vector2 intent = _pressureRelief ? RelievePressure(unit.Intent, unit.Separation) : unit.Intent;
             intent *= CrowdDampingScale(unit);
-            unit.Body.ApplyVelocity(intent + unit.Separation + unit.Knockback);
+            // A crowd pushing from behind must never speed a bot past its own MaxSpeed; knockback stays above the cap.
+            unit.Body.ApplyVelocity((intent + unit.Separation).LimitLength(unit.MaxSpeed) + unit.Knockback);
 
             Vector2 actualVelocity = unit.Body.LastDisplacement / dt;
             _metrics.AddBotMovement(actualVelocity, unit.PreviousActualVelocity, unit.MaxSpeed);
@@ -227,8 +262,9 @@ public partial class PhysicsBenchmarkRoot : Node2D
             return;
         }
 
-        // In auto mode the facing is scripted per tick (in headless the mouse is meaningless).
-        if (_auto == null)
+        // In auto mode the facing is scripted per tick (in headless the mouse is meaningless), and the demo faces
+        // along the movement.
+        if (_auto == null && !_demo)
         {
             _playerFacing = (GetGlobalMousePosition() - _player.Position).Angle();
             _player.SetFacing(_playerFacing);
@@ -281,6 +317,21 @@ public partial class PhysicsBenchmarkRoot : Node2D
             return;
         }
 
+        // The demo must replay the same picture for the same flags, so only the zoom, which never touches the
+        // simulation, stays on the input.
+        if (_demo)
+        {
+            if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.WheelUp })
+            {
+                SetZoom(_zoom * ZoomStep);
+            }
+            else if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.WheelDown })
+            {
+                SetZoom(_zoom / ZoomStep);
+            }
+            return;
+        }
+
         if (@event is InputEventKey { Pressed: true } key)
         {
             switch (key.Keycode)
@@ -330,12 +381,15 @@ public partial class PhysicsBenchmarkRoot : Node2D
                     break;
                 case Key.J:
                     _separationStrengthIndex = (_separationStrengthIndex + 1) % SeparationStrengths.Length;
+                    _separationStrength = SeparationStrengths[_separationStrengthIndex];
                     break;
                 case Key.L:
                     _separationSmoothingIndex = (_separationSmoothingIndex + 1) % SeparationSmoothings.Length;
+                    _separationSmoothing = SeparationSmoothings[_separationSmoothingIndex];
                     break;
                 case Key.O:
                     _separationRangeIndex = (_separationRangeIndex + 1) % SeparationRangeFactors.Length;
+                    _separationRange = SeparationRangeFactors[_separationRangeIndex];
                     break;
                 case Key.Y:
                     _crowdDamping = (CrowdDampingMode)(((int)_crowdDamping + 1) % 4);
@@ -520,6 +574,33 @@ public partial class PhysicsBenchmarkRoot : Node2D
             moveInput.X += 1f;
         }
         return moveInput.LimitLength(1f) * BenchSpecs.PlayerSpeed;
+    }
+
+    /// <summary>The demo route: the legs repeat in a cycle, their durations counted in physics ticks, so a hitch never shifts the path.</summary>
+    private Vector2 DemoPlayerCommand()
+    {
+        int cycleTicks = 0;
+        foreach ((Vector2 _, float seconds) in DemoLegs)
+        {
+            cycleTicks += (int)(seconds * Engine.PhysicsTicksPerSecond);
+        }
+
+        int tickInCycle = _demoTick % cycleTicks;
+        Vector2 direction = DemoLegs[^1].Direction;
+        foreach ((Vector2 legDirection, float seconds) in DemoLegs)
+        {
+            int legTicks = (int)(seconds * Engine.PhysicsTicksPerSecond);
+            if (tickInCycle < legTicks)
+            {
+                direction = legDirection;
+                break;
+            }
+            tickInCycle -= legTicks;
+        }
+        _demoTick++;
+        _playerFacing = direction.Angle();
+        _player.SetFacing(_playerFacing);
+        return direction * BenchSpecs.PlayerSpeed;
     }
 
     /// <summary>
@@ -753,9 +834,9 @@ public partial class PhysicsBenchmarkRoot : Node2D
 
     private void SeparateBots()
     {
-        float rangeFactor = SeparationRangeFactors[_separationRangeIndex];
-        float strength = SeparationStrengths[_separationStrengthIndex];
-        float smoothing = SeparationSmoothings[_separationSmoothingIndex];
+        float rangeFactor = _separationRange;
+        float strength = _separationStrength;
+        float smoothing = _separationSmoothing;
         _grid.Rebuild(_bots);
         ResetSeparationBuffers();
 
@@ -906,7 +987,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
             WanderTarget = RandomArenaPoint(),
             Radius = radius,
         };
-        body.PlaceAt(RandomFreePoint(radius));
+        body.PlaceAt(_demo ? DemoSpawnPoint() : RandomFreePoint(radius));
         _bots.Add(unit);
         _botByBodyNode[body.Node] = unit;
         if (radius > BenchSpecs.BotRadius)
@@ -1107,6 +1188,17 @@ public partial class PhysicsBenchmarkRoot : Node2D
         return point;
     }
 
+    /// <summary>
+    /// A point in a disc left of the player's start, its near edge DemoCrowdGap away; the disc grows with the bot
+    /// count so the crowd starts dense at any count.
+    /// </summary>
+    private Vector2 DemoSpawnPoint()
+    {
+        float discRadius = BenchSpecs.BotRadius * 0.9f * MathF.Sqrt(_initialBotCount);
+        Vector2 centre = new(-(DemoCrowdGap + discRadius), 0f);
+        return centre + RandomUnitVector() * discRadius * MathF.Sqrt(_rng.Randf());
+    }
+
     private Vector2 RandomUnitVector()
     {
         float angle = _rng.RandfRange(0f, MathF.Tau);
@@ -1190,7 +1282,7 @@ public partial class PhysicsBenchmarkRoot : Node2D
                + $" | walls {_runtimeWalls.Count}\n"
                + $"steer {_steering} | B {_playerBlocksEnemies} | C {_enemiesSelfCollide}"
                + $" | P {_projectilesEnabled} ({_projectileRate}/s) | H {_hurtboxesEnabled}"
-               + $" | auto {_autoEnabled}{auto}\n"
+               + $" | auto {_autoEnabled}{auto}{(_demo ? $" | demo {_demoTick / (float)Engine.PhysicsTicksPerSecond:F1} s" : "")}\n"
                + BuildTuningText() + "\n"
                + metrics;
     }
@@ -1198,9 +1290,9 @@ public partial class PhysicsBenchmarkRoot : Node2D
     private string BuildTuningText() =>
         $"I interp {GetTree().PhysicsInterpolation} | V camera {(_cameraInPhysics ? "physics" : "process")}"
         + $" | {_variant.TuningText}\n"
-        + $"J strength {SeparationStrengths[_separationStrengthIndex]:0}"
-        + $" | L smoothing {SeparationSmoothings[_separationSmoothingIndex]:0.##}"
-        + $" | O range x{SeparationRangeFactors[_separationRangeIndex]:0.##}"
+        + $"J strength {_separationStrength:0}"
+        + $" | L smoothing {_separationSmoothing:0.###}"
+        + $" | O range x{_separationRange:0.##}"
         + $" | N averaged {_separationAveraged} | Y crowd damping {_crowdDamping} | T ticks {Engine.PhysicsTicksPerSecond} | U relief {_pressureRelief} | Z sizes {_sizeMix}";
 
     /// <summary>A runtime wall plus its age, for the stuck metric and the auto wall-drop lifetime.</summary>

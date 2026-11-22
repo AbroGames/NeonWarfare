@@ -33,7 +33,7 @@ public class RootStarterManager
         {
             return new DedicatedServerRootStarter();
         }
-        if (cmdline.Contains(PhysicsBenchmarkArgs.PhysicsBenchmarkFlag))
+        if (cmdline.Contains(PhysicsBenchmarkArgs.PhysicsBenchmarkFlag) || cmdline.Contains(PhysicsBenchmarkArgs.DemoFlag))
         {
             return new PhysicsBenchmarkRootStarter();
         }

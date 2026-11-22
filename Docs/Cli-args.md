@@ -34,7 +34,11 @@ nothing to do with the game's arguments.
 | Flag | Description |
 |---|---|
 | `--physics-benchmark` | Run the crowd physics prototype instead of the game: an arena where bots crowd under different steering modes, built to compare `CharacterBody2D` and `RigidBody2D` crowds by TPS, physics tick time and jitter (selects `PhysicsBenchmarkRootStarter`) |
-| `--bench-count <n>` | The initial bot count of the benchmark (if the flag is not passed, then `100`) |
+| `--count <n>` | The initial bot count of the benchmark (if the flag is not passed, then `100`) |
+| `--demo` | A repeatable run for comparing the separation tuning by eye: a fixed spawn, the player driving right 4 s, down 4 s, left 3 s, up 2 s in a cycle, every key but the zoom off. Implies `--physics-benchmark` and wins over `--bench-auto` |
+| `-J <f>`, `-L <f>`, `-O <f>` | The starting separation strength, smoothing and range factor (the `J`, `L`, `O` keys; if not passed, then the first value of the key's list). Upper case because Godot takes `-l` as `--language` |
+| `-N` | Start with the separation averaged over the neighbours (the `N` key) |
+| `-Y <mode>` | The starting crowd damping of the intent: `Off`, `Density`, `Front` or `NearPlayer`, case-insensitive (the `Y` key; if not passed or not recognized, then `Off`) |
 | `--bench-auto` | Run the automatic benchmark: the `legacy` suite (four configurations, the bot count ramped 50 → 500, one CSV row per step written to `user://`), then quit (works together with `--headless`) |
 | `--bench-suite <name>` | Which suite to run: `sanity`, `legacy`, `core`, `blocking`, `load`, `load-rate`, `events` or `realtime` (the configurations are listed in the prototype `README.md`). Implies `--bench-auto` |
 | `--bench-out <dir>` | Absolute directory for the benchmark CSV (if the flag is not passed, then `user://`) |

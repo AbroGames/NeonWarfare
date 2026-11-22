@@ -15,13 +15,18 @@ the physics variant:
 ## How to run
 
 ```bash
-"$GODOT_EXE" --path "./" --physics-benchmark --bench-count 200    # interactive, 200 bots
+"$GODOT_EXE" --path "./" --physics-benchmark --count 200    # interactive, 200 bots
 "$GODOT_EXE" --path "./" --headless --physics-benchmark --bench-auto    # the legacy suite, one CSV
 "$GODOT_EXE" --path "./" --headless --fixed-fps 60 --physics-benchmark --bench-suite core \
     --bench-rep 1 --bench-throughput --bench-out /tmp/bench    # one suite in throughput mode
+"$GODOT_EXE" --path "./" --demo --count 300 -J 3200 -L 0.01 -O 2.5 -N
 ```
 
-`--bench-count <n>` sets the initial bot count (default 100). A suite run walks all of its
+`--demo` replays the same picture for the same flags: a fixed spawn of a dense crowd 125 px left of the player, the player driving right 4 s, down 4 s, left 3 s,
+up 2 s in a cycle and facing along the movement, and every key but the zoom off. `-J`, `-L`, `-O`, `-N` and `-Y <Off|Density|Front|NearPlayer>` set the starting
+separation tuning (the `J`, `L`, `O`, `N` and `Y` keys) in any mode. They are upper case because Godot takes `-l` as `--language`.
+
+`--count <n>` sets the initial bot count (default 100). A suite run walks all of its
 configurations and bot counts and quits after writing the CSV; the log prints the globalized path in
 the `Benchmark CSV written to ...` line. All flags are documented in `Docs/Cli-args.md`.
 
