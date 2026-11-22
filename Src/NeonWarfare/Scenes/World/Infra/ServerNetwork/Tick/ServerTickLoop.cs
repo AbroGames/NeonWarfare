@@ -2,6 +2,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Protocol;
@@ -9,6 +10,7 @@ using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Events;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Replication;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using RepliCAT.Bits;
 using Serilog;
 
@@ -19,7 +21,8 @@ namespace NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
 /// Everything the Simulation published during the tick leaves at its end, the host's own peer included. The state
 /// packet goes first, so the events of the tick are handled on a client whose models are already at its end.
 /// A peer that joined in the tick gets the world snapshot instead: it is written after the state packet, from the
-/// baselines that packet has just brought to the end of the tick.
+/// baselines that packet has just brought to the end of the tick. A save requested in the tick is written from the
+/// same baselines, after the snapshots.
 /// </summary>
 [ServerNetwork]
 public class ServerTickLoop(
@@ -27,8 +30,11 @@ public class ServerTickLoop(
     PeerGatekeeper gatekeeper,
     EventOutbox outbox,
     StateReplicator stateReplicator,
+    SaveWriter saveWriter,
     IClientsConnection clientsConnection)
 {
+    private const string RestoreAfterTickError = "The tick counter is {0}: a restore comes before the first tick.";
+    private const string NegativeTickError = "Tick {0} is negative.";
     private const string SendFailedLog = "Events packet for peer {peerId} failed, the other peers still get theirs";
     private const string StateSendFailedLog =
         "State packet for peer {peerId} failed, disconnecting it, the other peers still get theirs";
@@ -40,15 +46,29 @@ public class ServerTickLoop(
 
     private readonly ILogger _log = LogFactory.GetForStatic<ServerTickLoop>();
 
+    private bool _started;
+
     /// <summary>
     /// Grows at the start of <see cref="RunTick"/>: inside tick N it is N, and it stays N until tick N + 1 starts.
-    /// 0 before the first tick.
+    /// 0 before the first tick of a new world, the saved tick before the first tick of a loaded one.
     /// </summary>
     public long CurrentTick { get; private set; }
+
+    /// <summary>
+    /// Continues the tick counter of a loaded world: the first tick after it is <paramref name="tick"/> + 1.
+    /// </summary>
+    public void Restore(long tick)
+    {
+        if (_started) throw new InvalidOperationException(RestoreAfterTickError.FormatWith(CurrentTick));
+        if (tick < 0) throw new ArgumentOutOfRangeException(nameof(tick), tick, NegativeTickError.FormatWith(tick));
+
+        CurrentTick = tick;
+    }
 
     // Calls from ServerTickNode
     public void RunTick()
     {
+        _started = true;
         CurrentTick++;
         
         // A peer that joins in this tick gets the state at its end from its snapshot, and has nothing to apply a
@@ -58,9 +78,9 @@ public class ServerTickLoop(
         commands.ProcessAll();
         gatekeeper.DisconnectExpired();
         //TODO Tick() of the facades with a time rule, once the first one appears
-        //TODO 022a deferred save snapshot
         SendState(joinedBefore);
         SendSnapshots(joinedBefore);
+        saveWriter.WriteRequested();
         SendEvents();
     }
 

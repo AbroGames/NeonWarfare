@@ -1,6 +1,12 @@
+using System;
 using Godot;
+using KludgeBox.Logging;
+using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
+using Serilog;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
@@ -17,6 +23,12 @@ public class ConnectToMultiplayerGameStarter(
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
+    private const string BrokenWorldMessage = "The world received from the server is broken";
+    private const string WorldCreationFailedMessage = "Failed to enter the world received from the server";
+    private const string BrokenSnapshotLog = "The join snapshot from the server is broken";
+    private const string WorldCreationFailedLog = "Creating the World from the join snapshot failed";
+
+    private readonly ILogger _log = LogFactory.GetForStatic<ConnectToMultiplayerGameStarter>();
 
     public override void Init(Game game)
     {
@@ -24,13 +36,37 @@ public class ConnectToMultiplayerGameStarter(
         
         Network.Network network = game.AddNetwork();
 
-        //TODO 021b the World comes from the first snapshot, until then the connecting screen stays
+        // The World comes from the first snapshot, until then the connecting screen stays
         void ConnectedToServerEvent()
         {
             if (!IsGameAlive(game)) return;
             SendJoinRequest(game);
         }
         
+        void WorldSnapshotReceivedEvent(byte[] snapshot)
+        {
+            if (!IsGameAlive(game)) return;
+            try
+            {
+                game.AddWorld(WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud);
+            }
+            catch (NetMessageFormatException e)
+            {
+                // The server sends no second snapshot, so waiting for one is pointless
+                _log.Error(e, BrokenSnapshotLog);
+                GoToMenuAndShowError(BrokenWorldMessage);
+                return;
+            }
+            catch (Exception e)
+            {
+                // The World is already freed, so without the menu the connecting screen would stay forever
+                _log.Error(e, WorldCreationFailedLog);
+                GoToMenuAndShowError(WorldCreationFailedMessage);
+                return;
+            }
+            Services.LoadingScreen.Clear();
+        }
+
         // Failed attempt to connect to the server (did not receive a response from the server within the timeout).
         void ConnectionFailedEvent()
         {
@@ -46,8 +82,9 @@ public class ConnectToMultiplayerGameStarter(
             GoToMenuAndShowError(DisconnectedFromServerMessage);
         }
 
-        // Events of Network, which dies with the game, so the handlers need no unsubscribing
+        // Events of Network and Game, which die with the game, so the handlers need no unsubscribing
         network.ConnectedToServerEvent += ConnectedToServerEvent;
+        game.WorldSnapshotReceivedEvent += WorldSnapshotReceivedEvent;
         network.ConnectionFailedEvent += ConnectionFailedEvent;
         network.ServerDisconnectedEvent += ServerDisconnectedEvent;
 

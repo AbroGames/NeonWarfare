@@ -13,7 +13,7 @@ namespace NeonWarfare.SmokeTests.Scenarios;
 /// </summary>
 public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
 {
-    // The milestones wait for the old World's handshake, which the new World does not have until task 021;
+    // The milestones wait for the old World's handshake, which the new World does not have;
     // task 025 restores the tests.
     private const string SkipReason = "Muted during the network rework, see task 025-restore-sidecar-file-tests";
 
