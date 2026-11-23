@@ -18,12 +18,8 @@ public static class BenchSpecs
     public const float BotSpeedMin = 150f;
     public const float BotSpeedMax = 250f;
 
-    /// <summary>A 4x-radius big bot; one spawns per <see cref="BotsPerBigBot"/> regular bots.</summary>
+    /// <summary>The largest bot radius, 4x the regular one; no spawn mix goes above it.</summary>
     public const float BigBotRadius = 56f;
-
-    /// <summary>Area-proportional mass for the big bot: the solver lets it plow through the crowd instead
-    /// of being stopped by single small bodies (the prescribed velocity ignores mass either way).</summary>
-    public const float BigBotMass = 16f;
 
     /// <summary>One big bot per this many regular ones; the big leads each batch of the spawn sequence.</summary>
     public const int BotsPerBigBot = 100;

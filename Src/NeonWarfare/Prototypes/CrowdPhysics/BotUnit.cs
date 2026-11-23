@@ -11,10 +11,16 @@ public sealed class BotUnit
 {
     public required IBenchBotBody Body { get; init; }
     public required float MaxSpeed { get; init; }
-    public required bool IsBig { get; init; }
+    public required float Radius { get; init; }
 
     public Vector2 Intent { get; set; }
     public Vector2 Separation { get; set; }
+
+    /// <summary>How many neighbours pushed this bot on the last tick.</summary>
+    public int Crowding { get; set; }
+
+    /// <summary>How many of those neighbours were ahead along the intent.</summary>
+    public int FrontCrowding { get; set; }
 
     /// <summary>Scripted knockback velocity; decays exponentially and is added to the intent velocity.</summary>
     public Vector2 Knockback { get; set; }

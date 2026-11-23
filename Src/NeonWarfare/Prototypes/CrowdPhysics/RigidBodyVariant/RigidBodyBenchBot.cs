@@ -26,11 +26,11 @@ public partial class RigidBodyBenchBot : RigidBodyBenchBody, IBenchBotBody
     private bool _blocksPlayer;
     private CollisionShape2D _hurtboxShape;
 
-    public RigidBodyBenchBot(bool big) : base(
-        big ? BenchSpecs.BigBotRadius : BenchSpecs.BotRadius, BenchLayers.Enemies,
-        big ? BenchSpecs.BigBotMass : 1f)
+    /// <summary>The mass is proportional to the area, so the solver lets a large bot plow through small bodies.</summary>
+    public RigidBodyBenchBot(float radius) : base(
+        radius, BenchLayers.Enemies, radius * radius / (BenchSpecs.BotRadius * BenchSpecs.BotRadius))
     {
-        _radius = big ? BenchSpecs.BigBotRadius : BenchSpecs.BotRadius;
+        _radius = radius;
         _arrowScale = _radius / BenchSpecs.BotRadius;
         AddChild(MakeHurtbox(out _hurtboxShape));
     }

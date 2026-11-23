@@ -1,3 +1,5 @@
+using Godot;
+
 namespace NeonWarfare.Prototypes.CrowdPhysics;
 
 /// <summary>
@@ -15,5 +17,20 @@ public interface IPhysicsVariant
     string FileStamp { get; }
 
     IBenchPlayerBody CreatePlayer();
-    IBenchBotBody CreateBot(bool big);
+    IBenchBotBody CreateBot(float radius);
+
+    /// <summary>A variant-only tuning key in manual mode; the harness offers every key it does not handle itself.</summary>
+    TuningKeyResult HandleTuningKey(Key key) => TuningKeyResult.Ignored;
+
+    /// <summary>The current tuning for the HUD; empty when the variant has none.</summary>
+    string TuningText => string.Empty;
+}
+
+public enum TuningKeyResult
+{
+    Ignored,
+    Handled,
+
+    /// <summary>The key changed what CreatePlayer returns, so the harness replaces the player body in place.</summary>
+    RecreatePlayer,
 }

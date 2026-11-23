@@ -15,8 +15,8 @@ public abstract partial class RigidBodyBenchBody : RigidBody2D
     /// <summary>The retained solver response is clamped, so a wall hit cannot accumulate into a launch.</summary>
     private const float MaxSolverResponse = 400f;
 
-    /// <summary>Half of the measured response survives one tick: a bump fades instead of ringing.</summary>
-    private const float SolverResponseRetention = 0.5f;
+    /// <summary>The share of the measured response that survives one tick; at 0.5 a bump fades instead of ringing.</summary>
+    public static float SolverResponseRetention { get; set; } = 0.5f;
 
     private Vector2 _desiredVelocity;
     private Vector2 _lastDesiredVelocity;
