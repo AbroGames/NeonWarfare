@@ -1,11 +1,9 @@
 using System;
-using Godot;
 using KludgeBox.Logging;
-using NeonWarfare.Scenes.Game;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
 using NeonWarfare.Scenes.Worlds.Ports;
+using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
@@ -14,7 +12,8 @@ using Serilog;
 namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>
-/// Brings one game session up inside a fresh <see cref="Game"/>.
+/// Brings one game session up inside a fresh <see cref="Game"/>, step by step; the steps several modes share are the
+/// helpers below.
 /// </summary>
 public abstract class BaseGameStarter
 {
@@ -26,11 +25,10 @@ public abstract class BaseGameStarter
     private const string VersionMismatchMessage = "The save was made by another version of the game";
     private const string BrokenSaveMessage = "The save is broken or cannot be read";
     private const string LoadFailedLog = "Loading the save '{saveFileName}' failed";
-    private const string HudFailedLog = "The Hud failed to be created after the join";
 
     private readonly ILogger _log = LogFactory.GetForStatic<BaseGameStarter>();
 
-    public abstract void Init(Game game);
+    public abstract void Start(Game game);
 
     protected void SetLastGame(ResumableGame lastGame)
     {
@@ -47,28 +45,26 @@ public abstract class BaseGameStarter
     /// <summary>
     /// The server World from its save file if there is one, otherwise a new World that saves to it.
     /// </summary>
-    /// <returns>
-    /// <c>null</c> when the save cannot be loaded: the error is logged, and <paramref name="errorMessage"/> is for the
-    /// player.
-    /// </returns>
-    protected World AddServerWorld(
-        string saveFileName, Func<WorldOrigin, World> addWorld, out string errorMessage)
+    /// <exception cref="SaveLoadService.LoadException">The file cannot be read, see <see cref="IsLoadError"/>.
+    /// </exception>
+    protected WorldOrigin LoadServerOrigin(string saveFileName)
     {
         ArgumentNullException.ThrowIfNull(saveFileName);
-        errorMessage = null;
-        try
-        {
-            WorldOrigin origin = Services.SaveLoad.CheckFileExists(saveFileName)
-                ? new WorldOrigin.FromSave(Services.SaveLoad.LoadFromDisk(saveFileName), saveFileName)
-                : new WorldOrigin.NewWorld(saveFileName);
-            return addWorld(origin);
-        }
-        catch (Exception e) when (e is SaveLoadService.LoadException or SaveFormatException)
-        {
-            _log.Error(e, LoadFailedLog, saveFileName);
-            errorMessage = e is SaveVersionMismatchException ? VersionMismatchMessage : BrokenSaveMessage;
-            return null;
-        }
+        return Services.SaveLoad.CheckFileExists(saveFileName)
+            ? new WorldOrigin.FromSave(Services.SaveLoad.LoadFromDisk(saveFileName), saveFileName)
+            : new WorldOrigin.NewWorld(saveFileName);
+    }
+
+    /// <summary>
+    /// The file of <see cref="LoadServerOrigin"/> cannot be read, or the World cannot be built from it.
+    /// </summary>
+    protected static bool IsLoadError(Exception e) => e is SaveLoadService.LoadException or SaveFormatException;
+
+    /// <returns>The message for the player.</returns>
+    protected string LogLoadError(Exception e, string saveFileName)
+    {
+        _log.Error(e, LoadFailedLog, saveFileName);
+        return e is SaveVersionMismatchException ? VersionMismatchMessage : BrokenSaveMessage;
     }
 
     /// <summary>
@@ -81,53 +77,29 @@ public abstract class BaseGameStarter
         return new LocalPlayer(settings.PlayerUid, settings.PlayerNick, settings.PlayerColor);
     }
 
-    protected static bool IsGameAlive(Game game)
+    /// <summary>
+    /// A session of this process's player ends in the menu with its message, and with the join the loading screen
+    /// gives way to the <c>Hud</c>.
+    /// </summary>
+    protected void FollowLocalPlayer(Game game)
     {
-        return GodotObject.IsInstanceValid(game) && !game.IsQueuedForDeletion();
+        void OnFailed(string message) => GoToMenuAndShowError(message);
+        void OnLocalPlayerJoined() => Services.LoadingScreen.Clear();
+
+        // Events of the Game itself, which holds the handlers and dies first, so nothing unsubscribes
+        game.Failed += OnFailed;
+        game.LocalPlayerJoined += OnLocalPlayerJoined;
     }
 
     /// <summary>
-    /// <see cref="ILocalPlayerOwner.Joined"/> of every process with a player of its own: the <c>Hud</c> appears only
-    /// with the join, and until then the loading screen covers the World.
+    /// A remote client: until the join, the connecting screen, whose cancel leads back to the menu.
     /// </summary>
-    protected void ShowHudOnJoined(Game game)
+    protected void ConnectAndFollow(Game game, LocalPlayer localPlayer, string host, int port)
     {
-        if (!IsGameAlive(game)) return;
-        try
-        {
-            game.ShowHud();
-        }
-        catch (Exception e)
-        {
-            // The event dispatch would swallow it and leave the loading screen forever: the join fails instead
-            _log.Error(e, HudFailedLog);
-            GoToMenuOnJoinRejected(game, JoinRejectReason.InternalError);
-            return;
-        }
-        Services.LoadingScreen.Clear();
+        Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
+        FollowLocalPlayer(game);
+        game.ConnectToServer(localPlayer, host, port);
     }
-
-    /// <summary>
-    /// <see cref="ILocalPlayerOwner.JoinRejected"/> of every process with a player of its own: a refused join leaves
-    /// a remote client on the connecting screen and a host in a World without its player.
-    /// </summary>
-    protected void GoToMenuOnJoinRejected(Game game, JoinRejectReason reason)
-    {
-        // The transport has already logged the reason
-        if (IsGameAlive(game)) GoToMenuAndShowError(JoinRejectedMessage(reason));
-    }
-
-    private static string JoinRejectedMessage(JoinRejectReason reason) => Services.I18N.Tr(reason switch
-    {
-        JoinRejectReason.ProtocolMismatch => "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH",
-        JoinRejectReason.InvalidUid => "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID",
-        JoinRejectReason.InvalidNick => "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK",
-        JoinRejectReason.InvalidColor => "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR",
-        JoinRejectReason.UidInUse => "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE",
-        JoinRejectReason.InternalError => "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR",
-        // A server of another build may send a code this one does not know
-        _ => "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
-    });
 
     /// <summary>
     /// Not for a dedicated server: it has no menu.<br/>

@@ -31,10 +31,9 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
 
 * `Event` names only a protocol record (`PlayerJoinedEvent`); `Handle` / `…Handler` only its handler
   (`[EventHandler] Handle`, `IPlayerCommandHandler.Handle`). A C# event has no suffix (`Network.PeerConnected`,
-  `Network.ConnectedToServer`), its handler is a private `On<Event>` (`OnPeerConnected`); a hook the base class
-  calls when something has happened is a protected `On…` (`OnLoadFailed`). A method called from the outside
-  is named by what it does (`World.QueueDisconnection`, `PeerGatekeeper.StartHandshake`). Checked in
-  `Root/`, `Game/`, `Worlds/` by `EventNamingTests`.
+  `Network.ConnectedToServer`), its handler is a private `On<Event>` (`OnPeerConnected`), never a hook for a
+  subclass. A method called from the outside is named by what it does (`World.QueueDisconnection`,
+  `PeerGatekeeper.StartHandshake`). Checked in `Root/`, `Game/`, `Worlds/` by `EventNamingTests`.
 * No static game logic: it goes into the [world services or `Services`](Services.md). Statics are left
   for extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings
   (de)serialization.
@@ -82,7 +81,7 @@ An `Action` is never held in a `static` field: its subscribers are then never re
 through `PlayerConnected?.Invoke(...)`, and is declared with the `event` keyword when only its own
 class raises it.
 
-After a change to a `GameStarter`, the leak is checked by hand: run
+After a change to a `GameStarter` or `Game`, the leak is checked by hand: run
 `Fast-test (1 client)` (see [Quick start](Quick-start.md)), leave to the menu on the client, then in the
 profiler do Force GC → Snapshot and look for `World` among the types.
 

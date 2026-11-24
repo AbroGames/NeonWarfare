@@ -14,7 +14,7 @@ in `Worlds/Features/` — see [World features](World-features.md). The packets a
 
 | Member | Who calls it |
 |---|---|
-| `InitPreReady(setup, dependencies, origin)` | `Game.Add…World`, before the World enters the tree: builds every service, then fills the world |
+| `InitPreReady(setup, dependencies, origin)` | `WorldAssembler`, before the World enters the tree: builds every service, then fills the world |
 | `Send<TCommand>(command)` | The `Hud`, through `World.ICommandSender`: the only way a command leaves the World |
 | `Get<T>()` | The screens, through `World.IReader`: only `[Query]` and `[Presentation]` services are handed out |
 | `ReceiveFromClient`, `StartHandshake`, `QueueDisconnection` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
@@ -90,7 +90,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | Folder | What it holds |
 |---|---|
 | `Features` | The game itself, one folder per feature — see [World features](World-features.md) |
-| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by the starter), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
+| `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRequestCommand`, `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |

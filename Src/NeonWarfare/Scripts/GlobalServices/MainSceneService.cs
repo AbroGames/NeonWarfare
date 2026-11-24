@@ -59,10 +59,7 @@ public class MainSceneService
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
         
-        game.Init(new ConnectToMultiplayerGameStarter(
-            host: host, 
-            port: port, 
-            mustSetLastGame: true));
+        game.Init(new ConnectToMultiplayerGameStarter(host: host, port: port));
     }
     
     /// <summary>
@@ -111,17 +108,13 @@ public class MainSceneService
         Game game = _gamePackedScene.Instantiate<Game>();
         game.SetName("Game");
         _mainSceneContainer.ChangeStoredNode(game);
-        
-        // Don't set LastGame in dedicated server started from console
-        bool mustSetLastGame = parentPid.HasValue;
-        
+
         game.Init(new DedicatedServerGameStarter(
             saveFileName: saveFileName, 
             port: port, 
             adminUid: adminUid, 
             parentPid: parentPid,
-            serverHud: serverHud, 
-            mustSetLastGame: mustSetLastGame));
+            serverHud: serverHud));
         Services.LoadingScreen.Clear();
     }
 

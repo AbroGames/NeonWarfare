@@ -4,7 +4,7 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.Scenes.Worlds;
 
 /// <summary>
-/// The configuration of a World, chosen by its starter: the layers and the ports of the process that configuration
+/// The configuration of a World, chosen by its <c>Game</c>: the layers and the ports of the process that configuration
 /// needs. Known only to the composition root; a service sees its layer and the ports, never the configuration.
 /// </summary>
 public abstract record WorldSetup

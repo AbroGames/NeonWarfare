@@ -3,8 +3,8 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 namespace NeonWarfare.Scenes.Worlds.Ports;
 
 /// <summary>
-/// What shows this process's player its World, owned by its starter. The World and the transport only report; the
-/// UI is created by the owner, so that it never exists while the player is not online.
+/// What shows this process's player its World: its <c>Game</c>. The World and the transport only report; the UI is
+/// created by the owner, so that it never exists while the player is not online.
 /// </summary>
 public interface ILocalPlayerOwner
 {

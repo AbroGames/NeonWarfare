@@ -26,7 +26,7 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     private const string ConnectedToServer = "Connected to the server successfully";
 
     /// <summary>
-    /// ConnectToMultiplayerGameStarter: the join snapshot arrived and the client World is built from it.
+    /// Game: the join snapshot arrived and the client World is built from it.
     /// </summary>
     private const string EnteredWorld = "Entered the world from the join snapshot";
 

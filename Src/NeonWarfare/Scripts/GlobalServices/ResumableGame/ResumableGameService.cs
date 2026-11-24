@@ -16,8 +16,10 @@ public class ResumableGameService
         LoadSettings();
     }
 
+    // A child dedicated server rewrites the file after a "save as", so the copy read at startup goes stale
     public ResumableGame GetLastGame()
     {
+        LoadSettings();
         return _lastGame;
     }
     
@@ -29,7 +31,7 @@ public class ResumableGameService
     
     public void StartLastGame()
     {
-        StartResumableGame(_lastGame);
+        StartResumableGame(GetLastGame());
     }
     
     public void StartResumableGame(ResumableGame game)
@@ -51,7 +53,7 @@ public class ResumableGameService
     private void SaveSettings()
     {
         using var file = FileAccess.Open(LastGameSettingPath, FileAccess.ModeFlags.Write);
-        string json = JsonSerializer.Serialize(GetLastGame());
+        string json = JsonSerializer.Serialize(_lastGame);
         file.StoreString(json);
         file.Close();
     }
