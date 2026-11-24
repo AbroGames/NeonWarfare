@@ -38,15 +38,13 @@ public class EventOutbox(NetMessageCodec codec, PeerUidMap peers)
         }
     }
 
-    // A receiver is always online: callers pick online receivers, and a command's sender cannot have left yet
-    // because commands and disconnections share one ordered queue. Breaking that is logged and dropped
-    // rather than thrown, so the rest of the tick still goes out.
+    // A receiver chosen earlier in the tick may have left by the time the event is published
     public void PublishTo(Event @event, string receiverUid)
     {
         byte[] encoded = codec.Encode(@event);
         if (!peers.TryGetPeerId(receiverUid, out int peerId))
         {
-            _log.Error(OfflineReceiverLog, @event.GetType().Name, receiverUid);
+            _log.Information(OfflineReceiverLog, @event.GetType().Name, receiverUid);
             return;
         }
         if (!_bufferByPeerId.TryGetValue(peerId, out List<ReadOnlyMemory<byte>> buffer))

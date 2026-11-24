@@ -29,7 +29,6 @@ public class SaveServiceTests
     private ServiceProvider _server = null!;
     private RecordingSaveFiles _files = null!;
     private SaveService _service = null!;
-    private List<string> _saved = null!;
 
     [BeforeTest]
     public void SetUp()
@@ -51,8 +50,6 @@ public class SaveServiceTests
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _service = _server.GetRequiredService<SaveService>();
         _service.Init(OldFile);
-        _saved = [];
-        _service.SavedEvent += _saved.Add;
     }
 
     [AfterTest]
@@ -78,7 +75,6 @@ public class SaveServiceTests
         AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(NewFile);
         AssertThat(_files.Files[0].Data).IsEqual(Writer().Write());
         AssertThat(_service.SaveFileName).IsEqual(NewFile);
-        AssertThat(_saved).ContainsExactly(NewFile);
 
         _service.SaveOnExit();
 
@@ -98,7 +94,6 @@ public class SaveServiceTests
 
         AssertThat(failed).HasSize(1);
         AssertThat(_service.SaveFileName).IsEqual(OldFile);
-        AssertThat(_saved).IsEmpty();
     }
 
     // A failed delta has reset the baseline of a saved entity, so the writer refuses the save
@@ -116,24 +111,6 @@ public class SaveServiceTests
         AssertThat(failed).HasSize(1);
         AssertThat(_files.Files).IsEmpty();
         AssertThat(_service.SaveFileName).IsEqual(OldFile);
-        AssertThat(_saved).IsEmpty();
-    }
-
-    // The file is on disk whatever its handlers do
-    [TestCase]
-    [RequireGodotRuntime]
-    public void RequestSave_ASavedHandlerThrows_TheSaveStillCompletes()
-    {
-        Tick();
-        _service.SavedEvent += _ => throw new InvalidOperationException("handler");
-        int written = 0;
-        _service.RequestSave(NewFile, () => written++, error => throw error);
-
-        Tick();
-
-        AssertThat(written).IsEqual(1);
-        AssertThat(_service.SaveFileName).IsEqual(NewFile);
-        AssertThat(_saved).ContainsExactly(NewFile);
     }
 
     [TestCase]
@@ -146,7 +123,6 @@ public class SaveServiceTests
 
         AssertThat(_files.Files.Select(file => file.FileName)).ContainsExactly(OldFile);
         AssertThat(_files.Files[0].Data).IsEqual(Writer().Write());
-        AssertThat(_saved).ContainsExactly(OldFile);
     }
 
     [TestCase]
@@ -159,7 +135,6 @@ public class SaveServiceTests
         _service.SaveOnExit();
 
         AssertThat(_files.Files).IsEmpty();
-        AssertThat(_saved).IsEmpty();
     }
 
     // The writer would throw: every entity is still spawned since the last send
@@ -170,7 +145,6 @@ public class SaveServiceTests
         _service.SaveOnExit();
 
         AssertThat(_files.Files).IsEmpty();
-        AssertThat(_saved).IsEmpty();
     }
 
     [TestCase]
@@ -182,7 +156,7 @@ public class SaveServiceTests
 
         _service.SaveOnExit();
 
-        AssertThat(_saved).IsEmpty();
+        AssertThat(_files.Files).IsEmpty();
     }
 
     [TestCase]

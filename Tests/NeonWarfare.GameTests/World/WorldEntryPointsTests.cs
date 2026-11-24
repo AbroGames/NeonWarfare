@@ -190,12 +190,9 @@ public class WorldEntryPointsTests
         const string loadedFileName = "loaded";
         GameWorld host = InTree(HostWorld());
         JoinHost(host);
-        List<string> saved = [];
-        host.SavedEvent += saved.Add;
 
         host.GetParent().RemoveChild(host);
 
-        AssertThat(saved).ContainsExactly(SaveFileName);
         RecordingSaveFiles.Written save = _saveFiles.Files.Single();
         AssertThat(save.FileName).IsEqual(SaveFileName);
 
@@ -207,20 +204,20 @@ public class WorldEntryPointsTests
         AssertThat(_saveFiles.Files.Select(file => file.FileName)).ContainsExactly(SaveFileName, loadedFileName);
     }
 
-    // The handler is called directly: Godot only prints what a notification from the engine throws
+    // Given the save files all the same
     [TestCase]
     [RequireGodotRuntime]
-    public void ExitTree_ClientWorld_SavesNothing_AndHasNoSavedEvent()
+    public void ExitTree_ClientWorld_SavesNothing()
     {
         GameWorld host = HostWorld();
         JoinHost(host);
         JoinRemote(host);
-        GameWorld client = World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+        GameWorld client = InTree(World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot())));
 
-        client._Notification((int) Node.NotificationExitTree);
+        client.GetParent().RemoveChild(client);
 
+        AssertThat(client.GetChildren().OfType<SaveOnExitNode>()).IsEmpty();
         AssertThat(_saveFiles.Files).IsEmpty();
-        AssertThrown(() => client.SavedEvent += _ => { }).IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]

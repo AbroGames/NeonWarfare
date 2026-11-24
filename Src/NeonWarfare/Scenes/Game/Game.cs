@@ -16,6 +16,7 @@ using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.GlobalServices;
 using RepliCAT;
 using Serilog;
@@ -92,11 +93,12 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
         gameStarter.Init(this);
     }
 
-    public World.World AddWorld(WorldLayer layers, WorldOrigin origin, Screen screen)
+    /// <param name="saveFiles">Where a server World saves, <c>null</c> for a remote client.</param>
+    public World.World AddWorld(WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles)
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this, Services.SaveLoad);
+            this, this, saveFiles);
         var world = new World.World();
         try
         {

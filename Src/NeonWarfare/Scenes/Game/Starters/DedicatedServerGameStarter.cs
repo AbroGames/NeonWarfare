@@ -2,6 +2,7 @@ using Godot;
 using GodotBox.Godot.Nodes.Process;
 using NeonWarfare.Scenes.World;
 using NeonWarfare.Scenes.World.Infra.Composition;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 
 namespace NeonWarfare.Scenes.Game.Starters;
 
@@ -31,10 +32,10 @@ public class DedicatedServerGameStarter(
         base.Init(game);
     }
 
-    protected override World.World AddWorld(Game game, WorldOrigin origin)
+    protected override World.World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles)
     {
         World.World world = game.AddWorld(
-            WorldLayer.Dedicated, origin, serverHud ? Game.Screen.ServerHud : Game.Screen.None);
+            WorldLayer.Dedicated, origin, serverHud ? Game.Screen.ServerHud : Game.Screen.None, saveFiles);
         world.SetVisible(false);
         return world;
     }

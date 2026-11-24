@@ -33,13 +33,11 @@ public abstract class BaseGameStarter
     }
 
     /// <summary>
-    /// "Continue" leads to the file of the last save, which a "save as" changes.
+    /// The save files of a World that "Continue" leads to: it follows the file of the last save.
     /// </summary>
-    protected void UpdateLastGameOnSave(World.World world, ResumableGame lastGame)
-    {
-        // The World dies with the Game, so the handler needs no unsubscribing
-        world.SavedEvent += saveFileName => SetLastGame(lastGame with { SaveName = saveFileName });
-    }
+    protected ISaveFiles SaveFilesUpdatingLastGame(ResumableGame lastGame) =>
+        new LastGameUpdatingSaveFiles(
+            Services.SaveLoad, saveFileName => SetLastGame(lastGame with { SaveName = saveFileName }));
 
     /// <summary>
     /// The server World from its save file if there is one, otherwise a new World that saves to it.

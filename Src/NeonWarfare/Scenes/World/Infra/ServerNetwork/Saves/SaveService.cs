@@ -19,16 +19,10 @@ public class SaveService(SaveWriter saveWriter, ServerTickLoop tickLoop, ISaveFi
     private const string AutoSaveDisabledLog = "No autosave: it is disabled";
     private const string NoTickLog = "No autosave to '{saveFileName}': no tick has run, nothing new to save";
     private const string AutoSaveFailedLog = "The autosave to '{saveFileName}' failed";
-    private const string SavedHandlerFailedLog = "A handler of the save to '{saveFileName}' failed";
 
     private readonly ILogger _log = LogFactory.GetForStatic<SaveService>();
 
     public string SaveFileName { get; private set; }
-
-    /// <summary>
-    /// After every save file written, with its name.
-    /// </summary>
-    public event Action<string> SavedEvent;
 
     public void Init(string saveFileName)
     {
@@ -60,7 +54,7 @@ public class SaveService(SaveWriter saveWriter, ServerTickLoop tickLoop, ISaveFi
                 failed(e);
                 return;
             }
-            Saved(saveFileName);
+            SaveFileName = saveFileName;
             written();
         }, failed);
     }
@@ -90,22 +84,6 @@ public class SaveService(SaveWriter saveWriter, ServerTickLoop tickLoop, ISaveFi
         catch (Exception e)
         {
             _log.Error(e, AutoSaveFailedLog, SaveFileName);
-            return;
-        }
-        Saved(SaveFileName);
-    }
-
-    // The file is written whatever its handlers do, so the name follows it
-    private void Saved(string saveFileName)
-    {
-        SaveFileName = saveFileName;
-        try
-        {
-            SavedEvent?.Invoke(saveFileName);
-        }
-        catch (Exception e)
-        {
-            _log.Error(e, SavedHandlerFailedLog, saveFileName);
         }
     }
 }
