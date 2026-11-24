@@ -23,7 +23,12 @@ found by searching for a class or attribute name.
 `.godot/` and `*.tscn` are maintained by the Godot editor. Never create or modify them manually — ask
 the user to make the change in the editor instead.  
 A `.cs` attached to a `.tscn` is never renamed, moved or deleted by hand, nor is its `.uid` touched — ask the user.
-Any other `.cs` may be renamed, moved or deleted together with its `.uid`.
+Any other `.cs` may be renamed, moved or deleted together with its `.uid`.  
+After creating new `.cs` files, generate their `.uid` with Godot itself — never write a `.uid` by hand:
+
+```bash
+"$GODOT_EXE" --headless --path "./" --import
+```
 
 ## Tasks
 
