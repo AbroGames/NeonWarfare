@@ -8,7 +8,6 @@ using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Entities;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
 using static NeonWarfare.GameTests.Worlds.Infra.Server.Fixtures.FakeSessionHandler;
@@ -28,10 +27,9 @@ public class CommandDispatcherTests
     private const string ThrowInProcess = "throw in process";
 
     private NetMessageCodec _codec = null!;
-    private PeerUidMap _peers = null!;
+    private PeerStateTable _peers = null!;
     private RecordingClientsConnection _clientsConnection = null!;
     private PeerGatekeeper _gatekeeper = null!;
-    private EventOutbox _outbox = null!;
     private PlayersStorage _playersStorage = null!;
     private PlayersSessionStorage _sessionStorage = null!;
     private PlayersModel _playersModel = null!;
@@ -44,10 +42,9 @@ public class CommandDispatcherTests
     public void SetUp()
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
-        _peers = new PeerUidMap();
+        _peers = new PeerStateTable();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
-        _outbox = new EventOutbox(_codec, _peers);
         _playersStorage = new PlayersStorage();
         _sessionStorage = new PlayersSessionStorage();
         var registry = new EntityRegistry();
@@ -58,6 +55,10 @@ public class CommandDispatcherTests
         _handlers = new CommandHandlerRegistry();
         _inbox = new CommandInbox(_codec, _gatekeeper, _handlers);
         _calls = [];
+        foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
+        {
+            _gatekeeper.StartHandshake(peerId);
+        }
     }
 
     [AfterTest]
@@ -186,12 +187,39 @@ public class CommandDispatcherTests
 
         AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
         AssertBound(AliceSecondPeer, AliceUid);
-        AssertThat(_gatekeeper.IsDisconnecting(AlicePeer)).IsFalse();
+        AssertThat(_peers.IsCut(AlicePeer)).IsFalse();
+    }
+
+    // A join of another build from a joined peer disconnects it, but its Leave waits for its peer_disconnected
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ProcessAll_JoinedPeerRejectedByTheInbox_IsIgnoredAndLeavesOnItsDisconnection()
+    {
+        CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
+        Join(AlicePeer, AliceUid);
+        dispatcher.ProcessAll();
+        _calls.Clear();
+
+        _inbox.EnqueueFromPeer(
+            AlicePeer, _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash + 1, AliceUid, AliceUid, Colors.Red)));
+        Chat(AlicePeer, "still here");
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).IsEmpty();
+        AssertNotBound(AlicePeer);
+        AssertThat(_peers.TryGetPeerIdByUid(AliceUid, out _)).IsTrue();
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+
+        _inbox.EnqueuePeerDisconnected(AlicePeer);
+        dispatcher.ProcessAll();
+
+        AssertThat(_calls).ContainsExactly("leave alice");
+        AssertThat(_peers.TryGetPeerIdByUid(AliceUid, out _)).IsFalse();
     }
 
     [TestCase]
     [RequireGodotRuntime]
-    public void ProcessAll_JoinedPeerDisconnected_LeavesAndLosesBindingAndBuffer()
+    public void ProcessAll_JoinedPeerDisconnected_LeavesAndIsForgotten()
     {
         CommandDispatcher dispatcher = Dispatcher(new PlayerChatHandler(_calls), SessionHandler());
         Join(AlicePeer, AliceUid);
@@ -204,7 +232,7 @@ public class CommandDispatcherTests
 
         AssertThat(_calls).ContainsExactly("leave alice");
         AssertNotBound(AlicePeer);
-        AssertThat(_peers.TryGetPeerId(AliceUid, out _)).IsFalse();
+        AssertThat(_peers.TryGetPeerIdByUid(AliceUid, out _)).IsFalse();
     }
 
     [TestCase]
@@ -223,12 +251,12 @@ public class CommandDispatcherTests
     }
 
     private CommandDispatcher Unregistered() =>
-        new(_inbox, _handlers, new PeerSessions(_handlers, _peers, _outbox, _gatekeeper), _peers, _gatekeeper);
+        new(_inbox, _handlers, new PeerSessions(_handlers, _peers, _gatekeeper), _peers);
 
-    private FakeSessionHandler SessionHandler() => new(_calls, _peers, _outbox);
+    private FakeSessionHandler SessionHandler() => new(_calls, _peers);
 
-    // The dispatcher looks only at the binding: whether the player exists is the handler's lookup
-    private void JoinDirectly(string uid, int peerId) => _peers.Bind(uid, peerId);
+    // The dispatcher looks only at the peer's state: whether the player exists is the handler's lookup
+    private void JoinDirectly(string uid, int peerId) => _peers.Join(peerId, uid);
 
     private void Chat(int peerId, string text) =>
         _inbox.EnqueueFromPeer(peerId, _codec.Encode(new SendChatMessageCommand(text)));
@@ -239,16 +267,11 @@ public class CommandDispatcherTests
 
     private void AssertBound(int peerId, string uid)
     {
-        AssertThat(_peers.TryGetUid(peerId, out string? bound)).IsTrue();
-        AssertThat(bound).IsEqual(uid);
-        AssertThat(_outbox.Peers).Contains(peerId);
+        AssertThat(_peers.TryGetJoined(peerId, out PeerStateTable.Joined? joined)).IsTrue();
+        AssertThat(joined!.Uid).IsEqual(uid);
     }
 
-    private void AssertNotBound(int peerId)
-    {
-        AssertThat(_peers.TryGetUid(peerId, out _)).IsFalse();
-        AssertThat(_outbox.Peers.Contains(peerId)).IsFalse();
-    }
+    private void AssertNotBound(int peerId) => AssertThat(_peers.IsJoined(peerId)).IsFalse();
 
     private class PlayerChatHandler(List<string> calls) : IPlayerCommandHandler<SendChatMessageCommand>
     {

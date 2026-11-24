@@ -28,7 +28,7 @@ public class CommandInboxTests
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _clientsConnection = new RecordingClientsConnection();
-        _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), new PeerUidMap());
+        _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), new PeerStateTable());
         // No session handler on purpose: a command type without a handler must be rejected too
         _inbox = Inbox(new ChatHandler());
     }

@@ -93,20 +93,24 @@ packet carries only the last value of a tick.
 
 ## Join and leave
 
+The state of every peer lives in `PeerStateTable`: `Connecting(deadline)` → `Joined(uid)` with its event
+buffer. The server cuts a joined peer off as `Leaving(uid)`, whose uid stays taken until its `peer_disconnected`
+unless displacement frees it at once; any other cut-off peer is `TurnedAway`. Only a `Connecting` peer may join, and
+only a `Joined` one gets packets and has its commands handled.
+
 `peer_connected` only starts the handshake deadline in `PeerGatekeeper`. The peer joins by sending
 `JoinRequestCommand(protocolHash, uid, nick, color)`; until then it receives nothing. In the tick, `PeerSessions`:
 
 * drops a second join of a joined peer;
 * asks `IPeerSessionHandler.ValidateJoin` — a refusal sends `JoinRejected(reason)` and disconnects the peer;
-* displaces a peer already online with the same uid: the old one leaves and is disconnected, then the new one joins
+* displaces a peer already online with the same uid: the old one is disconnected and leaves, then the new one joins
   (a crashed client comes back without waiting for ENet to notice). The host's own uid cannot be taken —
   `UidInUse`;
-* binds peer ↔ uid (`PeerUidMap`), creates the peer's buffer in `EventOutbox` and calls
-  `IPeerSessionHandler.Join`, which joins the player through the Simulation.
+* marks the peer `Joined` and calls `IPeerSessionHandler.Join`, which joins the player through the Simulation.
 
-`peer_disconnected` enqueues `PeerDisconnected`; in the tick `IPeerSessionHandler.Leave(uid)` runs for a
-joined peer, then its buffer and binding go. Between a server-side disconnect and its `peer_disconnected` every
-command of the peer is dropped.
+`peer_disconnected` enqueues `PeerDisconnected`; in the tick the peer leaves the table and
+`IPeerSessionHandler.Leave(uid)` runs for a `Joined` or `Leaving` one. Between a server-side disconnect and its
+`peer_disconnected` every command of the peer is dropped.
 
 ```mermaid
 sequenceDiagram
@@ -122,7 +126,7 @@ sequenceDiagram
     C->>G: JoinRequestCommand(protocolHash, uid, nick, color)
     G->>W: ReceiveFromClient: hash check, into the inbox
     Note over W: next tick
-    W->>W: PeerSessions.Join: Validate, bind uid,<br/>event buffer, Process → join message, PlayerJoinedEvent
+    W->>W: PeerSessions.Join: Validate, Joined(uid),<br/>Process → join message, PlayerJoinedEvent
     W-->>O: State packet: the tick's changes (OnlinePlayerUids)
     W-->>C: Snapshot: every entity at the end of the tick
     C->>C: ClientTransport → Game builds the World from the snapshot

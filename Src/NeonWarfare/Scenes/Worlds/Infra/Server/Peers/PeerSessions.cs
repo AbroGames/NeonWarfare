@@ -4,24 +4,20 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using Serilog;
 
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 
 /// <summary>
-/// The life of a joined peer, kept in one place: after a valid join the peer is bound to its uid and gets its event
-/// buffer, both before the session handler publishes anything, and loses them on its disconnection or displacement.
+/// The life of a joined peer: after a valid join it becomes <see cref="PeerStateTable.Joined"/> before the session
+/// handler publishes anything, and the handler's <c>Leave</c> runs once, on its disconnection or displacement.
 /// Called by <see cref="CommandDispatcher"/> in the tick, in the order of the inbox.
 /// </summary>
 [Server]
-public class PeerSessions(
-    CommandHandlerRegistry handlers,
-    PeerUidMap peers,
-    EventOutbox outbox,
-    PeerGatekeeper gatekeeper)
+public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers, PeerGatekeeper gatekeeper)
 {
     private const string RejoinLog = "{command} from peer {peerId} dropped: the peer has already joined as {uid}";
+    private const string NotConnectingLog = "{command} from peer {peerId} dropped: the peer is not waiting for a join";
     private const string JoinRejectedLog = "{command} from peer {peerId} rejected by {handler}: {reason}";
     private const string JoinValidateFailedLog = "{handler} failed to validate {command}, the peer is rejected";
     private const string JoinFailedLog = "{handler} failed to process {command}, the peer is rejected";
@@ -37,9 +33,15 @@ public class PeerSessions(
     public void Join(int peerId, JoinRequestCommand command)
     {
         string name = command.GetType().Name;
-        if (peers.TryGetUid(peerId, out string joinedUid))
+        if (peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))
         {
-            _log.Warning(RejoinLog, name, peerId, joinedUid);
+            _log.Warning(RejoinLog, name, peerId, joined.Uid);
+            return;
+        }
+        // Checked before anything is done for the join: a cut peer must not displace the player online with its uid
+        if (!peers.IsConnecting(peerId))
+        {
+            _log.Warning(NotConnectingLog, name, peerId);
             return;
         }
         // The inbox lets the join through only when there is a session handler, so this is a wiring error, not a peer's
@@ -72,7 +74,7 @@ public class PeerSessions(
         }
 
         string uid = command.Uid;
-        if (peers.TryGetPeerId(uid, out int oldPeerId))
+        if (peers.TryGetPeerIdByUid(uid, out int oldPeerId))
         {
             // The host cannot be reconnected from another peer, so displacing it would only lock it out of its world
             if (gatekeeper.IsLocal(oldPeerId))
@@ -84,19 +86,19 @@ public class PeerSessions(
 
             // Otherwise a crashed client could not come back until ENet notices the old connection is gone
             _log.Information(DisplacedLog, peerId, uid, oldPeerId);
-            // Leave unbinds the old peer even if it throws, and an unbound peer has no handshake deadline any more
+            gatekeeper.Disconnect(oldPeerId);
+            // A throwing handler must not keep the uid from the new peer
             try
             {
-                Leave(oldPeerId, uid);
+                sessionHandler.Leave(uid);
             }
             finally
             {
-                gatekeeper.Disconnect(oldPeerId);
+                peers.Release(oldPeerId);
             }
         }
 
-        peers.Bind(uid, peerId);
-        outbox.AddPeer(peerId);
+        peers.Join(peerId, uid);
         try
         {
             sessionHandler.Join(command);
@@ -105,42 +107,31 @@ public class PeerSessions(
         catch (Exception e)
         {
             _log.Error(e, JoinFailedLog, handlerName, name);
-            outbox.RemovePeer(peerId);
-            peers.Unbind(peerId);
-            gatekeeper.Reject(peerId, JoinRejectReason.InternalError);
+            try
+            {
+                gatekeeper.Reject(peerId, JoinRejectReason.InternalError);
+            }
+            finally
+            {
+                peers.Release(peerId);
+            }
         }
     }
 
+    // Removed before Leave, so a throwing handler cannot leave the peer behind
     public void Disconnected(int peerId)
     {
-        try
+        switch (peers.Remove(peerId))
         {
-            if (peers.TryGetUid(peerId, out string uid))
-            {
-                Leave(peerId, uid);
-            }
-            else
-            {
+            case PeerStateTable.Joined joined:
+                handlers.SessionHandler.Leave(joined.Uid);
+                break;
+            case PeerStateTable.Leaving leaving:
+                handlers.SessionHandler.Leave(leaving.Uid);
+                break;
+            default:
                 _log.Debug(NotJoinedLeftLog, peerId);
-            }
-        }
-        finally
-        {
-            gatekeeper.Forget(peerId);
-        }
-    }
-
-    // The buffer and the binding go even if the handler throws: a peer left bound would block its uid forever
-    private void Leave(int peerId, string uid)
-    {
-        try
-        {
-            handlers.SessionHandler.Leave(uid);
-        }
-        finally
-        {
-            outbox.RemovePeer(peerId);
-            peers.Unbind(peerId);
+                break;
         }
     }
 }

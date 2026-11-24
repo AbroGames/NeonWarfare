@@ -65,7 +65,7 @@ public class WorldServicesBuilderTests
             using ServiceProvider provider = Build(setup);
 
             AssertThat(provider.GetService<EventOutbox>() != null).IsEqual(isServer);
-            AssertThat(provider.GetService<PeerUidMap>() != null).IsEqual(isServer);
+            AssertThat(provider.GetService<PeerStateTable>() != null).IsEqual(isServer);
             AssertThat(provider.GetService<CommandInbox>() != null).IsEqual(isServer);
             AssertThat(provider.GetService<CommandDispatcher>() != null).IsEqual(isServer);
             AssertThat(provider.GetService<CommandHandlerRegistry>() != null).IsEqual(isServer);
@@ -251,7 +251,7 @@ public class WorldServicesBuilderTests
     // facade its commands, so all of them come with any fixture, with what the chat takes
     private static WorldServicesBuilder FixtureBuilder(params Type[] fixtures) =>
         new([
-            ..fixtures, typeof(EventOutbox), typeof(PeerUidMap), typeof(EventDispatcher),
+            ..fixtures, typeof(EventOutbox), typeof(PeerStateTable), typeof(EventDispatcher),
             typeof(CommandHandlerRegistry), typeof(ChatSimulation), typeof(ChatSimulationFacade),
             typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
         ]);

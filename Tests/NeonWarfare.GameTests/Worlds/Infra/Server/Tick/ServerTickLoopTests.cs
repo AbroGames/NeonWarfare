@@ -178,6 +178,45 @@ public class ServerTickLoopTests
         AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
     }
 
+    // Until its peer_disconnected the peer keeps its uid, but has nothing to apply a packet to
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RunTick_PeerDisconnectedByTheServer_GetsNothingMore()
+    {
+        Build(new WorldServicesBuilder());
+        Outbox().PublishToAll(Hello);
+
+        _provider.GetRequiredService<PeerGatekeeper>().Disconnect(AlicePeer);
+        Outbox().PublishToAll(Hello);
+        Loop().RunTick();
+
+        AssertThat(_clientsConnection.Packets.Select(sent => sent.PeerId)).ContainsExactly(HostPeer);
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+    }
+
+    // Displaced by a join of this tick, the old peer was joined at its start, yet gets none of its state
+    [TestCase]
+    [RequireGodotRuntime]
+    public void RunTick_PeerDisplacedInTheTick_GetsNoStatePacket()
+    {
+        const string bobUid = "BobBobBobB-Bbbbbbbbbb";
+        const int bobPeer = 3;
+        const int bobSecondPeer = 4;
+        Build(new WorldServicesBuilder());
+        JoinDirectly(bobUid, "Bob", bobPeer);
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(bobSecondPeer);
+        var join = new JoinRequestCommand(_codec.ProtocolHash, bobUid, "Bob", Colors.White);
+        _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(bobSecondPeer, _codec.Encode(join));
+
+        Loop().RunTick();
+
+        AssertThat(_clientsConnection.Packets.Where(sent => sent.Kind == SentKind.State).Select(sent => sent.PeerId))
+            .ContainsExactly(AlicePeer);
+        AssertThat(_clientsConnection.Packets.Where(sent => sent.Kind == SentKind.Snapshot).Select(sent => sent.PeerId))
+            .ContainsExactly(bobSecondPeer);
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(bobPeer);
+    }
+
     // The deadline passes between the ticks: the join that came in time is processed before the timeout is checked
     [TestCase]
     [RequireGodotRuntime]
@@ -196,7 +235,7 @@ public class ServerTickLoopTests
         Loop().RunTick();
 
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(latePeer);
-        AssertThat(_provider.GetRequiredService<PeerUidMap>().TryGetUid(joiningPeer, out _)).IsTrue();
+        AssertThat(_provider.GetRequiredService<PeerStateTable>().IsJoined(joiningPeer)).IsTrue();
     }
 
     private void Build(WorldServicesBuilder builder)
@@ -220,8 +259,8 @@ public class ServerTickLoopTests
     {
         Players().AddPlayer(uid).Nick = nick;
         _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
-        _provider.GetRequiredService<PeerUidMap>().Bind(uid, peerId);
-        Outbox().AddPeer(peerId);
+        _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
+        _provider.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
 
     private void Command(int peerId, string text) =>

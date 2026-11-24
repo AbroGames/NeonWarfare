@@ -12,16 +12,15 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 /// Drains <see cref="CommandInbox"/> in the server tick and hands every entry to its handler: a join and a
 /// disconnection to <see cref="PeerSessions"/>, a command to the player handler from
 /// <see cref="CommandHandlerRegistry"/>. "Joined or not" is decided here, at tick time rather than on arrival: a join
-/// and a chat command of one peer in one tick must both pass, in order. A handler gets the bound uid and looks its
-/// own state up by it.
+/// and a chat command of one peer in one tick must both pass, in order. A handler gets the uid the peer has joined
+/// as in <see cref="PeerStateTable"/> and looks its own state up by it.
 /// </summary>
 [Server]
 public class CommandDispatcher(
     CommandInbox inbox,
     CommandHandlerRegistry handlers,
     PeerSessions sessions,
-    PeerUidMap peers,
-    PeerGatekeeper gatekeeper)
+    PeerStateTable peers)
 {
     private const string NotJoinedLog = "{command} from peer {peerId} dropped: the peer has not joined";
     private const string NotValidLog = "{command} from peer {peerId} dropped: {handler} did not validate it";
@@ -44,8 +43,8 @@ public class CommandDispatcher(
         foreach (CommandInbox.Entry entry in inbox.TakeAll())
         {
             // TakeAll has already emptied the inbox, so a throw must not cost the rest of the entries: a lost
-            // PeerDisconnected would leave its peer bound. A facade has no rollback, so a throw may leave the model
-            // half-changed: the log is the only signal of that
+            // PeerDisconnected would leave its peer in the table. A facade has no rollback, so a throw may leave the
+            // model half-changed: the log is the only signal of that
             try
             {
                 Process(entry);
@@ -60,7 +59,7 @@ public class CommandDispatcher(
     private void Process(CommandInbox.Entry entry)
     {
         // Its commands were sent before the disconnect reached it, so they are not its owner's any more
-        if (entry is not CommandInbox.PeerDisconnected && gatekeeper.IsDisconnecting(entry.PeerId))
+        if (entry is not CommandInbox.PeerDisconnected && peers.IsCut(entry.PeerId))
         {
             _log.Debug(DisconnectingLog, entry);
             return;
@@ -85,11 +84,12 @@ public class CommandDispatcher(
     private void ProcessFromPlayer(int peerId, Command command)
     {
         string name = command.GetType().Name;
-        if (!peers.TryGetUid(peerId, out string uid))
+        if (!peers.TryGetJoined(peerId, out PeerStateTable.Joined joined))
         {
             _log.Warning(NotJoinedLog, name, peerId);
             return;
         }
+        string uid = joined.Uid;
 
         // The inbox lets through only the commands with a handler, so this is a wiring error, not a peer's
         if (!handlers.TryGetPlayerHandler(command.GetType(), out CommandHandlerRegistry.PlayerHandler handler))

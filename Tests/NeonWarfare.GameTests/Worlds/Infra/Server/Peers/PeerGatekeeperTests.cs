@@ -13,7 +13,7 @@ public class PeerGatekeeperTests
     private const int BobPeer = 3;
 
     private ManualTimeProvider _time = null!;
-    private PeerUidMap _peers = null!;
+    private PeerStateTable _peers = null!;
     private RecordingClientsConnection _clientsConnection = null!;
     private PeerGatekeeper _gatekeeper = null!;
 
@@ -21,7 +21,7 @@ public class PeerGatekeeperTests
     public void SetUp()
     {
         _time = new ManualTimeProvider(1_700_000_000);
-        _peers = new PeerUidMap();
+        _peers = new PeerStateTable();
         _clientsConnection = new RecordingClientsConnection();
         _gatekeeper = new PeerGatekeeper(_clientsConnection, _time, _peers);
     }
@@ -42,8 +42,8 @@ public class PeerGatekeeperTests
         _gatekeeper.DisconnectExpired();
 
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
-        AssertThat(_gatekeeper.IsDisconnecting(AlicePeer)).IsTrue();
-        AssertThat(_gatekeeper.IsDisconnecting(BobPeer)).IsFalse();
+        AssertThat(_peers.IsCut(AlicePeer)).IsTrue();
+        AssertThat(_peers.IsCut(BobPeer)).IsFalse();
     }
 
     [TestCase]
@@ -51,7 +51,7 @@ public class PeerGatekeeperTests
     public void DisconnectExpired_JoinedPeer_StaysAfterTheDeadline()
     {
         _gatekeeper.StartHandshake(AlicePeer);
-        _peers.Bind("alice", AlicePeer);
+        _peers.Join(AlicePeer, "alice");
         _time.Now += PeerGatekeeper.HandshakeTimeout;
 
         _gatekeeper.DisconnectExpired();
@@ -92,24 +92,26 @@ public class PeerGatekeeperTests
     {
         _gatekeeper.Disconnect(AlicePeer);
         _gatekeeper.Disconnect(AlicePeer);
+        _gatekeeper.StartHandshake(BobPeer);
+        _peers.Join(BobPeer, "bob");
+        _gatekeeper.Disconnect(BobPeer);
+        _gatekeeper.Disconnect(BobPeer);
 
-        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
+        AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer, BobPeer);
+        AssertThat(_peers.IsCut(BobPeer)).IsTrue();
     }
 
-    // ENet may give a later peer the same id
     [TestCase]
     [RequireGodotRuntime]
-    public void Forget_ClearsTheMarkAndTheDeadline()
+    public void Reject_CutPeer_SendsNothing()
     {
-        _gatekeeper.StartHandshake(BobPeer);
+        _gatekeeper.StartHandshake(AlicePeer);
+        _peers.Join(AlicePeer, "alice");
         _gatekeeper.Disconnect(AlicePeer);
 
-        _gatekeeper.Forget(AlicePeer);
-        _gatekeeper.Forget(BobPeer);
-        _time.Now += PeerGatekeeper.HandshakeTimeout;
-        _gatekeeper.DisconnectExpired();
+        _gatekeeper.Reject(AlicePeer, JoinRejectReason.InternalError);
 
-        AssertThat(_gatekeeper.IsDisconnecting(AlicePeer)).IsFalse();
+        AssertThat(_clientsConnection.Packets).IsEmpty();
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
 
