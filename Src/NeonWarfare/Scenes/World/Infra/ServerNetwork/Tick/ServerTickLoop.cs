@@ -46,8 +46,6 @@ public class ServerTickLoop(
 
     private readonly ILogger _log = LogFactory.GetForStatic<ServerTickLoop>();
 
-    private bool _started;
-
     /// <summary>
     /// Grows at the start of <see cref="RunTick"/>: inside tick N it is N, and it stays N until tick N + 1 starts.
     /// 0 before the first tick of a new world, the saved tick before the first tick of a loaded one.
@@ -55,11 +53,16 @@ public class ServerTickLoop(
     public long CurrentTick { get; private set; }
 
     /// <summary>
+    /// Whether a tick has run in this World: before that its baselines hold nothing to save.
+    /// </summary>
+    public bool Started { get; private set; }
+
+    /// <summary>
     /// Continues the tick counter of a loaded world: the first tick after it is <paramref name="tick"/> + 1.
     /// </summary>
     public void Restore(long tick)
     {
-        if (_started) throw new InvalidOperationException(RestoreAfterTickError.FormatWith(CurrentTick));
+        if (Started) throw new InvalidOperationException(RestoreAfterTickError.FormatWith(CurrentTick));
         if (tick < 0) throw new ArgumentOutOfRangeException(nameof(tick), tick, NegativeTickError.FormatWith(tick));
 
         CurrentTick = tick;
@@ -68,7 +71,7 @@ public class ServerTickLoop(
     // Calls from ServerTickNode
     public void RunTick()
     {
-        _started = true;
+        Started = true;
         CurrentTick++;
         
         // A peer that joins in this tick gets the state at its end from its snapshot, and has nothing to apply a

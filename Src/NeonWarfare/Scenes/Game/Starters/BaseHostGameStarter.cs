@@ -1,4 +1,5 @@
 using Godot;
+using NeonWarfare.Scenes.World;
 using NeonWarfare.Scripts.Content.LoadingScreen;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
@@ -20,9 +21,10 @@ public abstract class BaseHostGameStarter(
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Loading);
 
         Network.Network network = game.AddNetwork();
+        ResumableGame lastGame = ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated);
         if (mustSetLastGame)
         {
-            SetLastGame(ResumableGame.GetCreateServer(saveFileName, port ?? DefaultPort, isDedicated));
+            SetLastGame(lastGame);
         }
 
         Error error = network.HostServer(port ?? DefaultPort);
@@ -32,16 +34,29 @@ public abstract class BaseHostGameStarter(
             return;
         }
 
-        //TODO 022b load the save; 028 adminUid
-        AddWorld(game);
+        //TODO 028 adminUid
+        World.World world = AddServerWorld(saveFileName, origin => AddWorld(game, origin), out string loadError);
+        if (world == null)
+        {
+            OnLoadFailed(loadError);
+            return;
+        }
+        if (mustSetLastGame)
+        {
+            UpdateLastGameOnSave(world, lastGame);
+        }
+
         network.OpenServer();
         OnServerOpened(game);
     }
 
-    protected abstract void AddWorld(Game game);
+    protected abstract World.World AddWorld(Game game, WorldOrigin origin);
 
     protected virtual void OnServerOpened(Game game) { }
 
     // Network has already logged the error
     protected virtual void OnHostingFailed(Error error) { }
+
+    // The server is not opened: nobody has connected yet
+    protected abstract void OnLoadFailed(string message);
 }

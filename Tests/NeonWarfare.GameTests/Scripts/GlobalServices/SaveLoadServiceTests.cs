@@ -73,13 +73,41 @@ public class SaveLoadServiceTests
     // A process killed between the two renames leaves only the backup
     [TestCase]
     [RequireGodotRuntime]
-    public void InterruptedSave_IsRestoredFromTheBackup()
+    public void Init_RestoresASaveLeftOnlyAsItsBackup()
     {
         Write(Path() + ".backup", Old);
 
-        AssertThat(_service.CheckFileExists(FileName)).IsTrue();
-        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
+        _service.Init();
+
         AssertThat(_service.GetAllSaveFiles().Select(file => file.FileName)).ContainsExactly(FileName);
+        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
+        AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
+    }
+
+    // The file is the newer one: the backup is left by a complete save that could not remove it
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Init_KeepsAFileOverItsBackup()
+    {
+        Write(Path(), New);
+        Write(Path() + ".backup", Old);
+
+        _service.Init();
+
+        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(New);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Init_RemovesAnUnfinishedTemporaryFile_KeepsTheSave()
+    {
+        _service.SaveToDisk(Old, FileName);
+        Write(Path() + ".tmp", New);
+
+        _service.Init();
+
+        AssertThat(DirAccess.GetFilesAt(_dir)).ContainsExactly(FileName + ".bin");
+        AssertThat(_service.LoadFromDisk(FileName)).IsEqual(Old);
     }
 
     private string Path() => _service.GetFullPath(FileName);

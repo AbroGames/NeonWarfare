@@ -4,6 +4,7 @@ using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
+using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using RepliCAT;
 
 namespace NeonWarfare.Scenes.World;
@@ -16,4 +17,5 @@ public record WorldDependencies(
     WorldPackedScenes Scenes,
     EntityCatalog Entities,
     IClientsConnection ClientsConnection,
-    IServerConnection ServerConnection);
+    IServerConnection ServerConnection,
+    ISaveFiles SaveFiles);

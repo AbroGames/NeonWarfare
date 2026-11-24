@@ -61,7 +61,7 @@ public class CommandHandlerTests
     [Fact]
     public void SentCommands_HavePlayerHandler()
     {
-        FailureReport report = new("Commands sent by PlayerCommandSender that the server never takes from a player");
+        FailureReport report = new("Commands sent that the server never takes from a player");
         IReadOnlySet<string> playerHandlers = PlayerHandledCommands();
 
         foreach (CommandSends.Site site in CommandSends.All())

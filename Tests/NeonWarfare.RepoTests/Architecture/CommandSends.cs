@@ -4,25 +4,33 @@ using NeonWarfare.RepoTests.Infrastructure;
 namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
-/// The call sites of <c>PlayerCommandSender.Send&lt;TCommand&gt;</c>, the only sender of commands in the World.
+/// The call sites of <c>Send&lt;TCommand&gt;</c> of a command sender: <c>PlayerCommandSender</c>, the only sender of
+/// commands in the World, and the World's <c>ICommandSender</c> entry point that forwards to it.
 /// </summary>
 public static class CommandSends
 {
-    private const string Sender = WorldLayers.WorldNamespace + ".Infra.ClientNetwork.PlayerCommandSender";
+    private const string PlayerSender = WorldLayers.WorldNamespace + ".Infra.ClientNetwork.PlayerCommandSender";
+    private const string WorldRoot = WorldLayers.WorldNamespace + ".World";
+    private const string WorldSender = WorldRoot + "/ICommandSender";
     private const string SendMethod = "Send";
+
+    private static readonly string[] Senders = [PlayerSender, WorldRoot, WorldSender];
 
     public sealed record Site(TypeDefinition Caller, IMemberDefinition From, TypeReference Command);
 
     /// <summary>
-    /// Throws when the sender or its method is gone or nothing calls it: the rules must never have nothing to check.
+    /// Throws when a sender or its method is gone or nothing calls them: the rules must never have nothing to check.
     /// </summary>
     public static IReadOnlyList<Site> All()
     {
         GameAssembly game = GameAssembly.Instance;
-        TypeDefinition sender = game.FindByName(Sender) ?? throw new InvalidOperationException($"{Sender} is gone");
-        if (!sender.Methods.Any(method => method is { Name: SendMethod, HasGenericParameters: true }))
+        foreach (string name in Senders)
         {
-            throw new InvalidOperationException($"{Sender}.{SendMethod}<TCommand> is gone");
+            TypeDefinition sender = game.FindByName(name) ?? throw new InvalidOperationException($"{name} is gone");
+            if (!sender.Methods.Any(method => method is { Name: SendMethod, HasGenericParameters: true }))
+            {
+                throw new InvalidOperationException($"{name}.{SendMethod}<TCommand> is gone");
+            }
         }
 
         List<Site> sites = [];
@@ -30,23 +38,32 @@ public static class CommandSends
         {
             foreach (TypeReferenceSite site in TypeReferences.Of(type))
             {
-                if (site.Type.FullName != Sender || site.Via is not GenericInstanceMethod { Name: SendMethod } call)
+                if (!Senders.Contains(site.Type.FullName)
+                    || site.Via is not GenericInstanceMethod { Name: SendMethod } call)
                 {
                     continue;
                 }
 
-                TypeReference command = call.GenericArguments[0] is GenericParameter parameter
-                    ? throw new NotSupportedException(
+                if (call.GenericArguments[0] is GenericParameter parameter)
+                {
+                    // One sender forwarding to another: its own callers name the command
+                    if (IsSender(site.From)) continue;
+
+                    throw new NotSupportedException(
                         $"{GameAssembly.Describe(site.From)} sends the type parameter {parameter.Name}: a generic " +
-                        "sender is not supported by the command rules")
-                    : call.GenericArguments[0];
-                sites.Add(new Site(type, site.From, command));
+                        "sender is not supported by the command rules");
+                }
+                sites.Add(new Site(type, site.From, call.GenericArguments[0]));
             }
         }
         if (sites.Count == 0)
         {
-            throw new InvalidOperationException($"Nothing calls {Sender}.{SendMethod}<TCommand>");
+            throw new InvalidOperationException(
+                $"Nothing calls {SendMethod}<TCommand> of {string.Join(", ", Senders)}");
         }
         return sites;
     }
+
+    private static bool IsSender(IMemberDefinition member) =>
+        member is MethodDefinition { Name: SendMethod } method && Senders.Contains(method.DeclaringType.FullName);
 }

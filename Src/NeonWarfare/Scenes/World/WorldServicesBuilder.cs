@@ -42,6 +42,7 @@ public class WorldServicesBuilder
         services.AddSingleton(dependencies.Entities);
         services.AddSingleton(dependencies.ClientsConnection);
         services.AddSingleton(dependencies.ServerConnection);
+        services.AddSingleton(dependencies.SaveFiles);
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one
         // layer. Every layer reads it through IEntityFinder, only the spawning one registers
