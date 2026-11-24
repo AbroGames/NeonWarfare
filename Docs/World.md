@@ -65,6 +65,8 @@ and `WorldRoot` — the spawning layers, `[Simulation]` and `[ClientReplication]
 `IEntityFinder` is open to all. `ConstructorLayerTests` checks all of it, the other `Architecture/` tests the rest:
 
 * leaf simulations never call each other, a command handler calls only facades;
+* no Simulation constructor chain reaches the tick loop, the command machinery or `PeerSessions`: they reach the
+  handlers, which are built from the Simulation;
 * only the Simulation writes models and publishes events, and only inside the tick;
 * events reach only `[EventHandler]` methods of the Presentation, `HudMailbox.Post` is reached only from them;
 * a Presentation exposes only property getters, and they change nothing (`HudMailbox` aside);
@@ -95,7 +97,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
 | `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
-| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
+| `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step; `ServerTickClock` — the tick counter |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |

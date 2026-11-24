@@ -35,7 +35,7 @@ A process has no role. What runs is decided by the set of layers the starter bui
 `ServerTickLoop.RunTick()` last in every physics step, so the physics callbacks and every other `_PhysicsProcess`
 belong to the tick. `RunTick` goes strictly in this order:
 
-1. `CurrentTick++`;
+1. `ServerTickClock.StartTick()` — the tick counter;
 2. `CommandDispatcher.ProcessAll()` — every command and disconnection received since the last tick;
 3. `PeerGatekeeper.DisconnectExpired()` — peers that have not joined in `HandshakeTimeout` (10 s);
 4. the state packet to every peer joined before this tick;
