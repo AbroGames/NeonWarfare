@@ -97,7 +97,7 @@ public class ServerTickLoop(
         var writer = new BitWriter();
         if (!stateReplicator.TryWrite(CurrentTick, writer)) return;
 
-        ReadOnlySpan<byte> packet = writer.AsSpan();
+        ReadOnlySpan<byte> body = writer.AsSpan();
         // The host's own World has the state already: its Simulation wrote it
         foreach (int peerId in joinedBefore.Where(peerId => peerId != clientsConnection.LocalPeerId))
         {
@@ -105,7 +105,7 @@ public class ServerTickLoop(
 
             try
             {
-                clientsConnection.Send(peerId, packet);
+                clientsConnection.SendState(peerId, body);
             }
             catch (Exception e)
             {
@@ -129,7 +129,6 @@ public class ServerTickLoop(
         var writer = new BitWriter();
         try
         {
-            writer.WriteBits((byte) ServerPacketKind.Snapshot, 8);
             writer.WriteVarUInt((ulong) CurrentTick);
             stateReplicator.WriteSnapshot(writer);
         }
@@ -152,12 +151,12 @@ public class ServerTickLoop(
             return;
         }
 
-        ReadOnlySpan<byte> packet = writer.AsSpan();
+        ReadOnlySpan<byte> body = writer.AsSpan();
         foreach (int peerId in joined)
         {
             try
             {
-                clientsConnection.Send(peerId, packet);
+                clientsConnection.SendSnapshot(peerId, body);
             }
             catch (Exception e)
             {
@@ -169,18 +168,16 @@ public class ServerTickLoop(
 
     private void SendEvents()
     {
-        ArrayBufferWriter<byte> packet = new();
+        ArrayBufferWriter<byte> section = new();
         foreach (int peerId in outbox.Peers.Where(IsReachable).ToList())
         {
-            // On the host this also covers its own World throwing: Game delivers the loopback inside Send
+            // On the host this also covers its own World throwing: its transport delivers the events inside the call
             try
             {
-                packet.ResetWrittenCount();
-                packet.GetSpan(1)[0] = (byte) ServerPacketKind.Events;
-                packet.Advance(1);
-                if (outbox.DrainEvents(peerId, packet) == 0) continue;
+                section.ResetWrittenCount();
+                if (outbox.DrainEvents(peerId, section) == 0) continue;
 
-                clientsConnection.Send(peerId, packet.WrittenSpan);
+                clientsConnection.SendEvents(peerId, section.WrittenSpan);
             }
             catch (Exception e)
             {

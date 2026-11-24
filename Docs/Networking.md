@@ -18,9 +18,9 @@ World; their layers and the World itself are in [World](World.md).
   with their World. `ServerTransport` routes the remote peers of a server into `World.StartHandshake` /
   `QueueDisconnection` / `ReceiveFromClient`; `HostTransport` loops the host's own peer back and hands the others to
   its `ServerTransport`; `ClientTransport` is a remote client's connection, which has no World until the join
-  snapshot. The direction a configuration does not use is `NoConnection`. `GameProtocol` holds what the client
-  needs before its World exists: `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT
-  `Replicator`.
+  snapshot. The World hands `IClientsConnection` bodies only, one method per packet kind. The direction a
+  configuration does not use is `NoConnection`. `GameProtocol` holds what the client needs before its World exists:
+  `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
   `HostTransport` hands it to its own World synchronously, inside the call. So the host's commands pass the same
   decoding and whitelist as a remote client's, and its event handlers run in the physics step, before `_Process`.
@@ -64,21 +64,23 @@ command — only from a joined peer — to its `IPlayerCommandHandler<T>`, which
 
 ## Packets: server → client
 
-The first byte of every packet is its `ServerPacketKind`:
+The first byte of every packet is its `ServerPacketKind`, written and read only by `ServerPackets`
+(`Game/Transport/`); the World sees only the bodies:
 
 | Kind | Content | To whom |
 |---|---|---|
 | `Snapshot` | The tick, then a spawn record of every entity (`StateReplicator.WriteSnapshot`) | A peer that joined in this tick, except the host's own |
 | `State` | The tick, then spawns → models → despawns (`StateReplicator.TryWrite`) | Every peer joined before this tick, except the host's own |
 | `Events` | The events of this tick for this peer (`EventOutbox.DrainEvents`) | Every joined peer, the host's own included |
-| `JoinRejected` | One `JoinRejectReason` byte (`JoinRejectedPacket`), frozen across builds | A peer whose join is refused, just before the disconnect |
+| `JoinRejected` | One `JoinRejectReason` byte, frozen across builds | A peer whose join is refused, just before the disconnect |
 
 The state packet is the same for everyone and written once; an empty one is not sent. It goes before the events,
 so an event handler sees the models already at the end of the tick, on the host and on a remote client alike.
 ENet delivers a fragmented reliable packet whole, so a client applies a tick atomically.
 
-A client applies a packet at once, in `peer_packet`, with no queue: `StateApplier` the state, `EventDispatcher` the
-events. The host gets only its events packet: its Simulation has already written the state.
+A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes it by kind, the state to
+`World.ReceiveState` (`StateApplier`), the events to `World.ReceiveEvents` (`EventDispatcher`). The host gets only its
+events: its Simulation has already written the state.
 `JoinRejected` never reaches a World: the transport reads it, with or without a World, and calls
 `ILocalPlayerOwner.JoinRejected`; `Game` reports it as `Failed`, and the starter leaves for the menu with the reason,
 on a remote client and on a host refused its own join alike.

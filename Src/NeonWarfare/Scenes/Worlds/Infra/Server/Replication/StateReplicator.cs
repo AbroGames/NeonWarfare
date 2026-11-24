@@ -14,7 +14,7 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
 
 /// <summary>
-/// Writes the state packet of the tick: the kind byte, the tick number (varuint), then three sections, each closed by
+/// Writes the state packet body of the tick: the tick number (varuint), then three sections, each closed by
 /// <see cref="NetId.None"/>:
 /// <list type="number">
 /// <item>spawns — for every entity spawned since the last packet, by NetId: its NetId, kind id and parent NetId
@@ -83,7 +83,6 @@ public class StateReplicator
         LastSentTick = tick;
 
         int start = writer.BitPosition;
-        writer.WriteBits((byte) ServerPacketKind.State, 8);
         writer.WriteVarUInt((ulong) tick);
 
         bool spawnedOrDespawned = _spawned.Count > 0 || _despawned.Count > 0;
@@ -103,7 +102,7 @@ public class StateReplicator
 
     /// <summary>
     /// Every entity as it was at the last send, by NetId: the same record as in the spawns section of the state
-    /// packet, closed by <see cref="NetId.None"/>. No packet kind and no tick: the caller frames it. Written right
+    /// packet, closed by <see cref="NetId.None"/>. No tick: the caller writes it. Written right
     /// after <see cref="TryWrite"/>, before anything spawns: "the snapshot, then the next state packet" is then
     /// consistent, because it is built from the baselines, not from the live entities. An entity despawned since the
     /// send is still in it, and the next packet despawns it. An entity whose delta was never written goes without

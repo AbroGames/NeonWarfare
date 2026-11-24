@@ -102,8 +102,8 @@ public class ServerTickLoopTests
         AssertThat(EventPackets().Select(sent => sent.PeerId)).ContainsExactlyInAnyOrder(HostPeer, AlicePeer);
         foreach (RecordingClientsConnection.Sent sent in EventPackets())
         {
-            IReadOnlyList<object> events = _codec.ReadSection(sent.Packet.AsMemory(1..), EventTypes, out int read);
-            AssertThat(read).IsEqual(sent.Packet.Length - 1);
+            IReadOnlyList<object> events = _codec.ReadSection(sent.Body, EventTypes, out int read);
+            AssertThat(read).IsEqual(sent.Body.Length);
             AssertThat(events).ContainsExactly(Hello);
         }
     }
@@ -209,7 +209,7 @@ public class ServerTickLoopTests
                 _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
-        _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().DispatchPacket;
+        _clientsConnection.Loopback = _provider.GetRequiredService<EventDispatcher>().Dispatch;
 
         JoinDirectly("host", "Host", HostPeer);
         JoinDirectly("alice", "Alice", AlicePeer);
@@ -231,7 +231,7 @@ public class ServerTickLoopTests
     private PlayersModel Players() => _provider.GetRequiredService<PlayersStorageQuery>().Model;
 
     private IEnumerable<RecordingClientsConnection.Sent> EventPackets() =>
-        _clientsConnection.Packets.Where(sent => sent.Packet[0] == (byte) ServerPacketKind.Events);
+        _clientsConnection.Packets.Where(sent => sent.Kind == SentKind.Events);
 
     private ServerTickLoop Loop() => _provider.GetRequiredService<ServerTickLoop>();
 

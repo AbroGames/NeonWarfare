@@ -39,10 +39,6 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     private const string NoLayerError = "World has no {0} layer";
     private const string NotExposedError = "{0} is not a [Query] or [Presentation] service";
     private const string NotWorldServiceError = "{0} has no world layer attribute";
-    private const string EmptyPacketError = "The packet is empty.";
-    private const string UnknownKindError = "Unknown server packet kind {0}.";
-    private const string SecondSnapshotError = "A snapshot for a World that already has one.";
-    private const string JoinRejectedError = "A join rejection is read by the transport, not by the World.";
 
     private ServiceProvider _services;
     private WorldLayer _layers;
@@ -68,7 +64,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
                 Service<SaveService>().Init(newWorld.SaveFileName);
                 break;
             case WorldOrigin.FromSnapshot snapshot:
-                Service<StateApplier>().ApplySnapshot(snapshot.Packet);
+                Service<StateApplier>().ApplySnapshot(snapshot.Body);
                 break;
             case WorldOrigin.FromSave save:
                 Service<SaveLoader>().Load(save.Save);
@@ -117,30 +113,11 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     public void QueueDisconnection(int peerId) =>
         Service<CommandInbox>().EnqueuePeerDisconnected(peerId);
 
-    /// <exception cref="NetMessageFormatException">The packet is broken or of an unknown kind.</exception>
-    public void ReceiveFromServer(ReadOnlyMemory<byte> packet)
-    {
-        if (packet.IsEmpty)
-        {
-            throw new NetMessageFormatException(EmptyPacketError);
-        }
+    /// <exception cref="NetMessageFormatException">The body is broken.</exception>
+    public void ReceiveState(ReadOnlyMemory<byte> body) => Service<StateApplier>().ApplyState(body);
 
-        switch ((ServerPacketKind) packet.Span[0])
-        {
-            case ServerPacketKind.Events:
-                Service<EventDispatcher>().DispatchPacket(packet);
-                break;
-            case ServerPacketKind.State:
-                Service<StateApplier>().ApplyPacket(packet);
-                break;
-            case ServerPacketKind.Snapshot:
-                throw new NetMessageFormatException(SecondSnapshotError);
-            case ServerPacketKind.JoinRejected:
-                throw new NetMessageFormatException(JoinRejectedError);
-            default:
-                throw new NetMessageFormatException(UnknownKindError.FormatWith(packet.Span[0]));
-        }
-    }
+    /// <exception cref="NetMessageFormatException">The body is broken.</exception>
+    public void ReceiveEvents(ReadOnlyMemory<byte> body) => Service<EventDispatcher>().Dispatch(body);
 
     public override void _Notification(int what)
     {

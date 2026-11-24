@@ -252,8 +252,8 @@ public class SaveTests
 
         AssertThat(failed).HasSize(1);
         AssertThat(_connection.Packets.Where(sent => sent.PeerId == AlicePeer)
-                .Select(sent => (ServerPacketKind) sent.Packet[0]))
-            .Contains(ServerPacketKind.Events);
+                .Select(sent => sent.Kind))
+            .Contains(SentKind.Events);
     }
 
     // A failed delta has reset the baseline, so the entity has no state to save until a delta succeeds: the save fails
@@ -354,9 +354,9 @@ public class SaveTests
         ServiceProvider bob = Build(TestWorldSetups.RemoteClient(), new RecordingClientsConnection(), out _);
         var applier = bob.GetRequiredService<StateApplier>();
         // Only the snapshot: Bob's events are not under test
-        connection.Receivers[BobPeer] = packet =>
+        connection.Receivers[BobPeer] = (kind, body) =>
         {
-            if (packet.Span[0] == (byte) ServerPacketKind.Snapshot) applier.ApplySnapshot(packet);
+            if (kind == SentKind.Snapshot) applier.ApplySnapshot(body);
         };
         Tick(loaded);
 

@@ -18,10 +18,10 @@ in `Worlds/Features/` — see [World features](World-features.md). The packets a
 | `Send<TCommand>(command)` | The `Hud`, through `World.ICommandSender`: the only way a command leaves the World |
 | `Get<T>()` | The screens, through `World.IReader`: only `[Query]` and `[Presentation]` services are handed out |
 | `ReceiveFromClient`, `StartHandshake`, `QueueDisconnection` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
-| `ReceiveFromServer` | `ClientTransport`, and `HostTransport` for the host's own peer: a state or events packet |
+| `ReceiveState`, `ReceiveEvents` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the body of a packet |
 
 `WorldOrigin` says where the state comes from: `NewWorld(saveFileName)` — `NewWorldSimulationFacade.Create()` spawns
-what a world starts with; `FromSave(save, saveFileName)` — `SaveLoader`; `FromSnapshot(packet)` — the join snapshot,
+what a world starts with; `FromSave(save, saveFileName)` — `SaveLoader`; `FromSnapshot(body)` — the join snapshot,
 on a remote client. A World is never empty: a remote client creates it only from the first snapshot. A broken save
 or snapshot throws from `InitPreReady`, and the caller frees the World.
 
@@ -93,7 +93,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Ports` | What the owning process supplies, everything with an effect beyond the World: `IClientsConnection` and `IServerConnection` (implemented by the transports of `Game`, the host's own peer looped back synchronously), `ISaveFiles`, `IServerOwner` (see [Shutdown](Shutdown.md)), `ILocalPlayerOwner` (both owners implemented by `Game`), `LocalPlayer` — who this process is, `WorldAdmin` — whose join grants `IsAdmin`; refers to nothing in `Features/` or the World root |
 | `Infra` | The machinery shared by every feature; refers to nothing in `Features/` or the World root |
 | `Infra/Composition` | `WorldLayer` — the layer flags; `WorldServiceAttribute` and one attribute per layer, see [Layers](#layers) |
-| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `ServerPacketKind` (the first byte of a server packet), `JoinRequestCommand`, `JoinRejectReason` and `JoinRejectedPacket` (the same layout in every build), `ColorFormatter` |
+| `Infra/Protocol` | The wire format: `Command` and `Event` bases (typing only), `NetMessageCodec` (a `ushort` type id and a MessagePack body) with `NetMessageFormatException`, `ProtocolHasher`, `JoinRequestCommand`, `JoinRejectReason`, `ColorFormatter` |
 | `Infra/Server` | The `[Server]` layer, one folder per topic |
 | `Infra/Server/Tick` | `ServerTickLoop` — one server tick, see [Networking](Networking.md#the-server-tick); `ServerTickNode` runs it last in the physics step |
 | `Infra/Server/Commands` | `CommandInbox` (decoded on arrival) → `CommandDispatcher` (drains it in the tick); `CommandHandlerRegistry` — the handlers and the whitelist built from them; `IPlayerCommandHandler<TCommand>` |

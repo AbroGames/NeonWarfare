@@ -217,7 +217,7 @@ public class PeerSessionsTests
 
     private List<(int, JoinRejectReason)> Rejections() =>
         _clientsConnection.Packets
-            .Where(sent => sent.Packet[0] == (byte) ServerPacketKind.JoinRejected)
-            .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Packet[1]))
+            .Where(sent => sent.Kind == SentKind.JoinRejected)
+            .Select(sent => (sent.PeerId, (JoinRejectReason) sent.Body[0]))
             .ToList();
 }

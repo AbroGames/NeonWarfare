@@ -75,7 +75,7 @@ public class WorldAssemblerTests
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
         NetMessageCodecTests.AssertRejected(() => _assembler.RemoteClient(
-            TestWorldSetups.RemoteClient(localPlayerOwner: _owner), [(byte) ServerPacketKind.Snapshot, 1], transport));
+            TestWorldSetups.RemoteClient(localPlayerOwner: _owner), new byte[] { 1 }, transport));
 
         AssertThat(Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount)).IsEqual(orphans);
     }

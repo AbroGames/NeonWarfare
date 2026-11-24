@@ -46,9 +46,8 @@ public class EventDispatcherTests
             new ChatServerMessageEvent(3, "server"),
             new LocalizedChatMessageEvent(4, "HUD__CHAT_PLAYER_LEFT", ["Alice"]));
 
-        int bytesRead = provider.GetRequiredService<EventDispatcher>().Dispatch(section);
+        provider.GetRequiredService<EventDispatcher>().Dispatch(section);
 
-        AssertThat(bytesRead).IsEqual(section.Length);
         AssertThat(provider.GetRequiredService<ChatPresentation>().Entries).ContainsExactly(
             new LocalizedServerEntry(1, "HUD__CHAT_PLAYER_JOINED", ["Alice"]),
             new PlayerMessageEntry(2, "alice", "Alice", "hi"),
@@ -84,33 +83,13 @@ public class EventDispatcherTests
 
     [TestCase]
     [RequireGodotRuntime]
-    public void DispatchPacket_EventsPacket_ReachesHandlers()
-    {
-        var chat = new ChatPresentation(new HudMailbox(new ManualFrameProvider()));
-        EventDispatcher dispatcher = Dispatcher(chat);
-
-        dispatcher.DispatchPacket(Packet(ServerPacketKind.Events, Section(new ChatServerMessageEvent(1, "first"))));
-
-        AssertThat(chat.Entries).ContainsExactly(new ServerTextEntry(1, "first"));
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void DispatchPacket_EmptyWrongKindOrTrailingBytes_ThrowsAndCallsNothing()
+    public void Dispatch_TrailingBytes_ThrowsAndCallsNothing()
     {
         var chat = new ChatPresentation(new HudMailbox(new ManualFrameProvider()));
         EventDispatcher dispatcher = Dispatcher(chat);
         byte[] section = Section(new ChatServerMessageEvent(1, "first"));
 
-        foreach (byte[] packet in new[]
-                 {
-                     [],
-                     Packet((ServerPacketKind) 0, section),
-                     Packet(ServerPacketKind.Events, [..section, 0]),
-                 })
-        {
-            NetMessageCodecTests.AssertRejected(() => dispatcher.DispatchPacket(packet));
-        }
+        NetMessageCodecTests.AssertRejected(() => dispatcher.Dispatch((byte[]) [..section, 0]));
         AssertThat(chat.Entries).IsEmpty();
     }
 
@@ -147,8 +126,6 @@ public class EventDispatcherTests
         _codec.WriteSection(buffer, events.Select(@event => (ReadOnlyMemory<byte>) _codec.Encode(@event)).ToList());
         return buffer.WrittenSpan.ToArray();
     }
-
-    private static byte[] Packet(ServerPacketKind kind, byte[] section) => [(byte) kind, ..section];
 
     // A frame that never ends: everything posted during the test is still readable at its end
     private WorldDependencies Dependencies()

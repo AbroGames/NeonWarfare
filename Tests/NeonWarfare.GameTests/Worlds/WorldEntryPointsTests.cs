@@ -75,28 +75,6 @@ public class WorldEntryPointsTests
             new ChatPresentation.PlayerMessageEntry(Now, HostUid, "Host", "hello"));
     }
 
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ReceiveFromServer_JoinRejected_Throws()
-    {
-        World world = HostWorld();
-
-        AssertThrown(() => world.ReceiveFromServer(JoinRejectedPacket.Write(JoinRejectReason.InvalidNick)))
-            .IsInstanceOf<NetMessageFormatException>();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ReceiveFromServer_BrokenPacket_Throws()
-    {
-        World world = HostWorld();
-
-        foreach (byte[] packet in new byte[][] { [], [0] })
-        {
-            AssertThrown(() => world.ReceiveFromServer(packet)).IsInstanceOf<NetMessageFormatException>();
-        }
-    }
-
     // A missing client layer is shown by a dedicated server, a missing server one by a World before its InitPreReady
     [TestCase]
     [RequireGodotRuntime]
@@ -105,8 +83,8 @@ public class WorldEntryPointsTests
         World dedicated = CreateWorld(DedicatedSetup());
         World notInitialized = AutoFree(new World())!;
 
-        AssertThrown(() => dedicated.ReceiveFromServer(new byte[] { (byte) ServerPacketKind.Events }))
-            .IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => dedicated.ReceiveState(new byte[] { 0 })).IsInstanceOf<InvalidOperationException>();
+        AssertThrown(() => dedicated.ReceiveEvents(new byte[] { 0 })).IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.ReceiveFromClient(HostPeer, new byte[] { 0 }))
             .IsInstanceOf<InvalidOperationException>();
         AssertThrown(() => notInitialized.StartHandshake(HostPeer)).IsInstanceOf<InvalidOperationException>();
@@ -127,19 +105,6 @@ public class WorldEntryPointsTests
 
         AssertThat(client.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Nick))
             .ContainsExactlyInAnyOrder("Host", "Remote");
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void ReceiveFromServer_SecondSnapshot_Throws()
-    {
-        World host = HostWorld();
-        JoinHost(host);
-        JoinRemote(host);
-        byte[] snapshot = RemoteSnapshot();
-        World client = CreateWorld(RemoteClientSetup(), new WorldOrigin.FromSnapshot(snapshot));
-
-        AssertThrown(() => client.ReceiveFromServer(snapshot)).IsInstanceOf<NetMessageFormatException>();
     }
 
     [TestCase]
@@ -287,8 +252,8 @@ public class WorldEntryPointsTests
         ((IServerConnection) _connection).Send(_codec.Encode(invalid.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
 
-        AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Packet[0])))
-            .ContainsExactly((HostPeer, (byte) ServerPacketKind.JoinRejected));
+        AssertThat(_connection.Packets.Select(sent => (sent.PeerId, sent.Kind)))
+            .ContainsExactly((HostPeer, SentKind.JoinRejected));
         AssertThat(owner.JoinedCount).IsEqual(0);
         AssertThrown(() => { _ = world.Get<LocalPlayerPresentation>().Player; })
             .IsInstanceOf<InvalidOperationException>();
@@ -333,13 +298,13 @@ public class WorldEntryPointsTests
         JoinHost(host);
         JoinRemote(host);
         byte[] events = _connection.Packets
-            .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Events)
-            .Packet;
+            .Single(sent => sent.PeerId == RemotePeer && sent.Kind == SentKind.Events)
+            .Body;
         var owner = new RecordingLocalPlayerOwner();
         World client = CreateWorld(RemoteClientSetup(owner), new WorldOrigin.FromSnapshot(RemoteSnapshot()));
         AssertThat(owner.JoinedCount).IsEqual(0);
 
-        client.ReceiveFromServer(events);
+        client.ReceiveEvents(events);
 
         AssertThat(owner.JoinedCount).IsEqual(1);
     }
@@ -356,7 +321,7 @@ public class WorldEntryPointsTests
     private World HostWorld(WorldOrigin? origin = null, ILocalPlayerOwner? owner = null)
     {
         World world = CreateWorld(HostSetup(owner), origin);
-        _connection.Loopback = packet => world.ReceiveFromServer(packet);
+        _connection.Loopback = section => world.ReceiveEvents(section);
         _connection.CommandLoopback = packet => world.ReceiveFromClient(HostPeer, packet);
         return world;
     }
@@ -412,8 +377,8 @@ public class WorldEntryPointsTests
 
     private byte[] RemoteSnapshot() =>
         _connection.Packets
-            .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Snapshot)
-            .Packet;
+            .Single(sent => sent.PeerId == RemotePeer && sent.Kind == SentKind.Snapshot)
+            .Body;
 
     private static World InTree(World world)
     {

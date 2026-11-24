@@ -24,6 +24,7 @@ public sealed class HostTransport(
     private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string LocalDisconnectedLog = "The host's own peer is disconnected: the host has no player";
     private const string NoNetworkError = "Peer {0} is not the host's own, but there is no network";
+    private const string LocalPeerError = "Peer {0} is the host's own: its World is the server's and needs no state";
 
     private readonly ILogger _log = LogFactory.GetForStatic<HostTransport>();
 
@@ -38,22 +39,30 @@ public sealed class HostTransport(
         ((IServerConnection) this).Send(codec.Encode(localPlayer.ToJoinRequest(codec.ProtocolHash)));
     }
 
-    void IClientsConnection.Send(int peerId, ReadOnlySpan<byte> packet)
+    void IClientsConnection.SendState(int peerId, ReadOnlySpan<byte> body) => Remote(peerId).SendState(peerId, body);
+
+    void IClientsConnection.SendSnapshot(int peerId, ReadOnlySpan<byte> body) =>
+        Remote(peerId).SendSnapshot(peerId, body);
+
+    void IClientsConnection.SendEvents(int peerId, ReadOnlySpan<byte> body)
     {
-        if (peerId != LocalPeer)
+        if (peerId == LocalPeer)
         {
-            Remote(peerId).Send(peerId, packet);
+            world.ReceiveEvents(body.ToArray());
             return;
         }
+        Remote(peerId).SendEvents(peerId, body);
+    }
 
-        if (packet.Length > 0 && packet[0] == (byte) ServerPacketKind.JoinRejected)
+    void IClientsConnection.Reject(int peerId, JoinRejectReason reason)
+    {
+        if (peerId == LocalPeer)
         {
-            JoinRejectReason reason = JoinRejectedPacket.Read(packet);
             _log.Error(JoinRejectedLog, reason);
             owner.JoinRejected(reason);
             return;
         }
-        world.ReceiveFromServer(packet.ToArray());
+        Remote(peerId).Reject(peerId, reason);
     }
 
     void IClientsConnection.Disconnect(int peerId)
@@ -71,6 +80,10 @@ public sealed class HostTransport(
 
     void IServerConnection.Send(ReadOnlySpan<byte> packet) => world.ReceiveFromClient(LocalPeer, packet.ToArray());
 
-    private ServerTransport Remote(int peerId) =>
-        remote ?? throw new InvalidOperationException(NoNetworkError.FormatWith(peerId));
+    private ServerTransport Remote(int peerId)
+    {
+        if (peerId == LocalPeer) throw new InvalidOperationException(LocalPeerError.FormatWith(peerId));
+
+        return remote ?? throw new InvalidOperationException(NoNetworkError.FormatWith(peerId));
+    }
 }
