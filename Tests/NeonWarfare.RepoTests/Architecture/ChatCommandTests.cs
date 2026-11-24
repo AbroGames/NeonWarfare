@@ -20,7 +20,8 @@ public class ChatCommandTests
         GameAssembly game = GameAssembly.Instance;
 
         List<TypeDefinition> commands = game.Types
-            .Where(type => type is { IsInterface: false, IsAbstract: false } && Implements(type, ChatCommand))
+            .Where(type => type is { IsInterface: false, IsAbstract: false }
+                           && WorldLayers.Implements(type, ChatCommand))
             .ToList();
         Assert.NotEmpty(commands);
         foreach (TypeDefinition command in commands)
@@ -33,21 +34,5 @@ public class ChatCommandTests
         }
 
         report.AssertEmpty();
-    }
-
-    // Cecil lists only the interfaces a type declares itself
-    private static bool Implements(TypeDefinition type, string interfaceName)
-    {
-        for (TypeDefinition? current = type;
-             current != null;
-             current = current.BaseType == null ? null : GameAssembly.Instance.Find(current.BaseType))
-        {
-            if (current.Interfaces.Any(implementation => implementation.InterfaceType.FullName == interfaceName))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

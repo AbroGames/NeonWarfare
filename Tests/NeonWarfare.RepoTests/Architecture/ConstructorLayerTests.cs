@@ -92,60 +92,57 @@ public class ConstructorLayerTests
                        + $"{nameof(RestrictedDependencies)} or {nameof(OpenTypes)}");
         }
 
-        foreach (TypeDefinition type in game.Types)
-        {
-            if (WorldLayers.DeclaredLayer(type) is not { } layer)
-            {
-                continue;
-            }
-
-            IEnumerable<MethodDefinition> constructors =
-                type.Methods.Where(method => method.IsConstructor && !method.IsStatic && method.IsPublic);
-            foreach (MethodDefinition constructor in constructors)
-            {
-                foreach (ParameterDefinition parameter in constructor.Parameters)
-                {
-                    TypeReference parameterType = parameter.ParameterType;
-                    if (RestrictedDependencies.TryGetValue(parameterType.FullName, out Layer[]? owners))
-                    {
-                        if (!owners.Contains(layer))
-                        {
-                            report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
-                                       $"'{parameter.Name}' of {GameAssembly.ShortName(parameterType)}, " +
-                                       $"which only {string.Join(", ", owners)} may take");
-                        }
-                        continue;
-                    }
-                    if (open.Contains(parameterType.FullName))
-                    {
-                        continue;
-                    }
-
-                    TypeDefinition? local = game.Find(parameterType);
-                    if (local != null && WorldLayers.IsModel(local))
-                    {
-                        continue;
-                    }
-
-                    Layer? parameterLayer = local == null ? null : WorldLayers.DeclaredLayer(local);
-                    if (parameterLayer is { } taken && AllowedParameterLayers[layer].Contains(taken))
-                    {
-                        continue;
-                    }
-
-                    string what = parameterLayer is { } other ? $"a {other} service" : "neither a layer nor a model";
-                    string allowed = AllowedParameterLayers[layer].Length == 0
-                        ? "only models and the composition root's dependencies"
-                        : string.Join(", ", AllowedParameterLayers[layer])
-                          + ", models and the composition root's dependencies";
-                    report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
-                               $"'{parameter.Name}' of {GameAssembly.ShortName(parameterType)}, {what}; " +
-                               $"a {layer} may take {allowed}");
-                }
-            }
-        }
-
+        CheckParameters(game, open, report);
         report.AssertEmpty();
+    }
+
+    [Fact]
+    public void Constructors_CollectionOfDisallowedLayer_IsReported()
+    {
+        GameAssembly fixture = GameAssembly.Compile(ArchitectureFixtures.LayerAttributes + """
+            namespace Fixture
+            {
+                using NeonWarfare.Scenes.Worlds.Infra.Composition;
+
+                public interface IPart;
+                [Query] public class AllowedPart : IPart;
+                [Simulation] public class SimulationPart : IPart;
+                [Client] public class Consumer(System.Collections.Generic.IEnumerable<IPart> parts);
+            }
+            """);
+        FailureReport report = new("fixture");
+
+        CheckParameters(fixture, new HashSet<string>(), report);
+
+        string failure = Assert.Single(report.Failures);
+        Assert.Contains("which holds SimulationPart", failure);
+    }
+
+    [Fact]
+    public void Constructors_CollectionOfRootType_IsReported()
+    {
+        GameAssembly fixture = GameAssembly.Compile(ArchitectureFixtures.LayerAttributes + """
+            namespace NeonWarfare.Scenes.Worlds.Ports
+            {
+                public interface IClientsConnection;
+            }
+
+            namespace Fixture
+            {
+                using NeonWarfare.Scenes.Worlds.Infra.Composition;
+                using NeonWarfare.Scenes.Worlds.Ports;
+
+                public interface IOpen;
+                [Simulation] public class Restricted(System.Collections.Generic.IEnumerable<IClientsConnection> c);
+                [Simulation] public class Open(System.Collections.Generic.IEnumerable<IOpen> open);
+            }
+            """);
+        FailureReport report = new("fixture");
+
+        CheckParameters(fixture, new HashSet<string> { "Fixture.IOpen" }, report);
+
+        Assert.Equal(2, report.Failures.Count);
+        Assert.All(report.Failures, failure => Assert.Contains("which the composition root registers itself", failure));
     }
 
     /// <summary>
@@ -199,6 +196,91 @@ public class ConstructorLayerTests
 
         report.AssertEmpty();
     }
+
+    /// <summary>
+    /// Every constructor parameter of every layer service against the tables. A parameter <c>IEnumerable&lt;I&gt;</c>
+    /// takes every implementation of <c>I</c>, so it is a dependency on the layer of each one; an <c>I</c> the root
+    /// registers itself is never a collection.
+    /// </summary>
+    private static void CheckParameters(GameAssembly game, IReadOnlySet<string> open, FailureReport report)
+    {
+        foreach (TypeDefinition type in game.Types)
+        {
+            if (WorldLayers.DeclaredLayer(type) is not { } layer)
+            {
+                continue;
+            }
+
+            IEnumerable<MethodDefinition> constructors =
+                type.Methods.Where(method => method.IsConstructor && !method.IsStatic && method.IsPublic);
+            foreach (MethodDefinition constructor in constructors)
+            {
+                foreach (ParameterDefinition parameter in constructor.Parameters)
+                {
+                    TypeReference parameterType = parameter.ParameterType;
+                    if (WorldLayers.CollectionElement(parameterType) is { } element)
+                    {
+                        // MS.DI hands the root's own registration as a collection of one, past the tables below
+                        if (RestrictedDependencies.ContainsKey(element.FullName) || open.Contains(element.FullName))
+                        {
+                            report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
+                                       $"'{parameter.Name}' of IEnumerable<{GameAssembly.ShortName(element)}>, " +
+                                       "which the composition root registers itself; take it directly");
+                            continue;
+                        }
+                        foreach (TypeDefinition implementation in WorldLayers.Implementations(game, element))
+                        {
+                            if (WorldLayers.DeclaredLayer(implementation) is { } held
+                                && !AllowedParameterLayers[layer].Contains(held))
+                            {
+                                report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
+                                           $"'{parameter.Name}' of IEnumerable<{GameAssembly.ShortName(element)}>, " +
+                                           $"which holds {GameAssembly.ShortName(implementation)}, a {held} " +
+                                           $"service; a {layer} may take {Allowed(layer)}");
+                            }
+                        }
+                        continue;
+                    }
+                    if (RestrictedDependencies.TryGetValue(parameterType.FullName, out Layer[]? owners))
+                    {
+                        if (!owners.Contains(layer))
+                        {
+                            report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
+                                       $"'{parameter.Name}' of {GameAssembly.ShortName(parameterType)}, " +
+                                       $"which only {string.Join(", ", owners)} may take");
+                        }
+                        continue;
+                    }
+                    if (open.Contains(parameterType.FullName))
+                    {
+                        continue;
+                    }
+
+                    TypeDefinition? local = game.Find(parameterType);
+                    if (local != null && WorldLayers.IsModel(local))
+                    {
+                        continue;
+                    }
+
+                    Layer? parameterLayer = local == null ? null : WorldLayers.DeclaredLayer(local);
+                    if (parameterLayer is { } taken && AllowedParameterLayers[layer].Contains(taken))
+                    {
+                        continue;
+                    }
+
+                    string what = parameterLayer is { } other ? $"a {other} service" : "neither a layer nor a model";
+                    report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
+                               $"'{parameter.Name}' of {GameAssembly.ShortName(parameterType)}, {what}; " +
+                               $"a {layer} may take {Allowed(layer)}");
+                }
+            }
+        }
+    }
+
+    private static string Allowed(Layer layer) =>
+        AllowedParameterLayers[layer].Length == 0
+            ? "only models and the composition root's dependencies"
+            : string.Join(", ", AllowedParameterLayers[layer]) + ", models and the composition root's dependencies";
 
     /// <summary>
     /// The parameter types of the <c>WorldDependencies</c> record and of the <c>WorldSetup</c> records — what the

@@ -8,7 +8,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Presentation;
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 [Presentation]
-public class ChatPresentation(HudMailbox hudMailbox)
+public class ChatPresentation(HudMailbox hudMailbox) : IEventHandlerOwner
 {
     private const int MaxNumberOfMessages = 100;
 

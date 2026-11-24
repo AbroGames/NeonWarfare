@@ -19,6 +19,8 @@ public sealed class FailureReport
 
     public bool IsEmpty => _failures.Count == 0;
 
+    public IReadOnlyList<string> Failures => _failures;
+
     public void Add(string failure) => _failures.Add(failure);
 
     public void AssertEmpty() => Assert.True(IsEmpty, ToString());

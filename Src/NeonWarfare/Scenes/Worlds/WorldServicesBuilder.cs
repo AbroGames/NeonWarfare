@@ -20,6 +20,7 @@ public class WorldServicesBuilder
 {
     private const string SeveralLayersError = "{0} has more than one layer attribute: {1}";
     private const string NotConcreteError = "{0} has a layer attribute but is abstract or generic";
+    private const string RootInterfaceError = "{0} implements {1}, which the composition root registers itself";
 
     private readonly IEnumerable<Type> _candidates;
 
@@ -97,12 +98,29 @@ public class WorldServicesBuilder
                 throw new ArgumentOutOfRangeException(nameof(setup), setup, null);
         }
 
+        HashSet<Type> rootTypes = services.Select(descriptor => descriptor.ServiceType).ToHashSet();
         foreach ((Type type, _) in selected)
         {
             services.AddSingleton(type);
+            // So that a consumer takes every service of a kind as IEnumerable<I>. Only the game's interfaces and
+            // those of a test's fixtures: the framework's and the engine's would be collections nobody means
+            foreach (Type implemented in type.GetInterfaces().Where(IsOwnInterface(type)))
+            {
+                // MS.DI resolves a single I to the last registration: the service would silently replace the port
+                if (rootTypes.Contains(implemented))
+                {
+                    throw new InvalidOperationException(
+                        RootInterfaceError.FormatWith(type.FullName, implemented.FullName));
+                }
+                services.AddSingleton(implemented, provider => provider.GetRequiredService(type));
+            }
         }
         return services;
     }
+
+    private static Func<Type, bool> IsOwnInterface(Type service) =>
+        implemented => implemented.Assembly == service.Assembly
+                       || implemented.Assembly == typeof(WorldServicesBuilder).Assembly;
 
     private void PassWhatCannotBeInjected(
         ServiceProvider provider,

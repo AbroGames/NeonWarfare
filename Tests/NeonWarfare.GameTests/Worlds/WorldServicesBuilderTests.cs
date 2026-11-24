@@ -18,6 +18,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Commands;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Replication;
+using NeonWarfare.Scenes.Worlds.Ports;
 using RepliCAT;
 using static GdUnit4.Assertions;
 
@@ -175,6 +176,47 @@ public class WorldServicesBuilderTests
 
     [TestCase]
     [RequireGodotRuntime]
+    public void Build_CollectionConsumer_GetsEveryImplementationOfItsLayers()
+    {
+        foreach ((WorldSetup setup, int count) in new (WorldSetup, int)[]
+                 {
+                     (TestWorldSetups.Host(), 3),
+                     (TestWorldSetups.Dedicated(), 2),
+                 })
+        {
+            using ServiceProvider provider = Build(
+                FixtureBuilder(typeof(QueryPartA), typeof(QueryPartB), typeof(PresentationPart), typeof(PartConsumer)),
+                setup);
+
+            IReadOnlyList<IPart> parts = provider.GetRequiredService<PartConsumer>().Parts;
+            AssertThat(parts.Count).IsEqual(count);
+            AssertThat(parts.Contains(provider.GetRequiredService<QueryPartA>())).IsTrue();
+            AssertThat(parts.Contains(provider.GetRequiredService<QueryPartB>())).IsTrue();
+        }
+    }
+
+    // The consumer validates the collection in its constructor; the eager creation is what makes that fail the build.
+    // A remote client: a server configuration creates every service anyway, to pass the chat commands
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_CollectionConsumerRejectingIt_Throws()
+    {
+        AssertThrown(() => Build(FixtureBuilder(typeof(QueryPartA), typeof(RejectingConsumer)),
+                TestWorldSetups.RemoteClient()).Dispose())
+            .IsInstanceOf<InvalidOperationException>()
+            .HasMessage(RejectingConsumer.Error);
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_ServiceImplementingAPort_Throws()
+    {
+        AssertThrown(() => Build(FixtureBuilder(typeof(PortImpersonator)), TestWorldSetups.Host()).Dispose())
+            .IsInstanceOf<InvalidOperationException>();
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
     public void InitPreReady_OutsideTree_Succeeds()
     {
         World world = AutoFree(new World())!;
@@ -289,5 +331,36 @@ public class WorldServicesBuilderTests
         public static int Created;
 
         public UnrequestedPresentation() => Created++;
+    }
+
+    private interface IPart;
+
+    [Query]
+    private class QueryPartA : IPart;
+
+    [Query]
+    private class QueryPartB : IPart;
+
+    [Presentation]
+    private class PresentationPart : IPart;
+
+    [Query]
+    private class PartConsumer(IEnumerable<IPart> parts)
+    {
+        public IReadOnlyList<IPart> Parts { get; } = parts.ToList();
+    }
+
+    [Query]
+    private class RejectingConsumer
+    {
+        public const string Error = "rejected";
+
+        public RejectingConsumer(IEnumerable<IPart> parts) => throw new InvalidOperationException(Error);
+    }
+
+    [Simulation]
+    private class PortImpersonator : IServerOwner
+    {
+        public void AdminLeft() { }
     }
 }

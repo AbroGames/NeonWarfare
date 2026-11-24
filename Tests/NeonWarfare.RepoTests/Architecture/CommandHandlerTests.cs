@@ -86,7 +86,7 @@ public class CommandHandlerTests
     public void SessionHandler_HasExactlyOneImplementation()
     {
         List<TypeDefinition> implementations = HandlerTypes()
-            .Where(type => Interfaces(type).Any(implemented => implemented.FullName == SessionHandler))
+            .Where(type => WorldLayers.Implements(type, SessionHandler))
             .ToList();
 
         string found = string.Join(", ", implementations.Select(GameAssembly.Describe));
@@ -103,7 +103,7 @@ public class CommandHandlerTests
         FailureReport report = new("Command handlers outside the CommandHandler layer");
 
         List<TypeDefinition> handlers = HandlerTypes()
-            .Where(type => Interfaces(type).Any(IsHandlerInterface))
+            .Where(type => WorldLayers.Interfaces(type).Any(IsHandlerInterface))
             .ToList();
         Assert.NotEmpty(handlers);
         foreach (TypeDefinition handler in handlers)
@@ -124,7 +124,7 @@ public class CommandHandlerTests
     /// <summary>The full names of the commands some type of the game implements the player handler for.</summary>
     private static IReadOnlySet<string> PlayerHandledCommands() =>
         HandlerTypes()
-            .SelectMany(Interfaces)
+            .SelectMany(WorldLayers.Interfaces)
             .OfType<GenericInstanceType>()
             .Where(generic => generic.ElementType.FullName == PlayerHandler)
             .Select(generic => generic.GenericArguments[0] is GenericParameter parameter
@@ -137,22 +137,6 @@ public class CommandHandlerTests
     // Abstract types are skipped: the dispatcher only ever gets instances
     private static IEnumerable<TypeDefinition> HandlerTypes() =>
         GameAssembly.Instance.Types.Where(type => !type.IsInterface && !type.IsAbstract);
-
-    /// <summary>
-    /// Cecil lists only the interfaces a type declares itself, while the dispatcher sees inherited ones too.
-    /// </summary>
-    private static IEnumerable<TypeReference> Interfaces(TypeDefinition type)
-    {
-        for (TypeDefinition? current = type;
-             current != null;
-             current = current.BaseType == null ? null : GameAssembly.Instance.Find(current.BaseType))
-        {
-            foreach (InterfaceImplementation implementation in current.Interfaces)
-            {
-                yield return implementation.InterfaceType;
-            }
-        }
-    }
 
     private static bool IsHandlerInterface(TypeReference implemented) =>
         implemented.GetElementType().FullName is PlayerHandler or SessionHandler;

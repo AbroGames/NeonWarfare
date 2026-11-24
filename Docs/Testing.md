@@ -88,11 +88,12 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/EventNamingTests` | In `Root/`, `Game/`, `Worlds/`: no `…Event` C# event, `On…` methods private or protected, a subscribed method is `On…` |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
-| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles` only in `Server`; every `Build` parameter is open or restricted explicitly; no optional parameter |
+| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `Server`, `IServerConnection` only in `Client`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `Server` and `ClientReplication`, `ISaveFiles` only in `Server`; every `Build` parameter is open or restricted explicitly; an `IEnumerable<I>` is a dependency on every implementation of `I`, never of a type the root registers; no optional parameter |
 | `Architecture/SimulationReachTests` | No `[Simulation]` / `[SimulationFacade]` constructor chain reaches `ServerTickLoop`, the command machinery or `PeerSessions` |
 | `Architecture/ConstructorWorldReadTests` | No world service constructor calls a query or an `EntityRegistry` lookup |
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |
 | `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IPeerSessionHandler`); exactly one session handler; every handler is `[CommandHandler]` |
+| `Architecture/CollectionInjectionTests` | Every implementation of an interface taken as `IEnumerable<>` is a layer service; a type with an `[EventHandler]` is an `IEventHandlerOwner`; a `[CommandHandler]` is an `ICommandHandler` |
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
 | `Architecture/ProducedMessageTests` | Every event is constructed only in the Simulation and has an `[EventHandler]`; every command is sent |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
