@@ -666,14 +666,14 @@ public class TickStateReplicationTests
         Tick();
         byte[] packet = StatePacket(AlicePeer);
         GameWorld host = AutoFree(new GameWorld())!.InitPreReady(
-            WorldLayer.Host, Dependencies(new RecordingClientsConnection()), WorldOrigin.New);
+            WorldLayer.Host, Dependencies(new RecordingClientsConnection()), new WorldOrigin.NewWorld("save"));
 
         AssertThrown(() => host.ReceiveFromServer(packet)).IsInstanceOf<InvalidOperationException>();
     }
 
     private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
         new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
-            new ManualFrameProvider(), _scenes, _catalog, connection, connection);
+            new ManualFrameProvider(), _scenes, _catalog, connection, connection, new RecordingSaveFiles());
 
     private ServiceProvider ClientOf(int peerId, out Node root)
     {

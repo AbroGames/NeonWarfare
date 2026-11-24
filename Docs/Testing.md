@@ -85,7 +85,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Conventions/CodeStyleTests` | `Event` suffix on events, single `GlobalUsings.cs`, no `GD.Load` / `res://` literals |
 | `Conventions/SourceFormattingTests` | Every hand-written `.cs`, tests included: lines fit into `max_line_length` columns, tabs expanded to `tab_width` |
 | `Conventions/FileEncodingTests` | Every text file of the repository, documentation included: LF line endings, no UTF-8 BOM |
-| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `ServerNetwork`, `IServerConnection` only in `ClientNetwork`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `ServerNetwork` and `ClientReplication`; every `Build` parameter is open or restricted explicitly |
+| `Architecture/ConstructorLayerTests` | World service constructors take only the layers the layer table allows; `IClientsConnection` only in `ServerNetwork`, `IServerConnection` only in `ClientNetwork`, `EntityRegistry` and `WorldRoot` only in `Simulation`, `EntityRecordReader` only in `ServerNetwork` and `ClientReplication`, `ISaveFiles` only in `ServerNetwork`; every `Build` parameter is open or restricted explicitly |
 | `Architecture/ConstructorWorldReadTests` | No world service constructor calls a query or an `EntityRegistry` lookup |
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |
 | `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IJoinRequestHandler`); exactly one join and one peer disconnected handler; every handler is `[CommandHandler]` |

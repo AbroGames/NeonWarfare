@@ -31,15 +31,18 @@ public class WorldEntryPointsTests
     private const string HostUid = "HostHostHo-Hhhhhhhhhh";
     private const int RemotePeer = 2;
     private const string RemoteUid = "RemoteRemo-Rrrrrrrrrr";
+    private const string SaveFileName = "save";
 
     private NetMessageCodec _codec = null!;
     private RecordingClientsConnection _connection = null!;
+    private RecordingSaveFiles _saveFiles = null!;
 
     [BeforeTest]
     public void SetUp()
     {
         _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
+        _saveFiles = new RecordingSaveFiles();
     }
 
     [TestCase]
@@ -147,7 +150,7 @@ public class WorldEntryPointsTests
     {
         byte[] save = HostSave(_codec);
 
-        GameWorld loaded = World(WorldLayer.Dedicated, new WorldOrigin.FromSave(save));
+        GameWorld loaded = World(WorldLayer.Dedicated, new WorldOrigin.FromSave(save, SaveFileName));
 
         AssertThat(loaded.Get<PlayersStorageQuery>().Model.PlayerByUid[HostUid].Nick).IsEqual("Host");
     }
@@ -157,7 +160,7 @@ public class WorldEntryPointsTests
     [RequireGodotRuntime]
     public void InitPreReady_FromSaveOnAHost_TheHostJoinsIt()
     {
-        GameWorld world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec)));
+        GameWorld world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName));
 
         JoinHost(world);
 
@@ -174,8 +177,49 @@ public class WorldEntryPointsTests
         GameWorld world = AutoFree(new GameWorld())!;
 
         AssertThrown(() => world.InitPreReady(WorldLayer.Dedicated, Dependencies(),
-                new WorldOrigin.FromSave(save)))
+                new WorldOrigin.FromSave(save, SaveFileName)))
             .IsInstanceOf<SaveVersionMismatchException>();
+    }
+
+    // The autosave on exit: Quit() and the way back to the menu both take the World out of the tree
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ExitTree_ServerWorld_SavesToItsFile_ALoadedOneToTheFileItCameFrom()
+    {
+        const string loadedFileName = "loaded";
+        GameWorld host = InTree(HostWorld());
+        JoinHost(host);
+        List<string> saved = [];
+        host.SavedEvent += saved.Add;
+
+        host.GetParent().RemoveChild(host);
+
+        AssertThat(saved).ContainsExactly(SaveFileName);
+        RecordingSaveFiles.Written save = _saveFiles.Files.Single();
+        AssertThat(save.FileName).IsEqual(SaveFileName);
+
+        GameWorld loaded = InTree(World(WorldLayer.Dedicated, new WorldOrigin.FromSave(save.Data, loadedFileName)));
+        AssertThat(loaded.Get<PlayersStorageQuery>().Model.PlayerByUid[HostUid].Nick).IsEqual("Host");
+        Tick(loaded);
+        loaded.GetParent().RemoveChild(loaded);
+
+        AssertThat(_saveFiles.Files.Select(file => file.FileName)).ContainsExactly(SaveFileName, loadedFileName);
+    }
+
+    // The handler is called directly: Godot only prints what a notification from the engine throws
+    [TestCase]
+    [RequireGodotRuntime]
+    public void ExitTree_ClientWorld_SavesNothing_AndHasNoSavedEvent()
+    {
+        GameWorld host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+        GameWorld client = World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+
+        client._Notification((int) Node.NotificationExitTree);
+
+        AssertThat(_saveFiles.Files).IsEmpty();
+        AssertThrown(() => client.SavedEvent += _ => { }).IsInstanceOf<InvalidOperationException>();
     }
 
     [TestCase]
@@ -205,7 +249,8 @@ public class WorldEntryPointsTests
     }
 
     private GameWorld World(WorldLayer layers, WorldOrigin? origin = null) =>
-        AutoFree(new GameWorld())!.InitPreReady(layers, Dependencies(), origin ?? WorldOrigin.New);
+        AutoFree(new GameWorld())!.InitPreReady(
+            layers, Dependencies(), origin ?? new WorldOrigin.NewWorld(SaveFileName));
 
     private WorldDependencies Dependencies(NetMessageCodec? codec = null)
     {
@@ -213,7 +258,7 @@ public class WorldEntryPointsTests
         return new WorldDependencies(
             new ManualTimeProvider(Now), codec ?? _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), _connection, _connection);
+            TestWorldScenes.CreateCatalog(scenes), _connection, _connection, _saveFiles);
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way
@@ -250,6 +295,12 @@ public class WorldEntryPointsTests
         _connection.Packets
             .Single(sent => sent.PeerId == RemotePeer && sent.Packet[0] == (byte) ServerPacketKind.Snapshot)
             .Packet;
+
+    private static GameWorld InTree(GameWorld world)
+    {
+        ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
+        return world;
+    }
 
     // Outside the tree the engine never ticks the World
     private static void Tick(GameWorld world) =>

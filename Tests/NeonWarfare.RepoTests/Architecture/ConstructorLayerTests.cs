@@ -53,6 +53,8 @@ public class ConstructorLayerTests
             // Spawns with the NetIds of its records: the client's state applier and the server's load of a save
             [WorldLayers.WorldNamespace + ".Infra.Entities.EntityRecordReader"] =
                 [Layer.ServerNetwork, Layer.ClientReplication],
+            // A write past SaveService would put a file on disk that the save file name and LastGame never follow
+            [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Saves.ISaveFiles"] = [Layer.ServerNetwork],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it
