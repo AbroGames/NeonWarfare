@@ -55,6 +55,8 @@ public class ConstructorLayerTests
                 [Layer.ServerNetwork, Layer.ClientReplication],
             // A write past SaveService would put a file on disk that the save file name and LastGame never follow
             [WorldLayers.WorldNamespace + ".Infra.ServerNetwork.Saves.ISaveFiles"] = [Layer.ServerNetwork],
+            // Who the host is must not change what the server does: the server logic treats every player alike
+            [WorldLayers.WorldNamespace + ".Features.Players.LocalPlayer"] = [Layer.Presentation],
         };
 
     // Open to every layer besides the WorldDependencies types: what the root registers itself, or a view of it

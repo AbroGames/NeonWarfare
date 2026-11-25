@@ -10,12 +10,12 @@ using NeonWarfare.Scenes.Game.Starters;
 using NeonWarfare.Scenes.Screen.Hud;
 using NeonWarfare.Scenes.Screen.ServerHud;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Entities;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork;
-using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.GlobalServices;
 using RepliCAT;
@@ -94,11 +94,14 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     }
 
     /// <param name="saveFiles">Where a server World saves, <c>null</c> for a remote client.</param>
-    public World.World AddWorld(WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles)
+    /// <param name="localPlayer">The one passed to <see cref="SendJoinRequest"/>, <c>null</c> on a dedicated
+    /// server.</param>
+    public World.World AddWorld(
+        WorldLayer layers, WorldOrigin origin, Screen screen, ISaveFiles saveFiles, LocalPlayer localPlayer)
     {
         var dependencies = new WorldDependencies(
             TimeProvider.System, _codec, _replicator, FrameProvider.Engine, WorldPackedScenes, _entities,
-            this, this, saveFiles);
+            this, this, saveFiles, localPlayer);
         var world = new World.World();
         try
         {
@@ -151,14 +154,13 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     /// The join of this process's player. On the host its own peer first connects, as a remote one would, so it
     /// passes the same gatekeeper.
     /// </summary>
-    public void SendJoinRequest(string uid, string nick, Color color)
+    public void SendJoinRequest(LocalPlayer localPlayer)
     {
         if (LocalPeerId is { } localPeerId)
         {
             _world.OnClientConnected(localPeerId);
         }
-        ((IServerConnection) this).Send(_codec.Encode(
-            new JoinRequestCommand(_codec.ProtocolHash, uid, nick, color)));
+        ((IServerConnection) this).Send(_codec.Encode(localPlayer.ToJoinRequest(_codec.ProtocolHash)));
     }
 
     int? IClientsConnection.LocalPeerId => LocalPeerId;

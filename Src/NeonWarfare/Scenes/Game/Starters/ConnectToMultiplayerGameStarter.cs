@@ -2,6 +2,7 @@ using System;
 using Godot;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.Composition;
 using NeonWarfare.Scenes.World.Infra.Protocol;
 using NeonWarfare.Scripts.Content.LoadingScreen;
@@ -35,12 +36,13 @@ public class ConnectToMultiplayerGameStarter(
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
         
         Network.Network network = game.AddNetwork();
+        LocalPlayer localPlayer = ReadLocalPlayer();
 
         // The World comes from the first snapshot, until then the connecting screen stays
         void ConnectedToServerEvent()
         {
             if (!IsGameAlive(game)) return;
-            SendJoinRequest(game);
+            game.SendJoinRequest(localPlayer);
         }
         
         void WorldSnapshotReceivedEvent(byte[] snapshot)
@@ -49,7 +51,8 @@ public class ConnectToMultiplayerGameStarter(
             try
             {
                 game.AddWorld(
-                    WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud, saveFiles: null);
+                    WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud, saveFiles: null,
+                    localPlayer);
             }
             catch (NetMessageFormatException e)
             {

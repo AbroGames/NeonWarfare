@@ -1,6 +1,7 @@
 using System;
 using KludgeBox.Logging;
 using NeonWarfare.Scenes.World;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
@@ -66,10 +67,14 @@ public abstract class BaseGameStarter
         }
     }
 
-    protected void SendJoinRequest(Game game)
+    /// <summary>
+    /// Read once per session: the same object goes to the World and into the join request, so a settings change
+    /// in between cannot make them disagree.
+    /// </summary>
+    protected LocalPlayer ReadLocalPlayer()
     {
         GameSettings settings = Services.GameSettings.GetSettings();
-        game.SendJoinRequest(settings.PlayerUid, settings.PlayerNick, settings.PlayerColor);
+        return new LocalPlayer(settings.PlayerUid, settings.PlayerNick, settings.PlayerColor);
     }
 
     /// <summary>

@@ -179,7 +179,8 @@ public class WorldServicesBuilderTests
     {
         GameWorld world = AutoFree(new GameWorld())!;
 
-        AssertThat(world.InitPreReady(WorldLayer.Host, Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
+        AssertThat(world.InitPreReady(
+                WorldLayer.Host, Dependencies(WorldLayer.Host), new WorldOrigin.NewWorld(SaveFileName)))
             .IsSame(world);
     }
 
@@ -190,7 +191,8 @@ public class WorldServicesBuilderTests
         GameWorld world = AutoFree(new GameWorld())!;
         ((SceneTree) Engine.GetMainLoop()).Root.AddChild(world);
 
-        AssertThrown(() => world.InitPreReady(WorldLayer.Host, Dependencies(), new WorldOrigin.NewWorld(SaveFileName)))
+        AssertThrown(() => world.InitPreReady(
+                WorldLayer.Host, Dependencies(WorldLayer.Host), new WorldOrigin.NewWorld(SaveFileName)))
             .IsInstanceOf<InvalidOperationException>();
     }
 
@@ -202,7 +204,7 @@ public class WorldServicesBuilderTests
         {
             GameWorld world = AutoFree(new GameWorld())!;
 
-            world.InitPreReady(layers, Dependencies(), new WorldOrigin.NewWorld(SaveFileName));
+            world.InitPreReady(layers, Dependencies(layers), new WorldOrigin.NewWorld(SaveFileName));
 
             AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
             AssertThat(world.GetChildren().OfType<PlayersSessionStorage>().Count()).IsEqual(1);
@@ -219,7 +221,7 @@ public class WorldServicesBuilderTests
             Node root = AutoFree(new Node())!;
 
             using ServiceProvider provider =
-                new WorldServicesBuilder().Build(layers, Dependencies(), new WorldRoot(root));
+                new WorldServicesBuilder().Build(layers, Dependencies(layers), new WorldRoot(root));
 
             AssertThat(provider.GetRequiredService<IEntityFinder>().GetAll<Node>()).IsEmpty();
             AssertThat(root.GetChildCount()).IsEqual(0);
@@ -242,22 +244,41 @@ public class WorldServicesBuilderTests
     [RequireGodotRuntime]
     public void Build_WithoutSaveFiles_OnlyRemoteClient()
     {
-        WorldDependencies noSaveFiles = Dependencies() with { SaveFiles = null! };
         var root = new WorldRoot(AutoFree(new Node())!);
 
-        using ServiceProvider client = new WorldServicesBuilder().Build(WorldLayer.Client, noSaveFiles, root);
+        using ServiceProvider client = new WorldServicesBuilder()
+            .Build(WorldLayer.Client, Dependencies(WorldLayer.Client) with { SaveFiles = null! }, root);
         AssertThat(client.GetService<ISaveFiles>()).IsNull();
         foreach (WorldLayer server in new[] { WorldLayer.Host, WorldLayer.Dedicated })
         {
+            WorldDependencies noSaveFiles = Dependencies(server) with { SaveFiles = null! };
             AssertThrown(() => new WorldServicesBuilder().Build(server, noSaveFiles, root))
                 .IsInstanceOf<ArgumentException>();
         }
     }
 
+    // A dedicated server has no player of its own, and every World with a Presentation has one
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_LocalPlayer_OnlyAndAlwaysWithPresentation()
+    {
+        var root = new WorldRoot(AutoFree(new Node())!);
+        WorldDependencies withLocalPlayer = Dependencies(WorldLayer.Host);
+
+        foreach (WorldLayer layers in new[] { WorldLayer.Client, WorldLayer.Host })
+        {
+            WorldDependencies noLocalPlayer = Dependencies(layers) with { LocalPlayer = null! };
+            AssertThrown(() => new WorldServicesBuilder().Build(layers, noLocalPlayer, root))
+                .IsInstanceOf<ArgumentException>();
+        }
+        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Dedicated, withLocalPlayer, root))
+            .IsInstanceOf<ArgumentException>();
+    }
+
     private static ServiceProvider Build(WorldLayer layers) => Build(new WorldServicesBuilder(), layers);
 
     private static ServiceProvider Build(WorldServicesBuilder builder, WorldLayer layers) =>
-        builder.Build(layers, Dependencies(), new WorldRoot(AutoFree(new Node())!));
+        builder.Build(layers, Dependencies(layers), new WorldRoot(AutoFree(new Node())!));
 
     // The root gives the event dispatcher and the command handler registry their handlers and the chat commands
     // facade its commands, so all of them come with any fixture, with what the chat takes
@@ -268,13 +289,13 @@ public class WorldServicesBuilderTests
             typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
         ]);
 
-    private static WorldDependencies Dependencies()
+    private static WorldDependencies Dependencies(WorldLayer layers)
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new(TimeProvider.System, Codec(),
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles());
+            new RecordingClientsConnection(), new RecordingSaveFiles(), TestLocalPlayer.For(layers));
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

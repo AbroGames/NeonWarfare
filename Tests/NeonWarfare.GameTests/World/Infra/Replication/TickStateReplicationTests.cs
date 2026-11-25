@@ -64,7 +64,7 @@ public class TickStateReplicationTests
         _serverRoot = InTree(new Node());
         _connection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _server = new WorldServicesBuilder()
-            .Build(WorldLayer.Host, Dependencies(_connection), new WorldRoot(_serverRoot));
+            .Build(WorldLayer.Host, Dependencies(WorldLayer.Host, _connection), new WorldRoot(_serverRoot));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _connection.Loopback = _server.GetRequiredService<EventDispatcher>().DispatchPacket;
 
@@ -666,21 +666,24 @@ public class TickStateReplicationTests
         Tick();
         byte[] packet = StatePacket(AlicePeer);
         GameWorld host = AutoFree(new GameWorld())!.InitPreReady(
-            WorldLayer.Host, Dependencies(new RecordingClientsConnection()), new WorldOrigin.NewWorld("save"));
+            WorldLayer.Host, Dependencies(WorldLayer.Host, new RecordingClientsConnection()),
+            new WorldOrigin.NewWorld("save"));
 
         AssertThrown(() => host.ReceiveFromServer(packet)).IsInstanceOf<InvalidOperationException>();
     }
 
-    private WorldDependencies Dependencies(RecordingClientsConnection connection) =>
+    private WorldDependencies Dependencies(WorldLayer layers, RecordingClientsConnection connection) =>
         new(new ManualTimeProvider(Now), _codec, new Replicator(NetMessageCodecTests.CreateMapping()),
-            new ManualFrameProvider(), _scenes, _catalog, connection, connection, new RecordingSaveFiles());
+            new ManualFrameProvider(), _scenes, _catalog, connection, connection, new RecordingSaveFiles(),
+            TestLocalPlayer.For(layers));
 
     private ServiceProvider ClientOf(int peerId, out Node root)
     {
         root = InTree(new Node());
         _clientNodes.Add(root);
         ServiceProvider client = new WorldServicesBuilder([..GameTypes(), typeof(JoinRecorder)])
-            .Build(WorldLayer.Client, Dependencies(new RecordingClientsConnection()), new WorldRoot(root));
+            .Build(WorldLayer.Client, Dependencies(WorldLayer.Client, new RecordingClientsConnection()),
+                new WorldRoot(root));
         _clients.Add(client);
 
         var applier = client.GetRequiredService<StateApplier>();

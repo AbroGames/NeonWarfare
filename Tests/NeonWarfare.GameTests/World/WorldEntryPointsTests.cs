@@ -33,6 +33,9 @@ public class WorldEntryPointsTests
     private const string RemoteUid = "RemoteRemo-Rrrrrrrrrr";
     private const string SaveFileName = "save";
 
+    private static readonly LocalPlayer HostPlayer = new(HostUid, "Host", Colors.White);
+    private static readonly LocalPlayer RemotePlayer = new(RemoteUid, "Remote", Colors.White);
+
     private NetMessageCodec _codec = null!;
     private RecordingClientsConnection _connection = null!;
     private RecordingSaveFiles _saveFiles = null!;
@@ -177,7 +180,7 @@ public class WorldEntryPointsTests
         byte[] save = HostSave(new NetMessageCodec(NetMessageCodecTests.CreateMapping(), ["Another kind"]));
         GameWorld world = AutoFree(new GameWorld())!;
 
-        AssertThrown(() => world.InitPreReady(WorldLayer.Dedicated, Dependencies(),
+        AssertThrown(() => world.InitPreReady(WorldLayer.Dedicated, Dependencies(WorldLayer.Dedicated),
                 new WorldOrigin.FromSave(save, SaveFileName)))
             .IsInstanceOf<SaveVersionMismatchException>();
     }
@@ -238,6 +241,74 @@ public class WorldEntryPointsTests
         AssertThrown(() => dedicated.Get<ChatPresentation>()).IsInstanceOf<InvalidOperationException>();
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnAHost_IsOnlineOnlyAfterItsOwnJoin()
+    {
+        GameWorld world = HostWorld();
+        var localPlayer = world.Get<LocalPlayerPresentation>();
+
+        AssertThat(localPlayer.TryGetPlayer()).IsNull();
+        JoinRemote(world);
+        AssertThat(localPlayer.TryGetPlayer()).IsNull();
+        JoinHost(world);
+
+        AssertThat(localPlayer.Uid).IsEqual(HostUid);
+        AssertThat(localPlayer.TryGetPlayer()!.Uid).IsEqual(HostUid);
+    }
+
+    // A loaded save stores the host's player, but it is not online until it joins again
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnAHostFromSave_IsOnlineOnlyAfterItsJoin()
+    {
+        GameWorld world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName));
+        var localPlayer = world.Get<LocalPlayerPresentation>();
+
+        AssertThat(localPlayer.TryGetPlayer()).IsNull();
+        JoinHost(world);
+
+        AssertThat(localPlayer.TryGetPlayer()!.Nick).IsEqual("Host");
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnAHost_IsGoneAfterItsLeave()
+    {
+        GameWorld world = HostWorld();
+        JoinHost(world);
+
+        world.OnClientDisconnected(HostPeer);
+        Tick(world);
+
+        AssertThat(world.Get<LocalPlayerPresentation>().TryGetPlayer()).IsNull();
+    }
+
+    // The client's World is created after the join, from the object the join request was made of
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnARemoteClient_IsThePlayerItJoinedWith()
+    {
+        GameWorld host = HostWorld();
+        JoinHost(host);
+        JoinRemote(host);
+
+        GameWorld client = World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
+
+        PlayerModel player = client.Get<LocalPlayerPresentation>().TryGetPlayer()!;
+        AssertThat(player.Uid).IsEqual(RemoteUid);
+        AssertThat(player.Nick).IsEqual("Remote");
+    }
+
+    [TestCase]
+    [RequireGodotRuntime]
+    public void LocalPlayer_OnADedicatedServer_DoesNotExist()
+    {
+        GameWorld dedicated = World(WorldLayer.Dedicated);
+
+        AssertThrown(() => dedicated.Get<LocalPlayerPresentation>()).IsInstanceOf<InvalidOperationException>();
+    }
+
     private GameWorld HostWorld(WorldOrigin? origin = null)
     {
         GameWorld world = World(WorldLayer.Host, origin);
@@ -248,15 +319,22 @@ public class WorldEntryPointsTests
 
     private GameWorld World(WorldLayer layers, WorldOrigin? origin = null) =>
         AutoFree(new GameWorld())!.InitPreReady(
-            layers, Dependencies(), origin ?? new WorldOrigin.NewWorld(SaveFileName));
+            layers, Dependencies(layers), origin ?? new WorldOrigin.NewWorld(SaveFileName));
 
-    private WorldDependencies Dependencies(NetMessageCodec? codec = null)
+    // A client World here is always the remote player's, made from its join snapshot
+    private WorldDependencies Dependencies(WorldLayer layers, NetMessageCodec? codec = null)
     {
+        LocalPlayer? localPlayer = layers switch
+        {
+            WorldLayer.Host => HostPlayer,
+            WorldLayer.Client => RemotePlayer,
+            _ => null,
+        };
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         return new WorldDependencies(
             new ManualTimeProvider(Now), codec ?? _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), _connection, _connection, _saveFiles);
+            TestWorldScenes.CreateCatalog(scenes), _connection, _connection, _saveFiles, localPlayer);
     }
 
     // The World hands out no SaveWriter yet: the save comes from a host container built the same way
@@ -264,7 +342,7 @@ public class WorldEntryPointsTests
     {
         Node root = AutoFree(new Node())!;
         using ServiceProvider host = new WorldServicesBuilder()
-            .Build(WorldLayer.Host, Dependencies(codec), new WorldRoot(root));
+            .Build(WorldLayer.Host, Dependencies(WorldLayer.Host, codec), new WorldRoot(root));
         host.GetRequiredService<NewWorldSimulationFacade>().Create();
         host.GetRequiredService<PlayersStorageQuery>().Model.AddPlayer(HostUid).Nick = "Host";
         host.GetRequiredService<ServerTickLoop>().RunTick();
@@ -275,8 +353,7 @@ public class WorldEntryPointsTests
     private void JoinHost(GameWorld world)
     {
         world.OnClientConnected(HostPeer);
-        ((IServerConnection) _connection).Send(
-            _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, HostUid, "Host", Colors.White)));
+        ((IServerConnection) _connection).Send(_codec.Encode(HostPlayer.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
     }
 
@@ -284,8 +361,7 @@ public class WorldEntryPointsTests
     private void JoinRemote(GameWorld world)
     {
         world.OnClientConnected(RemotePeer);
-        world.ReceiveFromClient(RemotePeer,
-            _codec.Encode(new JoinRequestCommand(_codec.ProtocolHash, RemoteUid, "Remote", Colors.White)));
+        world.ReceiveFromClient(RemotePeer, _codec.Encode(RemotePlayer.ToJoinRequest(_codec.ProtocolHash)));
         Tick(world);
     }
 
