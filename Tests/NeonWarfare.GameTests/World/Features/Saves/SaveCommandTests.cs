@@ -139,7 +139,7 @@ public class SaveCommandTests
         AssertThat(Replies(PlayerPeer)).IsEmpty();
     }
 
-    // The rule itself is in SaveFileNameRuleTests
+    // The rule itself is in SaveFileNameTests
     [TestCase]
     [RequireGodotRuntime]
     public void BadName_IsDropped()
