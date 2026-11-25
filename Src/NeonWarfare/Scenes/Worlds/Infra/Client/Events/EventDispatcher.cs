@@ -12,17 +12,14 @@ namespace NeonWarfare.Scenes.Worlds.Infra.Client.Events;
 
 /// <summary>
 /// Delivers a received events section to the <see cref="EventHandlerAttribute"/> methods of the Presentation.
-/// The handlers are collected once, by the composition root, since MS.DI cannot inject "every Presentation".
 /// </summary>
 [Client]
-public class EventDispatcher(NetMessageCodec codec)
+public class EventDispatcher
 {
     private const string NoHandlerLog = "{event} has no [EventHandler]: it will be read and dropped";
     private const string HandlerFailedLog = "[EventHandler] {handler} failed on {event}";
-    private const string RegisteredError = "The event handlers are already registered.";
-    private const string NotRegisteredError = "The event handlers are not registered yet.";
     private const string ParameterCountError = "[EventHandler] {0} must have exactly one parameter.";
-    private const string NotEventError = "[EventHandler] {0} takes {1}, which is not an event type.";
+    private const string NotEventError = "[EventHandler] {0} takes {1}, which is not a mapped event type.";
     private const string TrailingBytesError = "{0} of {1} bytes read, an events packet carries one section.";
     
     private record Handler(string Name, Action<Event> Call);
@@ -35,17 +32,18 @@ public class EventDispatcher(NetMessageCodec codec)
 
     private readonly ILogger _log = LogFactory.GetForStatic<EventDispatcher>();
 
+    private readonly NetMessageCodec _codec;
     private readonly Dictionary<Type, List<Handler>> _handlersByType = new();
-    private IReadOnlySet<Type> _eventTypes;
+    private readonly IReadOnlySet<Type> _eventTypes;
 
-    public void Register(IEnumerable<object> owners, IReadOnlySet<Type> eventTypes)
+    public EventDispatcher(NetMessageCodec codec, IEnumerable<IEventHandlerOwner> owners)
     {
-        if (_eventTypes != null)
-        {
-            throw new InvalidOperationException(RegisteredError);
-        }
+        _codec = codec;
+        HashSet<Type> eventTypes = codec.MappedTypes
+            .Where(type => type.IsSubclassOf(typeof(Event)) && type is { IsNested: false, IsAbstract: false })
+            .ToHashSet();
 
-        foreach (object owner in owners)
+        foreach (IEventHandlerOwner owner in owners)
         {
             foreach (MethodInfo method in HandlerMethods(owner.GetType()))
             {
@@ -95,12 +93,7 @@ public class EventDispatcher(NetMessageCodec codec)
 
     private IReadOnlyList<object> Read(ReadOnlyMemory<byte> section, out int bytesRead)
     {
-        if (_eventTypes == null)
-        {
-            throw new InvalidOperationException(NotRegisteredError);
-        }
-
-        return codec.ReadSection(section, _eventTypes, out bytesRead);
+        return _codec.ReadSection(section, _eventTypes, out bytesRead);
     }
 
     private void Deliver(IReadOnlyList<object> events)

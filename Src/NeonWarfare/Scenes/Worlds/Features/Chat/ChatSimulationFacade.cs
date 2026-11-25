@@ -11,31 +11,26 @@ using Serilog;
 namespace NeonWarfare.Scenes.Worlds.Features.Chat;
 
 [SimulationFacade]
-public class ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery players)
+public class ChatSimulationFacade
 {
     private const string RanLog = "{nick} ({uid}) ran command /{text}";
     private const string NotFoundReply = "Command '{0}' not found. Use '/help' to see the list of commands.";
     private const string RequiresAdminReply = "Command '{0}' requires admin status.";
 
-    private const string RegisteredError = "The chat commands are already registered.";
-    private const string NotRegisteredError = "The chat commands are not registered yet.";
     private const string BadNameError =
         "{0} has the name '{1}': a chat command name is lower case, with no whitespace.";
     private const string SecondCommandError = "{0} and {1} both have the name '{2}'.";
 
     private readonly ILogger _log = LogFactory.GetForStatic<ChatSimulationFacade>();
 
-    private Dictionary<string, IChatCommand> _commandByName;
-    public IReadOnlyCollection<IChatCommand> Commands =>
-        _commandByName.Values.OrderBy(command => command.Name, StringComparer.Ordinal).ToList();
+    private readonly ChatSimulation _chatSimulation;
+    private readonly PlayerQuery _players;
+    private readonly Dictionary<string, IChatCommand> _commandByName;
 
-    // From the composition root rather than the constructor: /help takes this facade, so the list would close a cycle
-    public void Register(IEnumerable<IChatCommand> commands)
+    public ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery players, IEnumerable<IChatCommand> commands)
     {
-        if (_commandByName != null)
-        {
-            throw new InvalidOperationException(RegisteredError);
-        }
+        _chatSimulation = chatSimulation;
+        _players = players;
 
         var commandByName = new Dictionary<string, IChatCommand>(StringComparer.Ordinal);
         foreach (IChatCommand command in commands)
@@ -63,17 +58,12 @@ public class ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery pla
             ExecuteChatCommand(senderUid, text[1..]);
             return;
         }
-        chatSimulation.SendMessageAsPlayerToAll(senderUid, text);
+        _chatSimulation.SendMessageAsPlayerToAll(senderUid, text);
     }
 
     private void ExecuteChatCommand(string senderUid, string text)
     {
-        if (_commandByName == null)
-        {
-            throw new InvalidOperationException(NotRegisteredError);
-        }
-
-        PlayerModel sender = players.Get(senderUid);
+        PlayerModel sender = _players.Get(senderUid);
 
         // A command is not a chat message, so ChatSimulation never logs it, we have to log it here
         _log.Information(RanLog, sender.Nick, sender.Uid, text);
@@ -88,12 +78,12 @@ public class ChatSimulationFacade(ChatSimulation chatSimulation, PlayerQuery pla
 
         if (!_commandByName.TryGetValue(name, out IChatCommand command))
         {
-            chatSimulation.SendMessageAsServerToPlayer(NotFoundReply.FormatWith(name), senderUid);
+            _chatSimulation.SendMessageAsServerToPlayer(NotFoundReply.FormatWith(name), senderUid);
             return;
         }
         if (command.RequiresAdmin && !sender.IsAdmin)
         {
-            chatSimulation.SendMessageAsServerToPlayer(RequiresAdminReply.FormatWith(name), senderUid);
+            _chatSimulation.SendMessageAsServerToPlayer(RequiresAdminReply.FormatWith(name), senderUid);
             return;
         }
 

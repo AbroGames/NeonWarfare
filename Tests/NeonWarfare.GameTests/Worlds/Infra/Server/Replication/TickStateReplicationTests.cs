@@ -853,7 +853,7 @@ public class TickStateReplicationTests
 
     // What Alice's client models hold at the moment her Presentation handles a join
     [Presentation]
-    private class JoinRecorder(PlayersStorageQuery players, PlayersSessionStorageQuery session)
+    private class JoinRecorder(PlayersStorageQuery players, PlayersSessionStorageQuery session) : IEventHandlerOwner
     {
         public record Sight(string? Uid, bool Online, string Nick);
 

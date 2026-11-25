@@ -37,6 +37,19 @@ public class ConstructorLayerTests
             [Layer.ClientReplication] = [Layer.ClientReplication, Layer.Query],
         };
 
+    /// <summary>
+    /// What a layer may take only as a whole collection, on top of <see cref="AllowedParameterLayers"/>: the machinery
+    /// that runs every handler of a kind, never one of them picked by type.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<Layer, Layer[]> AllowedCollectionLayers =
+        new Dictionary<Layer, Layer[]>
+        {
+            // CommandDispatcher hands every command to its handler
+            [Layer.Server] = [Layer.CommandHandler],
+            // EventDispatcher hands every event to the [EventHandler] methods
+            [Layer.Client] = [Layer.Presentation],
+        };
+
     private static readonly IReadOnlyDictionary<string, Layer[]> RestrictedDependencies =
         new Dictionary<string, Layer[]>
         {
@@ -116,6 +129,28 @@ public class ConstructorLayerTests
 
         string failure = Assert.Single(report.Failures);
         Assert.Contains("which holds SimulationPart", failure);
+    }
+
+    [Fact]
+    public void Constructors_CollectionOnlyLayer_IsAllowedOnlyAsCollection()
+    {
+        GameAssembly fixture = GameAssembly.Compile(ArchitectureFixtures.LayerAttributes + """
+            namespace Fixture
+            {
+                using NeonWarfare.Scenes.Worlds.Infra.Composition;
+
+                public interface IHandler;
+                [CommandHandler] public class Handler : IHandler;
+                [Server] public class Collection(System.Collections.Generic.IEnumerable<IHandler> handlers);
+                [Server] public class Single(Handler handler);
+            }
+            """);
+        FailureReport report = new("fixture");
+
+        CheckParameters(fixture, new HashSet<string>(), report);
+
+        string failure = Assert.Single(report.Failures);
+        Assert.Contains("Single::.ctor", failure);
     }
 
     [Fact]
@@ -231,12 +266,16 @@ public class ConstructorLayerTests
                         foreach (TypeDefinition implementation in WorldLayers.Implementations(game, element))
                         {
                             if (WorldLayers.DeclaredLayer(implementation) is { } held
-                                && !AllowedParameterLayers[layer].Contains(held))
+                                && !AllowedParameterLayers[layer].Contains(held)
+                                && !CollectionOnlyLayers(layer).Contains(held))
                             {
+                                string collections = CollectionOnlyLayers(layer).Length == 0
+                                    ? ""
+                                    : $", and collections of {string.Join(", ", CollectionOnlyLayers(layer))}";
                                 report.Add($"{GameAssembly.Describe(constructor)}: {layer} takes " +
                                            $"'{parameter.Name}' of IEnumerable<{GameAssembly.ShortName(element)}>, " +
                                            $"which holds {GameAssembly.ShortName(implementation)}, a {held} " +
-                                           $"service; a {layer} may take {Allowed(layer)}");
+                                           $"service; a {layer} may take {Allowed(layer)}{collections}");
                             }
                         }
                         continue;
@@ -276,6 +315,9 @@ public class ConstructorLayerTests
             }
         }
     }
+
+    private static Layer[] CollectionOnlyLayers(Layer layer) =>
+        AllowedCollectionLayers.TryGetValue(layer, out Layer[]? layers) ? layers : [];
 
     private static string Allowed(Layer layer) =>
         AllowedParameterLayers[layer].Length == 0

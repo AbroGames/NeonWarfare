@@ -68,7 +68,7 @@ public class EventHandlerTests
         report.AssertEmpty();
     }
 
-    // The same rule WorldServicesBuilder uses to collect the event types: any other parameter makes Register throw
+    // The same rule EventDispatcher uses on the codec's types: any other parameter makes its constructor throw
     private static bool IsEventType(TypeReference type) =>
         GameAssembly.Instance.Find(type) is { IsNested: false, IsAbstract: false } definition
         && WorldLayers.DerivesFrom(definition, EventBase);

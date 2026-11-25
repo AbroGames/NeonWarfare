@@ -6,7 +6,7 @@ namespace NeonWarfare.RepoTests.Docs;
 
 /// <summary>
 /// The command table of Docs/Chat-and-commands.md is the only list of what a player can type. Commands
-/// register themselves — the composition root hands every created one to the chat facade — so nothing
+/// register themselves — the chat facade takes every one in its constructor — so nothing
 /// anywhere names them together, and a new command or a renamed one leaves the table behind without a
 /// single failure to show for it. The name a command answers to is a string literal inside its class,
 /// which is exactly the kind of thing a document repeats and then stops matching.
@@ -18,6 +18,8 @@ public class ChatCommandsDocTests
     private const string TableHeading = "Chat commands";
 
     private const string CommandInterface = "IChatCommand";
+
+    private const string ListedCommandInterface = "IListedChatCommand";
 
     private const string NameProperty = "Name";
 
@@ -183,15 +185,16 @@ public class ChatCommandsDocTests
     }
 
     /// <summary>
-    /// Every class under Src/ that names IChatCommand in its base list — the whole of Src/, because the
-    /// composition root scans the whole assembly. The interface is matched by its rightmost identifier, so a
-    /// qualified name counts as well. A command reaching the interface through a base class of its own is
-    /// not found; there is none.
+    /// Every class under Src/ that names IChatCommand or IListedChatCommand in its base list — the whole of Src/,
+    /// because the composition root scans the whole assembly. The interface is matched by its rightmost identifier,
+    /// so a qualified name counts as well. A command reaching the interface through a base class of its own is not
+    /// found; there is none.
     /// </summary>
     private static IEnumerable<(CSharpFile File, ClassDeclarationSyntax Declaration)> CommandDeclarations() =>
         CSharpFile.LoadAll().SelectMany(file => file.Nodes<ClassDeclarationSyntax>()
             .Where(declaration => declaration.BaseList?.Types
-                .Any(type => RightmostIdentifier(type.Type) == CommandInterface) ?? false)
+                .Any(type => RightmostIdentifier(type.Type) is CommandInterface or ListedCommandInterface)
+                ?? false)
             .Select(declaration => (file, declaration)));
 
     private static string RightmostIdentifier(TypeSyntax type) =>

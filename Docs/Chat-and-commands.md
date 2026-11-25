@@ -29,10 +29,12 @@ shows as the key and the arguments, as does an unknown key.
 
 ## Chat commands
 
-A chat command is a class implementing `IChatCommand` (`Name`, `Description`, `RequiresAdmin`,
+A chat command is a class implementing `IListedChatCommand` (`Name`, `Description`, `RequiresAdmin`,
 `Execute(senderUid, arguments)`) — a `[SimulationFacade]` named `*ChatCommandSimulationFacade` in
-`Worlds/Features/Chat/ChatCommands/`, since a command may change the state through other facades. The composition
-root passes every created one to `ChatSimulationFacade.Register`; the name is lower case without whitespace, unique.
+`Worlds/Features/Chat/ChatCommands/`, since a command may change the state through other facades.
+`ChatSimulationFacade` takes every `IChatCommand` in its constructor; the name is lower case without whitespace,
+unique. `/help` takes every `IListedChatCommand`, so it implements only the base `IChatCommand` and does not list
+itself.
 
 `ChatSimulationFacade` logs the command, splits the name from the arguments and runs it. An unknown name or missing
 admin rights get a reply instead; a reply is `ChatSimulation.SendMessageAsServerToPlayer(text, senderUid)` →

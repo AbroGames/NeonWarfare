@@ -36,8 +36,7 @@ public class PeerSessionsTests
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
         _calls = [];
-        var handlers = new CommandHandlerRegistry();
-        handlers.Register([new FakeSessionHandler(_calls, _peers)]);
+        var handlers = new CommandHandlerRegistry([new FakeSessionHandler(_calls, _peers)]);
         _sessions = new PeerSessions(handlers, _peers, _gatekeeper);
         foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
         {
@@ -268,8 +267,7 @@ public class PeerSessionsTests
     [RequireGodotRuntime]
     public void Join_WithoutSessionHandler_Throws()
     {
-        var handlers = new CommandHandlerRegistry();
-        handlers.Register([]);
+        var handlers = new CommandHandlerRegistry([]);
         var sessions = new PeerSessions(handlers, _peers, _gatekeeper);
 
         AssertThrown(() => sessions.Join(AlicePeer, Command(AliceUid))).IsInstanceOf<InvalidOperationException>();
