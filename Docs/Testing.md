@@ -46,11 +46,11 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
   `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Nine exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
-  line directly), the engine's `ui_*` input actions, `NavigationService` (not a world service),
-  `NotFoundCommand` (no command name of its own), Godot's `--path` (not our flag), the composition
+  skip. Eight exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  line directly), the engine's `ui_*` input actions, Godot's `--path` (not our flag), the composition
   root — `World` and `WorldServicesBuilder` as one entry (takes `Services` and wires every layer),
-  `Services.Di`, the `All tests` launch profile (does not start the game). Each has a test
+  `Services.Di`, `JoinRequestCommand` (sent by `Game`, not by a command sender), the `All tests`
+  launch profile (does not start the game). Each has a test
   failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).
 
 ## What is covered now
@@ -65,11 +65,13 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Docs/DocsFormattingTests` | Encoding, trailing whitespace, line length, one heading, final newline |
 | `Docs/CliArgsDocTests` | Flag table of [Command-line arguments](Cli-args.md) ↔ `Scripts/Content/CmdArgs/` |
 | `Docs/StackDocTests` | Package tables of [Stack](Stack.md) ↔ `PackageReference` of both `.csproj`; the smoke project takes only the xUnit three |
-| `Docs/ServicesDocTests` | Both tables of [Services](Services.md) ↔ `Scripts/Services.cs` and `World*Service` |
+| `Docs/ServicesDocTests` | The global services table of [Services](Services.md) ↔ `Scripts/Services.cs` |
+| `Docs/WorldDocTests` | Inventory of [World](World.md) ↔ the top-level types of the World root and `Infra/`, both ways |
+| `Docs/WorldFeaturesDocTests` | Folder table of [World features](World-features.md) ↔ the folders of `World/Features/`, both ways |
 | `Docs/TestingDocTests` | This table ↔ the test classes of `Tests/NeonWarfare.RepoTests/`, both ways |
 | `Docs/GameTestingDocTests` | Coverage table of [Game testing](Game-testing.md) ↔ the `[TestSuite]` classes of `Tests/NeonWarfare.GameTests/`, both ways |
 | `Docs/SmokeTestingDocTests` | Scenario table of [Smoke testing](Smoke-testing.md) ↔ the tests of `Tests/NeonWarfare.SmokeTests/` |
-| `Docs/ChatCommandsDocTests` | Command table of [Chat and commands](Chat-and-commands.md) ↔ the `ICommandProcessor` classes: name, rights, only in `Command/Impl/` |
+| `Docs/ChatCommandsDocTests` | Command table of [Chat and commands](Chat-and-commands.md) ↔ the `IChatCommand` classes: name, rights |
 | `Docs/NetworkingDocTests` | Channel table of [Networking](Networking.md) ↔ `Consts.TransferChannel`, order included |
 | `Docs/RepositoryStructureDocTests` | Paths drawn in [Repository structure](Repository-structure.md) exist (one way only) |
 | `Localization/LocaleFilesTests` | One key set, key order, no duplicates, naming, no empty `.po` translations, empty `.pot` |
@@ -90,6 +92,7 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/NotSavedEntityTests` | Every replicated member of a `[NotSaved]` entity is a readonly field set in each constructor |
 | `Architecture/CommandHandlerTests` | Every command but the join has a player handler (the join goes to `IJoinRequestHandler`); exactly one join and one peer disconnected handler; every handler is `[CommandHandler]` |
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
+| `Architecture/ProducedMessageTests` | Every event is constructed only in the Simulation and has an `[EventHandler]`; every command is sent |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
 | `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` called only from the Presentation |
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |

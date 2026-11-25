@@ -120,13 +120,9 @@ public static class RepositoryPaths
     /// <summary>The registry of all global services.</summary>
     public static string ServicesPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Services.cs");
 
-    /// <summary>The world services — child nodes of World, one class per service.</summary>
-    public static string WorldServiceDirectory { get; } =
-        Path.Combine(GameSourceDirectory, "Scenes", "OldWorld", "WorldServices");
-
-    /// <summary>The only place allowed to implement ICommandProcessor, one class per command.</summary>
-    public static string CommandProcessorImplDirectory { get; } =
-        Path.Combine(WorldServiceDirectory, "Command", "Impl");
+    /// <summary>The features of the World, one folder each — see Docs/World-features.md.</summary>
+    public static string WorldFeaturesDirectory { get; } =
+        Path.Combine(GameSourceDirectory, "Scenes", "World", "Features");
 
     /// <summary>The only place that declares a transfer channel — Consts.TransferChannel.</summary>
     public static string ConstsPath { get; } = Path.Combine(GameSourceDirectory, "Scripts", "Consts.cs");
@@ -228,9 +224,6 @@ public static class RepositoryPaths
         SourceFiles().Concat(RepoTestFiles()).Concat(SmokeTestFiles()).Concat(GameTestFiles())
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToList();
-
-    /// <summary>The world service classes — every .cs under Scenes/OldWorld/WorldServices, at any depth.</summary>
-    public static IReadOnlyList<string> WorldServiceFiles() => Files([WorldServiceDirectory], "*.cs");
 
     /// <summary>
     /// Every <c>.uid</c> sidecar Godot keeps next to a file it cannot store a uid inside — a .cs under

@@ -34,7 +34,7 @@ nothing to do with the game's arguments.
 | Flag | Description |
 |---|---|
 | `--server` | Run the process as a dedicated server (selects `DedicatedServerRootStarter`) |
-| `--headless` | Run without a window |
+| `--headless` | Run without a window and without `ServerHud` |
 | `--port <port>` | The port the server listens on (if the flag is not passed, then `25566`) |
 | `--savefile <name>` | The save file name; if the file does not exist, a new game is created |
 | `--admin <uid>` | The UID of the player who will be granted administrator rights |

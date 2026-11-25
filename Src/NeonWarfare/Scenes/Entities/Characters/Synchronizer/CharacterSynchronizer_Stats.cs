@@ -18,7 +18,7 @@ public partial class CharacterSynchronizer
     //TODO В доку, что здесь не должно быть никакой логики кроме сетевой
     public void Stats_OnStatUpdate(CharacterStat stat, double additive, double multiplicative) => 
         Rpc(MethodName.Stats_OnStatUpdateRpc, (int) stat, additive, multiplicative);
-    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsCache)]
+    [Rpc(CallLocal = true)]
     private void Stats_OnStatUpdateRpc(int stat, double additive, double multiplicative)
     {
         if (!Net.IsClient()) return;
@@ -27,7 +27,7 @@ public partial class CharacterSynchronizer
     
     public void Stats_OnDamage(Character damager, double value, double absorbByArmor, double newHp) => 
         Rpc(MethodName.Stats_OnDamageRpc, damager.GetPath().ToString(), value, absorbByArmor, newHp);
-    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsHp)]
+    [Rpc(CallLocal = true)]
     private void Stats_OnDamageRpc(string damager, double value, double absorbByArmor, double newHp)
     {
         if (!Net.IsClient()) return;
@@ -36,7 +36,7 @@ public partial class CharacterSynchronizer
     
     public void Stats_OnHeal(Character healer, double value, double newHp, double newDutyHp) => 
         Rpc(MethodName.Stats_OnHealRpc, healer.GetPath().ToString(), value, newHp, newDutyHp);
-    [Rpc(CallLocal = true, TransferChannel = (int) Consts.TransferChannel.StatsHp)]
+    [Rpc(CallLocal = true)]
     private void Stats_OnHealRpc(string healer, double value, double newHp, double newDutyHp)
     {
         if (!Net.IsClient()) return;

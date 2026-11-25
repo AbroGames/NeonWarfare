@@ -14,10 +14,7 @@ public static class Consts
     
     public enum TransferChannel
     {
-        Default,
-        Chat,
-        StatsHp,
-        StatsCache
+        Default
     }
     
     public const string Localhost = "127.0.0.1";
