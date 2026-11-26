@@ -5,7 +5,7 @@ using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
-namespace NeonWarfare.Scenes.Game.Transport;
+namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
 /// The connection of a remote client. Until it has a World the client is connecting: it sends the join once

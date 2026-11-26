@@ -1,11 +1,11 @@
 using System.Buffers;
 using GdUnit4;
 using NeonWarfare.GameTests.Worlds.Infra.Protocol;
-using NeonWarfare.Scenes.Game.Transport;
+using NeonWarfare.Scenes.Game.Networks.Transport;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using static GdUnit4.Assertions;
 
-namespace NeonWarfare.GameTests.Game.Transport;
+namespace NeonWarfare.GameTests.Game.Networks.Transport;
 
 [TestSuite]
 public class ServerPacketsTests

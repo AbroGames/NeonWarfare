@@ -8,19 +8,19 @@ World; their layers and the World itself are in [World](World.md).
 
 ## Transport and roles
 
-* **`Network`** ([Scenes/Game/Network.cs](../Src/NeonWarfare/Scenes/Game/Network.cs)) — ENet
+* **`Network`** ([Scenes/Game/Networks/Network.cs](../Src/NeonWarfare/Scenes/Game/Networks/Network.cs)) — ENet
   only: `HostServer()`, `OpenServer()`, `ConnectToServer()`, `Send(peerId, bytes)`, `Disconnect(peerId)` and the
   connection events. It creates a fresh `SceneMultiplayer` per `Game`, so no handler outlives the session, and
   unsets it on `Game.TreeExiting`. A server is hosted with `RefuseNewConnections` and opened only after its World
   is built.
-* **The transports** ([Scenes/Game/Transport/](../Src/NeonWarfare/Scenes/Game/Transport/)) — plain objects
-  implementing `IClientsConnection` (server → clients) and `IServerConnection` (client → server), created by `Game`
-  with their World. `ServerTransport` routes the remote peers of a server into `World.StartHandshake` /
-  `QueueDisconnection` / `ReceiveFromClient`; `HostTransport` loops the host's own peer back and hands the others to
-  its `ServerTransport`; `ClientTransport` is a remote client's connection, which has no World until the join
-  snapshot. The World hands `IClientsConnection` bodies only, one method per packet kind. The direction a
-  configuration does not use is `NoConnection`. `GameProtocol` holds what the client needs before its World exists:
-  `EntityCatalog`, `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
+* **The transports** ([Scenes/Game/Networks/Transport/](../Src/NeonWarfare/Scenes/Game/Networks/Transport/)) — plain
+  objects implementing `IClientsConnection` (server → clients) and `IServerConnection` (client → server), created by
+  `Game` with their World. `ServerTransport` routes the remote peers of a server into `World.StartHandshake` /
+  `QueueDisconnection` / `ReceiveFromClient`; `HostTransport` loops the host's own peer back and hands the others to its
+  `ServerTransport`; `ClientTransport` is a remote client's connection, which has no World until the join snapshot. The
+  World hands `IClientsConnection` bodies only, one method per packet kind. The direction a configuration does not use
+  is `NoConnection`. `GameProtocol` holds what the client needs before its World exists: `EntityCatalog`,
+  `NetMessageCodec` (with the protocol hash) and the RepliCAT `Replicator`.
 * **The host is an ordinary peer.** Its own peer is peer 1 (the server's id): a packet for it never reaches ENet,
   `HostTransport` hands it to its own World synchronously, inside the call. So the host's commands pass the same
   decoding and whitelist as a remote client's, and its event handlers run in the physics step, before `_Process`.
@@ -65,7 +65,7 @@ command — only from a joined peer — to its `IPlayerCommandHandler<T>`, which
 ## Packets: server → client
 
 The first byte of every packet is its `ServerPacketKind`, written and read only by `ServerPackets`
-(`Game/Transport/`); the World sees only the bodies:
+(`Game/Networks/Transport/`); the World sees only the bodies:
 
 | Kind | Content | To whom |
 |---|---|---|

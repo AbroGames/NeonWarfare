@@ -1,13 +1,14 @@
 using GdUnit4;
 using NeonWarfare.GameTests.Game.Fixtures;
+using NeonWarfare.GameTests.Game.Networks.Fixtures;
 using NeonWarfare.GameTests.Worlds.Fixtures;
-using NeonWarfare.Scenes.Game.Transport;
+using NeonWarfare.Scenes.Game.Networks.Transport;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
 
-namespace NeonWarfare.GameTests.Game.Transport;
+namespace NeonWarfare.GameTests.Game.Networks.Transport;
 
 [TestSuite]
 public class ServerTransportTests

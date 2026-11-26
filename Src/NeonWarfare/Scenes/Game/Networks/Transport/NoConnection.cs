@@ -2,7 +2,7 @@ using System;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;
 
-namespace NeonWarfare.Scenes.Game.Transport;
+namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
 /// The direction a configuration has no use for: a dedicated server sends no commands, a remote client serves no

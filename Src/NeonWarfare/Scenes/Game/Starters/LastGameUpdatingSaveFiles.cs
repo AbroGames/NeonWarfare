@@ -3,7 +3,7 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
-namespace NeonWarfare.Scenes.Game;
+namespace NeonWarfare.Scenes.Game.Starters;
 
 /// <summary>
 /// The save files of a World that "Continue" follows: after every file written, <paramref name="setLastGameSave"/>

@@ -1,6 +1,7 @@
 using System;
 using GodotBox.Godot;
-using NeonWarfare.Scenes.Game.Transport;
+using NeonWarfare.Scenes.Game.Networks;
+using NeonWarfare.Scenes.Game.Networks.Transport;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Ports;

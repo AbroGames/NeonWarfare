@@ -1,4 +1,4 @@
-namespace NeonWarfare.Scenes.Game.Transport;
+namespace NeonWarfare.Scenes.Game.Networks.Transport;
 
 /// <summary>
 /// The first byte of every packet the server sends: it tells the client what follows.

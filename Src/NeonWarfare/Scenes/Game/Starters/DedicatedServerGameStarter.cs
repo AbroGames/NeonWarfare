@@ -2,6 +2,7 @@ using System;
 using Godot;
 using GodotBox.Godot.Nodes.Process;
 using KludgeBox.Logging;
+using NeonWarfare.Scenes.Game.Networks;
 using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Ports;
 using NeonWarfare.Scripts.Content.LoadingScreen;
