@@ -23,7 +23,7 @@ public class CommandInbox(NetMessageCodec codec, PeerGatekeeper gatekeeper, Comm
         "JoinRequestCommand from peer {peerId} has protocol hash {theirs}, the server has {ours}";
 
     public abstract record Entry(int PeerId);
-    public record PeerCommand(int PeerId, Command Command) : Entry(PeerId);
+    public record PeerCommandEntry(int PeerId, Command Command) : Entry(PeerId);
     // Not a Command, so it never enters the network whitelist: a peer cannot send its own disconnection
     public record PeerDisconnected(int PeerId) : Entry(PeerId);
 
@@ -60,7 +60,7 @@ public class CommandInbox(NetMessageCodec codec, PeerGatekeeper gatekeeper, Comm
             return;
         }
 
-        _entries.Add(new PeerCommand(peerId, command));
+        _entries.Add(new PeerCommandEntry(peerId, command));
     }
 
     public void EnqueuePeerDisconnected(int peerId) => _entries.Add(new PeerDisconnected(peerId));

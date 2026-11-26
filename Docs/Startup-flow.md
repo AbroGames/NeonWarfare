@@ -83,7 +83,6 @@ Easy to forget: the dedicated server initializes neither `Services.GameSettings`
 from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, and `ServerHud` unless
 `--headless` is passed.
 
-
 ## Level 2: GameStarter
 
 `MainSceneService` creates the `Game` scene, puts it into `MainSceneContainer` and hands it a **game starter** — an

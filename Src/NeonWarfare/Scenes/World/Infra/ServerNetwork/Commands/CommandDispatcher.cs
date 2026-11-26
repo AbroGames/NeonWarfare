@@ -68,10 +68,10 @@ public class CommandDispatcher(
 
         switch (entry)
         {
-            case CommandInbox.PeerCommand { Command: JoinRequestCommand join }:
+            case CommandInbox.PeerCommandEntry { Command: JoinRequestCommand join }:
                 sessions.Join(entry.PeerId, join);
                 break;
-            case CommandInbox.PeerCommand peerCommand:
+            case CommandInbox.PeerCommandEntry peerCommand:
                 ProcessFromPlayer(peerCommand.PeerId, peerCommand.Command);
                 break;
             case CommandInbox.PeerDisconnected:

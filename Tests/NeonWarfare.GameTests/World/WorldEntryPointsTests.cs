@@ -248,13 +248,13 @@ public class WorldEntryPointsTests
         GameWorld world = HostWorld();
         var localPlayer = world.Get<LocalPlayerPresentation>();
 
-        AssertThat(localPlayer.TryGetPlayer()).IsNull();
+        AssertThat(localPlayer.Player).IsNull();
         JoinRemote(world);
-        AssertThat(localPlayer.TryGetPlayer()).IsNull();
+        AssertThat(localPlayer.Player).IsNull();
         JoinHost(world);
 
         AssertThat(localPlayer.Uid).IsEqual(HostUid);
-        AssertThat(localPlayer.TryGetPlayer()!.Uid).IsEqual(HostUid);
+        AssertThat(localPlayer.Player!.Uid).IsEqual(HostUid);
     }
 
     // A loaded save stores the host's player, but it is not online until it joins again
@@ -265,10 +265,10 @@ public class WorldEntryPointsTests
         GameWorld world = HostWorld(new WorldOrigin.FromSave(HostSave(_codec), SaveFileName));
         var localPlayer = world.Get<LocalPlayerPresentation>();
 
-        AssertThat(localPlayer.TryGetPlayer()).IsNull();
+        AssertThat(localPlayer.Player).IsNull();
         JoinHost(world);
 
-        AssertThat(localPlayer.TryGetPlayer()!.Nick).IsEqual("Host");
+        AssertThat(localPlayer.Player!.Nick).IsEqual("Host");
     }
 
     [TestCase]
@@ -281,7 +281,7 @@ public class WorldEntryPointsTests
         world.OnClientDisconnected(HostPeer);
         Tick(world);
 
-        AssertThat(world.Get<LocalPlayerPresentation>().TryGetPlayer()).IsNull();
+        AssertThat(world.Get<LocalPlayerPresentation>().Player).IsNull();
     }
 
     // The client's World is created after the join, from the object the join request was made of
@@ -295,7 +295,7 @@ public class WorldEntryPointsTests
 
         GameWorld client = World(WorldLayer.Client, new WorldOrigin.FromSnapshot(RemoteSnapshot()));
 
-        PlayerModel player = client.Get<LocalPlayerPresentation>().TryGetPlayer()!;
+        PlayerModel player = client.Get<LocalPlayerPresentation>().Player!;
         AssertThat(player.Uid).IsEqual(RemoteUid);
         AssertThat(player.Nick).IsEqual("Remote");
     }

@@ -16,6 +16,7 @@ public class ProducedMessageTests
     private const string GameNamespace = "NeonWarfare.";
     private const string EventBase = WorldLayers.WorldNamespace + ".Infra.Protocol.Event";
     private const string CommandBase = WorldLayers.WorldNamespace + ".Infra.Protocol.Command";
+    private const string CloneMethod = "<Clone>$";
     private const string EventHandlerAttribute =
         WorldLayers.WorldNamespace + ".Infra.ClientNetwork.EventHandlerAttribute";
 
@@ -38,7 +39,7 @@ public class ProducedMessageTests
         {
             List<Construction> found = constructions.GetValueOrDefault(@event.FullName, [])
                 // The record's own Clone, behind a 'with' expression
-                .Where(construction => construction.Owner != @event)
+                .Where(construction => construction.Owner != @event || construction.Method.Name != CloneMethod)
                 .ToList();
             if (found.Count == 0)
             {

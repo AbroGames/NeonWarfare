@@ -46,12 +46,13 @@ dotnet test --filter FullyQualifiedName~DocsLinksTests   # a single class
   shapes live in `Infrastructure/`: `CrossCheck` walks a "code ↔ document" pair both ways,
   `DocTableChecks` states what an inventory row must look like, `FileSources` holds the theory sources.
 * An exception to a rule is an explicit array in the test with a comment saying why — never a silent
-  skip. Eight exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
+  skip. Ten exist: `GlobalUsings.cs` (no namespace), `RootStarterManager` (reads the command
   line directly), the engine's `ui_*` input actions, Godot's `--path` (not our flag), the composition
   root — `World` and `WorldServicesBuilder` as one entry (takes `Services` and wires every layer),
-  `Services.Di`, `JoinRequestCommand` (sent by `Game`, not by a command sender), the `All tests`
-  launch profile (does not start the game). Each has a test
-  failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).
+  `Services.Di`, `JoinRequestCommand` (sent by `Game`, not by a command sender), `IChatCommand` (a chat
+  command, not a `Command`), `HudMailbox` (its
+  `Post` / `Read<T>` are the mailbox itself), the `All tests` launch profile (does not start the game).
+  Each has a test failing with "stale exception" once the entry names nothing (`CrossCheck.AssertExemptionsExist`).
 
 ## What is covered now
 
@@ -94,7 +95,9 @@ One row per test class, path relative to `Tests/NeonWarfare.RepoTests/`. A new t
 | `Architecture/ChatCommandTests` | Every `IChatCommand` is `[SimulationFacade]`, or the root never registers it |
 | `Architecture/ProducedMessageTests` | Every event is constructed only in the Simulation and has an `[EventHandler]`; every command is sent |
 | `Architecture/EventHandlerTests` | An `[EventHandler]` is a private instance `Handle` of one event type, declared in a `[Presentation]` |
-| `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` called only from the Presentation |
+| `Architecture/LayerReferenceTests` | `Services` reached in the World only by `World` (`Di` aside); Simulation referred to only by its group; `HudMailbox.Post` reached only from event handlers and their private helpers |
+| `Architecture/PresentationSurfaceTests` | A `[Presentation]` exposes only property getters, which write no field and reach no event handler code |
+| `Architecture/WorldNamingTests` | `Command` / `Event` / `Notice` types ↔ the same suffix in the World; layer attribute ↔ suffix in `Features/` |
 | `Architecture/ModelRulesTests` | Models refer only to primitives, engine value types, RepliCAT, enums, models; only Simulation writes them |
 | `Architecture/ReplicatedMemberTests` | `[Replicated]` only on fields, never on a plain collection: RepliCAT ones only |
 | `Architecture/SimulationTimingTests` | The Simulation group defers nothing past the tick: no deferred calls, timers, tweens, `async` |

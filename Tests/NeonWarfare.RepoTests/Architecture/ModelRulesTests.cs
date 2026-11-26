@@ -160,13 +160,8 @@ public class ModelRulesTests
 
         return local.IsEnum
                || WorldLayers.ModelOwner(local) != null
-               || GameAssembly.SelfAndEnclosing(local).Any(IsCompilerGenerated);
+               || GameAssembly.IsCompilerGenerated(local);
     }
-
-    private static bool IsCompilerGenerated(TypeDefinition type) =>
-        type.Name.StartsWith('<')
-        || type.CustomAttributes.Any(attribute =>
-            attribute.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 
     /// <summary>
     /// The model methods that write replicated state, directly or through other model methods, as a fixed

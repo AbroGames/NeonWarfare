@@ -42,7 +42,7 @@ public class CommandInboxTests
 
         _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(command));
 
-        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, command));
+        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(AlicePeer, command));
     }
 
     [TestCase]
@@ -65,7 +65,7 @@ public class CommandInboxTests
         }
         _inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(next));
 
-        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(AlicePeer, next));
+        AssertThat(_inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(AlicePeer, next));
     }
 
     // A client of another build: rejected before its join can reach the world, and told why
@@ -79,7 +79,7 @@ public class CommandInboxTests
         inbox.EnqueueFromPeer(AlicePeer, _codec.Encode(join with { ProtocolHash = _codec.ProtocolHash + 1 }));
         inbox.EnqueueFromPeer(BobPeer, _codec.Encode(join));
 
-        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommand(BobPeer, join));
+        AssertThat(inbox.TakeAll()).ContainsExactly(new CommandInbox.PeerCommandEntry(BobPeer, join));
         AssertThat(_clientsConnection.Packets.Count).IsEqual(1);
         AssertThat(_clientsConnection.Packets[0].PeerId).IsEqual(AlicePeer);
         AssertThat(_clientsConnection.Packets[0].Packet)
@@ -99,7 +99,7 @@ public class CommandInboxTests
 
         AssertThat(_inbox.TakeAll()).ContainsExactly(
             new CommandInbox.PeerDisconnected(BobPeer),
-            new CommandInbox.PeerCommand(AlicePeer, command),
+            new CommandInbox.PeerCommandEntry(AlicePeer, command),
             new CommandInbox.PeerDisconnected(AlicePeer));
     }
 
