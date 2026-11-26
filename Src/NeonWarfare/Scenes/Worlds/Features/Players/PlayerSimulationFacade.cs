@@ -3,6 +3,7 @@ using KludgeBox.Logging;
 using NeonWarfare.Scenes.Worlds.Features.Chat;
 using NeonWarfare.Scenes.Worlds.Infra.Composition;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Events;
+using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using NeonWarfare.Scenes.Worlds.Ports;
 using Serilog;
 
@@ -50,12 +51,13 @@ public class PlayerSimulationFacade(
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
     }
 
-    public void Leave(string uid)
+    // A displaced admin is the same player on a new connection: the server it started must not stop under it
+    public void Leave(string uid, LeaveReason reason)
     {
         PlayerModel player = players.Model.PlayerByUid[uid];
         session.Model.OnlinePlayerUids.Remove(uid);
         _log.Information(LeftLog, player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, player.Nick);
-        if (uid == admin.Uid) owner.AdminLeft();
+        if (uid == admin.Uid && reason == LeaveReason.Disconnected) owner.AdminLeft();
     }
 }

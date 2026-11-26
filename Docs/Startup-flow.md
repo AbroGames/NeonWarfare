@@ -161,20 +161,20 @@ A host without `Network`: its only peer is its own.
 
 An ENet server **in this same process**.
 
-1. Only the dedicated server, with `parentPid`: a `ProcessDeadChecker` (a GodotBox node) on `Game` calls
-   `MainScene.Shutdown()` when the parent process dies, so a child server is not left hanging after the client is
-   closed (see [Shutdown](Shutdown.md)).
-2. The `Loading` loading screen, `AddServerNetwork()`.
-3. `resume-game.json` — "own server" with the save files that keep it current: always on the host, on the dedicated
-   server only with `parentPid` (a server started from the console is never resumed).
-4. `network.HostServer(port ?? 25566)` — the port is open but refuses connections. An error (a busy port, say) →
+1. The `Loading` loading screen, `AddServerNetwork()`.
+2. `resume-game.json` — "own server" with the save files that keep it current: always on the host, on the dedicated
+   server only with `parentPid` (a server started from the console is never resumed). The dedicated server with
+   `parentPid` is a child server, set up in one place, `FollowParentClient`: a `ProcessDeadChecker` (a GodotBox node)
+   on `Game` and `AdminLeft` both call `MainScene.Shutdown()`, so a child server is not left hanging after the client
+   is closed (see [Shutdown](Shutdown.md)).
+3. `network.HostServer(port ?? 25566)` — the port is open but refuses connections. An error (a busy port, say) →
    the host goes back to the menu, the dedicated server shuts down.
-5. The host: `FollowLocalPlayer`; the dedicated server with `parentPid`: `AdminLeft` → `MainScene.Shutdown()`.
-6. The host — `AddHostWorld(...)` with its `LocalPlayer`, whose join leaves before the server is opened; the dedicated
+4. The host: `FollowLocalPlayer`.
+5. The host — `AddHostWorld(...)` with its `LocalPlayer`, whose join leaves before the server is opened; the dedicated
    server — `AddDedicatedWorld(...)`, no local player, the World hidden, then `ShowServerHud()` if requested. A load
    error → the host goes back to the menu, the dedicated server shuts down: a new world in its place would overwrite
    the save on exit.
-7. `network.OpenServer()`.
+6. `network.OpenServer()`.
 
 > [!IMPORTANT]
 > The server is opened for incoming connections **only after** the World is built. Otherwise a client would knock

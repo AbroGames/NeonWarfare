@@ -8,7 +8,8 @@ namespace NeonWarfare.Scenes.Worlds.Ports;
 public interface IServerOwner
 {
     /// <summary>
-    /// The player with the admin uid has left. Called inside the tick.
+    /// The player with the admin uid has disconnected; a displacement by its own new connection is no leave.
+    /// Called inside the tick.
     /// </summary>
     void AdminLeft();
 }

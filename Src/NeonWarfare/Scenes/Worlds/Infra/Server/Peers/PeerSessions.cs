@@ -90,7 +90,7 @@ public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers,
             // A throwing handler must not keep the uid from the new peer
             try
             {
-                sessionHandler.Leave(uid);
+                sessionHandler.Leave(uid, LeaveReason.Displaced);
             }
             finally
             {
@@ -124,10 +124,10 @@ public class PeerSessions(CommandHandlerRegistry handlers, PeerStateTable peers,
         switch (peers.Remove(peerId))
         {
             case PeerStateTable.Joined joined:
-                handlers.SessionHandler.Leave(joined.Uid);
+                handlers.SessionHandler.Leave(joined.Uid, LeaveReason.Disconnected);
                 break;
             case PeerStateTable.Leaving leaving:
-                handlers.SessionHandler.Leave(leaving.Uid);
+                handlers.SessionHandler.Leave(leaving.Uid, LeaveReason.Disconnected);
                 break;
             default:
                 _log.Debug(NotJoinedLeftLog, peerId);

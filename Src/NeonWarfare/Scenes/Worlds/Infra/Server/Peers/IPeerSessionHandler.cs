@@ -13,5 +13,12 @@ public interface IPeerSessionHandler : ICommandHandler
 {
     bool ValidateJoin(JoinRequestCommand command, out JoinRejectReason reason);
     void Join(JoinRequestCommand command);
-    void Leave(string uid);
+    void Leave(string uid, LeaveReason reason);
+}
+
+public enum LeaveReason
+{
+    Disconnected,
+    // The same uid joins from another peer right after this leave: the player is back, not gone
+    Displaced
 }

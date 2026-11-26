@@ -138,6 +138,6 @@ public class CommandInboxTests
 
         public void Join(JoinRequestCommand command) { }
 
-        public void Leave(string uid) { }
+        public void Leave(string uid, LeaveReason reason) { }
     }
 }

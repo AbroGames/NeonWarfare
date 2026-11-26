@@ -5,8 +5,8 @@ using NeonWarfare.Scenes.Worlds.Ports;
 namespace NeonWarfare.Scenes.Worlds.Infra.Client;
 
 /// <summary>
-/// The only sender of commands in the World. <c>JoinRequestCommand</c> does not go through it: <c>Game</c> sends the
-/// join itself, before a remote client has a World.
+/// The only sender of commands in the World. <c>JoinRequestCommand</c> does not go through it: the transport of
+/// <c>Game</c> sends the join itself, since a remote client sends it before it has a World.
 /// </summary>
 [Client]
 public class PlayerCommandSender(NetMessageCodec codec, IServerConnection serverConnection)

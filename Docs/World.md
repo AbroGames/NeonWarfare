@@ -87,7 +87,8 @@ exists, and a collection rejected by its consumer fails the build. Adding a serv
 attribute; nothing else is edited.
 Every service is also registered under each interface of the game it implements, so a constructor takes every
 service of a kind as `IEnumerable<I>`: a new collection is an interface and a parameter, validated in the
-consumer's constructor. A service implementing an interface the root registers itself (a port) is rejected. No
+consumer's constructor. A service implementing an interface the root registers itself (a port) is rejected, and so is
+a single `I` parameter when several services implement `I`: MS.DI would silently hand over the last one. No
 constructor of a service has an optional parameter: MS.DI would fill it silently. The GameTests build the container for
 every configuration.
 

@@ -107,7 +107,7 @@ public class PeerSessionsTests
 
         Join(AliceSecondPeer, AliceUid);
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", Displaced(AliceUid), Joined(AliceUid));
         AssertNotJoined(AlicePeer);
         AssertJoined(AliceSecondPeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
@@ -116,7 +116,7 @@ public class PeerSessionsTests
 
         _sessions.Disconnected(AlicePeer);
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", Displaced(AliceUid), Joined(AliceUid));
         AssertJoined(AliceSecondPeer, AliceUid);
     }
 
@@ -132,7 +132,7 @@ public class PeerSessionsTests
         Join(AliceSecondPeer, AliceUid);
         _sessions.Disconnected(AlicePeer);
 
-        AssertThat(_calls).ContainsExactly("validate join alice", "leave alice", Joined(AliceUid));
+        AssertThat(_calls).ContainsExactly("validate join alice", Displaced(AliceUid), Joined(AliceUid));
         AssertJoined(AliceSecondPeer, AliceUid);
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
     }
@@ -146,7 +146,7 @@ public class PeerSessionsTests
 
         AssertThrown(() => Join(AliceSecondPeer, ThrowInLeave)).IsInstanceOf<InvalidOperationException>();
 
-        AssertThat(_calls).Contains($"leave {ThrowInLeave}");
+        AssertThat(_calls).Contains(Displaced(ThrowInLeave));
         AssertNotJoined(AlicePeer);
         AssertThat(_peers.TryGetPeerIdByUid(ThrowInLeave, out _)).IsFalse();
         AssertThat(_clientsConnection.Disconnected).ContainsExactly(AlicePeer);
