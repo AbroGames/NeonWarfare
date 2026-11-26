@@ -81,6 +81,9 @@ ENet delivers a fragmented reliable packet whole, so a client applies a tick ato
 A client applies a packet at once, in `peer_packet`, with no queue: `ClientTransport` routes it by kind, the state to
 `World.ReceiveState` (`StateApplier`), the events to `World.ReceiveEvents` (`EventDispatcher`). The host gets only its
 events: its Simulation has already written the state.
+A packet the client cannot read or apply ends its session (`ClientTransport.ConnectionBroken` → `Game.Failed`): it may
+be applied in part while the server's baselines have moved on, so the models would drift; a new join brings a fresh
+snapshot.
 `JoinRejected` never reaches a World: the transport reads it, with or without a World, and calls
 `ILocalPlayerOwner.JoinRejected`; `Game` reports it as `Failed`, and the starter leaves for the menu with the reason,
 on a remote client and on a host refused its own join alike.

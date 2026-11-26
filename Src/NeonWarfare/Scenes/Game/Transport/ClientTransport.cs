@@ -17,7 +17,8 @@ public sealed class ClientTransport : IServerConnection
 
     private const string NoWorldLog = "Packet from peer {peerId} dropped: there is no World yet";
     private const string NotFromServerLog = "Packet from peer {peerId} dropped: not from the server";
-    private const string BrokenServerPacketLog = "Packet from the server dropped";
+    private const string BrokenServerPacketLog = "A packet from the server cannot be read or applied";
+    private const string AfterBrokenLog = "Packet from the server dropped: the connection is already broken";
     private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string SecondWorldError = "The client already has a World";
     private const string SecondSnapshotError = "A snapshot for a client that already has a World.";
@@ -31,6 +32,13 @@ public sealed class ClientTransport : IServerConnection
     private readonly ILogger _log = LogFactory.GetForStatic<ClientTransport>();
 
     private World _world;
+    private bool _isBroken;
+
+    /// <summary>
+    /// A packet from the server could not be read or applied. Raised once, already logged; every later packet is
+    /// dropped.
+    /// </summary>
+    public event Action ConnectionBroken;
 
     /// <param name="snapshotReceived">Builds the World inside the call, before the events packet of the join tick
     /// arrives, and calls <see cref="Enter"/>.</param>
@@ -66,13 +74,23 @@ public sealed class ClientTransport : IServerConnection
             return;
         }
 
+        if (_isBroken)
+        {
+            _log.Debug(AfterBrokenLog);
+            return;
+        }
+
         try
         {
             Receive(packet);
         }
-        catch (NetMessageFormatException e)
+        // Whatever the failure, the packet may be applied in part, and the server's baselines have moved past it, so
+        // every next delta would land on diverged models. The session ends; a new join brings a fresh snapshot
+        catch (Exception e)
         {
             _log.Error(e, BrokenServerPacketLog);
+            _isBroken = true;
+            ConnectionBroken?.Invoke();
         }
     }
 

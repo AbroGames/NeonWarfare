@@ -30,6 +30,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string ConnectionFailedMessage = "Connection to the server failed";
     private const string DisconnectedFromServerMessage = "Server disconnected";
+    private const string ConnectionBrokenMessage = "The data received from the server is broken";
     private const string BrokenWorldMessage = "The world received from the server is broken";
     private const string WorldCreationFailedMessage = "Failed to enter the world received from the server";
     private const string BrokenSnapshotLog = "The join snapshot from the server is broken";
@@ -44,7 +45,8 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     /// <summary>
     /// The session of this process's player is over, with a message for it: the join was rejected, the World or its
-    /// <c>Hud</c> failed to be created, the connection failed or the server disconnected. Already logged.
+    /// <c>Hud</c> failed to be created, the connection failed, the server disconnected or sent a packet this client
+    /// cannot apply. Already logged.
     /// </summary>
     public event Action<string> Failed;
 
@@ -98,6 +100,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     {
         Network network = AddNetwork();
         _clientTransport = new ClientTransport(network, _protocol.Codec, localPlayer, this, OnSnapshotReceived);
+        _clientTransport.ConnectionBroken += OnConnectionBroken;
         _clientSetup = new WorldSetup.RemoteClient(localPlayer, this);
         network.ConnectionFailed += OnConnectionFailed;
         network.ServerDisconnected += OnServerDisconnected;
@@ -217,6 +220,9 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
 
     // Can arrive even hours into the game
     private void OnServerDisconnected() => Fail(DisconnectedFromServerMessage);
+
+    // The transport has already logged the packet
+    private void OnConnectionBroken() => Fail(ConnectionBrokenMessage);
 
     // The multiplayer is still polled until the end of the frame the Game is queued for deletion in, and the
     // session has already been left by then
