@@ -22,7 +22,7 @@ Game (Node2D)                                      A single game session (single
 World (Node2D)                                     The game world, its services are plain C# objects, see World.md
 ├── ServerTickNode                                 With the Simulation: runs the server tick
 ├── SaveOnExitNode                                 With the server network: the save on exit
-└── PlayersStorage, PlayersSessionStorage, ...   The root entities, spawned by EntitySpawner
+└── PlayersStorage, PlayersSessionStorage, ...     The root entities, spawned by EntitySpawner
 ```
 
 Which parts of the World exist on a client, a host or a dedicated server is decided by its layers, not
