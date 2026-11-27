@@ -16,7 +16,7 @@ Command-line arguments are parsed **only** in the RootStarters and travel on as 
 
 `Root._Ready()` calls `RootStarterManager.ChooseStarter()`: `"--server"` in `OS.GetCmdlineArgs()` →
 `DedicatedServerRootStarter`, otherwise `ClientRootStarter`. Both then get `Init()` (the common
-`BaseRootStarter.Init()`, then the role-specific part: `Net.Init()`, the settings, the locale, UI
+`BaseRootStarter.Init()`, then the role-specific part: `SaveLoad.Init()`, the settings, the locale, UI
 auto-scaling) and `Start()` (the scenario, through `Services.MainScene.*`). `RootData` (the containers,
 `RootPackedScenes`, `SceneTree`) comes in as a parameter — no global access to `Root`.
 
@@ -46,7 +46,7 @@ someone else's server, hosting "from inside the client". `Init()` after `base.In
 | Step | What for |
 |---|---|
 | `ClientArgs.GetFromCmd(...)` | Parsing the client flags |
-| `Services.Net.Init(false)` | The process is **not** a dedicated server → `Net.IsClient()` is always `true` |
+| `Services.SaveLoad.Init(false)` | Restoring the save folder; autosave follows `GameSettings` |
 | `Services.AutoScaling.Init(...)` | UI auto-scaling per `Consts.AutoScalingSettings` |
 | `Services.LastGame.Init()` | Reading `resume-game.json` for the "Continue" button |
 | `Services.KnownServers.Init()` | Reading `known-servers.json` for the server list of the multiplayer menu |
@@ -70,7 +70,7 @@ Chosen by `--server`. There is no head player in this process. `Init()` after `b
 | Step | What for |
 |---|---|
 | `DedicatedServerArgs.GetFromCmd(...)` | Parsing the server flags |
-| `Services.Net.Init(true)` | The process is a dedicated server → `Net.IsClient()` is always `false` |
+| `Services.SaveLoad.Init(true)` | Restoring the save folder; autosave follows `DedicatedServerSettings` |
 | `Services.LastGame.Init()` | Reading `resume-game.json` |
 | `Services.DedicatedServerSettings.Init()` | Reading `dedicated-server-settings.json` |
 | `Services.I18N.SetCurrentLocale(...)` | The locale from `DedicatedServerSettings`, **after** they are loaded |

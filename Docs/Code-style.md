@@ -18,8 +18,8 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
 ## Initialization
 
 * If dependency injection is required, write `Di.Process(this)` as the **first line** in `_Ready()` (or
-  in the constructor for a non-node). Without it all `[Child]` / `[Parent]` / `[SceneService]` /
-  `[Logger]` silently stay `null` — see [Dependency injection](Dependency-injection.md).
+  in the constructor for a non-node). Without it all `[Child]` / `[Logger]` silently stay
+  `null` — see [Dependency injection](Dependency-injection.md).
 * Data needed **before** `_Ready()` goes through `InitPreReady(...)`, which returns `this`:
   `PackedScene.Instantiate<Hud>().InitPreReady(world)`. After readiness — `InitPostReady(...)`.
 * Heavy top-level initialization is split into `Init()` and `Start()`.
@@ -29,53 +29,17 @@ Godot and KludgeBox only, and nothing from the game — the game's global usings
 
 ## Methods
 
-* The `On…` prefix marks a method that **must** be called from the outside (`OnPhysicsProcess`,
-  `OnDamage`, `OnStatUpdate` in `Scenes/Entities/Characters/`) — it is not called from within its class.
+* The `On…` prefix marks a method that **must** be called from the outside (`World.OnClientConnected`,
+  `PeerGatekeeper.OnPeerConnected`) — it is not called from within its class.
 * No static game logic: it goes into the [world services or `Services`](Services.md). Statics are left
-  for extension classes (`CommandProcessorExtensions`), constant sets (`Keys`) and the settings
+  for extension classes (`MainMenuPageExtensions`), constant sets (`Keys`) and the settings
   (de)serialization.
-
-## Client and server
-
-* Check the role only through `Net.*`, never through `GetMultiplayer().IsServer()` directly.
-* Methods valid on only one side start with a check:
-
-  ```csharp
-  if (!Net.IsServer()) throw new InvalidOperationException("Can only be executed on the server");
-  ```
-
-* The `OnServer` / `OnClient` suffix in a method name denotes the side it runs on (`InitOnServer`,
-  `StartSyncOnClient`, `RejectSyncOnClient`); events are named `<What>Event` with the side spelled out
-  (`SaveSuccessServerEvent`, `SyncEndedOnClientEvent`), in the past tense.
-
-## RPC
-
-* A public wrapper + a private method with the `Rpc` suffix marked `[Rpc]`. The wrapper is one line,
-  `=> RpcId(ServerId, MethodName.XxxRpc, ...)` or `=> Rpc(...)`, and a blank line between the two is
-  **not** inserted — this is deliberate.
-* Always state the mode explicitly: `[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]` for
-  "client → server", `[Rpc(CallLocal = true)]` for "server → client". `CallLocal` is always stated:
-  `true` is the usual case — on a host the server and the client are the same process, and without it
-  the server would skip its own call; `false` is a deliberate choice.
-* Where possible, move the stream onto a separate `TransferChannel` from `Consts.TransferChannel`.
-* Arguments are Godot primitives or `byte[]` from MessagePack; JSON is not used over the network.
-* Combine data into a single call where you can (the coordinates of several units at once) rather than
-  sending an RPC per object.
-
-More detail — in [Networking](Networking.md).
 
 ## Serialization
 
 Network and saves — **MessagePack** (`[MessagePackObject]`, `[Key(N)]`, `[IgnoreMember]`); settings
 files on disk — **JSON** (`System.Text.Json`). These two must not be confused: see
 [Data and saves](Data-and-saves.md).
-
-## Data
-
-Data classes contain only state and its synchronization, without game logic. Models derive from
-`ObservableObject` + `[ObservableProperty]`, and the storage broadcasts their changes itself — so a
-write to a model property on the server is a network call, never a working variable in a loop (see
-[Data and saves](Data-and-saves.md)).
 
 ## Logging
 
@@ -111,7 +75,7 @@ An `Action` is never held in a `static` field: its subscribers are then never re
 through `PlayerConnectedEvent?.Invoke(...)`, and is declared with the `event` keyword when only its own
 class raises it.
 
-After a change to a synchronizer or to a `GameStarter`, the leak is checked by hand: run
+After a change to a `GameStarter`, the leak is checked by hand: run
 `Fast-test (1 client)` (see [Quick start](Quick-start.md)), leave to the menu on the client, then in the
 profiler do Force GC → Snapshot and look for `World` among the types.
 

@@ -10,7 +10,6 @@ Packages of the game project (`NeonWarfare.csproj`):
 |---|---|
 | `KludgeBox` | An in-house library with shared reusable code: DI, logging, services, Godot extensions, utility classes |
 | `RepliCAT` | An in-house library for delta replication of plain C# objects |
-| `CommunityToolkit.Mvvm` | The `[ObservableProperty]` annotation for data models |
 | `MessagePack` | Binary serialization of the world state for saves and for transfer over the network |
 | `Microsoft.Extensions.DependencyInjection` | The container of world services, built by `World` from the layer attributes |
 | `JetBrains.Annotations` | `[MeansImplicitUse]`, so the IDE does not flag reflection-called methods (`[EventHandler]`) as unused |
@@ -47,17 +46,14 @@ Coming in transitively through KludgeBox and used directly in the code: **Serilo
 
 **KludgeBox and GodotBox.** KludgeBox is referenced as a NuGet package, so its sources are not in this
 repository and searching it will not find declarations of its types: the DI core (`DependencyInjector`,
-`[Child]`, `[Parent]`, `[SceneService]`, `[Logger]`, `[NotNull]`), logging, the services of the
-[global registry](Services.md) (`I18N`, `Rand`, `NodeTree`, …), the Godot extensions pulled in by
-`GlobalUsings.cs`, `StatModifiersContainer<T>` and so on. The path to the library's source code is stored
-in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
+`[Child]`, `[Logger]`, `[NotNull]`), logging, the services of the [global registry](Services.md) (`I18N`,
+`Rand`, `NodeTree`, …), the Godot extensions pulled in by `GlobalUsings.cs` and so on. The path to the
+library's source code is stored in the `KLUDGEBOX_SRC` ENV variable — that is where they should be read.
 
 The Godot nodes built on top of it are **not** in the package: they live in this repository, in
 `Src/GodotBox/` (namespaces `GodotBox.*`) — `NodeContainer`, `AbstractStorage`, `CheckedAbstractStorage`,
-`AbstractMultiplayerSpawner`, `Background`, `Camera` with its shifts, `ProcessShutdowner`,
-`ProcessDeadChecker`, the `[Sync]` attribute with `AttributeMultiplayerSynchronizer`, and the DI request
-that processes `[Sync]`, plus its own service registry `GodotBoxServices`. GodotBox is a reusable layer
-that must not depend on the game — see
+`Background`, `Camera` with its shifts, `ProcessShutdowner`, `ProcessDeadChecker`, plus its own service
+registry `GodotBoxServices`. GodotBox is a reusable layer that must not depend on the game — see
 [Code style conventions](Code-style.md#namespaces).
 
 Two build details. The `CS0649` warning is suppressed (`NoWarn` in `.csproj`): the fields are filled by

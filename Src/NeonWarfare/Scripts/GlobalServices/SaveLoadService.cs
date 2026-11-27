@@ -27,6 +27,7 @@ public class SaveLoadService : ISaveFiles
     [Logger] ILogger _log;
 
     private readonly string _saveDirPath;
+    private bool _isDedicatedServer;
 
     public SaveLoadService(string saveDirPath = DefaultSaveDirPath)
     {
@@ -38,8 +39,9 @@ public class SaveLoadService : ISaveFiles
     /// Before anything reads the save folder, method try to restore its state: a process killed in the middle
     /// of <see cref="SaveToDisk"/> leaves the save only as its backup, and a temporary file nobody will finish.
     /// </summary>
-    public void Init()
+    public void Init(bool isDedicatedServer)
     {
+        _isDedicatedServer = isDedicatedServer;
         if (!DirAccess.DirExistsAbsolute(_saveDirPath)) return;
 
         foreach (string fileName in DirAccess.GetFilesAt(_saveDirPath))
@@ -58,9 +60,9 @@ public class SaveLoadService : ISaveFiles
 
     public bool IsAutoSaveEnabled()
     {
-        return Services.Net.IsClient()
-            ? Services.GameSettings.GetSettings().AutoSaveEnabled
-            : Services.DedicatedServerSettings.GetSettings().AutoSaveEnabled;
+        return _isDedicatedServer
+            ? Services.DedicatedServerSettings.GetSettings().AutoSaveEnabled
+            : Services.GameSettings.GetSettings().AutoSaveEnabled;
     }
 
     public string GenNewSaveFileName()

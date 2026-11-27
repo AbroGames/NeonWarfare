@@ -24,8 +24,7 @@ public class DiTests
 
     /// <summary>
     /// The attributes that need an injector run. <c>[NotNull]</c> is deliberately not one of them: it
-    /// validates an <c>[Export]</c> filled in by the Godot editor, and in WorldMultiplayerSpawner.cs the
-    /// name even resolves to System.Diagnostics.CodeAnalysis instead.
+    /// validates an <c>[Export]</c> filled in by the Godot editor.
     /// </summary>
     private static readonly string[] InjectionAttributes = ["Child", "Parent", "SceneService", "Logger"];
 

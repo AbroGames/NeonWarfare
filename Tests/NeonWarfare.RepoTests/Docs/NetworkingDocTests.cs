@@ -5,8 +5,8 @@ using Xunit;
 namespace NeonWarfare.RepoTests.Docs;
 
 /// <summary>
-/// The channel table of Docs/Networking.md against Consts.TransferChannel. A channel is written into an
-/// [Rpc(...)] attribute as a number the enum position produces, so the document is not just a list of
+/// The channel table of Docs/Networking.md against Consts.TransferChannel. A channel is handed to the
+/// transport as a number the enum position produces, so the document is not just a list of
 /// names: the order of the rows is the numbering, and a member inserted in the middle silently
 /// renumbers everything after it. The names are only ever seen inside a cast, which no reader of the
 /// document has in front of them.

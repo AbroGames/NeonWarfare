@@ -1,4 +1,3 @@
-using GodotBox.DI;
 using KludgeBox.Core;
 using KludgeBox.Core.Random;
 using KludgeBox.DI;
@@ -9,7 +8,6 @@ using NeonWarfare.Scripts.GlobalServices;
 using NeonWarfare.Scripts.GlobalServices.KnownServers;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 using NeonWarfare.Scripts.GlobalServices.Settings;
-using NetworkService = NeonWarfare.Scripts.GlobalServices.NetworkService;
 using TerminationSignalsService = NeonWarfare.Scripts.GlobalServices.TerminationSignalsService;
 using TypesMappingService = NeonWarfare.Scripts.GlobalServices.TypesMappingService;
 
@@ -18,7 +16,7 @@ namespace NeonWarfare.Scripts;
 public static class Services
 {
     // Services from KludgeBox
-    public static readonly DependencyInjector Di = new(RequestsScanner.CreateDefault().EnableMpSyncInjection());
+    public static readonly DependencyInjector Di = new(RequestsScanner.CreateDefault());
     public static readonly ExceptionHandlerService ExceptionHandler = new();
     public static readonly RandomService Rand = new();
     public static readonly MathService Math = new();
@@ -30,7 +28,6 @@ public static class Services
     public static MembersScanner MembersScanner => Di.MembersScanner;
     
     // Services from game, but extended KludgeBox services
-    public static readonly NetworkService Net = new();
     public static readonly TerminationSignalsService TerminationSignals = new();
     public static readonly TypesMappingService TypesMapping = new();
     
@@ -49,6 +46,5 @@ public static class Services
     public static class Global
     {
         public static DependencyInjector Di => Services.Di;
-        public static NetworkService Net => Services.Net;
     }
 }

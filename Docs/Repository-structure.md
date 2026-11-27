@@ -14,33 +14,21 @@ Assets/                               Any files except scenes (.tscn) and code (
 Src/                                  Code and scenes of the Godot project; a namespace is the folder path relative to Src/
 ├── GodotBox/                         The game-independent layer over KludgeBox; must not depend on NeonWarfare
 │   ├── GodotBoxServices.cs           GodotBox's own services (Di, Rand, MembersScanner), separate from the game's
-│   ├── DI/                           The [Sync] injection request for the KludgeBox DI (EnableMpSyncInjection)
 │   └── Godot/
-│       └── Nodes/                    NodeContainer, AbstractStorage, CheckedAbstractStorage, spawner, Background
+│       └── Nodes/                    NodeContainer, AbstractStorage, CheckedAbstractStorage, Background
 │           ├── Camera/               Camera2D with pluggable shifts: shake, manual shake, punch
-│           ├── MpSync/               The [Sync] attribute and AttributeMultiplayerSynchronizer
 │           └── Process/              ProcessShutdowner, ProcessDeadChecker
 └── NeonWarfare/                      The game itself
     ├── Scenes/                       Scenes (.tscn) and their handlers (.cs) — kept next to each other, in one folder
     │   ├── Root/                     The application entry point and the client and server starters
     │   ├── Game/                     The game session: a wrapper for the network and the game mode starters
-    │   ├── OldWorld/                 The world: one per game session, synchronized from the server to the client
-    │   │   ├── Data/                 World data
-    │   │   │   ├── PersistenceData/  Data that goes into the save (General, Player)
-    │   │   │   └── TemporaryData/    Data of the current session, not saved
-    │   │   ├── Scenes/               Prototypes of the scenes available for spawning
-    │   │   │   ├── ClientScenes/     Purely client-side (visual) scenes
-    │   │   │   └── SyncedScenes/     Scenes that, when spawned on the server, will be synchronized to the clients
-    │   │   ├── WorldServices/        World services: chat, commands, characters, spawning, performance, start/stop
-    │   │   └── Tree/                 The current surface (location) and the game objects on it
-    │   │       └── Surfaces/         Surfaces (locations): Safe, Battle
-    │   ├── World/                    The new world under construction, will replace OldWorld/
+    │   ├── World/                    The game world: one per game session, built from a set of layers
     │   │   ├── Infra/                Feature-independent machinery: layer attributes, entities and NetId, protocol, network, HUD mailbox; refers to nothing in Features/ or the World root
     │   │   └── Features/             One folder per feature with all its layers and models next to their nodes: Chat, Players, NewWorld…
-    │   ├── Entities/                 Game objects: characters (controllers, stats, effects), walls
-    │   └── Screen/                   UI: the main menu, HUD, server console, loading screen
+    │   ├── Screen/                   UI: the main menu, HUD, server console, loading screen
+    │   └── Old/                      Scenes kept from the old code for reuse: Character, Wall; no scripts
     └── Scripts/                      Code without scenes
-        ├── Content/                  Game entity stats, loading screen types, cmd args; no reading or processing logic
+        ├── Content/                  Input action names, loading screen types, cmd args; no reading or processing logic
         ├── GlobalServices/           Global services
         ├── Services.cs               The registry of all global services
         ├── Consts.cs                 Global constants

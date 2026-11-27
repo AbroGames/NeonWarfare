@@ -14,8 +14,8 @@ on Windows/Linux/macOS.
 | Document | What is inside |
 |---|---|
 | [Scene tree](Docs/Scene-tree.md) | `NodeContainer`, "calls go down, events go up" |
-| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Parent]`, `[SceneService]` |
-| [Code style conventions](Docs/Code-style.md) | Namespaces, RPC pairs, serialization, `.editorconfig` |
+| [Dependency injection](Docs/Dependency-injection.md) | `Di.Process(this)`, `[Child]`, `[Logger]` |
+| [Code style conventions](Docs/Code-style.md) | Namespaces, initialization, serialization, `.editorconfig` |
 
 ### Area-by-area design — read when the task touches that area
 
@@ -28,7 +28,6 @@ on Windows/Linux/macOS.
 | [Services](Docs/Services.md) | `Services.*`, the global services |
 | [Startup flow](Docs/Startup-flow.md) | `RootStarter`, `GameStarter`, the four session modes |
 | [Shutdown](Docs/Shutdown.md) | Autosave on exit, killing child processes |
-| [Entities](Docs/Entities.md) | `Character` and its subsystems: controllers, stats, status effects |
 | [UI](Docs/Ui.md) | `PagesProvider` menu stack, `MenuGameSettings`, HUD |
 | [Chat and commands](Docs/Chat-and-commands.md) | `ChatSimulationFacade`, `ChatPresentation`, `IChatCommand` |
 | [Localization](Docs/Localization.md) | `Tr(KEY)`, `Assets/Locales/*.po` |
@@ -59,11 +58,10 @@ on Windows/Linux/macOS.
 | Add a command-line flag | [Command-line arguments](Docs/Cli-args.md) → [Startup flow](Docs/Startup-flow.md) |
 | Add a chat command | [Chat and commands](Docs/Chat-and-commands.md) |
 | Add a menu page or a setting | [UI](Docs/Ui.md) → [Localization](Docs/Localization.md) |
-| Add a stat, a status effect, a character subsystem | [Entities](Docs/Entities.md) → [Networking](Docs/Networking.md) |
 | Add player-visible text | [Localization](Docs/Localization.md) |
 | The code behaves differently in single-player and over the network | [World](Docs/World.md) (layers) → [Networking](Docs/Networking.md) (the host's loopback) |
 | Add a test or figure out what is tested at all | [Testing](Docs/Testing.md) → [Smoke testing](Docs/Smoke-testing.md) → [Game testing](Docs/Game-testing.md) |
-| `[Child]` / `[SceneService]` came out `null` | [DI](Docs/Dependency-injection.md) → [Scene tree](Docs/Scene-tree.md) |
+| `[Child]` came out `null` | [DI](Docs/Dependency-injection.md) → [Scene tree](Docs/Scene-tree.md) |
 
 ---
 
@@ -77,9 +75,8 @@ on Windows/Linux/macOS.
 | [Src/NeonWarfare/Scenes/World/WorldServicesBuilder.cs](Src/NeonWarfare/Scenes/World/WorldServicesBuilder.cs) | The container of the world services, found by their layer attributes |
 | [Src/NeonWarfare/Scenes/World/Infra/Composition/WorldLayer.cs](Src/NeonWarfare/Scenes/World/Infra/Composition/WorldLayer.cs) | The layers and the client / host / dedicated sets |
 | [Src/NeonWarfare/Scenes/World/Features/](Src/NeonWarfare/Scenes/World/Features/) | The game itself, one folder per feature |
-| [Src/NeonWarfare/Scenes/Entities/Characters/Character.cs](Src/NeonWarfare/Scenes/Entities/Characters/Character.cs) | The character (`RigidBody2D`) and all of its subsystems |
 | [Src/NeonWarfare/Scripts/Services.cs](Src/NeonWarfare/Scripts/Services.cs) | The global service registry |
 | [Src/NeonWarfare/Scripts/Consts.cs](Src/NeonWarfare/Scripts/Consts.cs) | Global constants, `Consts.TransferChannel` |
 | [Src/NeonWarfare/Scripts/Content/CmdArgs/](Src/NeonWarfare/Scripts/Content/CmdArgs/) | `CommonArgs`, `ClientArgs`, `DedicatedServerArgs` |
-| [Src/GodotBox/](Src/GodotBox/) | The game-independent layer over KludgeBox: `NodeContainer`, storages, spawner, `[Sync]`, camera |
+| [Src/GodotBox/](Src/GodotBox/) | The game-independent layer over KludgeBox: `NodeContainer`, storages, camera, process nodes |
 | [Properties/launchSettings.json](Properties/launchSettings.json), [.run/](.run/) | Rider and Multi-Launch run profiles |

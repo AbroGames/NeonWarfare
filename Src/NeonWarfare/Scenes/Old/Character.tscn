@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://ci2dn8dnt3kav"]
+
+[ext_resource type="Texture2D" uid="uid://c3rvwl1ge5xcy" path="res://Assets/Textures/Entities/Character/Player.svg" id="1_nnodc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kp28h"]
+radius = 14.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5fjuf"]
+size = Vector2(23.25, 23.25)
+
+[node name="Character" type="RigidBody2D" unique_id=717358219]
+can_sleep = false
+lock_rotation = true
+custom_integrator = true
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=2031552787]
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("1_nnodc")
+
+[node name="PhysicShape" type="CollisionShape2D" parent="." unique_id=1474960456]
+shape = SubResource("CircleShape2D_kp28h")
+
+[node name="HitBox" type="Area2D" parent="." unique_id=1283692061]
+
+[node name="HitBoxShape" type="CollisionShape2D" parent="HitBox" unique_id=2100308013]
+shape = SubResource("RectangleShape2D_5fjuf")

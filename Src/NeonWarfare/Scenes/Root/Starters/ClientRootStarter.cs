@@ -18,7 +18,7 @@ public class ClientRootStarter : BaseRootStarter
         
         _clientArgs = ClientArgs.GetFromCmd(CmdArgsService);
         
-        Services.Net.Init(false);
+        Services.SaveLoad.Init(false);
         Services.AutoScaling.Init(rootData.SceneTree, Consts.AutoScalingSettings);
         Services.LastGame.Init();
         Services.KnownServers.Init();

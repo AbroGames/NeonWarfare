@@ -22,7 +22,7 @@ public static class SmokeRun
 
     /// <summary>
     /// How long everything keeps running once every milestone is reached, so an error that follows a
-    /// successful start — the first frames of a world, a late RPC — still gets caught.
+    /// successful start — the first frames of a world, a late packet — still gets caught.
     /// </summary>
     private static readonly TimeSpan Linger = TimeSpan.FromSeconds(3);
 

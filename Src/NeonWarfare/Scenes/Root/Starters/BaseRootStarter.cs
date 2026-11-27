@@ -36,7 +36,6 @@ public abstract class BaseRootStarter
             rootData.MainSceneContainer, rootData.PackedScenes.Game, rootData.PackedScenes.MainMenu);
         Services.TerminationSignals.Init();
         Services.I18N.Init(rootData.SceneTree);
-        Services.SaveLoad.Init();
     }
 
     public virtual void Start(RootData rootData)

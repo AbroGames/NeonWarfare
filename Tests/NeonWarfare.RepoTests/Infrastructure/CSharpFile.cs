@@ -59,15 +59,15 @@ public sealed class CSharpFile
     public IEnumerable<T> Nodes<T>() where T : SyntaxNode => Root.DescendantNodes().OfType<T>();
 
     /// <summary>
-    /// The method a node sits in, or <c>null</c> at file or type level. Used to say which wrapper an
-    /// RPC is called from and which method reaches for the command line.
+    /// The method a node sits in, or <c>null</c> at file or type level. Used to say which method runs
+    /// the injector.
     /// </summary>
     public static MethodDeclarationSyntax? EnclosingMethod(SyntaxNode node) =>
         node.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
 
     /// <summary>
-    /// The name a call is made through: <c>Net</c> for <c>Net.IsServer()</c>, <c>Services.Net</c> for
-    /// <c>Services.Net.IsServer()</c>, empty for an unqualified <c>IsServer()</c>.
+    /// The name a call is made through: <c>Di</c> for <c>Di.Process(this)</c>, <c>Services.Di</c> for
+    /// <c>Services.Di.Process(this)</c>, empty for an unqualified <c>Process(this)</c>.
     /// </summary>
     public static string ReceiverOf(InvocationExpressionSyntax invocation) =>
         invocation.Expression is MemberAccessExpressionSyntax access
