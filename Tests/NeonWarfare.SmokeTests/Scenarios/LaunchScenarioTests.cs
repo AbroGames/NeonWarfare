@@ -13,32 +13,39 @@ namespace NeonWarfare.SmokeTests.Scenarios;
 /// </summary>
 public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
 {
-    // The milestones wait for the old World's handshake, which the new World does not have;
-    // task 025 restores the tests.
-    private const string SkipReason = "Muted during the network rework, see task 025-restore-sidecar-file-tests";
-
     /// <summary>ClientRootStarter: the client has initialized and is about to open the menu.</summary>
     private const string ClientStarted = "Starting Client...";
 
-    /// <summary>Network.HostServer: the ENet socket is open.</summary>
-    private const string ServerStarted = "Started server successfully";
+    /// <summary>
+    /// Network.OpenServer: the server World is loaded and the ENet socket accepts peers. The socket is
+    /// open earlier, but it refuses connections until then.
+    /// </summary>
+    private const string ServerOpened = "Server opened";
 
     /// <summary>Network: the ENet handshake with the server is done.</summary>
     private const string ConnectedToServer = "Connected to the server successfully";
 
     /// <summary>
-    /// WorldSynchronizerService on the client: the initial world snapshot arrived and was applied. The
-    /// single-player game goes through the same local handshake, so it prints this too.
+    /// ConnectToMultiplayerGameStarter: the join snapshot arrived and the client World is built from it.
     /// </summary>
-    private const string WorldSynced = "Syncing complete successfully";
+    private const string EnteredWorld = "Entered the world from the join snapshot";
 
-    /// <summary>Network on the server: an ENet peer is gone.</summary>
-    private const string PeerDisconnected = "Network peer disconnected";
+    /// <summary>
+    /// PlayerSimulationFacade: the World has joined a player. The single-player game joins its own player
+    /// whose uid is generated, so only the prefix is matched.
+    /// </summary>
+    private const string PlayerJoined = "Player joined: ";
+
+    /// <summary>
+    /// PlayerSimulationFacade on the server: the World let the player go, not just ENet the peer. Followed by
+    /// <c>nick (uid)</c>.
+    /// </summary>
+    private const string PlayerLeft = "Player left: ";
 
     /// <summary>
     /// The plain client launch: the menu comes up and nothing else happens.
     /// </summary>
-    [Fact(Skip = SkipReason)]
+    [Fact]
     public void Client_StartsToMenu()
     {
         SmokeRun.Run(new GameLaunch("client", [], [ClientStarted]));
@@ -48,10 +55,10 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     /// Straight into a single-player game: world generation plus the local handshake.
     /// user:// is a fresh directory for every process, so the save it creates never outlives the run.
     /// </summary>
-    [Fact(Skip = SkipReason)]
+    [Fact]
     public void Client_StartsSingleplayerGame()
     {
-        SmokeRun.Run(new GameLaunch("client", ["--auto-start"], [WorldSynced]));
+        SmokeRun.Run(new GameLaunch("client", ["--auto-start"], [PlayerJoined]));
     }
 
     /// <summary>
@@ -59,7 +66,7 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     /// handshake and the initial world snapshot. Processes stop in launch order, so here the server
     /// always goes first and the clients are dropped back to the menu before they quit.
     /// </summary>
-    [Fact(Skip = SkipReason)]
+    [Fact]
     public void Server_AcceptsTwoClients()
     {
         int port = FreePort.Take();
@@ -72,26 +79,33 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
     /// keep playing. This is the only path where a client tears down a live world on exit, and where the
     /// server sees a player leave — neither happens in <see cref="Server_AcceptsTwoClients"/>.
     /// </summary>
-    [Fact(Skip = SkipReason)]
+    [Fact]
     public void Client_QuitsFromMultiplayerGame()
     {
         int port = FreePort.Take();
 
         SmokeRun.Run(
             [Server(port), FirstClient(port), SecondClient(port)],
-            new Departure(Leaver: "client-1", Witness: "server", Milestone: PeerDisconnected));
+            new Departure(
+                Leaver: FirstClientName, Witness: "server",
+                Milestone: $"{PlayerLeft}{FirstClientName} ({FirstClientUid})"));
     }
 
     private static GameLaunch Server(int port) =>
-        new("server", ["--server", "--port", port.ToString()], [ServerStarted]);
+        new("server", ["--server", "--port", port.ToString()], [ServerOpened]);
 
-    private static GameLaunch FirstClient(int port) => Client("client-1", "SmokeTestA-Aaaaaaaaaa", port);
+    private const string FirstClientName = "client-1";
+    private const string FirstClientUid = "SmokeTestA-Aaaaaaaaaa";
+    private const string SecondClientName = "client-2";
+    private const string SecondClientUid = "SmokeTestB-Bbbbbbbbbb";
 
-    private static GameLaunch SecondClient(int port) => Client("client-2", "SmokeTestB-Bbbbbbbbbb", port);
+    private static GameLaunch FirstClient(int port) => Client(FirstClientName, FirstClientUid, port);
+
+    private static GameLaunch SecondClient(int port) => Client(SecondClientName, SecondClientUid, port);
 
     /// <summary>
     /// The name doubles as the nickname and must be 3 to 25 characters long, or the server rejects the
-    /// sync — "client-1" fits. The uid follows the format of the generated ones.
+    /// join — "client-1" fits. The uid follows the format of the generated ones.
     /// </summary>
     private static GameLaunch Client(string name, string uid, int port) => new(
         name,
@@ -102,5 +116,5 @@ public sealed class LaunchScenarioTests : IClassFixture<GameBuildFixture>
             "--uid", uid,
             "--nick", name,
         ],
-        [ConnectedToServer, WorldSynced]);
+        [ConnectedToServer, EnteredWorld]);
 }
