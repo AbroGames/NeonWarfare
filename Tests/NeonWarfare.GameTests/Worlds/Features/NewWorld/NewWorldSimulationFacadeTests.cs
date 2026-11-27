@@ -25,6 +25,6 @@ public class NewWorldSimulationFacadeTests
         new NewWorldSimulationFacade(spawner).Create();
 
         AssertThat(root.GetChildren())
-            .ContainsExactly(registry.GetSingle<PlayersStorage>(), registry.GetSingle<PlayersSessionStorage>());
+            .ContainsExactly(registry.GetSingle<PlayersStorage>(), registry.GetSingle<OnlinePlayersStorage>());
     }
 }

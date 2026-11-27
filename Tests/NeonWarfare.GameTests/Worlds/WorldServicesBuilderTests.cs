@@ -260,7 +260,7 @@ public class WorldServicesBuilderTests
             world.InitPreReady(setup, Dependencies(), new WorldOrigin.NewWorld(SaveFileName));
 
             AssertThat(world.GetChildren().OfType<PlayersStorage>().Count()).IsEqual(1);
-            AssertThat(world.GetChildren().OfType<PlayersSessionStorage>().Count()).IsEqual(1);
+            AssertThat(world.GetChildren().OfType<OnlinePlayersStorage>().Count()).IsEqual(1);
         }
     }
 
@@ -306,7 +306,7 @@ public class WorldServicesBuilderTests
         new([
             ..fixtures, typeof(EventOutbox), typeof(PeerStateTable), typeof(EventDispatcher),
             typeof(CommandHandlerRegistry), typeof(ChatSimulation), typeof(ChatSimulationFacade),
-            typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(PlayersSessionStorageQuery),
+            typeof(PlayerQuery), typeof(PlayersStorageQuery), typeof(OnlinePlayersStorageQuery),
         ]);
 
     private static WorldDependencies Dependencies()

@@ -131,7 +131,7 @@ sequenceDiagram
     G->>W: ReceiveFromClient: hash check, into the inbox
     Note over W: next tick
     W->>W: PeerSessions.Join: Validate, Joined(uid),<br/>Process → join message, PlayerJoinedEvent
-    W-->>O: State packet: the tick's changes (OnlinePlayerUids)
+    W-->>O: State packet: the tick's changes (OnlinePlayersModel.Uids)
     W-->>C: Snapshot: every entity at the end of the tick
     C->>C: ClientTransport → Game builds the World from the snapshot
     W-->>C: Events packet: LocalizedChatMessageEvent (joined), PlayerJoinedEvent

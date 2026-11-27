@@ -14,7 +14,7 @@ public class PlayerSimulationFacade(
     ChatSimulation chat,
     EventOutbox outbox,
     PlayersStorageQuery players,
-    PlayersSessionStorageQuery session,
+    OnlinePlayersStorageQuery onlinePlayers,
     WorldAdmin admin,
     IServerOwner owner)
 {
@@ -45,7 +45,7 @@ public class PlayerSimulationFacade(
             _log.Information(AdminGrantedLog, player.Nick, uid);
         }
 
-        session.Model.OnlinePlayerUids.Add(uid);
+        onlinePlayers.Model.Uids.Add(uid);
         _log.Information(JoinedLog, player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(JoinedMessageKey, player.Nick);
         outbox.PublishToAll(new PlayerJoinedEvent(uid));
@@ -55,7 +55,7 @@ public class PlayerSimulationFacade(
     public void Leave(string uid, LeaveReason reason)
     {
         PlayerModel player = players.Model.PlayerByUid[uid];
-        session.Model.OnlinePlayerUids.Remove(uid);
+        onlinePlayers.Model.Uids.Remove(uid);
         _log.Information(LeftLog, player.Nick, uid);
         chat.SendLocalizedMessageAsServerToAll(LeftMessageKey, player.Nick);
         if (uid == admin.Uid && reason == LeaveReason.Disconnected) owner.AdminLeft();

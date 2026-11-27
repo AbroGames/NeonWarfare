@@ -7,16 +7,16 @@ using NeonWarfare.Scenes.Worlds.Infra.Composition;
 namespace NeonWarfare.Scenes.Worlds.Features.Players;
 
 [Query]
-public class PlayerQuery(PlayersStorageQuery players, PlayersSessionStorageQuery session)
+public class PlayerQuery(PlayersStorageQuery players, OnlinePlayersStorageQuery onlinePlayers)
 {
     public IEnumerable<PlayerModel> OnlinePlayers()
     {
         PlayersModel model = players.Model;
-        return session.Model.OnlinePlayerUids.Select(uid => model.PlayerByUid[uid]);
+        return onlinePlayers.Model.Uids.Select(uid => model.PlayerByUid[uid]);
     }
 
     public PlayerModel TryGetOnline(string uid) =>
-        session.Model.OnlinePlayerUids.Contains(uid) ? players.Model.PlayerByUid[uid] : null;
+        onlinePlayers.Model.Uids.Contains(uid) ? players.Model.PlayerByUid[uid] : null;
 
     // Throws rather than returning null, because otherwise every caller would need a null-check branch
     public PlayerModel Get(string uid)

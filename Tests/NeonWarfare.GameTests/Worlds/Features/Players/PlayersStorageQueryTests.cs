@@ -15,12 +15,12 @@ public class PlayersStorageQueryTests
     {
         var registry = new EntityRegistry();
         PlayersStorage players = AutoFree(new PlayersStorage())!;
-        PlayersSessionStorage session = AutoFree(new PlayersSessionStorage())!;
+        OnlinePlayersStorage onlinePlayers = AutoFree(new OnlinePlayersStorage())!;
         registry.Register(new NetId(1), players, 0);
-        registry.Register(new NetId(2), session, 0);
+        registry.Register(new NetId(2), onlinePlayers, 0);
 
         AssertThat(new PlayersStorageQuery(registry).Model).IsSame(players.Model);
-        AssertThat(new PlayersSessionStorageQuery(registry).Model).IsSame(session.Model);
+        AssertThat(new OnlinePlayersStorageQuery(registry).Model).IsSame(onlinePlayers.Model);
     }
 
     // The registry's own message, so a read before the spawn says why the storage is missing
@@ -33,8 +33,8 @@ public class PlayersStorageQueryTests
         AssertThrown(() => _ = new PlayersStorageQuery(registry).Model)
             .IsInstanceOf<InvalidOperationException>()
             .StartsWithMessage("Expected exactly one PlayersStorage, found 0.");
-        AssertThrown(() => _ = new PlayersSessionStorageQuery(registry).Model)
+        AssertThrown(() => _ = new OnlinePlayersStorageQuery(registry).Model)
             .IsInstanceOf<InvalidOperationException>()
-            .StartsWithMessage("Expected exactly one PlayersSessionStorage, found 0.");
+            .StartsWithMessage("Expected exactly one OnlinePlayersStorage, found 0.");
     }
 }

@@ -19,15 +19,15 @@ public class EntityCatalogTests
         PackedScene second = TestWorldScenes.Pack(new Node());
 
         var catalog = new EntityCatalog(
-            [first, second], [typeof(PlayersModel), typeof(PlayersSessionStorage), typeof(PlayersStorage)]);
+            [first, second], [typeof(PlayersModel), typeof(OnlinePlayersStorage), typeof(PlayersStorage)]);
 
         AssertThat(catalog.GetKindId(first)).IsEqual(0);
         AssertThat(catalog.GetKindId(second)).IsEqual(1);
-        AssertThat(catalog.GetKindId(typeof(PlayersSessionStorage))).IsEqual(2);
+        AssertThat(catalog.GetKindId(typeof(OnlinePlayersStorage))).IsEqual(2);
         AssertThat(catalog.GetKindId(typeof(PlayersStorage))).IsEqual(3);
         AssertThat(catalog.Descriptors).ContainsExactly(
             "scene " + first.ResourcePath, "scene " + second.ResourcePath,
-            "type " + typeof(PlayersSessionStorage).FullName, "type " + typeof(PlayersStorage).FullName);
+            "type " + typeof(OnlinePlayersStorage).FullName, "type " + typeof(PlayersStorage).FullName);
     }
 
     [TestCase]
@@ -35,9 +35,9 @@ public class EntityCatalogTests
     public void Types_AbstractNonNodeAndGeneric_AreLeftOut()
     {
         var catalog = new EntityCatalog(
-            [], [typeof(AbstractNode), typeof(PlayersModel), typeof(GenericNode<>), typeof(PlayersSessionStorage)]);
+            [], [typeof(AbstractNode), typeof(PlayersModel), typeof(GenericNode<>), typeof(OnlinePlayersStorage)]);
 
-        AssertThat(catalog.Descriptors).ContainsExactly("type " + typeof(PlayersSessionStorage).FullName);
+        AssertThat(catalog.Descriptors).ContainsExactly("type " + typeof(OnlinePlayersStorage).FullName);
         AssertThrown(() => catalog.GetKindId(typeof(AbstractNode))).IsInstanceOf<ArgumentException>();
         AssertThrown(() => catalog.GetKindId(typeof(PlayersModel))).IsInstanceOf<ArgumentException>();
         AssertThrown(() => catalog.GetKindId(typeof(GenericNode<>))).IsInstanceOf<ArgumentException>();
@@ -47,14 +47,14 @@ public class EntityCatalogTests
     [RequireGodotRuntime]
     public void Create_TypeKind_IsANewInstanceNamedAfterItsType()
     {
-        var catalog = new EntityCatalog([], [typeof(PlayersSessionStorage)]);
-        int kind = catalog.GetKindId(typeof(PlayersSessionStorage));
+        var catalog = new EntityCatalog([], [typeof(OnlinePlayersStorage)]);
+        int kind = catalog.GetKindId(typeof(OnlinePlayersStorage));
 
         Node created = AutoFree(catalog.Create(kind))!;
         Node another = AutoFree(catalog.Create(kind))!;
 
-        AssertThat(created).IsInstanceOf<PlayersSessionStorage>();
-        AssertThat(created.Name.ToString()).IsEqual(nameof(PlayersSessionStorage));
+        AssertThat(created).IsInstanceOf<OnlinePlayersStorage>();
+        AssertThat(created.Name.ToString()).IsEqual(nameof(OnlinePlayersStorage));
         AssertThat(another).IsNotSame(created);
     }
 
@@ -64,7 +64,7 @@ public class EntityCatalogTests
     {
         var content = new Node2D { Name = "Content" };
         PackedScene scene = TestWorldScenes.Pack(content);
-        var catalog = new EntityCatalog([scene], [typeof(PlayersSessionStorage)]);
+        var catalog = new EntityCatalog([scene], [typeof(OnlinePlayersStorage)]);
 
         Node created = AutoFree(catalog.Create(catalog.GetKindId(scene)))!;
 
@@ -76,7 +76,7 @@ public class EntityCatalogTests
     [RequireGodotRuntime]
     public void UnknownSceneTypeOrId_Throws()
     {
-        var catalog = new EntityCatalog([TestWorldScenes.Pack(new Node())], [typeof(PlayersSessionStorage)]);
+        var catalog = new EntityCatalog([TestWorldScenes.Pack(new Node())], [typeof(OnlinePlayersStorage)]);
 
         AssertThrown(() => catalog.GetKindId(TestWorldScenes.Pack(new Node()))).IsInstanceOf<ArgumentException>();
         AssertThrown(() => catalog.GetKindId((PackedScene) null!)).IsInstanceOf<ArgumentException>();
@@ -98,10 +98,10 @@ public class EntityCatalogTests
         var client = new EntityCatalog([clientScene], NetMessageCodecTests.CreateMapping().Types);
 
         Node players = AutoFree(client.Create(server.GetKindId(typeof(PlayersStorage))))!;
-        Node session = AutoFree(client.Create(server.GetKindId(typeof(PlayersSessionStorage))))!;
+        Node onlinePlayers = AutoFree(client.Create(server.GetKindId(typeof(OnlinePlayersStorage))))!;
 
         AssertThat(players).IsInstanceOf<PlayersStorage>();
-        AssertThat(session).IsInstanceOf<PlayersSessionStorage>();
+        AssertThat(onlinePlayers).IsInstanceOf<OnlinePlayersStorage>();
         AssertThat(client.Descriptors.Skip(1)).ContainsExactly(server.Descriptors.Skip(1));
     }
 }

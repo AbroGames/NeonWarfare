@@ -21,9 +21,9 @@ Nothing is registered by hand: the composition root finds a feature by its types
   `EventOutbox` and handled by an `[EventHandler]` of a `[Presentation]`. A one-frame signal to the HUD is a
   `Notice` the Presentation posts into `HudMailbox`.
 * **State** — models (`[Replicated]` fields) live in entities, and the world-wide state of a feature in its own
-  storage entities: one saved, one `[NotSaved]` for the session. `NewWorldSimulationFacade` spawns them in a new
-  world; a save and the join snapshot bring them back. A `[Query]` finds a storage through
-  `IEntityFinder.GetSingle<T>()` — see [Data and saves](Data-and-saves.md).
+  storage entities: one saved, one `[NotSaved]` whose model is not saved on leaving the world.
+  `NewWorldSimulationFacade` spawns them in a new world; a save and the join snapshot bring them back. A `[Query]`
+  finds a storage through `IEntityFinder.GetSingle<T>()` — see [Data and saves](Data-and-saves.md).
 * **Chat commands** — a `[SimulationFacade]` named `*ChatCommandSimulationFacade` implementing `IChatCommand`, see
   [Chat and commands](Chat-and-commands.md).
 
@@ -34,7 +34,7 @@ Every folder under `Worlds/Features/`, nested ones included. `WorldFeaturesDocTe
 | Folder | What it holds |
 |---|---|
 | `NewWorld` | `NewWorldSimulationFacade`: spawns what a new world starts with — the storages of every feature |
-| `Players` | Players and their sessions: `PlayersStorage` (saved `PlayersModel` of `PlayerModel` by uid), `PlayersSessionStorage` (`[NotSaved]`, the online uids), join and leave (`PlayerSessionHandler` → `PlayerSimulationFacade`), `PlayerQuery`, `LocalPlayerPresentation` — passes this process's own `PlayerJoinedEvent` to `ILocalPlayerOwner` (`Game`), which only then creates the UI; the admin flag granted by `WorldAdmin` is never revoked: it is saved |
+| `Players` | Players and their sessions: `PlayersStorage` (saved `PlayersModel` of `PlayerModel` by uid), `OnlinePlayersStorage` (`[NotSaved]`, the online uids), join and leave (`PlayerSessionHandler` → `PlayerSimulationFacade`), `PlayerQuery`, `LocalPlayerPresentation` — passes this process's own `PlayerJoinedEvent` to `ILocalPlayerOwner` (`Game`), which only then creates the UI; the admin flag granted by `WorldAdmin` is never revoked: it is saved |
 | `Chat` | `SendChatMessageCommand` → `SendChatMessageHandler` → `ChatSimulationFacade` → `ChatSimulation`, the chat events, `ChatPresentation` with the history and `ChatEntryAddedNotice` |
 | `Chat/ChatCommands` | `IChatCommand` and the chat commands, one class each |
 | `Saves` | "Save as": `SaveCommand` (admin only) → `SaveCommandHandler` → `SaveSimulationFacade` → `SaveService`, the reply in the chat |

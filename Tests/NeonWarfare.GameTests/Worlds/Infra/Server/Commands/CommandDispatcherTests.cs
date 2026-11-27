@@ -31,7 +31,7 @@ public class CommandDispatcherTests
     private RecordingClientsConnection _clientsConnection = null!;
     private PeerGatekeeper _gatekeeper = null!;
     private PlayersStorage _playersStorage = null!;
-    private PlayersSessionStorage _sessionStorage = null!;
+    private OnlinePlayersStorage _onlinePlayersStorage = null!;
     private PlayersModel _playersModel = null!;
     private PlayerQuery _players = null!;
     private CommandInbox _inbox = null!;
@@ -45,12 +45,12 @@ public class CommandDispatcherTests
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
         _gatekeeper = new PeerGatekeeper(_clientsConnection, new ManualTimeProvider(0), _peers);
         _playersStorage = new PlayersStorage();
-        _sessionStorage = new PlayersSessionStorage();
+        _onlinePlayersStorage = new OnlinePlayersStorage();
         var registry = new EntityRegistry();
         registry.Register(new NetId(1), _playersStorage, 0);
-        registry.Register(new NetId(2), _sessionStorage, 0);
+        registry.Register(new NetId(2), _onlinePlayersStorage, 0);
         _playersModel = _playersStorage.Model;
-        _players = new PlayerQuery(new PlayersStorageQuery(registry), new PlayersSessionStorageQuery(registry));
+        _players = new PlayerQuery(new PlayersStorageQuery(registry), new OnlinePlayersStorageQuery(registry));
         _calls = [];
         foreach (int peerId in (int[]) [HostPeer, AlicePeer, BobPeer, AliceSecondPeer])
         {
@@ -62,7 +62,7 @@ public class CommandDispatcherTests
     public void TearDown()
     {
         _playersStorage.Free();
-        _sessionStorage.Free();
+        _onlinePlayersStorage.Free();
     }
 
     [TestCase]

@@ -260,7 +260,7 @@ public class ServerTickLoopTests
     private void JoinDirectly(string uid, string nick, int peerId)
     {
         Players().AddPlayer(uid).Nick = nick;
-        _provider.GetRequiredService<PlayersSessionStorageQuery>().Model.OnlinePlayerUids.Add(uid);
+        _provider.GetRequiredService<OnlinePlayersStorageQuery>().Model.Uids.Add(uid);
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
         _provider.GetRequiredService<PeerStateTable>().Join(peerId, uid);
     }
