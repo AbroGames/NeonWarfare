@@ -275,6 +275,23 @@ public class WorldServicesBuilderTests
             .IsInstanceOf<ArgumentException>();
     }
 
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Build_Admin_OnlyAndAlwaysWithSimulation()
+    {
+        var root = new WorldRoot(AutoFree(new Node())!);
+
+        foreach (WorldLayer layers in new[] { WorldLayer.Dedicated, WorldLayer.Host })
+        {
+            WorldDependencies noAdmin = Dependencies(layers) with { Admin = null! };
+            AssertThrown(() => new WorldServicesBuilder().Build(layers, noAdmin, root))
+                .IsInstanceOf<ArgumentException>();
+        }
+        WorldDependencies clientWithAdmin = Dependencies(WorldLayer.Client) with { Admin = new WorldAdmin(null!) };
+        AssertThrown(() => new WorldServicesBuilder().Build(WorldLayer.Client, clientWithAdmin, root))
+            .IsInstanceOf<ArgumentException>();
+    }
+
     private static ServiceProvider Build(WorldLayer layers) => Build(new WorldServicesBuilder(), layers);
 
     private static ServiceProvider Build(WorldServicesBuilder builder, WorldLayer layers) =>
@@ -295,7 +312,8 @@ public class WorldServicesBuilderTests
         return new(TimeProvider.System, Codec(),
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles(), TestLocalPlayer.For(layers));
+            new RecordingClientsConnection(), new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
+            TestWorldDependencies.Admin(layers));
     }
 
     private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);

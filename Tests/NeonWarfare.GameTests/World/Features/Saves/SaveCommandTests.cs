@@ -63,7 +63,7 @@ public class SaveCommandTests
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), _frames, _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _connection, _connection, _files,
-                TestLocalPlayer.For(WorldLayer.Host)),
+                TestWorldDependencies.LocalPlayer(WorldLayer.Host), TestWorldDependencies.Admin(WorldLayer.Host)),
             new WorldRoot(_root));
         _server.GetRequiredService<NewWorldSimulationFacade>().Create();
         _server.GetRequiredService<SaveService>().Init("old");

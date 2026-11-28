@@ -12,9 +12,8 @@ namespace NeonWarfare.Scenes.Game.Starters;
 /// </summary>
 public class HostMultiplayerGameStarter(
     string saveFileName,
-    int? port,
-    string adminUid
-    ) : BaseHostGameStarter(saveFileName, port, adminUid, mustSetLastGame: true, isDedicated: false)
+    int? port
+    ) : BaseHostGameStarter(saveFileName, port, mustSetLastGame: true, isDedicated: false)
 {
     // TODO Localization debt: player-visible text must go through Tr(KEY), see Docs/Localization.md
     private const string HostingFailedMessage = "Failed to start server: {0}";
@@ -28,7 +27,8 @@ public class HostMultiplayerGameStarter(
     }
 
     protected override World.World AddWorld(Game game, WorldOrigin origin, ISaveFiles saveFiles) =>
-        game.AddWorld(WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, _localPlayer);
+        game.AddWorld(
+            WorldLayer.Host, origin, Game.Screen.Hud, saveFiles, _localPlayer, new WorldAdmin(_localPlayer.Uid));
 
     protected override void OnServerOpened(Game game)
     {

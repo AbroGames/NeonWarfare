@@ -56,7 +56,8 @@ public class PlayerJoinLeaveTests
                 new ManualTimeProvider(Now), _codec,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection,
-                new RecordingSaveFiles(), TestLocalPlayer.For(WorldLayer.Host)),
+                new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(WorldLayer.Host),
+                TestWorldDependencies.Admin(WorldLayer.Host, HostUid)),
             new WorldRoot(_root));
         _provider.GetRequiredService<NewWorldSimulationFacade>().Create();
     }
@@ -102,6 +103,36 @@ public class PlayerJoinLeaveTests
         AssertThat(alice.Nick).IsEqual("Alice");
         AssertThat(alice.Color).IsEqual(Pink);
         AssertThat(PeerEvents(AliceSecondPeer)).ContainsExactly(Joined(AliceUid, "Alice"));
+    }
+
+    // Done when: the player with the admin uid is admin after join; another player is not
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Join_AdminUid_IsAdmin_TheOthersAreNot()
+    {
+        Join(HostPeer, HostUid, "Host");
+        Join(AlicePeer, AliceUid, "Alice");
+        Tick();
+
+        AssertThat(Players().PlayerByUid[HostUid].IsAdmin).IsTrue();
+        AssertThat(Players().PlayerByUid[AliceUid].IsAdmin).IsFalse();
+    }
+
+    // The rights may have come from another admin: a join never takes them
+    [TestCase]
+    [RequireGodotRuntime]
+    public void Join_ReturningAdminWithoutTheAdminUid_StaysAdmin()
+    {
+        Join(AlicePeer, AliceUid, "Alice");
+        Tick();
+        Disconnect(AlicePeer);
+        Tick();
+        Players().PlayerByUid[AliceUid].IsAdmin = true;
+
+        Join(AliceSecondPeer, AliceUid, "Alice");
+        Tick();
+
+        AssertThat(Players().PlayerByUid[AliceUid].IsAdmin).IsTrue();
     }
 
     [TestCase]

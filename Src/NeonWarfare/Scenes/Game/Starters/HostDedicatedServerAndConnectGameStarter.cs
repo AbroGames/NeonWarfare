@@ -1,4 +1,5 @@
 using GodotBox.Godot.Nodes.Process;
+using NeonWarfare.Scenes.World.Features.Players;
 using NeonWarfare.Scripts.GlobalServices.ResumableGame;
 
 namespace NeonWarfare.Scenes.Game.Starters;
@@ -9,7 +10,6 @@ namespace NeonWarfare.Scenes.Game.Starters;
 public class HostDedicatedServerAndConnectGameStarter(
     string saveFileName,
     int? port,
-    string adminUid,
     bool showWindow
     ) : ConnectToMultiplayerGameStarter(host: Localhost, port: port, mustSetLastGame: false)
 {
@@ -17,10 +17,12 @@ public class HostDedicatedServerAndConnectGameStarter(
 
     public override void Init(Game game)
     {
+        // The admin of the child server is the very player that joins it
+        LocalPlayer localPlayer = ReadLocalPlayer();
         int dedicatedServerPid = Services.Process.StartNewDedicatedServerApplication(
             saveFileName,
             _port ?? DefaultPort,
-            adminUid,
+            localPlayer.Uid,
             showWindow);
         
         ProcessShutdowner dedicatedServerShutdowner = new ProcessShutdowner(
@@ -30,7 +32,7 @@ public class HostDedicatedServerAndConnectGameStarter(
 
         // Try to connect to new hosted server, don't save connect as last game
         // Flag 'SetLastGame = false' was set in constructor
-        base.Init(game); 
+        Connect(game, localPlayer);
         
         // This starter always start from menu, so we must set LastGame  
         var lastGame = ResumableGame.GetCreateServer(saveFileName, _port ?? DefaultPort, true);

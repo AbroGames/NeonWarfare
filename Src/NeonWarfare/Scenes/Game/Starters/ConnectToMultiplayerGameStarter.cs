@@ -34,10 +34,14 @@ public class ConnectToMultiplayerGameStarter(
 
     public override void Init(Game game)
     {
+        Connect(game, ReadLocalPlayer());
+    }
+
+    protected void Connect(Game game, LocalPlayer localPlayer)
+    {
         Services.LoadingScreen.SetLoadingScreen(LoadingScreenTypes.Type.Connecting, GoToMenu);
         
         Network.Network network = game.AddNetwork();
-        LocalPlayer localPlayer = ReadLocalPlayer();
 
         // The World comes from the first snapshot, until then the connecting screen stays
         void ConnectedToServerEvent()
@@ -53,7 +57,7 @@ public class ConnectToMultiplayerGameStarter(
             {
                 game.AddWorld(
                     WorldLayer.Client, new WorldOrigin.FromSnapshot(snapshot), Game.Screen.Hud, saveFiles: null,
-                    localPlayer);
+                    localPlayer, admin: null);
             }
             catch (NetMessageFormatException e)
             {

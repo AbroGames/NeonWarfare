@@ -23,6 +23,8 @@ public class WorldServicesBuilder
     private const string NoSaveFilesError = "A World with the ServerNetwork layer needs the save files.";
     private const string NoLocalPlayerError = "A World with the Presentation layer needs the local player.";
     private const string UnexpectedLocalPlayerError = "A World without the Presentation layer has no local player.";
+    private const string NoAdminError = "A World with the Simulation layer needs the admin, even one without a uid.";
+    private const string UnexpectedAdminError = "A World without the Simulation layer has no admin.";
 
     private readonly IEnumerable<Type> _candidates;
 
@@ -62,6 +64,15 @@ public class WorldServicesBuilder
         if (dependencies.LocalPlayer != null)
         {
             services.AddSingleton(dependencies.LocalPlayer);
+        }
+        if (layers.HasFlag(WorldLayer.Simulation) != (dependencies.Admin != null))
+        {
+            string error = dependencies.Admin == null ? NoAdminError : UnexpectedAdminError;
+            throw new ArgumentException(error, nameof(dependencies));
+        }
+        if (dependencies.Admin != null)
+        {
+            services.AddSingleton(dependencies.Admin);
         }
         services.AddSingleton(root);
         // By hand, not by a layer attribute: the registry is the world's own state rather than a service of one

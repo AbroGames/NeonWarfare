@@ -12,7 +12,6 @@ namespace NeonWarfare.Scenes.Game.Starters;
 public abstract class BaseHostGameStarter(
     string saveFileName,
     int? port,
-    string adminUid,
     bool mustSetLastGame,
     bool isDedicated
     ) : BaseGameStarter
@@ -35,7 +34,6 @@ public abstract class BaseHostGameStarter(
             return;
         }
 
-        //TODO 028 adminUid
         ISaveFiles saveFiles = mustSetLastGame ? SaveFilesUpdatingLastGame(lastGame) : Services.SaveLoad;
         World.World world = AddServerWorld(
             saveFileName, origin => AddWorld(game, origin, saveFiles), out string loadError);

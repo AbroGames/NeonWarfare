@@ -121,7 +121,8 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
 * **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu; never called by
   `DedicatedServerGameStarter`, since a dedicated server has no menu.
 
-The admin UID reaches the host starters but is not used yet (task 028).
+The admin of a server World (`WorldAdmin`) is the uid of the host's `LocalPlayer`, or `--admin` of a dedicated
+server.
 
 ### 1. `SingleplayerGameStarter`
 
@@ -181,8 +182,9 @@ A **second OS process** plus an ordinary client connection to it. A descendant o
 `ConnectToMultiplayerGameStarter(Localhost, port, mustSetLastGame: false)`.
 
 1. `Services.Process.StartNewDedicatedServerApplication(...)` launches a process with `--server`, `--port`,
-   `--savefile`, `--admin` and **`--parent-pid` with the PID of the current process**. `--headless` is set when the
-   server window is not requested; log mirroring into the Godot console is never passed to the dedicated server.
+   `--savefile`, `--admin` (the uid of the `LocalPlayer` this starter joins with) and **`--parent-pid` with the PID of
+   the current process**. `--headless` is set when the server window is not requested; log mirroring into the Godot
+   console is never passed to the dedicated server.
 2. A `ProcessShutdowner` (a GodotBox node) with the server's PID is attached to `Game`: the child process is killed
    when `Game` is destroyed.
 3. `base.Init(game)` — from here on this is an ordinary connection to `127.0.0.1`.

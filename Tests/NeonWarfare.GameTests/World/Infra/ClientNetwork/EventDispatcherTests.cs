@@ -160,7 +160,8 @@ public class EventDispatcherTests
         return new(TimeProvider.System, _codec,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
-            new RecordingClientsConnection(), new RecordingSaveFiles(), TestLocalPlayer.For(layers));
+            new RecordingClientsConnection(), new RecordingSaveFiles(), TestWorldDependencies.LocalPlayer(layers),
+            TestWorldDependencies.Admin(layers));
     }
 
     private class ThrowingPresentation
