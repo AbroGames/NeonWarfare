@@ -12,10 +12,9 @@ namespace NeonWarfare.RepoTests.Architecture;
 public class CommandHandlerTests
 {
     private const string CommandsNamespace = WorldLayers.WorldNamespace + ".Infra.Server.Commands";
-    private const string PeersNamespace = WorldLayers.WorldNamespace + ".Infra.Server.Peers";
     private const string JoinCommand = WorldLayers.WorldNamespace + ".Infra.Protocol.JoinRequestCommand";
     private const string PlayerHandler = CommandsNamespace + ".IPlayerCommandHandler`1";
-    private const string SessionHandler = PeersNamespace + ".IPeerSessionHandler";
+    private const string SessionHandler = WorldLayers.PeerSessionHandler;
 
     /// <summary>
     /// <c>JoinRequestCommand</c> goes to the <c>IPeerSessionHandler</c>: the joining peer has no player yet.
@@ -79,8 +78,8 @@ public class CommandHandlerTests
     }
 
     /// <summary>
-    /// <c>CommandHandlerRegistry</c> takes at most one, but only at run time: without it a peer could
-    /// neither join nor leave.
+    /// <c>PeerSessions</c> takes exactly one, but only the container checks it, when a server world is built: without
+    /// it a peer could neither join nor leave.
     /// </summary>
     [Fact]
     public void SessionHandler_HasExactlyOneImplementation()
