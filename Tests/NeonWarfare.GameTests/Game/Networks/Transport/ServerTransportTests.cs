@@ -1,12 +1,10 @@
 using GdUnit4;
 using NeonWarfare.GameTests.Game.Fixtures;
 using NeonWarfare.GameTests.Game.Networks.Fixtures;
-using NeonWarfare.GameTests.Worlds.Fixtures;
 using NeonWarfare.Scenes.Game.Networks.Transport;
 using NeonWarfare.Scenes.Worlds;
-using NeonWarfare.Scenes.Worlds.Features.Players;
-using NeonWarfare.Scenes.Worlds.Infra.Server.Peers;
 using static GdUnit4.Assertions;
+using Call = NeonWarfare.GameTests.Game.Fixtures.RecordingWorldEndpoint.Call;
 
 namespace NeonWarfare.GameTests.Game.Networks.Transport;
 
@@ -15,83 +13,57 @@ public class ServerTransportTests
 {
     private const int RemotePeer = 2;
 
-    private TransportWorlds _worlds = null!;
     private FakeNetwork _network = null!;
+    private RecordingWorldEndpoint _endpoint = null!;
+    private ServerTransport _transport = null!;
 
     [BeforeTest]
     public void SetUp()
     {
-        _worlds = new TransportWorlds();
         _network = new FakeNetwork();
+        _endpoint = new RecordingWorldEndpoint();
+        _transport = new ServerTransport(_network, _endpoint);
     }
 
     [TestCase]
-    [RequireGodotRuntime]
-    public void PeerConnected_NotJoinedByTheDeadline_IsDisconnected()
+    public void PeerConnected_StartsItsHandshake()
     {
-        World world = DedicatedWorld();
-
         _network.Connect(RemotePeer);
-        _worlds.Time.Now += PeerGatekeeper.HandshakeTimeout;
-        TransportWorlds.Tick(world);
 
-        AssertThat(_network.Disconnected).ContainsExactly(RemotePeer);
+        AssertThat(_endpoint.Calls).ContainsExactly(new Call(nameof(World.IServerEndpoint.StartHandshake), RemotePeer));
     }
 
     [TestCase]
-    [RequireGodotRuntime]
-    public void PacketReceived_TheJoinOfAConnectedPeer_JoinsIt()
+    public void PeerDisconnected_QueuesItsDisconnection()
     {
-        World world = DedicatedWorld();
-
-        Join(world);
-
-        AssertThat(world.Get<PlayerQuery>().OnlinePlayers().Select(player => player.Uid))
-            .ContainsExactly(TestWorldSetups.LocalPlayerUid);
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void PeerDisconnected_TheJoinedPeerLeavesInTheNextTick()
-    {
-        World world = DedicatedWorld();
-        Join(world);
-
         _network.Drop(RemotePeer);
-        AssertThat(world.Get<PlayerQuery>().OnlinePlayers().Count()).IsEqual(1);
-        TransportWorlds.Tick(world);
 
-        AssertThat(world.Get<PlayerQuery>().OnlinePlayers()).IsEmpty();
+        AssertThat(_endpoint.Calls)
+            .ContainsExactly(new Call(nameof(World.IServerEndpoint.QueueDisconnection), RemotePeer));
+    }
+
+    [TestCase]
+    public void PacketReceived_GoesToTheWorldAsIs()
+    {
+        _network.Receive(RemotePeer, [1, 2]);
+
+        Call call = _endpoint.Calls.Single();
+        AssertThat(call.Name).IsEqual(nameof(World.IServerEndpoint.ReceiveFromClient));
+        AssertThat(call.PeerId).IsEqual(RemotePeer);
+        AssertThat(call.Body).ContainsExactly(1, 2);
     }
 
     // A World that failed to be built is freed, while the network lives on
     [TestCase]
-    [RequireGodotRuntime]
     public void Dispose_DetachesFromTheNetwork()
     {
-        World world = AutoFree(new World())!;
-        var transport = new ServerTransport(_network, world);
+        _transport.Dispose();
 
-        transport.Dispose();
-
-        // The World is not initialized, so each of these would throw if it still reached it
         _network.Connect(RemotePeer);
         _network.Drop(RemotePeer);
         _network.Receive(RemotePeer, [1]);
-    }
 
-    private World DedicatedWorld()
-    {
-        World world = AutoFree(new World())!;
-        var transport = new ServerTransport(_network, world);
-        return _worlds.Init(world, TestWorldSetups.Dedicated(), transport, new NoConnection());
-    }
-
-    private void Join(World world)
-    {
-        _network.Connect(RemotePeer);
-        _network.Receive(RemotePeer,
-            _worlds.Codec.Encode(TestWorldSetups.LocalPlayer().ToJoinRequest(_worlds.Codec.ProtocolHash)));
-        TransportWorlds.Tick(world);
+        AssertThat(_endpoint.Calls).IsEmpty();
+        AssertThat(_network.HasListeners).IsFalse();
     }
 }

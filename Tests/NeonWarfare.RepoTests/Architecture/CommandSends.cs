@@ -5,16 +5,16 @@ namespace NeonWarfare.RepoTests.Architecture;
 
 /// <summary>
 /// The call sites of <c>Send&lt;TCommand&gt;</c> of a command sender: <c>PlayerCommandSender</c>, the only sender of
-/// commands in the World, and the World's <c>ICommandSender</c> entry point that forwards to it.
+/// commands in the World, and the World's <c>ICommandSender</c> entry point, which <c>World</c> implements explicitly
+/// by forwarding to it.
 /// </summary>
 public static class CommandSends
 {
     private const string PlayerSender = WorldLayers.WorldNamespace + ".Infra.Client.PlayerCommandSender";
-    private const string WorldRoot = WorldLayers.WorldNamespace + ".World";
-    private const string WorldSender = WorldRoot + "/ICommandSender";
+    private const string WorldSender = WorldLayers.WorldNamespace + ".World/ICommandSender";
     private const string SendMethod = "Send";
 
-    private static readonly string[] Senders = [PlayerSender, WorldRoot, WorldSender];
+    private static readonly string[] Senders = [PlayerSender, WorldSender];
 
     public sealed record Site(TypeDefinition Caller, IMemberDefinition From, TypeReference Command);
 
@@ -65,5 +65,8 @@ public static class CommandSends
     }
 
     private static bool IsSender(IMemberDefinition member) =>
-        member is MethodDefinition { Name: SendMethod } method && Senders.Contains(method.DeclaringType.FullName);
+        member is MethodDefinition method
+        && (method.Name == SendMethod && Senders.Contains(method.DeclaringType.FullName)
+            || method.Overrides.Any(sender => sender.Name == SendMethod
+                && Senders.Contains(sender.DeclaringType.FullName)));
 }

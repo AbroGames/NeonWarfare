@@ -10,15 +10,16 @@ in `Worlds/Features/` — see [World features](World-features.md). The packets a
 
 ## The World node
 
-`World` is a `Node2D` and the composition root. Its entry points:
+`World` is a `Node2D` and the composition root. Its only public entry point is `InitPreReady`; every other one is an
+explicit implementation of a nested role interface, so a caller holds only the role it needs:
 
 | Member | Who calls it |
 |---|---|
 | `InitPreReady(setup, dependencies, origin)` | `WorldAssembler`, before the World enters the tree: builds every service, then fills the world |
-| `Send<TCommand>(command)` | The `Hud`, through `World.ICommandSender`: the only way a command leaves the World |
-| `Get<T>()` | The screens, through `World.IReader`: only `[Query]` and `[Presentation]` services are handed out |
-| `ReceiveFromClient`, `StartHandshake`, `QueueDisconnection` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
-| `ReceiveState`, `ReceiveEvents` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the body of a packet |
+| `ICommandSender.Send<TCommand>(command)` | The `Hud`: the only way a command leaves the World |
+| `IReader.Get<T>()` | The screens: only `[Query]` and `[Presentation]` services are handed out |
+| `IServerEndpoint`: `StartHandshake`, `QueueDisconnection`, `ReceiveFromClient` | `ServerTransport`, and `HostTransport` for the host's own peer: packets and connection events of the peers |
+| `IClientEndpoint`: `ReceiveState`, `ReceiveEvents` | `ClientTransport`, and `HostTransport` for the events of the host's own peer: the body of a packet |
 
 `WorldOrigin` says where the state comes from: `NewWorld(saveFileName)` — `NewWorldSimulationFacade.Create()` spawns
 what a world starts with; `FromSave(save, saveFileName)` — `SaveLoader`; `FromSnapshot(body)` — the join snapshot,

@@ -13,13 +13,13 @@ namespace NeonWarfare.Scenes.Game.Networks.Transport;
 public sealed class ServerTransport : IClientsConnection, IDisposable
 {
     private readonly INetwork _network;
-    private readonly World _world;
+    private readonly World.IServerEndpoint _endpoint;
     private readonly ArrayBufferWriter<byte> _packet = new();
 
-    public ServerTransport(INetwork network, World world)
+    public ServerTransport(INetwork network, World.IServerEndpoint endpoint)
     {
         _network = network;
-        _world = world;
+        _endpoint = endpoint;
         _network.PeerConnected += OnPeerConnected;
         _network.PeerDisconnected += OnPeerDisconnected;
         _network.PacketReceived += OnPacketReceived;
@@ -59,9 +59,9 @@ public sealed class ServerTransport : IClientsConnection, IDisposable
         _network.Send(peerId, _packet.WrittenSpan);
     }
 
-    private void OnPeerConnected(int peerId) => _world.StartHandshake(peerId);
+    private void OnPeerConnected(int peerId) => _endpoint.StartHandshake(peerId);
 
-    private void OnPeerDisconnected(int peerId) => _world.QueueDisconnection(peerId);
+    private void OnPeerDisconnected(int peerId) => _endpoint.QueueDisconnection(peerId);
 
-    private void OnPacketReceived(int peerId, byte[] packet) => _world.ReceiveFromClient(peerId, packet);
+    private void OnPacketReceived(int peerId, byte[] packet) => _endpoint.ReceiveFromClient(peerId, packet);
 }

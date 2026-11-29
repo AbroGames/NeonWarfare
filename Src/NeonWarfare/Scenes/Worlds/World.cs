@@ -17,13 +17,16 @@ using NeonWarfare.Scenes.Worlds.Infra.Server.Tick;
 
 namespace NeonWarfare.Scenes.Worlds;
 
-public partial class World : Node2D, World.IReader, World.ICommandSender
+public partial class World : Node2D, World.IReader, World.ICommandSender, World.IServerEndpoint, World.IClientEndpoint
 {
     /// <summary>
     /// What a screen reads from the World.
     /// </summary>
     public interface IReader
     {
+        /// <summary>
+        /// What the outside of the World may read: the Simulation and the network machinery are never handed out.
+        /// </summary>
         T Get<T>() where T : class;
     }
 
@@ -32,7 +35,34 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     /// </summary>
     public interface ICommandSender
     {
+        /// <summary>
+        /// The only way the outside of the World sends commands.
+        /// </summary>
         void Send<TCommand>(TCommand command) where TCommand : Command;
+    }
+
+    /// <summary>
+    /// What a server World receives from its peers.
+    /// </summary>
+    public interface IServerEndpoint
+    {
+        void StartHandshake(int peerId);
+
+        void QueueDisconnection(int peerId);
+
+        void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet);
+    }
+
+    /// <summary>
+    /// What a client World receives from the server.
+    /// </summary>
+    public interface IClientEndpoint
+    {
+        /// <exception cref="NetMessageFormatException">The body is broken.</exception>
+        void ReceiveState(ReadOnlyMemory<byte> body);
+
+        /// <exception cref="NetMessageFormatException">The body is broken.</exception>
+        void ReceiveEvents(ReadOnlyMemory<byte> body);
     }
 
     private const string NotInitializedError = "World is not initialized";
@@ -85,16 +115,9 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         return this;
     }
 
-    /// <summary>
-    /// The only way the outside of the World sends commands.
-    /// </summary>
-    public void Send<TCommand>(TCommand command) where TCommand : Command =>
-        Service<PlayerCommandSender>().Send(command);
+    void ICommandSender.Send<TCommand>(TCommand command) => Service<PlayerCommandSender>().Send(command);
 
-    /// <summary>
-    /// What the outside of the World may read: the Simulation and the network machinery are never handed out.
-    /// </summary>
-    public T Get<T>() where T : class
+    T IReader.Get<T>()
     {
         if (ServiceLayer<T>.Attribute is not (QueryAttribute or PresentationAttribute))
         {
@@ -104,20 +127,16 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         return Service<T>();
     }
 
-    public void ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
+    void IServerEndpoint.StartHandshake(int peerId) => Service<PeerGatekeeper>().StartHandshake(peerId);
+
+    void IServerEndpoint.QueueDisconnection(int peerId) => Service<CommandInbox>().EnqueuePeerDisconnected(peerId);
+
+    void IServerEndpoint.ReceiveFromClient(int peerId, ReadOnlyMemory<byte> packet) =>
         Service<CommandInbox>().EnqueueFromPeer(peerId, packet);
 
-    public void StartHandshake(int peerId) =>
-        Service<PeerGatekeeper>().StartHandshake(peerId);
+    void IClientEndpoint.ReceiveState(ReadOnlyMemory<byte> body) => Service<StateApplier>().ApplyState(body);
 
-    public void QueueDisconnection(int peerId) =>
-        Service<CommandInbox>().EnqueuePeerDisconnected(peerId);
-
-    /// <exception cref="NetMessageFormatException">The body is broken.</exception>
-    public void ReceiveState(ReadOnlyMemory<byte> body) => Service<StateApplier>().ApplyState(body);
-
-    /// <exception cref="NetMessageFormatException">The body is broken.</exception>
-    public void ReceiveEvents(ReadOnlyMemory<byte> body) => Service<EventDispatcher>().Dispatch(body);
+    void IClientEndpoint.ReceiveEvents(ReadOnlyMemory<byte> body) => Service<EventDispatcher>().Dispatch(body);
 
     public override void _Notification(int what)
     {

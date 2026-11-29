@@ -16,7 +16,7 @@ Nothing is registered by hand: the composition root finds a feature by its types
   notice end with `Command`, `Event`, `Notice` (`WorldNamingTests`, both ways).
 * **Commands** — a `Command` record with MessagePack keys and a `[CommandHandler]` implementing
   `IPlayerCommandHandler<T>`: the handler is what puts the command on the whitelist. The HUD sends it through
-  `World.Send<T>`.
+  `World.ICommandSender`.
 * **Events** — an `Event` record with MessagePack keys, published by a `[Simulation]` / `[SimulationFacade]` into
   `EventOutbox` and handled by an `[EventHandler]` of a `[Presentation]`. A one-frame signal to the HUD is a
   `Notice` the Presentation posts into `HudMailbox`.

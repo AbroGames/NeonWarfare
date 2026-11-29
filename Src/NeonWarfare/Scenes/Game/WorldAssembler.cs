@@ -23,7 +23,7 @@ public class WorldAssembler(GameProtocol protocol, WorldPackedScenes scenes)
     {
         var world = new World();
         ServerTransport remote = network != null ? new ServerTransport(network, world) : null;
-        var transport = new HostTransport(world, protocol.Codec, setup.LocalPlayerOwner, remote);
+        var transport = new HostTransport(world, world, protocol.Codec, setup.LocalPlayerOwner, remote);
         Build(world, setup, origin, transport, transport, remote);
         transport.SendJoinRequest(setup.LocalPlayer);
         return world;
