@@ -10,7 +10,6 @@ using NeonWarfare.Scenes.Worlds;
 using NeonWarfare.Scenes.Worlds.Features.Players;
 using NeonWarfare.Scenes.Worlds.Infra.Protocol;
 using NeonWarfare.Scenes.Worlds.Infra.Server.Saves;
-using RepliCAT;
 using static GdUnit4.Assertions;
 
 namespace NeonWarfare.GameTests.Game;
@@ -23,17 +22,15 @@ public class WorldAssemblerTests
     private static readonly byte[] BrokenSave = [1, 2, 3, 4];
 
     private WorldAssembler _assembler = null!;
-    private NetMessageCodec _codec = null!;
+    private GameProtocol _protocol = null!;
     private RecordingLocalPlayerOwner _owner = null!;
 
     [BeforeTest]
     public void SetUp()
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
-        var protocol = new GameProtocol(
-            TestWorldScenes.CreateCatalog(scenes), _codec, new Replicator(NetMessageCodecTests.CreateMapping()));
-        _assembler = new WorldAssembler(protocol, scenes);
+        _protocol = GameProtocol.Create(scenes, NetMessageCodecTests.CreateMapping());
+        _assembler = new WorldAssembler(_protocol, scenes);
         _owner = new RecordingLocalPlayerOwner();
     }
 
@@ -72,7 +69,7 @@ public class WorldAssemblerTests
     public void RemoteClient_BrokenSnapshot_FreesTheWorld()
     {
         var transport = new ClientTransport(
-            new FakeNetwork(), _codec, TestWorldSetups.LocalPlayer(), _owner, _ => { });
+            new FakeNetwork(), _protocol.Codec, _protocol.Hash, TestWorldSetups.LocalPlayer(), _owner, _ => { });
         double orphans = Performance.GetMonitor(Performance.Monitor.ObjectOrphanNodeCount);
 
         NetMessageCodecTests.AssertRejected(() => _assembler.RemoteClient(

@@ -18,7 +18,7 @@ public class TransportWorlds
     public const long Now = 1_700_000_000;
     public const string SaveFileName = "save";
 
-    public NetMessageCodec Codec { get; } = new(NetMessageCodecTests.CreateMapping(), []);
+    public NetMessageCodec Codec { get; } = new(NetMessageCodecTests.CreateMapping());
 
     public ManualTimeProvider Time { get; } = new(Now);
 
@@ -28,8 +28,8 @@ public class TransportWorlds
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
         var dependencies = new WorldDependencies(
-            Time, Codec, new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
-            TestWorldScenes.CreateCatalog(scenes), clients, server);
+            Time, Codec, TestProtocol.Hash, new Replicator(NetMessageCodecTests.CreateMapping()),
+            new ManualFrameProvider(), scenes, TestWorldScenes.CreateCatalog(scenes), clients, server);
         return world.InitPreReady(setup, dependencies, origin ?? new WorldOrigin.NewWorld(SaveFileName));
     }
 

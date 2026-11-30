@@ -21,7 +21,7 @@ public class ProtocolHasher(Replicator replicator)
     private const BindingFlags DeclaredInstanceMembers =
         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
-    public ulong Compute(IReadOnlyList<Type> mappedTypes, IReadOnlyList<string> entityKinds)
+    public ProtocolHash Compute(IReadOnlyList<Type> mappedTypes, IReadOnlyList<string> entityKinds)
     {
         var text = new StringBuilder();
         foreach (Type type in mappedTypes)
@@ -52,7 +52,7 @@ public class ProtocolHasher(Replicator replicator)
         }
 
         byte[] digest = SHA256.HashData(Encoding.UTF8.GetBytes(text.ToString()));
-        return BinaryPrimitives.ReadUInt64LittleEndian(digest);
+        return new ProtocolHash(BinaryPrimitives.ReadUInt64LittleEndian(digest));
     }
 
     private void AppendMessagePackKeys(StringBuilder text, Type type)

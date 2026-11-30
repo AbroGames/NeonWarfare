@@ -79,7 +79,7 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     {
         if (!IsInsideTree()) throw new InvalidOperationException(NotInTreeError);
 
-        _protocol = GameProtocol.Create(WorldPackedScenes);
+        _protocol = GameProtocol.Create(WorldPackedScenes, Services.TypesMapping);
         _assembler = new WorldAssembler(_protocol, WorldPackedScenes);
         gameStarter.Start(this);
     }
@@ -100,7 +100,8 @@ public partial class Game : Node2D, ILocalPlayerOwner, IServerOwner
     public void ConnectToServer(LocalPlayer localPlayer, string host, int port)
     {
         Network network = AddNetwork();
-        _clientTransport = new ClientTransport(network, _protocol.Codec, localPlayer, this, OnSnapshotReceived);
+        _clientTransport = new ClientTransport(
+            network, _protocol.Codec, _protocol.Hash, localPlayer, this, OnSnapshotReceived);
         _clientTransport.ConnectionBroken += OnConnectionBroken;
         _clientSetup = new WorldSetup.RemoteClient(localPlayer, this);
         network.ConnectionFailed += OnConnectionFailed;

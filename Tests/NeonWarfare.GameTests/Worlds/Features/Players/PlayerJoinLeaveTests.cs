@@ -48,7 +48,7 @@ public class PlayerJoinLeaveTests
     [BeforeTest]
     public void SetUp()
     {
-        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        _codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         _scenes = TestWorldScenes.Create();
         _root = new Node();
         _clientsConnection = new RecordingClientsConnection { LocalPeerId = HostPeer };
@@ -308,7 +308,7 @@ public class PlayerJoinLeaveTests
         ServiceProvider provider = new WorldServicesBuilder().Build(
             setup,
             new WorldDependencies(
-                new ManualTimeProvider(Now), _codec,
+                new ManualTimeProvider(Now), _codec, TestProtocol.Hash,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes,
                 TestWorldScenes.CreateCatalog(_scenes), _clientsConnection, _clientsConnection),
             new WorldRoot(_root));
@@ -319,7 +319,7 @@ public class PlayerJoinLeaveTests
     private void Join(int peerId, string uid, string nick, Color? color = null)
     {
         _provider.GetRequiredService<PeerGatekeeper>().StartHandshake(peerId);
-        var join = new JoinRequestCommand(_codec.ProtocolHash, uid, nick, color ?? Colors.White);
+        var join = new JoinRequestCommand(TestProtocol.Hash.Value, uid, nick, color ?? Colors.White);
         _provider.GetRequiredService<CommandInbox>().EnqueueFromPeer(peerId, _codec.Encode(join));
     }
 

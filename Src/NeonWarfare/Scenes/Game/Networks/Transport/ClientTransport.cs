@@ -25,6 +25,7 @@ public sealed class ClientTransport : IServerConnection
 
     private readonly INetwork _network;
     private readonly NetMessageCodec _codec;
+    private readonly ProtocolHash _protocolHash;
     private readonly LocalPlayer _localPlayer;
     private readonly ILocalPlayerOwner _owner;
     private readonly Action<ReadOnlyMemory<byte>> _snapshotReceived;
@@ -43,11 +44,12 @@ public sealed class ClientTransport : IServerConnection
     /// <param name="snapshotReceived">Builds the World inside the call, before the events packet of the join tick
     /// arrives, and calls <see cref="Enter"/>.</param>
     public ClientTransport(
-        INetwork network, NetMessageCodec codec, LocalPlayer localPlayer, ILocalPlayerOwner owner,
-        Action<ReadOnlyMemory<byte>> snapshotReceived)
+        INetwork network, NetMessageCodec codec, ProtocolHash protocolHash, LocalPlayer localPlayer,
+        ILocalPlayerOwner owner, Action<ReadOnlyMemory<byte>> snapshotReceived)
     {
         _network = network;
         _codec = codec;
+        _protocolHash = protocolHash;
         _localPlayer = localPlayer;
         _owner = owner;
         _snapshotReceived = snapshotReceived;
@@ -64,7 +66,7 @@ public sealed class ClientTransport : IServerConnection
 
     public void Send(ReadOnlySpan<byte> packet) => _network.Send(ServerPeer, packet);
 
-    private void OnConnectedToServer() => Send(_codec.Encode(_localPlayer.ToJoinRequest(_codec.ProtocolHash)));
+    private void OnConnectedToServer() => Send(_codec.Encode(_localPlayer.ToJoinRequest(_protocolHash)));
 
     private void OnPacketReceived(int peerId, byte[] packet)
     {

@@ -312,13 +312,13 @@ public class WorldServicesBuilderTests
     private static WorldDependencies Dependencies()
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
-        return new(TimeProvider.System, Codec(),
+        return new(TimeProvider.System, Codec(), TestProtocol.Hash,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());
     }
 
-    private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping(), []);
+    private static NetMessageCodec Codec() => new(NetMessageCodecTests.CreateMapping());
 
     [Query]
     private class FixtureQuery;

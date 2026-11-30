@@ -42,7 +42,7 @@ public class SaveServiceTests
         _server = new WorldServicesBuilder().Build(
             TestWorldSetups.Dedicated(saveFiles: _files),
             new WorldDependencies(new ManualTimeProvider(0),
-                new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []),
+                new NetMessageCodec(NetMessageCodecTests.CreateMapping()), TestProtocol.Hash,
                 new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), _scenes, catalog,
                 connection, connection),
             new WorldRoot(_root));

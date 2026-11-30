@@ -71,7 +71,7 @@ public class CommandHandlerRegistryTests
     [RequireGodotRuntime]
     public void Build_Host_WhitelistHasOnlyCommandsAndReachesTheInbox()
     {
-        var codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping(), []);
+        var codec = new NetMessageCodec(NetMessageCodecTests.CreateMapping());
         using ServiceProvider provider = new WorldServicesBuilder().Build(
             TestWorldSetups.Host(), Dependencies(codec), new WorldRoot(AutoFree(new Node())!));
         IReadOnlySet<Type> whitelist = provider.GetRequiredService<CommandHandlerRegistry>().NetworkCommandTypes;
@@ -92,7 +92,7 @@ public class CommandHandlerRegistryTests
     private static WorldDependencies Dependencies(NetMessageCodec codec)
     {
         WorldPackedScenes scenes = AutoFree(TestWorldScenes.Create())!;
-        return new(TimeProvider.System, codec,
+        return new(TimeProvider.System, codec, TestProtocol.Hash,
             new Replicator(NetMessageCodecTests.CreateMapping()), new ManualFrameProvider(), scenes,
             TestWorldScenes.CreateCatalog(scenes), new RecordingClientsConnection(),
             new RecordingClientsConnection());

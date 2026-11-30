@@ -61,7 +61,7 @@ public class HostTransportTests
             new Call(nameof(World.IServerEndpoint.StartHandshake), LocalPeer),
             new Call(nameof(World.IServerEndpoint.ReceiveFromClient), LocalPeer));
         AssertThat(_endpoint.Calls[1].Body).ContainsExactly(
-            _worlds.Codec.Encode(player.ToJoinRequest(_worlds.Codec.ProtocolHash)));
+            _worlds.Codec.Encode(player.ToJoinRequest(TestProtocol.Hash)));
     }
 
     // The World would throw on a rejection: it reaches only the owner
@@ -151,13 +151,13 @@ public class HostTransportTests
     private HostTransport FakeHost(FakeNetwork? network = null)
     {
         ServerTransport? remote = network != null ? new ServerTransport(network, _endpoint) : null;
-        return new HostTransport(_endpoint, _endpoint, _worlds.Codec, _owner, remote);
+        return new HostTransport(_endpoint, _endpoint, _worlds.Codec, TestProtocol.Hash, _owner, remote);
     }
 
     private (World World, HostTransport Transport) HostWorld()
     {
         World world = AutoFree(new World())!;
-        var transport = new HostTransport(world, world, _worlds.Codec, _owner, null);
+        var transport = new HostTransport(world, world, _worlds.Codec, TestProtocol.Hash, _owner, null);
         _worlds.Init(world, TestWorldSetups.Host(localPlayerOwner: _owner), transport, transport);
         return (world, transport);
     }
