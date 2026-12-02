@@ -40,6 +40,15 @@ public class CmdArgsContractTests
     private static readonly string[] MayReadCommandLineDirectly =
         ["Src/NeonWarfare/Scenes/Root/Starters/RootStarterManager.cs"];
 
+    /// <summary>
+    /// Godot's own flags the game passes to a process it starts. The engine consumes them before the game
+    /// sees the command line, so they are never parsed and have no place among the game's arguments.
+    /// </summary>
+    private static readonly Dictionary<string, string> MayWriteGodotFlag = new(StringComparer.Ordinal)
+    {
+        ["Src/NeonWarfare/Scripts/GlobalServices/ProcessService.cs"] = "--headless",
+    };
+
     [Fact]
     public void Flags_AreDeclaredOnlyInCmdArgs()
     {
@@ -50,7 +59,8 @@ public class CmdArgsContractTests
         {
             foreach (LiteralExpressionSyntax literal in file.Nodes<LiteralExpressionSyntax>()
                          .Where(literal => literal.IsKind(SyntaxKind.StringLiteralExpression))
-                         .Where(literal => literal.Token.ValueText.StartsWith(FlagPrefix, StringComparison.Ordinal)))
+                         .Where(literal => literal.Token.ValueText.StartsWith(FlagPrefix, StringComparison.Ordinal))
+                         .Where(literal => !IsAllowedGodotFlag(file, literal)))
             {
                 report.Add($"{file.Describe(literal)}: '{literal.Token.ValueText}'");
             }
@@ -147,6 +157,27 @@ public class CmdArgsContractTests
             readers.Contains,
             "no such source file, or it no longer reads the command line");
     }
+
+    /// <summary>A file that stopped writing its Godot flag no longer needs the exemption either.</summary>
+    [Fact]
+    public void MayWriteGodotFlag_ListsFilesThatWriteIt()
+    {
+        HashSet<string> writers = CSharpFile.LoadAll()
+            .Where(file => file.Nodes<LiteralExpressionSyntax>().Any(literal => IsAllowedGodotFlag(file, literal)))
+            .Select(file => file.RelativePath)
+            .ToHashSet(StringComparer.Ordinal);
+
+        CrossCheck.AssertExemptionsExist(
+            nameof(MayWriteGodotFlag),
+            MayWriteGodotFlag.Keys,
+            writers.Contains,
+            "no such source file, or it no longer writes that flag");
+    }
+
+    private static bool IsAllowedGodotFlag(CSharpFile file, LiteralExpressionSyntax literal) =>
+        literal.IsKind(SyntaxKind.StringLiteralExpression)
+        && MayWriteGodotFlag.TryGetValue(file.RelativePath, out string? flag)
+        && literal.Token.ValueText == flag;
 
     private static IEnumerable<CSharpFile> OutsideCmdArgs() =>
         CSharpFile.LoadAll().Where(file => !IsInCmdArgs(file));
