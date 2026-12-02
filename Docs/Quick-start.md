@@ -26,6 +26,7 @@ picks them up automatically. All the flags are described in [Command-line argume
 | `Auto-start (new game)` | `--auto-start` | Straight into a single-player game with a new save file, skipping the menu |
 | `Auto-start (saved game)` | `--auto-start --auto-start-savefile test` | The same, but with the `test` save: the first run creates it, later ones load it |
 | `Server` | `--server` | A dedicated server with the `ServerHud` window |
+| `Server (headless)` | `--server --headless` | A dedicated server without a window and without `ServerHud` |
 | `Autoconnect (1)` | `--auto-connect --uid TestPlayer-AAAAAAAAAA --nick TestPlayer1` | A client with auto-connection |
 | `Autoconnect (2)` | `--auto-connect --uid TestPlayer-BBBBBBBBBB --nick TestPlayer2` | A second client with auto-connection |
 

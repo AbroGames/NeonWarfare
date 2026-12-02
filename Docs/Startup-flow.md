@@ -81,7 +81,7 @@ Easy to forget: the dedicated server initializes neither `Services.GameSettings`
 
 `Start()` — a single scenario: `MainScene.HostMultiplayerGameAsDedicatedServer(...)` with the save name
 from `--savefile` (or a generated one), the port, the admin UID, `--parent-pid`, and `ServerHud` unless
-`--headless` is passed.
+the engine runs without a window (`DisplayServer.GetName()` is `headless`).
 
 ## Level 2: GameStarter
 
