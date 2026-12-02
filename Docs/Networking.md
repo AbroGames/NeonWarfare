@@ -67,7 +67,7 @@ The first byte of every packet is its `ServerPacketKind`:
 | `Snapshot` | The tick, then a spawn record of every entity (`StateReplicator.WriteSnapshot`) | A peer that joined in this tick, except the host's own |
 | `State` | The tick, then spawns → models → despawns (`StateReplicator.TryWrite`) | Every peer joined before this tick, except the host's own |
 | `Events` | The events of this tick for this peer (`EventOutbox.DrainEvents`) | Every joined peer, the host's own included |
-| `JoinRejected` | One `JoinRejectReason` byte | A peer whose join is refused, just before the disconnect |
+| `JoinRejected` | One `JoinRejectReason` byte (`JoinRejectedPacket`), frozen across builds | A peer whose join is refused, just before the disconnect |
 
 The state packet is the same for everyone and written once; an empty one is not sent. It goes before the events,
 so an event handler sees the models already at the end of the tick, on the host and on a remote client alike.
@@ -75,6 +75,8 @@ ENet delivers a fragmented reliable packet whole, so a client applies a tick ato
 
 A client applies a packet at once, in `peer_packet`, with no queue: `StateApplier` the state, `EventDispatcher` the
 events. The host gets only its events packet: its Simulation has already written the state.
+`JoinRejected` never reaches a World: `Game` reads it, with or without a World, and raises `JoinRejectedEvent`; the
+starter leaves for the menu with the reason, on a remote client and on a host refused its own join alike.
 
 Events are published only by the Simulation, into `EventOutbox` (`PublishToAll` / `PublishTo(uid)`), one buffer per
 joined peer, so personal and common events keep the order of publication. An event is encoded when published, so

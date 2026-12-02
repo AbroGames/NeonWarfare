@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using Godot;
 using Humanizer;
-using KludgeBox.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using NeonWarfare.Scenes.World.Features.NewWorld;
 using NeonWarfare.Scenes.World.Infra.ClientNetwork;
@@ -14,7 +13,6 @@ using NeonWarfare.Scenes.World.Infra.ServerNetwork.Commands;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Peers;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Saves;
 using NeonWarfare.Scenes.World.Infra.ServerNetwork.Tick;
-using Serilog;
 
 namespace NeonWarfare.Scenes.World;
 
@@ -36,7 +34,6 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
         void Send<TCommand>(TCommand command) where TCommand : Command;
     }
 
-    private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string NotInitializedError = "World is not initialized";
     private const string NoLayerError = "World has no {0} layer";
     private const string NotExposedError = "{0} is not a [Query] or [Presentation] service";
@@ -44,11 +41,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
     private const string EmptyPacketError = "The packet is empty.";
     private const string UnknownKindError = "Unknown server packet kind {0}.";
     private const string SecondSnapshotError = "A snapshot for a World that already has one.";
-    private const string JoinRejectedLengthError = "A join rejection is {0} bytes long, {1} expected.";
-
-    private const int JoinRejectedLength = 2;
-
-    private readonly ILogger _log = LogFactory.GetForStatic<World>();
+    private const string JoinRejectedError = "A join rejection is read by Game, not by the World.";
 
     private ServiceProvider _services;
     private WorldLayer _layers;
@@ -142,14 +135,7 @@ public partial class World : Node2D, World.IReader, World.ICommandSender
             case ServerPacketKind.Snapshot:
                 throw new NetMessageFormatException(SecondSnapshotError);
             case ServerPacketKind.JoinRejected:
-                if (packet.Length != JoinRejectedLength)
-                {
-                    throw new NetMessageFormatException(
-                        JoinRejectedLengthError.FormatWith(packet.Length, JoinRejectedLength));
-                }
-                //TODO 031 show the reason to the player
-                _log.Error(JoinRejectedLog, (JoinRejectReason) packet.Span[1]);
-                break;
+                throw new NetMessageFormatException(JoinRejectedError);
             default:
                 throw new NetMessageFormatException(UnknownKindError.FormatWith(packet.Span[0]));
         }

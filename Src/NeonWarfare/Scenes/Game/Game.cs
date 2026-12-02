@@ -44,6 +44,7 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     private const string NoWorldLog = "Packet from peer {peerId} dropped: there is no World yet";
     private const string NotFromServerLog = "Packet from peer {peerId} dropped: not from the server";
     private const string BrokenServerPacketLog = "Packet from the server dropped";
+    private const string JoinRejectedLog = "The server rejected the join: {reason}";
     private const string HostDisconnectedLog = "The host's own peer is disconnected: the host has no player";
     private const string NoNetworkError = "Peer {0} is not the host's own, but there is no network";
     private const string NoServerError = "There is no server to send to";
@@ -75,6 +76,12 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     /// A remote client without a World got the server's join snapshot: the World is created from it.
     /// </summary>
     public event Action<byte[]> WorldSnapshotReceivedEvent;
+
+    /// <summary>
+    /// The server refused this process's join: a remote client gets it before it has a World, the host from its own
+    /// World, inside the tick.
+    /// </summary>
+    public event Action<JoinRejectReason> JoinRejectedEvent;
 
     public override void _Ready()
     {
@@ -171,7 +178,14 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
     {
         if (peerId == LocalPeerId)
         {
-            _world.ReceiveFromServer(packet.ToArray());
+            if (IsJoinRejected(packet))
+            {
+                RaiseJoinRejected(packet);
+            }
+            else
+            {
+                _world.ReceiveFromServer(packet.ToArray());
+            }
             return;
         }
         if (_network == null) throw new InvalidOperationException(NoNetworkError.FormatWith(peerId));
@@ -234,6 +248,18 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
             _log.Warning(NotFromServerLog, peerId);
             return;
         }
+        if (IsJoinRejected(packet))
+        {
+            try
+            {
+                RaiseJoinRejected(packet);
+            }
+            catch (NetMessageFormatException e)
+            {
+                _log.Error(e, BrokenServerPacketLog);
+            }
+            return;
+        }
         if (!HasWorld)
         {
             // The subscriber creates the World inside the call, before the events packet of the join tick arrives
@@ -256,5 +282,16 @@ public partial class Game : Node2D, IClientsConnection, IServerConnection
         {
             _log.Error(e, BrokenServerPacketLog);
         }
+    }
+
+    private static bool IsJoinRejected(ReadOnlySpan<byte> packet) =>
+        packet.Length > 0 && packet[0] == (byte) ServerPacketKind.JoinRejected;
+
+    /// <exception cref="NetMessageFormatException">The rejection is broken.</exception>
+    private void RaiseJoinRejected(ReadOnlySpan<byte> packet)
+    {
+        JoinRejectReason reason = JoinRejectedPacket.Read(packet);
+        _log.Error(JoinRejectedLog, reason);
+        JoinRejectedEvent?.Invoke(reason);
     }
 }

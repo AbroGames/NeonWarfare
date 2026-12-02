@@ -33,6 +33,7 @@ public class SingleplayerGameStarter(
             return;
         }
 
+        GoToMenuOnJoinRejected(game);
         game.SendJoinRequest(localPlayer);
         Services.LoadingScreen.Clear();
     }

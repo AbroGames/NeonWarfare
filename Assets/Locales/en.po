@@ -66,6 +66,27 @@ msgstr "Ok"
 msgid "MESSAGE_MENU__DEFAULT_ERROR"
 msgstr "Unknown error"
 
+msgid "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH"
+msgstr "The server runs another version of the game"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID"
+msgstr "The server rejected your player id"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK"
+msgstr "The nick must be 3 to 25 characters long, with no spaces"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR"
+msgstr "The player color is too dark"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE"
+msgstr "A player with your id is already on the server"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR"
+msgstr "The server failed to let you in because of an internal error"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
+msgstr "The server rejected the connection"
+
 msgid "HUD__CHAT_PLACEHOLDER"
 msgstr "Type a message or command starting with /"
 

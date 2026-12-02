@@ -115,6 +115,7 @@ models. `WorldDocTests` checks the tables both ways.
 | `ProtocolHasher` | The hash of the mapped types, MessagePack keys, RepliCAT schemas and entity kinds |
 | `ServerPacketKind` | The first byte of a server packet |
 | `JoinRejectReason` | Why a join is refused, a code the client shows in its own language |
+| `JoinRejectedPacket` | The layout of the `JoinRejected` packet, the same in every build |
 | `ColorFormatter` | MessagePack formatter of Godot `Color` |
 
 ### ServerNetwork

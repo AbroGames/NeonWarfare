@@ -120,6 +120,8 @@ protocol hash, the RepliCAT `Replicator` — then calls `starter.Init(game)`. Th
   writes, so after a "save as" it leads to the new file.
 * **`GoToMenuAndShowError(message)` / `GoToMenu()`** — returning to the menu; never called by
   `DedicatedServerGameStarter`, since a dedicated server has no menu.
+* **`GoToMenuOnJoinRejected(game)`** — every starter with a player of its own: `Game.JoinRejectedEvent` → to the
+  menu with the localized reason.
 
 The admin of a server World (`WorldAdmin`) is the uid of the host's `LocalPlayer`, or `--admin` of a dedicated
 server.
@@ -131,7 +133,7 @@ A host without `Network`: its only peer is its own.
 1. The `Loading` loading screen.
 2. `resume-game.json` — the "single-player game" mode, with the save files that keep it current.
 3. `AddServerWorld(...)` → `AddWorld(Host, origin, Hud, ...)`. A load error → back to the menu with the message.
-4. `SendJoinRequest(localPlayer)`, the loading screen is cleared.
+4. `GoToMenuOnJoinRejected(game)`, `SendJoinRequest(localPlayer)`, the loading screen is cleared.
 
 ### 2. `HostMultiplayerGameStarter` and `DedicatedServerGameStarter`
 
@@ -150,7 +152,8 @@ the World, the screen and what happens on a failure and after `OpenServer()`.
    with `ServerHud` or no screen, no local player, the World hidden. A load error → the host goes back to the menu,
    the dedicated server shuts down: a new world in its place would overwrite the save on exit.
 6. `network.OpenServer()`.
-7. Only the host: `SendJoinRequest(localPlayer)`, the loading screen is cleared.
+7. Only the host: `SendJoinRequest(localPlayer)` (`GoToMenuOnJoinRejected` is subscribed before step 1), the
+   loading screen is cleared.
 
 > [!IMPORTANT]
 > The server is opened for incoming connections **only after** the World is built. Otherwise a client would knock
@@ -167,8 +170,8 @@ Connecting to someone else's server. Parameters: `host`, `port`, `mustSetLastGam
    * `WorldSnapshotReceivedEvent` → `AddWorld(Client, FromSnapshot(snapshot), Hud, null, localPlayer)` and the
      loading screen is cleared; a broken snapshot or a failure to build the World → back to the menu with the error;
    * `ConnectionFailedEvent` → to the menu with "Connection to the server failed" (no answer within the timeout);
-   * `ServerDisconnectedEvent` → to the menu with "Server disconnected" (can arrive even hours into the game, and is
-     also all the player sees of a rejected join until task 031).
+   * `ServerDisconnectedEvent` → to the menu with "Server disconnected" (can arrive even hours into the game);
+   * `GoToMenuOnJoinRejected(game)`.
 
    Each does nothing once its `Game` is queued for deletion: the multiplayer is still polled until the end of that
    frame.

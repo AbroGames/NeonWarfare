@@ -23,6 +23,7 @@ public class HostMultiplayerGameStarter(
     public override void Init(Game game)
     {
         _localPlayer = ReadLocalPlayer();
+        GoToMenuOnJoinRejected(game);
         base.Init(game);
     }
 

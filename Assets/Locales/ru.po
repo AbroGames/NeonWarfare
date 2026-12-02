@@ -67,6 +67,27 @@ msgstr "Ок"
 msgid "MESSAGE_MENU__DEFAULT_ERROR"
 msgstr "Неизвестная ошибка"
 
+msgid "MESSAGE_MENU__JOIN_REJECTED_PROTOCOL_MISMATCH"
+msgstr "На сервере другая версия игры"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_UID"
+msgstr "Сервер отклонил идентификатор игрока"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_NICK"
+msgstr "Ник должен быть длиной от 3 до 25 символов, без пробелов"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INVALID_COLOR"
+msgstr "Цвет игрока слишком тёмный"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_UID_IN_USE"
+msgstr "Игрок с вашим идентификатором уже на сервере"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_INTERNAL_ERROR"
+msgstr "Сервер не смог впустить вас из-за внутренней ошибки"
+
+msgid "MESSAGE_MENU__JOIN_REJECTED_UNKNOWN"
+msgstr "Сервер отклонил подключение"
+
 msgid "HUD__CHAT_PLACEHOLDER"
 msgstr "Введите сообщение или команду, начиная с /"
 

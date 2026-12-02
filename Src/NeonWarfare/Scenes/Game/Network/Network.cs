@@ -159,7 +159,8 @@ public partial class Network(Node multiplayerRoot) : Node
             return;
         }
 
-        //TODO 031 verify that the queued packets leave first and peer_disconnected still follows
+        // DisconnectPeer resets the peer's queues and would drop a queued rejection; the peer stays in the peer list,
+        // so its peer_disconnected is reported once the disconnect is acknowledged
         ((ENetMultiplayerPeer) _api.MultiplayerPeer).GetPeer(peerId).PeerDisconnectLater();
     }
 
