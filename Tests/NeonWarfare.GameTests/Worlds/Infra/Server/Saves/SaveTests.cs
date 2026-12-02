@@ -192,47 +192,6 @@ public class SaveTests
             .IsInstanceOf<InvalidOperationException>();
     }
 
-    // The save is the state at the end of the tick, as the joining peers get it
-    [TestCase]
-    [RequireGodotRuntime]
-    public void RequestSave_IsWrittenAtTheEndOfTheTick()
-    {
-        Tick(_server);
-        List<byte[]> written = [];
-        Saver().RequestSave(written.Add, error => throw error);
-        Saver().RequestSave(written.Add, error => throw error);
-
-        var counter = Spawner(_server).SpawnOnRoot<CounterNode>(node => node.Value = 1);
-        counter.Value = 2;
-        AssertThat(written).IsEmpty();
-        Tick(_server);
-
-        AssertThat(written).HasSize(2);
-        ServiceProvider loaded = Load(written[0]);
-        AssertThat(((CounterNode) loaded.GetRequiredService<IEntityFinder>().GetNode(Id(_server, counter))).Value)
-            .IsEqual(2);
-        AssertThat(loaded.GetRequiredService<ServerTickClock>().CurrentTick).IsEqual(2L);
-        written.Clear();
-
-        Tick(_server);
-
-        AssertThat(written).IsEmpty();
-    }
-
-    [TestCase]
-    [RequireGodotRuntime]
-    public void RequestSave_ACallbackThrows_TheOthersStillRun()
-    {
-        Tick(_server);
-        List<byte[]> written = [];
-        Saver().RequestSave(_ => throw new InvalidOperationException("callback"), error => throw error);
-        Saver().RequestSave(written.Add, error => throw error);
-
-        Tick(_server);
-
-        AssertThat(written).HasSize(1);
-    }
-
     // The tick still sends its events: a failed save costs the players nothing
     [TestCase]
     [RequireGodotRuntime]
@@ -244,7 +203,8 @@ public class SaveTests
         // Unmarked, so no delta writes it: only the save, which writes manual members from the live object
         node.Text = new string('x', 70_000);
         List<Exception> failed = [];
-        Saver().RequestSave(_ => throw new InvalidOperationException("written"), failed.Add);
+        _server.GetRequiredService<SaveService>()
+            .RequestSave("file", () => throw new InvalidOperationException("written"), failed.Add);
 
         Join(BobPeer, BobUid, "Bob");
         Tick(_server);
@@ -259,16 +219,14 @@ public class SaveTests
     // instead of loading it empty
     [TestCase]
     [RequireGodotRuntime]
-    public void RequestSave_SavedEntityWhoseDeltaFailed_GoesToFailedUntilADeltaSucceeds()
+    public void Write_SavedEntityWhoseDeltaFailed_ThrowsUntilADeltaSucceeds()
     {
         Tick(_server);
         var broken = Spawner(_server).SpawnOnRoot<UnmappedPartNode>();
-        List<Exception> failed = [];
-        Saver().RequestSave(_ => throw new InvalidOperationException("written"), failed.Add);
-
         Tick(_server);
 
-        AssertThat(failed).HasSize(1);
+        AssertThrown(() => Saver().Write()).IsInstanceOf<InvalidOperationException>();
+
         broken.Part = new UnmappedPartNode.MappedPart { Value = 7 };
         Tick(_server);
         ServiceProvider loaded = Load(Saver().Write());

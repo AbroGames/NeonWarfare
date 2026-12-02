@@ -111,7 +111,7 @@ Every folder of `Worlds/`, except the inside of `Features/`. `WorldDocTests` che
 | `Infra/Server/Peers` | `PeerGatekeeper` (handshake deadline, rejection, disconnection), `PeerSessions` (join, displacement, leave, in the tick), `PeerStateTable` (the state, uid and event buffer of every peer; never replicated), `IPeerSessionHandler` |
 | `Infra/Server/Events` | `EventOutbox` — encodes the events of the tick into the buffers of the joined peers |
 | `Infra/Server/Replication` | `StateReplicator` — the state packet, the join snapshot and the save records, from the RepliCAT baselines |
-| `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter`, `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
+| `Infra/Server/Saves` | `SaveService` ("save as" at the end of the tick, the save on exit through `SaveOnExitNode`), `SaveWriter` (the format only), `SaveLoader`, `SaveFormatException`, `SaveVersionMismatchException` |
 | `Infra/Client` | `PlayerCommandSender` — the only sender in the World |
 | `Infra/Client/Events` | `EventDispatcher`, `EventHandlerAttribute` and `IEventHandlerOwner` — a Presentation with handlers |
 | `Infra/Client/Replication` | `StateApplier` — the state packets and the join snapshot of a remote client |

@@ -40,7 +40,7 @@ belong to the tick. `RunTick` goes strictly in this order:
 3. `PeerGatekeeper.DisconnectExpired()` — peers that have not joined in `HandshakeTimeout` (10 s);
 4. the state packet to every peer joined before this tick;
 5. the snapshots to the peers joined in this tick;
-6. the saves requested in this tick (`SaveWriter.WriteRequested`, see [Data and saves](Data-and-saves.md));
+6. the saves requested in this tick (`SaveService.WriteRequested`, see [Data and saves](Data-and-saves.md));
 7. the events packet of each joined peer.
 
 The Simulation changes the models only inside the tick: it has no deferred calls, timers or `async`
